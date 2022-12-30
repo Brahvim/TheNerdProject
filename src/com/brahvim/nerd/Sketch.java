@@ -114,6 +114,7 @@ public class Sketch extends PApplet {
         this.frameTime = this.frameStartTime - this.pframeTime;
         this.pframeTime = this.frameStartTime;
 
+        // TODO: Complete dealing with these!
         this.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
         this.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
         this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
