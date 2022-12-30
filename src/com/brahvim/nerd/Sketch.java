@@ -31,7 +31,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 
-// TODO: Bring stuff from Nerd - let's make a Game Engine! ":D!~
+// TODO: Bring stuff from Nerd - let's make a "Game Engine"! ":D!~
 
 public class Sketch extends PApplet {
     // region `public` fields.

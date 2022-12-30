@@ -84,7 +84,6 @@ public class Scene {
   }
 
   // region `Layer`-operations.
-  // TODO: Improve these getters!
   // They get a running `Layer`'s reference from its (given) class.
   public Layer getLayer(Class<? extends Layer> p_layerClass) {
     for (Layer l : this.LAYERS)
@@ -95,9 +94,12 @@ public class Scene {
     // return null;
   }
 
-  public HashSet<Layer> getLayers(Class<? extends Layer> p_layerClass) {
-    if (!this.hasLayerOfClass(p_layerClass))
-      return null;
+  public HashSet<Layer> getManyLayers(Class<? extends Layer> p_layerClass) {
+    // Nobody's gunna do stuff like this. Ugh.
+    // No matter what I do, its still gunna crash their program.
+
+    // if (!this.hasLayerOfClass(p_layerClass))
+    // return null;
 
     HashSet<Layer> ret = new HashSet<>();
 

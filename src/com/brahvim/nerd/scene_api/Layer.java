@@ -23,6 +23,8 @@ public class Layer {
 
     // region `private` fields.
     private boolean active = true;
+    // ^^^ `private` because otherwise you won't be able to track changes.
+    // This isn't C#!
     // endregion
 
     public Layer(Scene.LayerInitializer p_initializer) {
