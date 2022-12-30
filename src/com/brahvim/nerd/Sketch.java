@@ -44,15 +44,23 @@ public class Sketch extends PApplet {
     public JFrame sketchFrame;
     // (Why check for errors at all? You know what renderer you used!)
 
+    // region Previous frame states.
+    public int pmouseButton, pkeyCode; // Previous fraaaaame!...
+    public boolean pkeyPressed, pmousePressed; // Previous frame...
+    public boolean mouseLeft, mouseMid, mouseRight; // Current frame!
+    public boolean pmouseLeft, pmouseMid, pmouseRight; // Previous frame...
+    // endregion
+
     // region "Dimensions".
     public int frameStartTime, pframeTime, frameTime;
     public float cx, cy, qx, qy, q3x, q3y;
     public int pwidth, pheight;
     // endregion
 
-    // Directories:
+    // region Directories:
     public static final File EXEC_DIR = new File("");
     public static final File DATA_DIR = new File("data");
+    // endregion
     // endregion
 
     // region `private` ~~/ `protected`~~ fields.
@@ -106,10 +114,19 @@ public class Sketch extends PApplet {
         this.frameTime = this.frameStartTime - this.pframeTime;
         this.pframeTime = this.frameStartTime;
 
+        this.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
+        this.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
+        this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
+
         this.sceneMan.draw();
+
     }
 
     public void post() {
+        this.pmouseMid = this.mouseMid;
+        this.pmouseLeft = this.mouseLeft;
+        this.pmouseRight = this.mouseRight;
+
         this.sceneMan.post();
     }
     // endregion
@@ -181,7 +198,7 @@ public class Sketch extends PApplet {
     // endregion
     // endregion
 
-    // region Boilerplate-y extras.
+    // region Utilities!~
     public void updateRatios() {
         this.cx = super.width * 0.5f;
         this.cy = super.height * 0.5f;
@@ -191,6 +208,29 @@ public class Sketch extends PApplet {
         this.q3y = this.cy + this.qy;
     }
 
+    // region Key-press helper methods.
+    boolean keyIsPressed(int p_keyCode) {
+        return this.keysHeld.contains(p_keyCode);
+    }
+
+    boolean keysPressed(int... p_keyCodes) {
+        for (int i : p_keyCodes)
+            if (!this.keysHeld.contains(i))
+                return false;
+        return true;
+
+        // I have no idea why Nerd still uses this. Didn't I change that..?:
+        /*
+         * boolean flag = true;
+         * for (int i : p_keyCodes)
+         * flag &= this.keysHeld.contains(i); // ...yeah, `|=` and not `&=`...
+         * return flag;
+         */
+        // An article once said: `boolean` flags are bad.
+    }
+    // endregion
+
+    // region 2D rendering.
     public void in2d(Runnable p_toDraw) {
         this.begin2d();
         p_toDraw.run();
@@ -208,7 +248,9 @@ public class Sketch extends PApplet {
         super.popMatrix();
         super.hint(PConstants.ENABLE_DEPTH_TEST);
     }
+    // endregion
 
+    // region Start a `JAVA2D` sketch with an undecorated window.
     public JFrame createSketchPanel(
             Runnable p_exitTask, Sketch p_sketch,
             PGraphics p_sketchGraphics) {
@@ -361,11 +403,13 @@ public class Sketch extends PApplet {
         return ret;
     }
 
+    // Used by `Sketch::createSketchPanel()`:
     public void updateSketchMouse() {
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         super.mouseX = mousePoint.x - this.sketchFrame.getLocation().x;
         super.mouseY = mousePoint.y - this.sketchFrame.getLocation().y;
     }
+    // endregion
     // endregion
 
 }
