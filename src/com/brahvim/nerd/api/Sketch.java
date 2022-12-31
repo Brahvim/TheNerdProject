@@ -37,9 +37,8 @@ import processing.core.PGraphics;
 public class Sketch extends PApplet {
     // region `public` fields.
     // region Constants.
-    public final static boolean CLOSE_ON_ESCAPE = Boolean.TRUE;
-
-    public final int INIT_WIDTH = 400, INIT_HEIGHT = 400;
+    public final static File EXEC_DIR = new File("");
+    public final static File DATA_DIR = new File("data");
 
     public final static int REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
             .getScreenDevices()[0].getDisplayMode().getRefreshRate();
@@ -50,6 +49,10 @@ public class Sketch extends PApplet {
             ']', ';', ',', '.', '/', '\\', ':', '|', '<',
             '>', '_', '+', '?'
     };
+
+    public final String RENDERER;
+    public final int INIT_WIDTH, INIT_HEIGHT;
+    public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN;
     // endregion
 
     // Window object references::
@@ -69,12 +72,6 @@ public class Sketch extends PApplet {
     public float cx, cy, qx, qy, q3x, q3y;
     public int pwidth, pheight;
     // endregion
-
-    // region Directories:
-
-    public final static File EXEC_DIR = new File("");
-    public final static File DATA_DIR = new File("data");
-    // endregion
     // endregion
 
     // region `private` ~~/ `protected`~~ fields.
@@ -83,18 +80,27 @@ public class Sketch extends PApplet {
     // endregion
 
     // region Constructors, `main()`, `settings()`...
-    public Sketch(SketchBuilder p_sketchBuilder) {
-        if (p_sketchBuilder == null) {
+    public Sketch(SketchInitializer p_sketchInitializer) {
+        if (p_sketchInitializer == null) {
             throw new IllegalArgumentException("""
                     Please use a `SketchBuilder` instance to make a `Sketch`!""");
         }
 
         this.sceneMan = new SceneManager(this);
+
+        this.INIT_WIDTH = p_sketchInitializer.width;
+        this.RENDERER = p_sketchInitializer.renderer;
+        this.INIT_HEIGHT = p_sketchInitializer.height;
+        this.CLOSE_ON_ESCAPE = p_sketchInitializer.closeOnEscape;
+        this.STARTED_FULLSCREEN = p_sketchInitializer.startedFullscreen;
     }
 
     @Override
     public void settings() {
-        super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.sketchInitializer.renderer);
+        if (this.STARTED_FULLSCREEN)
+            super.fullScreen(this.RENDERER);
+        else
+            super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER);
     }
     // endregion
 
@@ -177,7 +183,7 @@ public class Sketch extends PApplet {
     }
 
     public void keyPressed() {
-        if (!Sketch.CLOSE_ON_ESCAPE) {
+        if (!this.CLOSE_ON_ESCAPE) {
             if (super.keyCode == 27)
                 super.key = ' ';
         }

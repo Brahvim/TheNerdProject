@@ -3,8 +3,6 @@ package com.brahvim.nerd.scenes.test_scene;
 import com.brahvim.nerd.scene_api.Scene;
 import com.brahvim.nerd.scene_api.SceneManager;
 
-import processing.core.PApplet;
-
 public class TestScene1 extends Scene {
     public TestScene1(SceneManager.SceneInitializer p_sceneInitializer) {
         super(p_sceneInitializer);

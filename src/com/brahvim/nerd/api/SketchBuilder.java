@@ -4,13 +4,21 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class SketchBuilder {
-    private String renderer = PConstants.P3D;
+    private SketchInitializer sketchInitializer;
 
     public SketchBuilder() {
+        this.sketchInitializer = new SketchInitializer();
     }
 
-    // Why use a `SketchInitializer`, when you could make `Sketch` use only one
-    // parameterized constructor taking in a `SketchBuilder` the same way?
+    // Hmmm... "`SketchSettings`" instead..?
+    public class SketchInitializer {
+        public int width = 400, height = 400;
+        public String renderer = PConstants.P3D;
+        public boolean closeOnEscape, startedFullscreen;
+
+        private SketchInitializer() {
+        }
+    }
 
     public Sketch build(String[] p_javaMainArgs) {
         Sketch constructedSketch = new Sketch(this.sketchInitializer);
@@ -25,29 +33,55 @@ public class SketchBuilder {
     }
 
     // region Renderer selection.
-    public void useJavaRenderer() {
+    public SketchBuilder useJavaRenderer() {
         this.sketchInitializer.renderer = PConstants.JAVA2D;
+        return this;
     }
 
-    public void useOpenGlRenderer() {
+    public SketchBuilder useOpenGlRenderer() {
         this.sketchInitializer.renderer = PConstants.P3D;
+        return this;
     }
 
-    public void useJavaFxRenderer() {
+    public SketchBuilder useJavaFxRenderer() {
         this.sketchInitializer.renderer = PConstants.FX2D;
+        return this;
     }
 
-    public void usePdfRenderer() {
+    public SketchBuilder usePdfRenderer() {
         this.sketchInitializer.renderer = PConstants.PDF;
+        return this;
     }
 
-    public void useSvgRenderer() {
+    public SketchBuilder useSvgRenderer() {
         this.sketchInitializer.renderer = PConstants.SVG;
+        return this;
     }
 
-    public void useDxfRenderer() {
+    public SketchBuilder useDxfRenderer() {
         this.sketchInitializer.renderer = PConstants.DXF;
+        return this;
     }
     // endregion
+
+    public SketchBuilder setWidth(int p_width) {
+        this.sketchInitializer.width = p_width;
+        return this;
+    }
+
+    public SketchBuilder setHeight(int p_height) {
+        this.sketchInitializer.height = p_height;
+        return this;
+    }
+
+    public SketchBuilder startFullscreen() {
+        this.sketchInitializer.startedFullscreen = true;
+        return this;
+    }
+
+    public SketchBuilder closeOnEscape() {
+        this.sketchInitializer.closeOnEscape = true;
+        return this;
+    }
 
 }

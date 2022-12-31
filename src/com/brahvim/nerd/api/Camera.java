@@ -37,13 +37,8 @@ public class Camera {
     private Sketch parentSketch;
     // endregion
 
-    public Camera(CameraBuilder p_builder) {
-        if (p_builder == null) {
-            throw new IllegalArgumentException("""
-                    `Camera`s must be constructed using a non-null `CameraBuilder`!""");
-        }
-
-        this.parentSketch = p_builder.getSketch();
+    public Camera(Sketch p_sketch) {
+        this.parentSketch = p_sketch;
 
         this.DEFAULT_CAM_UP = new PVector(0, 1, 0);
 

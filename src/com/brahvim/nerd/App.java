@@ -1,10 +1,14 @@
 package com.brahvim.nerd;
 
-import com.brahvim.nerd.api.Sketch;
+import com.brahvim.nerd.api.SketchBuilder;
 
 public class App {
     public static void main(String[] p_args) {
-        Sketch.SketchBuilder builder = new Sketch.SketchBuilder();
-        Sketch sketch = builder.build(p_args);
+        new SketchBuilder()
+                .setWidth(400)
+                .setHeight(400)
+                .startFullscreen()
+                .closeOnEscape()
+                .build(p_args);
     }
 }

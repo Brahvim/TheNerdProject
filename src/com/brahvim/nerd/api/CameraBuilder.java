@@ -4,17 +4,12 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 public class CameraBuilder {
-
-    public class CameraInitializer {
-    }
-
     private Camera build;
     private Sketch sketch;
-    private CameraInitializer initializer;
 
     public CameraBuilder(Sketch p_sketch) {
-        this.sketch = p_sketch;
-        this.build = new Camera(this);
+        this.sketch = p_sketch; // Used by `setClearColor()`.
+        this.build = new Camera(p_sketch);
 
         this.build.up.set(this.build.DEFAULT_CAM_UP);
         this.build.pos.set(this.build.DEFAULT_CAM_POS);
