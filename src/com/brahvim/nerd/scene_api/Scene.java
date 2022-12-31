@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.brahvim.nerd.Sketch;
+import com.brahvim.nerd.api.Sketch;
 import com.brahvim.nerd.scene_api.SceneManager.SceneInitializer;
 
 /**

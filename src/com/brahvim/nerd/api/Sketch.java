@@ -1,4 +1,4 @@
-package com.brahvim.nerd;
+package com.brahvim.nerd.api;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,12 +16,13 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.brahvim.nerd.api.SketchBuilder.SketchInitializer;
 import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd.scenes.test_scene.TestScene1;
 import com.jogamp.newt.opengl.GLWindow;
@@ -35,9 +36,21 @@ import processing.core.PGraphics;
 
 public class Sketch extends PApplet {
     // region `public` fields.
-    public static final int REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
+    // region Constants.
+    public final static boolean CLOSE_ON_ESCAPE = Boolean.TRUE;
+
+    public final int INIT_WIDTH = 400, INIT_HEIGHT = 400;
+
+    public final static int REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
             .getScreenDevices()[0].getDisplayMode().getRefreshRate();
-    public static final boolean CLOSE_ON_ESCAPE = Boolean.TRUE;
+
+    public final static char[] VALID_SYMBOLS = {
+            '\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
+            '%', '^', '&', '*', '(', ')', '{', '}', '[',
+            ']', ';', ',', '.', '/', '\\', ':', '|', '<',
+            '>', '_', '+', '?'
+    };
+    // endregion
 
     // Window object references::
     public GLWindow glWindow;
@@ -58,30 +71,30 @@ public class Sketch extends PApplet {
     // endregion
 
     // region Directories:
-    public static final File EXEC_DIR = new File("");
-    public static final File DATA_DIR = new File("data");
+
+    public final static File EXEC_DIR = new File("");
+    public final static File DATA_DIR = new File("data");
     // endregion
     // endregion
 
     // region `private` ~~/ `protected`~~ fields.
-    private SceneManager sceneMan = new SceneManager(this);
-    private final ArrayList<Integer> keysHeld = new ArrayList<>(5); // `final` to avoid concurrency issues.
+    private SceneManager sceneMan;
+    private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
     // endregion
 
     // region Constructors, `main()`, `settings()`...
-    public static void main(String[] p_args) {
-        Sketch constructedSketch = new Sketch();
-        String[] args = new String[] { constructedSketch.getClass().getName() };
+    public Sketch(SketchBuilder p_sketchBuilder) {
+        if (p_sketchBuilder == null) {
+            throw new IllegalArgumentException("""
+                    Please use a `SketchBuilder` instance to make a `Sketch`!""");
+        }
 
-        if (p_args == null || p_args.length == 0)
-            PApplet.runSketch(args, constructedSketch);
-        else
-            PApplet.runSketch(PApplet.concat(p_args, args), constructedSketch);
+        this.sceneMan = new SceneManager(this);
     }
 
     @Override
     public void settings() {
-        super.size(400, 400, PConstants.P3D);
+        super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.sketchInitializer.renderer);
     }
     // endregion
 
@@ -114,13 +127,11 @@ public class Sketch extends PApplet {
         this.frameTime = this.frameStartTime - this.pframeTime;
         this.pframeTime = this.frameStartTime;
 
-        // TODO: Complete dealing with these!
+        this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
         this.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
         this.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
-        this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
 
         this.sceneMan.draw();
-
     }
 
     public void post() {
@@ -171,13 +182,13 @@ public class Sketch extends PApplet {
                 super.key = ' ';
         }
 
-        this.keysHeld.add(this.keysHeld.indexOf(super.keyCode));
+        this.keysHeld.add(super.keyCode);
         this.sceneMan.keyPressed();
     }
 
     public void keyReleased() {
         try {
-            this.keysHeld.remove(this.keysHeld.indexOf(super.keyCode));
+            this.keysHeld.remove(super.keyCode);
         } catch (IndexOutOfBoundsException e) {
         }
         this.sceneMan.keyReleased();
@@ -209,12 +220,12 @@ public class Sketch extends PApplet {
         this.q3y = this.cy + this.qy;
     }
 
-    // region Key-press helper methods.
-    boolean keyIsPressed(int p_keyCode) {
+    // region Key-press and key-type helper methods.
+    public boolean keyIsPressed(int p_keyCode) {
         return this.keysHeld.contains(p_keyCode);
     }
 
-    boolean keysPressed(int... p_keyCodes) {
+    public boolean keysPressed(int... p_keyCodes) {
         for (int i : p_keyCodes)
             if (!this.keysHeld.contains(i))
                 return false;
@@ -228,6 +239,98 @@ public class Sketch extends PApplet {
          * return flag;
          */
         // An article once said: `boolean` flags are bad.
+    }
+
+    public static boolean isValidSymbol(char p_char) {
+        // boolean is = false;
+        for (char ch : VALID_SYMBOLS)
+            if (ch == p_char)
+                return true;
+
+        // These used to be in the loop:
+        // is = ch == p_char;
+        // is |= ch == p_char;
+        // return is;
+
+        return false;
+    }
+
+    public static boolean isTypeable(char p_char) {
+        return Character.isDigit(p_char) ||
+                Character.isLetter(p_char) ||
+                Character.isWhitespace(p_char) ||
+                Sketch.isValidSymbol(p_char);
+    }
+
+    public char getTypedKey() {
+        if (Sketch.isTypeable(key))
+            return key;
+
+        // New way to do this in Java!:
+        // (...as seen in [`java.lang.`]`Long.class`, on line 217, in OpenJDK `17`!)
+        return switch (keyCode) {
+            case PConstants.BACKSPACE -> '\b';
+            case PConstants.RETURN -> '\n';
+            case PConstants.ENTER -> '\n';
+            default -> '\0';
+        };
+
+        // """"""""Slow"""""""":
+        /*
+         * if (keyCode == BACKSPACE)
+         * return '\b';
+         * else if (keyCode == RETURN || keyCode == ENTER)
+         * return '\n';
+         * else if (isTypeable(key))
+         * return key;
+         * else return '\0';
+         */
+
+    }
+
+    public void addTypedKeyTo(String p_str) {
+        char typedChar = this.getTypedKey();
+        int strLen = p_str.length();
+
+        if (typedChar == '\b' && strLen > 0)
+            p_str.substring(strLen - 1, strLen);
+        else
+            p_str.concat(Character.toString(typedChar));
+    }
+
+    public void addTypedKeyTo(StringBuilder p_str) {
+        char typedChar = this.getTypedKey();
+        int strLen = p_str.length();
+
+        if (typedChar == '\b' && strLen > 0)
+            p_str.substring(strLen - 1, strLen);
+        else
+            p_str.append(Character.toString(typedChar));
+    }
+
+    // To be used for checking if a certain key can be typed:
+    public boolean isNotSpecialKey(int p_keyCode) {
+        // I just didn't want to make an array :joy::
+        return !(
+        // For all function keys [regardless of whether `Shift` or `Ctrl` are pressed]:
+        p_keyCode > 96 && p_keyCode < 109 ||
+                p_keyCode == 0 || // `Fn`, plus a function key.
+                p_keyCode == 2 || // `Home`,
+                p_keyCode == 3 || // `End`,
+                p_keyCode == 8 || // `Backspace`,
+                p_keyCode == 10 || // Both `Enter`s/`Return`s.
+                p_keyCode == 11 || // `PageDown`,
+                p_keyCode == 12 || // Resistered when a button is pressed on the numpad with `NumLock` off.
+                p_keyCode == 16 || // `PageUp`,
+                p_keyCode == 19 || // "`Alt`-Graph',
+                p_keyCode == 20 || // `CapsLock`,
+                p_keyCode == 23 || // `ScrollLock`,
+                p_keyCode == 26 || // `Insert`,
+                p_keyCode == 147 || // Both `Delete` keys,
+                p_keyCode == 148 || // `Pause`/`Break` and also `NumLock`,
+                p_keyCode == 153 || // `Menu`/`Application` AKA "RightClick" key.
+                p_keyCode == 157 // "Meta", AKA the "OS key".
+        );
     }
     // endregion
 

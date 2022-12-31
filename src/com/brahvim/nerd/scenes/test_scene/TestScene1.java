@@ -16,12 +16,14 @@ public class TestScene1 extends Scene {
     protected void draw() {
         SKETCH.text("Scene `1`!", SKETCH.cx, SKETCH.cy);
 
-        if (SKETCH.frameCount % 5 == 0) {
-            SKETCH.glWindow.setPosition(0, 0);
-            SKETCH.glWindow.setSize(
-                    250 + (int) PApplet.abs((PApplet.sin(SKETCH.millis() * 0.001f) * 250)),
-                    250 + (int) PApplet.abs((PApplet.sin(SKETCH.millis() * 0.001f) * 250)));
-        }
+        /*
+         * if (SKETCH.frameCount % 5 == 0) {
+         * SKETCH.glWindow.setPosition(0, 0);
+         * SKETCH.glWindow.setSize(
+         * 250 + (int) PApplet.abs((PApplet.sin(SKETCH.millis() * 0.001f) * 250)),
+         * 250 + (int) PApplet.abs((PApplet.sin(SKETCH.millis() * 0.001f) * 250)));
+         * }
+         */
     }
 
     @Override

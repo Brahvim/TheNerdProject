@@ -1,6 +1,6 @@
 package com.brahvim.nerd.scenes.test_scene;
 
-import com.brahvim.nerd.misc.SineWave;
+import com.brahvim.nerd.api.SineWave;
 import com.brahvim.nerd.scene_api.Layer;
 import com.brahvim.nerd.scene_api.Scene.LayerInitializer;
 
