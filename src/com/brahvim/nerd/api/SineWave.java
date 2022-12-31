@@ -6,21 +6,32 @@ public class SineWave {
     private float endTime = Float.MAX_VALUE - 1, aliveTime;
 
     /**
-     * Determines if a `SineWave` object is doing calculations or not.
-     * `public` so that you can change it! (...and stop the sine wave calculations
-     * if they're unnecessary.)
+     * Determines if a {@code SineWave} object is doing calculations or not.
+     * {@code public} so that you can change it! (...and stop the sine wave
+     * calculations if they're unnecessary.)
      * 
-     * @apiNote `false` by default. Call `.start()` to make the wave active!
+     * @apiNote {@code false} by default. Call {@code SineWave::start()} to
+     *          make the wave active!
      */
     public boolean active = true;
 
     /**
-     * Makes `get()` output `0` when the wave has
-     * ended - AKA, when `active` turns `false`.
+     * Makes {@code SineWave::get()} output {@code 0} when the wave has
+     * ended - AKA, when {@code SineWave::active} turns {@code false}.
      *
-     * @apiNote `false` by default.
+     * @apiNote {@code false} by default.
      */
     public boolean zeroWhenInactive;
+
+    /**
+     * Makes {@code SineWave::get()} output its absolute value. This may make the
+     * wave behave as if it has doubled in frequency. Toggling this {@code boolean}
+     * while the wave is active may show unwantedly large, sudden changes in the
+     * value returned by {@code SineWave::get()}.
+     *
+     * @apiNote {@code false} by default.
+     */
+    public boolean absoluteValue;
 
     private Sketch parentSketch;
     // endregion
@@ -135,8 +146,10 @@ public class SineWave {
             return 0;
 
         this.freq = this.aliveTime * this.freqMult + this.angleOffset;
-        return (float) Math.sin(this.freq);
         // That looked like a matrix calculation LOL.
+
+        float ret = (float) Math.sin(this.freq);
+        return this.absoluteValue ? Math.abs(ret) : ret;
     }
     // endregion
 

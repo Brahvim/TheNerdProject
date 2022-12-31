@@ -119,8 +119,8 @@ public class Sketch extends PApplet {
 
         this.fullscreen = this.STARTED_FULLSCREEN;
         if (this.STARTED_FULLSCREEN) {
-            this.INIT_WIDTH = super.displayWidth;
-            this.INIT_HEIGHT = super.displayHeight;
+            this.INIT_WIDTH = super.displayWidth / 8;
+            this.INIT_HEIGHT = super.displayHeight / 8;
         } else {
             this.INIT_WIDTH = p_sketchInitializer.width;
             this.INIT_HEIGHT = p_sketchInitializer.height;
@@ -129,10 +129,10 @@ public class Sketch extends PApplet {
 
     @Override
     public void settings() {
-        if (this.STARTED_FULLSCREEN)
-            super.fullScreen(this.RENDERER);
-        else
-            super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER);
+        // if (this.STARTED_FULLSCREEN)
+        // super.fullScreen(this.RENDERER);
+        // else
+        super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER);
     }
     // endregion
 
@@ -155,6 +155,10 @@ public class Sketch extends PApplet {
                 case PConstants.P3D -> this.glWindow.setResizable(true);
                 case PConstants.JAVA2D -> super.surface.setResizable(true);
             }
+
+        super.rectMode(PConstants.CENTER);
+        super.imageMode(PConstants.CENTER);
+        super.textAlign(PConstants.CENTER, PConstants.CENTER);
     }
 
     public void pre() {

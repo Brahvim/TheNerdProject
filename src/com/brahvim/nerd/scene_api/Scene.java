@@ -230,8 +230,11 @@ public class Scene {
     this.verifyInitializer(p_sceneInitializer);
     for (Layer l : this.LAYERS)
       if (l != null)
-        if (l.isActive())
+        if (l.isActive()) {
+          this.SKETCH.pushMatrix();
           l.draw();
+          this.SKETCH.popMatrix();
+        }
 
     this.draw();
   }

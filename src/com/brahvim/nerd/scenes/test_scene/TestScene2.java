@@ -7,7 +7,7 @@ public class TestScene2 extends Scene {
     public TestScene2(SceneManager.SceneInitializer p_sceneInitializer) {
         super(p_sceneInitializer);
         super.startLayer(TestLayer1.class);
-        super.startLayer(TestLayer2.class);
+        super.startLayer(TestLayer3.class);
     }
 
     @Override

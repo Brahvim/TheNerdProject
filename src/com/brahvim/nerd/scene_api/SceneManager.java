@@ -55,8 +55,11 @@ public class SceneManager {
     }
 
     public void draw() {
-        if (this.currentScene != null)
+        if (this.currentScene != null) {
+            this.sketch.pushMatrix();
             this.currentScene.runDraw(this.runner);
+            this.sketch.popMatrix();
+        }
     }
 
     public void post() {

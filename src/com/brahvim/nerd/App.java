@@ -7,7 +7,7 @@ public class App {
     public static void main(String[] p_args) {
         new SketchBuilder()
                 .setFirstScene(TestScene1.class)
-                // .startFullscreen()
+                .startFullscreen()
                 .closeOnEscape()
                 .setWidth(400)
                 .setHeight(400)
