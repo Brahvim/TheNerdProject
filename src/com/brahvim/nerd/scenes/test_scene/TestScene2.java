@@ -15,6 +15,7 @@ public class TestScene2 extends Scene {
 
     @Override
     protected void setup() {
+        SKETCH.clear();
         SKETCH.background(0x00669);
         SKETCH.currentCamera.reset();
 

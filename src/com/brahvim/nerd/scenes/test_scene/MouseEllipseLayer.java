@@ -19,11 +19,18 @@ public class MouseEllipseLayer extends Layer {
         // SKETCH.circle(super.SKETCH.mouseX, super.SKETCH.mouseY, 20);
 
         SKETCH.noStroke();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 20; i++) {
             float angle = PConstants.TAU / i;
             SKETCH.circle(
-                    SKETCH.cx + 200 * angle * PApplet.cos(SKETCH.millis() * 0.001f * angle),
-                    SKETCH.cy + 200 * angle * PApplet.sin(SKETCH.millis() * 0.001f * angle), 20);
+                    ((i & 1) == 0 ? 1 : -1) * SKETCH.cx
+                            + 200 * angle
+                                    * PApplet.cos(
+                                            PApplet.sin(SKETCH.millis() * 0.001f) * SKETCH.millis() * 0.001f * angle),
+                    ((i & 1) == 0 ? 1 : -1) * SKETCH.cy
+                            + 200 * angle
+                                    * PApplet.sin(
+                                            PApplet.cos(SKETCH.millis() * 0.001f) * SKETCH.millis() * 0.001f * angle),
+                    20);
         }
     }
 
