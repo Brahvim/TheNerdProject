@@ -107,6 +107,14 @@ public class Layer {
     public void touchEnded() {
     }
     // endregion
+
+    // region Window focus events.
+    public void focusLost() {
+    }
+
+    public void focusGained() {
+    }
+    // endregion
     // endregion
 
 }

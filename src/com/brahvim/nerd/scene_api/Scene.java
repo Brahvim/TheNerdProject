@@ -325,6 +325,14 @@ public class Scene {
   public void touchEnded() {
   }
   // endregion
+
+  // region Window focus events.
+  public void focusLost() {
+  }
+
+  public void focusGained() {
+  }
+  // endregion
   // endregion
   // endregion
 

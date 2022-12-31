@@ -22,15 +22,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import com.brahvim.nerd.api.SketchBuilder.SketchInitializer;
 import com.brahvim.nerd.scene_api.SceneManager;
-import com.brahvim.nerd.scenes.test_scene.TestScene1;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
+import processing.core.PVector;
+import processing.opengl.PGraphics3D;
 
 // TODO: Bring stuff from Nerd - let's make a "Game Engine"! ":D!~
 
@@ -50,9 +50,12 @@ public class Sketch extends PApplet {
             '>', '_', '+', '?'
     };
 
+    public final Sketch SKETCH;
+
     public final String RENDERER;
     public final int INIT_WIDTH, INIT_HEIGHT;
-    public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN;
+    public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
+            CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
     // endregion
 
     // Window object references::
@@ -60,11 +63,23 @@ public class Sketch extends PApplet {
     public JFrame sketchFrame;
     // (Why check for errors at all? You know what renderer you used!)
 
-    // region Previous frame states.
-    public int pmouseButton, pkeyCode; // Previous fraaaaame!...
+    // region Frame-wise states, Processing style (modifiable!).
+    public char pkey; // Previous fraaaaame!...
+    public boolean pfocused;
+    public int pmouseButton, pkeyCode;
     public boolean pkeyPressed, pmousePressed; // Previous frame...
-    public boolean mouseLeft, mouseMid, mouseRight; // Current frame!
+
+    // Current frame!
+    public float mouseScroll, mouseScrollDelta;
+    public boolean mouseLeft, mouseMid, mouseRight;
+
+    public boolean fullscreen, pfullscreen;
+    public boolean cursorConfined, cursorVisible; // nO previoS versiuN!11!!
+    public Camera previousCamera, currentCamera; // CAM! (wher lite?)
+    public PVector mouse = new PVector(), pmouse = new PVector(); // MOUS!
+
     public boolean pmouseLeft, pmouseMid, pmouseRight; // Previous frame...
+    public float pmouseScroll, pmouseScrollDelta;
     // endregion
 
     // region "Dimensions".
@@ -76,23 +91,40 @@ public class Sketch extends PApplet {
 
     // region `private` ~~/ `protected`~~ fields.
     private SceneManager sceneMan;
+    private final Unprojector unprojector;
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
     // endregion
 
     // region Constructors, `main()`, `settings()`...
-    public Sketch(SketchInitializer p_sketchInitializer) {
+    public Sketch(SketchBuilder.SketchInitializer p_sketchInitializer) {
         if (p_sketchInitializer == null) {
             throw new IllegalArgumentException("""
                     Please use a `SketchBuilder` instance to make a `Sketch`!""");
         }
 
-        this.sceneMan = new SceneManager(this);
+        this.SKETCH = this;
 
-        this.INIT_WIDTH = p_sketchInitializer.width;
+        this.unprojector = new Unprojector();
+        this.sceneMan = new SceneManager(this);
+        this.currentCamera = new CameraBuilder(this).build();
+        this.sceneMan.setScene(p_sketchInitializer.firstScene);
+
         this.RENDERER = p_sketchInitializer.renderer;
-        this.INIT_HEIGHT = p_sketchInitializer.height;
+        this.CAN_FULLSCREEN = !p_sketchInitializer.cannotFullscreen;
         this.CLOSE_ON_ESCAPE = p_sketchInitializer.closeOnEscape;
+        this.INITIALLY_RESIZABLE = p_sketchInitializer.canResize;
         this.STARTED_FULLSCREEN = p_sketchInitializer.startedFullscreen;
+        this.F11_FULLSCREEN = !p_sketchInitializer.cannotF11Fullscreen;
+        this.ALT_ENTER_FULLSCREEN = !p_sketchInitializer.cannotAltEnterFullscreen;
+
+        this.fullscreen = this.STARTED_FULLSCREEN;
+        if (this.STARTED_FULLSCREEN) {
+            this.INIT_WIDTH = super.displayWidth;
+            this.INIT_HEIGHT = super.displayHeight;
+        } else {
+            this.INIT_WIDTH = p_sketchInitializer.width;
+            this.INIT_HEIGHT = p_sketchInitializer.height;
+        }
     }
 
     @Override
@@ -111,18 +143,27 @@ public class Sketch extends PApplet {
         super.registerMethod("pre", this);
         super.registerMethod("post", this);
 
-        this.sketchSetup();
-    }
-
-    private void sketchSetup() {
         this.updateRatios();
-        this.glWindow = ((GLWindow) super.surface.getNative());
-        this.sceneMan.setScene(TestScene1.class);
+
+        switch (this.RENDERER) {
+            case PConstants.P3D -> this.glWindow = (GLWindow) super.surface.getNative();
+            case PConstants.JAVA2D -> this.sketchFrame = (JFrame) super.surface.getNative();
+        }
+
+        if (this.INITIALLY_RESIZABLE)
+            switch (this.RENDERER) {
+                case PConstants.P3D -> this.glWindow.setResizable(true);
+                case PConstants.JAVA2D -> super.surface.setResizable(true);
+            }
     }
 
     public void pre() {
         if (!(this.pwidth == super.width || this.pheight == super.height))
             this.updateRatios();
+
+        this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
+        this.mouse.set(super.mouseX, super.mouseY);
+        this.unprojectMouse();
 
         this.sceneMan.pre();
     }
@@ -137,13 +178,56 @@ public class Sketch extends PApplet {
         this.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
         this.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
 
+        if (this.currentCamera != null)
+            this.currentCamera.apply();
+
         this.sceneMan.draw();
     }
 
     public void post() {
+        this.pwidth = this.width;
+        this.pheight = this.height;
+        this.pfocused = this.focused;
+
+        this.pmouse.set(this.mouse);
         this.pmouseMid = this.mouseMid;
         this.pmouseLeft = this.mouseLeft;
         this.pmouseRight = this.mouseRight;
+        this.pmouseButton = this.mouseButton;
+        this.pmouseScroll = this.mouseScroll;
+        this.pmouseScrollDelta = this.mouseScrollDelta;
+
+        this.pkey = super.key;
+        this.pkeyCode = this.keyCode;
+        this.pkeyPressed = super.keyPressed;
+        this.pmousePressed = super.mousePressed;
+
+        this.previousCamera = this.currentCamera;
+
+        if (this.RENDERER == PConstants.P3D) {
+            // region `glWindow` stuff.
+            this.pfullscreen = this.fullscreen;
+
+            // if (this.pfullscreen != this.fullscreen) {
+            this.glWindow.setFullscreen(this.fullscreen);
+            while (this.fullscreen ? !this.glWindow.isFullscreen() : this.glWindow.isFullscreen())
+                ;
+            // }
+
+            this.glWindow.confinePointer(this.cursorConfined);
+            while (this.cursorConfined ? !this.glWindow.isPointerConfined() : this.glWindow.isPointerConfined())
+                ;
+
+            this.glWindow.setPointerVisible(this.cursorVisible);
+            while (this.cursorVisible ? !this.glWindow.isPointerVisible() : this.glWindow.isPointerVisible())
+                ;
+            // endregion
+        } else {
+            if (cursorVisible)
+                super.cursor();
+            else
+                super.noCursor();
+        }
 
         this.sceneMan.post();
     }
@@ -188,6 +272,22 @@ public class Sketch extends PApplet {
                 super.key = ' ';
         }
 
+        if (this.CAN_FULLSCREEN) {
+            if (this.ALT_ENTER_FULLSCREEN) {
+                if (super.keyCode == KeyEvent.VK_ENTER &&
+                        this.keyIsPressed(KeyEvent.VK_ALT)) {
+                    System.out.println("`Alt`-`Enter` fullscreen!");
+                    this.fullscreen = !this.fullscreen;
+                }
+            }
+            if (this.F11_FULLSCREEN) {
+                if (super.keyCode == 107) { // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
+                    System.out.println("`F11` fullscreen!");
+                    this.fullscreen = !this.fullscreen;
+                }
+            }
+        }
+
         this.keysHeld.add(super.keyCode);
         this.sceneMan.keyPressed();
     }
@@ -214,6 +314,34 @@ public class Sketch extends PApplet {
         this.sceneMan.touchEnded();
     }
     // endregion
+
+    // region Window focus events.
+    @Override
+    public void focusGained() {
+        // For compatibility with newer versions of Processing, I guess:
+        super.focusGained();
+        super.focused = true;
+
+        // I guess this works because `looping` is `false` for sometime after
+        // `handleDraw()`,
+        // which is probably when events are handled:
+        if (!super.isLooping())
+            this.sceneMan.focusGained();
+    }
+
+    @Override
+    public void focusLost() {
+        // For compatibility with newer versions of Processing, I guess:
+        super.focusLost();
+        super.focused = false;
+
+        // I guess this works because `looping` is `false` for sometime after
+        // `handleDraw()`,
+        // which is probably when events are handled:
+        if (!super.isLooping())
+            this.sceneMan.focusLost();
+    }
+    // endregion
     // endregion
 
     // region Utilities!~
@@ -224,6 +352,42 @@ public class Sketch extends PApplet {
         this.qy = this.cy * 0.5f;
         this.q3x = this.cx + this.qx;
         this.q3y = this.cy + this.qy;
+    }
+
+    public void unprojectMouse() {
+        if (this.currentCamera == null)
+            return;
+
+        float originalNear = this.currentCamera.near;
+        this.currentCamera.near = this.currentCamera.mouseZ;
+        this.currentCamera.applyMatrix();
+
+        // Unproject:
+        this.unprojector.captureViewMatrix((PGraphics3D) g);
+        // `0.9f`: at the near clipping plane.
+        // `0.9999f`: at the far clipping plane.
+        this.unprojector.gluUnProject(
+                super.mouseX, super.height - super.mouseY,
+                // 0.9f + map(mouseY, height, 0, 0, 0.1f),
+                0, this.mouse);
+
+        this.currentCamera.near = originalNear;
+    }
+
+    public void centerWindow() {
+        this.updateRatios(); // You called this function when the window changed its size or position, right?
+        // Remember: computers with multiple displays exist! We shouldn't cache this:
+
+        int winX = (int) (super.displayWidth * 0.5f - this.cx),
+                winY = (int) (super.displayHeight * 0.5f - this.cy);
+
+        // switch (this.RENDERER) {
+        // case PConstants.P3D -> this.glWindow.setPosition(winX, winY);
+        // default -> super.surface.setLocation(winX, winY);
+        // }
+
+        super.surface.setLocation(winX, winY);
+        // (Well, changing the display does NOT effect those variables in any way :|)
     }
 
     // region Key-press and key-type helper methods.

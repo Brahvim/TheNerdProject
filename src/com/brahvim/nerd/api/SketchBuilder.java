@@ -1,5 +1,7 @@
 package com.brahvim.nerd.api;
 
+import com.brahvim.nerd.scene_api.Scene;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 
@@ -14,7 +16,9 @@ public class SketchBuilder {
     public class SketchInitializer {
         public int width = 400, height = 400;
         public String renderer = PConstants.P3D;
-        public boolean closeOnEscape, startedFullscreen;
+        public boolean closeOnEscape, startedFullscreen, canResize,
+                cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
+        public Class<? extends Scene> firstScene;
 
         private SketchInitializer() {
         }
@@ -74,13 +78,38 @@ public class SketchBuilder {
         return this;
     }
 
+    public SketchBuilder canResize() {
+        this.sketchInitializer.canResize = true;
+        return this;
+    }
+
     public SketchBuilder startFullscreen() {
         this.sketchInitializer.startedFullscreen = true;
         return this;
     }
 
+    public SketchBuilder cannotFullscreen() {
+        this.sketchInitializer.cannotFullscreen = false;
+        return this;
+    }
+
+    public SketchBuilder cannotF11Fullscreen() {
+        this.sketchInitializer.cannotF11Fullscreen = true;
+        return this;
+    }
+
+    public SketchBuilder cannotAltEnterFullscreen() {
+        this.sketchInitializer.cannotAltEnterFullscreen = true;
+        return this;
+    }
+
     public SketchBuilder closeOnEscape() {
         this.sketchInitializer.closeOnEscape = true;
+        return this;
+    }
+
+    public SketchBuilder setFirstScene(Class<? extends Scene> p_firstScene) {
+        this.sketchInitializer.firstScene = p_firstScene;
         return this;
     }
 

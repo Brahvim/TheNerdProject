@@ -203,6 +203,30 @@ public class SceneManager {
                     l.touchEnded();
     }
     // endregion
+
+    // region Window focus events.
+    public void focusLost() {
+        if (this.currentScene == null)
+            return;
+
+        this.currentScene.focusLost();
+        for (Layer l : this.currentScene.getAllLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.focusLost();
+    }
+
+    public void focusGained() {
+        if (this.currentScene == null)
+            return;
+
+        this.currentScene.focusGained();
+        for (Layer l : this.currentScene.getAllLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.focusGained();
+    }
+    // endregion
     // endregion
 
     // region `Scene`-operations.

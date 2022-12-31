@@ -40,10 +40,14 @@ public class Camera {
     public Camera(Sketch p_sketch) {
         this.parentSketch = p_sketch;
 
+        this.up = new PVector(0, 1, 0);
+        this.pos = new PVector(0, 0, 0);
+        this.center = new PVector(0, 0, 0);
+
         this.DEFAULT_CAM_UP = new PVector(0, 1, 0);
 
         this.DEFAULT_CAM_POS = new PVector(
-                this.parentSketch.INIT_WIDTH * 0.5f, this.parentSketch.INIT_HEIGHT * 0.5f, 300);
+                this.parentSketch.INIT_WIDTH * 0.5f, this.parentSketch.INIT_HEIGHT * 0.5f, 600);
 
         this.DEFAULT_CAM_CENTER = new PVector(
                 this.parentSketch.INIT_WIDTH * 0.5f, this.parentSketch.INIT_HEIGHT * 0.5f, 0);
@@ -70,8 +74,6 @@ public class Camera {
         this.parentSketch.rectMode(PConstants.CORNER);
         this.parentSketch.noStroke();
         this.parentSketch.fill(this.clearColor);
-        // this.parentSketch.rect(-width * 2.5f, -height * 2.5f, width * 7.5f, height *
-        // 7.5f);
         this.parentSketch.rect(0, 0, this.parentSketch.width, this.parentSketch.height);
         this.parentSketch.end2d();
     }
@@ -95,7 +97,7 @@ public class Camera {
                 this.center.z, this.center.y, this.center.z,
                 this.up.x, this.up.y, this.up.z);
 
-        // this.parentSketch.translate(-this.parentSketch.cx, -this.parentSketch.cy);
+        this.parentSketch.translate(-this.parentSketch.cx, -this.parentSketch.cy);
     }
     // endregion
 
