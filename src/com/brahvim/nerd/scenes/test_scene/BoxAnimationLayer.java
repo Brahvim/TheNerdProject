@@ -5,24 +5,31 @@ import com.brahvim.nerd.scene_api.Layer;
 import com.brahvim.nerd.scene_api.Scene.LayerInitializer;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 
-public class TestLayer2 extends Layer {
-    SineWave squareAmpWave;
+public class BoxAnimationLayer extends Layer {
+    private SineWave squareAmpWave, camRotWave;
 
-    public TestLayer2(LayerInitializer p_initializer) {
+    public BoxAnimationLayer(LayerInitializer p_initializer) {
         super(p_initializer);
 
         this.squareAmpWave = new SineWave(SKETCH, 100 / 60_000.0f);
         this.squareAmpWave.absoluteValue = true;
         this.squareAmpWave.start();
+
+        this.camRotWave = new SineWave(SKETCH, 50 / 60_000.0f);
+        // this.camRotWave.absoluteValue = true;
+        this.camRotWave.start();
     }
 
     @Override
     protected void draw() {
-        float squareAmp = squareAmpWave.get() * 150;
+        float squareAmpPure = this.squareAmpWave.get(),
+                squareAmp = squareAmpPure * 150;
 
-        SKETCH.currentCamera.center.x = squareAmp / 2.5f;
-        SKETCH.currentCamera.pos.y = squareAmp / 1.5f;
+        // SKETCH.currentCamera.center.x = squareAmp / 2.5f;
+        // SKETCH.currentCamera.pos.y = squareAmp / 1.5f;
+        SKETCH.currentCamera.up.x = this.camRotWave.get() * PConstants.TAU;
 
         SKETCH.translate(
                 SKETCH.cx + PApplet.cos(SKETCH.millis() * 0.001f) * squareAmp,

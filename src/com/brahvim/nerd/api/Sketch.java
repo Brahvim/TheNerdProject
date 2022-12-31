@@ -51,6 +51,7 @@ public class Sketch extends PApplet {
     };
 
     public final Sketch SKETCH;
+    public final Camera DEFAULT_CAMERA;
 
     public final String RENDERER;
     public final int INIT_WIDTH, INIT_HEIGHT;
@@ -106,7 +107,8 @@ public class Sketch extends PApplet {
 
         this.unprojector = new Unprojector();
         this.sceneMan = new SceneManager(this);
-        this.currentCamera = new CameraBuilder(this).build();
+        this.DEFAULT_CAMERA = new CameraBuilder(this).build();
+        this.currentCamera = this.DEFAULT_CAMERA;
         this.sceneMan.setScene(p_sketchInitializer.firstScene);
 
         this.RENDERER = p_sketchInitializer.renderer;
@@ -393,6 +395,32 @@ public class Sketch extends PApplet {
         super.surface.setLocation(winX, winY);
         // (Well, changing the display does NOT effect those variables in any way :|)
     }
+
+    // region `Sketch::alphaBg()` overloads.
+    public void alphaBg(int p_color) {
+        super.pushStyle();
+        super.fill(p_color);
+        this.alphaBgRect();
+    }
+
+    public void alphaBg(float p_grey, float p_alpha) {
+        super.pushStyle();
+        super.fill(p_grey, p_alpha);
+        this.alphaBgRect();
+    }
+
+    public void alphaBg(float p_red, float p_green, float p_blue, float p_alpha) {
+        super.pushStyle();
+        super.fill(p_red, p_green, p_blue, p_alpha);
+        this.alphaBgRect();
+    }
+
+    private void alphaBgRect() {
+        super.rectMode(PConstants.CORNER);
+        super.rect(0, 0, super.width, super.height);
+        super.popStyle();
+    }
+    // endregion
 
     // region Key-press and key-type helper methods.
     public boolean keyIsPressed(int p_keyCode) {

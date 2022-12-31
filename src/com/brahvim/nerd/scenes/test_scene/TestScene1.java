@@ -9,9 +9,9 @@ import processing.core.PConstants;
 public class TestScene1 extends Scene {
     public TestScene1(SceneManager.SceneInitializer p_sceneInitializer) {
         super(p_sceneInitializer);
-        super.startLayer(TestLayer1.class);
-        super.startLayer(TestLayer2.class);
-        super.startLayer(TestLayer3.class);
+        super.startLayer(BackgroundLayer.class);
+        super.startLayer(BoxAnimationLayer.class);
+        super.startLayer(MouseEllipseLayer.class);
     }
 
     @Override

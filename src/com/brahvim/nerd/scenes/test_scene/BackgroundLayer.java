@@ -4,10 +4,10 @@ import com.brahvim.nerd.api.SineWave;
 import com.brahvim.nerd.scene_api.Layer;
 import com.brahvim.nerd.scene_api.Scene.LayerInitializer;
 
-public class TestLayer1 extends Layer {
+public class BackgroundLayer extends Layer {
     private SineWave fadeWave;
 
-    public TestLayer1(LayerInitializer p_initializer) {
+    public BackgroundLayer(LayerInitializer p_initializer) {
         super(p_initializer);
     }
 
