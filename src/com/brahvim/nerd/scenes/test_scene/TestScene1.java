@@ -34,7 +34,7 @@ public class TestScene1 extends Scene {
     @Override
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
-            case PConstants.RIGHT -> MANAGER.setScene(TestScene2.class);
+            case PConstants.RIGHT -> MANAGER.startScene(TestScene2.class);
         }
     }
 }

@@ -22,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.brahvim.nerd.scene_api.Scene;
 import com.brahvim.nerd.scene_api.SceneManager;
 import com.jogamp.newt.opengl.GLWindow;
 
@@ -52,6 +53,7 @@ public class Sketch extends PApplet {
 
     public final Sketch SKETCH;
     public final Camera DEFAULT_CAMERA;
+    public final Class<? extends Scene> FIRST_SCENE_CLASS;
 
     public final String RENDERER;
     public final int INIT_WIDTH, INIT_HEIGHT;
@@ -109,7 +111,7 @@ public class Sketch extends PApplet {
         this.sceneMan = new SceneManager(this);
         this.DEFAULT_CAMERA = new CameraBuilder(this).build();
         this.currentCamera = this.DEFAULT_CAMERA;
-        this.sceneMan.setScene(p_sketchInitializer.firstScene);
+        this.FIRST_SCENE_CLASS = p_sketchInitializer.firstScene;
 
         this.RENDERER = p_sketchInitializer.renderer;
         this.CAN_FULLSCREEN = !p_sketchInitializer.cannotFullscreen;
@@ -121,8 +123,8 @@ public class Sketch extends PApplet {
 
         this.fullscreen = this.STARTED_FULLSCREEN;
         if (this.STARTED_FULLSCREEN) {
-            this.INIT_WIDTH = super.displayWidth / 8;
-            this.INIT_HEIGHT = super.displayHeight / 8;
+            this.INIT_WIDTH = 800;
+            this.INIT_HEIGHT = 600;
         } else {
             this.INIT_WIDTH = p_sketchInitializer.width;
             this.INIT_HEIGHT = p_sketchInitializer.height;
@@ -161,6 +163,8 @@ public class Sketch extends PApplet {
         super.rectMode(PConstants.CENTER);
         super.imageMode(PConstants.CENTER);
         super.textAlign(PConstants.CENTER, PConstants.CENTER);
+
+        this.sceneMan.startScene(this.FIRST_SCENE_CLASS);
     }
 
     public void pre() {

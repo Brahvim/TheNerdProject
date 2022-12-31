@@ -232,7 +232,9 @@ public class Scene {
       if (l != null)
         if (l.isActive()) {
           this.SKETCH.pushMatrix();
+          this.SKETCH.pushStyle();
           l.draw();
+          this.SKETCH.popStyle();
           this.SKETCH.popMatrix();
         }
 

@@ -57,7 +57,9 @@ public class SceneManager {
     public void draw() {
         if (this.currentScene != null) {
             this.sketch.pushMatrix();
+            this.sketch.pushStyle();
             this.currentScene.runDraw(this.runner);
+            this.sketch.popStyle();
             this.sketch.popMatrix();
         }
     }
@@ -252,7 +254,7 @@ public class SceneManager {
         this.setCurrentAndPreviousScene(this.previousScene);
     }
 
-    public void setScene(Class<? extends Scene> p_sceneClass) {
+    public void startScene(Class<? extends Scene> p_sceneClass) {
         if (p_sceneClass == null)
             throw new NullPointerException("`SceneManager::startScene()` will not take `null`s!");
 
