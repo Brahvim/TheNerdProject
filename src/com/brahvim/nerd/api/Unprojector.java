@@ -70,8 +70,7 @@ public class Unprojector {
         public boolean gluUnProject(float p_winx, float p_winy, float p_winz, PVector p_result) {
                 // "A `memset()` is definitely better. Put these into the class?" - Brahvim.
                 // Note: One day, I actually benchmarked it - allocating a new array is TWO
-                // orders of
-                // magnitude faster!
+                // orders of magnitude faster!
                 float[] in = new float[4];
                 float[] out = new float[4];
 

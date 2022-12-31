@@ -21,7 +21,8 @@ public class TestLayer2 extends Layer {
     protected void draw() {
         float squareAmp = squareAmpWave.get() * 150;
 
-        SKETCH.currentCamera.pos.x = squareAmp / 2.5f;
+        SKETCH.currentCamera.center.x = squareAmp / 2.5f;
+        SKETCH.currentCamera.pos.y = squareAmp / 1.5f;
 
         SKETCH.translate(
                 SKETCH.cx + PApplet.cos(SKETCH.millis() * 0.001f) * squareAmp,
