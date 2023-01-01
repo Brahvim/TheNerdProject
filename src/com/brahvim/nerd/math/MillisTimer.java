@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api;
+package com.brahvim.nerd.math;
 
 public class MillisTimer {
     private boolean active;

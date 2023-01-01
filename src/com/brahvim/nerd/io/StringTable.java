@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api;
+package com.brahvim.nerd.io;
 
 public class StringTable {
     // String tables exist for making it easy for TRANSLATORS to work with them.

@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api;
+package com.brahvim.nerd.processing_wrapper;
 
 import com.brahvim.nerd.scene_api.Scene;
 

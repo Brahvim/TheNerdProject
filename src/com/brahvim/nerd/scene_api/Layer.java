@@ -1,6 +1,6 @@
 package com.brahvim.nerd.scene_api;
 
-import com.brahvim.nerd.api.Sketch;
+import com.brahvim.nerd.processing_wrapper.Sketch;
 
 /**
  * Just like {@code Scene}s, {@code Layer}s

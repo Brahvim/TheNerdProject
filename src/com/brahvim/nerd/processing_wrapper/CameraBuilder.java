@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api;
+package com.brahvim.nerd.processing_wrapper;
 
 import processing.core.PConstants;
 import processing.core.PVector;

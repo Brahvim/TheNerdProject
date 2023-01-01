@@ -1,7 +1,7 @@
-package com.brahvim.nerd;
+package com.brahvim.nerd_test;
 
-import com.brahvim.nerd.api.SketchBuilder;
-import com.brahvim.nerd.scenes.test_scene.TestScene1;
+import com.brahvim.nerd.processing_wrapper.SketchBuilder;
+import com.brahvim.nerd_test.scenes.TestScene1;
 
 import processing.opengl.PJOGL;
 

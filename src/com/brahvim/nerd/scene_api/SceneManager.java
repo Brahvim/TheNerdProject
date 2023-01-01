@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.brahvim.nerd.api.Sketch;
+import com.brahvim.nerd.processing_wrapper.Sketch;
 
 public class SceneManager {
     // region `private` ~~/ `protected`~~ fields.

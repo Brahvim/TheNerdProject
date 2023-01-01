@@ -1,4 +1,4 @@
-package com.brahvim.nerd.scenes.test_scene;
+package com.brahvim.nerd_test.scenes;
 
 import com.brahvim.nerd.scene_api.Scene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneInitializer;

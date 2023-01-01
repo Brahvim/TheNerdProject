@@ -1,7 +1,10 @@
-package com.brahvim.nerd.scenes.test_scene;
+package com.brahvim.nerd_test.scenes;
 
 import com.brahvim.nerd.scene_api.Scene;
 import com.brahvim.nerd.scene_api.SceneManager;
+import com.brahvim.nerd_test.layers.BackgroundLayer;
+import com.brahvim.nerd_test.layers.BoxAnimationLayer;
+import com.brahvim.nerd_test.layers.MouseEllipseLayer;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

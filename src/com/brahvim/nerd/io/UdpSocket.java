@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api;
+package com.brahvim.nerd.io;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -235,7 +235,7 @@ public class UdpSocket {
 
         public static int getNumberOfReceivers() {
             // LOL (Autocomplete moment):
-            return com.brahvim.nerd.api.UdpSocket.Receiver.NUMBER_OF_THREADS;
+            return com.brahvim.nerd.io.UdpSocket.Receiver.NUMBER_OF_THREADS;
         }
 
         public Thread getThread() {

@@ -1,4 +1,6 @@
-package com.brahvim.nerd.api;
+package com.brahvim.nerd.math;
+
+import com.brahvim.nerd.processing_wrapper.Sketch;
 
 public class SineWave {
     // region Fields.

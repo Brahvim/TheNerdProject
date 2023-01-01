@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api;
+package com.brahvim.nerd.math;
 
 import processing.core.PApplet;
 import processing.core.PMatrix3D;

@@ -1,6 +1,6 @@
-package com.brahvim.nerd.scenes.test_scene;
+package com.brahvim.nerd_test.scenes;
 
-import com.brahvim.nerd.api.SineWave;
+import com.brahvim.nerd.math.SineWave;
 import com.brahvim.nerd.scene_api.Scene;
 import com.brahvim.nerd.scene_api.SceneManager;
 
