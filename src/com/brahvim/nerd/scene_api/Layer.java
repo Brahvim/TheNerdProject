@@ -13,7 +13,7 @@ import com.brahvim.nerd.api.Sketch;
  *
  * @author Brahvim Bhaktvatsal
  */
-public class Layer {
+public class Layer extends EventReceiver {
     // region `protected` fields.
     protected final Scene SCENE;
     protected final Sketch SKETCH;
@@ -49,9 +49,7 @@ public class Layer {
     }
     // endregion
 
-    // region `public` event callbacks. Can be called from anywhere - ":D!
-
-    // region App workflow:
+    // region App workflow callbacks.
     protected void setup() {
     }
 
@@ -63,58 +61,6 @@ public class Layer {
 
     protected void post() {
     }
-    // endregion
-
-    // region Mouse events.
-    public void mousePressed() {
-    }
-
-    public void mouseReleased() {
-    }
-
-    public void mouseMoved() {
-    }
-
-    public void mouseClicked() {
-    }
-
-    public void mouseDragged() {
-    }
-
-    // @SuppressWarnings("unused")
-    public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
-    }
-    // endregion
-
-    // region Keyboard events.
-    public void keyTyped() {
-    }
-
-    public void keyPressed() {
-    }
-
-    public void keyReleased() {
-    }
-    // endregion
-
-    // region Touch events.
-    public void touchStarted() {
-    }
-
-    public void touchMoved() {
-    }
-
-    public void touchEnded() {
-    }
-    // endregion
-
-    // region Window focus events.
-    public void focusLost() {
-    }
-
-    public void focusGained() {
-    }
-    // endregion
     // endregion
 
 }

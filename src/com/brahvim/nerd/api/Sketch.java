@@ -30,6 +30,8 @@ import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
+import processing.core.PImage;
+import processing.core.PShape;
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
 
@@ -115,7 +117,7 @@ public class Sketch extends PApplet {
 
         this.RENDERER = p_sketchInitializer.renderer;
         this.CAN_FULLSCREEN = !p_sketchInitializer.cannotFullscreen;
-        this.CLOSE_ON_ESCAPE = p_sketchInitializer.closeOnEscape;
+        this.CLOSE_ON_ESCAPE = !p_sketchInitializer.dontCloseOnEscape;
         this.INITIALLY_RESIZABLE = p_sketchInitializer.canResize;
         this.STARTED_FULLSCREEN = p_sketchInitializer.startedFullscreen;
         this.F11_FULLSCREEN = !p_sketchInitializer.cannotF11Fullscreen;
@@ -399,6 +401,70 @@ public class Sketch extends PApplet {
         super.surface.setLocation(winX, winY);
         // (Well, changing the display does NOT effect those variables in any way :|)
     }
+
+    // region Drawing utilities (Sketch only! :sob:)
+    // region From `PGraphics`.
+    public void translate(PVector p_translation) {
+        super.translate(p_translation.x, p_translation.y, p_translation.z);
+    }
+
+    public void camera(Camera p_cam) {
+        super.camera(p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
+                p_cam.center.x, p_cam.center.y, p_cam.center.z,
+                p_cam.up.x, p_cam.up.y, p_cam.up.z);
+    }
+
+    public void perspective(Camera p_cam) {
+        super.perspective(p_cam.fov, (float) super.width / (float) super.height, p_cam.near, p_cam.far);
+    }
+
+    public void ortho(Camera p_cam) {
+        super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_cam.near, p_cam.far);
+    }
+
+    public void image(PImage p_image) {
+        super.image(p_image, 0, 0);
+    }
+
+    // These simply don't work in `PApplet`...:
+    @Override
+    public void push() {
+        super.pushMatrix();
+        super.pushStyle();
+    }
+
+    @Override
+    public void pop() {
+        super.popStyle();
+        super.popMatrix();
+    }
+    // endregion
+
+    public PImage svgToImage(PShape p_shape, float p_width, float p_height) {
+        if (p_shape == null)
+            throw new NullPointerException("`svgToImage(null , p_width, p_height)` won't work.");
+
+        PGraphics buffer = createGraphics((int) ceil(p_width), (int) ceil(p_height), P3D);
+
+        if (buffer == null) {
+            throw new NullPointerException("`svgToImage()`'s `buffer` is `null`!");
+        }
+
+        buffer.beginDraw();
+        buffer.shape(p_shape, 0, 0, p_width, p_height);
+        buffer.endDraw();
+        return buffer;
+    }
+
+    @Override
+    public PGraphics createGraphics(int p_width, int p_height) {
+        return super.createGraphics(p_width, p_height, P3D);
+    }
+
+    public PGraphics createGraphics(float p_width, float p_height) {
+        return super.createGraphics((int) p_width, (int) p_height, P3D);
+    }
+    // endregion
 
     // region `Sketch::alphaBg()` overloads.
     public void alphaBg(int p_color) {

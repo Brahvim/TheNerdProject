@@ -15,7 +15,7 @@ import com.brahvim.nerd.scene_api.SceneManager.SceneInitializer;
  * The {@code PApplet} you passed into your
  * {@code SceneManager} is what you get! :)
  */
-public class Scene {
+public class Scene extends EventReceiver {
   // region `private` / `protected` fields.
   protected final Scene SCENE = this;
   protected final Sketch SKETCH;
@@ -67,6 +67,7 @@ public class Scene {
   }
 
   public Scene(SceneInitializer p_sceneInitializer) {
+    // this.SCENE_CLASS = p_sceneInitializer.getSceneClass();
     this.MANAGER = p_sceneInitializer.getSceneManager();
     this.SKETCH = this.MANAGER.getSketch();
 
@@ -74,14 +75,21 @@ public class Scene {
     this.LAYER_INITIALIZER = new LayerInitializer(this, this.SKETCH);
   }
 
-  @SafeVarargs
-  public Scene(SceneInitializer p_sceneInitializer, Class<? extends Layer>... p_layerClasses) {
-    this(p_sceneInitializer);
-
-    for (Class<? extends Layer> c : p_layerClasses) {
-      this.startLayer(c);
-    }
-  }
+  /*
+   * // Rejected because subclasses will need to implement this
+   * // (no matter it's just another `super()` constructor call).
+   * // Not good!
+   *
+   * @SafeVarargs
+   * public Scene(SceneInitializer p_sceneInitializer,
+   * Class<? extends Layer>... p_layerClasses) {
+   * this(p_sceneInitializer);
+   * 
+   * for (Class<? extends Layer> c : p_layerClasses) {
+   * this.startLayer(c);
+   * }
+   * }
+   */
 
   // region `Layer`-operations.
   // They get a running `Layer`'s reference from its (given) class.
@@ -238,7 +246,11 @@ public class Scene {
           this.SKETCH.popMatrix();
         }
 
+    this.SKETCH.pushMatrix();
+    this.SKETCH.pushStyle();
     this.draw();
+    this.SKETCH.popStyle();
+    this.SKETCH.popMatrix();
   }
 
   public void runPost(SceneManager.SceneInitializer p_sceneInitializer) {
@@ -257,7 +269,7 @@ public class Scene {
   }
   // endregion
 
-  // region App workflow:
+  // region App workflow callbacks.
   /**
    * {@code Scene::setup()} is called first,
    * {@code Layer::setup()} is called for each {@linkplain Layer}, later.
@@ -285,59 +297,6 @@ public class Scene {
    */
   protected void post() {
   }
-  // endregion
-
-  // region `public` event callbacks. Call from anywhere, ":D! REMEMBER `super()`!
-  // region Mouse events.
-  public void mousePressed() {
-  }
-
-  public void mouseReleased() {
-  }
-
-  public void mouseMoved() {
-  }
-
-  public void mouseClicked() {
-  }
-
-  public void mouseDragged() {
-  }
-
-  // @SuppressWarnings("unused")
-  public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
-  }
-  // endregion
-
-  // region Keyboard events.
-  public void keyTyped() {
-  }
-
-  public void keyPressed() {
-  }
-
-  public void keyReleased() {
-  }
-  // endregion
-
-  // region Touch events.
-  public void touchStarted() {
-  }
-
-  public void touchMoved() {
-  }
-
-  public void touchEnded() {
-  }
-  // endregion
-
-  // region Window focus events.
-  public void focusLost() {
-  }
-
-  public void focusGained() {
-  }
-  // endregion
   // endregion
   // endregion
 

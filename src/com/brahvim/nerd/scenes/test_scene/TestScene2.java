@@ -1,7 +1,5 @@
 package com.brahvim.nerd.scenes.test_scene;
 
-import java.rmi.server.Skeleton;
-
 import com.brahvim.nerd.api.SineWave;
 import com.brahvim.nerd.scene_api.Scene;
 import com.brahvim.nerd.scene_api.SceneManager;
@@ -15,10 +13,6 @@ public class TestScene2 extends Scene {
 
     @Override
     protected void setup() {
-        SKETCH.clear();
-        SKETCH.background(0x00669);
-        SKETCH.currentCamera.reset();
-
         this.camHorizWave = new SineWave(SKETCH, 100 / 60_000.0f);
         this.camHorizWave.start();
 
@@ -26,10 +20,14 @@ public class TestScene2 extends Scene {
         this.camVertWave.start();
     }
 
+    // TODO: Add "before camera" and "after camera" callbacks.
+
     @Override
     protected void draw() {
+        // Won't work because of the camera, :sweat_smile::
+        SKETCH.in2d(() -> SKETCH.alphaBg(0, 102, 153, 100));
+
         // SKETCH.background(0x006699);
-        // SKETCH.in2d(() -> SKETCH.alphaBg(0, 102, 153, 100));
 
         SKETCH.translate(SKETCH.cx, SKETCH.cy);
 

@@ -9,9 +9,11 @@ import com.brahvim.nerd.api.Sketch;
 
 public class SceneManager {
     // region `private` ~~/ `protected`~~ fields.
-    private final HashSet<Class<? extends Scene>> SCENE_CLASSES;
     private final HashMap<Class<? extends Scene>, Constructor<? extends Scene>> SCENE_CONSTRUCTORS;
+    private final HashSet<Class<? extends Scene>> SCENE_CLASSES;
+    private final SceneManager.SceneManagerSettings settings;
     private final SceneManager.SceneInitializer runner;
+
     private Scene currentScene, previousScene;
 
     /**
@@ -24,6 +26,7 @@ public class SceneManager {
 
     public class SceneInitializer {
         private SceneManager manager;
+        // private Class<? extends Scene> sceneClass;
 
         private SceneInitializer(SceneManager p_sceneManager) {
             this.manager = p_sceneManager;
@@ -32,14 +35,42 @@ public class SceneManager {
         public SceneManager getSceneManager() {
             return this.manager;
         }
+
+        /*
+         * public Class<? extends Scene> getSceneClass() {
+         * return this.sceneClass;
+         * }
+         */
+
+    }
+
+    public class SceneManagerSettings {
+        public OnSceneSwitch onSceneSwitch = new OnSceneSwitch();
+
+        private class OnSceneSwitch {
+            public boolean doClear,
+                    completelyResetCam = true;
+
+            private OnSceneSwitch() {
+            }
+        }
+
     }
 
     public SceneManager(Sketch p_sketch) {
         this.sketch = p_sketch;
-        this.runner = new SceneManager.SceneInitializer(this);
-
-        this.SCENE_CONSTRUCTORS = new HashMap<>();
         this.SCENE_CLASSES = new HashSet<>();
+        this.SCENE_CONSTRUCTORS = new HashMap<>();
+        this.settings = new SceneManagerSettings();
+        this.runner = new SceneManager.SceneInitializer(this);
+    }
+
+    public SceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
+        this.sketch = p_sketch;
+        this.settings = p_settings;
+        this.SCENE_CLASSES = new HashSet<>();
+        this.SCENE_CONSTRUCTORS = new HashMap<>();
+        this.runner = new SceneManager.SceneInitializer(this);
     }
 
     // region `Scene`-callbacks.
@@ -55,13 +86,8 @@ public class SceneManager {
     }
 
     public void draw() {
-        if (this.currentScene != null) {
-            this.sketch.pushMatrix();
-            this.sketch.pushStyle();
+        if (this.currentScene != null)
             this.currentScene.runDraw(this.runner);
-            this.sketch.popStyle();
-            this.sketch.popMatrix();
-        }
     }
 
     public void post() {
@@ -297,6 +323,14 @@ public class SceneManager {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+        // endregion
+
+        // region `this.settings.onSceneSwitch` tasks.
+        if (this.settings.onSceneSwitch.doClear)
+            this.sketch.clear();
+
+        if (this.settings.onSceneSwitch.completelyResetCam)
+            this.sketch.currentCamera.completeReset();
         // endregion
 
         this.setCurrentAndPreviousScene(toStart);

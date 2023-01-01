@@ -16,7 +16,7 @@ public class SketchBuilder {
     public class SketchInitializer {
         public int width = 400, height = 400;
         public String renderer = PConstants.P3D;
-        public boolean closeOnEscape, startedFullscreen, canResize,
+        public boolean dontCloseOnEscape, startedFullscreen, canResize,
                 cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
         public Class<? extends Scene> firstScene;
 
@@ -103,8 +103,8 @@ public class SketchBuilder {
         return this;
     }
 
-    public SketchBuilder closeOnEscape() {
-        this.sketchInitializer.closeOnEscape = true;
+    public SketchBuilder dontCloseOnEscape() {
+        this.sketchInitializer.dontCloseOnEscape = true;
         return this;
     }
 

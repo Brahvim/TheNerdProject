@@ -2,16 +2,15 @@ package com.brahvim.nerd;
 
 import com.brahvim.nerd.api.SketchBuilder;
 import com.brahvim.nerd.scenes.test_scene.TestScene1;
-import com.brahvim.nerd.scenes.test_scene.TestScene2;
+
+import processing.opengl.PJOGL;
 
 public class App {
     public static void main(String[] p_args) {
+        PJOGL.setIcon("data/sunglass_nerd.png");
         new SketchBuilder()
-                .setFirstScene(TestScene2.class)
+                .setFirstScene(TestScene1.class)
                 .startFullscreen()
-                .closeOnEscape()
-                .setWidth(400)
-                .setHeight(400)
                 .canResize()
                 .build(p_args);
     }
