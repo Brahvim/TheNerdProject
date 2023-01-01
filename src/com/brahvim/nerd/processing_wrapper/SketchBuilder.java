@@ -15,7 +15,7 @@ public class SketchBuilder {
     // Hmmm... "`SketchSettings`" instead..?
     public class SketchInitializer {
         public int width = 400, height = 400;
-        public String renderer = PConstants.P3D;
+        public String renderer = PConstants.P3D, name;
         public boolean dontCloseOnEscape, startedFullscreen, canResize,
                 cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
         public Class<? extends Scene> firstScene;
@@ -76,6 +76,11 @@ public class SketchBuilder {
 
     public SketchBuilder setHeight(int p_height) {
         this.sketchInitializer.height = p_height;
+        return this;
+    }
+
+    public SketchBuilder setName(String p_name) {
+        this.sketchInitializer.name = p_name;
         return this;
     }
 

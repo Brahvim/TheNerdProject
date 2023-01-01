@@ -52,6 +52,7 @@ public class Sketch extends PApplet {
             '>', '_', '+', '?'
     };
 
+    public final String NAME;
     public final Sketch SKETCH;
     public final Camera DEFAULT_CAMERA;
     public final Class<? extends Scene> FIRST_SCENE_CLASS;
@@ -107,22 +108,22 @@ public class Sketch extends PApplet {
         }
 
         this.SKETCH = this;
+        this.NAME = p_sketchInitializer.name;
+        this.RENDERER = p_sketchInitializer.renderer;
+        this.DEFAULT_CAMERA = new CameraBuilder(this).build();
+        this.FIRST_SCENE_CLASS = p_sketchInitializer.firstScene;
+        this.INITIALLY_RESIZABLE = p_sketchInitializer.canResize;
+        this.CAN_FULLSCREEN = !p_sketchInitializer.cannotFullscreen;
+        this.CLOSE_ON_ESCAPE = !p_sketchInitializer.dontCloseOnEscape;
+        this.F11_FULLSCREEN = !p_sketchInitializer.cannotF11Fullscreen;
+        this.STARTED_FULLSCREEN = p_sketchInitializer.startedFullscreen;
+        this.ALT_ENTER_FULLSCREEN = !p_sketchInitializer.cannotAltEnterFullscreen;
 
         this.unprojector = new Unprojector();
         this.sceneMan = new SceneManager(this);
-        this.DEFAULT_CAMERA = new CameraBuilder(this).build();
         this.currentCamera = this.DEFAULT_CAMERA;
-        this.FIRST_SCENE_CLASS = p_sketchInitializer.firstScene;
-
-        this.RENDERER = p_sketchInitializer.renderer;
-        this.CAN_FULLSCREEN = !p_sketchInitializer.cannotFullscreen;
-        this.CLOSE_ON_ESCAPE = !p_sketchInitializer.dontCloseOnEscape;
-        this.INITIALLY_RESIZABLE = p_sketchInitializer.canResize;
-        this.STARTED_FULLSCREEN = p_sketchInitializer.startedFullscreen;
-        this.F11_FULLSCREEN = !p_sketchInitializer.cannotF11Fullscreen;
-        this.ALT_ENTER_FULLSCREEN = !p_sketchInitializer.cannotAltEnterFullscreen;
-
         this.fullscreen = this.STARTED_FULLSCREEN;
+
         if (this.STARTED_FULLSCREEN) {
             this.INIT_WIDTH = 800;
             this.INIT_HEIGHT = 600;
@@ -144,11 +145,11 @@ public class Sketch extends PApplet {
     // region Processing sketch workflow.
     @Override
     public void setup() {
-        super.frameRate(Sketch.REFRESH_RATE);
+        this.updateRatios();
+        super.surface.setTitle(this.NAME);
         super.registerMethod("pre", this);
         super.registerMethod("post", this);
-
-        this.updateRatios();
+        super.frameRate(Sketch.REFRESH_RATE);
 
         switch (this.RENDERER) {
             case PConstants.P3D -> this.glWindow = (GLWindow) super.surface.getNative();
@@ -281,6 +282,8 @@ public class Sketch extends PApplet {
         if (!this.CLOSE_ON_ESCAPE) {
             if (super.keyCode == 27)
                 super.key = ' ';
+            else
+                System.out.println("`Esc` exit!");
         }
 
         if (this.CAN_FULLSCREEN) {
@@ -291,6 +294,7 @@ public class Sketch extends PApplet {
                     this.fullscreen = !this.fullscreen;
                 }
             }
+
             if (this.F11_FULLSCREEN) {
                 if (super.keyCode == 107) { // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
                     System.out.println("`F11` fullscreen!");

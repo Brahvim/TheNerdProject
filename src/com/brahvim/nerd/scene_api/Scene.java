@@ -168,10 +168,12 @@ public class Scene implements EventReceiver {
   }
 
   public boolean hasLayerOfClass(Class<? extends Layer> p_layerClass) {
-    for (Class<? extends Layer> c : this.LAYER_CONSTRUCTORS.keySet())
-      if (c.equals(p_layerClass))
-        return true;
-    return false;
+    return this.LAYER_CONSTRUCTORS.keySet().contains(p_layerClass);
+    // for (Class<? extends Layer> c :
+    // this.LAYER_CONSTRUCTORS.keySet().contains(p_layerClass))
+    // if (c.equals(p_layerClass))
+    // return true;
+    // return false;
   }
 
   public void restartLayer(int p_layerId) {

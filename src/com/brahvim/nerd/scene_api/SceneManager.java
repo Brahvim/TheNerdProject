@@ -3,36 +3,60 @@ package com.brahvim.nerd.scene_api;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.HashSet;
 
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
 public class SceneManager {
-    // region `private` ~~/ `protected`~~ fields.
-    private final HashMap<Class<? extends Scene>, SceneCache> SCENE_CACHE = new HashMap<>();
-    private final SceneManager.SceneManagerSettings settings;
-    private final SceneManager.SceneInitializer runner;
 
-    /**
-     * Keeping this just-in-case. It would otherwise be passed
-     * straight to the {@linkplain SceneManager.SceneInitializer}
-     * constructor instead.
-     */
-    private final Sketch SKETCH;
-
-    private Class<? extends Scene> currentSceneClass, previousSceneClass;
-    private Scene currentScene;
-    private int sceneStartMillis;
-    // endregion
-
+    // region Inner classes.
     public class SceneCache {
-        public Constructor<? extends Scene> constructor;
-        public Scene cachedReference;
+        private Constructor<? extends Scene> constructor;
+        private Scene cachedReference;
+        private boolean isDeletable;
 
-        private boolean doNotDelete;
-
-        private SceneCache() {
+        private SceneCache(Constructor<? extends Scene> p_constructor, Scene p_cachedReference) {
+            this.constructor = p_constructor;
+            this.cachedReference = p_cachedReference;
         }
+
+        private SceneCache(Constructor<? extends Scene> p_constructor,
+                Scene p_cachedReference, boolean p_isDeletable) {
+            this.constructor = p_constructor;
+            this.isDeletable = p_isDeletable;
+            this.cachedReference = p_cachedReference;
+        }
+
+        // region Getters.
+        public Constructor<? extends Scene> getConstructor() {
+            return this.constructor;
+        }
+
+        public boolean isDeletable() {
+            return this.isDeletable;
+        }
+
+        public Scene getCache() {
+            return this.cachedReference;
+        }
+        // endregion
+
+        // region Cache deletion.
+        public void deleteCache() {
+            // If this was the only reference to the scene object, the scene gets GCed!
+            this.cachedReference = null;
+        }
+
+        public void deleteCacheIfCan() {
+            // Delete the scene reference if allowed:
+            if (this.isDeletable)
+                this.deleteCache();
+            // If this was the only reference to the scene object, the scene gets GCed!
+            System.gc();
+
+        }
+        // endregion
+
     }
 
     public class SceneInitializer {
@@ -67,6 +91,24 @@ public class SceneManager {
         }
 
     }
+    // endregion
+
+    // region `private` ~~/ `protected`~~ fields.
+    private final HashMap<Class<? extends Scene>, SceneCache> SCENE_CACHE = new HashMap<>();
+    private final SceneManager.SceneManagerSettings settings;
+    private final SceneManager.SceneInitializer runner;
+
+    /**
+     * Keeping this just-in-case. It would otherwise be passed
+     * straight to the {@linkplain SceneManager.SceneInitializer}
+     * constructor instead.
+     */
+    private final Sketch SKETCH;
+
+    private Class<? extends Scene> currentSceneClass, previousSceneClass;
+    private Scene currentScene;
+    private int sceneStartMillis;
+    // endregion
 
     public SceneManager(Sketch p_sketch) {
         this.SKETCH = p_sketch;
@@ -81,6 +123,29 @@ public class SceneManager {
     }
 
     // region Queries.
+    // Older implementation:
+    /*
+     * @SuppressWarnings("unchecked")
+     * public Class<? extends Scene>[] getSceneClasses() {
+     * return (Class<? extends Scene>[]) this.SCENE_CLASSES.toArray();
+     * }
+     */
+
+    @SuppressWarnings("unchecked")
+    public HashSet<Class<? extends Scene>> knownScenes() {
+        // Here's what's happening here:
+
+        // HashSet<Class<? extends Scene>> ret = (HashSet<Class<? extends Scene>>)
+        // this.SCENE_CACHE.keySet();
+        // return (HashSet<Class<? extends Scene>>) ret.clone();
+
+        // Cast the `keySet`, clone it, and cast the clone:
+
+        return ((HashSet<Class<? extends Scene>>)
+
+        ((HashSet<Class<? extends Scene>>) (this.SCENE_CACHE.keySet())).clone());
+    }
+
     public int getSceneStartMillis() {
         return this.sceneStartMillis;
     }
@@ -278,17 +343,21 @@ public class SceneManager {
     // endregion
 
     // region `Scene`-operations.
-    /*
-     * @SuppressWarnings("unchecked")
-     * public Class<? extends Scene>[] getSceneClasses() {
-     * return (Class<? extends Scene>[]) this.SCENE_CLASSES.toArray();
-     * }
-     */
+    public void cacheScene(Class<? extends Scene> p_sceneClass, boolean p_isDeletable) {
+        if (this.SCENE_CACHE.containsKey(p_sceneClass))
+            return;
 
-    // @SuppressWarnings("unchecked")
-    public Set<Class<? extends Scene>> getSceneClasses() {
-        return // (HashSet<Class<? extends Scene>>)
-        this.SCENE_CACHE.keySet(); // .clone();
+        Constructor<? extends Scene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
+        if (sceneConstructor == null)
+            throw new IllegalArgumentException("""
+                    The passed class's constructor could not be accessed.""");
+
+        Scene toCache = this.constructScene(sceneConstructor);
+        if (toCache == null)
+            throw new RuntimeException("The scene could not be constructed.");
+
+        SceneCache cache = new SceneCache(sceneConstructor, toCache, p_isDeletable);
+        this.SCENE_CACHE.put(p_sceneClass, cache);
     }
 
     public void restartScene() {
@@ -330,6 +399,31 @@ public class SceneManager {
          */
     }
 
+    // If the scene ain't in the cache, the scene starts normally, and gets PUT into
+    // the cache. Just start it after it's cached - no matter when it was cached!
+    public void startCached(Class<? extends Scene> p_sceneClass) {
+        SceneCache cache = this.SCENE_CACHE.get(p_sceneClass);
+
+        if (cache.getCache() == null) {
+            System.out.println("""
+                    Scene not found in cache. Starting the usual way.
+                    \n\tPutting this scene in the cache.""");
+            this.startScene(p_sceneClass);
+        } else
+            this.setScene(this.SCENE_CACHE.get(p_sceneClass).getCache());
+
+    }
+
+    // If the scene ain't in the cache, start it normally.
+    public void startFromCacheIfCan(Class<? extends Scene> p_sceneClass) {
+        if (this.SCENE_CACHE.keySet().contains(p_sceneClass))
+            this.setScene(this.SCENE_CACHE.get(p_sceneClass).getCache());
+        else {
+            System.out.println("Scene not found in cache. Starting the usual way.");
+            this.startScene(p_sceneClass);
+        }
+    }
+
     // region `private` Scene-operations.
     private Constructor<? extends Scene> getSceneConstructor(Class<? extends Scene> p_sceneClass) {
         Constructor<? extends Scene> ret = null;
@@ -361,6 +455,7 @@ public class SceneManager {
         return ret;
     }
 
+    // Yes, this checks for errors.
     private void startSceneImpl(Class<? extends Scene> p_sceneClass) {
         Constructor<? extends Scene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
 
@@ -377,13 +472,11 @@ public class SceneManager {
 
         // Don't worry about concurrency, vvv *this* vvv is `final`! ^-^
         if (!this.SCENE_CACHE.containsKey(p_sceneClass)) {
-            SceneCache cache = new SceneCache();
-            // cache.cachedReference = toStart;
-            cache.constructor = sceneConstructor;
-            this.SCENE_CACHE.put(p_sceneClass, cache);
+            this.SCENE_CACHE.put(p_sceneClass, new SceneCache(sceneConstructor, toStart));
         }
     }
 
+    // The scene-deleter!!!
     private void setScene(Scene p_currentScene) {
         // region `this.settings.onSceneSwitch` tasks.
         if (this.settings.onSceneSwitch.doClear)
@@ -397,12 +490,16 @@ public class SceneManager {
         if (this.previousSceneClass != null) {
             this.currentScene.runOnSceneExit(this.runner);
 
-            // Delete the scene reference if needed:
-            SceneCache oldSceneCache = this.SCENE_CACHE.get(this.previousSceneClass);
-            if (!oldSceneCache.doNotDelete)
-                oldSceneCache.cachedReference = null;
-            // If this was the only reference to the scene object, the scene gets GCed!
-            System.gc();
+            this.SCENE_CACHE.get(this.previousSceneClass).deleteCacheIfCan();
+
+            /*
+             * // Delete the scene reference if needed:
+             * SceneCache oldSceneCache = this.SCENE_CACHE.get(this.previousSceneClass);
+             * if (!oldSceneCache.doNotDelete)
+             * oldSceneCache.deleteCache();
+             * // If this was the only reference to the scene object, the scene gets GCed!
+             * System.gc();
+             */
 
         }
 
@@ -410,6 +507,7 @@ public class SceneManager {
         this.setupCurrentScene();
     }
 
+    // Set the time, *then* call `SceneManager::runSetup()`.
     private void setupCurrentScene() {
         this.sceneStartMillis = this.SKETCH.millis();
         this.currentScene.runSetup(this.runner);
