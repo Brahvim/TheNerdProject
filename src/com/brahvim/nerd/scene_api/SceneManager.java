@@ -356,8 +356,7 @@ public class SceneManager {
         if (toCache == null)
             throw new RuntimeException("The scene could not be constructed.");
 
-        SceneCache cache = new SceneCache(sceneConstructor, toCache, p_isDeletable);
-        this.SCENE_CACHE.put(p_sceneClass, cache);
+        this.SCENE_CACHE.put(p_sceneClass, new SceneCache(sceneConstructor, toCache, p_isDeletable));
     }
 
     public void restartScene() {
@@ -399,28 +398,62 @@ public class SceneManager {
          */
     }
 
-    // If the scene ain't in the cache, the scene starts normally, and gets PUT into
-    // the cache. Just start it after it's cached - no matter when it was cached!
-    public void startCached(Class<? extends Scene> p_sceneClass) {
-        SceneCache cache = this.SCENE_CACHE.get(p_sceneClass);
+    // "Cache if not cached" method. Experiences these problems:
+    /*
+     * - Asking for deletion permissions when you may not be caching is awkward,
+     * - Structure. `cache == null`, `cache.getCache() == null` must result in the
+     * same, but can't be grouped together logicaly, for optimization. This can be
+     * fixed with the use of an "impl" method, but this class already has too many
+     * similarly-named methods!
+     * 
+     * Another approach would be to call `SceneManager::cacheScene()` then query
+     * `SceneManager::SCENE_CACHE`, but that sounds even slower. Even with the JIT!
+     */
 
-        if (cache.getCache() == null) {
-            System.out.println("""
-                    Scene not found in cache. Starting the usual way.
-                    \n\tPutting this scene in the cache.""");
-            this.startScene(p_sceneClass);
-        } else
+    // *The method:*
+    /*
+     * // Ensures scene is cached, then starts it.
+     * public void startCached(Class<? extends Scene> p_sceneClass) {
+     * SceneCache cache = this.SCENE_CACHE.get(p_sceneClass);
+     * 
+     * if (cache == null || cache.getCache() == null) {
+     * System.out.println("""
+     * Scene not found in cache. Starting the usual way.
+     * \n\tPutting this scene in the cache.""");
+     * this.startScene(p_sceneClass);
+     * 
+     * /*
+     * Constructor<? extends Scene> sceneConstructor =
+     * this.getSceneConstructor(p_sceneClass);
+     * if (sceneConstructor == null)
+     * throw new IllegalArgumentException("""
+     * The passed class's constructor could not be accessed.""");
+     * 
+     * Scene toCache = this.constructScene(sceneConstructor);
+     * if (toCache == null)
+     * throw new RuntimeException("The scene could not be constructed.");
+     * 
+     * // Will have to use the parameters here...
+     * this.SCENE_CACHE.put(p_sceneClass, new SceneCache(sceneConstructor,
+     * toCache));
+     * // ...which is a bad idea, since it's not confirmed whether this code will
+     * run.
+     * 
+     * <asterisk>\
+     * }
+     * 
+     * }
+     */
+
+    // If it ain't cached, start it normally. Tell me if it is cached.
+    public boolean startFromCacheIfCan(Class<? extends Scene> p_sceneClass) {
+        if (this.SCENE_CACHE.keySet().contains(p_sceneClass)) {
             this.setScene(this.SCENE_CACHE.get(p_sceneClass).getCache());
-
-    }
-
-    // If the scene ain't in the cache, start it normally.
-    public void startFromCacheIfCan(Class<? extends Scene> p_sceneClass) {
-        if (this.SCENE_CACHE.keySet().contains(p_sceneClass))
-            this.setScene(this.SCENE_CACHE.get(p_sceneClass).getCache());
-        else {
+            return true;
+        } else {
             System.out.println("Scene not found in cache. Starting the usual way.");
             this.startScene(p_sceneClass);
+            return false;
         }
     }
 
