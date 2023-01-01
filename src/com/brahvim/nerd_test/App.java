@@ -12,6 +12,9 @@ public class App {
                 .setName("The Nerd Project")
                 .setFirstScene(TestScene1.class)
                 // .setIcon("path/to/icon")
+                // TODO: Implement `cacheScene()` and `cacheScenes()` as shown:
+                // `cacheScene(boolean p_isDeletable, Class<? extends Scene> p_sceneClass)`,
+                // `.cacheScenes(Class<? extends Scene>... p_sceneClasses)`.
                 .startFullscreen()
                 .canResize()
                 .build(p_args);

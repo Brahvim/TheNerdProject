@@ -11,10 +11,14 @@ import processing.core.PConstants;
 
 public class TestScene1 extends Scene {
     public TestScene1(SceneManager.SceneInitializer p_sceneInitializer) {
-        super(p_sceneInitializer);
-        super.startLayer(BackgroundLayer.class);
-        super.startLayer(BoxAnimationLayer.class);
-        super.startLayer(MouseEllipseLayer.class);
+        super(p_sceneInitializer,
+                BackgroundLayer.class,
+                BoxAnimationLayer.class,
+                MouseEllipseLayer.class);
+
+        // super.startLayer(BackgroundLayer.class);
+        // super.startLayer(BoxAnimationLayer.class);
+        // super.startLayer(MouseEllipseLayer.class);
     }
 
     @Override

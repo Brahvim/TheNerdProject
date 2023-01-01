@@ -289,7 +289,7 @@ public class Sketch extends PApplet {
         if (this.CAN_FULLSCREEN) {
             if (this.ALT_ENTER_FULLSCREEN) {
                 if (super.keyCode == KeyEvent.VK_ENTER &&
-                        this.keyIsPressed(KeyEvent.VK_ALT)) {
+                        this.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19 /* Same as `VK_PAUSE`. */)) {
                     System.out.println("`Alt`-`Enter` fullscreen!");
                     this.fullscreen = !this.fullscreen;
                 }
@@ -514,6 +514,13 @@ public class Sketch extends PApplet {
          * return flag;
          */
         // An article once said: `boolean` flags are bad.
+    }
+
+    public boolean anyGivenKeyIsPressed(int... p_keyCodes) {
+        for (int i : p_keyCodes)
+            if (this.keysHeld.contains(i))
+                return true;
+        return false;
     }
 
     public static boolean isValidSymbol(char p_char) {

@@ -75,21 +75,15 @@ public class Scene implements EventReceiver {
     this.LAYER_INITIALIZER = new LayerInitializer(this, this.SKETCH);
   }
 
-  /*
-   * // Rejected because subclasses will need to implement this
-   * // (no matter it's just another `super()` constructor call).
-   * // Not good!
-   *
-   * @SafeVarargs
-   * public Scene(SceneInitializer p_sceneInitializer,
-   * Class<? extends Layer>... p_layerClasses) {
-   * this(p_sceneInitializer);
-   * 
-   * for (Class<? extends Layer> c : p_layerClasses) {
-   * this.startLayer(c);
-   * }
-   * }
-   */
+  @SafeVarargs
+  public Scene(SceneInitializer p_sceneInitializer,
+      Class<? extends Layer>... p_layerClasses) {
+    this(p_sceneInitializer);
+
+    for (Class<? extends Layer> c : p_layerClasses) {
+      this.startLayer(c);
+    }
+  }
 
   // region `Layer`-operations.
   // They get a running `Layer`'s reference from its (given) class.
@@ -117,6 +111,15 @@ public class Scene implements EventReceiver {
       }
 
     return ret;
+  }
+
+  // TODO: Decide if `startLayer()` should be removed (or made `private`?).
+
+  @SafeVarargs
+  public final void startLayers(Class<? extends Layer>... p_layerClasses) {
+    for (Class<? extends Layer> c : p_layerClasses) {
+      this.startLayer(c);
+    }
   }
 
   public void startLayer(Class<? extends Layer> p_layerClass) {
