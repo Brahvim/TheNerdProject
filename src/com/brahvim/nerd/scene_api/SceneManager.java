@@ -3,14 +3,13 @@ package com.brahvim.nerd.scene_api;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Set;
 
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
 public class SceneManager {
     // region `private` ~~/ `protected`~~ fields.
-    private final HashMap<Class<? extends Scene>, Constructor<? extends Scene>> SCENE_CONSTRUCTORS;
-    private final HashSet<Class<? extends Scene>> SCENE_CLASSES;
+    private final HashMap<Class<? extends Scene>, SceneCache> SCENE_CACHE = new HashMap<>();
     private final SceneManager.SceneManagerSettings settings;
     private final SceneManager.SceneInitializer runner;
 
@@ -21,18 +20,18 @@ public class SceneManager {
      */
     private final Sketch SKETCH;
 
-    private Scene currentScene, previousScene;
+    private Class<? extends Scene> currentSceneClass, previousSceneClass;
+    private Scene currentScene;
     private int sceneStartMillis;
     // endregion
 
     public class SceneCache {
         public Constructor<? extends Scene> constructor;
-        public Scene scene;
+        public Scene cachedReference;
 
-        private boolean preventAutoDeletion;
+        private boolean doNotDelete;
 
-        public void deleteCache() {
-            this.scene = null; // If this was the only reference, the scene gets GCed!
+        private SceneCache() {
         }
     }
 
@@ -71,8 +70,6 @@ public class SceneManager {
 
     public SceneManager(Sketch p_sketch) {
         this.SKETCH = p_sketch;
-        this.SCENE_CLASSES = new HashSet<>();
-        this.SCENE_CONSTRUCTORS = new HashMap<>();
         this.settings = new SceneManagerSettings();
         this.runner = new SceneManager.SceneInitializer(this);
     }
@@ -80,8 +77,6 @@ public class SceneManager {
     public SceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
-        this.SCENE_CLASSES = new HashSet<>();
-        this.SCENE_CONSTRUCTORS = new HashMap<>();
         this.runner = new SceneManager.SceneInitializer(this);
     }
 
@@ -99,7 +94,7 @@ public class SceneManager {
     // region App workflow:
     public void setup() {
         if (this.currentScene != null)
-            this.runCurrentSceneSetup();
+            this.setupCurrentScene();
     }
 
     public void pre() {
@@ -290,27 +285,38 @@ public class SceneManager {
      * }
      */
 
-    public void cacheScene(Class<? extends Scene> p_sceneClass) {
-        
-    }
-
-    public HashSet<Class<? extends Scene>> getSceneClasses() {
-        return this.SCENE_CLASSES;
+    // @SuppressWarnings("unchecked")
+    public Set<Class<? extends Scene>> getSceneClasses() {
+        return // (HashSet<Class<? extends Scene>>)
+        this.SCENE_CACHE.keySet(); // .clone();
     }
 
     public void restartScene() {
-        this.setCurrentAndPreviousScene(this.currentScene);
+        if (this.currentSceneClass == null)
+            return;
+
+        SceneCache cache = this.SCENE_CACHE.remove(this.currentSceneClass);
+        Scene toUse = this.constructScene(cache.constructor);
+        this.SCENE_CACHE.put(this.currentSceneClass, cache);
+
+        this.setScene(toUse);
     }
 
     public void startPreviousScene() {
-        this.setCurrentAndPreviousScene(this.previousScene);
+        if (this.previousSceneClass == null)
+            return;
+
+        SceneCache cache = this.SCENE_CACHE.remove(this.previousSceneClass);
+        Scene toUse = this.constructScene(cache.constructor);
+        this.SCENE_CACHE.put(this.previousSceneClass, cache);
+
+        this.setScene(toUse);
     }
 
     public void startScene(Class<? extends Scene> p_sceneClass) {
         if (p_sceneClass == null)
-            throw new NullPointerException("`SceneManager::startScene()` will not take `null`s!");
+            throw new NullPointerException("`SceneManager::startScene()` was `null`.");
 
-        this.SCENE_CLASSES.add(p_sceneClass);
         this.startSceneImpl(p_sceneClass);
 
         /*
@@ -325,21 +331,23 @@ public class SceneManager {
     }
 
     // region `private` Scene-operations.
-    private void startSceneImpl(Class<? extends Scene> p_sceneClass) {
-        Scene toStart = null;
-        Constructor<? extends Scene> sceneConstructor = null;
+    private Constructor<? extends Scene> getSceneConstructor(Class<? extends Scene> p_sceneClass) {
+        Constructor<? extends Scene> ret = null;
 
-        // region Getting the constructor.
         try {
-            sceneConstructor = p_sceneClass.getConstructor(SceneInitializer.class);
+            ret = p_sceneClass.getConstructor(SceneInitializer.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-        // endregion
 
-        // region Constructing the `Scene`.
+        return ret;
+    }
+
+    private Scene constructScene(Constructor<? extends Scene> p_sceneConstructor) {
+        Scene ret = null;
+
         try {
-            toStart = (Scene) sceneConstructor.newInstance(this.runner);
+            ret = (Scene) p_sceneConstructor.newInstance(this.runner);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -349,8 +357,34 @@ public class SceneManager {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-        // endregion
 
+        return ret;
+    }
+
+    private void startSceneImpl(Class<? extends Scene> p_sceneClass) {
+        Constructor<? extends Scene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
+
+        if (sceneConstructor == null)
+            throw new IllegalArgumentException("""
+                    The passed class's constructor could not be accessed.""");
+
+        Scene toStart = this.constructScene(sceneConstructor);
+
+        if (toStart == null)
+            throw new RuntimeException("The scene could not be constructed.");
+
+        this.setScene(toStart);
+
+        // Don't worry about concurrency, vvv *this* vvv is `final`! ^-^
+        if (!this.SCENE_CACHE.containsKey(p_sceneClass)) {
+            SceneCache cache = new SceneCache();
+            // cache.cachedReference = toStart;
+            cache.constructor = sceneConstructor;
+            this.SCENE_CACHE.put(p_sceneClass, cache);
+        }
+    }
+
+    private void setScene(Scene p_currentScene) {
         // region `this.settings.onSceneSwitch` tasks.
         if (this.settings.onSceneSwitch.doClear)
             this.SKETCH.clear();
@@ -359,23 +393,24 @@ public class SceneManager {
             this.SKETCH.currentCamera.completeReset();
         // endregion
 
-        this.setCurrentAndPreviousScene(toStart);
+        this.previousSceneClass = this.currentSceneClass;
+        if (this.previousSceneClass != null) {
+            this.currentScene.runOnSceneExit(this.runner);
 
-        // Don't worry about concurrency, vvv *this* vvv is `final`! ^-^
-        this.SCENE_CONSTRUCTORS.put(p_sceneClass, sceneConstructor);
-    }
+            // Delete the scene reference if needed:
+            SceneCache oldSceneCache = this.SCENE_CACHE.get(this.previousSceneClass);
+            if (!oldSceneCache.doNotDelete)
+                oldSceneCache.cachedReference = null;
+            // If this was the only reference to the scene object, the scene gets GCed!
+            System.gc();
 
-    private void setCurrentAndPreviousScene(Scene p_currentScene) {
-        this.previousScene = this.currentScene;
-        if (this.previousScene != null) {
-            this.previousScene.runOnSceneExit(this.runner);
         }
 
         this.currentScene = p_currentScene;
-        this.runCurrentSceneSetup();
+        this.setupCurrentScene();
     }
 
-    private void runCurrentSceneSetup() {
+    private void setupCurrentScene() {
         this.sceneStartMillis = this.SKETCH.millis();
         this.currentScene.runSetup(this.runner);
     }
@@ -391,8 +426,12 @@ public class SceneManager {
         return this.currentScene;
     }
 
-    public Scene getPreviousScene() {
-        return this.previousScene;
+    public Class<? extends Scene> getCurrentSceneClass() {
+        return this.currentSceneClass;
+    }
+
+    public Class<? extends Scene> getPreviousSceneClass() {
+        return this.previousSceneClass;
     }
     // endregion
 
