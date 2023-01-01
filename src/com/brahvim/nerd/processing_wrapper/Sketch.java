@@ -36,8 +36,6 @@ import processing.core.PShape;
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
 
-// TODO: Bring stuff from Nerd - let's make a "Game Engine"! ":D!~
-
 public class Sketch extends PApplet {
     // region `public` fields.
     // region Constants.

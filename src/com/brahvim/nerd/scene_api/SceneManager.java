@@ -25,6 +25,17 @@ public class SceneManager {
     private int sceneStartMillis;
     // endregion
 
+    public class SceneCache {
+        public Constructor<? extends Scene> constructor;
+        public Scene scene;
+
+        private boolean preventAutoDeletion;
+
+        public void deleteCache() {
+            this.scene = null; // If this was the only reference, the scene gets GCed!
+        }
+    }
+
     public class SceneInitializer {
         private SceneManager manager;
         // private Class<? extends Scene> sceneClass;
@@ -50,8 +61,7 @@ public class SceneManager {
 
         private class OnSceneSwitch {
             public boolean doClear = false,
-                    completelyResetCam = true,
-                    gcPrevious = false;
+                    completelyResetCam = true;
 
             private OnSceneSwitch() {
             }
@@ -279,6 +289,10 @@ public class SceneManager {
      * return (Class<? extends Scene>[]) this.SCENE_CLASSES.toArray();
      * }
      */
+
+    public void cacheScene(Class<? extends Scene> p_sceneClass) {
+        
+    }
 
     public HashSet<Class<? extends Scene>> getSceneClasses() {
         return this.SCENE_CLASSES;
