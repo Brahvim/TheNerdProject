@@ -22,7 +22,7 @@ public class SceneManager {
     private final Sketch SKETCH;
 
     private Scene currentScene, previousScene;
-    private int sceneStartTime;
+    private int sceneStartMillis;
     // endregion
 
     public class SceneInitializer {
@@ -74,6 +74,16 @@ public class SceneManager {
         this.SCENE_CONSTRUCTORS = new HashMap<>();
         this.runner = new SceneManager.SceneInitializer(this);
     }
+
+    // region Queries.
+    public int getSceneStartMillis() {
+        return this.sceneStartMillis;
+    }
+
+    public int sinceSceneStarted() {
+        return this.SKETCH.millis() - this.sceneStartMillis;
+    }
+    // endregion
 
     // region `Scene`-callbacks.
     // region App workflow:
@@ -352,7 +362,7 @@ public class SceneManager {
     }
 
     private void runCurrentSceneSetup() {
-        this.sceneStartTime = this.SKETCH.millis();
+        this.sceneStartMillis = this.SKETCH.millis();
         this.currentScene.runSetup(this.runner);
     }
     // endregion
