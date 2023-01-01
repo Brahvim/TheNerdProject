@@ -14,14 +14,15 @@ public class SceneManager {
     private final SceneManager.SceneManagerSettings settings;
     private final SceneManager.SceneInitializer runner;
 
-    private Scene currentScene, previousScene;
-
     /**
      * Keeping this just-in-case. It would otherwise be passed
      * straight to the {@linkplain SceneManager.SceneInitializer}
      * constructor instead.
      */
-    private final Sketch sketch;
+    private final Sketch SKETCH;
+
+    private Scene currentScene, previousScene;
+    private int sceneStartTime;
     // endregion
 
     public class SceneInitializer {
@@ -48,8 +49,9 @@ public class SceneManager {
         public OnSceneSwitch onSceneSwitch = new OnSceneSwitch();
 
         private class OnSceneSwitch {
-            public boolean doClear,
-                    completelyResetCam = true;
+            public boolean doClear = false,
+                    completelyResetCam = true,
+                    gcPrevious = false;
 
             private OnSceneSwitch() {
             }
@@ -58,7 +60,7 @@ public class SceneManager {
     }
 
     public SceneManager(Sketch p_sketch) {
-        this.sketch = p_sketch;
+        this.SKETCH = p_sketch;
         this.SCENE_CLASSES = new HashSet<>();
         this.SCENE_CONSTRUCTORS = new HashMap<>();
         this.settings = new SceneManagerSettings();
@@ -66,7 +68,7 @@ public class SceneManager {
     }
 
     public SceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
-        this.sketch = p_sketch;
+        this.SKETCH = p_sketch;
         this.settings = p_settings;
         this.SCENE_CLASSES = new HashSet<>();
         this.SCENE_CONSTRUCTORS = new HashMap<>();
@@ -77,7 +79,7 @@ public class SceneManager {
     // region App workflow:
     public void setup() {
         if (this.currentScene != null)
-            this.currentScene.runSetup(this.runner);
+            this.runCurrentSceneSetup();
     }
 
     public void pre() {
@@ -327,10 +329,10 @@ public class SceneManager {
 
         // region `this.settings.onSceneSwitch` tasks.
         if (this.settings.onSceneSwitch.doClear)
-            this.sketch.clear();
+            this.SKETCH.clear();
 
         if (this.settings.onSceneSwitch.completelyResetCam)
-            this.sketch.currentCamera.completeReset();
+            this.SKETCH.currentCamera.completeReset();
         // endregion
 
         this.setCurrentAndPreviousScene(toStart);
@@ -346,6 +348,11 @@ public class SceneManager {
         }
 
         this.currentScene = p_currentScene;
+        this.runCurrentSceneSetup();
+    }
+
+    private void runCurrentSceneSetup() {
+        this.sceneStartTime = this.SKETCH.millis();
         this.currentScene.runSetup(this.runner);
     }
     // endregion
@@ -353,7 +360,7 @@ public class SceneManager {
 
     // region Getters.
     public Sketch getSketch() {
-        return this.sketch;
+        return this.SKETCH;
     }
 
     public Scene getCurrentScene() {
