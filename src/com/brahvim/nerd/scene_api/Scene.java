@@ -15,7 +15,7 @@ import com.brahvim.nerd.scene_api.SceneManager.SceneInitializer;
  * The {@code PApplet} you passed into your
  * {@code SceneManager} is what you get! :)
  */
-public class Scene extends EventReceiver {
+public class Scene implements EventReceiver {
   // region `private` / `protected` fields.
   protected final Scene SCENE = this;
   protected final Sketch SKETCH;

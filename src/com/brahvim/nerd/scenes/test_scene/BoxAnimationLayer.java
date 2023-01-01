@@ -12,7 +12,10 @@ public class BoxAnimationLayer extends Layer {
 
     public BoxAnimationLayer(LayerInitializer p_initializer) {
         super(p_initializer);
+    }
 
+    @Override
+    protected void setup() {
         this.squareAmpWave = new SineWave(SKETCH, 100 / 60_000.0f);
         this.squareAmpWave.absoluteValue = true;
         this.squareAmpWave.start();

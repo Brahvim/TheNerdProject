@@ -13,7 +13,7 @@ import com.brahvim.nerd.api.Sketch;
  *
  * @author Brahvim Bhaktvatsal
  */
-public class Layer extends EventReceiver {
+public class Layer implements EventReceiver {
     // region `protected` fields.
     protected final Scene SCENE;
     protected final Sketch SKETCH;

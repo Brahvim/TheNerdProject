@@ -68,6 +68,7 @@ public class SketchBuilder {
     }
     // endregion
 
+    // region `set()`.
     public SketchBuilder setWidth(int p_width) {
         this.sketchInitializer.width = p_width;
         return this;
@@ -78,11 +79,18 @@ public class SketchBuilder {
         return this;
     }
 
+    public SketchBuilder setFirstScene(Class<? extends Scene> p_firstScene) {
+        this.sketchInitializer.firstScene = p_firstScene;
+        return this;
+    }
+    // endregion
+
     public SketchBuilder canResize() {
         this.sketchInitializer.canResize = true;
         return this;
     }
 
+    // region Fullscreen settings.
     public SketchBuilder startFullscreen() {
         this.sketchInitializer.startedFullscreen = true;
         return this;
@@ -102,14 +110,10 @@ public class SketchBuilder {
         this.sketchInitializer.cannotAltEnterFullscreen = true;
         return this;
     }
+    // endregion
 
     public SketchBuilder dontCloseOnEscape() {
         this.sketchInitializer.dontCloseOnEscape = true;
-        return this;
-    }
-
-    public SketchBuilder setFirstScene(Class<? extends Scene> p_firstScene) {
-        this.sketchInitializer.firstScene = p_firstScene;
         return this;
     }
 

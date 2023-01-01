@@ -1,58 +1,55 @@
 package com.brahvim.nerd.scene_api;
 
 // `public` event callbacks. Can be called from anywhere-":D!
-public class EventReceiver {
-    protected EventReceiver() {
-    }
-
+public interface EventReceiver {
     // region Mouse events.
-    public void mousePressed() {
+    public default void mousePressed() {
     }
 
-    public void mouseReleased() {
+    public default void mouseReleased() {
     }
 
-    public void mouseMoved() {
+    public default void mouseMoved() {
     }
 
-    public void mouseClicked() {
+    public default void mouseClicked() {
     }
 
-    public void mouseDragged() {
+    public default void mouseDragged() {
     }
 
     // @SuppressWarnings("unused")
-    public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
+    public default void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
     }
     // endregion
 
     // region Keyboard events.
-    public void keyTyped() {
+    public default void keyTyped() {
     }
 
-    public void keyPressed() {
+    public default void keyPressed() {
     }
 
-    public void keyReleased() {
+    public default void keyReleased() {
     }
     // endregion
 
     // region Touch events.
-    public void touchStarted() {
+    public default void touchStarted() {
     }
 
-    public void touchMoved() {
+    public default void touchMoved() {
     }
 
-    public void touchEnded() {
+    public default void touchEnded() {
     }
     // endregion
 
     // region Window focus events.
-    public void focusLost() {
+    public default void focusLost() {
     }
 
-    public void focusGained() {
+    public default void focusGained() {
     }
     // endregion
 
