@@ -107,31 +107,31 @@ public class Sketch extends PApplet {
     // endregion
 
     // region Constructors, `settings()`...
-    public Sketch(SketchBuilder.SketchInitializer p_sketchInitializer) {
-        if (p_sketchInitializer == null) {
+    public Sketch(SketchBuilder.SketchKey p_sketchKey) {
+        if (p_sketchKey == null) {
             throw new IllegalArgumentException("""
                     Please use a `SketchBuilder` instance to make a `Sketch`!""");
         }
 
         this.SKETCH = this;
-        this.NAME = p_sketchInitializer.name;
-        this.iconPath = p_sketchInitializer.iconPath;
-        this.RENDERER = p_sketchInitializer.renderer;
+        this.NAME = p_sketchKey.name;
+        this.iconPath = p_sketchKey.iconPath;
+        this.RENDERER = p_sketchKey.renderer;
         this.DEFAULT_CAMERA = new NerdCameraBuilder(this).build();
-        this.FIRST_SCENE_CLASS = p_sketchInitializer.firstScene;
-        this.INITIALLY_RESIZABLE = p_sketchInitializer.canResize;
-        this.CAN_FULLSCREEN = !p_sketchInitializer.cannotFullscreen;
-        this.CLOSE_ON_ESCAPE = !p_sketchInitializer.dontCloseOnEscape;
-        this.F11_FULLSCREEN = !p_sketchInitializer.cannotF11Fullscreen;
-        this.STARTED_FULLSCREEN = p_sketchInitializer.startedFullscreen;
-        this.ALT_ENTER_FULLSCREEN = !p_sketchInitializer.cannotAltEnterFullscreen;
+        this.FIRST_SCENE_CLASS = p_sketchKey.firstScene;
+        this.INITIALLY_RESIZABLE = p_sketchKey.canResize;
+        this.CAN_FULLSCREEN = !p_sketchKey.cannotFullscreen;
+        this.CLOSE_ON_ESCAPE = !p_sketchKey.dontCloseOnEscape;
+        this.F11_FULLSCREEN = !p_sketchKey.cannotF11Fullscreen;
+        this.STARTED_FULLSCREEN = p_sketchKey.startedFullscreen;
+        this.ALT_ENTER_FULLSCREEN = !p_sketchKey.cannotAltEnterFullscreen;
 
         this.unprojector = new Unprojector();
         this.sceneMan = new SceneManager(this);
         this.currentCamera = this.DEFAULT_CAMERA;
         this.fullscreen = this.STARTED_FULLSCREEN;
 
-        for (Map.Entry<Class<? extends Scene>, Boolean> e : p_sketchInitializer.scenesToCache.entrySet()) {
+        for (Map.Entry<Class<? extends Scene>, Boolean> e : p_sketchKey.scenesToCache.entrySet()) {
             this.sceneMan.cacheScene(e.getKey(), e.getValue());
         }
 
@@ -139,8 +139,8 @@ public class Sketch extends PApplet {
             this.INIT_WIDTH = 800;
             this.INIT_HEIGHT = 600;
         } else {
-            this.INIT_WIDTH = p_sketchInitializer.width;
-            this.INIT_HEIGHT = p_sketchInitializer.height;
+            this.INIT_WIDTH = p_sketchKey.width;
+            this.INIT_HEIGHT = p_sketchKey.height;
         }
     }
 

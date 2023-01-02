@@ -97,7 +97,7 @@ public class SceneManager {
     // region `private` ~~/ `protected`~~ fields.
     private final HashMap<Class<? extends Scene>, SceneCache> SCENE_CACHE = new HashMap<>();
     private final SceneManager.SceneManagerSettings settings;
-    private final SceneManager.SceneKey sceneInitializer;
+    private final SceneManager.SceneKey sceneKey;
 
     /**
      * Keeping this just-in-case. It would otherwise be passed
@@ -114,13 +114,13 @@ public class SceneManager {
     public SceneManager(Sketch p_sketch) {
         this.SKETCH = p_sketch;
         this.settings = new SceneManagerSettings();
-        this.sceneInitializer = new SceneManager.SceneKey(this);
+        this.sceneKey = new SceneManager.SceneKey(this);
     }
 
     public SceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
-        this.sceneInitializer = new SceneManager.SceneKey(this);
+        this.sceneKey = new SceneManager.SceneKey(this);
     }
 
     // region Queries.
@@ -165,17 +165,17 @@ public class SceneManager {
 
     public void pre() {
         if (this.currentScene != null)
-            this.currentScene.runPre(this.sceneInitializer);
+            this.currentScene.runPre(this.sceneKey);
     }
 
     public void draw() {
         if (this.currentScene != null)
-            this.currentScene.runDraw(this.sceneInitializer);
+            this.currentScene.runDraw(this.sceneKey);
     }
 
     public void post() {
         if (this.currentScene != null)
-            this.currentScene.runPost(this.sceneInitializer);
+            this.currentScene.runPost(this.sceneKey);
     }
     // endregion
 
@@ -449,7 +449,7 @@ public class SceneManager {
     // If it ain't cached, start it normally. Tell me if it is cached.
     public boolean startFromCacheIfCan(Class<? extends Scene> p_sceneClass) {
         if (this.SCENE_CACHE.keySet().contains(p_sceneClass)) {
-            this.setScene(this.SCENE_CACHE.get(p_sceneClass).getCache(this.sceneInitializer));
+            this.setScene(this.SCENE_CACHE.get(p_sceneClass).getCache(this.sceneKey));
             return true;
         } else {
             System.out.println("Scene not found in cache. Starting the usual way.");
@@ -475,7 +475,7 @@ public class SceneManager {
         Scene toRet = null;
 
         try {
-            toRet = (Scene) p_sceneConstructor.newInstance(this.sceneInitializer);
+            toRet = (Scene) p_sceneConstructor.newInstance(this.sceneKey);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -522,7 +522,7 @@ public class SceneManager {
 
         this.previousSceneClass = this.currentSceneClass;
         if (this.previousSceneClass != null) {
-            this.currentScene.runOnSceneExit(this.sceneInitializer);
+            this.currentScene.runOnSceneExit(this.sceneKey);
 
             this.SCENE_CACHE.get(this.previousSceneClass).deleteCacheIfCan();
 
@@ -544,7 +544,7 @@ public class SceneManager {
     // Set the time, *then* call `SceneManager::runSetup()`.
     private void setupCurrentScene() {
         this.sceneStartMillis = this.SKETCH.millis();
-        this.currentScene.runSetup(this.sceneInitializer);
+        this.currentScene.runSetup(this.sceneKey);
     }
     // endregion
     // endregion

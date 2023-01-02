@@ -10,8 +10,9 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class TestScene1 extends Scene {
-    public TestScene1(SceneManager.SceneKey p_sceneInitializer) {
-        super(p_sceneInitializer,
+    public TestScene1(SceneManager.SceneKey p_sceneKey) {
+        super(p_sceneKey,
+                // Yes, these work in order:
                 BackgroundLayer.class,
                 BoxAnimationLayer.class,
                 RevolvingParticlesLayer.class);

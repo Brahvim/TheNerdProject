@@ -38,7 +38,7 @@ public class Scene implements EventReceiver {
    *
    * - Any instance of a layer WILL re-initialize the constructor reference. This
    * can be avoided by making the reference `static` (and also `private`, making
-   * it accessible only through a method checking for a `LayerInitializer`
+   * it accessible only through a method checking for a `LayerKey`
    * argument, since constructors cannot return anything), but we've already
    * decided not to do that.
    */
@@ -66,9 +66,9 @@ public class Scene implements EventReceiver {
 
   }
 
-  public Scene(SceneKey p_sceneInitializer) {
-    // this.SCENE_CLASS = p_sceneInitializer.getSceneClass();
-    this.MANAGER = p_sceneInitializer.getSceneManager();
+  public Scene(SceneKey p_sceneKey) {
+    // this.SCENE_CLASS = p_sceneKey.getSceneClass();
+    this.MANAGER = p_sceneKey.getSceneManager();
     this.SKETCH = this.MANAGER.getSketch();
 
     this.LAYER_CONSTRUCTORS = new HashMap<>();
@@ -76,9 +76,8 @@ public class Scene implements EventReceiver {
   }
 
   @SafeVarargs
-  public Scene(SceneKey p_sceneInitializer,
-      Class<? extends Layer>... p_layerClasses) {
-    this(p_sceneInitializer);
+  public Scene(SceneKey p_sceneKey, Class<? extends Layer>... p_layerClasses) {
+    this(p_sceneKey);
 
     for (Class<? extends Layer> c : p_layerClasses) {
       this.startLayer(c);
@@ -206,19 +205,19 @@ public class Scene implements EventReceiver {
 
   // region Anything callback-related, LOL.
   // region `SceneManager.SceneInitializer` app-workflow callback runners.
-  private void verifyInitializer(SceneManager.SceneKey p_sceneInitializer) {
-    if (p_sceneInitializer == null)
+  private void verifyInitializer(SceneManager.SceneKey p_sceneKey) {
+    if (p_sceneKey == null)
       throw new IllegalArgumentException(
           "`Scene::run()` should only be called by a `SceneManager`!");
   }
 
-  public void runOnSceneExit(SceneManager.SceneKey p_sceneInitializer) {
-    this.verifyInitializer(p_sceneInitializer);
+  public void runOnSceneExit(SceneManager.SceneKey p_sceneKey) {
+    this.verifyInitializer(p_sceneKey);
     this.onSceneExit();
   }
 
-  public void runSetup(SceneManager.SceneKey p_sceneInitializer) {
-    this.verifyInitializer(p_sceneInitializer);
+  public void runSetup(SceneManager.SceneKey p_sceneKey) {
+    this.verifyInitializer(p_sceneKey);
     this.setup();
 
     for (Layer l : this.LAYERS)
@@ -227,8 +226,8 @@ public class Scene implements EventReceiver {
           l.setup();
   }
 
-  public void runPre(SceneManager.SceneKey p_sceneInitializer) {
-    this.verifyInitializer(p_sceneInitializer);
+  public void runPre(SceneManager.SceneKey p_sceneKey) {
+    this.verifyInitializer(p_sceneKey);
     this.pre();
 
     for (Layer l : this.LAYERS)
@@ -237,8 +236,8 @@ public class Scene implements EventReceiver {
           l.pre();
   }
 
-  public void runDraw(SceneManager.SceneKey p_sceneInitializer) {
-    this.verifyInitializer(p_sceneInitializer);
+  public void runDraw(SceneManager.SceneKey p_sceneKey) {
+    this.verifyInitializer(p_sceneKey);
     for (Layer l : this.LAYERS)
       if (l != null)
         if (l.isActive()) {
@@ -256,8 +255,8 @@ public class Scene implements EventReceiver {
     this.SKETCH.popMatrix();
   }
 
-  public void runPost(SceneManager.SceneKey p_sceneInitializer) {
-    this.verifyInitializer(p_sceneInitializer);
+  public void runPost(SceneManager.SceneKey p_sceneKey) {
+    this.verifyInitializer(p_sceneKey);
     for (Layer l : this.LAYERS)
       if (l != null)
         if (l.isActive())

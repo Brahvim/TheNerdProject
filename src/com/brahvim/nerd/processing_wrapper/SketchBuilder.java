@@ -10,14 +10,14 @@ import processing.core.PConstants;
 public final class SketchBuilder {
     // region Fields, constructor, class `SketchInitializer`...
 
-    private SketchInitializer sketchInitializer;
+    private SketchKey sketchInitializer;
 
     public SketchBuilder() {
-        this.sketchInitializer = new SketchInitializer();
+        this.sketchInitializer = new SketchKey();
     }
 
     // Hmmm... "`SketchSettings`" instead..?
-    public class SketchInitializer {
+    public class SketchKey {
         public int width = 400, height = 400;
         public String renderer = PConstants.P3D, iconPath, name;
         public boolean dontCloseOnEscape, startedFullscreen, canResize,
@@ -25,7 +25,7 @@ public final class SketchBuilder {
         public Class<? extends Scene> firstScene;
         public HashMap<Class<? extends Scene>, Boolean> scenesToCache;
 
-        private SketchInitializer() {
+        private SketchKey() {
             this.scenesToCache = new HashMap<>();
         }
     }

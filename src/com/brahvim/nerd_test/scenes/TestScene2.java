@@ -7,8 +7,8 @@ import com.brahvim.nerd.scene_api.SceneManager;
 public class TestScene2 extends Scene {
     private SineWave boxHorizWave, boxVertWave;
 
-    public TestScene2(SceneManager.SceneKey p_sceneInitializer) {
-        super(p_sceneInitializer);
+    public TestScene2(SceneManager.SceneKey p_sceneKey) {
+        super(p_sceneKey);
     }
 
     @Override

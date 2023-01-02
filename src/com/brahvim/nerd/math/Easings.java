@@ -15,8 +15,14 @@ public class Easings {
         return (float) Math.sqrt(x * x * Math.cos(2 * theta));
     }
 
+    // Mine!:
     public static float exponentialSine(float x, float theta) {
         return (float) Math.pow(x, Math.sin(theta));
+    }
+
+    // Mine!:
+    public static float exponentialSine(float x) {
+        return (float) Math.pow(x, Math.sin(x));
     }
 
 }

@@ -4,8 +4,8 @@ import com.brahvim.nerd.scene_api.Scene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
 
 public class TestScene3 extends Scene {
-    public TestScene3(SceneKey p_sceneInitializer) {
-        super(p_sceneInitializer);
+    public TestScene3(SceneKey p_sceneKey) {
+        super(p_sceneKey);
     }
 
     @Override
