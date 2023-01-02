@@ -9,9 +9,9 @@ public abstract class VecUtilsPVector {
     }
 
     public static PVector rotate(PVector p_vec, float p_angleRad) {
-        PVector ret = new PVector(p_vec.x, p_vec.y, p_vec.z);
-        ret.rotate(p_angleRad);
-        return ret;
+        PVector toRet = new PVector(p_vec.x, p_vec.y, p_vec.z);
+        toRet.rotate(p_angleRad);
+        return toRet;
     }
 
     // region `vecLerp()` overloads.

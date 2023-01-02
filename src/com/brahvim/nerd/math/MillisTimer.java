@@ -8,14 +8,14 @@ public class MillisTimer {
         this.restart();
     }
 
-    public void restart() {
-        this.active = true;
-        this.startTime = System.currentTimeMillis();
-    }
-
     public void stop() {
         this.active = false;
         this.endTime = System.currentTimeMillis();
+    }
+
+    public void restart() {
+        this.active = true;
+        this.startTime = System.currentTimeMillis();
     }
 
     // region Duration getters.

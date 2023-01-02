@@ -27,7 +27,7 @@ public class Layer implements EventReceiver {
     // This isn't C#!
     // endregion
 
-    public Layer(Scene.LayerInitializer p_initializer) {
+    public Layer(Scene.LayerKey p_initializer) {
         this.SCENE = p_initializer.getScene();
         this.SKETCH = p_initializer.getSketch();
         this.MANAGER = this.SCENE.MANAGER;

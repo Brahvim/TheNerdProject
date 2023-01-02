@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import com.brahvim.nerd.processing_wrapper.Sketch;
-import com.brahvim.nerd.scene_api.SceneManager.SceneInitializer;
+import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
 
 /**
  * Do not use as anonymous classes!
@@ -44,14 +44,14 @@ public class Scene implements EventReceiver {
    */
 
   /* private */ protected final SceneManager MANAGER; // ~~Don't let the scene manage its `manager`!~~
-  private final LayerInitializer LAYER_INITIALIZER; // Don't let the scene manage its `manager`!
+  private final LayerKey LAYER_INITIALIZER; // Don't let the scene manage its `manager`!
   // endregion
 
-  public class LayerInitializer {
+  public class LayerKey {
     private final Scene SCENE;
     private final Sketch SKETCH;
 
-    private LayerInitializer(Scene p_scene, Sketch p_sketch) {
+    private LayerKey(Scene p_scene, Sketch p_sketch) {
       this.SCENE = p_scene;
       this.SKETCH = p_sketch;
     }
@@ -66,17 +66,17 @@ public class Scene implements EventReceiver {
 
   }
 
-  public Scene(SceneInitializer p_sceneInitializer) {
+  public Scene(SceneKey p_sceneInitializer) {
     // this.SCENE_CLASS = p_sceneInitializer.getSceneClass();
     this.MANAGER = p_sceneInitializer.getSceneManager();
     this.SKETCH = this.MANAGER.getSketch();
 
     this.LAYER_CONSTRUCTORS = new HashMap<>();
-    this.LAYER_INITIALIZER = new LayerInitializer(this, this.SKETCH);
+    this.LAYER_INITIALIZER = new LayerKey(this, this.SKETCH);
   }
 
   @SafeVarargs
-  public Scene(SceneInitializer p_sceneInitializer,
+  public Scene(SceneKey p_sceneInitializer,
       Class<? extends Layer>... p_layerClasses) {
     this(p_sceneInitializer);
 
@@ -96,27 +96,25 @@ public class Scene implements EventReceiver {
     // return null;
   }
 
-  public HashSet<Layer> getManyLayers(Class<? extends Layer> p_layerClass) {
+  public HashSet<Layer> getAllLayers(Class<? extends Layer> p_layerClass) {
     // Nobody's gunna do stuff like this. Ugh.
     // No matter what I do, its still gunna crash their program.
 
     // if (!this.hasLayerOfClass(p_layerClass))
     // return null;
 
-    HashSet<Layer> ret = new HashSet<>();
+    HashSet<Layer> toRet = new HashSet<>();
 
     for (Layer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass)) {
-        ret.add(l);
+        toRet.add(l);
       }
 
-    return ret;
+    return toRet;
   }
 
-  // TODO: Decide if `startLayer()` should be removed (or made `private`?).
-
   @SafeVarargs
-  public final void startLayers(Class<? extends Layer>... p_layerClasses) {
+  public final void startAllLayers(Class<? extends Layer>... p_layerClasses) {
     for (Class<? extends Layer> c : p_layerClasses) {
       this.startLayer(c);
     }
@@ -135,7 +133,7 @@ public class Scene implements EventReceiver {
 
     // region Getting the constructor.
     try {
-      layerConstructor = p_layerClass.getConstructor(Scene.LayerInitializer.class);
+      layerConstructor = p_layerClass.getConstructor(Scene.LayerKey.class);
     } catch (NoSuchMethodException e) {
       e.printStackTrace();
     } catch (SecurityException e) {
@@ -208,18 +206,18 @@ public class Scene implements EventReceiver {
 
   // region Anything callback-related, LOL.
   // region `SceneManager.SceneInitializer` app-workflow callback runners.
-  private void verifyInitializer(SceneManager.SceneInitializer p_sceneInitializer) {
+  private void verifyInitializer(SceneManager.SceneKey p_sceneInitializer) {
     if (p_sceneInitializer == null)
       throw new IllegalArgumentException(
           "`Scene::run()` should only be called by a `SceneManager`!");
   }
 
-  public void runOnSceneExit(SceneManager.SceneInitializer p_sceneInitializer) {
+  public void runOnSceneExit(SceneManager.SceneKey p_sceneInitializer) {
     this.verifyInitializer(p_sceneInitializer);
     this.onSceneExit();
   }
 
-  public void runSetup(SceneManager.SceneInitializer p_sceneInitializer) {
+  public void runSetup(SceneManager.SceneKey p_sceneInitializer) {
     this.verifyInitializer(p_sceneInitializer);
     this.setup();
 
@@ -229,7 +227,7 @@ public class Scene implements EventReceiver {
           l.setup();
   }
 
-  public void runPre(SceneManager.SceneInitializer p_sceneInitializer) {
+  public void runPre(SceneManager.SceneKey p_sceneInitializer) {
     this.verifyInitializer(p_sceneInitializer);
     this.pre();
 
@@ -239,7 +237,7 @@ public class Scene implements EventReceiver {
           l.pre();
   }
 
-  public void runDraw(SceneManager.SceneInitializer p_sceneInitializer) {
+  public void runDraw(SceneManager.SceneKey p_sceneInitializer) {
     this.verifyInitializer(p_sceneInitializer);
     for (Layer l : this.LAYERS)
       if (l != null)
@@ -258,7 +256,7 @@ public class Scene implements EventReceiver {
     this.SKETCH.popMatrix();
   }
 
-  public void runPost(SceneManager.SceneInitializer p_sceneInitializer) {
+  public void runPost(SceneManager.SceneKey p_sceneInitializer) {
     this.verifyInitializer(p_sceneInitializer);
     for (Layer l : this.LAYERS)
       if (l != null)

@@ -5,13 +5,13 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 /**
- * @apiNote Please use {@linkplain CameraBuilder} to get a camera instance.
+ * @apiNote Please use {@linkplain NerdCameraBuilder} to get a camera instance.
  */
-public class Camera {
+public class NerdCamera {
     // region Interface `Camera.Script`.
     @FunctionalInterface
     public interface Script {
-        public void onCamUpdate(Camera p_cam);
+        public void onCamUpdate(NerdCamera p_cam);
     }
     // endregion
 
@@ -23,13 +23,13 @@ public class Camera {
     public final PVector DEFAULT_CAM_UP, DEFAULT_CAM_POS, DEFAULT_CAM_CENTER;
     // endregion
 
-    public Camera.Script script;
+    public NerdCamera.Script script;
 
     public PVector pos, center, up;
-    public float fov = Camera.DEFAULT_CAM_FOV,
-            far = Camera.DEFAULT_CAM_FAR,
-            near = Camera.DEFAULT_CAM_NEAR,
-            mouseZ = Camera.DEFAULT_CAM_MOUSE_Z;
+    public float fov = NerdCamera.DEFAULT_CAM_FOV,
+            far = NerdCamera.DEFAULT_CAM_FAR,
+            near = NerdCamera.DEFAULT_CAM_NEAR,
+            mouseZ = NerdCamera.DEFAULT_CAM_MOUSE_Z;
 
     public int clearColor = 0, projection = PConstants.PERSPECTIVE;
     public boolean doScript = true, doAutoClear = true;
@@ -37,7 +37,7 @@ public class Camera {
     private Sketch parentSketch;
     // endregion
 
-    public Camera(Sketch p_sketch) {
+    public NerdCamera(Sketch p_sketch) {
         this.parentSketch = p_sketch;
 
         this.up = new PVector(0, 1, 0);
@@ -106,9 +106,9 @@ public class Camera {
         this.up.set(this.DEFAULT_CAM_UP);
         this.pos.set(this.DEFAULT_CAM_POS);
         this.center.set(this.DEFAULT_CAM_CENTER);
-        this.far = Camera.DEFAULT_CAM_FAR;
-        this.fov = Camera.DEFAULT_CAM_FOV;
-        this.near = Camera.DEFAULT_CAM_NEAR;
+        this.far = NerdCamera.DEFAULT_CAM_FAR;
+        this.fov = NerdCamera.DEFAULT_CAM_FOV;
+        this.near = NerdCamera.DEFAULT_CAM_NEAR;
     }
 
     public void completeReset() {
@@ -117,23 +117,23 @@ public class Camera {
         this.clearColor = 0;
         this.doScript = true;
         this.doAutoClear = true;
-        this.mouseZ = Camera.DEFAULT_CAM_MOUSE_Z;
+        this.mouseZ = NerdCamera.DEFAULT_CAM_MOUSE_Z;
         this.projection = PConstants.PERSPECTIVE;
     }
 
-    public Camera copy() {
-        Camera ret = new Camera(this.parentSketch);
+    public NerdCamera copy() {
+        NerdCamera toRet = new NerdCamera(this.parentSketch);
 
-        ret.up.set(this.up);
-        ret.pos.set(this.pos);
-        ret.center.set(this.center);
+        toRet.up.set(this.up);
+        toRet.pos.set(this.pos);
+        toRet.center.set(this.center);
 
-        ret.far = this.far;
-        ret.fov = this.fov;
-        ret.near = this.near;
+        toRet.far = this.far;
+        toRet.fov = this.fov;
+        toRet.near = this.near;
 
-        ret.script = this.script;
-        return ret;
+        toRet.script = this.script;
+        return toRet;
     }
     // endregion
 

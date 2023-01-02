@@ -1,11 +1,15 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.util.HashMap;
+
 import com.brahvim.nerd.scene_api.Scene;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 
-public class SketchBuilder {
+public final class SketchBuilder {
+    // region Fields, constructor, class `SketchInitializer`...
+
     private SketchInitializer sketchInitializer;
 
     public SketchBuilder() {
@@ -15,14 +19,17 @@ public class SketchBuilder {
     // Hmmm... "`SketchSettings`" instead..?
     public class SketchInitializer {
         public int width = 400, height = 400;
-        public String renderer = PConstants.P3D, name;
+        public String renderer = PConstants.P3D, iconPath, name;
         public boolean dontCloseOnEscape, startedFullscreen, canResize,
                 cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
         public Class<? extends Scene> firstScene;
+        public HashMap<Class<? extends Scene>, Boolean> scenesToCache;
 
         private SketchInitializer() {
+            this.scenesToCache = new HashMap<>();
         }
     }
+    // endregion
 
     public Sketch build(String[] p_javaMainArgs) {
         Sketch constructedSketch = new Sketch(this.sketchInitializer);
@@ -117,8 +124,36 @@ public class SketchBuilder {
     }
     // endregion
 
-    public SketchBuilder dontCloseOnEscape() {
+    // region Scene caching.
+    public SketchBuilder cacheScene(boolean p_isDeletable, Class<? extends Scene> p_sceneClass) {
+        if (p_sceneClass == null)
+            return this;
+
+        this.sketchInitializer.scenesToCache.put(p_sceneClass, p_isDeletable);
+        return this;
+    }
+
+    @SafeVarargs
+    public final SketchBuilder cacheAllScenes(Boolean p_isDeletable, Class<? extends Scene>... p_sceneClasses) {
+        if (p_sceneClasses == null)
+            return this;
+
+        for (Class<? extends Scene> c : p_sceneClasses) {
+            if (c == null)
+                continue;
+            this.sketchInitializer.scenesToCache.put(c, p_isDeletable);
+        }
+        return this;
+    }
+    // endregion
+
+    public SketchBuilder preventCloseOnEscape() {
         this.sketchInitializer.dontCloseOnEscape = true;
+        return this;
+    }
+
+    public SketchBuilder setIconPath(String p_pathString) {
+        this.sketchInitializer.iconPath = p_pathString;
         return this;
     }
 

@@ -4,17 +4,17 @@ import com.brahvim.nerd.scene_api.Scene;
 import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd_test.layers.BackgroundLayer;
 import com.brahvim.nerd_test.layers.BoxAnimationLayer;
-import com.brahvim.nerd_test.layers.MouseEllipseLayer;
+import com.brahvim.nerd_test.layers.RevolvingParticlesLayer;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class TestScene1 extends Scene {
-    public TestScene1(SceneManager.SceneInitializer p_sceneInitializer) {
+    public TestScene1(SceneManager.SceneKey p_sceneInitializer) {
         super(p_sceneInitializer,
                 BackgroundLayer.class,
                 BoxAnimationLayer.class,
-                MouseEllipseLayer.class);
+                RevolvingParticlesLayer.class);
 
         // super.startLayer(BackgroundLayer.class);
         // super.startLayer(BoxAnimationLayer.class);

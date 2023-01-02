@@ -16,6 +16,7 @@ public class SineWave {
      *          make the wave active!
      */
     public boolean active = true;
+    private boolean pactive = false;
 
     /**
      * Makes {@code SineWave::get()} output {@code 0} when the wave has
@@ -35,6 +36,7 @@ public class SineWave {
      */
     public boolean absoluteValue;
 
+    private Runnable onEnd;
     private Sketch parentSketch;
     // endregion
 
@@ -68,6 +70,16 @@ public class SineWave {
 
     public void start(float p_angleOffset) {
         this.aliveTime = 0;
+        this.angleOffset = p_angleOffset;
+    }
+
+    public void start(Runnable p_onEnd) {
+        this.onEnd = p_onEnd;
+    }
+
+    public void start(float p_angleOffset, Runnable p_onEnd) {
+        this.aliveTime = 0;
+        this.onEnd = p_onEnd;
         this.angleOffset = p_angleOffset;
     }
 
@@ -139,19 +151,26 @@ public class SineWave {
     }
 
     public float get() {
+        this.pactive = this.active;
         this.active = this.aliveTime <= this.endTime;
 
         if (this.active)
             this.aliveTime += this.parentSketch.frameTime;
         // ^^^ `frameTime` comes from "the Engine" by the way. (Hey - that's "Nerd"!)
-        else if (this.zeroWhenInactive)
-            return 0;
+        else { // If no longer active,
+            if (this.pactive)
+                if (this.onEnd != null)
+                    this.onEnd.run();
+
+            if (this.zeroWhenInactive)
+                return 0;
+        }
 
         this.freq = this.aliveTime * this.freqMult + this.angleOffset;
         // That looked like a matrix calculation LOL.
 
-        float ret = (float) Math.sin(this.freq);
-        return this.absoluteValue ? Math.abs(ret) : ret;
+        float toRet = (float) Math.sin(this.freq);
+        return this.absoluteValue ? Math.abs(toRet) : toRet;
     }
     // endregion
 

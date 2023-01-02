@@ -355,18 +355,18 @@ public class UdpSocket {
      * @return A {@code java.net.DatagramSocket}.
      */
     public static DatagramSocket createSocketForcingPort(int p_port, int p_timeout) {
-        DatagramSocket ret = null;
+        DatagramSocket toRet = null;
 
         try {
-            ret = new DatagramSocket(null);
-            ret.setReuseAddress(true);
-            ret.bind(new InetSocketAddress(p_port));
-            ret.setSoTimeout(p_timeout);
+            toRet = new DatagramSocket(null);
+            toRet.setReuseAddress(true);
+            toRet.bind(new InetSocketAddress(p_port));
+            toRet.setSoTimeout(p_timeout);
         } catch (SocketException e) {
             e.printStackTrace();
         }
 
-        return ret;
+        return toRet;
     }
     // endregion
 
