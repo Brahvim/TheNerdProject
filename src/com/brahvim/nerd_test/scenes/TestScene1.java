@@ -24,7 +24,9 @@ public class TestScene1 extends Scene {
 
     @Override
     protected void draw() {
-        SKETCH.text("Scene `1`!", SKETCH.cx, SKETCH.cy);
+        SKETCH.text("Scene `1`!",
+                SKETCH.cx, SKETCH.cy + PApplet.sin(SKETCH.millis() * 0.005f) * 25);
+        // SKETCH.cx, SKETCH.cy + PApplet.sin(SKETCH.millis() * 0.0125f) * 25);
         SKETCH.currentCamera.pos.z = PApplet.abs(PApplet.sin(SKETCH.millis() *
                 0.001f)) * 500;
 

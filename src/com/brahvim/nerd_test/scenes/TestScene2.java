@@ -25,8 +25,8 @@ public class TestScene2 extends Scene {
         SKETCH.in2d(() -> SKETCH.alphaBg(0, 102, 153, 100));
         // SKETCH.background(0x006699);
 
-        if (SKETCH.frameCount % 150 == 0)
-            System.out.println(SKETCH.frameRate);
+        // if (SKETCH.frameCount % 150 == 0)
+        // System.out.println(SKETCH.frameRate);
 
         SKETCH.translate(SKETCH.cx, SKETCH.cy);
         SKETCH.text("Scene `2`!", 0, 0);

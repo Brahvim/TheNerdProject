@@ -130,6 +130,7 @@ public class Sketch extends PApplet {
         this.sceneMan = new SceneManager(this);
         this.currentCamera = this.DEFAULT_CAMERA;
         this.fullscreen = this.STARTED_FULLSCREEN;
+        this.pfullscreen = !this.fullscreen;
 
         for (Map.Entry<Class<? extends Scene>, Boolean> e : p_sketchKey.scenesToCache.entrySet()) {
             this.sceneMan.cacheScene(e.getKey(), e.getValue());
@@ -217,28 +218,33 @@ public class Sketch extends PApplet {
         if (this.currentCamera != null)
             this.currentCamera.apply();
 
+        if (this.pkey != super.key)
+            System.out.println(this.pkey);
+
+        if (this.pfullscreen != this.fullscreen) {
+            this.centerWindow();
+        }
+
         this.sceneMan.draw();
     }
 
     public void post() {
+        this.pkey = super.key;
         this.pwidth = this.width;
         this.pheight = this.height;
-        this.pfocused = this.focused;
-
         this.pmouse.set(this.mouse);
+        this.pfocused = this.focused;
+        this.pkeyCode = this.keyCode;
         this.pmouseMid = this.mouseMid;
         this.pmouseLeft = this.mouseLeft;
         this.pmouseRight = this.mouseRight;
+        this.pfullscreen = this.fullscreen;
+        this.pkeyPressed = super.keyPressed;
         this.pmouseButton = this.mouseButton;
         this.pmouseScroll = this.mouseScroll;
-        this.pmouseScrollDelta = this.mouseScrollDelta;
-
-        this.pkey = super.key;
-        this.pkeyCode = this.keyCode;
-        this.pkeyPressed = super.keyPressed;
         this.pmousePressed = super.mousePressed;
-
         this.previousCamera = this.currentCamera;
+        this.pmouseScrollDelta = this.mouseScrollDelta;
 
         // Fullscreen control:
         switch (this.RENDERER) {
@@ -250,8 +256,6 @@ public class Sketch extends PApplet {
                 break;
 
             case PConstants.P3D:
-                this.pfullscreen = this.fullscreen;
-
                 // if (this.pfullscreen != this.fullscreen) {
                 this.glWindow.setFullscreen(this.fullscreen);
                 while (this.fullscreen ? !this.glWindow.isFullscreen() : this.glWindow.isFullscreen())
@@ -423,12 +427,12 @@ public class Sketch extends PApplet {
         int winX = (int) (super.displayWidth * 0.5f - this.cx),
                 winY = (int) (super.displayHeight * 0.5f - this.cy);
 
-        // switch (this.RENDERER) {
-        // case PConstants.P3D -> this.glWindow.setPosition(winX, winY);
-        // default -> super.surface.setLocation(winX, winY);
-        // }
+        switch (this.RENDERER) {
+            case PConstants.P3D -> this.glWindow.setPosition(winX, winY);
+            default -> super.surface.setLocation(winX, winY);
+        }
 
-        super.surface.setLocation(winX, winY);
+        // super.surface.setLocation(winX, winY);
         // (Well, changing the display does NOT effect those variables in any way :|)
     }
 

@@ -60,8 +60,8 @@ public class RevolvingParticlesLayer extends Layer {
 
     @Override
     protected void draw() {
-        if (SKETCH.frameCount % 60 == 0)
-            System.out.println(SKETCH.frameRate);
+        // if (SKETCH.frameCount % 150 == 0)
+        // System.out.println(SKETCH.frameRate);
 
         // SKETCH.translate(0, 0,
         // -(SKETCH.currentCamera.pos.z + SKETCH.currentCamera.center.z));
