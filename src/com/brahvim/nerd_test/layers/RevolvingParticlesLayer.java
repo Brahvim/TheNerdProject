@@ -10,8 +10,8 @@ import processing.core.PGraphics;
 
 public class RevolvingParticlesLayer extends Layer {
     private PGraphics particleGraphics;
-    private final int PARTICLE_SIZE = 120,
-            PARTICLE_CONC = 20,
+    private final int PARTICLE_SIZE = 60,
+            PARTICLE_CONC = 200,
             PARTICLE_SIZE_HALF = this.PARTICLE_SIZE / 2;
 
     private final int BPM = 100,
@@ -69,12 +69,12 @@ public class RevolvingParticlesLayer extends Layer {
 
         SKETCH.translate(SKETCH.cx, SKETCH.cy);
         for (int i = 0; i < 20; i++) {
-            float angle = PConstants.TAU / i;
+            // float angle = PConstants.TAU / i;
             SKETCH.rotate(this.tickCount);
 
             SKETCH.image(this.particleGraphics,
-                    PApplet.cos(PConstants.TAU * SKETCH.millis() * 0.0000016f * this.BPM) * i * 12,
-                    PApplet.tan(PConstants.TAU * SKETCH.millis() * 0.0000016f * this.BPM) * i * 12,
+                    PApplet.cos(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * this.BPM) * i * 12,
+                    PApplet.tan(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * this.BPM) * i * 12,
                     0.5f);
 
             // It doesn't even move ._.
