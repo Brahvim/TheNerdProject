@@ -3,6 +3,7 @@ package com.brahvim.nerd_test.layers;
 import com.brahvim.nerd.math.Easings;
 import com.brahvim.nerd.scene_api.Layer;
 import com.brahvim.nerd.scene_api.Scene.LayerKey;
+import com.brahvim.nerd_test.App;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -13,12 +14,6 @@ public class RevolvingParticlesLayer extends Layer {
     private final int PARTICLE_SIZE = 60,
             PARTICLE_CONC = 200,
             PARTICLE_SIZE_HALF = this.PARTICLE_SIZE / 2;
-
-    private final int BPM = 100,
-            BPM_INT = (int) (this.BPM / 60_000.0f);
-
-    private boolean tick;
-    private int tickCount;
 
     public RevolvingParticlesLayer(LayerKey p_initializer) {
         super(p_initializer);
@@ -48,14 +43,6 @@ public class RevolvingParticlesLayer extends Layer {
         this.particleGraphics = g;
         // endregion
 
-        final RevolvingParticlesLayer LAYER = this;
-        new Thread(() -> {
-            SKETCH.delay(BPM_INT);
-
-            LAYER.tick = true;
-            LAYER.tickCount++;
-        }).start();
-
     }
 
     @Override
@@ -70,11 +57,11 @@ public class RevolvingParticlesLayer extends Layer {
         SKETCH.translate(SKETCH.cx, SKETCH.cy);
         for (int i = 0; i < 20; i++) {
             // float angle = PConstants.TAU / i;
-            SKETCH.rotate(this.tickCount);
+            SKETCH.rotate(App.getTickCount());
 
             SKETCH.image(this.particleGraphics,
-                    PApplet.cos(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * this.BPM) * i * 12,
-                    PApplet.tan(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * this.BPM) * i * 12,
+                    PApplet.cos(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * App.BPM) * i * 12,
+                    PApplet.tan(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * App.BPM) * i * 12,
                     0.5f);
 
             // It doesn't even move ._.
