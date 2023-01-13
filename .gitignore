@@ -1,3 +1,9 @@
 /.vscode
 /bin
 /README.md
+
+# Uhhh, this would also remove future libraries!:
+#./*.jar
+
+# Ahh, this is better:
+TheNerdProject.jar

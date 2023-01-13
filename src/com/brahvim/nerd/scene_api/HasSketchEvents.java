@@ -1,7 +1,35 @@
 package com.brahvim.nerd.scene_api;
 
-// `public` event callbacks. Can be called from anywhere-":D!
-public interface EventReceiver {
+// `public` event callbacks. Can be called from anywhere - ":D!
+// (But this interface remains at `package` level!)
+/*
+ * (Nobody will NEED this, that's why.)
+ * (Thus-it-must, remain here.)
+ * (...right?!)
+ * (Hello?!)
+ */
+
+// And yes, NAMING. *I tried* (literally, the following!:).
+/*
+ * Original name: `EventReceiver`!
+ * "UnregisteredAllSketchEventsListenerv",
+ * "AnonSketchEventsListener",
+ * "UnregisteredSketchEventsListener",
+ * "ImplementsSketchEvents",
+ * "ProbablyHasSketchEvents",
+ * "ProllyHasSketchEvents",
+ * "EventListener",
+ * "SketchEventListener",
+ * "NerdEvtListener",
+ * "NerdEventListener",
+ * "HasSketchEventsForSomeReason",
+ * "HasSketchEvents".
+ *
+ * See? I really DID try!
+ */
+
+// ...remember - not `public`. `package`!
+/*sealed*/ interface HasSketchEvents /* permits Scene, Layer */ { // "Ceiling bab iDiya?", "Yaaaa!"!
     // region Mouse events.
     public default void mousePressed() {
     }

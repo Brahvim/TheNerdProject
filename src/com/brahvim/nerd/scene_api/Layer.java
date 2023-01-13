@@ -13,7 +13,7 @@ import com.brahvim.nerd.processing_wrapper.Sketch;
  *
  * @author Brahvim Bhaktvatsal
  */
-public class Layer implements EventReceiver {
+public class Layer implements HasSketchEvents {
     // region `protected` fields.
     protected final Scene SCENE;
     protected final Sketch SKETCH;
