@@ -16,6 +16,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -39,6 +40,100 @@ import processing.opengl.PGraphics3D;
 import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
+    // region Listener abstract classes.
+    // Used classes instead of interfaces for these (two) reasons:
+    /*
+     * - No security for `ALL` from the user! It'll have to be `public`!
+     * - Registering code becomes modifiable!
+     */
+
+    public abstract class SketchMouseListener {
+
+        public SketchMouseListener() {
+            SKETCH.ALL_MOUSE_LISTENERS.add(this);
+        }
+
+        // region Mouse events.
+        public void mousePressed() {
+        }
+
+        public void mouseReleased() {
+        }
+
+        public void mouseMoved() {
+        }
+
+        public void mouseClicked() {
+        }
+
+        public void mouseDragged() {
+        }
+
+        // @SuppressWarnings("unused")
+        public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
+        }
+        // endregion
+
+    }
+
+    public abstract class SketchTouchListener {
+
+        public SketchTouchListener() {
+            SKETCH.ALL_TOUCH_LISTENERS.add(this);
+        }
+
+        // region Touch events.
+        public void touchStarted() {
+        }
+
+        public void touchMoved() {
+        }
+
+        public void touchEnded() {
+        }
+        // endregion
+
+    }
+
+    public abstract class SketchWindowListener {
+
+        public SketchWindowListener() {
+            SKETCH.ALL_WINDOW_LISTENERS.add(this);
+        }
+
+        // region Window focus events.
+        public void resized() {
+        }
+
+        public void focusLost() {
+        }
+
+        public void focusGained() {
+        }
+        // endregion
+
+    }
+
+    public abstract class SketchKeyboardListener {
+
+        public SketchKeyboardListener() {
+            SKETCH.ALL_KEYBOARD_LISTENERS.add(this);
+        }
+
+        // region Keyboard events.
+        public void keyTyped() {
+        }
+
+        public void keyPressed() {
+        }
+
+        public void keyReleased() {
+        }
+        // endregion
+
+    }
+    // endregion
+
     // region `public` fields.
     // region Constants.
     public final static File EXEC_DIR = new File("");
@@ -104,6 +199,13 @@ public class Sketch extends PApplet {
     private SceneManager sceneMan;
     private final Unprojector unprojector;
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
+    // endregion
+
+    // region Listeners sets!
+    private final HashSet<SketchMouseListener> ALL_MOUSE_LISTENERS = new HashSet<>();
+    private final HashSet<SketchTouchListener> ALL_TOUCH_LISTENERS = new HashSet<>();
+    private final HashSet<SketchWindowListener> ALL_WINDOW_LISTENERS = new HashSet<>();
+    private final HashSet<SketchKeyboardListener> ALL_KEYBOARD_LISTENERS = new HashSet<>();
     // endregion
 
     // region Constructors, `settings()`...
@@ -195,8 +297,14 @@ public class Sketch extends PApplet {
     }
 
     public void pre() {
-        if (!(this.pwidth == super.width || this.pheight == super.height))
+        // When the window is resized, do the following!:
+        if (!(this.pwidth == super.width || this.pheight == super.height)) {
             this.updateRatios();
+
+            for (SketchWindowListener l : this.ALL_WINDOW_LISTENERS) {
+                l.resized();
+            }
+        }
 
         this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
         this.mouse.set(super.mouseX, super.mouseY);
@@ -279,23 +387,33 @@ public class Sketch extends PApplet {
     // region Processing's event callbacks! REMEMBER `this.sceneMan`! :joy:
     // region Mouse events.
     public void mousePressed() {
-        this.sceneMan.mousePressed();
+        for (SketchMouseListener l : this.ALL_MOUSE_LISTENERS) {
+            l.mousePressed();
+        }
     }
 
     public void mouseReleased() {
-        this.sceneMan.mouseReleased();
+        for (SketchMouseListener l : this.ALL_MOUSE_LISTENERS) {
+            l.mouseReleased();
+        }
     }
 
     public void mouseMoved() {
-        this.sceneMan.mouseMoved();
+        for (SketchMouseListener l : this.ALL_MOUSE_LISTENERS) {
+            l.mouseMoved();
+        }
     }
 
     public void mouseClicked() {
-        this.sceneMan.mouseClicked();
+        for (SketchMouseListener l : this.ALL_MOUSE_LISTENERS) {
+            l.mouseClicked();
+        }
     }
 
     public void mouseDragged() {
-        this.sceneMan.mouseDragged();
+        for (SketchMouseListener l : this.ALL_MOUSE_LISTENERS) {
+            l.mouseDragged();
+        }
     }
 
     // @SuppressWarnings("unused")
@@ -306,7 +424,10 @@ public class Sketch extends PApplet {
 
     // region Keyboard events.
     public void keyTyped() {
-        this.sceneMan.keyTyped();
+        // TODO: Filter these keys using the utility methods?
+        for (SketchKeyboardListener l : this.ALL_KEYBOARD_LISTENERS) {
+            l.keyTyped();
+        }
     }
 
     public void keyPressed() {
@@ -335,7 +456,10 @@ public class Sketch extends PApplet {
         }
 
         this.keysHeld.add(super.keyCode);
-        this.sceneMan.keyPressed();
+
+        for (SketchKeyboardListener l : this.ALL_KEYBOARD_LISTENERS) {
+            l.keyPressed();
+        }
     }
 
     public void keyReleased() {
@@ -343,21 +467,30 @@ public class Sketch extends PApplet {
             this.keysHeld.remove(super.keyCode);
         } catch (IndexOutOfBoundsException e) {
         }
-        this.sceneMan.keyReleased();
+
+        for (SketchKeyboardListener l : this.ALL_KEYBOARD_LISTENERS) {
+            l.keyReleased();
+        }
     }
     // endregion
 
     // region Touch events.
     public void touchStarted() {
-        this.sceneMan.touchStarted();
+        for (SketchTouchListener l : this.ALL_TOUCH_LISTENERS) {
+            l.touchStarted();
+        }
     }
 
     public void touchMoved() {
-        this.sceneMan.touchMoved();
+        for (SketchTouchListener l : this.ALL_TOUCH_LISTENERS) {
+            l.touchMoved();
+        }
     }
 
     public void touchEnded() {
-        this.sceneMan.touchEnded();
+        for (SketchTouchListener l : this.ALL_TOUCH_LISTENERS) {
+            l.touchEnded();
+        }
     }
     // endregion
 
@@ -372,7 +505,9 @@ public class Sketch extends PApplet {
         // `handleDraw()`,
         // which is probably when events are handled:
         if (!super.isLooping())
-            this.sceneMan.focusGained();
+            for (SketchWindowListener l : this.ALL_WINDOW_LISTENERS) {
+                l.focusGained();
+            }
     }
 
     @Override
@@ -385,7 +520,9 @@ public class Sketch extends PApplet {
         // `handleDraw()`,
         // which is probably when events are handled:
         if (!super.isLooping())
-            this.sceneMan.focusLost();
+            for (SketchWindowListener l : this.ALL_WINDOW_LISTENERS) {
+                l.focusLost();
+            }
     }
     // endregion
     // endregion
@@ -440,6 +577,16 @@ public class Sketch extends PApplet {
     // region From `PGraphics`.
     public void translate(PVector p_translation) {
         super.translate(p_translation.x, p_translation.y, p_translation.z);
+    }
+
+    public void scale(PVector p_scalingVector) {
+        super.scale(p_scalingVector.x, p_scalingVector.y, p_scalingVector.z);
+    }
+
+    public void rotate(PVector p_rotationVector) {
+        super.rotateX(p_rotationVector.x);
+        super.rotateY(p_rotationVector.y);
+        super.rotateZ(p_rotationVector.z);
     }
 
     public void camera(NerdCamera p_cam) {
@@ -916,7 +1063,7 @@ public class Sketch extends PApplet {
     }
 
     // Used by `Sketch::createSketchPanel()`:
-    public void updateSketchMouse() {
+    private void updateSketchMouse() {
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         super.mouseX = mousePoint.x - this.sketchFrame.getLocation().x;
         super.mouseY = mousePoint.y - this.sketchFrame.getLocation().y;

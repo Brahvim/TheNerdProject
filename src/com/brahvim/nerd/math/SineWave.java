@@ -4,7 +4,18 @@ import com.brahvim.nerd.processing_wrapper.Sketch;
 
 public class SineWave {
     // region Fields.
-    public float angleOffset, freqMult, freq;
+    public float freq;
+    public float angleOffset;
+    /**
+     * Returned by {@code SineWave::get()} if {@code SineWave::useInactValue} is
+     * {@code true}.
+     */
+    public float inactValue = 0;
+    /**
+     * @apiNote {@code 0.001f} by default.
+     */
+    public float freqMult = 0.001f;
+
     private float endTime = Float.MAX_VALUE - 1, aliveTime;
 
     /**
@@ -19,12 +30,15 @@ public class SineWave {
     private boolean pactive = false;
 
     /**
-     * Makes {@code SineWave::get()} output {@code 0} when the wave has
-     * ended - AKA, when {@code SineWave::active} turns {@code false}.
+     * Makes {@code SineWave::get()} output {@code SineWave::inactValue} when the
+     * wave has ended - AKA, when {@code SineWave::active} turns {@code false}.
      *
-     * @apiNote {@code false} by default.
+     * @apiNote {@code true} by default. <br>
+     *          <br>
+     *          {@code SineWave::inactValue} is {@code 0}
+     *          by default.
      */
-    public boolean zeroWhenInactive;
+    public boolean useInactValue = true;
 
     /**
      * Makes {@code SineWave::get()} output its absolute value. This may make the
@@ -34,7 +48,7 @@ public class SineWave {
      *
      * @apiNote {@code false} by default.
      */
-    public boolean absoluteValue;
+    public boolean absoluteValue = false;
 
     private Runnable onEnd;
     private Sketch parentSketch;
@@ -64,45 +78,53 @@ public class SineWave {
     // endregion
 
     // region `start()` overloads and `setAngleOffset()`.
-    public void start() {
+    public SineWave start() {
         this.aliveTime = 0;
+        return this;
     }
 
-    public void start(float p_angleOffset) {
+    public SineWave start(float p_angleOffset) {
         this.aliveTime = 0;
         this.angleOffset = p_angleOffset;
+        return this;
     }
 
-    public void start(Runnable p_onEnd) {
+    public SineWave start(Runnable p_onEnd) {
         this.onEnd = p_onEnd;
+        return this;
     }
 
-    public void start(float p_angleOffset, Runnable p_onEnd) {
-        this.aliveTime = 0;
+    public SineWave start(float p_angleOffset, Runnable p_onEnd) {
+        this.angleOffset = p_angleOffset;
         this.onEnd = p_onEnd;
-        this.angleOffset = p_angleOffset;
+        this.aliveTime = 0;
+        return this;
     }
 
-    public void setAngleOffset(float p_angleOffset) {
+    public SineWave setAngleOffset(float p_angleOffset) {
         this.angleOffset = p_angleOffset;
+        return this;
     }
     // endregion
 
     // region End and extend!
-    public void end() {
+    public SineWave end() {
         this.endTime = 0;
+        return this;
     }
 
-    public void endIn(float p_millis) {
+    public SineWave endIn(float p_millis) {
         this.endTime = this.aliveTime + p_millis;
+        return this;
     }
 
-    public void endWhenAngleIs(float p_angle) {
+    public SineWave endWhenAngleIs(float p_angle) {
         // Of course this magic-number stuff won't work everytime! REPLACE THIS?!
         // ~~(Also because... any multiple of `0.25` less than `1` works...)~~
         // Oh hey! That looks perfect!:
         this.endTime = 0.9f * // <--- The magic number!.
                 Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) / this.freqMult);
+        return this;
 
         // Was an idea to avoid I don't get negative values and the frequency doesn't
         // double - but I didn't use it.. don't ask me why :joy::
@@ -124,14 +146,30 @@ public class SineWave {
         // System.out.println(this.endTime);
     }
 
-    public void extendEndBy(float p_millis) {
-        this.endTime += p_millis;
+    /**
+     * Method to put the wave at given angle in given time.
+     */
+    public SineWave endWhenAngleIs(float p_angle, float p_before) {
+        this.endWhenAngleIs(p_angle);
+
+        if (this.endTime < this.aliveTime + p_before) {
+            this.endTime -= p_before;
+            return this;
+        } else // If they're equal, this still takes place!
+            return this.end();
+
     }
 
-    public void extendEndByAngle(float p_angle) {
+    public SineWave extendEndBy(float p_millis) {
+        this.endTime += p_millis;
+        return this;
+    }
+
+    public SineWave extendEndByAngle(float p_angle) {
         this.endTime += 0.9f *
                 Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) / this.freqMult)
                 - this.endTime;
+        return this;
 
         // this.endTime += (p_angle * (p_angle * this.freqMult) - this.angleOffset);
     }
@@ -162,8 +200,8 @@ public class SineWave {
                 if (this.onEnd != null)
                     this.onEnd.run();
 
-            if (this.zeroWhenInactive)
-                return 0;
+            if (this.useInactValue)
+                return this.inactValue;
         }
 
         this.freq = this.aliveTime * this.freqMult + this.angleOffset;

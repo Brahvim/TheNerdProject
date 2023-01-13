@@ -11,8 +11,7 @@ import processing.core.PGraphics;
 
 public class RevolvingParticlesLayer extends Layer {
     private PGraphics particleGraphics;
-    private final int PARTICLE_SIZE = 60,
-            PARTICLE_CONC = 200,
+    private final int PARTICLE_SIZE = 60, PARTICLE_CONC = 200,
             PARTICLE_SIZE_HALF = this.PARTICLE_SIZE / 2;
 
     public RevolvingParticlesLayer(LayerKey p_initializer) {

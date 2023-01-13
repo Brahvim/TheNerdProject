@@ -4,6 +4,7 @@ import com.brahvim.nerd.processing_wrapper.Sketch;
 import com.brahvim.nerd.processing_wrapper.SketchBuilder;
 import com.brahvim.nerd_test.scenes.TestScene1;
 import com.brahvim.nerd_test.scenes.TestScene2;
+import com.brahvim.nerd_test.scenes.TestScene3;
 
 import processing.opengl.PJOGL;
 
@@ -22,8 +23,8 @@ public class App {
                 .setFirstScene(TestScene1.class)
                 // .setIcon("path/to/icon")
                 // .cacheScene(true, TestScene1.class)
-                .cacheAllScenes(true,
-                        TestScene1.class, TestScene2.class)
+                // .cacheAllScenes(true,
+                // TestScene1.class, TestScene2.class)
                 .startFullscreen()
                 .canResize()
                 .build(p_args);

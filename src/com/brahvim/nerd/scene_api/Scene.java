@@ -20,6 +20,8 @@ public class Scene implements EventReceiver {
   protected final Scene SCENE = this;
   protected final Sketch SKETCH;
 
+  // Would've used a `LinkedHashSet`, but am using `ArrayList`s instead since
+  // duplicates won't be allowed.
   private final ArrayList<Layer> LAYERS = new ArrayList<>();
   private final HashMap<Class<? extends Layer>, Constructor<? extends Layer>> LAYER_CONSTRUCTORS;
   /*

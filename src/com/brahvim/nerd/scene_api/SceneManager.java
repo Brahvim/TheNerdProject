@@ -96,8 +96,7 @@ public class SceneManager {
 
     // region `private` ~~/ `protected`~~ fields.
     private final HashMap<Class<? extends Scene>, SceneCache> SCENE_CACHE = new HashMap<>();
-    private final SceneManager.SceneManagerSettings settings;
-    private final SceneManager.SceneKey sceneKey;
+    private final SceneManager.SceneKey SCENE_KEY;
 
     /**
      * Keeping this just-in-case. It would otherwise be passed
@@ -106,21 +105,101 @@ public class SceneManager {
      */
     private final Sketch SKETCH;
 
+    // region Sketch Event Listeners.
+    private final Sketch.SketchMouseListener MOUSE_LISTENER;
+    private final Sketch.SketchTouchListener TOUCH_LISTENER;
+    private final Sketch.SketchWindowListener WINDOW_LISTENER;
+    private final Sketch.SketchKeyboardListener KEYBOARD_LISTENER;
+    // endregion
+
     private Class<? extends Scene> currentSceneClass, previousSceneClass;
-    private Scene currentScene;
+    private SceneManager.SceneManagerSettings settings;
     private int sceneStartMillis;
+    private Scene currentScene;
     // endregion
 
     public SceneManager(Sketch p_sketch) {
         this.SKETCH = p_sketch;
         this.settings = new SceneManagerSettings();
-        this.sceneKey = new SceneManager.SceneKey(this);
+        this.SCENE_KEY = new SceneManager.SceneKey(this);
+
+        final SceneManager SCENE_MAN = this;
+
+        // region Sketch Event Listeners initialization.
+        this.MOUSE_LISTENER = this.SKETCH.new SketchMouseListener() {
+            @Override
+            public void mouseClicked() {
+                SCENE_MAN.mouseClicked();
+            }
+
+            @Override
+            public void mouseDragged() {
+                SCENE_MAN.mouseDragged();
+            }
+
+            @Override
+            public void mouseReleased() {
+                SCENE_MAN.mouseReleased();
+            }
+        };
+
+        this.TOUCH_LISTENER = this.SKETCH.new SketchTouchListener() {
+            @Override
+            public void touchStarted() {
+                SCENE_MAN.touchStarted();
+            }
+
+            @Override
+            public void touchMoved() {
+                SCENE_MAN.touchMoved();
+            }
+
+            @Override
+            public void touchEnded() {
+                SCENE_MAN.touchEnded();
+            }
+        };
+
+        this.WINDOW_LISTENER = this.SKETCH.new SketchWindowListener() {
+            @Override
+            public void focusGained() {
+                SCENE_MAN.focusGained();
+            }
+
+            @Override
+            public void focusLost() {
+                SCENE_MAN.focusLost();
+            }
+
+            @Override
+            public void resized() {
+                SCENE_MAN.resized();
+            }
+        };
+
+        this.KEYBOARD_LISTENER = this.SKETCH.new SketchKeyboardListener() {
+            @Override
+            public void keyPressed() {
+                SCENE_MAN.keyPressed();
+            }
+
+            @Override
+            public void keyTyped() {
+                SCENE_MAN.keyTyped();
+            }
+
+            @Override
+            public void keyReleased() {
+                SCENE_MAN.keyReleased();
+            }
+        };
+        // endregion
+
     }
 
     public SceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
-        this.SKETCH = p_sketch;
+        this(p_sketch);
         this.settings = p_settings;
-        this.sceneKey = new SceneManager.SceneKey(this);
     }
 
     // region Queries.
@@ -136,9 +215,10 @@ public class SceneManager {
     public HashSet<Class<? extends Scene>> knownScenes() {
         // Here's what's happening here:
 
-        // HashSet<Class<? extends Scene>> toRet = (HashSet<Class<? extends Scene>>)
+        // HashSet<Class<? extends Scene>> toRetCloneOf = (HashSet<Class<? extends
+        // Scene>>)
         // this.SCENE_CACHE.keySet();
-        // return (HashSet<Class<? extends Scene>>) toRet.clone();
+        // return (HashSet<Class<? extends Scene>>) toRetCloneOf.clone();
 
         // Cast the `keySet`, clone it, and cast the clone:
 
@@ -165,17 +245,17 @@ public class SceneManager {
 
     public void pre() {
         if (this.currentScene != null)
-            this.currentScene.runPre(this.sceneKey);
+            this.currentScene.runPre(this.SCENE_KEY);
     }
 
     public void draw() {
         if (this.currentScene != null)
-            this.currentScene.runDraw(this.sceneKey);
+            this.currentScene.runDraw(this.SCENE_KEY);
     }
 
     public void post() {
         if (this.currentScene != null)
-            this.currentScene.runPost(this.sceneKey);
+            this.currentScene.runPost(this.SCENE_KEY);
     }
     // endregion
 
@@ -330,6 +410,17 @@ public class SceneManager {
                     l.focusLost();
     }
 
+    public void resized() {
+        if (this.currentScene == null)
+            return;
+
+        this.currentScene.resized();
+        for (Layer l : this.currentScene.getAllLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.resized();
+    }
+
     public void focusGained() {
         if (this.currentScene == null)
             return;
@@ -449,7 +540,7 @@ public class SceneManager {
     // If it ain't cached, start it normally. Tell me if it is cached.
     public boolean startFromCacheIfCan(Class<? extends Scene> p_sceneClass) {
         if (this.SCENE_CACHE.keySet().contains(p_sceneClass)) {
-            this.setScene(this.SCENE_CACHE.get(p_sceneClass).getCache(this.sceneKey));
+            this.setScene(this.SCENE_CACHE.get(p_sceneClass).getCache(this.SCENE_KEY));
             return true;
         } else {
             System.out.println("Scene not found in cache. Starting the usual way.");
@@ -475,7 +566,7 @@ public class SceneManager {
         Scene toRet = null;
 
         try {
-            toRet = (Scene) p_sceneConstructor.newInstance(this.sceneKey);
+            toRet = (Scene) p_sceneConstructor.newInstance(this.SCENE_KEY);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -522,7 +613,7 @@ public class SceneManager {
 
         this.previousSceneClass = this.currentSceneClass;
         if (this.previousSceneClass != null) {
-            this.currentScene.runOnSceneExit(this.sceneKey);
+            this.currentScene.runOnSceneExit(this.SCENE_KEY);
 
             this.SCENE_CACHE.get(this.previousSceneClass).deleteCacheIfCan();
 
@@ -544,7 +635,7 @@ public class SceneManager {
     // Set the time, *then* call `SceneManager::runSetup()`.
     private void setupCurrentScene() {
         this.sceneStartMillis = this.SKETCH.millis();
-        this.currentScene.runSetup(this.sceneKey);
+        this.currentScene.runSetup(this.SCENE_KEY);
     }
     // endregion
     // endregion

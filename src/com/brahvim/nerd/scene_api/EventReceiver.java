@@ -49,6 +49,9 @@ public interface EventReceiver {
     public default void focusLost() {
     }
 
+    public default void resized() {
+    }
+
     public default void focusGained() {
     }
     // endregion
