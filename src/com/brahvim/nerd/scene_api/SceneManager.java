@@ -106,9 +106,16 @@ public class SceneManager {
     private final Sketch SKETCH;
 
     // region Sketch Event Listeners.
+    @SuppressWarnings("unused")
     private final Sketch.SketchMouseListener MOUSE_LISTENER;
+
+    @SuppressWarnings("unused")
     private final Sketch.SketchTouchListener TOUCH_LISTENER;
+
+    @SuppressWarnings("unused")
     private final Sketch.SketchWindowListener WINDOW_LISTENER;
+
+    @SuppressWarnings("unused")
     private final Sketch.SketchKeyboardListener KEYBOARD_LISTENER;
     // endregion
 
