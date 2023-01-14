@@ -26,7 +26,7 @@ public class NerdSceneManager {
         }
 
         @Override
-        public boolean fitsLock(Class<?> p_class) {
+        public boolean isFor(Class<?> p_class) {
             // Putting `p_class` in the argument eliminates the need for a `null` check.
             return this.INTENDED_USER_CLASS.equals(p_class);
         }
@@ -40,35 +40,52 @@ public class NerdSceneManager {
     }
 
     public class SceneCache {
-        private Constructor<? extends NerdScene> constructor;
+        private final Constructor<? extends NerdScene> CONSTRUCTOR;
+        private final Class<? extends NerdScene> SCENE_CLASS;
         private NerdScene cachedReference;
-        private boolean isDeletable;
+        private boolean isDeletable, hasCompletedPreload;
 
-        private SceneCache(Constructor<? extends NerdScene> p_constructor,
+        private SceneCache(Class<? extends NerdScene> p_sceneClass,
+                Constructor<? extends NerdScene> p_constructor,
                 NerdScene p_cachedReference) {
-            this.constructor = p_constructor;
+            this.SCENE_CLASS = p_sceneClass;
+            this.CONSTRUCTOR = p_constructor;
             this.cachedReference = p_cachedReference;
         }
 
-        private SceneCache(Constructor<? extends NerdScene> p_constructor,
+        private SceneCache(Class<? extends NerdScene> p_sceneClass,
+                Constructor<? extends NerdScene> p_constructor,
                 NerdScene p_cachedReference, boolean p_isDeletable) {
-            this.constructor = p_constructor;
+            this.SCENE_CLASS = p_sceneClass;
+            this.CONSTRUCTOR = p_constructor;
             this.isDeletable = p_isDeletable;
             this.cachedReference = p_cachedReference;
         }
 
         // region Getters.
-        public Constructor<? extends NerdScene> getConstructor() {
-            return this.constructor;
+        public Constructor<? extends NerdScene> getSceneConstructor() {
+            return this.CONSTRUCTOR;
         }
 
         public boolean isDeletable() {
             return this.isDeletable;
         }
 
-        public NerdScene getCache(SceneKey p_initializer) {
-            if (p_initializer == null)
-                throw new IllegalArgumentException("Only `SceneManager`s may use this method.");
+        public boolean hasCompletedPreload() {
+            return this.hasCompletedPreload;
+        }
+
+        public NerdScene getCache(SceneKey p_key) {
+            if (p_key == null) {
+                throw new IllegalArgumentException("Only `NerdSceneManager`s may use this method.");
+            }
+            if (p_key.isUsed()) {
+                throw new IllegalArgumentException("Only `NerdSceneManager`s may use this method.");
+            }
+            if (p_key.INTENDED_USER_CLASS.equals(this.SCENE_CLASS)) {
+                throw new IllegalArgumentException("Only `NerdSceneManager`s may use this method.");
+            }
+
             return this.cachedReference;
         }
         // endregion
@@ -108,7 +125,14 @@ public class NerdSceneManager {
     public final NerdAssetManager PERSISTENT_ASSETS;
 
     // region `private` ~~/ `protected`~~ fields.
-    private final HashMap<Class<? extends NerdScene>, SceneCache> SCENE_CACHE = new HashMap<>();
+    /**
+     * This {@code HashMap} contains cached data about each {@code NerdScene} class
+     * any {@code NerdSceneManager} instance has cached or ran.<br>
+     * <br>
+     * Actual "caching" of a {@code NerdScene} is when its corresponding
+     * {@code SceneCache}'s {@code cachedReference} is not {@code null}.
+     */
+    private final HashMap<Class<? extends NerdScene>, SceneCache> SCENE_CLASS_TO_CACHE = new HashMap<>();
 
     /**
      * Keeping this just-in-case. It would otherwise be passed
@@ -138,6 +162,7 @@ public class NerdSceneManager {
     private int sceneStartMillis;
     // endregion
 
+    // region Constructors.
     public NerdSceneManager(Sketch p_sketch) {
         this.SKETCH = p_sketch;
         this.settings = new SceneManagerSettings();
@@ -153,7 +178,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.mousePressed();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mousePressed();
@@ -165,7 +190,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.mouseReleased();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseReleased();
@@ -177,7 +202,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.mouseMoved();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseMoved();
@@ -189,7 +214,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.mouseClicked();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseClicked();
@@ -201,7 +226,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.mouseDragged();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseDragged();
@@ -213,7 +238,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.mouseWheel(p_mouseEvent);
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseWheel(p_mouseEvent);
@@ -228,7 +253,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.touchStarted();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.touchStarted();
@@ -240,7 +265,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.touchMoved();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.touchMoved();
@@ -252,7 +277,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.touchEnded();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.touchEnded();
@@ -267,7 +292,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.focusLost();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.focusLost();
@@ -279,7 +304,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.resized();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.resized();
@@ -291,7 +316,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.focusGained();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.focusGained();
@@ -306,7 +331,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.keyTyped();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.keyTyped();
@@ -318,7 +343,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.keyPressed();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.keyPressed();
@@ -330,7 +355,7 @@ public class NerdSceneManager {
                     return;
 
                 SCENE_MAN.currentScene.keyReleased();
-                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                for (NerdLayer l : SCENE_MAN.currentScene.allLayers())
                     if (l != null)
                         if (l.isActive())
                             l.keyReleased();
@@ -345,6 +370,7 @@ public class NerdSceneManager {
         this(p_sketch);
         this.settings = p_settings;
     }
+    // endregion
 
     // region Queries.
     // Older implementation:
@@ -368,7 +394,7 @@ public class NerdSceneManager {
 
         return ((HashSet<Class<? extends NerdScene>>)
 
-        ((HashSet<Class<? extends NerdScene>>) (this.SCENE_CACHE.keySet())).clone());
+        ((HashSet<Class<? extends NerdScene>>) (this.SCENE_CLASS_TO_CACHE.keySet())).clone());
     }
 
     public int getSceneStartMillis() {
@@ -403,32 +429,34 @@ public class NerdSceneManager {
     // endregion
 
     // region `Scene`-operations.
-    public void cacheScene(Class<? extends NerdScene> p_sceneClass, boolean p_isDeletable) {
-        if (this.SCENE_CACHE.containsKey(p_sceneClass))
+    public void loadSceneAssetsAsync(Class<? extends NerdScene> p_sceneClass) {
+        if (this.hasCompletedPreload(p_sceneClass))
             return;
 
-        Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
-        if (sceneConstructor == null)
-            throw new IllegalArgumentException("""
-                    The passed class's constructor could not be accessed.""");
+        Thread thread = new Thread(() -> {
+            this.loadSceneAssets();
+        });
 
-        SceneKey sceneKey = new SceneKey(this, p_sceneClass);
-        NerdScene toCache = this.constructScene(sceneConstructor, sceneKey);
-        if (toCache == null)
-            throw new RuntimeException("The scene could not be constructed.");
+        thread.setName("AssetLoader_" + this.getClass().getSimpleName());
+        thread.start();
+    }
 
-        this.SCENE_CACHE.put(p_sceneClass, new SceneCache(
-                sceneConstructor, toCache, p_isDeletable));
+    public synchronized void loadSceneAssets(Class<? extends NerdScene> p_sceneClass) {
+
+    }
+
+    public boolean hasCompletedPreload(Class<? extends NerdScene> p_sceneClass) {
+        return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).hasCompletedPreload();
     }
 
     public void restartScene() {
         if (this.currentSceneClass == null)
             return;
 
-        SceneCache cache = this.SCENE_CACHE.remove(this.currentSceneClass);
+        SceneCache cache = this.SCENE_CLASS_TO_CACHE.remove(this.currentSceneClass);
         this.currentSceneKey = new SceneKey(this, this.currentSceneClass);
-        NerdScene toUse = this.constructScene(cache.constructor, this.currentSceneKey);
-        this.SCENE_CACHE.put(this.currentSceneClass, cache);
+        NerdScene toUse = this.constructScene(cache.CONSTRUCTOR, this.currentSceneKey);
+        this.SCENE_CLASS_TO_CACHE.put(this.currentSceneClass, cache);
 
         this.setScene(toUse);
     }
@@ -437,10 +465,10 @@ public class NerdSceneManager {
         if (this.previousSceneClass == null)
             return;
 
-        SceneCache cache = this.SCENE_CACHE.remove(this.previousSceneClass);
+        SceneCache cache = this.SCENE_CLASS_TO_CACHE.remove(this.previousSceneClass);
         this.currentSceneKey = new SceneKey(this, this.previousSceneClass);
-        NerdScene toUse = this.constructScene(cache.constructor, this.currentSceneKey);
-        this.SCENE_CACHE.put(this.previousSceneClass, cache);
+        NerdScene toUse = this.constructScene(cache.CONSTRUCTOR, this.currentSceneKey);
+        this.SCENE_CLASS_TO_CACHE.put(this.previousSceneClass, cache);
 
         this.setScene(toUse);
     }
@@ -462,7 +490,34 @@ public class NerdSceneManager {
          */
     }
 
-    // "Cache if not cached" method. Experiences these problems:
+    public boolean hasCached(Class<? extends NerdScene> p_sceneClass) {
+        return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass)
+                .getCache(new SceneKey(this, p_sceneClass)) != null;
+
+        // Ugh, -_- this is cheating...:
+        // .cachedReference != null;
+    }
+
+    public void cacheScene(Class<? extends NerdScene> p_sceneClass, boolean p_isDeletable) {
+        if (this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass))
+            return;
+
+        Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
+        if (sceneConstructor == null)
+            throw new IllegalArgumentException("""
+                    The passed class's constructor could not be accessed.""");
+
+        SceneKey sceneKey = new SceneKey(this, p_sceneClass);
+        NerdScene toCache = this.constructScene(sceneConstructor, sceneKey);
+        if (toCache == null)
+            throw new RuntimeException("The scene could not be constructed.");
+
+        this.SCENE_CLASS_TO_CACHE.put(p_sceneClass, new SceneCache(
+                p_sceneClass, sceneConstructor, toCache, p_isDeletable));
+    }
+
+    // "Cache if not cached" / "Start cached" method.
+    // Used to experience these (now solved!) problems:
     /*
      * - Asking for deletion permissions when you may not be caching is awkward,
      * - Structure. `cache == null`, `cache.getCache() == null` must result in the
@@ -475,50 +530,36 @@ public class NerdSceneManager {
      */
 
     // *The method:*
-    /*
-     * // Ensures scene is cached, then starts it.
-     * public void startCached(Class<? extends Scene> p_sceneClass) {
-     * SceneCache cache = this.SCENE_CACHE.get(p_sceneClass);
-     * 
-     * if (cache == null || cache.getCache() == null) {
-     * System.out.println("""
-     * Scene not found in cache. Starting the usual way.
-     * \n\tPutting this scene in the cache.""");
-     * this.startScene(p_sceneClass);
-     * 
-     * /*
-     * Constructor<? extends Scene> sceneConstructor =
-     * this.getSceneConstructor(p_sceneClass);
-     * if (sceneConstructor == null)
-     * throw new IllegalArgumentException("""
-     * The passed class's constructor could not be accessed.""");
-     * 
-     * Scene toCache = this.constructScene(sceneConstructor);
-     * if (toCache == null)
-     * throw new RuntimeException("The scene could not be constructed.");
-     * 
-     * // Will have to use the parameters here...
-     * this.SCENE_CACHE.put(p_sceneClass, new SceneCache(sceneConstructor,
-     * toCache));
-     * // ...which is a bad idea, since it's not confirmed whether this code will
-     * run.
-     * 
-     * <asterisk>\
-     * }
-     * 
-     * }
+    /**
+     * Ensures scene is cached, then starts it.
+     * The {@code boolean} argument tells if the scene is to be deleted once exited.
      */
+    public void startCached(Class<? extends NerdScene> p_sceneClass, boolean p_isDeletable) {
+        if (!this.hasCached(p_sceneClass)) {
+            System.out.println("""
+                    `NerdScene` not found in cache. Starting the usual way.
+                    \tPutting it in the cache.""");
+            this.cacheScene(p_sceneClass, p_isDeletable);
+        }
+
+        this.startScene(p_sceneClass);
+    }
 
     // If it ain't cached, start it normally. Tell me if it is cached.
-    public boolean startFromCacheIfCan(Class<? extends NerdScene> p_sceneClass) {
-        if (this.SCENE_CACHE.keySet().contains(p_sceneClass)) {
-            this.setScene(this.SCENE_CACHE.get(p_sceneClass)
-                    .getCache(new SceneKey(this, p_sceneClass)));
-            return true;
-        } else {
-            System.out.println("Scene not found in cache. Starting the usual way.");
+    /**
+     * If the scene is cached, resume rendering it. Start it otherwise.
+     *
+     * @return If the scene was cached or not.
+     */
+    public boolean resumeCachedScene(Class<? extends NerdScene> p_sceneClass) {
+        if (this.SCENE_CLASS_TO_CACHE.get(p_sceneClass)
+                .getCache(new SceneKey(this, p_sceneClass)) == null) {
+            System.out.println("`NerdScene` not in resumable state. Starting the usual way.");
             this.startScene(p_sceneClass);
             return false;
+        } else {
+            this.setScene(this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference);
+            return true;
         }
     }
 
@@ -570,8 +611,8 @@ public class NerdSceneManager {
         this.setScene(toStart);
 
         // Don't worry about concurrency, vvv *this* vvv is `final`! ^-^
-        if (!this.SCENE_CACHE.containsKey(p_sceneClass)) {
-            this.SCENE_CACHE.put(p_sceneClass, new SceneCache(sceneConstructor, toStart));
+        if (!this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass)) {
+            this.SCENE_CLASS_TO_CACHE.put(p_sceneClass, new SceneCache(p_sceneClass, sceneConstructor, toStart));
         }
     }
 
@@ -589,8 +630,10 @@ public class NerdSceneManager {
         if (this.previousSceneClass != null) {
             this.currentScene.runOnSceneExit(this.currentSceneKey);
 
-            this.SCENE_CACHE.get(this.previousSceneClass).deleteCacheIfCan();
+            this.SCENE_CLASS_TO_CACHE.get(this.previousSceneClass)
+                    .deleteCacheIfCan();
 
+            // What `deleteCacheIfCan()` did, I guess (or used to do)!:
             /*
              * // Delete the scene reference if needed:
              * SceneCache oldSceneCache = this.SCENE_CACHE.get(this.previousSceneClass);

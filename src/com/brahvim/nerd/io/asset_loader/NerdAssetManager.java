@@ -4,7 +4,6 @@ import java.util.HashSet;
 
 import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
-import com.brahvim.nerd.scene_api.NerdScene;
 
 public class NerdAssetManager {
     public class AssetKey extends NerdKey {
@@ -14,9 +13,9 @@ public class NerdAssetManager {
             this.SKETCH = p_sketch;
         }
 
-        public boolean fitsLock(Class<?> p_class) {
+        public boolean isFor(Class<?> p_class) {
             // Putting `p_class` in the argument eliminates the need for a `null` check.
-            return Sketch.class.equals(p_class);
+            return NerdAsset.class.equals(p_class);
         }
     }
 
@@ -28,6 +27,7 @@ public class NerdAssetManager {
         this.ASSET_KEY = new AssetKey(p_sketch);
     }
 
+    // region `add()` overloads.
     public NerdAssetManager add(NerdAsset p_asset) {
         this.ASSETS.add(p_asset);
         return this;
@@ -44,12 +44,29 @@ public class NerdAssetManager {
         this.ASSETS.add(new NerdAsset(this.ASSET_KEY, p_type, p_path));
         return this;
     }
+    // endregion
 
     public NerdAsset get(String p_fileName) {
         for (NerdAsset a : this.ASSETS)
             if (a.NAME == p_fileName)
                 return a;
         return null;
+    }
+
+    // region `remove()` overloads.
+    public void remove(NerdAsset... p_assets) {
+        for (NerdAsset a : p_assets) {
+            this.ASSETS.remove(a);
+        }
+    }
+
+    public void remove(NerdAsset p_asset) {
+        this.ASSETS.remove(p_asset);
+    }
+    // endregion
+
+    public void clear() {
+        this.ASSETS.clear();
     }
 
 }

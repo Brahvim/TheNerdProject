@@ -206,8 +206,8 @@ public class Sketch extends PApplet {
     // endregion
 
     // region `private` ~~/ `protected`~~ fields.
-    private String iconPath;
     private NerdSceneManager sceneMan;
+    private final String ICON_PATH;
     private final Unprojector unprojector;
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
     // endregion
@@ -220,27 +220,33 @@ public class Sketch extends PApplet {
     // endregion
 
     // region Constructors, `settings()`...
-    public Sketch(SketchBuilder.SketchKey p_sketchKey) {
-        if (p_sketchKey == null) {
+    public Sketch(SketchBuilder.SketchKey p_key) {
+        // region Verify and 'use' key.
+        if (p_key == null) {
             throw new IllegalArgumentException("""
                     Please use a `SketchBuilder` instance to make a `Sketch`!""");
-        } else if (p_sketchKey.isUsed()) {
+        } else if (p_key.isUsed()) {
             throw new IllegalArgumentException("""
                     Please use a `SketchBuilder` instance to make a `Sketch`! That is a used key!""");
-        }
+        } else if (!p_key.isFor(this.getClass()))
+            throw new IllegalArgumentException("""
+                    Please use a `SketchBuilder` instance to make a `Sketch`! That key is not for me!""");
+
+        p_key.use();
+        // endregion
 
         this.SKETCH = this;
-        this.NAME = p_sketchKey.name;
-        this.iconPath = p_sketchKey.iconPath;
-        this.RENDERER = p_sketchKey.renderer;
+        this.NAME = p_key.name;
+        this.ICON_PATH = p_key.iconPath;
+        this.RENDERER = p_key.renderer;
         this.DEFAULT_CAMERA = new NerdCameraBuilder(this).build();
-        this.FIRST_SCENE_CLASS = p_sketchKey.firstScene;
-        this.INITIALLY_RESIZABLE = p_sketchKey.canResize;
-        this.CAN_FULLSCREEN = !p_sketchKey.cannotFullscreen;
-        this.CLOSE_ON_ESCAPE = !p_sketchKey.dontCloseOnEscape;
-        this.F11_FULLSCREEN = !p_sketchKey.cannotF11Fullscreen;
-        this.STARTED_FULLSCREEN = p_sketchKey.startedFullscreen;
-        this.ALT_ENTER_FULLSCREEN = !p_sketchKey.cannotAltEnterFullscreen;
+        this.FIRST_SCENE_CLASS = p_key.firstScene;
+        this.INITIALLY_RESIZABLE = p_key.canResize;
+        this.CAN_FULLSCREEN = !p_key.cannotFullscreen;
+        this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
+        this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
+        this.STARTED_FULLSCREEN = p_key.startedFullscreen;
+        this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
 
         this.unprojector = new Unprojector();
         this.sceneMan = new NerdSceneManager(this);
@@ -248,24 +254,29 @@ public class Sketch extends PApplet {
         this.fullscreen = this.STARTED_FULLSCREEN;
         this.pfullscreen = !this.fullscreen;
 
-        for (Map.Entry<Class<? extends NerdScene>, Boolean> e : p_sketchKey.scenesToCache.entrySet()) {
+        for (Map.Entry<Class<? extends NerdScene>, Boolean> e : p_key.scenesToCache.entrySet()) {
             this.sceneMan.cacheScene(e.getKey(), e.getValue());
         }
+
+        if (this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D)
+            PJOGL.setIcon(this.ICON_PATH);
 
         if (this.STARTED_FULLSCREEN) {
             this.INIT_WIDTH = 800;
             this.INIT_HEIGHT = 600;
         } else {
-            this.INIT_WIDTH = p_sketchKey.width;
-            this.INIT_HEIGHT = p_sketchKey.height;
+            this.INIT_WIDTH = p_key.width;
+            this.INIT_HEIGHT = p_key.height;
         }
     }
 
     @Override
     public void settings() {
+        // Crazy effects (no un-decoration!), I guess:
         // if (this.STARTED_FULLSCREEN)
         // super.fullScreen(this.RENDERER);
         // else
+
         super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER);
     }
     // endregion
@@ -293,25 +304,26 @@ public class Sketch extends PApplet {
         // I should make a super slow "convenience" method to do this with `Runnable`s!
         // :joy:!
 
+        // Renderer-specific object initialization and settings!:
         switch (this.RENDERER) {
-            case PConstants.P3D:
+            case PConstants.P2D, PConstants.P3D:
                 this.glWindow = (GLWindow) super.surface.getNative();
 
                 if (this.INITIALLY_RESIZABLE)
                     this.glWindow.setResizable(true);
 
-                PJOGL.setIcon(this.iconPath);
+                // Done in the constructor! `setup()`'s too late for this!:
+                // PJOGL.setIcon(this.iconPath);
                 break;
 
             case PConstants.JAVA2D:
-                PSurfaceAWT.SmoothCanvas a = (PSurfaceAWT.SmoothCanvas) super.surface.getNative();
-                this.sketchFrame = (JFrame) a.getFrame();
-
-                this.surface.setIcon(loadImage("data/sunglass_nerd.png"));
+                PSurfaceAWT.SmoothCanvas canvas = (PSurfaceAWT.SmoothCanvas) super.surface.getNative();
+                this.sketchFrame = (JFrame) canvas.getFrame();
 
                 if (this.INITIALLY_RESIZABLE)
                     super.surface.setResizable(true);
 
+                this.surface.setIcon(loadImage(this.ICON_PATH));
                 // "Loose" image loading is usually not a good idea, but I guess it's here...
                 // super.surface.setIcon(super.loadImage(this.iconPath));
                 break;
@@ -1195,10 +1207,12 @@ public class Sketch extends PApplet {
 
             @Override
             public void mouseEntered(MouseEvent p_mouseEvent) {
+                // p_sketch.focused = true;
             }
 
             @Override
             public void mouseExited(MouseEvent p_mouseEvent) {
+                // p_sketch.focused = false;
             }
         });
 

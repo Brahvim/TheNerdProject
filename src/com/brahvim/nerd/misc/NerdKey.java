@@ -11,7 +11,7 @@ public abstract class NerdKey {
         return this.used;
     }
 
-    public boolean fitsLock(Class<?> p_class) {
+    public boolean isFor(Class<?> p_class) {
         return false;
     }
 

@@ -52,6 +52,34 @@ public class NerdScene implements HasSketchEvents {
    */
   // endregion
 
+  public class LayerKey extends NerdKey {
+    private final NerdScene SCENE;
+    private final Sketch SKETCH;
+    private final Class<? extends NerdLayer> LAYER_CLASS;
+
+    private LayerKey(NerdScene p_scene, Sketch p_sketch, Class<? extends NerdLayer> p_layerClass) {
+      this.LAYER_CLASS = p_layerClass;
+      this.SCENE = p_scene;
+      this.SKETCH = p_sketch;
+    }
+
+    public NerdScene getScene() {
+      return this.SCENE;
+    }
+
+    public Sketch getSketch() {
+      return this.SKETCH;
+    }
+
+    @Override
+    public boolean isFor(Class<?> p_class) {
+      return this.LAYER_CLASS.equals(p_class);
+    }
+
+  }
+
+  public final NerdAssetManager ASSETS;
+
   // region `private` / `protected` fields.
   protected final NerdScene SCENE = this;
   protected final Sketch SKETCH;
@@ -81,43 +109,32 @@ public class NerdScene implements HasSketchEvents {
    * decided not to do that.
    */
 
-  /* private */ protected final NerdSceneManager MANAGER; // ~~Don't let the scene manage its `manager`!~~
-  private final LayerKey LAYER_INITIALIZER; // Don't let the scene manage its `manager`!
-  public final NerdAssetManager ASSETS;
+  // ~~Don't let the scene manage its `manager`!~~
+  /* private */ protected final NerdSceneManager MANAGER;
   // endregion
 
-  public class LayerKey extends NerdKey {
-    private final NerdScene SCENE;
-    private final Sketch SKETCH;
+  // region Constructors.
+  public NerdScene(SceneKey p_key) {
+    // region Verify and 'use' key.
+    if (p_key == null) {
+      throw new IllegalArgumentException("""
+          Please use a `NerdSceneManager` instance to make a `NerdScene`!""");
+    } else if (p_key.isUsed()) {
+      throw new IllegalArgumentException("""
+          Please use a `NerdSceneManager` instance to make a `NerdScene`! That is a used key!""");
+    } else if (!p_key.isFor(this.getClass()))
+      throw new IllegalArgumentException("""
+          Please use a `NerdSceneManager` instance to make a `NerdScene`! That key is not for me!""");
 
-    private LayerKey(NerdScene p_scene, Sketch p_sketch) {
-      this.SCENE = p_scene;
-      this.SKETCH = p_sketch;
-    }
+    p_key.use();
+    // endregion
 
-    public NerdScene getScene() {
-      return this.SCENE;
-    }
-
-    public Sketch getSketch() {
-      return this.SKETCH;
-    }
-
-    @Override
-    public boolean fitsLock(Class<?> p_class) {
-      return this.SCENE.getClass().equals(p_class);
-    }
-
-  }
-
-  public NerdScene(SceneKey p_sceneKey) {
-    // this.SCENE_CLASS = p_sceneKey.getSceneClass();
-    this.MANAGER = p_sceneKey.getSceneManager();
+    // this.SCENE_CLASS = p_key.getSceneClass();
+    this.MANAGER = p_key.getSceneManager();
     this.SKETCH = this.MANAGER.getSketch();
     this.ASSETS = new NerdAssetManager(SKETCH);
 
     this.LAYER_CONSTRUCTORS = new HashMap<>();
-    this.LAYER_INITIALIZER = new LayerKey(this, this.SKETCH);
   }
 
   @SafeVarargs
@@ -128,6 +145,7 @@ public class NerdScene implements HasSketchEvents {
       this.startLayer(c);
     }
   }
+  // endregion
 
   public Sketch getSketch() {
     return this.SKETCH;
@@ -135,7 +153,7 @@ public class NerdScene implements HasSketchEvents {
 
   // region `Layer`-operations.
   // They get a running `Layer`'s reference from its (given) class.
-  public NerdLayer getLayer(Class<? extends NerdLayer> p_layerClass) {
+  public NerdLayer getLayerOfClass(Class<? extends NerdLayer> p_layerClass) {
     for (NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass))
         return l;
@@ -144,7 +162,7 @@ public class NerdScene implements HasSketchEvents {
     // return null;
   }
 
-  public HashSet<NerdLayer> getAllLayers(Class<? extends NerdLayer> p_layerClass) {
+  public HashSet<NerdLayer> getAllLayersOfClass(Class<? extends NerdLayer> p_layerClass) {
     // Nobody's gunna do stuff like this. Ugh.
     // No matter what I do, its still gunna crash their program.
 
@@ -191,7 +209,8 @@ public class NerdScene implements HasSketchEvents {
 
     // region Constructing the `Layer`.
     try {
-      toStart = (NerdLayer) layerConstructor.newInstance(this.LAYER_INITIALIZER);
+      toStart = (NerdLayer) layerConstructor.newInstance(
+          new LayerKey(this, this.SKETCH, p_layerClass));
     } catch (InstantiationException e) {
       e.printStackTrace();
     } catch (IllegalAccessException e) {
@@ -212,7 +231,7 @@ public class NerdScene implements HasSketchEvents {
    * This method gives the user the freedoms such as changing
    * layer rendering order.
    */
-  public ArrayList<NerdLayer> getAllLayers() {
+  public ArrayList<NerdLayer> allLayers() {
     return this.LAYERS;
   }
 
@@ -235,7 +254,8 @@ public class NerdScene implements HasSketchEvents {
 
     // region Re-construct layer.
     try {
-      toStart = this.LAYER_CONSTRUCTORS.get(layerClass).newInstance(this.LAYER_INITIALIZER);
+      toStart = this.LAYER_CONSTRUCTORS.get(layerClass).newInstance(
+          this.new LayerKey(this, this.SKETCH, layerClass));
     } catch (InstantiationException e) {
       e.printStackTrace();
     } catch (IllegalAccessException e) {
@@ -254,19 +274,31 @@ public class NerdScene implements HasSketchEvents {
 
   // region Anything callback-related, LOL.
   // region `SceneManager.SceneInitializer` app-workflow callback runners.
-  private void verifyInitializer(NerdSceneManager.SceneKey p_sceneKey) {
-    if (p_sceneKey == null)
+  private void verifyRunnerKey(NerdSceneManager.SceneKey p_key) {
+    if (p_key == null) {
       throw new IllegalArgumentException(
-          "`Scene::run()` should only be called by a `SceneManager`!");
+          "`NerdScene`s should only be accessed by a `NerdSceneManager`!");
+    }
+
+    Class<? extends NerdScene> myClass = this.getClass();
+    if (!p_key.isFor(myClass)) {
+      throw new IllegalArgumentException(
+          "This key was not meant to be used by the `NerdScene`, `"
+              + myClass.getSimpleName() + "`!");
+    }
   }
 
   public void runOnSceneExit(NerdSceneManager.SceneKey p_sceneKey) {
-    this.verifyInitializer(p_sceneKey);
+    this.verifyRunnerKey(p_sceneKey);
+
+    if (!MANAGER.hasCached(this.getClass()))
+      this.ASSETS.clear();
+
     this.onSceneExit();
   }
 
   public void runSetup(NerdSceneManager.SceneKey p_sceneKey) {
-    this.verifyInitializer(p_sceneKey);
+    this.verifyRunnerKey(p_sceneKey);
     this.setup();
 
     for (NerdLayer l : this.LAYERS)
@@ -276,7 +308,7 @@ public class NerdScene implements HasSketchEvents {
   }
 
   public void runPre(NerdSceneManager.SceneKey p_sceneKey) {
-    this.verifyInitializer(p_sceneKey);
+    this.verifyRunnerKey(p_sceneKey);
     this.pre();
 
     for (NerdLayer l : this.LAYERS)
@@ -286,7 +318,7 @@ public class NerdScene implements HasSketchEvents {
   }
 
   public void runDraw(NerdSceneManager.SceneKey p_sceneKey) {
-    this.verifyInitializer(p_sceneKey);
+    this.verifyRunnerKey(p_sceneKey);
     for (NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.isActive()) {
@@ -305,7 +337,7 @@ public class NerdScene implements HasSketchEvents {
   }
 
   public void runPost(NerdSceneManager.SceneKey p_sceneKey) {
-    this.verifyInitializer(p_sceneKey);
+    this.verifyRunnerKey(p_sceneKey);
     for (NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.isActive())
@@ -316,6 +348,18 @@ public class NerdScene implements HasSketchEvents {
   // endregion
 
   // region Scene callbacks.
+  /**
+   * Used by a {@code NerdScene} to load {@code NerdAsset}s
+   * into their, or their {@code NerdSceneManager}'s {@code NerdAssetManager}.<br>
+   * <br>
+   * Use this method for all asset-loading purposes that you would like to do in
+   * the background. If {@code NerdSceneManager::preloadSceneAssets} or
+   * {@code NerdSceneManager::loadSceneAsync} is called, this method is run
+   * async, loading-in all {@code NerdAssets}!
+   */
+  protected void preload() {
+  }
+
   protected void onSceneExit() {
   }
   // endregion

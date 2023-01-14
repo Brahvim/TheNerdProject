@@ -43,10 +43,4 @@ public class TestScene1 extends NerdScene {
             case PConstants.RIGHT -> MANAGER.startScene(TestScene2.class);
         }
     }
-
-    @Override
-    public void mouseMoved() {
-        System.out.println("TestScene1.mouseMoved()");
-        SKETCH.centerWindow();
-    }
 }

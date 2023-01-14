@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 
 import com.brahvim.nerd.io.ByteSerial;
 import com.brahvim.nerd.processing_wrapper.Sketch;
-import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PImage;
 import processing.core.PShape;
@@ -33,11 +32,19 @@ public class NerdAsset {
     // region Constructors!
     // NO. Tell me the type yourself :joy:
     public NerdAsset(NerdAssetManager.AssetKey p_key, NerdAssetType p_type, String p_path) {
+        // region Verify and 'use' key.
         if (p_key == null) {
-            throw new IllegalArgumentException("Get a real key! That's `null`...");
+            throw new IllegalArgumentException("""
+                    Please use a `NerdSceneManager` instance to make a `NerdScene`!""");
         } else if (p_key.isUsed()) {
-            throw new IllegalArgumentException("Get a real key! That's a used one...");
-        }
+            throw new IllegalArgumentException("""
+                    Please use a `NerdSceneManager` instance to make a `NerdScene`! That is a used key!""");
+        } else if (!p_key.isFor(this.getClass()))
+            throw new IllegalArgumentException("""
+                    Please use a `NerdSceneManager` instance to make a `NerdScene`! That key is not for me!""");
+
+        p_key.use();
+        // endregion
 
         this.SKETCH = p_key.SKETCH;
         this.TYPE = p_type;

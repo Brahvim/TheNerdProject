@@ -30,7 +30,7 @@ public final class SketchBuilder {
         }
 
         @Override
-        public boolean fitsLock(Class<?> p_class) {
+        public boolean isFor(Class<?> p_class) {
             // Putting `p_class` in the argument eliminates the need for a `null` check.
             return Sketch.class.isAssignableFrom(p_class);
         }

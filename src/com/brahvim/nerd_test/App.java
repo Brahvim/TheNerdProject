@@ -7,8 +7,6 @@ import com.brahvim.nerd_test.scenes.TestScene2;
 import com.brahvim.nerd_test.scenes.TestScene3;
 import com.brahvim.nerd_test.scenes.TestScene4;
 
-import processing.opengl.PJOGL;
-
 public class App {
     // region Fields.
     public final static int BPM = 100,
@@ -20,14 +18,13 @@ public class App {
     // endregion
 
     public static void main(String[] p_args) {
-        // PJOGL.setIcon("data/sunglass_nerd.png");
         App.sketchInstance = new SketchBuilder()
                 .setTitle("The Nerd Project")
-                .cacheScene(true, TestScene1.class)
-                .setFirstScene(TestScene4.class)
-                .useJavaRenderer()
+                .setFirstScene(TestScene1.class)
+                .setIconPath("data/sunglass_nerd.png")
 
-                // .setIcon("path/to/icon")
+                // .useJavaRenderer()
+                // .cacheScene(true, TestScene1.class)
                 // .cacheAllScenes(true,
                 // TestScene1.class, TestScene2.class)
 

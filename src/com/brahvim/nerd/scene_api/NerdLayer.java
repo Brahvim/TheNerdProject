@@ -27,9 +27,23 @@ public class NerdLayer implements HasSketchEvents {
     // This isn't C#!
     // endregion
 
-    public NerdLayer(NerdScene.LayerKey p_initializer) {
-        this.SCENE = p_initializer.getScene();
-        this.SKETCH = p_initializer.getSketch();
+    public NerdLayer(NerdScene.LayerKey p_key) {
+        // region Verify and 'use' key.
+        if (p_key == null) {
+            throw new IllegalArgumentException("""
+                    Please use a `NerdSceneManager` instance to make a `NerdScene`!""");
+        } else if (p_key.isUsed()) {
+            throw new IllegalArgumentException("""
+                    Please use a `NerdSceneManager` instance to make a `NerdScene`! That is a used key!""");
+        } else if (!p_key.isFor(this.getClass()))
+            throw new IllegalArgumentException("""
+                    Please use a `NerdSceneManager` instance to make a `NerdScene`! That key is not for me!""");
+
+        p_key.use();
+        // endregion
+
+        this.SCENE = p_key.getScene();
+        this.SKETCH = p_key.getSketch();
         this.MANAGER = this.SCENE.MANAGER;
     }
 
