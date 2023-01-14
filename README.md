@@ -63,20 +63,20 @@ void mousePressed() {
 ```
 
 But then one day, somebody would want to make a BIG game!
-<br> And they decided to continue with similar code!
+<br> But what if they decided to continue with similar code...?!
 
 <br>*Here we go.*
 
 <br>The SHEER number of global variables in that code...
 <br>The HIGH number of... `menuScene`, `gameScene`, and `endScene` prefixing...
-<br>The fear of tired people accidentally modifying your variables in their all-nighter-coding-session sleep!
+<br>The fear of tired people accidentally modifying your variables in their all-nighter-coding-session sleepiness!
 <br>Loose functions, global variables... *AAAAAAH-*
 
 
 ...dear God. Oh *NO!*
 
 ...and that's what we aim to fix here :|
-<br>With `Scene`s, this tragedy is **no more** than just frightening dreams! ":D!~
+<br>With `Scene`s, this tragedy is ***no more*** than just frightening dreams! ":D!~
 
 ## `Layer`s.
 A recent addition to Nerd, `Layer`s are "scenes inside scenes", *idr est*, objects in a `Scene` class that may be used to respond to Processing's events *inside of a scene*. This is good for things such as extra text-boxes on the screen, or simply cleaning up your code further. You can even toggle them on and off!
