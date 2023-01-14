@@ -1,7 +1,7 @@
 package com.brahvim.nerd.scene_api;
 
 // I'm not using this yet...
-public class WorkflowExtension {
+/* public */ class SketchWorkflowListener { // Previously known as "WorkflowExtension"!
     // These are `protected`, since overriding methods
     // may EXTEND scope - just not lower it!
 

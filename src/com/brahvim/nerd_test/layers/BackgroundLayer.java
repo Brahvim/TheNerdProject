@@ -1,10 +1,10 @@
 package com.brahvim.nerd_test.layers;
 
 import com.brahvim.nerd.math.SineWave;
-import com.brahvim.nerd.scene_api.Layer;
-import com.brahvim.nerd.scene_api.Scene.LayerKey;
+import com.brahvim.nerd.scene_api.NerdLayer;
+import com.brahvim.nerd.scene_api.NerdScene.LayerKey;
 
-public class BackgroundLayer extends Layer {
+public class BackgroundLayer extends NerdLayer {
     private SineWave fadeWave;
 
     public BackgroundLayer(LayerKey p_initializer) {

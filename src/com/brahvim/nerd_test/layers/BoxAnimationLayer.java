@@ -1,13 +1,13 @@
 package com.brahvim.nerd_test.layers;
 
 import com.brahvim.nerd.math.SineWave;
-import com.brahvim.nerd.scene_api.Layer;
-import com.brahvim.nerd.scene_api.Scene.LayerKey;
+import com.brahvim.nerd.scene_api.NerdLayer;
+import com.brahvim.nerd.scene_api.NerdScene.LayerKey;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 
-public class BoxAnimationLayer extends Layer {
+public class BoxAnimationLayer extends NerdLayer {
     private SineWave squareAmpWave, camRotWave;
 
     public BoxAnimationLayer(LayerKey p_initializer) {

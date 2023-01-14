@@ -2,7 +2,7 @@ package com.brahvim.nerd.processing_wrapper;
 
 import java.util.HashMap;
 
-import com.brahvim.nerd.scene_api.Scene;
+import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -22,8 +22,8 @@ public final class SketchBuilder {
         public String renderer = PConstants.P3D, iconPath, name;
         public boolean dontCloseOnEscape, startedFullscreen, canResize,
                 cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
-        public Class<? extends Scene> firstScene;
-        public HashMap<Class<? extends Scene>, Boolean> scenesToCache;
+        public Class<? extends NerdScene> firstScene;
+        public HashMap<Class<? extends NerdScene>, Boolean> scenesToCache;
 
         private SketchKey() {
             this.scenesToCache = new HashMap<>();
@@ -91,7 +91,7 @@ public final class SketchBuilder {
         return this;
     }
 
-    public SketchBuilder setFirstScene(Class<? extends Scene> p_firstScene) {
+    public SketchBuilder setFirstScene(Class<? extends NerdScene> p_firstScene) {
         this.sketchInitializer.firstScene = p_firstScene;
         return this;
     }
@@ -125,7 +125,7 @@ public final class SketchBuilder {
     // endregion
 
     // region Scene caching.
-    public SketchBuilder cacheScene(boolean p_isDeletable, Class<? extends Scene> p_sceneClass) {
+    public SketchBuilder cacheScene(boolean p_isDeletable, Class<? extends NerdScene> p_sceneClass) {
         if (p_sceneClass == null)
             return this;
 
@@ -134,11 +134,11 @@ public final class SketchBuilder {
     }
 
     @SafeVarargs
-    public final SketchBuilder cacheAllScenes(Boolean p_isDeletable, Class<? extends Scene>... p_sceneClasses) {
+    public final SketchBuilder cacheAllScenes(Boolean p_isDeletable, Class<? extends NerdScene>... p_sceneClasses) {
         if (p_sceneClasses == null)
             return this;
 
-        for (Class<? extends Scene> c : p_sceneClasses) {
+        for (Class<? extends NerdScene> c : p_sceneClasses) {
             if (c == null)
                 continue;
             this.sketchInitializer.scenesToCache.put(c, p_isDeletable);

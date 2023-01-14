@@ -15,15 +15,49 @@ import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
  * The {@code PApplet} you passed into your
  * {@code SceneManager} is what you get! :)
  */
-public class Scene implements HasSketchEvents {
+public class NerdScene implements HasSketchEvents {
+
+  // region [DEPRECATED] `AutoDrawable` stuff!
+  /*
+   * public NerdScene.AutoDrawable
+   * createAutoDrawable(NerdScene.AutoDrawableInstance p_instance) {
+   * NerdScene.AutoDrawable toRet = this.new AutoDrawable() {
+   * 
+   * @Override
+   * public void draw() {
+   * p_instance.draw();
+   * }
+   * };
+   * 
+   * return toRet;
+   * }
+   * 
+   * public interface AutoDrawableInstance {
+   * public void draw();
+   * }
+   * 
+   * public abstract class AutoDrawable {
+   * private static final ArrayList<AutoDrawable> ALL_AUTO_DRAWABLES = new
+   * ArrayList<>(5);
+   * 
+   * public AutoDrawable() {
+   * NerdScene.AutoDrawable.ALL_AUTO_DRAWABLES.add(this);
+   * }
+   * 
+   * public void draw() {
+   * }
+   * }
+   */
+  // endregion
+
   // region `private` / `protected` fields.
-  protected final Scene SCENE = this;
+  protected final NerdScene SCENE = this;
   protected final Sketch SKETCH;
 
   // Would've used a `LinkedHashSet`, but am using `ArrayList`s instead since
   // duplicates won't be allowed.
-  private final ArrayList<Layer> LAYERS = new ArrayList<>();
-  private final HashMap<Class<? extends Layer>, Constructor<? extends Layer>> LAYER_CONSTRUCTORS;
+  private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(2);
+  private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>> LAYER_CONSTRUCTORS;
   /*
    * Alternative approach: storing a reference to the constructor WITHIN the class
    * extending `Layer` itself.
@@ -50,15 +84,15 @@ public class Scene implements HasSketchEvents {
   // endregion
 
   public class LayerKey {
-    private final Scene SCENE;
+    private final NerdScene SCENE;
     private final Sketch SKETCH;
 
-    private LayerKey(Scene p_scene, Sketch p_sketch) {
+    private LayerKey(NerdScene p_scene, Sketch p_sketch) {
       this.SCENE = p_scene;
       this.SKETCH = p_sketch;
     }
 
-    public Scene getScene() {
+    public NerdScene getScene() {
       return this.SCENE;
     }
 
@@ -68,7 +102,7 @@ public class Scene implements HasSketchEvents {
 
   }
 
-  public Scene(SceneKey p_sceneKey) {
+  public NerdScene(SceneKey p_sceneKey) {
     // this.SCENE_CLASS = p_sceneKey.getSceneClass();
     this.MANAGER = p_sceneKey.getSceneManager();
     this.SKETCH = this.MANAGER.getSketch();
@@ -78,18 +112,22 @@ public class Scene implements HasSketchEvents {
   }
 
   @SafeVarargs
-  public Scene(SceneKey p_sceneKey, Class<? extends Layer>... p_layerClasses) {
+  public NerdScene(SceneKey p_sceneKey, Class<? extends NerdLayer>... p_layerClasses) {
     this(p_sceneKey);
 
-    for (Class<? extends Layer> c : p_layerClasses) {
+    for (Class<? extends NerdLayer> c : p_layerClasses) {
       this.startLayer(c);
     }
   }
 
+  public Sketch getSketch() {
+    return this.SKETCH;
+  }
+
   // region `Layer`-operations.
   // They get a running `Layer`'s reference from its (given) class.
-  public Layer getLayer(Class<? extends Layer> p_layerClass) {
-    for (Layer l : this.LAYERS)
+  public NerdLayer getLayer(Class<? extends NerdLayer> p_layerClass) {
+    for (NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass))
         return l;
     return null; // Also does the work for:
@@ -97,16 +135,16 @@ public class Scene implements HasSketchEvents {
     // return null;
   }
 
-  public HashSet<Layer> getAllLayers(Class<? extends Layer> p_layerClass) {
+  public HashSet<NerdLayer> getAllLayers(Class<? extends NerdLayer> p_layerClass) {
     // Nobody's gunna do stuff like this. Ugh.
     // No matter what I do, its still gunna crash their program.
 
     // if (!this.hasLayerOfClass(p_layerClass))
     // return null;
 
-    HashSet<Layer> toRet = new HashSet<>();
+    HashSet<NerdLayer> toRet = new HashSet<>();
 
-    for (Layer l : this.LAYERS)
+    for (NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass)) {
         toRet.add(l);
       }
@@ -115,13 +153,13 @@ public class Scene implements HasSketchEvents {
   }
 
   @SafeVarargs
-  public final void startAllLayers(Class<? extends Layer>... p_layerClasses) {
-    for (Class<? extends Layer> c : p_layerClasses) {
+  public final void startAllLayers(Class<? extends NerdLayer>... p_layerClasses) {
+    for (Class<? extends NerdLayer> c : p_layerClasses) {
       this.startLayer(c);
     }
   }
 
-  public void startLayer(Class<? extends Layer> p_layerClass) {
+  public void startLayer(Class<? extends NerdLayer> p_layerClass) {
     if (p_layerClass == null)
       throw new NullPointerException("""
           You weren't supposed to pass `null` into `Scene::startLayer()`.""");
@@ -129,12 +167,12 @@ public class Scene implements HasSketchEvents {
     if (this.hasLayerOfClass(p_layerClass))
       return;
 
-    Layer toStart = null;
-    Constructor<? extends Layer> layerConstructor = null;
+    NerdLayer toStart = null;
+    Constructor<? extends NerdLayer> layerConstructor = null;
 
     // region Getting the constructor.
     try {
-      layerConstructor = p_layerClass.getConstructor(Scene.LayerKey.class);
+      layerConstructor = p_layerClass.getConstructor(NerdScene.LayerKey.class);
     } catch (NoSuchMethodException e) {
       e.printStackTrace();
     } catch (SecurityException e) {
@@ -144,7 +182,7 @@ public class Scene implements HasSketchEvents {
 
     // region Constructing the `Layer`.
     try {
-      toStart = (Layer) layerConstructor.newInstance(this.LAYER_INITIALIZER);
+      toStart = (NerdLayer) layerConstructor.newInstance(this.LAYER_INITIALIZER);
     } catch (InstantiationException e) {
       e.printStackTrace();
     } catch (IllegalAccessException e) {
@@ -165,11 +203,11 @@ public class Scene implements HasSketchEvents {
    * This method gives the user the freedoms such as changing
    * layer rendering order.
    */
-  public ArrayList<Layer> getAllLayers() {
+  public ArrayList<NerdLayer> getAllLayers() {
     return this.LAYERS;
   }
 
-  public boolean hasLayerOfClass(Class<? extends Layer> p_layerClass) {
+  public boolean hasLayerOfClass(Class<? extends NerdLayer> p_layerClass) {
     return this.LAYER_CONSTRUCTORS.keySet().contains(p_layerClass);
     // for (Class<? extends Layer> c :
     // this.LAYER_CONSTRUCTORS.keySet().contains(p_layerClass))
@@ -179,12 +217,12 @@ public class Scene implements HasSketchEvents {
   }
 
   public void restartLayer(int p_layerId) {
-    Class<? extends Layer> layerClass = this.LAYERS.get(p_layerId).getClass();
+    Class<? extends NerdLayer> layerClass = this.LAYERS.get(p_layerId).getClass();
 
     if (!this.hasLayerOfClass(layerClass))
       throw new IllegalArgumentException("This scene owns no such `Layer`.");
 
-    Layer toStart = null;
+    NerdLayer toStart = null;
 
     // region Re-construct layer.
     try {
@@ -222,7 +260,7 @@ public class Scene implements HasSketchEvents {
     this.verifyInitializer(p_sceneKey);
     this.setup();
 
-    for (Layer l : this.LAYERS)
+    for (NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.isActive())
           l.setup();
@@ -232,7 +270,7 @@ public class Scene implements HasSketchEvents {
     this.verifyInitializer(p_sceneKey);
     this.pre();
 
-    for (Layer l : this.LAYERS)
+    for (NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.isActive())
           l.pre();
@@ -240,7 +278,7 @@ public class Scene implements HasSketchEvents {
 
   public void runDraw(SceneManager.SceneKey p_sceneKey) {
     this.verifyInitializer(p_sceneKey);
-    for (Layer l : this.LAYERS)
+    for (NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.isActive()) {
           this.SKETCH.pushMatrix();
@@ -259,7 +297,7 @@ public class Scene implements HasSketchEvents {
 
   public void runPost(SceneManager.SceneKey p_sceneKey) {
     this.verifyInitializer(p_sceneKey);
-    for (Layer l : this.LAYERS)
+    for (NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.isActive())
           l.post();
@@ -276,27 +314,27 @@ public class Scene implements HasSketchEvents {
   // region App workflow callbacks.
   /**
    * {@code Scene::setup()} is called first,
-   * {@code Layer::setup()} is called for each {@linkplain Layer}, later.
+   * {@code Layer::setup()} is called for each {@linkplain NerdLayer}, later.
    */
   protected void setup() {
   }
 
   /**
    * {@code Scene::pre()} is called first,
-   * {@code Layer::pre()} is called for each {@linkplain Layer}, later.
+   * {@code Layer::pre()} is called for each {@linkplain NerdLayer}, later.
    */
   protected void pre() {
   }
 
   /**
-   * {@code Layer::draw()} is called for each {@linkplain Layer}, first.
+   * {@code Layer::draw()} is called for each {@linkplain NerdLayer}, first.
    * {@code Scene::draw()} is called later.
    */
   protected void draw() {
   }
 
   /**
-   * {@code Layer::draw()} is called for each {@linkplain Layer}, first.
+   * {@code Layer::draw()} is called for each {@linkplain NerdLayer}, first.
    * {@code Scene::draw()} is called later.
    */
   protected void post() {

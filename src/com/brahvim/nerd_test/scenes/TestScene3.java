@@ -1,11 +1,11 @@
 package com.brahvim.nerd_test.scenes;
 
-import com.brahvim.nerd.scene_api.Scene;
+import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
 import com.brahvim.nerd_test.AnimatedCube;
 
-public class TestScene3 extends Scene {
-    AnimatedCube cube;
+public class TestScene3 extends NerdScene {
+    private AnimatedCube cube;
 
     public TestScene3(SceneKey p_sceneKey) {
         super(p_sceneKey);
@@ -13,8 +13,7 @@ public class TestScene3 extends Scene {
 
     @Override
     protected void setup() {
-        this.cube = new AnimatedCube(SKETCH);
-
+        this.cube = new AnimatedCube(this);
     }
 
     @Override

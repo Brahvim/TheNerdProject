@@ -13,12 +13,12 @@ import com.brahvim.nerd.processing_wrapper.Sketch;
  *
  * @author Brahvim Bhaktvatsal
  */
-public class Layer implements HasSketchEvents {
+public class NerdLayer implements HasSketchEvents {
     // region `protected` fields.
-    protected final Scene SCENE;
+    protected final NerdScene SCENE;
     protected final Sketch SKETCH;
     protected final SceneManager MANAGER;
-    protected final Layer LAYER = this;
+    protected final NerdLayer LAYER = this;
     // endregion
 
     // region `private` fields.
@@ -27,7 +27,7 @@ public class Layer implements HasSketchEvents {
     // This isn't C#!
     // endregion
 
-    public Layer(Scene.LayerKey p_initializer) {
+    public NerdLayer(NerdScene.LayerKey p_initializer) {
         this.SCENE = p_initializer.getScene();
         this.SKETCH = p_initializer.getSketch();
         this.MANAGER = this.SCENE.MANAGER;

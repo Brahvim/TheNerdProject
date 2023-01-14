@@ -9,12 +9,14 @@ import com.brahvim.nerd_test.scenes.TestScene3;
 import processing.opengl.PJOGL;
 
 public class App {
-    public static Sketch sketchInstance;
-
-    private static boolean tick;
-    private static int tickCount;
+    // region Fields.
     public static final int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
+
+    private static Sketch sketchInstance;
+    private static boolean tick;
+    private static int tickCount;
+    // endregion
 
     public static void main(String[] p_args) {
         PJOGL.setIcon("data/sunglass_nerd.png");
@@ -30,6 +32,10 @@ public class App {
                 .build(p_args);
 
         App.startTickThread();
+    }
+
+    public Sketch getSketchInstance() {
+        return App.sketchInstance;
     }
 
     // region Ticking.

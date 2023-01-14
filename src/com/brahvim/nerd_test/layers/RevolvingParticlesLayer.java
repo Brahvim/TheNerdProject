@@ -1,15 +1,15 @@
 package com.brahvim.nerd_test.layers;
 
 import com.brahvim.nerd.math.Easings;
-import com.brahvim.nerd.scene_api.Layer;
-import com.brahvim.nerd.scene_api.Scene.LayerKey;
+import com.brahvim.nerd.scene_api.NerdLayer;
+import com.brahvim.nerd.scene_api.NerdScene.LayerKey;
 import com.brahvim.nerd_test.App;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 
-public class RevolvingParticlesLayer extends Layer {
+public class RevolvingParticlesLayer extends NerdLayer {
     private PGraphics particleGraphics;
     private final int PARTICLE_SIZE = 60, PARTICLE_CONC = 200,
             PARTICLE_SIZE_HALF = this.PARTICLE_SIZE / 2;

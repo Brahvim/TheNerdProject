@@ -2,27 +2,43 @@ package com.brahvim.nerd_test;
 
 import com.brahvim.nerd.math.SineWave;
 import com.brahvim.nerd.processing_wrapper.Sketch;
+import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
 
-// TODO: `NerdSceneAutoDrawable`! Each scene holds a reference of these.
-//interface NerdSceneAutoDrawable { void draw(); } 
-
-public class AnimatedCube /* implements NerdSceneAutoDrawable */ {
+public class AnimatedCube /* implements NerdScene.AutoDrawableInstance */ {
+    // region Fields.
     public float size = 45;
     public PVector pos, vel, acc, rot;
     public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
     private final Sketch SKETCH;
+    private final NerdScene SCENE;
     private boolean isVisible = true;
     private SineWave plopWave, fadeWave;
+    // private final NerdScene.AutoDrawable CALLBACK_FOR_RENDERER;
+    // endregion
 
-    public AnimatedCube(Sketch p_sketch) {
-        this.SKETCH = p_sketch;
+    public AnimatedCube(NerdScene p_scene) {
+        this.SCENE = p_scene;
+        this.SKETCH = this.SCENE.getSketch();
+
         this.pos = new PVector();
         this.vel = new PVector();
         this.acc = new PVector();
         this.rot = new PVector();
+
+        // final AnimatedCube CUBE = this;
+        // this.SCENE.createAutoDrawable(this);
+        /*
+         * this.CALLBACK_FOR_RENDERER = this.SCENE.new AutoDrawable() {
+         *
+         * @Override
+         * public void draw() {
+         * CUBE.draw();
+         * }
+         * };
+         */
 
         this.plopWave = new SineWave(SKETCH);
         this.fadeWave = new SineWave(SKETCH);
@@ -31,15 +47,12 @@ public class AnimatedCube /* implements NerdSceneAutoDrawable */ {
         this.fadeWave.inactValue = 1;
     }
 
-    public AnimatedCube(Sketch p_sketch, PVector p_pos) {
-        this(p_sketch);
+    public AnimatedCube(NerdScene p_scene, PVector p_pos) {
+        this(p_scene);
         this.pos.set(p_pos.x, p_pos.y, p_pos.z);
     }
 
-    public boolean isVisible() {
-        return this.isVisible;
-    }
-
+    // region Transitions.
     public void cutIn() {
         this.isVisible = true;
     }
@@ -67,6 +80,11 @@ public class AnimatedCube /* implements NerdSceneAutoDrawable */ {
     public void fadeOut() {
         this.isVisible = false;
         this.fadeWave.endWhenAngleIs(180).start(90);
+    }
+    // endregion
+
+    public boolean isVisible() {
+        return this.isVisible;
     }
 
     public void draw() {

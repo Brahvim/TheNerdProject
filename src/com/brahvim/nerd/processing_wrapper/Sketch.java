@@ -16,6 +16,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -25,7 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.math.Unprojector;
-import com.brahvim.nerd.scene_api.Scene;
+import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
 import com.jogamp.newt.opengl.GLWindow;
 
@@ -145,7 +146,7 @@ public class Sketch extends PApplet {
     public final static int REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
             .getScreenDevices()[0].getDisplayMode().getRefreshRate();
 
-    public final static char[] VALID_SYMBOLS = {
+    public final static char[] STANDARD_KEYBOARD_SYMBOLS = {
             '\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
             '%', '^', '&', '*', '(', ')', '{', '}', '[',
             ']', ';', ',', '.', '/', '\\', ':', '|', '<',
@@ -155,7 +156,7 @@ public class Sketch extends PApplet {
     public final String NAME;
     public final Sketch SKETCH;
     public final NerdCamera DEFAULT_CAMERA;
-    public final Class<? extends Scene> FIRST_SCENE_CLASS;
+    public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
     public final String RENDERER;
     public final int INIT_WIDTH, INIT_HEIGHT;
@@ -172,15 +173,17 @@ public class Sketch extends PApplet {
     public char pkey; // Previous fraaaaame!...
     public boolean pfocused;
     public int pmouseButton, pkeyCode;
-    public boolean pkeyPressed, pmousePressed; // Previous frame...
+    public boolean pkeyPressed, pmousePressed;
+    public final ArrayList<PVector> UNPROJ_TOUCHES = new ArrayList<>(10); // Previous frame...
 
     // Current frame!
     public float mouseScroll, mouseScrollDelta;
     public boolean mouseLeft, mouseMid, mouseRight;
+    public final ArrayList<PVector> PREV_UNPROJ_TOUCHES = new ArrayList<>(10);
 
     public boolean fullscreen, pfullscreen;
     public boolean cursorConfined, cursorVisible = true; // nO previoS versiuN!11!!
-    public NerdCamera previousCamera, currentCamera; // CAM! (wher lite?)
+    public NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
     public PVector mouse = new PVector(), pmouse = new PVector(); // MOUS!
 
     public boolean pmouseLeft, pmouseMid, pmouseRight; // Previous frame...
@@ -202,10 +205,10 @@ public class Sketch extends PApplet {
     // endregion
 
     // region Listeners sets!
-    private final HashSet<SketchMouseListener> ALL_MOUSE_LISTENERS = new HashSet<>();
-    private final HashSet<SketchTouchListener> ALL_TOUCH_LISTENERS = new HashSet<>();
-    private final HashSet<SketchWindowListener> ALL_WINDOW_LISTENERS = new HashSet<>();
-    private final HashSet<SketchKeyboardListener> ALL_KEYBOARD_LISTENERS = new HashSet<>();
+    private final HashSet<SketchMouseListener> ALL_MOUSE_LISTENERS = new HashSet<>(1);
+    private final HashSet<SketchTouchListener> ALL_TOUCH_LISTENERS = new HashSet<>(1);
+    private final HashSet<SketchWindowListener> ALL_WINDOW_LISTENERS = new HashSet<>(1);
+    private final HashSet<SketchKeyboardListener> ALL_KEYBOARD_LISTENERS = new HashSet<>(1);
     // endregion
 
     // region Constructors, `settings()`...
@@ -234,7 +237,7 @@ public class Sketch extends PApplet {
         this.fullscreen = this.STARTED_FULLSCREEN;
         this.pfullscreen = !this.fullscreen;
 
-        for (Map.Entry<Class<? extends Scene>, Boolean> e : p_sketchKey.scenesToCache.entrySet()) {
+        for (Map.Entry<Class<? extends NerdScene>, Boolean> e : p_sketchKey.scenesToCache.entrySet()) {
             this.sceneMan.cacheScene(e.getKey(), e.getValue());
         }
 
@@ -354,6 +357,10 @@ public class Sketch extends PApplet {
         this.previousCamera = this.currentCamera;
         this.pmouseScrollDelta = this.mouseScrollDelta;
 
+        for (PVector v : this.UNPROJ_TOUCHES) {
+            this.PREV_UNPROJ_TOUCHES.add(v);
+        }
+
         // Fullscreen control:
         switch (this.RENDERER) {
             case PConstants.JAVA2D:
@@ -424,9 +431,14 @@ public class Sketch extends PApplet {
 
     // region Keyboard events.
     public void keyTyped() {
-        // TODO: Filter these keys using the utility methods?
         for (SketchKeyboardListener l : this.ALL_KEYBOARD_LISTENERS) {
-            l.keyTyped();
+            // ...could call that callback here directly, but I decided this!:
+            // "Filter these keys using the utility method(s)?"
+
+            // ...and thus-this check was born!:
+            if (Sketch.isTypeable(super.key))
+                // TODO: Yes. Two ways to pass data! Should be in ALL input methods!
+                l.keyTyped(super.key, super.keyCode);
         }
     }
 
@@ -458,7 +470,7 @@ public class Sketch extends PApplet {
         this.keysHeld.add(super.keyCode);
 
         for (SketchKeyboardListener l : this.ALL_KEYBOARD_LISTENERS) {
-            l.keyPressed();
+            l.keyPressed(super.key, super.keyCode);
         }
     }
 
@@ -469,7 +481,7 @@ public class Sketch extends PApplet {
         }
 
         for (SketchKeyboardListener l : this.ALL_KEYBOARD_LISTENERS) {
-            l.keyReleased();
+            l.keyReleased(super.key, super.keyCode);
         }
     }
     // endregion
@@ -557,6 +569,69 @@ public class Sketch extends PApplet {
         this.currentCamera.near = originalNear;
     }
 
+    public void unprojectTouches() {
+        // Left empty, used on Android! (Implementation for Android, below:)
+        /*
+         * Sketch.UNPROJ_TOUCHES.clear();
+         * TouchEvent.Pointer[] touches = super.touches;
+         * 
+         * for (int i = 0; i < touches.length; i++) {
+         * // [WORKS, CHEAPEST, SAME LEVEL OF ACCURACY]
+         * // My own 'mapping' method!:
+         * /*
+         * PVector u = new PVector(
+         * PApplet.map(touches[i].x, 0, super.displayWidth,
+         * 0, super.width),
+         * PApplet.map(touches[i].y, 0, super.displayHeight,
+         * 0, super.height));
+         * <asterisk>/
+         * //u.add(super.cameraPos);
+         * 
+         * // [WORKS, NOT CHEAP + STILL INACCURATE]
+         * // Unprojection of my own:
+         * PVector u = new PVector(touches[i].x, touches[i].y);
+         * u = super.glGraphics.modelviewInv.mult(u, null);
+         * //u = super.glGraphics.cameraInv.mult(u, null);
+         * u.sub(super.width, super.height);
+         * u.add(super.cx, super.cy);
+         * 
+         * // [FAILURE] Unprojection using the `Unprojector` class:
+         * /*
+         * PVector u = new PVector(touches[i].x, touches[i].y);
+         * // Believe in the JIT!~
+         * Unprojector.captureViewMatrix(((PGraphics3D)super.getGraphics()
+         * ));
+         * System.out.printf("Was unprojection successful? %s\n",
+         * Unprojector.gluUnProject(u.x, u.y, u.z, u) // Yes, you can do that. Passing
+         * by value.
+         * ? "Yes!" : "No...");
+         * u.x *= 1.2f; //super.qx;
+         * u.y *= 1.2f; //super.qy;
+         * <asterisk>/
+         * 
+         * // (...here's longer text explaining that.. :)
+         * /*
+         * // [sic] "As different streams having their sources in different places all
+         * mingles
+         * // their water in the sea, so, O Lord, the different paths which men take
+         * through
+         * // tendencies, various touch as they appear, crooked or straight, all lead to
+         * Thee."
+         * // - Swami Vivekananda, quoting a hymn in his `1893` Chicago convention
+         * speech.
+         * // (((I do not guarantee complete correctness in the copying of that
+         * quote.)))
+         * <asterisk>/
+         * // ^^^ (...that basically, this `u.z` modfication will go unchanged,
+         * // no matter what un-projection method you use!:)
+         * u.z = touches[i].pressure; // Should be accessed in some other way, but
+         * whatever...
+         * 
+         * this.UNPROJ_TOUCHES.add(u);
+         * }
+         */
+    }
+
     public void centerWindow() {
         this.updateRatios(); // You called this function when the window changed its size or position, right?
         // Remember: computers with multiple displays exist! We shouldn't cache this:
@@ -582,6 +657,30 @@ public class Sketch extends PApplet {
     public void scale(PVector p_scalingVector) {
         super.scale(p_scalingVector.x, p_scalingVector.y, p_scalingVector.z);
     }
+
+    // region `screenX()`, `screenY()` and `screenZ()`, `PVector` overloads.
+    // "Oh! And when the `z` is `-1`, you just add this and sub that. Optimization!"
+    // - That ONE Mathematician.
+    public float screenX(PVector p_vec) {
+        return p_vec.z == 0
+                ? super.screenX(p_vec.x, p_vec.y)
+                : super.screenX(p_vec.x, p_vec.y, p_vec.z);
+    }
+
+    public float screenY(PVector p_vec) {
+        return p_vec.z == 0
+                ? super.screenY(p_vec.x, p_vec.y)
+                : super.screenY(p_vec.x, p_vec.y, p_vec.z);
+    }
+
+    public float screenZ(PVector p_vec) {
+        // Hmmm...
+        // ..so `z` cannot be `0` here.
+        // ..and `x` and `y` cannot be ignored!
+        // "No room for optimization here!"
+        return super.screenZ(p_vec.x, p_vec.y, p_vec.z);
+    }
+    // endregion
 
     public void rotate(PVector p_rotationVector) {
         super.rotateX(p_rotationVector.x);
@@ -766,10 +865,29 @@ public class Sketch extends PApplet {
         super.rect(0, 0, super.width, super.height);
         super.popStyle();
     }
+
     // endregion
 
     // region Key-press and key-type helper methods.
+    public boolean onlyKeyPressedIs(int p_keyCode) {
+        return this.keysHeld.size() == 1 && this.keysHeld.contains(p_keyCode);
+    }
+
+    public boolean onlyKeysPressedAre(int... p_keyCodes) {
+        boolean toRet = this.keysHeld.size() == p_keyCodes.length;
+
+        if (!toRet)
+            return false;
+
+        for (int i : p_keyCodes)
+            toRet &= this.keysHeld.contains(i);
+
+        return toRet;
+    }
+
     public boolean keysPressed(int... p_keyCodes) {
+        // this.keysHeld.contains(p_keyCodes); // Causes a totally unique error :O
+
         for (int i : p_keyCodes)
             if (!this.keysHeld.contains(i))
                 return false;
@@ -796,9 +914,13 @@ public class Sketch extends PApplet {
         return false;
     }
 
-    public static boolean isValidSymbol(char p_char) {
+    public static boolean isStandardKeyboardSymbol(char p_char) {
         // boolean is = false;
-        for (char ch : VALID_SYMBOLS)
+        for (char ch : Sketch.STANDARD_KEYBOARD_SYMBOLS)
+            // Can't use this!:
+            // return ch == p_char;
+            // What if the array being examined is empty?!
+
             if (ch == p_char)
                 return true;
 
@@ -814,7 +936,7 @@ public class Sketch extends PApplet {
         return Character.isDigit(p_char) ||
                 Character.isLetter(p_char) ||
                 Character.isWhitespace(p_char) ||
-                Sketch.isValidSymbol(p_char);
+                Sketch.isStandardKeyboardSymbol(p_char);
     }
 
     public char getTypedKey() {
@@ -890,12 +1012,6 @@ public class Sketch extends PApplet {
     // endregion
 
     // region 2D rendering.
-    public void in2d(Runnable p_toDraw) {
-        this.begin2d();
-        p_toDraw.run();
-        this.end2d();
-    }
-
     public void begin2d() {
         super.hint(PConstants.DISABLE_DEPTH_TEST);
         super.pushMatrix();
@@ -903,10 +1019,25 @@ public class Sketch extends PApplet {
     }
 
     public void end2d() {
-        super.popStyle();
-        super.popMatrix();
         super.hint(PConstants.ENABLE_DEPTH_TEST);
+        super.popMatrix();
+        super.popStyle();
     }
+
+    public void in2d(Runnable p_toDraw) {
+        super.hint(PConstants.DISABLE_DEPTH_TEST);
+        super.pushMatrix();
+        super.pushStyle();
+        // this.begin2d();
+
+        p_toDraw.run();
+
+        // this.end2d();
+        super.hint(PConstants.ENABLE_DEPTH_TEST);
+        super.popMatrix();
+        super.popStyle();
+    }
+
     // endregion
 
     // region Start a `JAVA2D` sketch with an undecorated window.
@@ -1063,6 +1194,7 @@ public class Sketch extends PApplet {
     }
 
     // Used by `Sketch::createSketchPanel()`:
+    // ~~Should've made a method-class for this.~~
     private void updateSketchMouse() {
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         super.mouseX = mousePoint.x - this.sketchFrame.getLocation().x;
