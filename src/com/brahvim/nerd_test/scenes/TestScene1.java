@@ -21,17 +21,20 @@ public class TestScene1 extends NerdScene {
     @Override
     protected void draw() {
         SKETCH.text("Scene `1`!",
-                SKETCH.cx, SKETCH.cy + PApplet.sin(SKETCH.millis() * 0.005f) * 25);
-        // SKETCH.cx, SKETCH.cy + PApplet.sin(SKETCH.millis() * 0.0125f) * 25);
-        SKETCH.currentCamera.pos.z = PApplet.abs(PApplet.sin(SKETCH.millis() *
+                SKETCH.cx, SKETCH.cy + PApplet.sin(MANAGER.sinceSceneStarted() * 0.005f) * 25);
+        // SKETCH.cx, SKETCH.cy + PApplet.sin(MANAGER.sinceSceneStarted() * 0.0125f) *
+        // 25);
+        SKETCH.currentCamera.pos.z = PApplet.abs(PApplet.sin(MANAGER.sinceSceneStarted() *
                 0.001f)) * 500;
 
         /*
          * if (SKETCH.frameCount % 5 == 0) {
          * SKETCH.glWindow.setPosition(0, 0);
          * SKETCH.glWindow.setSize(
-         * 250 + (int) PApplet.abs((PApplet.sin(SKETCH.millis() * 0.001f) * 250)),
-         * 250 + (int) PApplet.abs((PApplet.sin(SKETCH.millis() * 0.001f) * 250)));
+         * 250 + (int) PApplet.abs((PApplet.sin(MANAGER.sinceSceneStarted() * 0.001f) *
+         * 250)),
+         * 250 + (int) PApplet.abs((PApplet.sin(MANAGER.sinceSceneStarted() * 0.001f) *
+         * 250)));
          * }
          */
 

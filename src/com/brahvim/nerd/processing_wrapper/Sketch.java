@@ -207,7 +207,7 @@ public class Sketch extends PApplet {
 
     // region `private` ~~/ `protected`~~ fields.
     private NerdSceneManager sceneMan;
-    private final String ICON_PATH;
+    public final String ICON_PATH;
     private final Unprojector unprojector;
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
     // endregion
@@ -332,8 +332,6 @@ public class Sketch extends PApplet {
         super.rectMode(PConstants.CENTER);
         super.imageMode(PConstants.CENTER);
         super.textAlign(PConstants.CENTER, PConstants.CENTER);
-
-        this.sceneMan.startScene(this.FIRST_SCENE_CLASS);
     }
 
     public void pre() {
@@ -354,6 +352,10 @@ public class Sketch extends PApplet {
         this.mouse.set(super.mouseX, super.mouseY);
         if (this.RENDERER == PConstants.P3D)
             this.unprojectMouse();
+
+        if (super.frameCount == 1 && this.sceneMan.getCurrentScene() == null) {
+            this.sceneMan.startScene(this.FIRST_SCENE_CLASS);
+        }
 
         this.sceneMan.pre();
     }

@@ -54,18 +54,25 @@ public class NerdAsset {
         this.PATH = p_path;
 
         // region ...let's make a name!:
-        int lastCharId = this.PATH.lastIndexOf('.') - 1,
-                firstCharId = this.PATH.lastIndexOf(File.separator);
+        String name = new File(this.PATH).getName();
 
-        if (lastCharId == -2) // We subtracted `1` from it - it'll be `-2` in that case!
-            lastCharId = this.PATH.length();
+        int lastCharId = name.lastIndexOf('.');
+        // ,firstCharId = this.PATH.lastIndexOf(File.separator) + 1;
 
-        if (firstCharId == -1) // ...applies if the file is in the same folder as this code! What?!
-            firstCharId = 0;
+        if (lastCharId == -1) // We subtracted `1` from it - it'll be `-2` in that case!
+            lastCharId = name.length();
 
-        // this.NAME = new File(this.PATH).getName().substring(lastCharId);
-        this.NAME = this.PATH.substring(firstCharId, lastCharId);
+        // if (firstCharId == -1) // ...applies if the file is in the same folder as
+        // this code! What?!
+        // firstCharId = 0;
+
+        name = name.substring(0, lastCharId);
+        // name = this.PATH.substring(firstCharId, lastCharId);
+
+        this.NAME = name;
         // endregion
+
+        System.out.println();
 
     }
 

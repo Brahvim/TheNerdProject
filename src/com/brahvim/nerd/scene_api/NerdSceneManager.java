@@ -656,6 +656,13 @@ public class NerdSceneManager {
     // Set the time, *then* call `SceneManager::runSetup()`.
     private void setupCurrentScene() {
         this.loadSceneAssets(this.currentScene);
+
+        // Helps in resetting style and transformation info across scenes! YAY!:
+        if (this.previousSceneClass != null)
+            this.SKETCH.pop();
+
+        this.SKETCH.push();
+
         this.sceneStartMillis = this.SKETCH.millis();
         this.currentScene.runSetup(this.currentSceneKey);
     }

@@ -1,5 +1,7 @@
 package com.brahvim.nerd_test;
 
+import java.io.File;
+
 import com.brahvim.nerd.processing_wrapper.Sketch;
 import com.brahvim.nerd.processing_wrapper.SketchBuilder;
 import com.brahvim.nerd_test.scenes.TestScene1;
@@ -20,7 +22,7 @@ public class App {
     public static void main(String[] p_args) {
         App.sketchInstance = new SketchBuilder()
                 .setTitle("The Nerd Project")
-                .setFirstScene(TestScene1.class)
+                .setFirstScene(TestScene4.class)
                 .setIconPath("data/sunglass_nerd.png")
 
                 // .useJavaRenderer()

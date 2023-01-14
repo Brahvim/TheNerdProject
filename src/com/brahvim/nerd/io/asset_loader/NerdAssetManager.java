@@ -51,7 +51,7 @@ public class NerdAssetManager {
 
     public NerdAsset get(String p_fileName) {
         for (NerdAsset a : this.ASSETS)
-            if (a.NAME == p_fileName)
+            if (a.NAME.equals(p_fileName))
                 return a;
         return null;
     }
@@ -70,6 +70,18 @@ public class NerdAssetManager {
 
     public void clear() {
         this.ASSETS.clear();
+    }
+
+    public boolean hasCompleted() {
+        for (NerdAsset a : this.ASSETS)
+            if (!a.hasLoaded())
+                return false;
+        return true;
+    }
+
+    public void ensureCompletion() {
+        while (this.hasCompleted())
+            ;
     }
 
 }
