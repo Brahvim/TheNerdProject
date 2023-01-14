@@ -148,6 +148,9 @@ public class Sketch extends PApplet {
     public final static GraphicsDevice[] JAVA_SCREENS = GraphicsEnvironment
             .getLocalGraphicsEnvironment().getScreenDevices();
 
+    public final static DisplayMode DEFAULT_JAVA_SCREEN_MODE = GraphicsEnvironment
+            .getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+
     public final static int DEFAULT_REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
             .getDefaultScreenDevice().getDisplayMode().getRefreshRate();
 
@@ -276,13 +279,15 @@ public class Sketch extends PApplet {
         super.registerMethod("post", this);
         super.frameRate(Sketch.DEFAULT_REFRESH_RATE);
 
+        // TODO: Deal with multiple monitors!
+        // [https://stackoverflow.com/questions/21585121/java-getting-mouse-location-on-multiple-monitor-environment]
         // TODO: Find app monitor. AWT tells what mouse's on. Check if app tracks mouse.
         {
-            DisplayMode mode = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                    .getScreenDevices()[0].getDisplayMode();
+            // DisplayMode mode = GraphicsEnvironment.getLocalGraphicsEnvironment()
+            // .getScreenDevices()[0].getDisplayMode();
 
-            super.displayWidth = mode.getWidth();
-            super.displayHeight = mode.getHeight();
+            // super.displayWidth = mode.getWidth();
+            // super.displayHeight = mode.getHeight();
         }
 
         // I should make a super slow "convenience" method to do this with `Runnable`s!
@@ -656,13 +661,14 @@ public class Sketch extends PApplet {
         this.updateRatios(); // You called this function when the window changed its size or position, right?
         // Remember: computers with multiple displays exist! We shouldn't cache this:
 
-        System.out.println(super.displayWidth);
-        System.out.println(super.displayHeight);
-        int winX = (int) ((super.displayWidth * 0.5f) - this.cx),
-                winY = (int) ((super.displayHeight * 0.5f) - this.cy);
+        final int WIDTH = Sketch.DEFAULT_JAVA_SCREEN_MODE.getWidth(),
+                HEIGHT = Sketch.DEFAULT_JAVA_SCREEN_MODE.getHeight();
+
+        int winX = (int) ((WIDTH * 0.5f) - this.cx),
+                winY = (int) ((HEIGHT * 0.5f) - this.cy);
 
         switch (this.RENDERER) {
-            case PConstants.P3D -> this.glWindow.setPosition(winX, winY);
+            case PConstants.P3D, PConstants.P2D -> this.glWindow.setPosition(winX, winY);
             default -> super.surface.setLocation(winX, winY);
         }
 
@@ -671,7 +677,6 @@ public class Sketch extends PApplet {
     }
 
     public void fullScreenCheck() {
-        // Fullscreen control:
         switch (this.RENDERER) {
             case PConstants.JAVA2D:
                 // Fullscreen?
@@ -684,14 +689,20 @@ public class Sketch extends PApplet {
                     while (this.sketchFrame.isDisplayable())
                         ;
 
-                    System.out.println("J2D fullscreen...");
-
                     if (this.fullscreen) {
-                        this.sketchFrame.setSize(super.displayWidth, super.displayHeight);
-                        this.sketchFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                        // If `super.displayDim` are set to the actual (AWT) ones:
+
+                        // this.sketchFrame.setLocation(-7, -30);
+                        // this.sketchFrame.setSize(super.displayWidth - 354,
+                        // super.displayHeight - 270);
+
+                        // this.sketchFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                        this.sketchFrame.setLocation(-8, -30);
+                        this.sketchFrame.setSize(super.displayWidth + 15, super.displayHeight);
                         this.sketchFrame.setUndecorated(true);
                     } else {
-                        this.sketchFrame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                        this.centerWindow();
+                        this.sketchFrame.setSize(this.INIT_WIDTH, this.INIT_HEIGHT);
                         this.sketchFrame.setUndecorated(false);
                     }
 
@@ -705,7 +716,7 @@ public class Sketch extends PApplet {
                     super.noCursor();
                 break;
 
-            case PConstants.P3D:
+            case PConstants.P3D, PConstants.P2D:
                 if (this.pfullscreen != this.fullscreen) {
                     this.glWindow.setFullscreen(this.fullscreen);
                     while (this.fullscreen ? !this.glWindow.isFullscreen() : this.glWindow.isFullscreen())
@@ -721,7 +732,6 @@ public class Sketch extends PApplet {
                     ;
                 break;
         }
-
     }
 
     // region Drawing utilities!
