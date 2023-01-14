@@ -10,7 +10,7 @@ import processing.opengl.PJOGL;
 
 public class App {
     // region Fields.
-    public static final int BPM = 100,
+    public final static int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 
     private static Sketch sketchInstance;

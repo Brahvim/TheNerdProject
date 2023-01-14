@@ -9,6 +9,7 @@ import processing.core.PVector;
  */
 public class NerdCamera {
     // region Interface `Camera.Script`.
+    // Needed to be able to clone cameras!
     @FunctionalInterface
     public interface Script {
         public void onCamUpdate(NerdCamera p_cam);

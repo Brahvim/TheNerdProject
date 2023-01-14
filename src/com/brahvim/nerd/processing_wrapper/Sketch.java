@@ -437,8 +437,7 @@ public class Sketch extends PApplet {
 
             // ...and thus-this check was born!:
             if (Sketch.isTypeable(super.key))
-                // TODO: Yes. Two ways to pass data! Should be in ALL input methods!
-                l.keyTyped(super.key, super.keyCode);
+                l.keyTyped();
         }
     }
 
@@ -470,7 +469,7 @@ public class Sketch extends PApplet {
         this.keysHeld.add(super.keyCode);
 
         for (SketchKeyboardListener l : this.ALL_KEYBOARD_LISTENERS) {
-            l.keyPressed(super.key, super.keyCode);
+            l.keyPressed();
         }
     }
 
@@ -481,7 +480,7 @@ public class Sketch extends PApplet {
         }
 
         for (SketchKeyboardListener l : this.ALL_KEYBOARD_LISTENERS) {
-            l.keyReleased(super.key, super.keyCode);
+            l.keyReleased();
         }
     }
     // endregion
