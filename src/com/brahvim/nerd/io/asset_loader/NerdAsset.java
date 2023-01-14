@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import com.brahvim.nerd.io.ByteSerial;
+import com.brahvim.nerd.processing_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PImage;
@@ -16,6 +17,7 @@ import processing.sound.SoundFile;
 public class NerdAsset {
     // region Fields!
     public static boolean CACHE_SOUNDFILES = false;
+    public final String NAME;
 
     private boolean loaded, ploaded, failure;
     private long millis = -1;
@@ -24,24 +26,42 @@ public class NerdAsset {
     private Object data;
 
     private final NerdAssetType TYPE;
-    private final NerdScene SCENE;
+    private final Sketch SKETCH;
     private final String PATH;
     // endregion
 
     // region Constructors!
     // NO. Tell me the type yourself :joy:
-    public NerdAsset(NerdScene p_scene, NerdAssetType p_type, String p_path) {
-        if (p_path == null || p_scene == null || p_type == null) {
-            throw new IllegalArgumentException("Those arguments can't be `null`!");
+    public NerdAsset(NerdAssetManager.AssetKey p_key, NerdAssetType p_type, String p_path) {
+        if (p_key == null) {
+            throw new IllegalArgumentException("Get a real key! That's `null`...");
+        } else if (p_key.isUsed()) {
+            throw new IllegalArgumentException("Get a real key! That's a used one...");
         }
 
-        this.SCENE = p_scene;
+        this.SKETCH = p_key.SKETCH;
         this.TYPE = p_type;
         this.PATH = p_path;
+
+        // region ...let's make a name!:
+        int lastCharId = this.PATH.lastIndexOf('.') - 1,
+                firstCharId = this.PATH.lastIndexOf(File.separator);
+
+        if (lastCharId == -2) // We subtracted `1` from it - it'll be `-2` in that case!
+            lastCharId = this.PATH.length();
+
+        if (firstCharId == -1) // ...applies if the file is in the same folder as this code! What?!
+            firstCharId = 0;
+
+        // this.NAME = new File(this.PATH).getName().substring(lastCharId);
+        this.NAME = this.PATH.substring(firstCharId, lastCharId);
+        // endregion
+
     }
 
-    public NerdAsset(NerdScene p_scene, NerdAssetType p_type, String p_path, Runnable p_onLoad) {
-        this(p_scene, p_type, p_path);
+    public NerdAsset(NerdAssetManager.AssetKey p_key,
+            NerdAssetType p_type, String p_path, Runnable p_onLoad) {
+        this(p_key, p_type, p_path);
         this.onLoad = p_onLoad;
     }
     // endregion
@@ -113,7 +133,7 @@ public class NerdAsset {
             }
 
             case IMAGE -> {
-                PImage img = SCENE.getSketch().loadImage(this.PATH);
+                PImage img = SKETCH.loadImage(this.PATH);
 
                 // Oh, it failed?
                 this.failure = img == null;
@@ -124,7 +144,7 @@ public class NerdAsset {
             }
 
             case SVG, MODEL_3D -> {
-                PShape shape = SCENE.getSketch().loadShape(this.PATH);
+                PShape shape = SKETCH.loadShape(this.PATH);
 
                 if (shape == null)
                     this.failure = true;
@@ -133,7 +153,7 @@ public class NerdAsset {
             }
 
             case PAUDIO -> {
-                SoundFile file = new SoundFile(SCENE.getSketch(), this.PATH, NerdAsset.CACHE_SOUNDFILES);
+                SoundFile file = new SoundFile(SKETCH, this.PATH, NerdAsset.CACHE_SOUNDFILES);
 
                 try {
                     file.channels();
@@ -147,7 +167,7 @@ public class NerdAsset {
             }
 
             case PBYTES -> {
-                byte[] bytes = this.SCENE.getSketch().loadBytes(this.PATH);
+                byte[] bytes = this.SKETCH.loadBytes(this.PATH);
                 this.failure = bytes == null;
                 this.data = bytes; // Compiler: No complaints!
 
@@ -157,7 +177,7 @@ public class NerdAsset {
 
             case PJSON_ARRAY -> {
                 try {
-                    this.data = SCENE.getSketch().loadJSONArray(this.PATH);
+                    this.data = SKETCH.loadJSONArray(this.PATH);
                 } catch (NullPointerException e) {
                     this.failure = true;
                     this.data = e;
@@ -166,7 +186,7 @@ public class NerdAsset {
 
             case PJSON_OBJECT -> {
                 try {
-                    this.data = SCENE.getSketch().loadJSONObject(this.PATH);
+                    this.data = SKETCH.loadJSONObject(this.PATH);
                 } catch (NullPointerException e) {
                     this.failure = true;
                     this.data = e;
@@ -174,7 +194,7 @@ public class NerdAsset {
             }
 
             case PSHADER -> {
-                PShader shader = SCENE.getSketch().loadShader(this.PATH);
+                PShader shader = SKETCH.loadShader(this.PATH);
 
                 if (shader == null)
                     this.failure = true;
@@ -183,12 +203,22 @@ public class NerdAsset {
             }
 
             case PSTRINGS -> {
-                String[] strings = SCENE.getSketch().loadStrings(this.PATH);
+                String[] strings = SKETCH.loadStrings(this.PATH);
 
                 if (strings == null)
                     this.failure = true;
 
                 this.data = strings;
+                // haha space else vscode no fold dis
+            }
+
+            case XML -> {
+                XML markup = SKETCH.loadXML(this.PATH);
+
+                if (markup == null)
+                    this.failure = true;
+
+                this.data = markup;
             }
 
             case SERIALIZED -> {
@@ -196,15 +226,6 @@ public class NerdAsset {
 
                 if (this.data == null)
                     this.failure = true;
-            }
-
-            case XML -> {
-                XML markup = SCENE.getSketch().loadXML(this.PATH);
-
-                if (markup == null)
-                    this.failure = true;
-
-                this.data = markup;
             }
 
             // I know where the `default` may be used!

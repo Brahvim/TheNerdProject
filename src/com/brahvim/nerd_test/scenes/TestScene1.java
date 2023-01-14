@@ -1,7 +1,7 @@
 package com.brahvim.nerd_test.scenes;
 
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager;
+import com.brahvim.nerd.scene_api.NerdSceneManager;
 import com.brahvim.nerd_test.layers.BackgroundLayer;
 import com.brahvim.nerd_test.layers.BoxAnimationLayer;
 import com.brahvim.nerd_test.layers.RevolvingParticlesLayer;
@@ -10,16 +10,12 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class TestScene1 extends NerdScene {
-    public TestScene1(SceneManager.SceneKey p_sceneKey) {
+    public TestScene1(NerdSceneManager.SceneKey p_sceneKey) {
         super(p_sceneKey,
                 // Yes, these work in order:
                 BackgroundLayer.class,
                 BoxAnimationLayer.class,
                 RevolvingParticlesLayer.class);
-
-        // super.startLayer(BackgroundLayer.class);
-        // super.startLayer(BoxAnimationLayer.class);
-        // super.startLayer(MouseEllipseLayer.class);
     }
 
     @Override
@@ -46,5 +42,11 @@ public class TestScene1 extends NerdScene {
         switch (SKETCH.mouseButton) {
             case PConstants.RIGHT -> MANAGER.startScene(TestScene2.class);
         }
+    }
+
+    @Override
+    public void mouseMoved() {
+        System.out.println("TestScene1.mouseMoved()");
+        SKETCH.centerWindow();
     }
 }

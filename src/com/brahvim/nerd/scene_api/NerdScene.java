@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
+import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
-import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
+import com.brahvim.nerd.scene_api.NerdSceneManager.SceneKey;
 
 /**
  * Do not use as anonymous classes!
@@ -79,11 +81,12 @@ public class NerdScene implements HasSketchEvents {
    * decided not to do that.
    */
 
-  /* private */ protected final SceneManager MANAGER; // ~~Don't let the scene manage its `manager`!~~
+  /* private */ protected final NerdSceneManager MANAGER; // ~~Don't let the scene manage its `manager`!~~
   private final LayerKey LAYER_INITIALIZER; // Don't let the scene manage its `manager`!
+  public final NerdAssetManager ASSETS;
   // endregion
 
-  public class LayerKey {
+  public class LayerKey extends NerdKey {
     private final NerdScene SCENE;
     private final Sketch SKETCH;
 
@@ -100,12 +103,18 @@ public class NerdScene implements HasSketchEvents {
       return this.SKETCH;
     }
 
+    @Override
+    public boolean fitsLock(Class<?> p_class) {
+      return this.SCENE.getClass().equals(p_class);
+    }
+
   }
 
   public NerdScene(SceneKey p_sceneKey) {
     // this.SCENE_CLASS = p_sceneKey.getSceneClass();
     this.MANAGER = p_sceneKey.getSceneManager();
     this.SKETCH = this.MANAGER.getSketch();
+    this.ASSETS = new NerdAssetManager(SKETCH);
 
     this.LAYER_CONSTRUCTORS = new HashMap<>();
     this.LAYER_INITIALIZER = new LayerKey(this, this.SKETCH);
@@ -245,18 +254,18 @@ public class NerdScene implements HasSketchEvents {
 
   // region Anything callback-related, LOL.
   // region `SceneManager.SceneInitializer` app-workflow callback runners.
-  private void verifyInitializer(SceneManager.SceneKey p_sceneKey) {
+  private void verifyInitializer(NerdSceneManager.SceneKey p_sceneKey) {
     if (p_sceneKey == null)
       throw new IllegalArgumentException(
           "`Scene::run()` should only be called by a `SceneManager`!");
   }
 
-  public void runOnSceneExit(SceneManager.SceneKey p_sceneKey) {
+  public void runOnSceneExit(NerdSceneManager.SceneKey p_sceneKey) {
     this.verifyInitializer(p_sceneKey);
     this.onSceneExit();
   }
 
-  public void runSetup(SceneManager.SceneKey p_sceneKey) {
+  public void runSetup(NerdSceneManager.SceneKey p_sceneKey) {
     this.verifyInitializer(p_sceneKey);
     this.setup();
 
@@ -266,7 +275,7 @@ public class NerdScene implements HasSketchEvents {
           l.setup();
   }
 
-  public void runPre(SceneManager.SceneKey p_sceneKey) {
+  public void runPre(NerdSceneManager.SceneKey p_sceneKey) {
     this.verifyInitializer(p_sceneKey);
     this.pre();
 
@@ -276,7 +285,7 @@ public class NerdScene implements HasSketchEvents {
           l.pre();
   }
 
-  public void runDraw(SceneManager.SceneKey p_sceneKey) {
+  public void runDraw(NerdSceneManager.SceneKey p_sceneKey) {
     this.verifyInitializer(p_sceneKey);
     for (NerdLayer l : this.LAYERS)
       if (l != null)
@@ -295,7 +304,7 @@ public class NerdScene implements HasSketchEvents {
     this.SKETCH.popMatrix();
   }
 
-  public void runPost(SceneManager.SceneKey p_sceneKey) {
+  public void runPost(NerdSceneManager.SceneKey p_sceneKey) {
     this.verifyInitializer(p_sceneKey);
     for (NerdLayer l : this.LAYERS)
       if (l != null)

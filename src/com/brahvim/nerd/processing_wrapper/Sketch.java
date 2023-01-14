@@ -1,7 +1,9 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -27,7 +29,7 @@ import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager;
+import com.brahvim.nerd.scene_api.NerdSceneManager;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.awt.PSurfaceAWT;
@@ -143,8 +145,11 @@ public class Sketch extends PApplet {
     public final static File DATA_DIR = new File("data");
     public final static String DATA_DIR_PATH = Sketch.DATA_DIR.getAbsolutePath().concat(File.separator);
 
-    public final static int REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
-            .getScreenDevices()[0].getDisplayMode().getRefreshRate();
+    public final static GraphicsDevice[] JAVA_SCREENS = GraphicsEnvironment
+            .getLocalGraphicsEnvironment().getScreenDevices();
+
+    public final static int DEFAULT_REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
+            .getDefaultScreenDevice().getDisplayMode().getRefreshRate();
 
     public final static char[] STANDARD_KEYBOARD_SYMBOLS = {
             '\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
@@ -161,7 +166,7 @@ public class Sketch extends PApplet {
     public final String RENDERER;
     public final int INIT_WIDTH, INIT_HEIGHT;
     public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
-            CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
+            CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN, DO_FAKE_2D_CAMERA = false;
     // endregion
 
     // Window object references::
@@ -199,7 +204,7 @@ public class Sketch extends PApplet {
 
     // region `private` ~~/ `protected`~~ fields.
     private String iconPath;
-    private SceneManager sceneMan;
+    private NerdSceneManager sceneMan;
     private final Unprojector unprojector;
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
     // endregion
@@ -216,6 +221,9 @@ public class Sketch extends PApplet {
         if (p_sketchKey == null) {
             throw new IllegalArgumentException("""
                     Please use a `SketchBuilder` instance to make a `Sketch`!""");
+        } else if (p_sketchKey.isUsed()) {
+            throw new IllegalArgumentException("""
+                    Please use a `SketchBuilder` instance to make a `Sketch`! That is a used key!""");
         }
 
         this.SKETCH = this;
@@ -232,7 +240,7 @@ public class Sketch extends PApplet {
         this.ALT_ENTER_FULLSCREEN = !p_sketchKey.cannotAltEnterFullscreen;
 
         this.unprojector = new Unprojector();
-        this.sceneMan = new SceneManager(this);
+        this.sceneMan = new NerdSceneManager(this);
         this.currentCamera = this.DEFAULT_CAMERA;
         this.fullscreen = this.STARTED_FULLSCREEN;
         this.pfullscreen = !this.fullscreen;
@@ -266,7 +274,16 @@ public class Sketch extends PApplet {
         super.surface.setTitle(this.NAME);
         super.registerMethod("pre", this);
         super.registerMethod("post", this);
-        super.frameRate(Sketch.REFRESH_RATE);
+        super.frameRate(Sketch.DEFAULT_REFRESH_RATE);
+
+        // TODO: Find app monitor. AWT tells what mouse's on. Check if app tracks mouse.
+        {
+            DisplayMode mode = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                    .getScreenDevices()[0].getDisplayMode();
+
+            super.displayWidth = mode.getWidth();
+            super.displayHeight = mode.getHeight();
+        }
 
         // I should make a super slow "convenience" method to do this with `Runnable`s!
         // :joy:!
@@ -282,13 +299,16 @@ public class Sketch extends PApplet {
                 break;
 
             case PConstants.JAVA2D:
-                this.sketchFrame = (JFrame) super.surface.getNative();
+                PSurfaceAWT.SmoothCanvas a = (PSurfaceAWT.SmoothCanvas) super.surface.getNative();
+                this.sketchFrame = (JFrame) a.getFrame();
+
+                this.surface.setIcon(loadImage("data/sunglass_nerd.png"));
 
                 if (this.INITIALLY_RESIZABLE)
                     super.surface.setResizable(true);
 
                 // "Loose" image loading is usually not a good idea, but I guess it's here...
-                super.surface.setIcon(super.loadImage(this.iconPath));
+                // super.surface.setIcon(super.loadImage(this.iconPath));
                 break;
         }
 
@@ -309,9 +329,14 @@ public class Sketch extends PApplet {
             }
         }
 
+        if (this.pfullscreen != this.fullscreen) {
+            this.centerWindow();
+        }
+
         this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
         this.mouse.set(super.mouseX, super.mouseY);
-        this.unprojectMouse();
+        if (this.RENDERER == PConstants.P3D)
+            this.unprojectMouse();
 
         this.sceneMan.pre();
     }
@@ -326,20 +351,29 @@ public class Sketch extends PApplet {
         this.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
         this.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
 
+        // region Apply the camera!:
         if (this.currentCamera != null)
-            this.currentCamera.apply();
+            switch (this.RENDERER) {
+                // "ToDo: iMpLeMeNt a 2d cAmErA."
+                // if (this.DO_FAKE_2D_CAMERA);
 
-        if (this.pkey != super.key)
-            System.out.println(this.pkey);
+                case PConstants.JAVA2D: // If using the 2D renderer, don't do any of these!
+                    this.currentCamera.runScript();
+                    this.currentCamera.clear();
+                    break;
 
-        if (this.pfullscreen != this.fullscreen) {
-            this.centerWindow();
-        }
+                case PConstants.P3D, PConstants.P2D:
+                    this.currentCamera.apply(); // Do all three tasks!
+                    break;
+            }
+        // endregion
 
         this.sceneMan.draw();
     }
 
     public void post() {
+        this.fullScreenCheck();
+
         this.pkey = super.key;
         this.pwidth = this.width;
         this.pheight = this.height;
@@ -359,32 +393,6 @@ public class Sketch extends PApplet {
 
         for (PVector v : this.UNPROJ_TOUCHES) {
             this.PREV_UNPROJ_TOUCHES.add(v);
-        }
-
-        // Fullscreen control:
-        switch (this.RENDERER) {
-            case PConstants.JAVA2D:
-                if (cursorVisible)
-                    super.cursor();
-                else
-                    super.noCursor();
-                break;
-
-            case PConstants.P3D:
-                // if (this.pfullscreen != this.fullscreen) {
-                this.glWindow.setFullscreen(this.fullscreen);
-                while (this.fullscreen ? !this.glWindow.isFullscreen() : this.glWindow.isFullscreen())
-                    ;
-                // }
-
-                this.glWindow.confinePointer(this.cursorConfined);
-                while (this.cursorConfined ? !this.glWindow.isPointerConfined() : this.glWindow.isPointerConfined())
-                    ;
-
-                this.glWindow.setPointerVisible(this.cursorVisible);
-                while (this.cursorVisible ? !this.glWindow.isPointerVisible() : this.glWindow.isPointerVisible())
-                    ;
-                break;
         }
 
         this.sceneMan.post();
@@ -425,7 +433,9 @@ public class Sketch extends PApplet {
 
     // @SuppressWarnings("unused")
     public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
-        this.sceneMan.mouseWheel(p_mouseEvent);
+        for (SketchMouseListener l : this.ALL_MOUSE_LISTENERS) {
+            l.mouseWheel(p_mouseEvent);
+        }
     }
     // endregion
 
@@ -459,9 +469,20 @@ public class Sketch extends PApplet {
             }
 
             if (this.F11_FULLSCREEN) {
-                if (super.keyCode == 107) { // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
-                    System.out.println("`F11` fullscreen!");
-                    this.fullscreen = !this.fullscreen;
+                switch (this.RENDERER) {
+                    case PConstants.P2D, PConstants.P3D:
+                        if (super.keyCode == 107) { // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
+                            System.out.println("`F11` fullscreen!");
+                            this.fullscreen = !this.fullscreen;
+                        }
+                        break;
+
+                    case PConstants.JAVA2D:
+                        if (super.keyCode == KeyEvent.VK_F11) {
+                            System.out.println("`F11` fullscreen!");
+                            this.fullscreen = !this.fullscreen;
+                        }
+                        break;
                 }
             }
         }
@@ -635,8 +656,10 @@ public class Sketch extends PApplet {
         this.updateRatios(); // You called this function when the window changed its size or position, right?
         // Remember: computers with multiple displays exist! We shouldn't cache this:
 
-        int winX = (int) (super.displayWidth * 0.5f - this.cx),
-                winY = (int) (super.displayHeight * 0.5f - this.cy);
+        System.out.println(super.displayWidth);
+        System.out.println(super.displayHeight);
+        int winX = (int) ((super.displayWidth * 0.5f) - this.cx),
+                winY = (int) ((super.displayHeight * 0.5f) - this.cy);
 
         switch (this.RENDERER) {
             case PConstants.P3D -> this.glWindow.setPosition(winX, winY);
@@ -645,6 +668,60 @@ public class Sketch extends PApplet {
 
         // super.surface.setLocation(winX, winY);
         // (Well, changing the display does NOT effect those variables in any way :|)
+    }
+
+    public void fullScreenCheck() {
+        // Fullscreen control:
+        switch (this.RENDERER) {
+            case PConstants.JAVA2D:
+                // Fullscreen?
+                // https://stackoverflow.com/a/11570414/13951505
+
+                if (this.pfullscreen != this.fullscreen) {
+                    this.sketchFrame.removeNotify();
+
+                    this.sketchFrame.setVisible(false);
+                    while (this.sketchFrame.isDisplayable())
+                        ;
+
+                    System.out.println("J2D fullscreen...");
+
+                    if (this.fullscreen) {
+                        this.sketchFrame.setSize(super.displayWidth, super.displayHeight);
+                        this.sketchFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                        this.sketchFrame.setUndecorated(true);
+                    } else {
+                        this.sketchFrame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                        this.sketchFrame.setUndecorated(false);
+                    }
+
+                    this.sketchFrame.setVisible(true);
+                    this.sketchFrame.addNotify();
+                }
+
+                if (cursorVisible)
+                    super.cursor();
+                else
+                    super.noCursor();
+                break;
+
+            case PConstants.P3D:
+                if (this.pfullscreen != this.fullscreen) {
+                    this.glWindow.setFullscreen(this.fullscreen);
+                    while (this.fullscreen ? !this.glWindow.isFullscreen() : this.glWindow.isFullscreen())
+                        ;
+                }
+
+                this.glWindow.confinePointer(this.cursorConfined);
+                while (this.cursorConfined ? !this.glWindow.isPointerConfined() : this.glWindow.isPointerConfined())
+                    ;
+
+                this.glWindow.setPointerVisible(this.cursorVisible);
+                while (this.cursorVisible ? !this.glWindow.isPointerVisible() : this.glWindow.isPointerVisible())
+                    ;
+                break;
+        }
+
     }
 
     // region Drawing utilities!

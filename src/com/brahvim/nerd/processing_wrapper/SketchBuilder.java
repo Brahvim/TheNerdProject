@@ -2,22 +2,22 @@ package com.brahvim.nerd.processing_wrapper;
 
 import java.util.HashMap;
 
+import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 
 public final class SketchBuilder {
-    // region Fields, constructor, class `SketchInitializer`...
-
-    private SketchKey sketchInitializer;
+    // region Fields, constructor, and class `SketchKey`.
+    private final SketchKey SKETCH_KEY;
 
     public SketchBuilder() {
-        this.sketchInitializer = new SketchKey();
+        this.SKETCH_KEY = new SketchKey();
     }
 
     // Hmmm... "`SketchSettings`" instead..?
-    public class SketchKey {
+    public class SketchKey extends NerdKey {
         public int width = 400, height = 400;
         public String renderer = PConstants.P3D, iconPath, name;
         public boolean dontCloseOnEscape, startedFullscreen, canResize,
@@ -28,11 +28,17 @@ public final class SketchBuilder {
         private SketchKey() {
             this.scenesToCache = new HashMap<>();
         }
+
+        @Override
+        public boolean fitsLock(Class<?> p_class) {
+            // Putting `p_class` in the argument eliminates the need for a `null` check.
+            return Sketch.class.isAssignableFrom(p_class);
+        }
     }
     // endregion
 
     public Sketch build(String[] p_javaMainArgs) {
-        Sketch constructedSketch = new Sketch(this.sketchInitializer);
+        Sketch constructedSketch = new Sketch(this.SKETCH_KEY);
         String[] args = new String[] { constructedSketch.getClass().getName() };
 
         if (p_javaMainArgs == null || p_javaMainArgs.length == 0)
@@ -45,81 +51,81 @@ public final class SketchBuilder {
 
     // region Renderer selection.
     public SketchBuilder useJavaRenderer() {
-        this.sketchInitializer.renderer = PConstants.JAVA2D;
+        this.SKETCH_KEY.renderer = PConstants.JAVA2D;
         return this;
     }
 
     public SketchBuilder useOpenGlRenderer() {
-        this.sketchInitializer.renderer = PConstants.P3D;
+        this.SKETCH_KEY.renderer = PConstants.P3D;
         return this;
     }
 
     public SketchBuilder useJavaFxRenderer() {
-        this.sketchInitializer.renderer = PConstants.FX2D;
+        this.SKETCH_KEY.renderer = PConstants.FX2D;
         return this;
     }
 
     public SketchBuilder usePdfRenderer() {
-        this.sketchInitializer.renderer = PConstants.PDF;
+        this.SKETCH_KEY.renderer = PConstants.PDF;
         return this;
     }
 
     public SketchBuilder useSvgRenderer() {
-        this.sketchInitializer.renderer = PConstants.SVG;
+        this.SKETCH_KEY.renderer = PConstants.SVG;
         return this;
     }
 
     public SketchBuilder useDxfRenderer() {
-        this.sketchInitializer.renderer = PConstants.DXF;
+        this.SKETCH_KEY.renderer = PConstants.DXF;
         return this;
     }
     // endregion
 
     // region `set()`.
     public SketchBuilder setWidth(int p_width) {
-        this.sketchInitializer.width = p_width;
+        this.SKETCH_KEY.width = p_width;
         return this;
     }
 
     public SketchBuilder setHeight(int p_height) {
-        this.sketchInitializer.height = p_height;
+        this.SKETCH_KEY.height = p_height;
         return this;
     }
 
-    public SketchBuilder setName(String p_name) {
-        this.sketchInitializer.name = p_name;
+    public SketchBuilder setTitle(String p_name) {
+        this.SKETCH_KEY.name = p_name;
         return this;
     }
 
     public SketchBuilder setFirstScene(Class<? extends NerdScene> p_firstScene) {
-        this.sketchInitializer.firstScene = p_firstScene;
+        this.SKETCH_KEY.firstScene = p_firstScene;
         return this;
     }
     // endregion
 
     public SketchBuilder canResize() {
-        this.sketchInitializer.canResize = true;
+        this.SKETCH_KEY.canResize = true;
         return this;
     }
 
     // region Fullscreen settings.
     public SketchBuilder startFullscreen() {
-        this.sketchInitializer.startedFullscreen = true;
+        this.SKETCH_KEY.startedFullscreen = true;
         return this;
     }
 
     public SketchBuilder cannotFullscreen() {
-        this.sketchInitializer.cannotFullscreen = false;
+        this.SKETCH_KEY.cannotFullscreen = false;
         return this;
     }
 
     public SketchBuilder cannotF11Fullscreen() {
-        this.sketchInitializer.cannotF11Fullscreen = true;
+        this.SKETCH_KEY.cannotF11Fullscreen = true;
         return this;
     }
 
     public SketchBuilder cannotAltEnterFullscreen() {
-        this.sketchInitializer.cannotAltEnterFullscreen = true;
+        this.SKETCH_KEY.cannotAltEnterFullscreen = true;
         return this;
     }
     // endregion
@@ -129,7 +135,7 @@ public final class SketchBuilder {
         if (p_sceneClass == null)
             return this;
 
-        this.sketchInitializer.scenesToCache.put(p_sceneClass, p_isDeletable);
+        this.SKETCH_KEY.scenesToCache.put(p_sceneClass, p_isDeletable);
         return this;
     }
 
@@ -141,19 +147,19 @@ public final class SketchBuilder {
         for (Class<? extends NerdScene> c : p_sceneClasses) {
             if (c == null)
                 continue;
-            this.sketchInitializer.scenesToCache.put(c, p_isDeletable);
+            this.SKETCH_KEY.scenesToCache.put(c, p_isDeletable);
         }
         return this;
     }
     // endregion
 
     public SketchBuilder preventCloseOnEscape() {
-        this.sketchInitializer.dontCloseOnEscape = true;
+        this.SKETCH_KEY.dontCloseOnEscape = true;
         return this;
     }
 
     public SketchBuilder setIconPath(String p_pathString) {
-        this.sketchInitializer.iconPath = p_pathString;
+        this.SKETCH_KEY.iconPath = p_pathString;
         return this;
     }
 

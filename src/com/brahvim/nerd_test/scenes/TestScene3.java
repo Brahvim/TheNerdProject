@@ -1,7 +1,7 @@
 package com.brahvim.nerd_test.scenes;
 
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
+import com.brahvim.nerd.scene_api.NerdSceneManager.SceneKey;
 import com.brahvim.nerd_test.AnimatedCube;
 
 public class TestScene3 extends NerdScene {

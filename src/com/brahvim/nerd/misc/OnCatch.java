@@ -1,4 +1,4 @@
-package com.brahvim.nerd.interfaces;
+package com.brahvim.nerd.misc;
 
 // I keep forgetting and realizing that you can use try-catch statements and throws declarations together.
 // And yes, overloads (for default values of this!)

@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.brahvim.nerd.interfaces.OnCatch;
+import com.brahvim.nerd.misc.OnCatch;
 
 // Brought to you, *from* my other (currently supa'-duper secret, ";P!) project, "AGC"!:
 

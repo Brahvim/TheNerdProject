@@ -2,12 +2,12 @@ package com.brahvim.nerd_test.scenes;
 
 import com.brahvim.nerd.math.SineWave;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager;
+import com.brahvim.nerd.scene_api.NerdSceneManager;
 
 public class TestScene2 extends NerdScene {
     private SineWave boxHorizWave, boxVertWave;
 
-    public TestScene2(SceneManager.SceneKey p_sceneKey) {
+    public TestScene2(NerdSceneManager.SceneKey p_sceneKey) {
         super(p_sceneKey);
     }
 

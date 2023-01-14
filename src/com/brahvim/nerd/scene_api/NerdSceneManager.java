@@ -5,20 +5,30 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
+import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
-public class SceneManager {
+public class NerdSceneManager {
     // region Inner classes.
-    public class SceneKey {
-        private SceneManager manager;
-        // private Class<? extends Scene> sceneClass;
+    public class SceneKey extends NerdKey {
+        private final NerdSceneManager MANAGER;
+        public final Class<? extends NerdScene> INTENDED_USER_CLASS;
 
-        private SceneKey(SceneManager p_sceneManager) {
-            this.manager = p_sceneManager;
+        private SceneKey(NerdSceneManager p_sceneManager,
+                Class<? extends NerdScene> p_sceneThatWillUseThis) {
+            this.MANAGER = p_sceneManager;
+            this.INTENDED_USER_CLASS = p_sceneThatWillUseThis;
         }
 
-        public SceneManager getSceneManager() {
-            return this.manager;
+        public NerdSceneManager getSceneManager() {
+            return this.MANAGER;
+        }
+
+        @Override
+        public boolean fitsLock(Class<?> p_class) {
+            // Putting `p_class` in the argument eliminates the need for a `null` check.
+            return this.INTENDED_USER_CLASS.equals(p_class);
         }
 
         /*
@@ -34,7 +44,8 @@ public class SceneManager {
         private NerdScene cachedReference;
         private boolean isDeletable;
 
-        private SceneCache(Constructor<? extends NerdScene> p_constructor, NerdScene p_cachedReference) {
+        private SceneCache(Constructor<? extends NerdScene> p_constructor,
+                NerdScene p_cachedReference) {
             this.constructor = p_constructor;
             this.cachedReference = p_cachedReference;
         }
@@ -94,13 +105,14 @@ public class SceneManager {
     }
     // endregion
 
+    public final NerdAssetManager PERSISTENT_ASSETS;
+
     // region `private` ~~/ `protected`~~ fields.
     private final HashMap<Class<? extends NerdScene>, SceneCache> SCENE_CACHE = new HashMap<>();
-    private final SceneManager.SceneKey SCENE_KEY;
 
     /**
      * Keeping this just-in-case. It would otherwise be passed
-     * straight to the {@linkplain SceneManager.SceneKey}
+     * straight to the {@linkplain NerdSceneManager.SceneKey}
      * constructor instead.
      */
     private final Sketch SKETCH;
@@ -120,91 +132,216 @@ public class SceneManager {
     // endregion
 
     private Class<? extends NerdScene> currentSceneClass, previousSceneClass;
-    private SceneManager.SceneManagerSettings settings;
-    private int sceneStartMillis;
+    private NerdSceneManager.SceneManagerSettings settings;
+    private SceneKey currentSceneKey;
     private NerdScene currentScene;
+    private int sceneStartMillis;
     // endregion
 
-    public SceneManager(Sketch p_sketch) {
+    public NerdSceneManager(Sketch p_sketch) {
         this.SKETCH = p_sketch;
         this.settings = new SceneManagerSettings();
-        this.SCENE_KEY = new SceneManager.SceneKey(this);
+        this.PERSISTENT_ASSETS = new NerdAssetManager(p_sketch);
 
-        final SceneManager SCENE_MAN = this;
+        final NerdSceneManager SCENE_MAN = this;
 
         // region Sketch Event Listeners initialization.
         this.MOUSE_LISTENER = this.SKETCH.new SketchMouseListener() {
             @Override
-            public void mouseClicked() {
-                SCENE_MAN.mouseClicked();
-            }
+            public void mousePressed() {
+                if (SCENE_MAN.currentScene == null)
+                    return;
 
-            @Override
-            public void mouseDragged() {
-                SCENE_MAN.mouseDragged();
+                SCENE_MAN.currentScene.mousePressed();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.mousePressed();
             }
 
             @Override
             public void mouseReleased() {
-                SCENE_MAN.mouseReleased();
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.mouseReleased();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.mouseReleased();
             }
+
+            @Override
+            public void mouseMoved() {
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.mouseMoved();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.mouseMoved();
+            }
+
+            @Override
+            public void mouseClicked() {
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.mouseClicked();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.mouseClicked();
+            }
+
+            @Override
+            public void mouseDragged() {
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.mouseDragged();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.mouseDragged();
+            }
+
+            @Override
+            public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.mouseWheel(p_mouseEvent);
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.mouseWheel(p_mouseEvent);
+            }
+
         };
 
         this.TOUCH_LISTENER = this.SKETCH.new SketchTouchListener() {
             @Override
             public void touchStarted() {
-                SCENE_MAN.touchStarted();
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.touchStarted();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.touchStarted();
             }
 
             @Override
             public void touchMoved() {
-                SCENE_MAN.touchMoved();
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.touchMoved();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.touchMoved();
             }
 
             @Override
             public void touchEnded() {
-                SCENE_MAN.touchEnded();
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.touchEnded();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.touchEnded();
             }
+
         };
 
         this.WINDOW_LISTENER = this.SKETCH.new SketchWindowListener() {
             @Override
-            public void focusGained() {
-                SCENE_MAN.focusGained();
-            }
-
-            @Override
             public void focusLost() {
-                SCENE_MAN.focusLost();
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.focusLost();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.focusLost();
             }
 
             @Override
             public void resized() {
-                SCENE_MAN.resized();
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.resized();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.resized();
             }
+
+            @Override
+            public void focusGained() {
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.focusGained();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.focusGained();
+            }
+
         };
 
         this.KEYBOARD_LISTENER = this.SKETCH.new SketchKeyboardListener() {
             @Override
-            public void keyPressed() {
-                SCENE_MAN.keyPressed();
+            public void keyTyped() {
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.keyTyped();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.keyTyped();
             }
 
             @Override
-            public void keyTyped() {
-                SCENE_MAN.keyTyped();
+            public void keyPressed() {
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.keyPressed();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.keyPressed();
             }
 
             @Override
             public void keyReleased() {
-                SCENE_MAN.keyReleased();
+                if (SCENE_MAN.currentScene == null)
+                    return;
+
+                SCENE_MAN.currentScene.keyReleased();
+                for (NerdLayer l : SCENE_MAN.currentScene.getAllLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.keyReleased();
             }
+
         };
         // endregion
 
     }
 
-    public SceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
+    public NerdSceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
         this(p_sketch);
         this.settings = p_settings;
     }
@@ -243,8 +380,7 @@ public class SceneManager {
     }
     // endregion
 
-    // region `Scene`-callbacks.
-    // region App workflow:
+    // region App workflow callbacks.
     public void setup() {
         if (this.currentScene != null)
             this.setupCurrentScene();
@@ -252,193 +388,18 @@ public class SceneManager {
 
     public void pre() {
         if (this.currentScene != null)
-            this.currentScene.runPre(this.SCENE_KEY);
+            this.currentScene.runPre(this.currentSceneKey);
     }
 
     public void draw() {
         if (this.currentScene != null)
-            this.currentScene.runDraw(this.SCENE_KEY);
+            this.currentScene.runDraw(this.currentSceneKey);
     }
 
     public void post() {
         if (this.currentScene != null)
-            this.currentScene.runPost(this.SCENE_KEY);
+            this.currentScene.runPost(this.currentSceneKey);
     }
-    // endregion
-
-    // region Mouse events.
-    public void mousePressed() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.mousePressed();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mousePressed();
-    }
-
-    public void mouseReleased() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.mouseReleased();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseReleased();
-    }
-
-    public void mouseMoved() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.mouseMoved();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseMoved();
-    }
-
-    public void mouseClicked() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.mouseClicked();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseClicked();
-    }
-
-    public void mouseDragged() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.mouseDragged();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseDragged();
-    }
-
-    // @SuppressWarnings("unused")
-    public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.mouseWheel(p_mouseEvent);
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseWheel(p_mouseEvent);
-    }
-    // endregion
-
-    // region Keyboard events.
-    public void keyTyped() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.keyTyped();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.keyTyped();
-    }
-
-    public void keyPressed() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.keyPressed();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.keyPressed();
-    }
-
-    public void keyReleased() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.keyReleased();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.keyReleased();
-    }
-    // endregion
-
-    // region Touch events.
-    public void touchStarted() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.touchStarted();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.touchStarted();
-    }
-
-    public void touchMoved() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.touchMoved();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.touchMoved();
-    }
-
-    public void touchEnded() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.touchEnded();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.touchEnded();
-    }
-    // endregion
-
-    // region Window focus events.
-    public void focusLost() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.focusLost();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.focusLost();
-    }
-
-    public void resized() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.resized();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.resized();
-    }
-
-    public void focusGained() {
-        if (this.currentScene == null)
-            return;
-
-        this.currentScene.focusGained();
-        for (NerdLayer l : this.currentScene.getAllLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.focusGained();
-    }
-    // endregion
     // endregion
 
     // region `Scene`-operations.
@@ -451,11 +412,13 @@ public class SceneManager {
             throw new IllegalArgumentException("""
                     The passed class's constructor could not be accessed.""");
 
-        NerdScene toCache = this.constructScene(sceneConstructor);
+        SceneKey sceneKey = new SceneKey(this, p_sceneClass);
+        NerdScene toCache = this.constructScene(sceneConstructor, sceneKey);
         if (toCache == null)
             throw new RuntimeException("The scene could not be constructed.");
 
-        this.SCENE_CACHE.put(p_sceneClass, new SceneCache(sceneConstructor, toCache, p_isDeletable));
+        this.SCENE_CACHE.put(p_sceneClass, new SceneCache(
+                sceneConstructor, toCache, p_isDeletable));
     }
 
     public void restartScene() {
@@ -463,7 +426,8 @@ public class SceneManager {
             return;
 
         SceneCache cache = this.SCENE_CACHE.remove(this.currentSceneClass);
-        NerdScene toUse = this.constructScene(cache.constructor);
+        this.currentSceneKey = new SceneKey(this, this.currentSceneClass);
+        NerdScene toUse = this.constructScene(cache.constructor, this.currentSceneKey);
         this.SCENE_CACHE.put(this.currentSceneClass, cache);
 
         this.setScene(toUse);
@@ -474,7 +438,8 @@ public class SceneManager {
             return;
 
         SceneCache cache = this.SCENE_CACHE.remove(this.previousSceneClass);
-        NerdScene toUse = this.constructScene(cache.constructor);
+        this.currentSceneKey = new SceneKey(this, this.previousSceneClass);
+        NerdScene toUse = this.constructScene(cache.constructor, this.currentSceneKey);
         this.SCENE_CACHE.put(this.previousSceneClass, cache);
 
         this.setScene(toUse);
@@ -547,7 +512,8 @@ public class SceneManager {
     // If it ain't cached, start it normally. Tell me if it is cached.
     public boolean startFromCacheIfCan(Class<? extends NerdScene> p_sceneClass) {
         if (this.SCENE_CACHE.keySet().contains(p_sceneClass)) {
-            this.setScene(this.SCENE_CACHE.get(p_sceneClass).getCache(this.SCENE_KEY));
+            this.setScene(this.SCENE_CACHE.get(p_sceneClass)
+                    .getCache(new SceneKey(this, p_sceneClass)));
             return true;
         } else {
             System.out.println("Scene not found in cache. Starting the usual way.");
@@ -569,11 +535,11 @@ public class SceneManager {
         return toRet;
     }
 
-    private NerdScene constructScene(Constructor<? extends NerdScene> p_sceneConstructor) {
+    private NerdScene constructScene(Constructor<? extends NerdScene> p_sceneConstructor, SceneKey p_sceneKey) {
         NerdScene toRet = null;
 
         try {
-            toRet = (NerdScene) p_sceneConstructor.newInstance(this.SCENE_KEY);
+            toRet = (NerdScene) p_sceneConstructor.newInstance(p_sceneKey);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -595,7 +561,8 @@ public class SceneManager {
             throw new IllegalArgumentException("""
                     The passed class's constructor could not be accessed.""");
 
-        NerdScene toStart = this.constructScene(sceneConstructor);
+        this.currentSceneKey = new SceneKey(this, p_sceneClass);
+        NerdScene toStart = this.constructScene(sceneConstructor, this.currentSceneKey);
 
         if (toStart == null)
             throw new RuntimeException("The scene could not be constructed.");
@@ -620,7 +587,7 @@ public class SceneManager {
 
         this.previousSceneClass = this.currentSceneClass;
         if (this.previousSceneClass != null) {
-            this.currentScene.runOnSceneExit(this.SCENE_KEY);
+            this.currentScene.runOnSceneExit(this.currentSceneKey);
 
             this.SCENE_CACHE.get(this.previousSceneClass).deleteCacheIfCan();
 
@@ -642,7 +609,7 @@ public class SceneManager {
     // Set the time, *then* call `SceneManager::runSetup()`.
     private void setupCurrentScene() {
         this.sceneStartMillis = this.SKETCH.millis();
-        this.currentScene.runSetup(this.SCENE_KEY);
+        this.currentScene.runSetup(this.currentSceneKey);
     }
     // endregion
     // endregion
