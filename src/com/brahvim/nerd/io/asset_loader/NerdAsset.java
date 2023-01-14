@@ -46,6 +46,9 @@ public class NerdAsset {
         p_key.use();
         // endregion
 
+        if (p_type == null || p_path == null)
+            throw new IllegalArgumentException("`NerdAsset`s need data!");
+
         this.SKETCH = p_key.SKETCH;
         this.TYPE = p_type;
         this.PATH = p_path;
@@ -139,7 +142,7 @@ public class NerdAsset {
                 }
             }
 
-            case IMAGE -> {
+            case PIMAGE -> {
                 PImage img = SKETCH.loadImage(this.PATH);
 
                 // Oh, it failed?

@@ -434,7 +434,7 @@ public class NerdSceneManager {
             return;
 
         Thread thread = new Thread(() -> {
-            this.loadSceneAssets();
+            this.loadSceneAssets(p_sceneClass);
         });
 
         thread.setName("AssetLoader_" + this.getClass().getSimpleName());
@@ -442,7 +442,11 @@ public class NerdSceneManager {
     }
 
     public synchronized void loadSceneAssets(Class<? extends NerdScene> p_sceneClass) {
+        this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference.preload();
+    }
 
+    public synchronized void loadSceneAssets(NerdScene p_scene) {
+        p_scene.preload();
     }
 
     public boolean hasCompletedPreload(Class<? extends NerdScene> p_sceneClass) {
@@ -651,6 +655,7 @@ public class NerdSceneManager {
 
     // Set the time, *then* call `SceneManager::runSetup()`.
     private void setupCurrentScene() {
+        this.loadSceneAssets(this.currentScene);
         this.sceneStartMillis = this.SKETCH.millis();
         this.currentScene.runSetup(this.currentSceneKey);
     }

@@ -28,12 +28,12 @@ public class NerdAssetManager {
     }
 
     // region `add()` overloads.
-    public NerdAssetManager add(NerdAsset p_asset) {
+    private NerdAssetManager add(NerdAsset p_asset) {
         this.ASSETS.add(p_asset);
         return this;
     }
 
-    public NerdAssetManager add(NerdAsset... p_assets) {
+    private NerdAssetManager add(NerdAsset... p_assets) {
         for (NerdAsset a : p_assets)
             this.ASSETS.add(a);
 
@@ -41,6 +41,9 @@ public class NerdAssetManager {
     }
 
     public NerdAssetManager add(NerdAssetType p_type, String p_path) {
+        if (p_type == null || p_path == null)
+            throw new IllegalArgumentException("`NerdAsset`s need data!");
+
         this.ASSETS.add(new NerdAsset(this.ASSET_KEY, p_type, p_path));
         return this;
     }

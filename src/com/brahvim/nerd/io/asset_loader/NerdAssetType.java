@@ -5,7 +5,7 @@ public enum NerdAssetType {
     XML(processing.data.XML.class),
     SVG(processing.core.PShape.class),
     SERIALIZED(java.lang.Object.class),
-    IMAGE(processing.core.PImage.class),
+    PIMAGE(processing.core.PImage.class),
     // PVIDEO(processing.video.Movie.class),
     PBYTES(java.lang.reflect.Array.class),
     MODEL_3D(processing.core.PShape.class),
