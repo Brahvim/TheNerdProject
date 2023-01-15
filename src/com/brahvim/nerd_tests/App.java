@@ -23,8 +23,10 @@ public class App {
                 .setFirstScene(TestScene4.class)
                 .setIconPath("data/sunglass_nerd.png")
 
+                // TODO: Add window resizing hint arrows to the `OpenGL` renderer.
                 // .useJavaRenderer()
                 // .cacheScene(true, TestScene1.class)
+                // .preLoadAssets(TestScene1.class)
                 // .cacheAllScenes(true,
                 // TestScene1.class, TestScene2.class)
 
