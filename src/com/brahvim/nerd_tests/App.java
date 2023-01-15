@@ -27,8 +27,7 @@ public class App {
                 // .useJavaRenderer()
                 // .cacheScene(true, TestScene1.class)
                 // .preLoadAssets(TestScene1.class)
-                // .cacheAllScenes(true,
-                // TestScene1.class, TestScene2.class)
+                // .cacheAllScenes(true, TestScene1.class, TestScene2.class)
 
                 .startFullscreen()
                 .canResize()
