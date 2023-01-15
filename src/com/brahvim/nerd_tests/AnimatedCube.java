@@ -1,4 +1,4 @@
-package com.brahvim.nerd_test;
+package com.brahvim.nerd_tests;
 
 import com.brahvim.nerd.math.SineWave;
 import com.brahvim.nerd.processing_wrapper.Sketch;

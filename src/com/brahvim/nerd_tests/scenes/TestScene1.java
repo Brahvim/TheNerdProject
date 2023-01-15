@@ -1,10 +1,10 @@
-package com.brahvim.nerd_test.scenes;
+package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.NerdSceneManager;
-import com.brahvim.nerd_test.layers.BackgroundLayer;
-import com.brahvim.nerd_test.layers.BoxAnimationLayer;
-import com.brahvim.nerd_test.layers.RevolvingParticlesLayer;
+import com.brahvim.nerd_tests.layers.BackgroundLayer;
+import com.brahvim.nerd_tests.layers.BoxAnimationLayer;
+import com.brahvim.nerd_tests.layers.RevolvingParticlesLayer;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

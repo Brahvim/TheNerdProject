@@ -144,11 +144,10 @@ public class NerdAsset {
         this.fetchData();
         this.loaded = true;
 
-        System.out.println("NerdAsset.loadImpl()");
         if (this.onLoad != null) {
             this.onLoad.run();
         }
-        System.out.println("NerdAsset.loadImpl()");
+
     }
 
     private synchronized void fetchData() {

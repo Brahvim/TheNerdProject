@@ -1,13 +1,11 @@
-package com.brahvim.nerd_test;
-
-import java.io.File;
+package com.brahvim.nerd_tests;
 
 import com.brahvim.nerd.processing_wrapper.Sketch;
 import com.brahvim.nerd.processing_wrapper.SketchBuilder;
-import com.brahvim.nerd_test.scenes.TestScene1;
-import com.brahvim.nerd_test.scenes.TestScene2;
-import com.brahvim.nerd_test.scenes.TestScene3;
-import com.brahvim.nerd_test.scenes.TestScene4;
+import com.brahvim.nerd_tests.scenes.TestScene1;
+import com.brahvim.nerd_tests.scenes.TestScene2;
+import com.brahvim.nerd_tests.scenes.TestScene3;
+import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
     // region Fields.

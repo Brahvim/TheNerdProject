@@ -1,4 +1,4 @@
-package com.brahvim.nerd_test.layers;
+package com.brahvim.nerd_tests.layers;
 
 import com.brahvim.nerd.math.SineWave;
 import com.brahvim.nerd.scene_api.NerdLayer;

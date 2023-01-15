@@ -27,18 +27,19 @@ public class NerdAssetManager {
         this.ASSET_KEY = new AssetKey(p_sketch);
     }
 
-    // region `add()` overloads.
-    private NerdAssetManager add(NerdAsset p_asset) {
-        this.ASSETS.add(p_asset);
-        return this;
-    }
-
-    private NerdAssetManager add(NerdAsset... p_assets) {
-        for (NerdAsset a : p_assets)
-            this.ASSETS.add(a);
-
-        return this;
-    }
+    /*
+     * private NerdAssetManager add(NerdAsset p_asset) {
+     * this.ASSETS.add(p_asset);
+     * return this;
+     * }
+     * 
+     * private NerdAssetManager add(NerdAsset... p_assets) {
+     * for (NerdAsset a : p_assets)
+     * this.ASSETS.add(a);
+     * 
+     * return this;
+     * }
+     */
 
     public NerdAssetManager add(NerdAssetType p_type, String p_path) {
         if (p_type == null || p_path == null)
@@ -47,7 +48,6 @@ public class NerdAssetManager {
         this.ASSETS.add(new NerdAsset(this.ASSET_KEY, p_type, p_path));
         return this;
     }
-    // endregion
 
     public NerdAsset get(String p_fileName) {
         for (NerdAsset a : this.ASSETS)

@@ -1,9 +1,9 @@
-package com.brahvim.nerd_test.layers;
+package com.brahvim.nerd_tests.layers;
 
 import com.brahvim.nerd.math.Easings;
 import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene.LayerKey;
-import com.brahvim.nerd_test.App;
+import com.brahvim.nerd_tests.App;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
