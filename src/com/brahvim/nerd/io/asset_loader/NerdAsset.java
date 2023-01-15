@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import com.brahvim.nerd.io.ByteSerial;
+import com.brahvim.nerd.io.asset_loader.NerdAssetManager.AssetKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
 import processing.core.PImage;
@@ -18,7 +19,7 @@ public class NerdAsset {
     public static boolean CACHE_SOUNDFILES = false;
     public final String NAME;
 
-    private boolean loaded, ploaded, failure;
+    private boolean loaded, failure;
     private long millis = -1;
     private Runnable onLoad;
     private int frame = -1;
@@ -32,7 +33,51 @@ public class NerdAsset {
     // region Constructors!
     // NO. Tell me the type yourself :joy:
     public NerdAsset(NerdAssetManager.AssetKey p_key, NerdAssetType p_type, String p_path) {
-        // region Verify and 'use' key.
+        this.verifyKey(p_key);
+
+        if (p_type == null || p_path == null)
+            throw new IllegalArgumentException("`NerdAsset`s need data!");
+
+        this.SKETCH = p_key.SKETCH;
+        this.TYPE = p_type;
+        this.PATH = p_path;
+
+        this.NAME = this.findName();
+
+        this.startLoading();
+    }
+
+    public NerdAsset(NerdAssetManager.AssetKey p_key,
+            NerdAssetType p_type, String p_path, Runnable p_onLoad) {
+        this.verifyKey(p_key);
+
+        if (p_type == null || p_path == null)
+            throw new IllegalArgumentException("`NerdAsset`s need data!");
+
+        this.SKETCH = p_key.SKETCH;
+        this.onLoad = p_onLoad;
+        this.TYPE = p_type;
+        this.PATH = p_path;
+
+        this.NAME = this.findName();
+        this.startLoading();
+
+    }
+    // endregion
+
+    private String findName() {
+        String toRet = new File(this.PATH).getName();
+
+        int lastCharId = toRet.lastIndexOf('.');
+
+        if (lastCharId == -1) // We subtracted `1` from it - it'll be `-2` in that case!
+            lastCharId = toRet.length();
+
+        toRet = toRet.substring(0, lastCharId);
+        return toRet;
+    }
+
+    private boolean verifyKey(AssetKey p_key) {
         if (p_key == null) {
             throw new IllegalArgumentException("""
                     Please use a `NerdSceneManager` instance to make a `NerdScene`!""");
@@ -44,44 +89,9 @@ public class NerdAsset {
                     Please use a `NerdSceneManager` instance to make a `NerdScene`! That key is not for me!""");
 
         p_key.use();
-        // endregion
 
-        if (p_type == null || p_path == null)
-            throw new IllegalArgumentException("`NerdAsset`s need data!");
-
-        this.SKETCH = p_key.SKETCH;
-        this.TYPE = p_type;
-        this.PATH = p_path;
-
-        // region ...let's make a name!:
-        String name = new File(this.PATH).getName();
-
-        int lastCharId = name.lastIndexOf('.');
-        // ,firstCharId = this.PATH.lastIndexOf(File.separator) + 1;
-
-        if (lastCharId == -1) // We subtracted `1` from it - it'll be `-2` in that case!
-            lastCharId = name.length();
-
-        // if (firstCharId == -1) // ...applies if the file is in the same folder as
-        // this code! What?!
-        // firstCharId = 0;
-
-        name = name.substring(0, lastCharId);
-        // name = this.PATH.substring(firstCharId, lastCharId);
-
-        this.NAME = name;
-        // endregion
-
-        System.out.println();
-
+        return true;
     }
-
-    public NerdAsset(NerdAssetManager.AssetKey p_key,
-            NerdAssetType p_type, String p_path, Runnable p_onLoad) {
-        this(p_key, p_type, p_path);
-        this.onLoad = p_onLoad;
-    }
-    // endregion
 
     // region Load status requests.
     public NerdAsset startLoading() {
@@ -99,17 +109,14 @@ public class NerdAsset {
 
     public NerdAsset completeLoad() {
         while (!this.loaded)
-            ;
+            System.out.println("Waiting for `" + this.NAME + "` to load...");
+
         return this;
     }
 
     // region "Yes/No" questions.
     public boolean hasLoaded() {
         return this.loaded;
-    }
-
-    public boolean wasLoaded() {
-        return this.ploaded;
     }
 
     public boolean hasFailed() {
@@ -135,7 +142,13 @@ public class NerdAsset {
 
     private void loadImpl() {
         this.fetchData();
-        this.onLoad.run();
+        this.loaded = true;
+
+        System.out.println("NerdAsset.loadImpl()");
+        if (this.onLoad != null) {
+            this.onLoad.run();
+        }
+        System.out.println("NerdAsset.loadImpl()");
     }
 
     private synchronized void fetchData() {
