@@ -72,6 +72,9 @@ public class NerdAssetManager {
         this.ASSETS.clear();
     }
 
+    /**
+     * Has every asset completed loading?
+     */
     public boolean hasCompleted() {
         for (NerdAsset a : this.ASSETS)
             if (!a.hasLoaded())
@@ -79,6 +82,9 @@ public class NerdAssetManager {
         return true;
     }
 
+    /**
+     * Wait till all assets are done loading!
+     */
     public void ensureCompletion() {
         while (this.hasCompleted())
             ;

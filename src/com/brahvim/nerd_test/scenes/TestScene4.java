@@ -29,15 +29,12 @@ public class TestScene4 extends NerdScene {
         SKETCH.fullscreen = false;
         SKETCH.setSize(1600, 900);
 
-        // ASSETS.ensureCompletion();
+        ASSETS.ensureCompletion();
 
         this.nerd = SKETCH.loadImage("data/sunglass_nerd.png");
         NerdAsset a = this.ASSETS.get("sunglass_nerd");
 
-        System.out.println("TestScene4.setup() - before image.");
         a.completeLoad();
-        System.out.println("TestScene4.setup() - AFTER image.");
-
 
         this.nerd = a.getData();
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
