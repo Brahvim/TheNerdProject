@@ -1,7 +1,7 @@
 package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.NerdSceneManager;
+import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd_tests.layers.BackgroundLayer;
 import com.brahvim.nerd_tests.layers.BoxAnimationLayer;
 import com.brahvim.nerd_tests.layers.RevolvingParticlesLayer;
@@ -10,7 +10,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class TestScene1 extends NerdScene {
-    public TestScene1(NerdSceneManager.SceneKey p_sceneKey) {
+    public TestScene1(SceneManager.SceneKey p_sceneKey) {
         super(p_sceneKey,
                 // Yes, these work in order:
                 BackgroundLayer.class,
@@ -46,4 +46,5 @@ public class TestScene1 extends NerdScene {
             case PConstants.RIGHT -> MANAGER.startScene(TestScene2.class);
         }
     }
+
 }

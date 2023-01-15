@@ -17,7 +17,7 @@ public class NerdLayer implements HasSketchEvents {
     // region `protected` fields.
     protected final NerdScene SCENE;
     protected final Sketch SKETCH;
-    protected final NerdSceneManager MANAGER;
+    protected final SceneManager MANAGER;
     protected final NerdLayer LAYER = this;
     // endregion
 

@@ -1,7 +1,7 @@
 package com.brahvim.nerd.io.asset_loader;
 
 // Keeping this outside saves typing!:
-public enum NerdAssetType {
+public enum AssetType {
     XML(processing.data.XML.class),
     SVG(processing.core.PShape.class),
     SERIALIZED(java.lang.Object.class),
@@ -19,7 +19,7 @@ public enum NerdAssetType {
     // What the `NerdAsset` object stores a reference to:
     public final Class<?> CLASS;
 
-    private NerdAssetType(Class<?> p_class) {
+    private AssetType(Class<?> p_class) {
         this.CLASS = p_class;
     }
 }

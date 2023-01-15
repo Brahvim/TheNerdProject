@@ -1,4 +1,4 @@
-package com.brahvim.nerd_tests.scenes.scene_comms.comm_class;
+package com.brahvim.nerd_tests.examples.scene_comms.comm_class;
 
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd_tests.scenes.TestScene3;

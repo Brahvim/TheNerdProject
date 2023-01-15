@@ -8,4 +8,4 @@
 They also have `public` getter methods for the data.
 These classes may be singletons.
 
-The example code in the `static_fields` and `comm_class` sub-packages of the `nerd_test.scene_comms` package should clarify these ideas' implementations.
+The example code in the `static_fields` and `comm_class` sub-packages of the `nerd_test.examples.scene_comms` package should clarify these ideas' implementations.

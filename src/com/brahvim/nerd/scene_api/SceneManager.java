@@ -5,23 +5,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
+import com.brahvim.nerd.io.asset_loader.AssetManKey;
+import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
-public class NerdSceneManager {
+public class SceneManager {
     // region Inner classes.
     public class SceneKey extends NerdKey {
-        private final NerdSceneManager MANAGER;
+        private final SceneManager MANAGER;
         public final Class<? extends NerdScene> INTENDED_USER_CLASS;
 
-        private SceneKey(NerdSceneManager p_sceneManager,
+        private SceneKey(SceneManager p_sceneManager,
                 Class<? extends NerdScene> p_sceneThatWillUseThis) {
             this.MANAGER = p_sceneManager;
             this.INTENDED_USER_CLASS = p_sceneThatWillUseThis;
         }
 
-        public NerdSceneManager getSceneManager() {
+        public SceneManager getSceneManager() {
             return this.MANAGER;
         }
 
@@ -122,7 +123,7 @@ public class NerdSceneManager {
     }
     // endregion
 
-    public final NerdAssetManager PERSISTENT_ASSETS;
+    public final AssetManager PERSISTENT_ASSETS;
 
     // region `private` ~~/ `protected`~~ fields.
     /**
@@ -132,13 +133,12 @@ public class NerdSceneManager {
      * Actual "caching" of a {@code NerdScene} is when its corresponding
      * {@code SceneCache}'s {@code cachedReference} is not {@code null}.
      */
-    private final HashMap<Class<? extends NerdScene>, SceneCache> SCENE_CLASS_TO_CACHE = new HashMap<>();
 
-    /**
-     * Keeping this just-in-case. It would otherwise be passed
-     * straight to the {@linkplain NerdSceneManager.SceneKey}
-     * constructor instead.
-     */
+    // The initial capacity is `2` here to aid performance, since, till the first
+    // scene switch, the JIT does no optimization. The one after that should be fast
+    // enough.
+    private final HashMap<Class<? extends NerdScene>, SceneCache> SCENE_CLASS_TO_CACHE = new HashMap<>(2);
+    private final AssetManKey ASSET_MAN_KEY;
     private final Sketch SKETCH;
 
     // region Sketch Event Listeners.
@@ -156,19 +156,20 @@ public class NerdSceneManager {
     // endregion
 
     private Class<? extends NerdScene> currentSceneClass, previousSceneClass;
-    private NerdSceneManager.SceneManagerSettings settings;
+    private SceneManager.SceneManagerSettings settings;
     private SceneKey currentSceneKey;
     private NerdScene currentScene;
     private int sceneStartMillis;
     // endregion
 
     // region Constructors.
-    public NerdSceneManager(Sketch p_sketch) {
+    public SceneManager(Sketch p_sketch) {
         this.SKETCH = p_sketch;
         this.settings = new SceneManagerSettings();
-        this.PERSISTENT_ASSETS = new NerdAssetManager(p_sketch);
+        this.ASSET_MAN_KEY = new AssetManKey(p_sketch);
+        this.PERSISTENT_ASSETS = new AssetManager(this.ASSET_MAN_KEY);
 
-        final NerdSceneManager SCENE_MAN = this;
+        final SceneManager SCENE_MAN = this;
 
         // region Sketch Event Listeners initialization.
         this.MOUSE_LISTENER = this.SKETCH.new SketchMouseListener() {
@@ -366,7 +367,7 @@ public class NerdSceneManager {
 
     }
 
-    public NerdSceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
+    public SceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
         this(p_sketch);
         this.settings = p_settings;
     }
@@ -423,6 +424,9 @@ public class NerdSceneManager {
     }
 
     public void post() {
+        if (this.PERSISTENT_ASSETS != null)
+            this.PERSISTENT_ASSETS.updatePreviousLoadState(this.ASSET_MAN_KEY);
+
         if (this.currentScene != null)
             this.currentScene.runPost(this.currentSceneKey);
     }

@@ -113,12 +113,22 @@ public final class SketchBuilder {
     }
     // endregion
 
+    // region Window behaviors and properties.
+    public SketchBuilder setIconPath(String p_pathString) {
+        this.SKETCH_KEY.iconPath = p_pathString;
+        return this;
+    }
+
     public SketchBuilder canResize() {
         this.SKETCH_KEY.canResize = true;
         return this;
     }
 
-    // region Fullscreen settings.
+    public SketchBuilder preventCloseOnEscape() {
+        this.SKETCH_KEY.dontCloseOnEscape = true;
+        return this;
+    }
+
     public SketchBuilder startFullscreen() {
         this.SKETCH_KEY.startedFullscreen = true;
         return this;
@@ -204,15 +214,5 @@ public final class SketchBuilder {
         return this;
     }
     // endregion
-
-    public SketchBuilder preventCloseOnEscape() {
-        this.SKETCH_KEY.dontCloseOnEscape = true;
-        return this;
-    }
-
-    public SketchBuilder setIconPath(String p_pathString) {
-        this.SKETCH_KEY.iconPath = p_pathString;
-        return this;
-    }
 
 }

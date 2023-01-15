@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
+import com.brahvim.nerd.io.asset_loader.AssetManKey;
+import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
-import com.brahvim.nerd.scene_api.NerdSceneManager.SceneKey;
+import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
 
 /**
  * Do not use as anonymous classes!
@@ -18,8 +19,7 @@ import com.brahvim.nerd.scene_api.NerdSceneManager.SceneKey;
  * {@code SceneManager} is what you get! :)
  */
 public class NerdScene implements HasSketchEvents {
-
-  // region [DEPRECATED] `AutoDrawable` stuff!
+  // region Inner classes
   /*
    * public NerdScene.AutoDrawable
    * createAutoDrawable(NerdScene.AutoDrawableInstance p_instance) {
@@ -50,7 +50,6 @@ public class NerdScene implements HasSketchEvents {
    * }
    * }
    */
-  // endregion
 
   public class LayerKey extends NerdKey {
     private final NerdScene SCENE;
@@ -77,10 +76,12 @@ public class NerdScene implements HasSketchEvents {
     }
 
   }
+  // endregion
 
-  public final NerdAssetManager ASSETS;
+  public final AssetManager ASSETS;
 
   // region `private` / `protected` fields.
+  private final AssetManKey ASSET_MAN_KEY;
   protected final NerdScene SCENE = this;
   protected final Sketch SKETCH;
 
@@ -88,6 +89,7 @@ public class NerdScene implements HasSketchEvents {
   // duplicates won't be allowed.
   private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(2);
   private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>> LAYER_CONSTRUCTORS;
+
   /*
    * Alternative approach: storing a reference to the constructor WITHIN the class
    * extending `Layer` itself.
@@ -110,10 +112,20 @@ public class NerdScene implements HasSketchEvents {
    */
 
   // ~~Don't let the scene manage its `manager`!~~
-  /* private */ protected final NerdSceneManager MANAGER;
+  /* private */ protected final SceneManager MANAGER;
   // endregion
 
   // region Constructors.
+  @SuppressWarnings("unused")
+  private NerdScene() {
+    this.MANAGER = null;
+    this.SKETCH = null;
+    this.ASSETS = null;
+    // this.SCENE_CLASS = null;
+    this.ASSET_MAN_KEY = null;
+    this.LAYER_CONSTRUCTORS = null;
+  }
+
   public NerdScene(SceneKey p_key) {
     // region Verify and 'use' key.
     if (p_key == null) {
@@ -132,14 +144,16 @@ public class NerdScene implements HasSketchEvents {
     // this.SCENE_CLASS = p_key.getSceneClass();
     this.MANAGER = p_key.getSceneManager();
     this.SKETCH = this.MANAGER.getSketch();
-    this.ASSETS = new NerdAssetManager(SKETCH);
+
+    this.ASSET_MAN_KEY = new AssetManKey(SKETCH);
+    this.ASSETS = new AssetManager(this.ASSET_MAN_KEY);
 
     this.LAYER_CONSTRUCTORS = new HashMap<>();
   }
 
   @SafeVarargs
-  public NerdScene(SceneKey p_sceneKey, Class<? extends NerdLayer>... p_layerClasses) {
-    this(p_sceneKey);
+  protected NerdScene(SceneKey p_key, Class<? extends NerdLayer>... p_layerClasses) {
+    this(p_key);
 
     for (Class<? extends NerdLayer> c : p_layerClasses) {
       this.startLayer(c);
@@ -274,7 +288,7 @@ public class NerdScene implements HasSketchEvents {
 
   // region Anything callback-related, LOL.
   // region `SceneManager.SceneInitializer` app-workflow callback runners.
-  private void verifyRunnerKey(NerdSceneManager.SceneKey p_key) {
+  private void verifyRunnerKey(SceneManager.SceneKey p_key) {
     if (p_key == null) {
       throw new IllegalArgumentException(
           "`NerdScene`s should only be accessed by a `NerdSceneManager`!");
@@ -288,7 +302,7 @@ public class NerdScene implements HasSketchEvents {
     }
   }
 
-  public void runOnSceneExit(NerdSceneManager.SceneKey p_sceneKey) {
+  public void runOnSceneExit(SceneManager.SceneKey p_sceneKey) {
     this.verifyRunnerKey(p_sceneKey);
 
     if (!MANAGER.hasCached(this.getClass()))
@@ -297,7 +311,7 @@ public class NerdScene implements HasSketchEvents {
     this.onSceneExit();
   }
 
-  public void runSetup(NerdSceneManager.SceneKey p_sceneKey) {
+  public void runSetup(SceneManager.SceneKey p_sceneKey) {
     this.verifyRunnerKey(p_sceneKey);
     this.setup();
 
@@ -307,7 +321,7 @@ public class NerdScene implements HasSketchEvents {
           l.setup();
   }
 
-  public void runPre(NerdSceneManager.SceneKey p_sceneKey) {
+  public void runPre(SceneManager.SceneKey p_sceneKey) {
     this.verifyRunnerKey(p_sceneKey);
     this.pre();
 
@@ -317,7 +331,7 @@ public class NerdScene implements HasSketchEvents {
           l.pre();
   }
 
-  public void runDraw(NerdSceneManager.SceneKey p_sceneKey) {
+  public void runDraw(SceneManager.SceneKey p_sceneKey) {
     this.verifyRunnerKey(p_sceneKey);
     for (NerdLayer l : this.LAYERS)
       if (l != null)
@@ -336,7 +350,7 @@ public class NerdScene implements HasSketchEvents {
     this.SKETCH.popMatrix();
   }
 
-  public void runPost(NerdSceneManager.SceneKey p_sceneKey) {
+  public void runPost(SceneManager.SceneKey p_sceneKey) {
     this.verifyRunnerKey(p_sceneKey);
     for (NerdLayer l : this.LAYERS)
       if (l != null)

@@ -1,8 +1,8 @@
 package com.brahvim.nerd_tests.scenes;
 
-import com.brahvim.nerd.io.asset_loader.NerdAssetType;
+import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.NerdSceneManager.SceneKey;
+import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
 
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -27,7 +27,7 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void preload() {
-        ASSETS.add(NerdAssetType.PIMAGE, SKETCH.ICON_PATH);
+        ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
     }
 
     @Override

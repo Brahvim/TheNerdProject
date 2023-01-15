@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import com.brahvim.nerd.io.ByteSerial;
-import com.brahvim.nerd.io.asset_loader.NerdAssetManager.AssetKey;
+import com.brahvim.nerd.io.asset_loader.AssetManager.AssetKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
 import processing.core.PImage;
@@ -19,21 +19,23 @@ public class NerdAsset {
     public static boolean CACHE_SOUNDFILES = false;
     public final String NAME;
 
-    private boolean loaded, failure;
+    private boolean loaded, ploaded, failure;
     private long millis = -1;
     private Runnable onLoad;
     private int frame = -1;
     private Object data;
 
-    private final NerdAssetType TYPE;
+    private final AssetType TYPE;
     private final Sketch SKETCH;
+    private final AssetKey KEY;
     private final String PATH;
     // endregion
 
     // region Constructors!
     // NO. Tell me the type yourself :joy:
-    public NerdAsset(NerdAssetManager.AssetKey p_key, NerdAssetType p_type, String p_path) {
+    public NerdAsset(AssetManager.AssetKey p_key, AssetType p_type, String p_path) {
         this.verifyKey(p_key);
+        this.KEY = p_key;
 
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
@@ -47,9 +49,9 @@ public class NerdAsset {
         this.startLoading();
     }
 
-    public NerdAsset(NerdAssetManager.AssetKey p_key,
-            NerdAssetType p_type, String p_path, Runnable p_onLoad) {
+    public NerdAsset(AssetManager.AssetKey p_key, AssetType p_type, String p_path, Runnable p_onLoad) {
         this.verifyKey(p_key);
+        this.KEY = p_key;
 
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
@@ -78,19 +80,25 @@ public class NerdAsset {
     }
 
     private boolean verifyKey(AssetKey p_key) {
+        if (this.KEY != null)
+            return p_key == this.KEY;
+
         if (p_key == null) {
             throw new IllegalArgumentException("""
-                    Please use a `NerdSceneManager` instance to make a `NerdScene`!""");
-        } else if (p_key.isUsed()) {
+                    Please use an `AssetManager` instance to make a `NerdAsset`!""");
+        }
+        // else if (p_key.isUsed()) {
+        // throw new IllegalArgumentException("""
+        // Please use a `NerdSceneManager` instance to make a `NerdScene`! That is a
+        // used key!""");
+        // }
+        else if (!p_key.isFor(this.getClass()))
             throw new IllegalArgumentException("""
-                    Please use a `NerdSceneManager` instance to make a `NerdScene`! That is a used key!""");
-        } else if (!p_key.isFor(this.getClass()))
-            throw new IllegalArgumentException("""
-                    Please use a `NerdSceneManager` instance to make a `NerdScene`! That key is not for me!""");
+                    Please use a `AssetManager` instance to make a `NerdAsset`! That key is not for me!""");
 
         p_key.use();
-
         return true;
+
     }
 
     // region Load status requests.
@@ -115,6 +123,10 @@ public class NerdAsset {
     }
 
     // region "Yes/No" questions.
+    public boolean wasLoaded() {
+        return this.ploaded;
+    }
+
     public boolean hasLoaded() {
         return this.loaded;
     }
@@ -262,6 +274,11 @@ public class NerdAsset {
             // default -> {}
 
         }
+    }
+
+    public void updatePreviousLoadState(AssetKey p_key) {
+        if (this.verifyKey(p_key))
+            this.ploaded = this.loaded;
     }
 
 }
