@@ -22,7 +22,7 @@ public class App {
                 .setTitle("The Nerd Project")
                 .setFirstScene(TestScene4.class)
                 .setIconPath("data/sunglass_nerd.png")
-                .preLoadAssets(TestScene1.class)
+                // .preLoadAssets(TestScene4.class)
 
                 // TODO: Add window resizing hint arrows to the `OpenGL` renderer.
                 // TODO: Perhaps find a fix for `JAVA2D` fullscreen windows not fitting well!
