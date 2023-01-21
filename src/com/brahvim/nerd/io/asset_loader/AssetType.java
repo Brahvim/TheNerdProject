@@ -10,7 +10,7 @@ public enum AssetType {
     PBYTES(java.lang.reflect.Array.class),
     MODEL_3D(processing.core.PShape.class),
     PSTRINGS(java.lang.reflect.Array.class),
-    PAUDIO(processing.sound.SoundFile.class),
+    // PAUDIO(processing.sound.SoundFile.class),
     PSHADER(processing.opengl.PShader.class),
     FILESTREAM(java.io.FileInputStream.class),
     PJSON_ARRAY(processing.data.JSONArray.class),

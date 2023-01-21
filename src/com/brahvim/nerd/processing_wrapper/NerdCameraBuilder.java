@@ -4,23 +4,19 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 public class NerdCameraBuilder {
-    private NerdCamera build;
-    private Sketch sketch;
+    private NerdCam build;
+    private final Sketch sketch;
 
     public NerdCameraBuilder(Sketch p_sketch) {
         this.sketch = p_sketch; // Used by `setClearColor()`.
-        this.build = new NerdCamera(p_sketch);
+        this.build = new NerdCam(p_sketch);
 
-        this.build.up.set(this.build.DEFAULT_CAM_UP);
-        this.build.pos.set(this.build.DEFAULT_CAM_POS);
-        this.build.center.set(this.build.DEFAULT_CAM_CENTER);
+        this.build.up.set(this.build.defaultCamUp);
+        this.build.pos.set(this.build.defaultCamPos);
+        this.build.center.set(this.build.defaultCamCenter);
     }
 
-    public Sketch getSketch() {
-        return this.sketch;
-    }
-
-    public NerdCamera build() {
+    public NerdCam build() {
         return this.build;
     }
 
@@ -114,7 +110,7 @@ public class NerdCameraBuilder {
     }
     // endregion
 
-    public NerdCameraBuilder setScript(NerdCamera.Script p_script) {
+    public NerdCameraBuilder setScript(NerdCam.Script p_script) {
         this.build.script = p_script;
         return this;
     }

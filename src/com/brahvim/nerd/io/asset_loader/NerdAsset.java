@@ -12,7 +12,7 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.data.XML;
 import processing.opengl.PShader;
-import processing.sound.SoundFile;
+// import processing.sound.SoundFile;
 
 public class NerdAsset {
     // region Fields!
@@ -193,19 +193,24 @@ public class NerdAsset {
                 this.data = shape;
             }
 
-            case PAUDIO -> {
-                SoundFile file = new SoundFile(SKETCH, this.PATH, NerdAsset.CACHE_SOUNDFILES);
-
-                try {
-                    file.channels();
-                } catch (NullPointerException e) {
-                    file.removeFromCache();
-                    this.failure = true;
-                    this.data = null; // `file` should be GC'ed by the end of this method.
-                }
-
-                this.data = file;
-            }
+            /*
+             * case PAUDIO -> {
+             * SoundFile file = new SoundFile(SKETCH, this.PATH,
+             * NerdAsset.CACHE_SOUNDFILES);
+             * 
+             * try {
+             * file.channels();
+             * } catch (NullPointerException e) {
+             * file.removeFromCache();
+             * this.failure = true;
+             * this.data = null; // `file` should be GC'ed by the end of this method.
+             * }
+             * 
+             * this.data = file;
+             * }
+             * 
+             * case PVIDEO -> {}
+             */
 
             case PBYTES -> {
                 byte[] bytes = this.SKETCH.loadBytes(this.PATH);

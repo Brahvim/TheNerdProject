@@ -162,7 +162,7 @@ public class Sketch extends PApplet {
 
     public final String NAME;
     public final Sketch SKETCH;
-    public final NerdCamera DEFAULT_CAMERA;
+    public final NerdCam DEFAULT_CAMERA;
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
     public final String RENDERER;
@@ -190,7 +190,7 @@ public class Sketch extends PApplet {
 
     public boolean fullscreen, pfullscreen;
     public boolean cursorConfined, cursorVisible = true; // nO previoS versiuN!11!!
-    public NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
+    public NerdCam previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
     public PVector mouse = new PVector(), pmouse = new PVector(); // MOUS!
 
     public boolean pmouseLeft, pmouseMid, pmouseRight; // Previous frame...
@@ -793,17 +793,17 @@ public class Sketch extends PApplet {
         super.rotateZ(p_rotationVector.z);
     }
 
-    public void camera(NerdCamera p_cam) {
+    public void camera(NerdCam p_cam) {
         super.camera(p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
                 p_cam.center.x, p_cam.center.y, p_cam.center.z,
                 p_cam.up.x, p_cam.up.y, p_cam.up.z);
     }
 
-    public void perspective(NerdCamera p_cam) {
+    public void perspective(NerdCam p_cam) {
         super.perspective(p_cam.fov, (float) super.width / (float) super.height, p_cam.near, p_cam.far);
     }
 
-    public void ortho(NerdCamera p_cam) {
+    public void ortho(NerdCam p_cam) {
         super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_cam.near, p_cam.far);
     }
 
