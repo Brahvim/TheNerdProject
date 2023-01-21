@@ -41,29 +41,17 @@ public class NerdCam {
         this.up = new PVector(0, 1, 0);
         this.pos = new PVector(0, 0, 0);
         this.center = new PVector(0, 0, 0);
+    }
 
+    public void useProcessingDefaults() {
         // Default camera values in Processing.
         // From [https://processing.org/reference/camera_.html].
-
         final float WIDTH_HALF = this.SKETCH.cx, HEIGHT_HALF = this.SKETCH.cy;
         this.defaultCamUp = new PVector(0, 1, 0);
         this.defaultCamPos = new PVector(
                 WIDTH_HALF, HEIGHT_HALF,
-                HEIGHT_HALF / PApplet.tan(PConstants.PI * 30 / 180));
+                HEIGHT_HALF / (float) Math.tan(PConstants.PI * 30 / 180));
         this.defaultCamCenter = new PVector(WIDTH_HALF, HEIGHT_HALF);
-
-        // region My defaults:
-        // this.defaultCamUp = new PVector(0, 1, 0);
-
-        // this.defaultCamPos = new PVector(
-        // this.parentSketch.INIT_WIDTH * 0.5f, this.parentSketch.INIT_HEIGHT * 0.5f,
-        // 600);
-
-        // this.defaultCamCenter = new PVector(
-        // this.parentSketch.INIT_WIDTH * 0.5f, this.parentSketch.INIT_HEIGHT * 0.5f,
-        // 0);
-        // endregion
-
     }
 
     // region Camera runtime.

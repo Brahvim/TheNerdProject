@@ -5,15 +5,25 @@ import processing.core.PVector;
 
 public class NerdCameraBuilder {
     private NerdCam build;
-    private final Sketch sketch;
+    private final Sketch SKETCH;
 
     public NerdCameraBuilder(Sketch p_sketch) {
-        this.sketch = p_sketch; // Used by `setClearColor()`.
+        this.SKETCH = p_sketch; // Used by `setClearColor()`.
         this.build = new NerdCam(p_sketch);
+        this.build.useProcessingDefaults();
 
-        this.build.up.set(this.build.defaultCamUp);
-        this.build.pos.set(this.build.defaultCamPos);
-        this.build.center.set(this.build.defaultCamCenter);
+        // region My defaults:
+        // this.defaultCamUp = new PVector(0, 1, 0);
+
+        // this.defaultCamPos = new PVector(
+        // this.parentSketch.INIT_WIDTH * 0.5f, this.parentSketch.INIT_HEIGHT * 0.5f,
+        // 600);
+
+        // this.defaultCamCenter = new PVector(
+        // this.parentSketch.INIT_WIDTH * 0.5f, this.parentSketch.INIT_HEIGHT * 0.5f,
+        // 0);
+        // endregion
+
     }
 
     public NerdCam build() {
@@ -21,7 +31,64 @@ public class NerdCameraBuilder {
     }
 
     // region Vectors.
-    // region Up vector.
+    // region Default ones.
+    // region Default up vector.
+    public NerdCameraBuilder setDefaultUp(float p_x, float p_y) {
+        this.build.defaultCamUp.set(p_x, p_y);
+        return this;
+    }
+
+    public NerdCameraBuilder setDefaultUp(float p_x, float p_y, float p_z) {
+        this.build.defaultCamUp.set(p_x, p_y, p_z);
+        return this;
+    }
+
+    public NerdCameraBuilder setDefaultUp(PVector p_vec) {
+        if (p_vec != null)
+            this.build.defaultCamUp.set(p_vec);
+        return this;
+    }
+    // endregion
+
+    // region Default position vector.
+    public NerdCameraBuilder setDefaultPos(float p_x, float p_y) {
+        this.build.defaultCamPos.set(p_x, p_y);
+        return this;
+    }
+
+    public NerdCameraBuilder setDefaultPos(float p_x, float p_y, float p_z) {
+        this.build.defaultCamPos.set(p_x, p_y, p_z);
+        return this;
+    }
+
+    public NerdCameraBuilder setDefaultPos(PVector p_vec) {
+        if (p_vec != null)
+            this.build.defaultCamPos.set(p_vec);
+        return this;
+    }
+    // endregion
+
+    // region Default center vector.
+    public NerdCameraBuilder setDefaultCenter(float p_x, float p_y) {
+        this.build.defaultCamCenter.set(p_x, p_y);
+        return this;
+    }
+
+    public NerdCameraBuilder setDefaultCenter(float p_x, float p_y, float p_z) {
+        this.build.defaultCamCenter.set(p_x, p_y, p_z);
+        return this;
+    }
+
+    public NerdCameraBuilder setDefaultCenter(PVector p_vec) {
+        if (p_vec != null)
+            this.build.defaultCamCenter.set(p_vec);
+        return this;
+    }
+    // endregion
+    // endregion
+
+    // region Dynamic ones.
+    // region Dynamic up vector.
     public NerdCameraBuilder setUp(float p_x, float p_y) {
         this.build.up.set(p_x, p_y);
         return this;
@@ -39,7 +106,7 @@ public class NerdCameraBuilder {
     }
     // endregion
 
-    // region Position vector.
+    // region Dynamic position vector.
     public NerdCameraBuilder setPos(float p_x, float p_y) {
         this.build.pos.set(p_x, p_y);
         return this;
@@ -57,7 +124,7 @@ public class NerdCameraBuilder {
     }
     // endregion
 
-    // region Position vector.
+    // region Dynamic center vector.
     public NerdCameraBuilder setCenter(float p_x, float p_y) {
         this.build.center.set(p_x, p_y);
         return this;
@@ -73,6 +140,7 @@ public class NerdCameraBuilder {
             this.build.center.set(p_vec);
         return this;
     }
+    // endregion
     // endregion
     // endregion
 
@@ -122,17 +190,17 @@ public class NerdCameraBuilder {
     }
 
     public NerdCameraBuilder setClearColor(float p_grey, float p_alpha) {
-        this.build.clearColor = this.sketch.color(p_grey, p_alpha);
+        this.build.clearColor = this.SKETCH.color(p_grey, p_alpha);
         return this;
     }
 
     public NerdCameraBuilder setClearColor(float p_red, float p_green, float p_blue) {
-        this.build.clearColor = this.sketch.color(p_red, p_green, p_blue);
+        this.build.clearColor = this.SKETCH.color(p_red, p_green, p_blue);
         return this;
     }
 
     public NerdCameraBuilder setClearColor(float p_red, float p_green, float p_blue, float p_alpha) {
-        this.build.clearColor = this.sketch.color(p_red, p_green, p_blue, p_alpha);
+        this.build.clearColor = this.SKETCH.color(p_red, p_green, p_blue, p_alpha);
         return this;
     }
     // endregion
