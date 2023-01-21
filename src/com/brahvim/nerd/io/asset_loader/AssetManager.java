@@ -91,6 +91,13 @@ public class AssetManager {
         return this;
     }
 
+    public AssetManager add(AssetType p_type, String p_path, Runnable p_onLoad) {
+        this.ASSETS.add(
+                this.makeAsset(p_type, p_path)
+                        .setLoadCallback(p_onLoad));
+        return this;
+    }
+
     public NerdAsset get(String p_fileName) {
         for (NerdAsset a : this.ASSETS)
             if (a.NAME.equals(p_fileName))

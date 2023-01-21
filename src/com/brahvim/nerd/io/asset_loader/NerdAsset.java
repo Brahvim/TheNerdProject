@@ -102,15 +102,7 @@ public class NerdAsset {
     }
 
     // region Load status requests.
-    public NerdAsset startLoading() {
-        new Thread(() -> {
-            this.loadImpl();
-        }).start();
-
-        return this;
-    }
-
-    public NerdAsset onLoad(Runnable p_onLoad) {
+    public NerdAsset setLoadCallback(Runnable p_onLoad) {
         this.onLoad = p_onLoad;
         return this;
     }
@@ -120,6 +112,15 @@ public class NerdAsset {
             System.out.println("Waiting for `" + this.NAME + "` to load...");
 
         return this;
+    }
+
+    public void startLoading() {
+        this.fetchData();
+        this.loaded = true;
+
+        if (this.onLoad != null) {
+            this.onLoad.run();
+        }
     }
 
     // region "Yes/No" questions.
@@ -137,8 +138,17 @@ public class NerdAsset {
     // endregion
 
     // region Getters.
+    /**
+     * Ensures that the asset has loaded, then returns its data,
+     * given the name of a file (without the extension!).<br>
+     * <br>
+     * Usage example:<br>
+     * <br>
+     * {@code PImage image = SCENE.ASSETS.get("my_image").getData();}
+     */
     @SuppressWarnings("unchecked")
     public <T> T getData() {
+        this.completeLoad();
         return (T) this.data;
     }
 
@@ -151,16 +161,6 @@ public class NerdAsset {
     }
     // endregion
     // endregion
-
-    private void loadImpl() {
-        this.fetchData();
-        this.loaded = true;
-
-        if (this.onLoad != null) {
-            this.onLoad.run();
-        }
-
-    }
 
     private synchronized void fetchData() {
         switch (this.TYPE) {

@@ -27,7 +27,8 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void preload() {
-        ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
+        ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH, () -> {
+        });
     }
 
     @Override
@@ -38,8 +39,7 @@ public class TestScene4 extends NerdScene {
 
         // ASSETS.ensureCompletion();
 
-        this.nerd = SKETCH.loadImage("data/sunglass_nerd.png");
-        this.nerd = this.ASSETS.get("sunglass_nerd").completeLoad().getData();
+        this.nerd = this.ASSETS.get("sunglass_nerd").getData();
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
         SKETCH.noStroke();

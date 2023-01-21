@@ -43,13 +43,16 @@ public class SceneManager {
     public class SceneData {
         private final Constructor<? extends NerdScene> CONSTRUCTOR;
         private final Class<? extends NerdScene> SCENE_CLASS;
+        private final SceneKey SCENE_KEY;
+
         private NerdScene cachedReference;
         private boolean isDeletable, hasCompletedPreload;
 
         // region Constructors.
         private SceneData(Class<? extends NerdScene> p_sceneClass,
                 Constructor<? extends NerdScene> p_constructor,
-                NerdScene p_cachedReference) {
+                NerdScene p_cachedReference, SceneKey p_key) {
+            this.SCENE_KEY = p_key;
             this.SCENE_CLASS = p_sceneClass;
             this.CONSTRUCTOR = p_constructor;
             this.cachedReference = p_cachedReference;
@@ -57,7 +60,8 @@ public class SceneManager {
 
         private SceneData(Class<? extends NerdScene> p_sceneClass,
                 Constructor<? extends NerdScene> p_constructor,
-                NerdScene p_cachedReference, boolean p_isDeletable) {
+                NerdScene p_cachedReference, SceneKey p_key, boolean p_isDeletable) {
+            this.SCENE_KEY = p_key;
             this.SCENE_CLASS = p_sceneClass;
             this.CONSTRUCTOR = p_constructor;
             this.isDeletable = p_isDeletable;
@@ -121,9 +125,6 @@ public class SceneManager {
 
     }
 
-    public class SceneManSettingBuilder {
-    }
-
     public static class SceneManagerSettings {
         public final OnSceneSwitch ON_SCENE_SWITCH = new OnSceneSwitch();
 
@@ -134,7 +135,6 @@ public class SceneManager {
             private OnSceneSwitch() {
             }
         }
-
     }
     // endregion
 
@@ -452,9 +452,7 @@ public class SceneManager {
         if (!this.hasCached(p_sceneClass))
             this.cacheScene(p_sceneClass, true);
 
-        // TODO: Caching entire scene objects takes memory. Find an alternative!
-
-        if (this.hasCompletedPreload(p_sceneClass))
+        if (this.givenSceneRanPreload(p_sceneClass))
             return;
 
         Thread thread = new Thread(() -> {
@@ -465,7 +463,7 @@ public class SceneManager {
         thread.start();
     }
 
-    public synchronized void loadSceneAssets(Class<? extends NerdScene> p_sceneClass) {
+    public void loadSceneAssets(Class<? extends NerdScene> p_sceneClass) {
         SceneData cache = this.SCENE_CLASS_TO_CACHE.get(p_sceneClass);
 
         if (cache != null)
@@ -476,7 +474,7 @@ public class SceneManager {
         cache.hasCompletedPreload = true;
     }
 
-    public synchronized void loadSceneAssets(NerdScene p_scene, SceneManager.SceneKey p_key) {
+    private void loadSceneAssets(NerdScene p_scene, SceneManager.SceneKey p_key) {
         if (p_scene == null)
             return;
 
@@ -486,7 +484,7 @@ public class SceneManager {
         p_scene.runPreload(p_key);
     }
 
-    public boolean hasCompletedPreload(Class<? extends NerdScene> p_sceneClass) {
+    public boolean givenSceneRanPreload(Class<? extends NerdScene> p_sceneClass) {
         return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference.hasCompletedPreload();
     }
 
@@ -549,11 +547,12 @@ public class SceneManager {
 
         SceneKey sceneKey = new SceneKey(this, p_sceneClass);
         NerdScene toCache = this.constructScene(sceneConstructor, sceneKey);
+
         if (toCache == null)
             throw new RuntimeException("The scene could not be constructed.");
 
         this.SCENE_CLASS_TO_CACHE.put(p_sceneClass, new SceneData(
-                p_sceneClass, sceneConstructor, toCache, p_isDeletable));
+                p_sceneClass, sceneConstructor, toCache, sceneKey, p_isDeletable));
     }
 
     // "Cache if not cached" / "Start cached" method.
@@ -615,7 +614,9 @@ public class SceneManager {
         return toRet;
     }
 
-    private NerdScene constructScene(Constructor<? extends NerdScene> p_sceneConstructor, SceneKey p_sceneKey) {
+    private NerdScene constructScene(
+            Constructor<? extends NerdScene> p_sceneConstructor,
+            SceneKey p_sceneKey) {
         NerdScene toRet = null;
 
         try {
@@ -651,7 +652,8 @@ public class SceneManager {
 
         // Don't worry about concurrency, vvv *this* vvv is `final`! ^-^
         if (!this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass)) {
-            this.SCENE_CLASS_TO_CACHE.put(p_sceneClass, new SceneData(p_sceneClass, sceneConstructor, toStart));
+            this.SCENE_CLASS_TO_CACHE.put(p_sceneClass,
+                    new SceneData(p_sceneClass, sceneConstructor, toStart, this.currSceneKey));
         }
     }
 
