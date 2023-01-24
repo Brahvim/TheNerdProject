@@ -3,6 +3,7 @@ package com.brahvim.nerd.math;
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
 public class SineWave {
+
     // region Fields.
     public float freq;
     public float angleOffset;

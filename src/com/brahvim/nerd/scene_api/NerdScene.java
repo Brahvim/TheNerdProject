@@ -19,6 +19,7 @@ import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
  * {@code SceneManager} is what you get! :)
  */
 public class NerdScene implements HasSketchEvents {
+
   // region Inner classes
   /*
    * public NerdScene.AutoDrawable
@@ -78,21 +79,25 @@ public class NerdScene implements HasSketchEvents {
   }
   // endregion
 
+  // region Fields.
   public final AssetManager ASSETS;
 
-  // region `private` / `protected` fields.
+  /* private */ protected final SceneManager MANAGER;
   protected final NerdScene SCENE = this;
   protected final Sketch SKETCH;
 
-  // ~~Don't let the scene manage its `manager`!:~~
-  /* private */ protected final SceneManager MANAGER;
-  private final AssetManKey ASSET_MAN_KEY;
-  // Would've used a `LinkedHashSet`, but am using `ArrayList`s instead since
-  // duplicates won't be allowed.
-  private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(2);
-  private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>> LAYER_CONSTRUCTORS;
-
+  // region `private` fields.
+  private int startMillis;
   private boolean donePreloading;
+
+  // ~~Don't let the scene manage its `manager`!:~~
+  private final AssetManKey ASSET_MAN_KEY;
+
+  // Would've used a `LinkedHashSet`, but am using `ArrayList`s instead since
+  // duplicates won't be allowed in the former case. We need them!
+  private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0); // Start at `0`. Who needs layers anyway?
+
+  private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>> LAYER_CONSTRUCTORS;
 
   /*
    * Alternative approach: storing a reference to the constructor WITHIN the class
@@ -114,7 +119,7 @@ public class NerdScene implements HasSketchEvents {
    * argument, since constructors cannot return anything), but we've already
    * decided not to do that.
    */
-
+  // endregion
   // endregion
 
   // region Constructors.
@@ -128,7 +133,7 @@ public class NerdScene implements HasSketchEvents {
     this.LAYER_CONSTRUCTORS = null;
   }
 
-  public NerdScene(SceneKey p_key) {
+  public NerdScene(SceneManager.SceneKey p_key) {
     // region Verify and 'use' key.
     if (p_key == null) {
       throw new IllegalArgumentException("""
@@ -154,7 +159,7 @@ public class NerdScene implements HasSketchEvents {
   }
 
   @SafeVarargs
-  protected NerdScene(SceneKey p_key, Class<? extends NerdLayer>... p_layerClasses) {
+  protected NerdScene(SceneManager.SceneKey p_key, Class<? extends NerdLayer>... p_layerClasses) {
     this(p_key);
 
     for (Class<? extends NerdLayer> c : p_layerClasses) {
@@ -163,6 +168,7 @@ public class NerdScene implements HasSketchEvents {
   }
   // endregion
 
+  // region Queries.
   public Sketch getSketch() {
     return this.SKETCH;
   }
@@ -171,6 +177,15 @@ public class NerdScene implements HasSketchEvents {
     // this.verifyKey(p_key);
     return this.donePreloading;
   }
+
+  public int startMillis() {
+    return this.startMillis;
+  }
+
+  public int millisSinceStart() {
+    return this.SKETCH.millis() - this.startMillis;
+  }
+  // endregion
 
   // region `Layer`-operations.
   // They get a running `Layer`'s reference from its (given) class.
@@ -231,7 +246,7 @@ public class NerdScene implements HasSketchEvents {
     // region Constructing the `Layer`.
     try {
       toStart = (NerdLayer) layerConstructor.newInstance(
-          new LayerKey(this, this.SKETCH, p_layerClass));
+          new NerdScene.LayerKey(this, this.SKETCH, p_layerClass));
     } catch (InstantiationException e) {
       e.printStackTrace();
     } catch (IllegalAccessException e) {
@@ -294,7 +309,7 @@ public class NerdScene implements HasSketchEvents {
   // endregion
 
   // region Anything callback-related, LOL.
-  // region `SceneManager.SceneInitializer` app-workflow callback runners.
+  // region `SceneManager.SceneKey` app-workflow callback runners.
   private void verifyKey(SceneManager.SceneKey p_key) {
     if (p_key == null) {
       throw new IllegalArgumentException(
@@ -333,6 +348,7 @@ public class NerdScene implements HasSketchEvents {
 
   public void runSetup(SceneManager.SceneKey p_sceneKey) {
     this.verifyKey(p_sceneKey);
+    this.startMillis = this.SKETCH.millis();
     this.setup();
 
     for (NerdLayer l : this.LAYERS)

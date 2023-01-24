@@ -11,6 +11,7 @@ import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
 public class SceneManager {
+
     // region Inner classes.
     public class SceneKey extends NerdKey {
         private final SceneManager MANAGER;
@@ -43,7 +44,7 @@ public class SceneManager {
     public class SceneData {
         private final Constructor<? extends NerdScene> CONSTRUCTOR;
         private final Class<? extends NerdScene> SCENE_CLASS;
-        private final SceneKey SCENE_KEY;
+        private final SceneManager.SceneKey SCENE_KEY;
 
         private NerdScene cachedReference;
         private boolean isDeletable, hasCompletedPreload;
@@ -51,7 +52,7 @@ public class SceneManager {
         // region Constructors.
         private SceneData(Class<? extends NerdScene> p_sceneClass,
                 Constructor<? extends NerdScene> p_constructor,
-                NerdScene p_cachedReference, SceneKey p_key) {
+                NerdScene p_cachedReference, SceneManager.SceneKey p_key) {
             this.SCENE_KEY = p_key;
             this.SCENE_CLASS = p_sceneClass;
             this.CONSTRUCTOR = p_constructor;
@@ -60,7 +61,7 @@ public class SceneManager {
 
         private SceneData(Class<? extends NerdScene> p_sceneClass,
                 Constructor<? extends NerdScene> p_constructor,
-                NerdScene p_cachedReference, SceneKey p_key, boolean p_isDeletable) {
+                NerdScene p_cachedReference, SceneManager.SceneKey p_key, boolean p_isDeletable) {
             this.SCENE_KEY = p_key;
             this.SCENE_CLASS = p_sceneClass;
             this.CONSTRUCTOR = p_constructor;
@@ -85,7 +86,7 @@ public class SceneManager {
          * return this.hasCompletedPreload;
          * }
          * 
-         * public NerdScene getCache(SceneKey p_key) {
+         * public NerdScene getCache(SceneManager.SceneKey p_key) {
          * if (p_key == null) {
          * throw new
          * IllegalArgumentException("Only `NerdSceneManager`s may use this method.");
@@ -172,9 +173,8 @@ public class SceneManager {
 
     private Class<? extends NerdScene> currSceneClass, prevSceneClass;
     private final SceneManager.SceneManagerSettings SETTINGS;
-    private SceneKey currSceneKey;
+    private SceneManager.SceneKey currSceneManager;
     private NerdScene currScene;
-    private int currSceneStartMillis;
     // endregion
 
     // region Constructors.
@@ -216,14 +216,6 @@ public class SceneManager {
 
         ((HashSet<Class<? extends NerdScene>>) (this.SCENE_CLASS_TO_CACHE.keySet())).clone());
     }
-
-    public int getCurrSceneStartMillis() {
-        return this.currSceneStartMillis;
-    }
-
-    public int sinceSceneStarted() {
-        return this.SKETCH.millis() - this.currSceneStartMillis;
-    }
     // endregion
 
     // region App workflow callbacks.
@@ -234,12 +226,12 @@ public class SceneManager {
 
     public void pre() {
         if (this.currScene != null)
-            this.currScene.runPre(this.currSceneKey);
+            this.currScene.runPre(this.currSceneManager);
     }
 
     public void draw() {
         if (this.currScene != null)
-            this.currScene.runDraw(this.currSceneKey);
+            this.currScene.runDraw(this.currSceneManager);
     }
 
     public void post() {
@@ -247,7 +239,7 @@ public class SceneManager {
             this.PERSISTENT_ASSETS.updatePreviousLoadState(this.ASSET_MAN_KEY);
 
         if (this.currScene != null)
-            this.currScene.runPost(this.currSceneKey);
+            this.currScene.runPost(this.currSceneManager);
     }
     // endregion
 
@@ -492,10 +484,10 @@ public class SceneManager {
         if (this.currSceneClass == null)
             return;
 
-        SceneData cache = this.SCENE_CLASS_TO_CACHE.remove(this.currSceneClass);
-        this.currSceneKey = new SceneKey(this, this.currSceneClass);
-        NerdScene toUse = this.constructScene(cache.CONSTRUCTOR, this.currSceneKey);
-        this.SCENE_CLASS_TO_CACHE.put(this.currSceneClass, cache);
+        SceneData data = this.SCENE_CLASS_TO_CACHE.remove(this.currSceneClass);
+        this.currSceneManager = new SceneManager.SceneKey(this, this.currSceneClass);
+        NerdScene toUse = this.constructScene(data.CONSTRUCTOR, this.currSceneManager);
+        this.SCENE_CLASS_TO_CACHE.put(this.currSceneClass, data);
 
         this.setScene(toUse);
     }
@@ -505,8 +497,8 @@ public class SceneManager {
             return;
 
         SceneData cache = this.SCENE_CLASS_TO_CACHE.remove(this.prevSceneClass);
-        this.currSceneKey = new SceneKey(this, this.prevSceneClass);
-        NerdScene toUse = this.constructScene(cache.CONSTRUCTOR, this.currSceneKey);
+        this.currSceneManager = new SceneManager.SceneKey(this, this.prevSceneClass);
+        NerdScene toUse = this.constructScene(cache.CONSTRUCTOR, this.currSceneManager);
         this.SCENE_CLASS_TO_CACHE.put(this.prevSceneClass, cache);
 
         this.setScene(toUse);
@@ -545,7 +537,7 @@ public class SceneManager {
             throw new IllegalArgumentException("""
                     The passed class's constructor could not be accessed.""");
 
-        SceneKey sceneKey = new SceneKey(this, p_sceneClass);
+        SceneManager.SceneKey sceneKey = new SceneManager.SceneKey(this, p_sceneClass);
         NerdScene toCache = this.constructScene(sceneConstructor, sceneKey);
 
         if (toCache == null)
@@ -606,7 +598,7 @@ public class SceneManager {
         Constructor<? extends NerdScene> toRet = null;
 
         try {
-            toRet = p_sceneClass.getConstructor(SceneKey.class);
+            toRet = p_sceneClass.getConstructor(SceneManager.SceneKey.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -616,7 +608,7 @@ public class SceneManager {
 
     private NerdScene constructScene(
             Constructor<? extends NerdScene> p_sceneConstructor,
-            SceneKey p_sceneKey) {
+            SceneManager.SceneKey p_sceneKey) {
         NerdScene toRet = null;
 
         try {
@@ -642,8 +634,8 @@ public class SceneManager {
             throw new IllegalArgumentException("""
                     The passed class's constructor could not be accessed.""");
 
-        this.currSceneKey = new SceneKey(this, p_sceneClass);
-        NerdScene toStart = this.constructScene(sceneConstructor, this.currSceneKey);
+        this.currSceneManager = new SceneManager.SceneKey(this, p_sceneClass);
+        NerdScene toStart = this.constructScene(sceneConstructor, this.currSceneManager);
 
         if (toStart == null)
             throw new RuntimeException("The scene could not be constructed.");
@@ -653,7 +645,7 @@ public class SceneManager {
         // Don't worry about concurrency, vvv *this* vvv is `final`! ^-^
         if (!this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass)) {
             this.SCENE_CLASS_TO_CACHE.put(p_sceneClass,
-                    new SceneData(p_sceneClass, sceneConstructor, toStart, this.currSceneKey));
+                    new SceneData(p_sceneClass, sceneConstructor, toStart, this.currSceneManager));
         }
     }
 
@@ -669,7 +661,7 @@ public class SceneManager {
 
         this.prevSceneClass = this.currSceneClass;
         if (this.prevSceneClass != null) {
-            this.currScene.runOnSceneExit(this.currSceneKey);
+            this.currScene.runOnSceneExit(this.currSceneManager);
 
             this.SCENE_CLASS_TO_CACHE.get(this.prevSceneClass)
                     .deleteCacheIfNeeded();
@@ -692,7 +684,7 @@ public class SceneManager {
 
     // Set the time, *then* call `SceneManager::runSetup()`.
     private void setupCurrentScene() {
-        this.loadSceneAssets(this.currScene, this.currSceneKey);
+        this.loadSceneAssets(this.currScene, this.currSceneManager);
 
         // Helps in resetting style and transformation info across scenes! YAY!:
         if (this.prevSceneClass != null)
@@ -700,8 +692,7 @@ public class SceneManager {
 
         this.SKETCH.push();
 
-        this.currSceneStartMillis = this.SKETCH.millis();
-        this.currScene.runSetup(this.currSceneKey);
+        this.currScene.runSetup(this.currSceneManager);
     }
     // endregion
     // endregion

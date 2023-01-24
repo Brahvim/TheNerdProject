@@ -1,13 +1,14 @@
 package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
+import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd_tests.AnimatedCube;
 
 public class TestScene3 extends NerdScene {
+
     private AnimatedCube cube;
 
-    public TestScene3(SceneKey p_sceneKey) {
+    public TestScene3(SceneManager.SceneKey p_sceneKey) {
         super(p_sceneKey);
     }
 

@@ -8,6 +8,7 @@ import com.brahvim.nerd_tests.scenes.TestScene3;
 import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
+
     // region Fields.
     public final static int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);

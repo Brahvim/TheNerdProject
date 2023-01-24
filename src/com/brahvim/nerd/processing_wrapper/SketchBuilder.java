@@ -9,12 +9,6 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 public final class SketchBuilder {
-    // region Fields, constructor, and class `SketchKey`.
-    private final SketchKey SKETCH_KEY;
-
-    public SketchBuilder() {
-        this.SKETCH_KEY = new SketchKey();
-    }
 
     // Hmmm... "`SketchSettings`" instead..?
     public class SketchKey extends NerdKey {
@@ -44,6 +38,13 @@ public final class SketchBuilder {
             // Putting `p_class` in the argument eliminates the need for a `null` check.
             return Sketch.class.isAssignableFrom(p_class);
         }
+    }
+
+    // region Fields and the constructor.
+    private final SketchKey SKETCH_KEY;
+
+    public SketchBuilder() {
+        this.SKETCH_KEY = new SketchKey();
     }
     // endregion
 

@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import com.brahvim.nerd.io.ByteSerial;
-import com.brahvim.nerd.io.asset_loader.AssetManager.AssetKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
 import processing.core.PImage;
@@ -15,6 +14,7 @@ import processing.opengl.PShader;
 // import processing.sound.SoundFile;
 
 public class NerdAsset {
+
     // region Fields!
     public static boolean CACHE_SOUNDFILES = false;
     public final String NAME;
@@ -27,7 +27,7 @@ public class NerdAsset {
 
     private final AssetType TYPE;
     private final Sketch SKETCH;
-    private final AssetKey KEY;
+    private final AssetManager.AssetKey KEY;
     private final String PATH;
     // endregion
 
@@ -79,7 +79,7 @@ public class NerdAsset {
         return toRet;
     }
 
-    private boolean verifyKey(AssetKey p_key) {
+    private boolean verifyKey(AssetManager.AssetKey p_key) {
         if (this.KEY != null)
             return p_key == this.KEY;
 
@@ -281,7 +281,7 @@ public class NerdAsset {
         }
     }
 
-    public void updatePreviousLoadState(AssetKey p_key) {
+    public void updatePreviousLoadState(AssetManager.AssetKey p_key) {
         if (this.verifyKey(p_key))
             this.ploaded = this.loaded;
     }

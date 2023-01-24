@@ -14,6 +14,7 @@ import com.brahvim.nerd.processing_wrapper.Sketch;
  * @author Brahvim Bhaktvatsal
  */
 public class NerdLayer implements HasSketchEvents {
+
     // region `protected` fields.
     protected final NerdScene SCENE;
     protected final Sketch SKETCH;
@@ -28,6 +29,7 @@ public class NerdLayer implements HasSketchEvents {
     // endregion
 
     public NerdLayer(NerdScene.LayerKey p_key) {
+
         // region Verify and 'use' key.
         if (p_key == null) {
             throw new IllegalArgumentException("""

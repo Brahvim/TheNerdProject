@@ -2,7 +2,7 @@ package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
+import com.brahvim.nerd.scene_api.SceneManager;
 
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -10,6 +10,7 @@ import processing.core.PImage;
 import processing.event.MouseEvent;
 
 public class TestScene4 extends NerdScene {
+
     // region Fields!
     private PImage nerd;
     private PGraphics nerdGraphics;
@@ -19,17 +20,23 @@ public class TestScene4 extends NerdScene {
             MAG_SCROLL_DECAY_ACC = 0.8f,
             MAG_SCROLL_DECAY_VEL = 0.99f;
     private float magScrollAcc, magScrollVel, magScroll = 1;
+
     // endregion
 
-    public TestScene4(SceneKey p_sceneKey) {
+    // region ...stuff!
+    public TestScene4(SceneManager.SceneKey p_sceneKey) {
         super(p_sceneKey);
     }
 
     @Override
     protected void preload() {
-        ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH, () -> {
-        });
+        ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
     }
+
+    private float nerdRotTime() {
+        return SCENE.millisSinceStart() * 0.1f;
+    }
+    // endregion
 
     @Override
     protected void setup() {
@@ -50,10 +57,6 @@ public class TestScene4 extends NerdScene {
         this.ncy = this.nerd.height * 0.5f;
     }
 
-    private float time() {
-        return MANAGER.sinceSceneStarted() * 0.1f;
-    }
-
     @Override
     protected void draw() {
         SKETCH.background(0);
@@ -68,7 +71,7 @@ public class TestScene4 extends NerdScene {
         this.nerdGraphics.beginDraw();
         this.nerdGraphics.imageMode(PConstants.CENTER);
         this.nerdGraphics.translate(this.ncx, this.ncy);
-        this.nerdGraphics.rotateZ(this.time() * 0.01f);
+        this.nerdGraphics.rotateZ(this.nerdRotTime() * 0.01f);
         this.nerdGraphics.image(this.nerd, 0, 0,
                 this.nerd.width * this.magScroll,
                 this.nerd.height * this.magScroll);
@@ -83,17 +86,18 @@ public class TestScene4 extends NerdScene {
         // SKETCH.vertex(SKETCH.width, SKETCH.height, SKETCH.width, SKETCH.height);
         // SKETCH.vertex(0, SKETCH.height, 0, SKETCH.height);
 
-        SKETCH.vertex(0, 0, this.time(), this.time());
-        SKETCH.vertex(SKETCH.width, 0, this.time() + SKETCH.width, this.time());
+        SKETCH.vertex(0, 0, this.nerdRotTime(), this.nerdRotTime());
+        SKETCH.vertex(SKETCH.width, 0, this.nerdRotTime() + SKETCH.width, this.nerdRotTime());
         SKETCH.vertex(SKETCH.width, SKETCH.height,
-                this.time() + SKETCH.width, this.time() + SKETCH.height);
-        SKETCH.vertex(0, SKETCH.height, this.time(), this.time() + SKETCH.height);
+                this.nerdRotTime() + SKETCH.width, this.nerdRotTime() + SKETCH.height);
+        SKETCH.vertex(0, SKETCH.height, this.nerdRotTime(), this.nerdRotTime() + SKETCH.height);
 
         SKETCH.endShape();
         // endregion
 
     }
 
+    // region Events.
     @Override
     protected void onSceneExit() {
         SKETCH.setSize(SKETCH.INIT_WIDTH, SKETCH.INIT_HEIGHT);
@@ -103,5 +107,6 @@ public class TestScene4 extends NerdScene {
     public void mouseWheel(MouseEvent p_mouseEvent) {
         this.magScrollAcc += p_mouseEvent.getCount() * this.MAG_SCROLL_ACC_MOD;
     }
+    // endregion
 
 }

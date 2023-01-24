@@ -1,10 +1,10 @@
 package com.brahvim.nerd_tests.examples.scene_comms.static_fields;
 
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
+import com.brahvim.nerd.scene_api.SceneManager;
 
 public class StaticFieldCommScene1 extends NerdScene {
-    public StaticFieldCommScene1(SceneKey p_key) {
+    public StaticFieldCommScene1(SceneManager.SceneKey p_key) {
         super(p_key);
     }
 

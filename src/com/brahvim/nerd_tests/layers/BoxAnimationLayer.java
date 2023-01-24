@@ -8,6 +8,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class BoxAnimationLayer extends NerdLayer {
+
     private SineWave squareAmpWave, camRotWave;
 
     public BoxAnimationLayer(LayerKey p_initializer) {

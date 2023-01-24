@@ -6,7 +6,8 @@ import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.processing_wrapper.Sketch;
 
 public class AssetManager {
-    // region Class `AssetKey`.
+
+    // region Class `AssetManager.AssetKey`.
     public class AssetKey extends NerdKey {
         public final Sketch SKETCH;
 
@@ -22,10 +23,12 @@ public class AssetManager {
     }
     // endregion
 
+    // region Fields.
     private final AssetManKey ASSET_MAN_KEY;
     private final AssetManager.AssetKey ASSET_KEY;
     private final HashSet<NerdAsset> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
     // Do we even *need* assets in any scene from the very beginning?
+    // endregion
 
     // region Constructors.
     @SuppressWarnings("unused")
@@ -35,14 +38,14 @@ public class AssetManager {
     }
 
     // public NerdAssetManager(Sketch p_sketch) {
-    // this.ASSET_KEY = new AssetKey(p_sketch);
+    // this.ASSET_KEY = new AssetManager.AssetKey(p_sketch);
     // }
 
     public AssetManager(AssetManKey p_key) {
         this.verifyKey(p_key);
 
         this.ASSET_MAN_KEY = p_key;
-        this.ASSET_KEY = new AssetKey(p_key.SKETCH);
+        this.ASSET_KEY = new AssetManager.AssetKey(p_key.SKETCH);
     }
     // endregion
 

@@ -1,14 +1,14 @@
 package com.brahvim.nerd_tests.examples.scene_comms.static_fields;
 
+import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
 
 public class StaticFieldCommScene2 extends NerdScene {
     // This field will store the received data.
     @SuppressWarnings("unused")
     private static Object receivedData;
 
-    public StaticFieldCommScene2(SceneKey p_key) {
+    public StaticFieldCommScene2(SceneManager.SceneKey p_key) {
         super(p_key);
     }
 

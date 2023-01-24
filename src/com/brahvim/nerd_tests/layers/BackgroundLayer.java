@@ -5,6 +5,7 @@ import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene.LayerKey;
 
 public class BackgroundLayer extends NerdLayer {
+
     private SineWave fadeWave;
 
     public BackgroundLayer(LayerKey p_initializer) {
