@@ -79,7 +79,7 @@ But then one day, somebody would want to make a BIG game!
 <br>With `Scene`s, this tragedy is ***no more*** than just frightening dreams! ":D!~
 
 ## `Layer`s.
-A recent addition to Nerd, `Layer`s are "scenes inside scenes", *idr est*, objects in a `Scene` class that may be used to respond to Processing's events *inside of a scene*. This is good for things such as extra text-boxes on the screen, or simply cleaning up your code further. You can even toggle them on and off!
+A recent addition to Nerd, `Layer`s are "scenes inside scenes", *id est*, objects in a `Scene` class that may be used to respond to Processing's events *inside of a scene*. This is good for things such as extra text-boxes on the screen, or simply cleaning up your code further. You can even toggle them on and off!
 
 A *major-looking* disadvantage for `Layer`s is their inability to share data ***directly*** with each other. A `Layer` can access its parent `Scene`, which may contain data that all layers can share, but this makes a `Scene` an interface for two layers - direct communication can still not occur between them.
 
