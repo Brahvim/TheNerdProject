@@ -738,8 +738,28 @@ public class Sketch extends PApplet {
             case PConstants.P3D, PConstants.P2D:
                 if (this.pfullscreen != this.fullscreen) {
                     this.glWindow.setFullscreen(this.fullscreen);
-                    while (this.fullscreen ? !this.glWindow.isFullscreen() : this.glWindow.isFullscreen())
-                        ;
+
+                    // Wait for the window to change its mode.
+                    // Don't wait for more than `5000` milliseconds!:
+                    // ...yes, that should crash the program :|
+                    // (It didn't, during my tests, surprisingly :O
+                    // The window just... waited there and didn't change states O_O
+                    // ...and then Processing began rendering again :D
+                    // Apparently `setFullscreen()` returns `boolean`, meaning that it does
+                    // error-checking! Kind of JogAmp!)
+
+                    // region Older logic (no time checking!).
+                    // while (this.fullscreen ? !this.glWindow.isFullscreen() :
+                    // this.glWindow.isFullscreen())
+                    // ;
+                    // endregion
+
+                    long fsStartMillis = System.currentTimeMillis();
+
+                    while (this.fullscreen != this.glWindow.isFullscreen())
+                        if (System.currentTimeMillis() - fsStartMillis > 5000)
+                            break; // Throw an exception instead?
+
                 }
 
                 this.glWindow.confinePointer(this.cursorConfined);

@@ -47,6 +47,7 @@ public class NerdLayer implements HasSketchEvents {
         this.SCENE = p_key.getScene();
         this.SKETCH = p_key.getSketch();
         this.MANAGER = this.SCENE.MANAGER;
+
     }
 
     // region Activity status.

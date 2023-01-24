@@ -456,6 +456,12 @@ public class SceneManager {
     }
 
     public void loadSceneAssets(Class<? extends NerdScene> p_sceneClass) {
+        if (!this.hasCached(p_sceneClass))
+            this.cacheScene(p_sceneClass, true);
+
+        if (this.givenSceneRanPreload(p_sceneClass))
+            return;
+
         SceneData cache = this.SCENE_CLASS_TO_CACHE.get(p_sceneClass);
 
         if (cache != null)
@@ -504,11 +510,36 @@ public class SceneManager {
         this.setScene(toUse);
     }
 
-    public void startScene(Class<? extends NerdScene> p_sceneClass) {
+    // region Starting a scene.
+
+    // "Cache if not cached" / "Start cached" method.
+    // Used to experience these (now solved!) problems:
+    /*
+     * - Asking for deletion permissions when you may not be caching is awkward,
+     * - Structure. `cache == null`, `cache.getCache() == null` must result in the
+     * same, but can't be grouped together logicaly, for optimization. This can be
+     * fixed with the use of an "impl" method, but this class already has too many
+     * similarly-named methods!
+     * 
+     * Another approach would be to call `SceneManager::cacheScene()` then query
+     * `SceneManager::SCENE_CACHE`, but that sounds even slower. Even with the JIT!
+     */
+
+    /**
+     * Starts a {@code NerdScene}, and tells using the return value, whether it was
+     * restored from cache or started again.
+     */
+    public boolean startScene(Class<? extends NerdScene> p_sceneClass) {
         if (p_sceneClass == null)
             throw new NullPointerException("`SceneManager::startScene()` was `null`.");
 
-        this.startSceneImpl(p_sceneClass);
+        if (this.hasCached(p_sceneClass)) {
+            this.setScene(this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference);
+            return true;
+        } else {
+            this.startSceneImpl(p_sceneClass);
+            return false;
+        }
 
         /*
          * // This is where `HashSets` shine more than `ArrayList`s!:
@@ -520,12 +551,25 @@ public class SceneManager {
          * to instantiate a `Scene` more than once!""");
          */
     }
+    // endregion
+
+    // region Caching.
+    public void ensureCache(Class<? extends NerdScene> p_sceneClass) {
+        if (!this.hasCached(p_sceneClass))
+            this.cacheScene(p_sceneClass, false);
+    }
 
     public boolean hasCached(Class<? extends NerdScene> p_sceneClass) {
+        // If you haven't been asked to run the scene even once, you didn't cache it!
+        // Say you haven't!:
+        if (!this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass))
+            return false;
+
+        // ...so you ran the scene? Great! ...BUT DO YOU HAVE THE SCENE OBJECT?!
         return !this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cacheIsNull();
 
         // Ugh, -_- this is cheating...:
-        // .cachedReference != null;
+        // return !this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference != null;
     }
 
     public void cacheScene(Class<? extends NerdScene> p_sceneClass, boolean p_isDeletable) {
@@ -546,52 +590,7 @@ public class SceneManager {
         this.SCENE_CLASS_TO_CACHE.put(p_sceneClass, new SceneData(
                 p_sceneClass, sceneConstructor, toCache, sceneKey, p_isDeletable));
     }
-
-    // "Cache if not cached" / "Start cached" method.
-    // Used to experience these (now solved!) problems:
-    /*
-     * - Asking for deletion permissions when you may not be caching is awkward,
-     * - Structure. `cache == null`, `cache.getCache() == null` must result in the
-     * same, but can't be grouped together logicaly, for optimization. This can be
-     * fixed with the use of an "impl" method, but this class already has too many
-     * similarly-named methods!
-     * 
-     * Another approach would be to call `SceneManager::cacheScene()` then query
-     * `SceneManager::SCENE_CACHE`, but that sounds even slower. Even with the JIT!
-     */
-
-    // *The method:*
-    /**
-     * Ensures scene is cached, then starts it.
-     * The {@code boolean} argument tells if the scene is to be deleted once exited.
-     */
-    public void startCached(Class<? extends NerdScene> p_sceneClass, boolean p_isDeletable) {
-        if (!this.hasCached(p_sceneClass)) {
-            System.out.println("""
-                    `NerdScene` not found in cache. Starting the usual way.
-                    \tPutting it in the cache.""");
-            this.cacheScene(p_sceneClass, p_isDeletable);
-        }
-
-        this.startScene(p_sceneClass);
-    }
-
-    // If it ain't cached, start it normally. Tell me if it is cached.
-    /**
-     * If the scene is cached, resume rendering it. Start it otherwise.
-     *
-     * @return If the scene was cached or not.
-     */
-    public boolean resumeCachedScene(Class<? extends NerdScene> p_sceneClass) {
-        if (this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cacheIsNull()) {
-            System.out.println("`NerdScene` not in resumable state. Starting the usual way.");
-            this.startScene(p_sceneClass);
-            return false;
-        } else {
-            this.setScene(this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference);
-            return true;
-        }
-    }
+    // endregion
 
     // region `private` Scene-operations.
     private Constructor<? extends NerdScene> getSceneConstructor(Class<? extends NerdScene> p_sceneClass) {

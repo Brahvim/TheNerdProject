@@ -80,11 +80,11 @@ public class NerdScene implements HasSketchEvents {
   // endregion
 
   // region Fields.
+  public final Sketch SKETCH;
   public final AssetManager ASSETS;
 
   /* private */ protected final SceneManager MANAGER;
   protected final NerdScene SCENE = this;
-  protected final Sketch SKETCH;
 
   // region `private` fields.
   private int startMillis;
@@ -96,7 +96,6 @@ public class NerdScene implements HasSketchEvents {
   // Would've used a `LinkedHashSet`, but am using `ArrayList`s instead since
   // duplicates won't be allowed in the former case. We need them!
   private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0); // Start at `0`. Who needs layers anyway?
-
   private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>> LAYER_CONSTRUCTORS;
 
   /*
@@ -169,10 +168,6 @@ public class NerdScene implements HasSketchEvents {
   // endregion
 
   // region Queries.
-  public Sketch getSketch() {
-    return this.SKETCH;
-  }
-
   public boolean hasCompletedPreload(/* SceneManager.SceneKey p_key */) {
     // this.verifyKey(p_key);
     return this.donePreloading;
