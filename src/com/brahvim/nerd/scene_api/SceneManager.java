@@ -14,6 +14,7 @@ public class SceneManager {
 
     // region Inner classes.
     public class SceneKey extends NerdKey {
+
         private final SceneManager MANAGER;
         public final Class<? extends NerdScene> INTENDED_USER_CLASS;
 
@@ -41,15 +42,19 @@ public class SceneManager {
 
     }
 
-    public class SceneData {
+    private class SceneData {
+
+        // region Fields.
         private final Constructor<? extends NerdScene> CONSTRUCTOR;
         private final Class<? extends NerdScene> SCENE_CLASS;
         private final SceneManager.SceneKey SCENE_KEY;
+        private final HashMap<String, Object> SAVED_DATA;
 
         private NerdScene cachedReference;
-        private boolean isDeletable, hasCompletedPreload;
+        private boolean hasCompletedPreload;
+        // endregion
 
-        // region Constructors.
+        // region Constructor[s].
         private SceneData(Class<? extends NerdScene> p_sceneClass,
                 Constructor<? extends NerdScene> p_constructor,
                 NerdScene p_cachedReference, SceneManager.SceneKey p_key) {
@@ -57,52 +62,8 @@ public class SceneManager {
             this.SCENE_CLASS = p_sceneClass;
             this.CONSTRUCTOR = p_constructor;
             this.cachedReference = p_cachedReference;
+            this.SAVED_DATA = new HashMap<>();
         }
-
-        private SceneData(Class<? extends NerdScene> p_sceneClass,
-                Constructor<? extends NerdScene> p_constructor,
-                NerdScene p_cachedReference, SceneManager.SceneKey p_key, boolean p_isDeletable) {
-            this.SCENE_KEY = p_key;
-            this.SCENE_CLASS = p_sceneClass;
-            this.CONSTRUCTOR = p_constructor;
-            this.isDeletable = p_isDeletable;
-            this.cachedReference = p_cachedReference;
-        }
-        // endregion
-
-        // region Getters.
-        // No class other than `SceneManager` is allowed to access an instance of
-        // `SceneData` anyway, so... these deem useless!:
-        /*
-         * public Constructor<? extends NerdScene> getSceneConstructor() {
-         * return this.CONSTRUCTOR;
-         * }
-         * 
-         * public boolean isDeletable() {
-         * return this.isDeletable;
-         * }
-         * 
-         * public boolean hasCompletedPreload() {
-         * return this.hasCompletedPreload;
-         * }
-         * 
-         * public NerdScene getCache(SceneManager.SceneKey p_key) {
-         * if (p_key == null) {
-         * throw new
-         * IllegalArgumentException("Only `NerdSceneManager`s may use this method.");
-         * }
-         * if (p_key.isUsed()) {
-         * throw new
-         * IllegalArgumentException("Only `NerdSceneManager`s may use this method.");
-         * }
-         * if (p_key.INTENDED_USER_CLASS.equals(this.SCENE_CLASS)) {
-         * throw new
-         * IllegalArgumentException("Only `NerdSceneManager`s may use this method.");
-         * }
-         * 
-         * return this.cachedReference;
-         * }
-         */
         // endregion
 
         // region Cache queries.
@@ -111,15 +72,8 @@ public class SceneManager {
         }
 
         public void deleteCache() {
-            // If this was the only reference to the scene object, the scene gets GCed!
+            // If this was (hopefully) the only reference to the scene object, it gets GCed!
             this.cachedReference = null;
-        }
-
-        public void deleteCacheIfNeeded() {
-            // Delete the scene reference if allowed:
-            if (this.isDeletable)
-                this.deleteCache();
-            // If this was the only reference to the scene object, the scene gets GCed!
             System.gc();
         }
         // endregion
@@ -127,6 +81,7 @@ public class SceneManager {
     }
 
     public static class SceneManagerSettings {
+
         public final OnSceneSwitch ON_SCENE_SWITCH = new OnSceneSwitch();
 
         private class OnSceneSwitch {
@@ -136,6 +91,7 @@ public class SceneManager {
             private OnSceneSwitch() {
             }
         }
+
     }
     // endregion
 
@@ -663,7 +619,7 @@ public class SceneManager {
             this.currScene.runOnSceneExit(this.currSceneManager);
 
             this.SCENE_CLASS_TO_CACHE.get(this.prevSceneClass)
-                    .deleteCacheIfNeeded();
+                    .deleteCache();
 
             // What `deleteCacheIfCan()` did, I guess (or used to do)!:
             /*
