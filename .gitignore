@@ -1,6 +1,7 @@
 /.vscode
 /bin
 /README.md
+/lib
 
 # Uhhh, this would also remove future libraries!:
 #./*.jar

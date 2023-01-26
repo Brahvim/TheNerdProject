@@ -13,7 +13,7 @@ import com.brahvim.nerd.processing_wrapper.Sketch;
 public class SceneManager {
 
     // region Inner classes.
-    public class SceneKey extends NerdKey {
+    public static class SceneKey extends NerdKey {
 
         private final SceneManager MANAGER;
         public final Class<? extends NerdScene> INTENDED_USER_CLASS;
@@ -42,7 +42,10 @@ public class SceneManager {
 
     }
 
-    private class SceneData {
+    /**
+     * Stores scene data while a scene is not active.
+     */
+    private static class SceneData {
 
         // region Fields.
         private final Constructor<? extends NerdScene> CONSTRUCTOR;
@@ -50,7 +53,7 @@ public class SceneManager {
         private final SceneManager.SceneKey SCENE_KEY;
         private final HashMap<String, Object> SAVED_DATA;
 
-        private NerdScene cachedReference;
+        private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
         private boolean hasCompletedPreload;
         // endregion
 
@@ -61,8 +64,8 @@ public class SceneManager {
             this.SCENE_KEY = p_key;
             this.SCENE_CLASS = p_sceneClass;
             this.CONSTRUCTOR = p_constructor;
-            this.cachedReference = p_cachedReference;
             this.SAVED_DATA = new HashMap<>();
+            this.cachedReference = p_cachedReference;
         }
         // endregion
 
@@ -71,7 +74,7 @@ public class SceneManager {
             return this.cachedReference == null;
         }
 
-        public void deleteCache() {
+        public void /* nullifyCache() { */ deleteCache() {
             // If this was (hopefully) the only reference to the scene object, it gets GCed!
             this.cachedReference = null;
             System.gc();
@@ -544,7 +547,7 @@ public class SceneManager {
             throw new RuntimeException("The scene could not be constructed.");
 
         this.SCENE_CLASS_TO_CACHE.put(p_sceneClass, new SceneData(
-                p_sceneClass, sceneConstructor, toCache, sceneKey, p_isDeletable));
+                p_sceneClass, sceneConstructor, toCache, sceneKey));
     }
     // endregion
 
