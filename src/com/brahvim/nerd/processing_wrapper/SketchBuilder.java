@@ -29,8 +29,8 @@ public final class SketchBuilder {
         public HashMap<Class<? extends NerdScene>, Boolean> scenesToPreload;
 
         private SketchKey() {
-            this.scenesToCache = new HashMap<>();
-            this.scenesToPreload = new HashMap<>();
+            this.scenesToCache = new HashMap<>(0, 0.25f);
+            this.scenesToPreload = new HashMap<>(0, 0.25f);
         }
 
         @Override

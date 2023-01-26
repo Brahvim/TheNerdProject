@@ -64,7 +64,7 @@ public class SceneManager {
             this.SCENE_KEY = p_key;
             this.SCENE_CLASS = p_sceneClass;
             this.CONSTRUCTOR = p_constructor;
-            this.SAVED_DATA = new HashMap<>();
+            this.SAVED_DATA = new HashMap<>(0);
             this.cachedReference = p_cachedReference;
         }
         // endregion
@@ -445,6 +445,7 @@ public class SceneManager {
         return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference.hasCompletedPreload();
     }
 
+    // region Starting a scene.
     public void restartScene() {
         if (this.currSceneClass == null)
             return;
@@ -468,8 +469,6 @@ public class SceneManager {
 
         this.setScene(toUse);
     }
-
-    // region Starting a scene.
 
     // "Cache if not cached" / "Start cached" method.
     // Used to experience these (now solved!) problems:

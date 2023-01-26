@@ -20,7 +20,7 @@ import com.brahvim.nerd.scene_api.SceneManager.SceneKey;
  */
 public class NerdScene implements HasSketchEvents {
 
-  // region Inner classes
+  // region Inner classes.
   /*
    * public NerdScene.AutoDrawable
    * createAutoDrawable(NerdScene.AutoDrawableInstance p_instance) {
@@ -81,9 +81,10 @@ public class NerdScene implements HasSketchEvents {
 
   // region Fields.
   public final Sketch SKETCH;
+  public final SceneState STATE;
   public final AssetManager ASSETS;
+  public final SceneManager MANAGER;
 
-  /* private */ protected final SceneManager MANAGER;
   protected final NerdScene SCENE = this;
 
   // region `private` fields.
@@ -124,9 +125,10 @@ public class NerdScene implements HasSketchEvents {
   // region Constructors.
   @SuppressWarnings("unused")
   private NerdScene() {
-    this.MANAGER = null;
+    this.STATE = null;
     this.SKETCH = null;
     this.ASSETS = null;
+    this.MANAGER = null;
     // this.SCENE_CLASS = null;
     this.ASSET_MAN_KEY = null;
     this.LAYER_CONSTRUCTORS = null;
@@ -147,6 +149,7 @@ public class NerdScene implements HasSketchEvents {
     p_key.use();
     // endregion
 
+    this.STATE = new SceneState();
     // this.SCENE_CLASS = p_key.getSceneClass();
     this.MANAGER = p_key.getSceneManager();
     this.SKETCH = this.MANAGER.getSketch();
@@ -154,7 +157,7 @@ public class NerdScene implements HasSketchEvents {
     this.ASSET_MAN_KEY = new AssetManKey(SKETCH);
     this.ASSETS = new AssetManager(this.ASSET_MAN_KEY);
 
-    this.LAYER_CONSTRUCTORS = new HashMap<>();
+    this.LAYER_CONSTRUCTORS = new HashMap<>(0);
   }
 
   @SafeVarargs
@@ -173,6 +176,7 @@ public class NerdScene implements HasSketchEvents {
     return this.donePreloading;
   }
 
+  // region Timing queries.
   public int startMillis() {
     return this.startMillis;
   }
@@ -180,6 +184,15 @@ public class NerdScene implements HasSketchEvents {
   public int millisSinceStart() {
     return this.SKETCH.millis() - this.startMillis;
   }
+  // endregion
+
+  // region State queries.
+  public void saveState() {
+  }
+
+  public void loadState() {
+  }
+  // endregion
   // endregion
 
   // region `Layer`-operations.
