@@ -8,10 +8,6 @@ public class TestScene3 extends NerdScene {
 
     private AnimatedCube cube;
 
-    public TestScene3(SceneManager.SceneKey p_sceneKey) {
-        super(p_sceneKey);
-    }
-
     @Override
     protected void setup() {
         this.cube = new AnimatedCube(this);

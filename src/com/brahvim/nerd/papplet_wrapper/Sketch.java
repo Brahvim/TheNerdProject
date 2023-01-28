@@ -387,7 +387,7 @@ public class Sketch extends PApplet {
         // endregion
 
         // region If it doesn't yet exist, construct the scene!
-        if (super.frameCount == 1 && this.sceneMan.getCurrScene() == null) {
+        if (super.frameCount == 1 && this.sceneMan.getCurrentScene() == null) {
             this.sceneMan.startScene(this.FIRST_SCENE_CLASS);
         }
         // endregion

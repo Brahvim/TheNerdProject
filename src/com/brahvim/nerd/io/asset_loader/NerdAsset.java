@@ -162,7 +162,7 @@ public class NerdAsset {
     // endregion
     // endregion
 
-    private synchronized void fetchData() {
+    private void fetchData() {
         switch (this.TYPE) {
             case FILESTREAM -> {
                 try {

@@ -21,7 +21,7 @@ public class AnimatedCube /* implements NerdScene.AutoDrawableInstance */ {
 
     public AnimatedCube(NerdScene p_scene) {
         this.SCENE = p_scene;
-        this.SKETCH = this.SCENE.SKETCH;
+        this.SKETCH = this.SCENE.getSketch();
 
         this.pos = new PVector();
         this.vel = new PVector();

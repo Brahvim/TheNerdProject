@@ -25,6 +25,7 @@ public class TestScene4 extends NerdScene {
     @Override
     protected void preload() {
         ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
+        System.out.println("This is async LOL!");
     }
 
     private float nerdRotTime() {
@@ -94,6 +95,12 @@ public class TestScene4 extends NerdScene {
     @Override
     protected void onSceneExit() {
         SKETCH.setSize(SKETCH.INIT_WIDTH, SKETCH.INIT_HEIGHT);
+    }
+
+    @Override
+    public void mousePressed() {
+        System.out.println("TestScene4.mousePressed()");
+        MANAGER.restartScene();
     }
 
     @Override

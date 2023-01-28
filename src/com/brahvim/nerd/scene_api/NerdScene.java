@@ -79,15 +79,11 @@ public class NerdScene implements HasSketchEvents {
   // endregion
 
   // region Fields.
-  public final Sketch SKETCH;
-  public final SceneState STATE;
-  public final AssetManager ASSETS;
-  public final SceneManager MANAGER;
-
-  private Sketch actualSketch;
-  private SceneState actualState;
-  private AssetManager actualAssets;
-  private SceneManager actualManager;
+  // Forgive me for breaking the naming conventions. Forgive me. Please!
+  protected /* final */ Sketch SKETCH;
+  protected /* final */ SceneState STATE;
+  protected /* final */ AssetManager ASSETS;
+  protected /* final */ SceneManager MANAGER;
 
   protected final NerdScene SCENE = this;
 
@@ -96,12 +92,16 @@ public class NerdScene implements HasSketchEvents {
   private boolean donePreloading;
 
   // ~~Don't let the scene manage its `manager`!:~~
-  private final AssetManKey ASSET_MAN_KEY;
+  private /* final */ AssetManKey ASSET_MAN_KEY;
 
   // Would've used a `LinkedHashSet`, but am using `ArrayList`s instead since
   // duplicates won't be allowed in the former case. We need them!
-  private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0); // Start at `0`. Who needs layers anyway?
-  private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>> LAYER_CONSTRUCTORS;
+
+  // Start at `0`. "Who needs layers anyway?"
+  private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0);
+  private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
+
+  LAYER_CONSTRUCTORS = new HashMap<>(0);
 
   /*
    * Alternative approach: storing a reference to the constructor WITHIN the class
@@ -127,50 +127,15 @@ public class NerdScene implements HasSketchEvents {
   // endregion
 
   // region Construction.
-  /* package */ static NerdScene createScene(SceneManager p_manager) {
-    NerdScene toRet = new NerdScene(p_manager);
-    return toRet;
-  }
-
-  @SafeVarargs
-  /* package */ static NerdScene createScene(
-      SceneManager p_manager, Class<? extends NerdLayer>... p_layerClasses) {
-    NerdScene toRet = new NerdScene(p_manager, p_layerClasses);
-    return toRet;
-  }
-
   protected NerdScene() {
-    // Pointer assignment, haha!:
-    this.STATE = this.actualState;
-    this.ASSETS = this.actualAssets;
-    this.SKETCH = this.actualSketch;
-    this.MANAGER = this.actualManager;
-
-    this.LAYER_CONSTRUCTORS = new HashMap<>();
-
-    // This constructor (vvv) does nothing with the sketch. ...yet.
-    this.ASSET_MAN_KEY = new AssetManKey(this.SKETCH);
-  }
-
-  private NerdScene(SceneManager p_manager) {
-    this();
-
-    this.actualManager = p_manager;
-    this.actualSketch = this.MANAGER.getSketch();
-    this.actualAssets = new AssetManager(this.ASSET_MAN_KEY);
-  }
-
-  @SafeVarargs
-  private NerdScene(SceneManager p_manager, Class<? extends NerdLayer>... p_layerClasses) {
-    this(p_manager);
-
-    for (Class<? extends NerdLayer> c : p_layerClasses) {
-      this.startLayer(c);
-    }
   }
   // endregion
 
   // region Queries.
+  public Sketch getSketch() {
+    return this.SKETCH;
+  }
+
   public boolean hasCompletedPreload(/* SceneManager.SceneKey p_key */) {
     // this.verifyKey(p_key);
     return this.donePreloading;
@@ -349,6 +314,7 @@ public class NerdScene implements HasSketchEvents {
 
     // Thread toRet = new Thread(() -> {
     this.preload();
+    this.donePreloading = true;
     // });
 
     // toRet.setName(this.getClass().getSimpleName() + "_AssetLoaderThread");
@@ -416,9 +382,12 @@ public class NerdScene implements HasSketchEvents {
    * Use this method for all asset-loading purposes that you would like to do in
    * the background. If {@code NerdSceneManager::preloadSceneAssets} or
    * {@code NerdSceneManager::loadSceneAsync} is called, this method is run
-   * async, loading-in all {@code NerdAssets}!
+   * async, loading-in all {@code NerdAssets}!<br>
+   * <br>
+   * Since {@code NerdScene}s could be a part of the same `Sketch`, it is
+   * important to ensure that this method is `synchronized`.
    */
-  protected void preload() {
+  protected synchronized void preload() {
   }
 
   protected void onSceneExit() {

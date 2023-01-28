@@ -1,7 +1,6 @@
 package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd_tests.layers.BackgroundLayer;
 import com.brahvim.nerd_tests.layers.BoxAnimationLayer;
 import com.brahvim.nerd_tests.layers.RevolvingParticlesLayer;
@@ -10,7 +9,8 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class TestScene1 extends NerdScene {
-    public TestScene1() {
+    @Override
+    protected void setup() {
         super.startAllLayers(
                 // Yes, these are started in order:
                 BackgroundLayer.class,
