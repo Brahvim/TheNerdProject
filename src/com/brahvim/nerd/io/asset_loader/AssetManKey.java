@@ -1,7 +1,7 @@
 package com.brahvim.nerd.io.asset_loader;
 
 import com.brahvim.nerd.misc.NerdKey;
-import com.brahvim.nerd.processing_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class AssetManKey extends NerdKey {
     public final Sketch SKETCH;

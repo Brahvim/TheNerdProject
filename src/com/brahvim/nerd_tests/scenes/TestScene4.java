@@ -2,7 +2,6 @@ package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager;
 
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -23,11 +22,6 @@ public class TestScene4 extends NerdScene {
 
     // endregion
 
-    // region ...stuff!
-    public TestScene4(SceneManager.SceneKey p_sceneKey) {
-        super(p_sceneKey);
-    }
-
     @Override
     protected void preload() {
         ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
@@ -36,7 +30,6 @@ public class TestScene4 extends NerdScene {
     private float nerdRotTime() {
         return SCENE.millisSinceStart() * 0.1f;
     }
-    // endregion
 
     @Override
     protected void setup() {

@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrapper;
+package com.brahvim.nerd.papplet_wrapper;
 
 import java.awt.DisplayMode;
 import java.awt.Graphics;
@@ -28,6 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.math.Unprojector;
+import com.brahvim.nerd.processing_wrappers.NerdCam;
+import com.brahvim.nerd.processing_wrappers.NerdCameraBuilder;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
 import com.jogamp.newt.opengl.GLWindow;

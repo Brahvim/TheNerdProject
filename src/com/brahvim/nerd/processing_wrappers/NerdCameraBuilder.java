@@ -1,4 +1,6 @@
-package com.brahvim.nerd.processing_wrapper;
+package com.brahvim.nerd.processing_wrappers;
+
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PConstants;
 import processing.core.PVector;

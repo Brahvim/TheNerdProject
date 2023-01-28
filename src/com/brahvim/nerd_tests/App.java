@@ -1,7 +1,7 @@
 package com.brahvim.nerd_tests;
 
-import com.brahvim.nerd.processing_wrapper.Sketch;
-import com.brahvim.nerd.processing_wrapper.SketchBuilder;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.SketchBuilder;
 import com.brahvim.nerd_tests.scenes.TestScene1;
 import com.brahvim.nerd_tests.scenes.TestScene2;
 import com.brahvim.nerd_tests.scenes.TestScene3;

@@ -8,39 +8,39 @@ import java.util.HashSet;
 import com.brahvim.nerd.io.asset_loader.AssetManKey;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.misc.NerdKey;
-import com.brahvim.nerd.processing_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class SceneManager {
 
     // region Inner classes.
-    public static class SceneKey extends NerdKey {
-
-        private final SceneManager MANAGER;
-        public final Class<? extends NerdScene> INTENDED_USER_CLASS;
-
-        private SceneKey(SceneManager p_sceneManager,
-                Class<? extends NerdScene> p_sceneThatWillUseThis) {
-            this.MANAGER = p_sceneManager;
-            this.INTENDED_USER_CLASS = p_sceneThatWillUseThis;
-        }
-
-        public SceneManager getSceneManager() {
-            return this.MANAGER;
-        }
-
-        @Override
-        public boolean isFor(Class<?> p_class) {
-            // Putting `p_class` in the argument eliminates the need for a `null` check.
-            return this.INTENDED_USER_CLASS.equals(p_class);
-        }
-
-        /*
-         * public Class<? extends Scene> getSceneClass() {
-         * return this.sceneClass;
-         * }
-         */
-
-    }
+    // ...here lies `SceneKey`:
+    /*
+     * public static class SceneKey extends NerdKey {
+     * 
+     * private final SceneManager MANAGER;
+     * public final Class<? extends NerdScene> INTENDED_USER_CLASS;
+     * 
+     * private SceneKey(SceneManager p_sceneManager,
+     * Class<? extends NerdScene> p_sceneThatWillUseThis) {
+     * this.MANAGER = p_sceneManager;
+     * this.INTENDED_USER_CLASS = p_sceneThatWillUseThis;
+     * }
+     * 
+     * public SceneManager getSceneManager() {
+     * return this.MANAGER;
+     * }
+     * 
+     * @Override
+     * public boolean isFor(Class<?> p_class) {
+     * // Putting `p_class` in the argument eliminates the need for a `null` check.
+     * return this.INTENDED_USER_CLASS.equals(p_class);
+     * }
+     * 
+     * /*
+     * public Class<? extends Scene> getSceneClass() {
+     * return this.sceneClass;
+     * }
+     */
 
     /**
      * Stores scene data while a scene is not active.
@@ -50,7 +50,6 @@ public class SceneManager {
         // region Fields.
         private final Constructor<? extends NerdScene> CONSTRUCTOR;
         private final Class<? extends NerdScene> SCENE_CLASS;
-        private final SceneManager.SceneKey SCENE_KEY;
         private final HashMap<String, Object> SAVED_DATA;
 
         private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
@@ -60,8 +59,7 @@ public class SceneManager {
         // region Constructor[s].
         private SceneData(Class<? extends NerdScene> p_sceneClass,
                 Constructor<? extends NerdScene> p_constructor,
-                NerdScene p_cachedReference, SceneManager.SceneKey p_key) {
-            this.SCENE_KEY = p_key;
+                NerdScene p_cachedReference) {
             this.SCENE_CLASS = p_sceneClass;
             this.CONSTRUCTOR = p_constructor;
             this.SAVED_DATA = new HashMap<>(0);
@@ -133,7 +131,6 @@ public class SceneManager {
 
     private Class<? extends NerdScene> currSceneClass, prevSceneClass;
     private final SceneManager.SceneManagerSettings SETTINGS;
-    private SceneManager.SceneKey currSceneManager;
     private NerdScene currScene;
     // endregion
 
@@ -186,12 +183,12 @@ public class SceneManager {
 
     public void pre() {
         if (this.currScene != null)
-            this.currScene.runPre(this.currSceneManager);
+            this.currScene.runPre();
     }
 
     public void draw() {
         if (this.currScene != null)
-            this.currScene.runDraw(this.currSceneManager);
+            this.currScene.runDraw();
     }
 
     public void post() {
@@ -199,7 +196,7 @@ public class SceneManager {
             this.PERSISTENT_ASSETS.updatePreviousLoadState(this.ASSET_MAN_KEY);
 
         if (this.currScene != null)
-            this.currScene.runPost(this.currSceneManager);
+            this.currScene.runPost();
     }
     // endregion
 

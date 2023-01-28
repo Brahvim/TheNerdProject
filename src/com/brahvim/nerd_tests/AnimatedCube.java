@@ -1,7 +1,7 @@
 package com.brahvim.nerd_tests;
 
 import com.brahvim.nerd.math.SineWave;
-import com.brahvim.nerd.processing_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;

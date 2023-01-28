@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import com.brahvim.nerd.io.ByteSerial;
-import com.brahvim.nerd.processing_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PImage;
 import processing.core.PShape;

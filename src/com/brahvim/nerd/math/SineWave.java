@@ -1,6 +1,6 @@
 package com.brahvim.nerd.math;
 
-import com.brahvim.nerd.processing_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class SineWave {
 

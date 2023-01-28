@@ -10,9 +10,9 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class TestScene1 extends NerdScene {
-    public TestScene1(SceneManager.SceneKey p_sceneKey) {
-        super(p_sceneKey,
-                // Yes, these work in order:
+    public TestScene1() {
+        super.startAllLayers(
+                // Yes, these are started in order:
                 BackgroundLayer.class,
                 BoxAnimationLayer.class,
                 RevolvingParticlesLayer.class);

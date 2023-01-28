@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrapper;
+package com.brahvim.nerd.papplet_wrapper;
 
 import java.util.HashMap;
 
