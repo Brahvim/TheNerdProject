@@ -38,18 +38,18 @@ public class EasingFunction {
     public boolean zeroWhenInactive;
 
     /**
-     * Takes in how many more milliseconds the {@linkplain EasingFunction}`
+     * Takes in how many more milliseconds the {@link EasingFunction}
      * will run for, then sets it to inactive.
      */
     private Function<Float, Float> extensionFunction;
 
     /**
-     * Takes in the parameter of the {@linkplain EasingFunction}
-     * (which many then be processed using {@linkplain EasingFunction::apply(Float[]
+     * Takes in the parameter of the {@link EasingFunction}
+     * (which many then be processed using {@link EasingFunction#apply(Float[]
      * p_parameters)},
      * to determine if the function can end. <b>The first parameter is the amount of
      * time the
-     * {@linkplain EasingFunction} has been executing for.</b>
+     * {@link EasingFunction} has been executing for.</b>
      */
     private Function<Float, Boolean> endCheck;
 

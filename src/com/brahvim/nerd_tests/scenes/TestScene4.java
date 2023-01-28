@@ -21,6 +21,13 @@ public class TestScene4 extends NerdScene {
     private float magScrollAcc, magScrollVel, magScroll = 1;
     // endregion
 
+    // region ...stuff!
+    public TestScene4() {
+        SKETCH.fullscreen = false;
+        SKETCH.getSurface().setSize(1600, 900);
+        SKETCH.centerWindow();
+    }
+
     @Override
     protected void preload() {
         ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
@@ -30,13 +37,10 @@ public class TestScene4 extends NerdScene {
     private float nerdRotTime() {
         return SCENE.millisSinceStart() * 0.1f;
     }
+    // endregion
 
     @Override
     protected void setup() {
-        SKETCH.fullscreen = false;
-        SKETCH.getSurface().setSize(1600, 900);
-        SKETCH.centerWindow();
-
         // ASSETS.ensureCompletion();
 
         this.nerd = this.ASSETS.get("sunglass_nerd").getData();

@@ -105,7 +105,7 @@ public class SceneManager {
     }
     // endregion
 
-    // TODO: Scene state saving, scene start data transfer.
+    // TODO: Scene state serialization, scene start data transfer.
     public final AssetManager PERSISTENT_ASSETS;
 
     // region `private` ~~/ `protected`~~ fields.
@@ -474,7 +474,7 @@ public class SceneManager {
             return;
 
         SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.prevSceneClass);
-        NerdScene toUse = this.constructAndCacheScene(cache.CONSTRUCTOR);
+        NerdScene toUse = this.constructScene(cache.CONSTRUCTOR);
 
         this.setScene(toUse);
     }
@@ -498,7 +498,7 @@ public class SceneManager {
      */
     public boolean startScene(Class<? extends NerdScene> p_sceneClass) {
         if (p_sceneClass == null)
-            throw new NullPointerException("`SceneManager::startScene()` was `null`.");
+            throw new NullPointerException("`SceneManager::startScene()` received `null`.");
 
         if (this.hasCached(p_sceneClass)) {
             this.setScene(this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference);
@@ -515,12 +515,14 @@ public class SceneManager {
          * else
          * throw new IllegalArgumentException("""
          * Use `SceneManager::restartScene()
-         * to instantiate a `Scene` more than once!""");
+         * to restart a `NerdScene` while it runs!""");
          */
+
     }
     // endregion
 
     // region Caching.
+    @SuppressWarnings("unused")
     private void ensureCache(Class<? extends NerdScene> p_sceneClass) {
         if (!this.hasCached(p_sceneClass))
             this.cacheScene(p_sceneClass, false);
@@ -544,11 +546,8 @@ public class SceneManager {
             return;
 
         Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
-        if (sceneConstructor == null)
-            throw new IllegalArgumentException("""
-                    The passed class's constructor could not be accessed.""");
 
-        NerdScene toCache = this.constructAndCacheScene(sceneConstructor);
+        NerdScene toCache = this.constructScene(sceneConstructor);
 
         if (toCache == null)
             throw new RuntimeException("The scene could not be constructed.");
@@ -562,13 +561,17 @@ public class SceneManager {
         try {
             toRet = p_sceneClass.getConstructor();
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            System.err.println("""
+                    Every subclass of `NerdScene` must have a `public` \"null-constructor\"
+                    (A constructor taking no arguments), or no overriden constructors at all.
+                    """);
+            // e.printStackTrace();
         }
 
         return toRet;
     }
 
-    private NerdScene constructAndCacheScene(Constructor<? extends NerdScene> p_sceneConstructor) {
+    private NerdScene constructScene(Constructor<? extends NerdScene> p_sceneConstructor) {
         NerdScene toRet = null;
 
         try {
@@ -608,11 +611,7 @@ public class SceneManager {
     private void startSceneImpl(Class<? extends NerdScene> p_sceneClass) {
         Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
 
-        if (sceneConstructor == null)
-            throw new IllegalArgumentException("""
-                    The passed class's constructor could not be accessed.""");
-
-        NerdScene toStart = this.constructAndCacheScene(sceneConstructor);
+        NerdScene toStart = this.constructScene(sceneConstructor);
 
         if (toStart == null)
             throw new RuntimeException("The scene could not be constructed.");

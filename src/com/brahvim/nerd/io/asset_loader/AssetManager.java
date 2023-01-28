@@ -1,6 +1,12 @@
 package com.brahvim.nerd.io.asset_loader;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
@@ -15,7 +21,6 @@ public class AssetManager {
             this.SKETCH = p_sketch;
         }
 
-        @Override
         public boolean isFor(Class<?> p_class) {
             // Putting `p_class` in the argument eliminates the need for a `null` check.
             return NerdAsset.class.equals(p_class);
@@ -101,6 +106,21 @@ public class AssetManager {
         return this;
     }
 
+    /**
+     * @deprecated since using {@link AssetManager#get()} is better. In cases
+     *             where you'd want to check for the availability of an asset, you
+     *             probably also a want a reference to it, in which case, it is much
+     *             better to use {@link AssetManager#get()} and check if the return
+     *             value is {@code null}.
+     */
+    @Deprecated
+    public boolean contains(String p_fileName) {
+        for (NerdAsset a : this.ASSETS)
+            if (a.NAME.equals(p_fileName))
+                return true;
+        return false;
+    }
+
     public NerdAsset get(String p_fileName) {
         for (NerdAsset a : this.ASSETS)
             if (a.NAME.equals(p_fileName))
@@ -157,6 +177,53 @@ public class AssetManager {
         for (NerdAsset a : this.ASSETS) {
             a.updatePreviousLoadState(this.ASSET_KEY);
         }
+    }
+    // endregion
+
+    // region From `HashSet<NerdAsset>`.
+    public boolean isEmpty() {
+        return this.ASSETS.isEmpty();
+    }
+
+    // Potential problem: Iterators allow you to remove elements!
+    public Iterator<NerdAsset> iterator() {
+        return this.ASSETS.iterator();
+    }
+
+    public int size() {
+        return this.ASSETS.size();
+    }
+
+    public Spliterator<NerdAsset> spliterator() {
+        return this.ASSETS.spliterator();
+    }
+
+    public Object[] toArray() {
+        return this.ASSETS.toArray();
+    }
+
+    public <T> T[] toArray(T[] a) {
+        return this.ASSETS.toArray(a);
+    }
+
+    public Stream<NerdAsset> parallelStream() {
+        return this.ASSETS.parallelStream();
+    }
+
+    public boolean removeIf(Predicate<? super NerdAsset> p_filter) {
+        return this.ASSETS.removeIf(p_filter);
+    }
+
+    public Stream<NerdAsset> stream() {
+        return this.ASSETS.stream();
+    }
+
+    public <T> T[] toArray(IntFunction<T[]> p_generator) {
+        return this.ASSETS.toArray(p_generator);
+    }
+
+    public void forEach(Consumer<? super NerdAsset> p_action) {
+        this.ASSETS.forEach(p_action);
     }
     // endregion
 

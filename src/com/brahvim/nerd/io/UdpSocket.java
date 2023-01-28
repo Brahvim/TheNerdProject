@@ -33,7 +33,7 @@ public class UdpSocket {
     public final static int DEFAULT_TIMEOUT = 32;
 
     /**
-     * The internal {@linkplain DatagramSocket} that takes care of
+     * The internal {@link DatagramSocket} that takes care of
      * networking.<br>
      * <br>
      * If you need to change it, consider using the
@@ -47,7 +47,7 @@ public class UdpSocket {
     private DatagramSocket sock;
 
     /**
-     * The internal, {@code private} {@linkplain UdpSocket.Receiver} instance.
+     * The internal, {@code private} {@link UdpSocket.Receiver} instance.
      * In abstract words, it handles threading for receiving messages.
      */
     protected Receiver receiver;
@@ -85,7 +85,7 @@ public class UdpSocket {
         /**
          * The {@code Thread} that handles the network's receive calls.
          *
-         * @implSpec {@linkplain UdpSocket.Receiver#start()}
+         * @implSpec {@link UdpSocket.Receiver#start()}
          *           should set this to be a daemon thread.
          * @see UdpSocket.Receiver#start()
          * @see UdpSocket.Receiver#stop()
@@ -93,8 +93,8 @@ public class UdpSocket {
         private Thread thread; // Ti's but a daemon thread.
 
         /**
-         * The {@linkplain UdpSocket} instance using this
-         * {@linkplain UdpSocket.Receiver} instance.
+         * The {@link UdpSocket} instance using this
+         * {@link UdpSocket.Receiver} instance.
          */
         private final UdpSocket parent;
 
@@ -135,7 +135,7 @@ public class UdpSocket {
 
         /**
          * This {@code Runnable} defines the actual code executed in the
-         * {@linkplain UdpSocket.Receiver#thread} thread.
+         * {@link UdpSocket.Receiver#thread} thread.
          * <p>
          * You may choose to modify it since it has been declared {@code public}.
          *
@@ -145,12 +145,12 @@ public class UdpSocket {
         // endregion
 
         /**
-         * Given the 'parent' {@linkplain UdpSocket} that objects of this class are to
+         * Given the 'parent' {@link UdpSocket} that objects of this class are to
          * be attached to, this class will handle receiving UDP packets.
          *
          * @param p_parent The {@code UdpSocket} instance.
          * @implNote {@code p_parent} may not be used since {@code Receiver} is a class
-         *           nested inside {@linkplain UdpSocket}
+         *           nested inside {@link UdpSocket}
          */
         private Receiver(UdpSocket p_parent) {
             Receiver.NUMBER_OF_THREADS++;
@@ -268,9 +268,9 @@ public class UdpSocket {
     /**
      * Constructs a {@code UdpSocket} with an empty port requested from the OS, the
      * receiver thread of which will time-out every
-     * {@linkplain UdpSocket#DEFAULT_TIMEOUT} milliseconds.
+     * {@link UdpSocket#DEFAULT_TIMEOUT} milliseconds.
      *
-     * @implSpec {@linkplain UdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
+     * @implSpec {@link UdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
      */
     public UdpSocket() {
         this(0, UdpSocket.DEFAULT_TIMEOUT);
@@ -278,10 +278,10 @@ public class UdpSocket {
 
     /**
      * Constructs a {@code UdpSocket} with the specified port, the receiver thread
-     * of which will time-out every {@linkplain UdpSocket#DEFAULT_TIMEOUT}
+     * of which will time-out every {@link UdpSocket#DEFAULT_TIMEOUT}
      * milliseconds.
      *
-     * @implSpec {@linkplain UdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
+     * @implSpec {@link UdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
      */
     public UdpSocket(int p_port) {
         this(p_port, UdpSocket.DEFAULT_TIMEOUT);
@@ -301,8 +301,8 @@ public class UdpSocket {
      *
      * @apiNote This constructor used to try to force the OS into giving the port of
      *          the user's choice. This functionality has now been split. Please see
-     *          {@linkplain UdpSocket#createSocketForcingPort(int, int)} and
-     *          {@linkplain UdpSocket#UdpSocket(DatagramSocket)}.
+     *          {@link UdpSocket#createSocketForcingPort(int, int)} and
+     *          {@link UdpSocket#UdpSocket(DatagramSocket)}.
      */
     public UdpSocket(int p_port, int p_timeout) {
         try {

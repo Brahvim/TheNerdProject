@@ -216,7 +216,10 @@ public class NerdScene implements HasSketchEvents {
     try {
       layerConstructor = p_layerClass.getConstructor(NerdScene.LayerKey.class);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      System.err.println("""
+          Every subclass of `NerdLayer` must have a `public` \"null-constructor\"
+          (A constructor taking no arguments), or no overriden constructors at all.
+            """);
     } catch (SecurityException e) {
       e.printStackTrace();
     }
@@ -399,29 +402,29 @@ public class NerdScene implements HasSketchEvents {
 
   // region App workflow callbacks.
   /**
-   * {@code Scene::setup()} is called first,
-   * {@code Layer::setup()} is called for each {@linkplain NerdLayer}, later.
+   * {@link NerdScene#setup()} is called first,
+   * {@link NerdLayer#setup()} is called for each {@link NerdLayer}, later.
    */
   protected void setup() {
   }
 
   /**
-   * {@code Scene::pre()} is called first,
-   * {@code Layer::pre()} is called for each {@linkplain NerdLayer}, later.
+   * {@link NerdScene#pre()} is called first,
+   * {@link NerdLayer#pre()} is called for each {@link NerdLayer}, later.
    */
   protected void pre() {
   }
 
   /**
-   * {@code Layer::draw()} is called for each {@linkplain NerdLayer}, first.
-   * {@code Scene::draw()} is called later.
+   * {@link NerdLayer#draw()} is called for each {@link NerdLayer}, first.
+   * {@link NerdScene#draw()} is called later.
    */
   protected void draw() {
   }
 
   /**
-   * {@code Layer::draw()} is called for each {@linkplain NerdLayer}, first.
-   * {@code Scene::draw()} is called later.
+   * {@link NerdLayer#draw()} is called for each {@link NerdLayer}, first.
+   * {@link NerdScene#draw()} is called later.
    */
   protected void post() {
   }

@@ -7,7 +7,7 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 /**
- * @apiNote Please use {@linkplain NerdCameraBuilder} to get a camera instance.
+ * @apiNote Please use {@link NerdCameraBuilder} to get a camera instance.
  */
 public class NerdCam {
     // region Interface `Camera.Script`.
