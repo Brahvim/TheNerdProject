@@ -98,6 +98,7 @@ public class SceneManager {
     }
     // endregion
 
+    // TODO: Scene state saving, scene start data transfer.
     public final AssetManager PERSISTENT_ASSETS;
 
     // region `private` ~~/ `protected`~~ fields.

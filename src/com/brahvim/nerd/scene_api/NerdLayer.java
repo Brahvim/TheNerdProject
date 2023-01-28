@@ -47,7 +47,6 @@ public class NerdLayer implements HasSketchEvents {
         this.SCENE = p_key.getScene();
         this.SKETCH = p_key.getSketch();
         this.MANAGER = this.SCENE.MANAGER;
-
     }
 
     // region Activity status.
@@ -61,6 +60,7 @@ public class NerdLayer implements HasSketchEvents {
     }
     // endregion
 
+    // Protected methods. Nobody can call them outside of this package!
     // region `Layer`-only (`protected`) callbacks!
     protected void onToggled(boolean p_toggleState) {
     }
