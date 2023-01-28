@@ -22,12 +22,6 @@ public class TestScene4 extends NerdScene {
     // endregion
 
     // region ...stuff!
-    public TestScene4() {
-        SKETCH.fullscreen = false;
-        SKETCH.getSurface().setSize(1600, 900);
-        SKETCH.centerWindow();
-    }
-
     @Override
     protected void preload() {
         ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
@@ -42,6 +36,12 @@ public class TestScene4 extends NerdScene {
     @Override
     protected void setup() {
         // ASSETS.ensureCompletion();
+
+        if (SCENE.timesSceneWasLoaded() < 1) {
+            SKETCH.fullscreen = false;
+            SKETCH.getSurface().setSize(1600, 900);
+            SKETCH.centerWindow();
+        }
 
         this.nerd = this.ASSETS.get("sunglass_nerd").getData();
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);

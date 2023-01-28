@@ -9,6 +9,8 @@ import com.brahvim.nerd.io.asset_loader.AssetManKey;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
+import processing.data.StringDict;
+
 public class SceneManager {
 
     // region Inner classes.
@@ -106,6 +108,7 @@ public class SceneManager {
     // endregion
 
     // TODO: Scene state serialization, scene start data transfer.
+    // TODO: Scenes from JARs!
     public final AssetManager PERSISTENT_ASSETS;
 
     // region `private` ~~/ `protected`~~ fields.

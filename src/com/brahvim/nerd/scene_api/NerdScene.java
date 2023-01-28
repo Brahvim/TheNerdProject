@@ -156,14 +156,6 @@ public class NerdScene implements HasSketchEvents {
     return this.SKETCH.millis() - this.startMillis;
   }
   // endregion
-
-  // region State queries.
-  public void saveState() {
-  }
-
-  public void loadState() {
-  }
-  // endregion
   // endregion
 
   // region `Layer`-operations.

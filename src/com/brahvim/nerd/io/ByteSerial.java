@@ -14,11 +14,24 @@ import org.jetbrains.annotations.Nullable;
 
 import com.brahvim.nerd.misc.OnCatch;
 
-// Brought to you, *from* my other (currently supa'-duper secret, ";P!) project, "AGC"!:
+// Brought to you, from my other (currently supa'-duper secret, ";P!) project, "AGC"!:
 
-// Bite Cereal! ":D!
-// *Just add milk!*
+// ~~[* The "...using generics and casting!" methods take {@link OnCatch} instances]~~
+/**
+ * <h3>A serialization utility.</h3>
+ *
+ * Have data serialized to {@code byte[]}s and files, and also deserialized from
+ * them!<br>
+ * <br>
+ * Many methods take {@link OnCatch} instances as arguments simply because
+ * overloading would not be allowed otherwise.
+ */
+
+// Bite Cereal, ":D!
+// "Just add milk!"
+// ...Throw-away, all exceptions!~
 public class ByteSerial {
+
     @Nullable
     public static byte[] toBytes(Serializable p_object) {
         if (p_object == null)
@@ -63,7 +76,10 @@ public class ByteSerial {
         try {
             return ByteSerial.fromBytesImpl(p_data);
         } catch (IOException e) {
-            p_onIo.onCatch(e);
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -75,66 +91,85 @@ public class ByteSerial {
         try {
             return ByteSerial.fromBytesImpl(p_data);
         } catch (IOException e) {
-            p_onIo.onCatch(e);
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
         } catch (ClassNotFoundException e) {
-            p_onClassNotFound.onCatch(e);
+            if (p_onClassNotFound == null)
+                e.printStackTrace();
+            else
+                p_onClassNotFound.onCatch(e);
         }
 
         return null;
     }
 
-    // region [DEPRECATED] ...after casting!
-    /*
-     * @SuppressWarnings("unchecked")
-     * public static <T> T fromBytesCasted(byte[] p_data) {
-     * try {
-     * return (T) ByteSerial.fromBytesImpl(p_data);
-     * } catch (ClassNotFoundException e) {
-     * e.printStackTrace();
-     * } catch (ClassCastException e) {
-     * e.printStackTrace();
-     * } catch (IOException e) {
-     * e.printStackTrace();
-     * }
-     * 
-     * return null;
-     * }
-     * 
-     * @SuppressWarnings("unchecked")
-     * public static <T> T fromBytesCasted(
-     * byte[] p_data,
-     * OnCatch p_onIo,
-     * OnCatch p_onClassCast) {
-     * try {
-     * return (T) ByteSerial.fromBytesImpl(p_data);
-     * } catch (IOException e) {
-     * p_onIo.onCatch(e);
-     * } catch (ClassCastException e) {
-     * p_onClassCast.onCatch(e);
-     * } catch (ClassNotFoundException e) {
-     * e.printStackTrace();
-     * }
-     * return null;
-     * }
-     * 
-     * @SuppressWarnings("unchecked")
-     * public static <T> T fromBytesCasted(
-     * byte[] p_data,
-     * OnCatch p_onClassNotFound,
-     * OnCatch p_onClassCast,
-     * OnCatch p_onIo) {
-     * try {
-     * return (T) ByteSerial.fromBytesImpl(p_data);
-     * } catch (IOException e) {
-     * p_onIo.onCatch(e);
-     * } catch (ClassCastException e) {
-     * p_onClassCast.onCatch(e);
-     * } catch (ClassNotFoundException e) {
-     * p_onClassNotFound.onCatch(e);
-     * }
-     * return null;
-     * }
-     */
+    // region ...using generics and casting!
+    @SuppressWarnings("unchecked")
+    public static <T> T fromBytesCasted(byte[] p_data) {
+        try {
+            return (T) ByteSerial.fromBytesImpl(p_data);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T fromBytesCasted(
+            byte[] p_data,
+            OnCatch p_onIo,
+            OnCatch p_onClassCast) {
+        try {
+            return (T) ByteSerial.fromBytesImpl(p_data);
+        } catch (IOException e) {
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
+        } catch (ClassCastException e) {
+            if (p_onClassCast == null)
+                e.printStackTrace();
+            else
+                p_onClassCast.onCatch(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T fromBytesCasted(
+            byte[] p_data,
+            OnCatch p_onClassNotFound,
+            OnCatch p_onClassCast,
+            OnCatch p_onIo) {
+        try {
+            return (T) ByteSerial.fromBytesImpl(p_data);
+        } catch (IOException e) {
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
+        } catch (ClassCastException e) {
+            if (p_onClassCast == null)
+                e.printStackTrace();
+            else
+                p_onClassCast.onCatch(e);
+        } catch (ClassNotFoundException e) {
+            if (p_onClassNotFound == null)
+                e.printStackTrace();
+            else
+                p_onClassNotFound.onCatch(e);
+        }
+        return null;
+    }
     // endregion
 
     @Nullable
@@ -147,70 +182,152 @@ public class ByteSerial {
     // endregion
 
     // region From files!
-    // region [DEPRECATED] ...after casting!
-    /*
-     * @SuppressWarnings("unchecked")
-     * public static <T> T fromFileCasted(String p_filePath)
-     * throws IOException, ClassNotFoundException, ClassCastException {
-     * return (T) ByteSerial.fromFileImpl(new File(p_filePath));
-     * }
-     * 
-     * @SuppressWarnings("unchecked")
-     * public static <T> T fromFileCasted(String p_filePath, OnCatch p_onIo) {
-     * try {
-     * return (T) ByteSerial.fromFileImpl(new File(p_filePath));
-     * } catch (ClassNotFoundException e) {
-     * e.printStackTrace();
-     * } catch (ClassCastException e) {
-     * e.printStackTrace();
-     * } catch (IOException e) {
-     * p_onIo.onCatch(e);
-     * }
-     * 
-     * return null;
-     * }
-     * 
-     * @SuppressWarnings("unchecked")
-     * public static <T> T fromFileCasted(String p_filePath, OnCatch p_onIo, OnCatch
-     * p_onClassNotFound) {
-     * try {
-     * return (T) ByteSerial.fromFileImpl(new File(p_filePath));
-     * } catch (ClassNotFoundException e) {
-     * p_onClassNotFound.onCatch(e);
-     * } catch (IOException e) {
-     * p_onIo.onCatch(e);
-     * }
-     * 
-     * return null;
-     * }
-     * 
-     * @SuppressWarnings("unchecked")
-     * public static <T> T fromFileCasted(
-     * String p_filePath,
-     * OnCatch p_onIo,
-     * OnCatch p_onClassCast,
-     * OnCatch p_onClassNotFound) {
-     * try {
-     * return (T) ByteSerial.fromFileImpl(new File(p_filePath));
-     * } catch (ClassNotFoundException e) {
-     * p_onClassNotFound.onCatch(e);
-     * } catch (ClassCastException e) {
-     * p_onClassCast.onCatch(e);
-     * } catch (IOException e) {
-     * p_onIo.onCatch(e);
-     * }
-     * 
-     * return null;
-     * }
-     * 
-     * // Throw-away, all exceptions!~
-     * 
-     * @SuppressWarnings("unchecked")
-     * public static <T> T fromFileCasted(File p_file)
-     * throws IOException, ClassCastException, ClassNotFoundException {
-     * return (T) ByteSerial.fromFileImpl(p_file);
-     * }
-     */
+    // region ...using generics and casting!
+    // region Using the file's path.
+    @SuppressWarnings("unchecked")
+    public static <T> T fromFileCasted(String p_filePath)
+            throws IOException, ClassNotFoundException, ClassCastException {
+        return (T) ByteSerial.fromFileImpl(new File(p_filePath));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T fromFileCasted(String p_filePath, OnCatch p_onIo) {
+        try {
+            return (T) ByteSerial.fromFileImpl(new File(p_filePath));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T fromFileCasted(String p_filePath, OnCatch p_onIo, OnCatch p_onClassNotFound) {
+        try {
+            return (T) ByteSerial.fromFileImpl(new File(p_filePath));
+        } catch (ClassNotFoundException e) {
+            if (p_onClassNotFound == null)
+                e.printStackTrace();
+            else
+                p_onClassNotFound.onCatch(e);
+        } catch (IOException e) {
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T fromFileCasted(
+            String p_filePath,
+            OnCatch p_onIo,
+            OnCatch p_onClassCast,
+            OnCatch p_onClassNotFound) {
+        try {
+            return (T) ByteSerial.fromFileImpl(new File(p_filePath));
+        } catch (ClassNotFoundException e) {
+            if (p_onClassNotFound == null)
+                e.printStackTrace();
+            else
+                p_onClassNotFound.onCatch(e);
+        } catch (ClassCastException e) {
+            if (p_onClassCast == null)
+                e.printStackTrace();
+            else
+                p_onClassCast.onCatch(e);
+        } catch (IOException e) {
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
+        }
+
+        return null;
+    }
+    // endregion
+
+    // region Using a `File` object.
+    @SuppressWarnings("unchecked")
+    public static <T> T fromFileCasted(File p_file)
+            throws IOException, ClassNotFoundException, ClassCastException {
+        return (T) ByteSerial.fromFileImpl(p_file);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T fromFileCasted(File p_file, OnCatch p_onIo) {
+        try {
+            return (T) ByteSerial.fromFileImpl(p_file);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T fromFileCasted(File p_file, OnCatch p_onIo, OnCatch p_onClassNotFound) {
+        try {
+            return (T) ByteSerial.fromFileImpl(p_file);
+        } catch (ClassNotFoundException e) {
+            if (p_onClassNotFound == null)
+                e.printStackTrace();
+            else
+                p_onClassNotFound.onCatch(e);
+        } catch (IOException e) {
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T fromFileCasted(
+            File p_file,
+            OnCatch p_onIo,
+            OnCatch p_onClassCast,
+            OnCatch p_onClassNotFound) {
+        try {
+            return (T) ByteSerial.fromFileImpl(p_file);
+        } catch (ClassNotFoundException e) {
+            if (p_onClassNotFound == null)
+                e.printStackTrace();
+            else
+                p_onClassNotFound.onCatch(e);
+        } catch (ClassCastException e) {
+            if (p_onClassCast == null)
+                e.printStackTrace();
+            else
+                p_onClassCast.onCatch(e);
+        } catch (IOException e) {
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
+        }
+
+        return null;
+    }
+    // endregion
     // endregion
 
     public static Object fromFile(String p_filePath) {
@@ -229,7 +346,10 @@ public class ByteSerial {
         try {
             return ByteSerial.fromFileImpl(new File(p_filePath));
         } catch (IOException e) {
-            p_onIo.onCatch(e);
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -241,9 +361,15 @@ public class ByteSerial {
         try {
             return ByteSerial.fromFileImpl(new File(p_filePath));
         } catch (ClassNotFoundException e) {
-            p_onClassNotFound.onCatch(e);
+            if (p_onClassNotFound == null)
+                e.printStackTrace();
+            else
+                p_onClassNotFound.onCatch(e);
         } catch (IOException e) {
-            p_onIo.onCatch(e);
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
         }
 
         return null;
@@ -265,7 +391,10 @@ public class ByteSerial {
         try {
             return ByteSerial.fromFileImpl(p_file);
         } catch (IOException e) {
-            p_onIo.onCatch(e);
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -277,9 +406,15 @@ public class ByteSerial {
         try {
             return ByteSerial.fromFileImpl(p_file);
         } catch (ClassNotFoundException e) {
-            p_onClassNotFound.onCatch(e);
+            if (p_onClassNotFound == null)
+                e.printStackTrace();
+            else
+                p_onClassNotFound.onCatch(e);
         } catch (IOException e) {
-            p_onIo.onCatch(e);
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
         }
 
         return null;
@@ -303,17 +438,10 @@ public class ByteSerial {
     }
 
     public static void toFile(Serializable p_object, File p_file) {
-        if (p_object == null)
-            return;
-
-        try (FileOutputStream fos = new FileOutputStream(p_file);
-                ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(p_object);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ByteSerial.toFile(p_object, p_file, null);
     }
 
+    // The actual implementation:
     public static void toFile(Serializable p_object, File p_file, OnCatch p_onIo) {
         if (p_object == null)
             return;
@@ -322,7 +450,10 @@ public class ByteSerial {
                 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(p_object);
         } catch (IOException e) {
-            p_onIo.onCatch(e);
+            if (p_onIo == null)
+                e.printStackTrace();
+            else
+                p_onIo.onCatch(e);
         }
     }
     // endregion

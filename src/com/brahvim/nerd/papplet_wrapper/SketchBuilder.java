@@ -13,7 +13,7 @@ public final class SketchBuilder {
     // Hmmm... "`SketchSettings`" instead..?
     public class SketchKey extends NerdKey {
         public int width = 400, height = 400;
-        public String renderer = PConstants.P3D, iconPath, name;
+        public String renderer = PConstants.P3D, iconPath, name, stringTablePath;
         public boolean dontCloseOnEscape, startedFullscreen, canResize,
                 cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
         public Class<? extends NerdScene> firstScene;
@@ -99,6 +99,11 @@ public final class SketchBuilder {
 
     public SketchBuilder setTitle(String p_name) {
         this.SKETCH_KEY.name = p_name;
+        return this;
+    }
+
+    public SketchBuilder setStringTablePath(String p_path) {
+        this.SKETCH_KEY.stringTablePath = p_path;
         return this;
     }
 

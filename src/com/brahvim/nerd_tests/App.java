@@ -21,7 +21,7 @@ public class App {
     public static void main(String[] p_args) {
         App.sketchInstance = new SketchBuilder()
                 .setTitle("The Nerd Project")
-                .setFirstScene(TestScene4.class)
+                .setFirstScene(TestScene1.class)
                 .setIconPath("data/sunglass_nerd.png")
                 // .preLoadAssets(TestScene4.class)
 

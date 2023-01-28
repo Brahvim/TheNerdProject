@@ -18,6 +18,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
@@ -25,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.processing_wrappers.NerdCam;
 import com.brahvim.nerd.processing_wrappers.NerdCameraBuilder;
@@ -139,6 +141,7 @@ public class Sketch extends PApplet {
 
     // region `public` fields.
     // region Constants.
+    // region Static constants.
     public final static File EXEC_DIR = new File("");
     public final static String EXEC_DIR_PATH = Sketch.EXEC_DIR.getAbsolutePath().concat(File.separator);
 
@@ -160,10 +163,12 @@ public class Sketch extends PApplet {
             ']', ';', ',', '.', '/', '\\', ':', '|', '<',
             '>', '_', '+', '?'
     };
+    // endregion
 
     public final String NAME;
     public final Sketch SKETCH;
     public final NerdCam DEFAULT_CAMERA;
+    public final StringTable STRINGS;
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
     public final String RENDERER;
@@ -206,7 +211,7 @@ public class Sketch extends PApplet {
     // endregion
 
     // region `private` ~~/ `protected`~~ fields.
-    private SceneManager sceneMan;
+    private SceneManager sceneMan; // Don't use static initialization for this..?
     public final String ICON_PATH;
     private final Unprojector unprojector;
 
@@ -258,13 +263,30 @@ public class Sketch extends PApplet {
         this.fullscreen = this.STARTED_FULLSCREEN;
         this.pfullscreen = !this.fullscreen;
 
+        // region Loading the string table.
+        StringTable loadedTable = null;
+
+        try {
+            loadedTable = new StringTable(p_key.stringTablePath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            this.STRINGS = loadedTable;
+        }
+        // endregion
+
+        // region Loading scenes to preload.
         for (Class<? extends NerdScene> c : p_key.scenesToPreload) {
             this.sceneMan.loadSceneAssetsAsync(c);
         }
+        // endregion
 
+        // region Setting icons.
         if (this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D)
             PJOGL.setIcon(this.ICON_PATH);
+        // endregion
 
+        // region Non-fullscreen window's dimensions when starting fullscreen.
         if (this.STARTED_FULLSCREEN) {
             this.INIT_WIDTH = 800;
             this.INIT_HEIGHT = 600;
@@ -272,6 +294,7 @@ public class Sketch extends PApplet {
             this.INIT_WIDTH = p_key.width;
             this.INIT_HEIGHT = p_key.height;
         }
+        // endregion
     }
 
     @Override
@@ -327,7 +350,7 @@ public class Sketch extends PApplet {
                 if (this.INITIALLY_RESIZABLE)
                     super.surface.setResizable(true);
 
-                this.surface.setIcon(loadImage(this.ICON_PATH));
+                super.surface.setIcon(super.loadImage(this.ICON_PATH));
                 // "Loose" image loading is usually not a good idea, but I guess it's here...
                 // super.surface.setIcon(super.loadImage(this.iconPath));
                 break;

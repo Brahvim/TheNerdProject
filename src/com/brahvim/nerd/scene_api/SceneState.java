@@ -1,5 +1,6 @@
 package com.brahvim.nerd.scene_api;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +8,8 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import com.brahvim.nerd.io.ByteSerial;
 
 public class SceneState {
     private final HashMap<String, Object> DATA = new HashMap<>(0);
@@ -106,5 +109,19 @@ public class SceneState {
      * 
      * ...another idea, would be to offer an iterator instead.
      */
+
+    // region Serialization.
+    public byte[] toByteArray() {
+        return ByteSerial.toBytes(this.DATA);
+    }
+
+    public void toFile(File p_file) {
+        ByteSerial.toFile(this.DATA, p_file);
+    }
+
+    public void toFile(String p_fileName) {
+        ByteSerial.toFile(this.DATA, p_fileName);
+    }
+    // endregion
 
 }

@@ -4,8 +4,7 @@ package com.brahvim.nerd.misc;
 // And yes, overloads (for default values of this!)
 // Might find a use for this someday?!
 
-// @Deprecated
-
+// `@Deprecated`-
 // ACTUALLY-ACTUALLY,
 // WAIT, WAIT!
 // Overloading with just a different throws decl is not a thing!
