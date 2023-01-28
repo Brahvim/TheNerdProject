@@ -84,15 +84,16 @@ public class NerdScene implements HasSketchEvents {
   protected /* final */ SceneState STATE;
   protected /* final */ AssetManager ASSETS;
   protected /* final */ SceneManager MANAGER;
+  protected /* final */ AssetManKey ASSET_MAN_KEY;
 
   protected final NerdScene SCENE = this;
 
   // region `private` fields.
   private int startMillis;
+  private int timesLoaded = 0;
   private boolean donePreloading;
 
   // ~~Don't let the scene manage its `manager`!:~~
-  private /* final */ AssetManKey ASSET_MAN_KEY;
 
   // Would've used a `LinkedHashSet`, but am using `ArrayList`s instead since
   // duplicates won't be allowed in the former case. We need them!
@@ -128,12 +129,17 @@ public class NerdScene implements HasSketchEvents {
 
   // region Construction.
   protected NerdScene() {
+    System.out.println("NerdScene.NerdScene()");
   }
   // endregion
 
   // region Queries.
   public Sketch getSketch() {
     return this.SKETCH;
+  }
+
+  public int timesSceneWasLoaded() {
+    return this.timesLoaded;
   }
 
   public boolean hasCompletedPreload(/* SceneManager.SceneKey p_key */) {
@@ -302,9 +308,6 @@ public class NerdScene implements HasSketchEvents {
 
   /* package */ void runOnSceneExit() {
     // this.verifyKey(p_sceneKey);
-
-    if (!MANAGER.hasCached(this.getClass()))
-      this.ASSETS.clear();
 
     this.onSceneExit();
   }

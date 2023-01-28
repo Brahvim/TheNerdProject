@@ -19,9 +19,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -45,6 +43,7 @@ import processing.opengl.PGraphics3D;
 import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
+
     // region Listener abstract classes.
     // Used classes instead of interfaces for these (two) reasons:
     /*
@@ -210,17 +209,19 @@ public class Sketch extends PApplet {
     private SceneManager sceneMan;
     public final String ICON_PATH;
     private final Unprojector unprojector;
+
+    // `LinkedHashSet`s preserve order (and also disallow element repetition)!
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
     // endregion
 
     // region Listeners sets!
-    private final HashSet<SketchMouseListener> MOUSE_LISTENERS = new HashSet<>(1);
-    private final HashSet<SketchTouchListener> TOUCH_LISTENERS = new HashSet<>(1);
-    private final HashSet<SketchWindowListener> WINDOW_LISTENERS = new HashSet<>(1);
-    private final HashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new HashSet<>(1);
+    private final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
+    private final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
+    private final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
+    private final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
     // endregion
 
-    // region Constructors, `settings()`...
+    // region Constructor[s], `settings()`...
     public Sketch(SketchBuilder.SketchKey p_key) {
         // region Verify and 'use' key.
         if (p_key == null) {
@@ -257,8 +258,8 @@ public class Sketch extends PApplet {
         this.fullscreen = this.STARTED_FULLSCREEN;
         this.pfullscreen = !this.fullscreen;
 
-        for (Map.Entry<Class<? extends NerdScene>, Boolean> e : p_key.scenesToCache.entrySet()) {
-            this.sceneMan.cacheScene(e.getKey(), e.getValue());
+        for (Class<? extends NerdScene> c : p_key.scenesToPreload) {
+            this.sceneMan.loadSceneAssetsAsync(c);
         }
 
         if (this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D)
@@ -929,7 +930,7 @@ public class Sketch extends PApplet {
         return buffer;
     }
 
-    // region `createGraphics()` overloads.
+    // region `createGraphics()` overrides and overloads.
     // region Actual overrides.
     @Override
     public PGraphics createGraphics(int w, int h, String renderer, String path) {
@@ -992,7 +993,6 @@ public class Sketch extends PApplet {
         super.rect(0, 0, super.width, super.height);
         super.popStyle();
     }
-
     // endregion
 
     // region Key-press and key-type helper methods.

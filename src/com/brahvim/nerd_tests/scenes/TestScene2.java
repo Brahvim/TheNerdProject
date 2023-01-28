@@ -16,6 +16,11 @@ public class TestScene2 extends NerdScene {
     }
 
     @Override
+    protected synchronized void preload() {
+        System.out.println("TestScene2.preload()");
+    }
+
+    @Override
     protected void draw() {
         SKETCH.in2d(() -> SKETCH.alphaBg(0, 102, 153, 100));
         // SKETCH.background(0x006699);

@@ -414,7 +414,7 @@ public class SceneManager {
     // endregion
 
     // region `Scene`-operations.
-    public boolean givenSceneRanPreload(Class<? extends NerdScene> p_sceneClass) {
+    private boolean givenSceneRanPreload(Class<? extends NerdScene> p_sceneClass) {
         return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference.hasCompletedPreload();
     }
 
@@ -464,10 +464,9 @@ public class SceneManager {
         if (this.currSceneClass == null)
             return;
 
-        SceneCache data = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
+        // SceneCache data = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
         // NerdScene toUse = this.constructAndCacheScene(data.CONSTRUCTOR);
-
-        this.setupCurrentScene();
+        this.startSceneImpl(this.currSceneClass);
     }
 
     public void startPreviousScene() {
@@ -522,12 +521,12 @@ public class SceneManager {
     // endregion
 
     // region Caching.
-    public void ensureCache(Class<? extends NerdScene> p_sceneClass) {
+    private void ensureCache(Class<? extends NerdScene> p_sceneClass) {
         if (!this.hasCached(p_sceneClass))
             this.cacheScene(p_sceneClass, false);
     }
 
-    public boolean hasCached(Class<? extends NerdScene> p_sceneClass) {
+    private boolean hasCached(Class<? extends NerdScene> p_sceneClass) {
         // If you haven't been asked to run the scene even once, you didn't cache it!
         // Say you haven't!:
         if (!this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass))
@@ -540,7 +539,7 @@ public class SceneManager {
         // return !this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference != null;
     }
 
-    public void cacheScene(Class<? extends NerdScene> p_sceneClass, boolean p_isDeletable) {
+    private void cacheScene(Class<? extends NerdScene> p_sceneClass, boolean p_isDeletable) {
         if (this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass))
             return;
 
@@ -590,10 +589,11 @@ public class SceneManager {
         // Initialize fields as if this was a part of the construction.
         toRet.MANAGER = this;
         toRet.SKETCH = this.SKETCH;
-        toRet.ASSETS = new AssetManager(new AssetManKey(this.SKETCH)); // Is this actually a good idea?
+        toRet.ASSET_MAN_KEY = new AssetManKey(this.SKETCH);
+        toRet.ASSETS = new AssetManager(toRet.ASSET_MAN_KEY); // Is this actually a good idea?
 
-        // If this is the first time we're constructing this scene, ensure a saved
-        // state!
+        // If this is the first time we're constructing this scene, ensure it has a
+        // cache and a saved state!
         // PS Don't worry about concurrency, `this.SCENE_CLASS_TO_CACHE` is `final`! ^-^
         if (SCENE_CACHE == null) {
             toRet.STATE = new SceneState();
@@ -634,6 +634,9 @@ public class SceneManager {
         if (this.prevSceneClass != null) {
             // Exit the scene, and nullify the cache.
             this.currScene.runOnSceneExit();
+
+            if (!this.hasCached(this.currSceneClass))
+                this.currScene.ASSETS.clear();
 
             SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
             cache.deleteCache();

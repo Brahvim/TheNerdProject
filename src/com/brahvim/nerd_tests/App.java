@@ -28,8 +28,7 @@ public class App {
                 // TODO: Add window resizing hint arrows to the `OpenGL` renderer.
                 // TODO: Perhaps find a fix for `JAVA2D` fullscreen windows not fitting well!
                 // .useJavaRenderer()
-                // .cacheScene(true, TestScene1.class)
-                // .cacheAllScenes(true, TestScene1.class, TestScene2.class)
+                // .preLoadAssets(TestScene1.class, TestScene2.class) // Works!
 
                 .startFullscreen()
                 .canResize()

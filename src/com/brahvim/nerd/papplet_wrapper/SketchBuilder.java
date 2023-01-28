@@ -1,6 +1,6 @@
 package com.brahvim.nerd.papplet_wrapper;
 
-import java.util.HashMap;
+import java.util.HashSet;
 
 import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -19,18 +19,12 @@ public final class SketchBuilder {
         public Class<? extends NerdScene> firstScene;
 
         /**
-         * The {@code Boolean} tells whether or not the scene is deletable.
-         */
-        public HashMap<Class<? extends NerdScene>, Boolean> scenesToCache;
-
-        /**
          * The {@code Boolean} tells whether or not assets are loaded async.
          */
-        public HashMap<Class<? extends NerdScene>, Boolean> scenesToPreload;
+        public HashSet<Class<? extends NerdScene>> scenesToPreload;
 
         private SketchKey() {
-            this.scenesToCache = new HashMap<>(0, 0.25f);
-            this.scenesToPreload = new HashMap<>(0, 0.25f);
+            this.scenesToPreload = new HashSet<>(0);
         }
 
         @Override
@@ -151,28 +145,12 @@ public final class SketchBuilder {
     }
     // endregion
 
-    // region Scene asset pre-loading and caching.
-    public SketchBuilder cacheScene(boolean p_isDeletable, Class<? extends NerdScene> p_sceneClass) {
-        if (p_sceneClass == null)
-            return this;
-
-        this.SKETCH_KEY.scenesToCache.put(p_sceneClass, p_isDeletable);
-        return this;
-    }
-
+    // region Scene asset pre-loading.
     public SketchBuilder preLoadAssets(Class<? extends NerdScene> p_sceneClass) {
         if (p_sceneClass == null)
             return this;
 
-        this.SKETCH_KEY.scenesToPreload.put(p_sceneClass, false);
-        return this;
-    }
-
-    public SketchBuilder asyncLoadAssets(Class<? extends NerdScene> p_sceneClass) {
-        if (p_sceneClass == null)
-            return this;
-
-        this.SKETCH_KEY.scenesToPreload.put(p_sceneClass, true);
+        this.SKETCH_KEY.scenesToPreload.add(p_sceneClass);
         return this;
     }
 
@@ -184,33 +162,7 @@ public final class SketchBuilder {
         for (Class<? extends NerdScene> c : p_sceneClasses) {
             if (c == null)
                 continue;
-            this.SKETCH_KEY.scenesToPreload.put(c, false);
-        }
-        return this;
-    }
-
-    @SafeVarargs
-    public final SketchBuilder asyncLoadAssets(Class<? extends NerdScene>... p_sceneClasses) {
-        if (p_sceneClasses == null)
-            return this;
-
-        for (Class<? extends NerdScene> c : p_sceneClasses) {
-            if (c == null)
-                continue;
-            this.SKETCH_KEY.scenesToPreload.put(c, true);
-        }
-        return this;
-    }
-
-    @SafeVarargs
-    public final SketchBuilder cacheAllScenes(Boolean p_isDeletable, Class<? extends NerdScene>... p_sceneClasses) {
-        if (p_sceneClasses == null)
-            return this;
-
-        for (Class<? extends NerdScene> c : p_sceneClasses) {
-            if (c == null)
-                continue;
-            this.SKETCH_KEY.scenesToCache.put(c, p_isDeletable);
+            this.SKETCH_KEY.scenesToPreload.add(c);
         }
         return this;
     }

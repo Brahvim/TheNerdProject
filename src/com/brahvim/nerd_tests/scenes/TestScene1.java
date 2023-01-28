@@ -19,6 +19,11 @@ public class TestScene1 extends NerdScene {
     }
 
     @Override
+    protected void preload() {
+        System.out.println("TestScene1.preload()");
+    }
+
+    @Override
     protected void draw() {
         SKETCH.text("Scene `1`!",
                 SKETCH.cx, SKETCH.cy + PApplet.sin(SCENE.millisSinceStart() * 0.005f) * 25);

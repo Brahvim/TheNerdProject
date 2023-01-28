@@ -19,7 +19,6 @@ public class TestScene4 extends NerdScene {
             MAG_SCROLL_DECAY_ACC = 0.8f,
             MAG_SCROLL_DECAY_VEL = 0.99f;
     private float magScrollAcc, magScrollVel, magScroll = 1;
-
     // endregion
 
     @Override
