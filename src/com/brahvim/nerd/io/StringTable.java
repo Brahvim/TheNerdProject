@@ -12,7 +12,9 @@ public class StringTable {
     // String tables exist for making it easy for TRANSLATORS to work with them.
     // Use a file!
 
-    // TODO: Multiline strings! Please! Pleasea add them!
+    // TODO: Multiline strings! Please! Please add them!
+    // TODO PS That backslash convertor is not acting correctly either.
+
     // NOTTODO: Declare this `public`, and try to save a modified table!
     // ..and please try not to mess up the file's comments...
     private final HashMap<String, String> TABLE = new HashMap<>();
