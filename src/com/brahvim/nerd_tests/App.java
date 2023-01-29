@@ -1,83 +1,9 @@
 package com.brahvim.nerd_tests;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.LinkedHashSet;
-
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuilder;
-import com.brahvim.nerd.scene_api.NerdLayer;
-import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd_tests.scenes.TestScene1;
-import com.brahvim.nerd_tests.scenes.TestScene2;
-import com.brahvim.nerd_tests.scenes.TestScene3;
-import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
-
-    public enum LoadedClasses {
-        // PS *I beg you,* layers first!
-        // `Layer`s are a parameterized type - they won't exist without a scene!
-
-        TEST_SCENE_5(
-                "file:/" + Sketch.DATA_DIR_PATH + "TestScene5.jar",
-                "com.brahvim.nerd_tests.scenes.TestScene5");
-
-        // region Fields, methods, ...the usual OOP, y'know?
-        // region Fields.
-        public Class<? extends NerdScene> SCENE_CLASSES;
-
-        private final URL URL;
-        private final String QUAL_NAME;
-
-        private Class<?> loadedClass;
-        // endregion Fields.
-
-        private LoadedClasses(String p_urlString, String p_fullyQualifiedName) {
-            URL urlToSet = null;
-            try {
-                urlToSet = new URL(p_urlString);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-
-            this.URL = urlToSet;
-            this.QUAL_NAME = p_fullyQualifiedName;
-        }
-
-        // region Methods.
-        // region `getLoadedClass()`-like.
-        public Class<?> getLoadedClass() {
-            return this.loadedClass;
-        }
-
-        @SuppressWarnings("unchecked")
-        public <T> Class<? extends T> getLoadedClassAs() {
-            return (Class<? extends T>) this.loadedClass;
-        }
-
-        @SuppressWarnings("unchecked")
-        public Class<? extends NerdScene> getLoadedClassAsScene() {
-            return (Class<? extends NerdScene>) this.loadedClass;
-        }
-
-        @SuppressWarnings("unchecked")
-        public Class<? extends NerdLayer> getLoadedClassAsLayer() {
-            return (Class<? extends NerdLayer>) this.loadedClass;
-        }
-        // endregion
-
-        protected void setLoadedClass(Class<?> p_class) {
-            this.loadedClass = p_class;
-        }
-
-        private URL getUrl() {
-            return this.URL;
-        }
-        // endregion
-        // endregion
-    }
 
     // region `App`'s Fields.
     public final static int BPM = 100,
@@ -89,44 +15,21 @@ public class App {
     // endregion
 
     public static void main(String[] p_args) {
-        App.loadClasses(); // Handle this yourself, sorry!
+        LoadeableClasses.loadClasses(); // Handle this yourself, sorry!
 
         // region Building the `Sketch`!
         App.sketchInstance = new SketchBuilder()
-                .setTitle("The Nerd Project")
-                // .setFirstScene(TestScene1.class)
-                .setFirstScene(LoadedClasses.TEST_SCENE_5.getLoadedClassAsScene())
-                .setIconPath("data/sunglass_nerd.png")
+                .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
                 .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.ini")
+                .setIconPath("data/sunglass_nerd.png")
+                // .setFirstScene(TestScene1.class)
+                .setTitle("The Nerd Project")
                 .startFullscreen()
                 .canResize()
                 .build(p_args);
         // endregion
 
         App.startTickThread();
-    }
-
-    private static void loadClasses() {
-        // Get all `URL`s as an array, in order:
-
-        final LoadedClasses[] ENUM_VALUES = LoadedClasses.values();
-        final URL[] URL_ARRAY = new URL[ENUM_VALUES.length];
-
-        for (int i = 0; i < URL_ARRAY.length; i++)
-            URL_ARRAY[i] = ENUM_VALUES[i].getUrl();
-
-        // Construct the loader:
-        final URLClassLoader LOADER = new URLClassLoader(
-                URL_ARRAY, ClassLoader.getSystemClassLoader());
-
-        for (LoadedClasses c : ENUM_VALUES) {// Load classes using `forName()`.
-            try {
-                final Class<?> LOADED_CLASS = Class.forName(c.QUAL_NAME, true, LOADER);
-                c.setLoadedClass(LOADED_CLASS);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public Sketch getSketchInstance() {
