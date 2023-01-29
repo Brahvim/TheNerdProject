@@ -4,12 +4,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetManKey;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
-import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 /**
@@ -53,31 +52,34 @@ public class NerdScene implements InputEventHandling {
    * }
    */
 
-  public class LayerKey extends NerdKey {
-    private final NerdScene SCENE;
-    private final Sketch SKETCH;
-    private final Class<? extends NerdLayer> LAYER_CLASS;
-
-    private LayerKey(NerdScene p_scene, Sketch p_sketch, Class<? extends NerdLayer> p_layerClass) {
-      this.LAYER_CLASS = p_layerClass;
-      this.SCENE = p_scene;
-      this.SKETCH = p_sketch;
-    }
-
-    public NerdScene getScene() {
-      return this.SCENE;
-    }
-
-    public Sketch getSketch() {
-      return this.SKETCH;
-    }
-
-    @Override
-    public boolean isFor(Class<?> p_class) {
-      return this.LAYER_CLASS.equals(p_class);
-    }
-
-  }
+  /*
+   * public class LayerKey extends NerdKey {
+   * private final NerdScene SCENE;
+   * private final Sketch SKETCH;
+   * private final Class<? extends NerdLayer> LAYER_CLASS;
+   * 
+   * private LayerKey(NerdScene p_scene, Sketch p_sketch, Class<? extends
+   * NerdLayer> p_layerClass) {
+   * this.LAYER_CLASS = p_layerClass;
+   * this.SCENE = p_scene;
+   * this.SKETCH = p_sketch;
+   * }
+   * 
+   * public NerdScene getScene() {
+   * return this.SCENE;
+   * }
+   * 
+   * public Sketch getSketch() {
+   * return this.SKETCH;
+   * }
+   * 
+   * @Override
+   * public boolean isFor(Class<?> p_class) {
+   * return this.LAYER_CLASS.equals(p_class);
+   * }
+   * 
+   * }
+   */
   // endregion
 
   // region Fields.
@@ -94,8 +96,6 @@ public class NerdScene implements InputEventHandling {
   // region `private` fields.
   private int startMillis;
   private boolean donePreloading;
-
-  // ~~Don't let the scene manage its `manager`!:~~
 
   // Would've used a `LinkedHashSet`, but am using `ArrayList`s instead since
   // duplicates won't be allowed in the former case. We need them!
@@ -165,19 +165,15 @@ public class NerdScene implements InputEventHandling {
     for (NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass))
         return l;
-    return null; // Also does the work for:
-    // if (!this.hasLayer(p_layerClass))
-    // return null;
+    return null;
   }
 
-  public HashSet<NerdLayer> getAllLayersOfClass(Class<? extends NerdLayer> p_layerClass) {
+  // Using a `LinkedHashSet` to retain order.
+  public LinkedHashSet<NerdLayer> getAllLayersOfClass(Class<? extends NerdLayer> p_layerClass) {
     // Nobody's gunna do stuff like this. Ugh.
     // No matter what I do, its still gunna crash their program.
 
-    // if (!this.hasLayerOfClass(p_layerClass))
-    // return null;
-
-    HashSet<NerdLayer> toRet = new HashSet<>();
+    LinkedHashSet<NerdLayer> toRet = new LinkedHashSet<>();
 
     for (NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass)) {
@@ -399,29 +395,39 @@ public class NerdScene implements InputEventHandling {
 
   // region App workflow callbacks.
   /**
-   * {@link NerdScene#setup()} is called first,
-   * {@link NerdLayer#setup()} is called for each {@link NerdLayer}, later.
+   * {@link NerdScene#setup()} is called when one of
+   * {@link SceneManager#startScene(Class)},
+   * {@link SceneManager#restartScene(Class)}, or
+   * {@link SceneManager#startPreviousScene(Class)}
+   * is called, after the {@link NerdScene} finishes executing
+   * {@link NerdScene#preload()},<br>
+   * <br>
+   * {@link NerdLayer#setup()} is called <i>when a {@link NerdLayer} is set
+   * active</i> using {@link NerdLayer#setActive(boolean)}.
    */
   protected void setup() {
   }
 
   /**
-   * {@link NerdScene#pre()} is called first,
+   * {@link NerdScene#pre()} is called first,<br>
+   * <br>
    * {@link NerdLayer#pre()} is called for each {@link NerdLayer}, later.
    */
   protected void pre() {
   }
 
   /**
-   * {@link NerdLayer#draw()} is called for each {@link NerdLayer}, first.
+   * {@link NerdLayer#draw()} is called for each {@link NerdLayer}, first.<br>
+   * <br>
    * {@link NerdScene#draw()} is called later.
    */
   protected void draw() {
   }
 
   /**
-   * {@link NerdLayer#draw()} is called for each {@link NerdLayer}, first.
-   * {@link NerdScene#draw()} is called later.
+   * {@link NerdLayer#post()} is called for each {@link NerdLayer}, first.<br>
+   * <br>
+   * {@link NerdScene#post()} is called later.
    */
   protected void post() {
   }

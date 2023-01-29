@@ -46,6 +46,16 @@ import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
 
+    public class CallbackOrder {
+        public final static boolean SCENE = true;
+        public final static boolean LAYER = false;
+
+        public static boolean PRE;
+        public static boolean DRAW;
+        public static boolean POST;
+
+    }
+
     // region Listener abstract classes.
     // Used classes instead of interfaces for these (two) reasons:
     /*

@@ -13,7 +13,7 @@ public enum LoadeableClasses {
     // `Layer`s are a parameterized type - they won't exist without a scene!
 
     TEST_SCENE_5(
-            // ....for some reason I can use only a JAR file now.
+            // ...for some reason I can use only a JAR file now. No `.class` ones!
             "file:/" + Sketch.DATA_DIR_PATH + "TestScene5.jar",
             "com.brahvim.nerd_tests.scenes.TestScene5");
 
