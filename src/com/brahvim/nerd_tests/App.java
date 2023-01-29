@@ -1,10 +1,10 @@
 package com.brahvim.nerd_tests;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuilder;
@@ -16,7 +16,48 @@ import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
 
-    // region Fields.
+    public enum LoadedClasses {
+        TEST_SCENE_5("", "");
+
+        // region Fields, methods, ...the usual OOP, y'know?
+        // region Fields.
+        public Class<? extends NerdScene> SCENE_CLASSES;
+
+        private final URL URL;
+        private final String QUAL_NAME;
+
+        private Class<?> loadedClass;
+        // endregion Fields.
+
+        private LoadedClasses(String p_urlString, String p_fullyQualifiedName) {
+            URL urlToSet = null;
+            try {
+                urlToSet = new URL(p_urlString);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            this.URL = urlToSet;
+            this.QUAL_NAME = p_fullyQualifiedName;
+        }
+
+        // region Methods.
+        public Class<?> getLoadedClass() {
+            return this.loadedClass;
+        }
+
+        protected void setLoadedClass(Class<?> p_class) {
+            this.loadedClass = p_class;
+        }
+
+        private URL getUrl() {
+            return this.URL;
+        }
+        // endregion
+        // endregion
+    }
+
+    // region `App`'s Fields.
     public final static int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 
@@ -26,33 +67,11 @@ public class App {
     // endregion
 
     public static void main(String[] p_args) {
-
-        // Working class loading, thanks to:
-        // [https://kostenko.org/blog/2019/06/runtime-class-loading.html]
-        URLClassLoader childClassLoader = null;
-
-        try {
-            URL jarUrl = new URL("file:/" + Sketch.DATA_DIR_PATH + "TestScene5.jar");
-            childClassLoader = new URLClassLoader(
-                    new URL[] { jarUrl },
-                    ClassLoader.getSystemClassLoader());
-
-            System.out.printf("Got the URL: `%s`.\n", jarUrl);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        Class<? extends NerdScene> testScene5Class = null;
-        try {
-            Class<?> loadedClass = Class.forName("com.brahvim.nerd_tests.scenes.TestScene5", true, childClassLoader);
-            testScene5Class = (Class<? extends NerdScene>) loadedClass;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        App.loadClasses(); // Handle this yourself, sorry!
 
         App.sketchInstance = new SketchBuilder()
                 .setTitle("The Nerd Project")
-                .setFirstScene(testScene5Class)
+                .setFirstScene(LoadedClasses.TEST_SCENE_5.SCENE_CLASSES)
                 .setIconPath("data/sunglass_nerd.png")
                 .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.ini")
 
@@ -67,6 +86,37 @@ public class App {
                 .build(p_args);
 
         App.startTickThread();
+    }
+
+    private static void loadClasses() {
+        // Just because a `URLClassLoader` can take many URLs does not mean that I
+        // should store all `URL`s into a single `URLClassLoader` and then fetch each
+        // `Class<?>` myself in a second loop. Even if it means constructing a
+        // completely new `URLClassLoader`, every time, I will still use this single
+        // loop because modifying two loops would be too much!
+
+        // (I could use an interface with two methods - one returning a
+        // `ToLoad` instance with the `url` and `fullyQualifiedName` set, and the other
+        // taking in the class to save it somewhere, but I won't...?)
+
+        // Get all `URL`s as an array, in order:
+        LinkedHashSet<URL> urlSet = new LinkedHashSet<>();
+
+        for (LoadedClasses c : LoadedClasses.values())
+            urlSet.add(c.getUrl());
+
+        // Construct the loader:
+        URLClassLoader loader = new URLClassLoader(
+                (URL[]) urlSet.toArray(), ClassLoader.getSystemClassLoader());
+
+        for (LoadedClasses c : LoadedClasses.values()) {// Load classes using `forName()`.
+            try {
+                Class<?> loadedClass = Class.forName(c.QUAL_NAME, true, loader);
+                c.setLoadedClass(loadedClass);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Sketch getSketchInstance() {

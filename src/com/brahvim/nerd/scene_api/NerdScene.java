@@ -40,7 +40,7 @@ public class NerdScene implements HasSketchEvents {
    * }
    * 
    * public abstract class AutoDrawable {
-   * private static final ArrayList<AutoDrawable> ALL_AUTO_DRAWABLES = new
+   * private final static ArrayList<AutoDrawable> ALL_AUTO_DRAWABLES = new
    * ArrayList<>(5);
    * 
    * public AutoDrawable() {

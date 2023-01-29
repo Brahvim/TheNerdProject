@@ -121,7 +121,7 @@ public class SceneManager {
      */
 
     // Keep track of what `Sketch`es a manager exists for.
-    // private static final HashSet<? extends Sketch> SKETCHES = new HashSet<>(1);
+    // private final static HashSet<? extends Sketch> SKETCHES = new HashSet<>(1);
     // "Don't let anybody build another!"" <-- Cool idea I'm stupid enough to stop.
 
     // The initial capacity is `2` here to aid performance, since, till the first
