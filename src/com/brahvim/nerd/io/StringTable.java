@@ -53,7 +53,7 @@ public class StringTable {
             String section = null, content = null;
             StringBuilder parsedContent;
             int firstQuotePosPlusOne = 0, lineLen = 0, lineLenMinusOne = 0,
-                    newLineCharPos = 0, lastQuotePos = 0;
+                    newLineCharPos = 0, lastQuotePos = 0, eqPos = 0;
 
             // Remember that this loop goes through EACH LINE!
             // Not each *character!* :joy::
@@ -61,6 +61,7 @@ public class StringTable {
                 lineLen = line.length();
                 lineLenMinusOne = lineLen - 1;
 
+                // region Cases demanding skipping this iteration.
                 // Leave empty lines alone!:
                 if (line.isBlank())
                     continue;
@@ -75,9 +76,14 @@ public class StringTable {
                         section = line.substring(1, line.indexOf(']'));
                         continue;
                 }
+                // endregion
 
                 // Find where the `=` sign is!:
-                firstQuotePosPlusOne = line.indexOf('"', line.indexOf('=')) + 1;
+                eqPos = line.indexOf('=');
+
+                // Finding an index since some people might prefer
+                // putting spaces between the property name and `=`:
+                firstQuotePosPlusOne = line.indexOf('"', eqPos);
 
                 // Find a `"` symbol *without* a `\` before it:
                 lastQuotePos = lineLen; // We assume it's at the end.
@@ -100,14 +106,15 @@ public class StringTable {
 
                 content = line.substring(firstQuotePosPlusOne + 1, lastQuotePos);
 
-                // Parse out `\n`s!:
+                // region Parse out `\n`s!:
                 parsedContent = new StringBuilder(content);
 
                 while ((newLineCharPos = parsedContent.indexOf("\\n")) != -1) {
-                    // Causes an infinite loop, and I won't be writing `\n` anywhere, anyway:
+                    // Causes an infinite loop:
                     // if (parsedContent.charAt(newLineCharPos - 1) == '\\')
                     // continue;
 
+                    // Better solution:
                     for (int i = 0; i < 2; i++)
                         parsedContent.deleteCharAt(newLineCharPos);
                     parsedContent.insert(newLineCharPos, '\n');
@@ -115,14 +122,18 @@ public class StringTable {
 
                 // if (content.contains("<br>"))
                 // content = content.replace("\\\\n", App.NEWLINE);
+                // endregion
 
+                // region ...put it into the map (while it is locked)!
                 synchronized (this.TABLE) {
                     this.TABLE.put(
                             // Format: `SectionName.propertyName`:
                             section.concat(".")
-                                    .concat(line.substring(0, firstQuotePosPlusOne)),
+                                    .concat(line.substring(0, eqPos)),
                             parsedContent.toString());
                 }
+                // endregion
+
             }
         } catch (Exception e) {
             System.out.printf("""

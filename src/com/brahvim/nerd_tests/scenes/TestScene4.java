@@ -26,9 +26,9 @@ public class TestScene4 extends NerdScene {
     // region ...stuff!
     @Override
     protected void preload() {
-        ASSETS.add(AssetType.PIMAGE, Paths.get(
-                "C:", "Projects", "Photo Edits", "Outputs", "Emojis",
-                "sunglass_nerd.png").toString());
+        // ASSETS.add(AssetType.PIMAGE, Paths.get(
+        // "C:", "Projects", "Photo Edits", "Outputs", "Emojis",
+        // "sunglass_nerd.png").toString());
 
         ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
         System.out.println("This is async LOL!");
@@ -41,18 +41,13 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void setup() {
+        System.out.println("TestScene4.setup()");
 
         if (SCENE.timesSceneWasLoaded() < 1) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();
         }
-
-        ASSETS.ensureCompletion();
-        System.out.println("We loaded:");
-        this.ASSETS.iterator().forEachRemaining((a) -> {
-            System.out.println(a.NAME);
-        });
 
         this.nerd = this.ASSETS.get("sunglass_nerd").getData();
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
