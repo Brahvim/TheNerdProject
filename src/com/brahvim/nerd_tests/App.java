@@ -17,6 +17,9 @@ import com.brahvim.nerd_tests.scenes.TestScene4;
 public class App {
 
     public enum LoadedClasses {
+        // PS *I beg you,* layers first!
+        // `Layer`s are a parameterized type - they won't exist without a scene!
+
         TEST_SCENE_5(
                 "file:/" + Sketch.DATA_DIR_PATH + "TestScene5.jar",
                 "com.brahvim.nerd_tests.scenes.TestScene5");
@@ -44,7 +47,6 @@ public class App {
         }
 
         // region Methods.
-
         // region `getLoadedClass()`-like.
         public Class<?> getLoadedClass() {
             return this.loadedClass;

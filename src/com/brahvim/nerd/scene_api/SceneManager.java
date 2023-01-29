@@ -66,6 +66,7 @@ public class SceneManager {
         // region Fields.
         private final Constructor<? extends NerdScene> CONSTRUCTOR;
         private final SceneState STATE;
+        private int timesLoaded = 0;
 
         private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
         // endregion
@@ -589,6 +590,7 @@ public class SceneManager {
             e.printStackTrace();
         }
 
+        // region Initialize it!
         final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
         final SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS);
 
@@ -604,10 +606,19 @@ public class SceneManager {
         if (SCENE_CACHE == null) {
             toRet.STATE = new SceneState();
             this.SCENE_CLASS_TO_CACHE.put(SCENE_CLASS, new SceneCache(p_sceneConstructor, toRet));
-        } else
+        } else {
             toRet.STATE = SCENE_CACHE.STATE;
+        }
+
+        if (SCENE_CACHE != null)
+            SCENE_CACHE.timesLoaded++;
+        // endregion
 
         return toRet;
+    }
+
+    public int numSceneLoads(Class<? extends NerdScene> p_sceneClass) {
+        return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).timesLoaded;
     }
 
     // Yes, this checks for errors.

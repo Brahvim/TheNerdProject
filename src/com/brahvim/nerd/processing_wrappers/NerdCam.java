@@ -34,7 +34,7 @@ public class NerdCam {
     public int clearColor = 0, projection = PConstants.PERSPECTIVE;
     public boolean doScript = true, doAutoClear = true;
 
-    private final Sketch SKETCH;
+    public final Sketch SKETCH;
     // endregion
 
     public NerdCam(Sketch p_sketch) {
@@ -82,6 +82,7 @@ public class NerdCam {
     }
 
     public void applyMatrix() {
+        // Apply projection:
         switch (this.projection) {
             case PConstants.PERSPECTIVE:
                 this.SKETCH.perspective(this.fov,
@@ -95,17 +96,25 @@ public class NerdCam {
                         this.near, this.far);
         }
 
+        // Apply the camera matrix:
         this.SKETCH.camera(
                 this.pos.x, this.pos.y, this.pos.z,
                 this.center.z, this.center.y, this.center.z,
                 this.up.x, this.up.y, this.up.z);
 
+        // Translate! People probably still prefer things on the top left corner `P3D`
+        // ...even if it could mean translating twice in some cases, it's alright!
         this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
     }
     // endregion
 
     // region Copy and reset!
-    public void reset() {
+    public void completeReset() {
+        this.resetCamParams();
+        this.resetSettings();
+    }
+
+    public void resetCamParams() {
         this.up.set(this.defaultCamUp);
         this.pos.set(this.defaultCamPos);
         this.center.set(this.defaultCamCenter);
@@ -114,8 +123,7 @@ public class NerdCam {
         this.near = NerdCam.DEFAULT_CAM_NEAR;
     }
 
-    public void completeReset() {
-        this.reset();
+    public void resetSettings() {
         // this.script = null;
         this.clearColor = 0;
         this.doScript = true;

@@ -13,11 +13,13 @@ import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 /**
- * Do not use as anonymous classes!
- *
- * The {@code PApplet} you passed into your
- * {@code SceneManager} is what you get! :)
+ * <h2>Do not use as an anonymous class!</h2>
+ * <i>Always extend!</i>
  */
+
+// * The {@link PApplet} you passed into your
+// * {@link SceneManager} is what you get! :)
+
 public class NerdScene implements HasSketchEvents {
 
   // region Inner classes.
@@ -92,7 +94,6 @@ public class NerdScene implements HasSketchEvents {
 
   // region `private` fields.
   private int startMillis;
-  private int timesLoaded = 0;
   private boolean donePreloading;
 
   // ~~Don't let the scene manage its `manager`!:~~
@@ -140,7 +141,7 @@ public class NerdScene implements HasSketchEvents {
   }
 
   public int timesSceneWasLoaded() {
-    return this.timesLoaded;
+    return this.MANAGER.numSceneLoads(this.getClass());
   }
 
   public boolean hasCompletedPreload(/* SceneManager.SceneKey p_key */) {
