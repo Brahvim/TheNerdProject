@@ -3,14 +3,11 @@ package com.brahvim.nerd_tests.layers;
 import com.brahvim.nerd.math.SineWave;
 import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene.LayerKey;
+import com.brahvim.nerd_tests.scenes.TestScene1;
 
 public class BackgroundLayer extends NerdLayer {
 
     private SineWave fadeWave;
-
-    public BackgroundLayer(LayerKey p_initializer) {
-        super(p_initializer);
-    }
 
     @Override
     protected void setup() {

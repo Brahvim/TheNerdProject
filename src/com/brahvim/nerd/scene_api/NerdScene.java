@@ -16,11 +16,10 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
  * <h2>Do not use as an anonymous class!</h2>
  * <i>Always extend!</i>
  */
-
 // * The {@link PApplet} you passed into your
 // * {@link SceneManager} is what you get! :)
 
-public class NerdScene implements HasSketchEvents {
+public class NerdScene implements InputEventHandling {
 
   // region Inner classes.
   /*
@@ -83,11 +82,11 @@ public class NerdScene implements HasSketchEvents {
 
   // region Fields.
   // Forgive me for breaking the naming conventions. Forgive me. Please!
-  protected /* final */ Sketch SKETCH;
-  protected /* final */ SceneState STATE;
-  protected /* final */ StringTable STRINGS;
-  protected /* final */ AssetManager ASSETS;
-  protected /* final */ SceneManager MANAGER;
+  public /* final */ Sketch SKETCH;
+  public /* final */ SceneState STATE;
+  public /* final */ StringTable STRINGS;
+  public /* final */ AssetManager ASSETS;
+  public /* final */ SceneManager MANAGER;
   protected /* final */ AssetManKey ASSET_MAN_KEY;
 
   protected final NerdScene SCENE = this;
@@ -190,39 +189,38 @@ public class NerdScene implements HasSketchEvents {
 
   @SafeVarargs
   public final void startAllLayers(Class<? extends NerdLayer>... p_layerClasses) {
-    for (Class<? extends NerdLayer> c : p_layerClasses) {
+    for (Class<? extends NerdLayer> c : p_layerClasses)
       this.startLayer(c);
-    }
   }
 
-  public void startLayer(Class<? extends NerdLayer> p_layerClass) {
-    if (p_layerClass == null)
-      throw new NullPointerException("""
-          You weren't supposed to pass `null` into `Scene::startLayer()`.""");
+  private Constructor<? extends NerdLayer> getLayerConstructor(Class<? extends NerdLayer> p_layerClass) {
+    Constructor<? extends NerdLayer> toRet = this.LAYER_CONSTRUCTORS.get(p_layerClass);
 
-    if (this.hasLayerOfClass(p_layerClass))
-      return;
+    if (toRet != null)
+      return toRet;
 
-    NerdLayer toStart = null;
-    Constructor<? extends NerdLayer> layerConstructor = null;
-
-    // region Getting the constructor.
     try {
-      layerConstructor = p_layerClass.getConstructor(NerdScene.LayerKey.class);
+      toRet = p_layerClass.getConstructor();
     } catch (NoSuchMethodException e) {
       System.err.println("""
           Every subclass of `NerdLayer` must have a `public` \"null-constructor\"
           (A constructor taking no arguments), or no overriden constructors at all.
-            """);
+          """);
     } catch (SecurityException e) {
       e.printStackTrace();
     }
-    // endregion
 
-    // region Constructing the `Layer`.
+    this.LAYER_CONSTRUCTORS.put(p_layerClass, toRet);
+    return toRet;
+  }
+
+  private NerdLayer constructLayer(Constructor<? extends NerdLayer> p_layerConstructor) {
+    NerdLayer toRet = null;
+
     try {
-      toStart = (NerdLayer) layerConstructor.newInstance(
-          new NerdScene.LayerKey(this, this.SKETCH, p_layerClass));
+      toRet = (NerdLayer) p_layerConstructor.newInstance(
+      // new NerdScene.LayerKey(this, this.SKETCH, p_layerClass)
+      );
     } catch (InstantiationException e) {
       e.printStackTrace();
     } catch (IllegalAccessException e) {
@@ -232,11 +230,28 @@ public class NerdScene implements HasSketchEvents {
     } catch (InvocationTargetException e) {
       e.printStackTrace();
     }
-    // endregion
 
-    // Don't worry about concurrency, vvv *these* vvv are `final`! ^-^
-    this.LAYERS.add(toStart);
-    this.LAYER_CONSTRUCTORS.put(p_layerClass, layerConstructor);
+    toRet.SCENE = this;
+    toRet.SKETCH = this.SKETCH;
+    toRet.MANAGER = this.MANAGER;
+
+    return toRet;
+  }
+
+  public void startLayer(Class<? extends NerdLayer> p_layerClass) {
+    if (p_layerClass == null)
+      throw new NullPointerException(
+          "You weren't supposed to pass `null` into `NerdScene::startLayer()`.");
+
+    // We allow multiple layer instances, by the way.
+
+    Constructor<? extends NerdLayer> layerConstructor = this.getLayerConstructor(p_layerClass);
+    NerdLayer toStart = this.constructLayer(layerConstructor);
+
+    synchronized (this.LAYERS) {
+      this.LAYERS.add(toStart);
+    }
+    toStart.setActive(true);
   }
 
   /**
@@ -247,40 +262,27 @@ public class NerdScene implements HasSketchEvents {
     return this.LAYERS;
   }
 
-  public boolean hasLayerOfClass(Class<? extends NerdLayer> p_layerClass) {
-    return this.LAYER_CONSTRUCTORS.keySet().contains(p_layerClass);
-    // for (Class<? extends Layer> c :
-    // this.LAYER_CONSTRUCTORS.keySet().contains(p_layerClass))
-    // if (c.equals(p_layerClass))
-    // return true;
-    // return false;
-  }
+  public void restartLayer(NerdLayer p_layer) {
+    if (p_layer == null)
+      return;
 
-  public void restartLayer(int p_layerId) {
-    Class<? extends NerdLayer> layerClass = this.LAYERS.get(p_layerId).getClass();
+    final Class<? extends NerdLayer> LAYER_CLASS = p_layer.getClass();
 
-    if (!this.hasLayerOfClass(layerClass))
-      throw new IllegalArgumentException("This scene owns no such `Layer`.");
+    // If an instance of this layer does not already exist,
+    if (!this.LAYERS.contains(p_layer)) {
+      System.out.printf(
+          "No instance of `NerdLayer` `%s` exists. Making one...\n",
+          LAYER_CLASS.getSimpleName());
 
-    NerdLayer toStart = null;
-
-    // region Re-construct layer.
-    try {
-      toStart = this.LAYER_CONSTRUCTORS.get(layerClass).newInstance(
-          this.new LayerKey(this, this.SKETCH, layerClass));
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (IllegalArgumentException e) {
-      e.printStackTrace();
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
+      this.startLayer(LAYER_CLASS);
+      return;
     }
-    // endregion
 
-    this.LAYERS.set(p_layerId, toStart);
-    toStart.setup();
+    NerdLayer toStart = this.constructLayer(this.getLayerConstructor(LAYER_CLASS));
+    this.LAYERS.set(this.LAYERS.indexOf(p_layer), toStart);
+
+    p_layer.setActive(false);
+    toStart.setActive(true);
   }
   // endregion
 
@@ -328,10 +330,11 @@ public class NerdScene implements HasSketchEvents {
     this.startMillis = this.SKETCH.millis();
     this.setup();
 
-    for (NerdLayer l : this.LAYERS)
-      if (l != null)
-        if (l.isActive())
-          l.setup();
+    // `NerdLayer`s don't get to respond to this `setup()`.
+    // for (NerdLayer l : this.LAYERS)
+    // if (l != null)
+    // if (l.isActive())
+    // l.setup();
   }
 
   /* package */ void runPre() {

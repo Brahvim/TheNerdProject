@@ -11,10 +11,6 @@ public class BoxAnimationLayer extends NerdLayer {
 
     private SineWave squareAmpWave, camRotWave;
 
-    public BoxAnimationLayer(LayerKey p_initializer) {
-        super(p_initializer);
-    }
-
     @Override
     protected void setup() {
         this.squareAmpWave = new SineWave(SKETCH, 100 / 60_000.0f);

@@ -108,8 +108,7 @@ public class SceneManager {
     }
     // endregion
 
-    // TODO: Scene state serialization, scene start data transfer.
-    // TODO: Scenes from JARs!
+    // TODO: Scene-to-scene data transfer.
     public final AssetManager PERSISTENT_ASSETS;
 
     // region `private` ~~/ `protected`~~ fields.

@@ -13,13 +13,13 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
  *
  * @author Brahvim Bhaktvatsal
  */
-public class NerdLayer implements HasSketchEvents {
+public class NerdLayer implements InputEventHandling {
 
     // region `protected` fields.
-    protected final NerdScene SCENE;
-    protected final Sketch SKETCH;
-    protected final SceneManager MANAGER;
     protected final NerdLayer LAYER = this;
+    protected /* final */ Sketch SKETCH;
+    protected /* final */ NerdScene SCENE;
+    protected /* final */ SceneManager MANAGER;
     // endregion
 
     // region `private` fields.
@@ -28,25 +28,26 @@ public class NerdLayer implements HasSketchEvents {
     // This isn't C#!
     // endregion
 
-    public NerdLayer(NerdScene.LayerKey p_key) {
-
+    public NerdLayer() {
         // region Verify and 'use' key.
-        if (p_key == null) {
-            throw new IllegalArgumentException("""
-                    Please use a `NerdSceneManager` instance to make a `NerdScene`!""");
-        } else if (p_key.isUsed()) {
-            throw new IllegalArgumentException("""
-                    Please use a `NerdSceneManager` instance to make a `NerdScene`! That is a used key!""");
-        } else if (!p_key.isFor(this.getClass()))
-            throw new IllegalArgumentException("""
-                    Please use a `NerdSceneManager` instance to make a `NerdScene`! That key is not for me!""");
+        // if (p_key == null) {
+        // throw new IllegalArgumentException("""
+        // Please use a `NerdSceneManager` instance to make a `NerdScene`!""");
+        // } else if (p_key.isUsed()) {
+        // throw new IllegalArgumentException("""
+        // Please use a `NerdSceneManager` instance to make a `NerdScene`! That is a
+        // used key!""");
+        // } else if (!p_key.isFor(this.getClass()))
+        // throw new IllegalArgumentException("""
+        // Please use a `NerdSceneManager` instance to make a `NerdScene`! That key is
+        // not for me!""");
 
-        p_key.use();
+        // p_key.use();
         // endregion
 
-        this.SCENE = p_key.getScene();
-        this.SKETCH = p_key.getSketch();
-        this.MANAGER = this.SCENE.MANAGER;
+        // this.SCENE = (SCENE_TYPE) p_key.getScene();
+        // this.SKETCH = p_key.getSketch();
+        // this.MANAGER = this.SCENE.MANAGER;
     }
 
     // region Activity status.
@@ -56,13 +57,17 @@ public class NerdLayer implements HasSketchEvents {
 
     public void setActive(boolean p_toggleState) {
         this.active = p_toggleState;
-        this.onToggled(p_toggleState);
+
+        if (this.active)
+            this.setup();
+        else
+            this.onLayerExit();
     }
     // endregion
 
     // Protected methods. Nobody can call them outside of this package!
     // region `Layer`-only (`protected`) callbacks!
-    protected void onToggled(boolean p_toggleState) {
+    protected void onLayerExit() {
     }
     // endregion
 

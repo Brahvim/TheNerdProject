@@ -25,11 +25,14 @@ package com.brahvim.nerd.scene_api;
  * "HasSketchEventsForSomeReason",
  * "HasSketchEvents".
  *
+ * "HandlesInputEvents"     - `29` January, `2023`.
+ * ..."InputEventHandling"  - `29` January, `2023`!
+ *
  * See? I really DID try!
  */
 
 // ...remember - not `public`. `package`!
-/*sealed*/ interface HasSketchEvents /* permits Scene, Layer */ { // "Ceiling bab iDiya?", "Yaaaa!"!
+/*sealed*/ interface InputEventHandling /* permits Scene, Layer */ { // "Ceiling bab iDiya?", "Yaaaa!"!
     // region Mouse events.
     public default void mousePressed() {
     }

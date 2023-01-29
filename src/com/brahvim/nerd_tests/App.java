@@ -94,16 +94,10 @@ public class App {
         // region Building the `Sketch`!
         App.sketchInstance = new SketchBuilder()
                 .setTitle("The Nerd Project")
+                // .setFirstScene(TestScene1.class)
                 .setFirstScene(LoadedClasses.TEST_SCENE_5.getLoadedClassAsScene())
                 .setIconPath("data/sunglass_nerd.png")
                 .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.ini")
-
-                // TODO: Add window resizing hint arrows to the `OpenGL` renderer.
-                // TODO: Perhaps find a fix for `JAVA2D` fullscreen windows not fitting well!
-                // .useJavaRenderer()
-                // .preLoadAssets(TestScene4.class) // This works, too! ...of course!
-                // .preLoadAssets(TestScene1.class, TestScene2.class) // Works!
-
                 .startFullscreen()
                 .canResize()
                 .build(p_args);
