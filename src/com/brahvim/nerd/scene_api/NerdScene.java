@@ -131,7 +131,6 @@ public class NerdScene implements HasSketchEvents {
 
   // region Construction.
   protected NerdScene() {
-    System.out.println("NerdScene.NerdScene()");
   }
   // endregion
 

@@ -52,12 +52,14 @@ public class StringTable {
                 BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String section = null, content = null;
             StringBuilder parsedContent;
-            int eqPos = 0, lineLen = 0, newLineCharPos = 0, contentLastCharPos = 0;
+            int firstQuotePosPlusOne = 0, lineLen = 0, lineLenMinusOne = 0,
+                    newLineCharPos = 0, lastQuotePos = 0;
 
             // Remember that this loop goes through EACH LINE!
             // Not each *character!* :joy::
             for (String line; (line = bufferedReader.readLine()) != null;) {
                 lineLen = line.length();
+                lineLenMinusOne = lineLen - 1;
 
                 // Leave empty lines alone!:
                 if (line.isBlank())
@@ -75,18 +77,33 @@ public class StringTable {
                 }
 
                 // Find where the `=` sign is!:
-                eqPos = line.indexOf('=');
+                firstQuotePosPlusOne = line.indexOf('"', line.indexOf('=')) + 1;
 
                 // Find a `"` symbol *without* a `\` before it:
+                lastQuotePos = lineLen; // We assume it's at the end.
 
-                contentLastCharPos = lineLen; // We assume it's at the end.
+                // String substr;
+                // // If the character before isn't a backslash,
+                // while (line.charAt(contentLastCharPos - 1) != '\\') {
+                // substr = line.substring(0, contentLastCharPos);
+                // System.out.println(substr);
+                // contentLastCharPos = line.lastIndexOf('"', contentLastCharPos);
+                // }
 
-                // If the character before isn't a backslash,
-                while (line.charAt(contentLastCharPos - 1) != '\\') {
-                    contentLastCharPos = line.lastIndexOf("\"", contentLastCharPos);
+                String substr;
+                for (int i = lineLenMinusOne; i != firstQuotePosPlusOne; i--) {
+
+                    substr = line.substring(firstQuotePosPlusOne, i);
+                    System.out.println(substr);
+
+                    if (line.charAt(i) == '"')
+                        if (line.charAt(i - 1) != '\\') {
+                            lastQuotePos = i;
+                            break;
+                        }
                 }
 
-                content = line.substring(eqPos + 1, contentLastCharPos);
+                content = line.substring(firstQuotePosPlusOne + 1, lastQuotePos);
 
                 // Parse out `\n`s!:
                 parsedContent = new StringBuilder(content);
@@ -108,7 +125,7 @@ public class StringTable {
                     this.TABLE.put(
                             // Format: `SectionName.propertyName`:
                             section.concat(".")
-                                    .concat(line.substring(0, eqPos)),
+                                    .concat(line.substring(0, firstQuotePosPlusOne)),
                             parsedContent.toString());
                 }
             }

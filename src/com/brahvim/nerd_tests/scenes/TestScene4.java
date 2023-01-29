@@ -1,5 +1,7 @@
 package com.brahvim.nerd_tests.scenes;
 
+import java.nio.file.Paths;
+
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.scene_api.NerdScene;
 
@@ -24,6 +26,10 @@ public class TestScene4 extends NerdScene {
     // region ...stuff!
     @Override
     protected void preload() {
+        ASSETS.add(AssetType.PIMAGE, Paths.get(
+                "C:", "Projects", "Photo Edits", "Outputs", "Emojis",
+                "sunglass_nerd.png").toString());
+
         ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
         System.out.println("This is async LOL!");
     }

@@ -28,7 +28,7 @@ public class NerdAsset {
     private final AssetType TYPE;
     private final Sketch SKETCH;
     private final AssetManager.AssetKey KEY;
-    private final String PATH;
+    private String path;
     // endregion
 
     // region Constructors!
@@ -42,7 +42,7 @@ public class NerdAsset {
         this.TYPE = p_type;
         this.SKETCH = p_key.SKETCH;
 
-        this.PATH = Sketch.getPathToRootFrom(p_path);
+        this.path = Sketch.getPathToRootFrom(p_path);
         this.NAME = this.findName();
         this.startLoading();
     }
@@ -54,7 +54,7 @@ public class NerdAsset {
     // endregion
 
     private String findName() {
-        String toRet = new File(this.PATH).getName();
+        String toRet = new File(this.path).getName();
 
         int lastCharId = toRet.lastIndexOf('.');
 
@@ -150,13 +150,15 @@ public class NerdAsset {
 
     private synchronized void fetchData() {
         // If the path is absolute,
-        if (Paths.get(this.PATH).isAbsolute())
-            this.PATH.concat(Sketch.DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX);
+        if (Paths.get(this.path).isAbsolute())
+            this.path += Sketch.DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX;
+        System.out.println("fetchData path:");
+        System.out.println(this.path);
 
         switch (this.TYPE) {
             case FILESTREAM -> {
                 try {
-                    this.data = new FileInputStream(new File(this.PATH));
+                    this.data = new FileInputStream(new File(this.path));
                 } catch (FileNotFoundException e) {
                     this.failure = true;
                     this.data = e;
@@ -164,7 +166,7 @@ public class NerdAsset {
             }
 
             case PIMAGE -> {
-                PImage img = SKETCH.loadImage(this.PATH);
+                PImage img = SKETCH.loadImage(this.path);
 
                 // Oh, it failed?
                 this.failure = img == null;
@@ -175,7 +177,7 @@ public class NerdAsset {
             }
 
             case SVG, MODEL_3D -> {
-                PShape shape = SKETCH.loadShape(this.PATH);
+                PShape shape = SKETCH.loadShape(this.path);
 
                 if (shape == null)
                     this.failure = true;
@@ -203,7 +205,7 @@ public class NerdAsset {
              */
 
             case PBYTES -> {
-                byte[] bytes = this.SKETCH.loadBytes(this.PATH);
+                byte[] bytes = this.SKETCH.loadBytes(this.path);
                 this.failure = bytes == null;
                 this.data = bytes; // Compiler: No complaints!
 
@@ -213,7 +215,7 @@ public class NerdAsset {
 
             case PJSON_ARRAY -> {
                 try {
-                    this.data = SKETCH.loadJSONArray(this.PATH);
+                    this.data = SKETCH.loadJSONArray(this.path);
                 } catch (NullPointerException e) {
                     this.failure = true;
                     this.data = e;
@@ -222,7 +224,7 @@ public class NerdAsset {
 
             case PJSON_OBJECT -> {
                 try {
-                    this.data = SKETCH.loadJSONObject(this.PATH);
+                    this.data = SKETCH.loadJSONObject(this.path);
                 } catch (NullPointerException e) {
                     this.failure = true;
                     this.data = e;
@@ -230,7 +232,7 @@ public class NerdAsset {
             }
 
             case PSHADER -> {
-                PShader shader = SKETCH.loadShader(this.PATH);
+                PShader shader = SKETCH.loadShader(this.path);
 
                 if (shader == null)
                     this.failure = true;
@@ -239,7 +241,7 @@ public class NerdAsset {
             }
 
             case PSTRINGS -> {
-                String[] strings = SKETCH.loadStrings(this.PATH);
+                String[] strings = SKETCH.loadStrings(this.path);
 
                 if (strings == null)
                     this.failure = true;
@@ -249,7 +251,7 @@ public class NerdAsset {
             }
 
             case XML -> {
-                XML markup = SKETCH.loadXML(this.PATH);
+                XML markup = SKETCH.loadXML(this.path);
 
                 if (markup == null)
                     this.failure = true;
@@ -258,7 +260,7 @@ public class NerdAsset {
             }
 
             case SERIALIZED -> {
-                this.data = ByteSerial.fromFile(new File(this.PATH));
+                this.data = ByteSerial.fromFile(new File(this.path));
 
                 if (this.data == null)
                     this.failure = true;
