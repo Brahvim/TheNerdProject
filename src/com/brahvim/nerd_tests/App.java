@@ -3,11 +3,11 @@ package com.brahvim.nerd_tests;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuilder;
+import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd_tests.scenes.TestScene1;
 import com.brahvim.nerd_tests.scenes.TestScene2;
@@ -17,7 +17,9 @@ import com.brahvim.nerd_tests.scenes.TestScene4;
 public class App {
 
     public enum LoadedClasses {
-        TEST_SCENE_5("", "");
+        TEST_SCENE_5(
+                "file:/" + Sketch.DATA_DIR_PATH + "TestScene5.jar",
+                "com.brahvim.nerd_tests.scenes.TestScene5");
 
         // region Fields, methods, ...the usual OOP, y'know?
         // region Fields.
@@ -42,9 +44,27 @@ public class App {
         }
 
         // region Methods.
+
+        // region `getLoadedClass()`-like.
         public Class<?> getLoadedClass() {
             return this.loadedClass;
         }
+
+        @SuppressWarnings("unchecked")
+        public <T> Class<? extends T> getLoadedClassAs() {
+            return (Class<? extends T>) this.loadedClass;
+        }
+
+        @SuppressWarnings("unchecked")
+        public Class<? extends NerdScene> getLoadedClassAsScene() {
+            return (Class<? extends NerdScene>) this.loadedClass;
+        }
+
+        @SuppressWarnings("unchecked")
+        public Class<? extends NerdLayer> getLoadedClassAsLayer() {
+            return (Class<? extends NerdLayer>) this.loadedClass;
+        }
+        // endregion
 
         protected void setLoadedClass(Class<?> p_class) {
             this.loadedClass = p_class;
@@ -69,9 +89,10 @@ public class App {
     public static void main(String[] p_args) {
         App.loadClasses(); // Handle this yourself, sorry!
 
+        // region Building the `Sketch`!
         App.sketchInstance = new SketchBuilder()
                 .setTitle("The Nerd Project")
-                .setFirstScene(LoadedClasses.TEST_SCENE_5.SCENE_CLASSES)
+                .setFirstScene(LoadedClasses.TEST_SCENE_5.getLoadedClassAsScene())
                 .setIconPath("data/sunglass_nerd.png")
                 .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.ini")
 
@@ -84,35 +105,28 @@ public class App {
                 .startFullscreen()
                 .canResize()
                 .build(p_args);
+        // endregion
 
         App.startTickThread();
     }
 
     private static void loadClasses() {
-        // Just because a `URLClassLoader` can take many URLs does not mean that I
-        // should store all `URL`s into a single `URLClassLoader` and then fetch each
-        // `Class<?>` myself in a second loop. Even if it means constructing a
-        // completely new `URLClassLoader`, every time, I will still use this single
-        // loop because modifying two loops would be too much!
-
-        // (I could use an interface with two methods - one returning a
-        // `ToLoad` instance with the `url` and `fullyQualifiedName` set, and the other
-        // taking in the class to save it somewhere, but I won't...?)
-
         // Get all `URL`s as an array, in order:
-        LinkedHashSet<URL> urlSet = new LinkedHashSet<>();
 
-        for (LoadedClasses c : LoadedClasses.values())
-            urlSet.add(c.getUrl());
+        final LoadedClasses[] ENUM_VALUES = LoadedClasses.values();
+        final URL[] URL_ARRAY = new URL[ENUM_VALUES.length];
+
+        for (int i = 0; i < URL_ARRAY.length; i++)
+            URL_ARRAY[i] = ENUM_VALUES[i].getUrl();
 
         // Construct the loader:
-        URLClassLoader loader = new URLClassLoader(
-                (URL[]) urlSet.toArray(), ClassLoader.getSystemClassLoader());
+        final URLClassLoader LOADER = new URLClassLoader(
+                URL_ARRAY, ClassLoader.getSystemClassLoader());
 
-        for (LoadedClasses c : LoadedClasses.values()) {// Load classes using `forName()`.
+        for (LoadedClasses c : ENUM_VALUES) {// Load classes using `forName()`.
             try {
-                Class<?> loadedClass = Class.forName(c.QUAL_NAME, true, loader);
-                c.setLoadedClass(loadedClass);
+                final Class<?> LOADED_CLASS = Class.forName(c.QUAL_NAME, true, LOADER);
+                c.setLoadedClass(LOADED_CLASS);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
