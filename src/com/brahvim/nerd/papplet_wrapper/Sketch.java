@@ -153,7 +153,7 @@ public class Sketch extends PApplet {
     }
 
     public CallbackOrder PRE_CALLBACK_ORDER = CallbackOrder.SCENE;
-    public CallbackOrder DRAW_CALLBACK_ORDER = CallbackOrder.SCENE;
+    public CallbackOrder DRAW_CALLBACK_ORDER = CallbackOrder.LAYER;
     public CallbackOrder POST_CALLBACK_ORDER = CallbackOrder.LAYER;
     // endregion
 
