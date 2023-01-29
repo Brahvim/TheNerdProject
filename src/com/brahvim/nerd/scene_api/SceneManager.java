@@ -9,12 +9,10 @@ import com.brahvim.nerd.io.asset_loader.AssetManKey;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-import processing.data.StringDict;
-
 public class SceneManager {
 
     // region Inner classes.
-    // ...here lies `SceneKey`:
+    // region ...here lies `SceneKey`.
     // Why was it rejected? Read this...:
     /*
      * ...because making a new constructor in every subclass is a way to pass the
@@ -30,6 +28,7 @@ public class SceneManager {
      * anyway. Sad.
      */
 
+    // ...here. Here it actually lies:
     /*
      * public static class SceneKey extends NerdKey {
      * 
@@ -57,6 +56,7 @@ public class SceneManager {
      * return this.sceneClass;
      * }
      */
+    // endregion
 
     /**
      * Stores scene data while a scene is not active.

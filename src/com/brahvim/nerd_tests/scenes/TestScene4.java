@@ -1,7 +1,5 @@
 package com.brahvim.nerd_tests.scenes;
 
-import java.nio.file.Paths;
-
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.scene_api.NerdScene;
 

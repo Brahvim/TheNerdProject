@@ -3,7 +3,6 @@ package com.brahvim.nerd.io.asset_loader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.nio.file.Paths;
 
 import com.brahvim.nerd.io.ByteSerial;
 import com.brahvim.nerd.papplet_wrapper.Sketch;

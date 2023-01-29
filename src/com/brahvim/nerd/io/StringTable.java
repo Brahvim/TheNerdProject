@@ -53,7 +53,7 @@ public class StringTable {
             String section = null, content = null;
             StringBuilder parsedContent;
             int firstQuotePosPlusOne = 0, lineLen = 0, lineLenMinusOne = 0,
-                    newLineCharPos = 0, lastQuotePos = 0, eqPos = 0;
+                    delimiterCharPos = 0, lastQuotePos = 0, eqPos = 0;
 
             // Remember that this loop goes through EACH LINE!
             // Not each *character!* :joy::
@@ -106,22 +106,49 @@ public class StringTable {
 
                 content = line.substring(firstQuotePosPlusOne + 1, lastQuotePos);
 
-                // region Parse out `\n`s!:
+                // This will experience changes according to delimiters:
                 parsedContent = new StringBuilder(content);
 
-                while ((newLineCharPos = parsedContent.indexOf("\\n")) != -1) {
+                // region Parse out backslashes first! The others rely on them...:
+                while ((delimiterCharPos = parsedContent.indexOf("\\\\")) != -1) {
+                    if (parsedContent.charAt(delimiterCharPos - 1) == 0)
+                        ;
+
+                    // Remove one of the backslashes. This gives us a single backslash,
+                    // which is what we need:
+                    parsedContent.deleteCharAt(delimiterCharPos);
+                }
+                // endregion
+
+                // region Parse out `\n`s!:
+                while ((delimiterCharPos = parsedContent.indexOf("\\n")) != -1) {
                     // Causes an infinite loop:
                     // if (parsedContent.charAt(newLineCharPos - 1) == '\\')
                     // continue;
 
                     // Better solution:
+
+                    // Remove the `\n`:
                     for (int i = 0; i < 2; i++)
-                        parsedContent.deleteCharAt(newLineCharPos);
-                    parsedContent.insert(newLineCharPos, '\n');
+                        parsedContent.deleteCharAt(delimiterCharPos);
+
+                    // Insert a real one in its place:
+                    parsedContent.insert(delimiterCharPos, '\n');
                 }
 
                 // if (content.contains("<br>"))
                 // content = content.replace("\\\\n", App.NEWLINE);
+                // endregion
+
+                // region Parse out `\t`s!:
+                while ((delimiterCharPos = parsedContent.indexOf("\\t")) != -1) {
+                    // Remove the `\t`:
+                    for (int i = 0; i < 2; i++)
+                        parsedContent.deleteCharAt(delimiterCharPos);
+
+                    // Insert a real one in its place:
+                    parsedContent.insert(delimiterCharPos, '\t');
+                }
                 // endregion
 
                 // region ...put it into the map (while it is locked)!
@@ -135,6 +162,7 @@ public class StringTable {
                 // endregion
 
             }
+
         } catch (Exception e) {
             System.out.printf("""
                     Failed to parse string table in file: `%s`.
