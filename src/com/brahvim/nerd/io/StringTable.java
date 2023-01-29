@@ -12,8 +12,10 @@ public class StringTable {
     // String tables exist for making it easy for TRANSLATORS to work with them.
     // Use a file!
 
-    public File file;
-    private HashMap<String, String> table = new HashMap<>();
+    // TODO: Declare this `public`, then try to give a way to save a modified table!
+    // ..and please try not to mess up the file's comments...
+    private final HashMap<String, String> TABLE = new HashMap<>();
+    private File file;
 
     // region Constructors.
     public StringTable(File p_file) throws FileNotFoundException {
@@ -44,11 +46,13 @@ public class StringTable {
 
     // Actual implementation:
     public void refresh() throws FileNotFoundException {
+        this.TABLE.clear();
+
         try (FileReader fileReader = new FileReader(this.file);
                 BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String section = null, content = null;
             StringBuilder parsedContent;
-            int eqPos = 0, lineLen = 0, newLineCharPos = 0;
+            int eqPos = 0, lineLen = 0, newLineCharPos = 0, contentLastCharPos = 0;
 
             // Remember that this loop goes through EACH LINE!
             // Not each *character!* :joy::
@@ -72,7 +76,17 @@ public class StringTable {
 
                 // Find where the `=` sign is!:
                 eqPos = line.indexOf('=');
-                content = line.substring(eqPos + 1, lineLen);
+
+                // Find a `"` symbol *without* a `\` before it:
+
+                contentLastCharPos = lineLen; // We assume it's at the end.
+
+                // If the character before isn't a backslash,
+                while (line.charAt(contentLastCharPos - 1) != '\\') {
+                    contentLastCharPos = line.lastIndexOf("\"", contentLastCharPos);
+                }
+
+                content = line.substring(eqPos + 1, contentLastCharPos);
 
                 // Parse out `\n`s!:
                 parsedContent = new StringBuilder(content);
@@ -90,8 +104,8 @@ public class StringTable {
                 // if (content.contains("<br>"))
                 // content = content.replace("\\\\n", App.NEWLINE);
 
-                synchronized (this.table) {
-                    this.table.put(
+                synchronized (this.TABLE) {
+                    this.TABLE.put(
                             // Format: `SectionName.propertyName`:
                             section.concat(".")
                                     .concat(line.substring(0, eqPos)),
@@ -110,8 +124,8 @@ public class StringTable {
     public String getString(String p_key) {
         String ret = null;
 
-        synchronized (this.table) {
-            ret = this.table.get(p_key);
+        synchronized (this.TABLE) {
+            ret = this.TABLE.get(p_key);
         }
 
         if (ret == null) {

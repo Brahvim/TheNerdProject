@@ -3,6 +3,7 @@ package com.brahvim.nerd.io.asset_loader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 
 import com.brahvim.nerd.io.ByteSerial;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
@@ -34,14 +35,14 @@ public class NerdAsset {
     // NO. Tell me the type yourself :joy:
     public NerdAsset(AssetManager.AssetKey p_key, AssetType p_type, String p_path) {
         this.verifyKey(p_key);
-        this.KEY = p_key;
-
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
 
-        this.SKETCH = p_key.SKETCH;
+        this.KEY = p_key;
         this.TYPE = p_type;
-        this.PATH = p_path;
+        this.SKETCH = p_key.SKETCH;
+
+        this.PATH = Sketch.getPathToRootFrom(p_path);
         this.NAME = this.findName();
         this.startLoading();
     }
@@ -147,7 +148,11 @@ public class NerdAsset {
     // endregion
     // endregion
 
-    private void fetchData() {
+    private synchronized void fetchData() {
+        // If the path is absolute,
+        if (Paths.get(this.PATH).isAbsolute())
+            this.PATH.concat(Sketch.DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX);
+
         switch (this.TYPE) {
             case FILESTREAM -> {
                 try {

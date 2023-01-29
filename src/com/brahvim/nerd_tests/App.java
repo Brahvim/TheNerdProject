@@ -20,7 +20,7 @@ public class App {
 
     public static void main(String[] p_args) {
         App.sketchInstance = new SketchBuilder()
-                .setStringTablePath(null)
+                .setStringTablePath("null")
                 .setTitle("The Nerd Project")
                 .setFirstScene(TestScene1.class)
                 .setIconPath("data/sunglass_nerd.png")

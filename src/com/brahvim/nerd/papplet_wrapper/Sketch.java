@@ -147,7 +147,7 @@ public class Sketch extends PApplet {
 
     public final static File DATA_DIR = new File("data");
     public final static String DATA_DIR_PATH = Sketch.DATA_DIR.getAbsolutePath().concat(File.separator);
-    public final static String DATA_PATH_TO_DRIVE_ROOT_SUFFIX = Sketch.getPathToRootFrom(Sketch.DATA_DIR_PATH);
+    public final static String DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX = Sketch.getPathToRootFrom(Sketch.DATA_DIR_PATH);
 
     public final static GraphicsDevice[] JAVA_SCREENS = GraphicsEnvironment
             .getLocalGraphicsEnvironment().getScreenDevices();
