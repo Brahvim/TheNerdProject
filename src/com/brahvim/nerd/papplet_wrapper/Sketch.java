@@ -258,11 +258,11 @@ public class Sketch extends PApplet {
         this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
         // endregion
 
+        this.pfullscreen = !this.fullscreen;
         this.unprojector = new Unprojector();
         this.sceneMan = new SceneManager(this);
         this.currentCamera = this.DEFAULT_CAMERA;
         this.fullscreen = this.STARTED_FULLSCREEN;
-        this.pfullscreen = !this.fullscreen;
 
         // region Loading the string table.
         StringTable loadedTable = null;

@@ -27,66 +27,6 @@ public class App {
 
     public static void main(String[] p_args) {
 
-        // region Class loading attempt. OOf.
-        /*
-         * Class<?> testScene5Class = null;
-         * 
-         * try {
-         * URLClassLoader loader = new URLClassLoader(new URL[] {
-         * new File(Sketch.EXEC_DIR,
-         * "src\\com\\brahvim\\nerd_tests\\scenes\\TestScene5.class")
-         * .toURI().toURL()
-         * });
-         * 
-         * testScene5Class =
-         * loader.loadClass("com.brahvim.nerd_tests.scenes.TestScene5");
-         * loader.close();
-         * 
-         * // testScene5Class = (Class<? extends NerdScene>) Class.forName(
-         * // "../../../../../../com.brahvim.nerd_tests.scenes.TestScene5",
-         * // true, NerdClassLoader.INSTANCE);
-         * } catch (MalformedURLException e) {
-         * e.printStackTrace();
-         * } catch (IOException e) {
-         * e.printStackTrace();
-         * } catch (ClassNotFoundException e) {
-         * e.printStackTrace();
-         * }
-         * 
-         * System.out.println(testScene5Class.getSimpleName());
-         */
-        // endregion
-
-        // region ANOTHER attempt at class loading. Also a failure.
-        /*
-         * URL fileUrl = null;
-         * URLClassLoader child = null;
-         * 
-         * try {
-         * child = new URLClassLoader(
-         * new URL[] { fileUrl = new File("file:/TestScene5.jar").toURI().toURL() },
-         * App.class.getClassLoader());
-         * // child.loadClass("com.brahvim.nerd_tests.scenes.TestScene5");
-         * child.close();
-         * } catch (MalformedURLException e) {
-         * e.printStackTrace();
-         * } catch (IOException e) {
-         * e.printStackTrace();
-         * }
-         * // catch (ClassNotFoundException e) {
-         * // e.printStackTrace();
-         * // }
-         * 
-         * System.out.println(fileUrl);
-         * 
-         * try {
-         * System.out.println(Class.forName("TestScene5").getSimpleName());
-         * } catch (ClassNotFoundException e) {
-         * e.printStackTrace();
-         * }
-         */
-        // endregion
-
         // Working class loading, thanks to:
         // [https://kostenko.org/blog/2019/06/runtime-class-loading.html]
         URLClassLoader childClassLoader = null;

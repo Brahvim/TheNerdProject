@@ -150,7 +150,7 @@ public final class SketchBuilder {
     }
     // endregion
 
-    // region Scene asset pre-loading.
+    // region Any kind of pre-loading.
     public SketchBuilder preLoadAssets(Class<? extends NerdScene> p_sceneClass) {
         if (p_sceneClass == null)
             return this;
