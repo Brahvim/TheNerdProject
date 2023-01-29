@@ -42,7 +42,7 @@ public class TestScene4 extends NerdScene {
         System.out.println("TestScene4.setup(), " + SCENE.timesSceneWasLoaded());
         System.out.println(SKETCH.STRINGS.getString("SectionName.propertyName"));
 
-        if (SCENE.timesSceneWasLoaded() < 1) {
+        if (SCENE.timesSceneWasLoaded() == 0) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();
@@ -100,11 +100,6 @@ public class TestScene4 extends NerdScene {
     }
 
     // region Events.
-    @Override
-    protected void onSceneExit() {
-        SKETCH.setSize(SKETCH.INIT_WIDTH, SKETCH.INIT_HEIGHT);
-    }
-
     @Override
     public void mousePressed() {
         System.out.println("TestScene4.mousePressed()");
