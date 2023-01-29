@@ -184,9 +184,9 @@ public class NerdScene implements InputEventHandling {
   }
 
   @SafeVarargs
-  public final void startAllLayers(Class<? extends NerdLayer>... p_layerClasses) {
+  public final void startLayers(Class<? extends NerdLayer>... p_layerClasses) {
     for (Class<? extends NerdLayer> c : p_layerClasses)
-      this.startLayer(c);
+      this.startLayers(c);
   }
 
   private Constructor<? extends NerdLayer> getLayerConstructor(Class<? extends NerdLayer> p_layerClass) {
@@ -234,7 +234,7 @@ public class NerdScene implements InputEventHandling {
     return toRet;
   }
 
-  public void startLayer(Class<? extends NerdLayer> p_layerClass) {
+  public void startLayers(Class<? extends NerdLayer> p_layerClass) {
     if (p_layerClass == null)
       throw new NullPointerException(
           "You weren't supposed to pass `null` into `NerdScene::startLayer()`.");
@@ -258,6 +258,12 @@ public class NerdScene implements InputEventHandling {
     return this.LAYERS;
   }
 
+  @SafeVarargs
+  public final void restartLayers(Class<? extends NerdLayer>... p_layerClasses) {
+    for (Class<? extends NerdLayer> c : p_layerClasses)
+      this.restartLayers(c);
+  }
+
   public void restartLayer(NerdLayer p_layer) {
     if (p_layer == null)
       return;
@@ -270,7 +276,7 @@ public class NerdScene implements InputEventHandling {
           "No instance of `NerdLayer` `%s` exists. Making one...\n",
           LAYER_CLASS.getSimpleName());
 
-      this.startLayer(LAYER_CLASS);
+      this.startLayers(LAYER_CLASS);
       return;
     }
 
@@ -303,22 +309,13 @@ public class NerdScene implements InputEventHandling {
 
   /* package */ void runOnSceneExit() {
     // this.verifyKey(p_sceneKey);
-
     this.onSceneExit();
   }
 
-  /* `package`, not `public`! */ void /* Thread */ runPreload() {
+  /* package */ void runPreload() {
     // this.verifyKey(p_sceneKey);
-
-    // Thread toRet = new Thread(() -> {
     this.preload();
     this.donePreloading = true;
-    // });
-
-    // toRet.setName(this.getClass().getSimpleName() + "_AssetLoaderThread");
-    // toRet.start();
-
-    // return toRet;
   }
 
   /* package */ void runSetup() {
@@ -327,49 +324,108 @@ public class NerdScene implements InputEventHandling {
     this.setup();
 
     // `NerdLayer`s don't get to respond to this `setup()`.
-    // for (NerdLayer l : this.LAYERS)
-    // if (l != null)
-    // if (l.isActive())
-    // l.setup();
   }
 
   /* package */ void runPre() {
     // this.verifyKey(p_sceneKey);
-    this.pre();
+    if (this.SKETCH.PRE_CALLBACK_ORDER == null)
+      throw new NullPointerException("`Sketch::PRE_CALLBACK_ORDER` cannot be `null`.");
 
-    for (NerdLayer l : this.LAYERS)
-      if (l != null)
-        if (l.isActive())
-          l.pre();
+    // To avoid asynchronous changes from causing repetition, we put both parts in
+    // `if` and `else` block.
+
+    switch (this.SKETCH.PRE_CALLBACK_ORDER) {
+      case SCENE -> {
+        this.pre();
+
+        for (NerdLayer l : this.LAYERS)
+          if (l != null)
+            if (l.isActive())
+              l.pre();
+      }
+      case LAYER -> {
+        for (NerdLayer l : this.LAYERS)
+          if (l != null)
+            if (l.isActive())
+              l.pre();
+
+        this.pre();
+      }
+    }
   }
 
   /* package */ void runDraw() {
     // this.verifyKey(p_sceneKey);
-    for (NerdLayer l : this.LAYERS)
-      if (l != null)
-        if (l.isActive()) {
-          this.SKETCH.pushMatrix();
-          this.SKETCH.pushStyle();
-          l.draw();
-          this.SKETCH.popStyle();
-          this.SKETCH.popMatrix();
-        }
+    if (this.SKETCH.DRAW_CALLBACK_ORDER == null)
+      throw new NullPointerException("`Sketch::DRAW_CALLBACK_ORDER` cannot be `null`.");
 
-    this.SKETCH.pushMatrix();
-    this.SKETCH.pushStyle();
-    this.draw();
-    this.SKETCH.popStyle();
-    this.SKETCH.popMatrix();
+    // To avoid asynchronous changes from causing repetition, we put both parts in
+    // `if` and `else` block.
+
+    switch (this.SKETCH.PRE_CALLBACK_ORDER) {
+      case SCENE -> {
+        this.SKETCH.pushMatrix();
+        this.SKETCH.pushStyle();
+        this.draw();
+        this.SKETCH.popStyle();
+        this.SKETCH.popMatrix();
+
+        for (NerdLayer l : this.LAYERS)
+          if (l != null)
+            if (l.isActive()) {
+              this.SKETCH.pushMatrix();
+              this.SKETCH.pushStyle();
+              l.draw();
+              this.SKETCH.popStyle();
+              this.SKETCH.popMatrix();
+            }
+      }
+      case LAYER -> {
+        for (NerdLayer l : this.LAYERS)
+          if (l != null)
+            if (l.isActive()) {
+              this.SKETCH.pushMatrix();
+              this.SKETCH.pushStyle();
+              l.draw();
+              this.SKETCH.popStyle();
+              this.SKETCH.popMatrix();
+            }
+
+        this.SKETCH.pushMatrix();
+        this.SKETCH.pushStyle();
+        this.draw();
+        this.SKETCH.popStyle();
+        this.SKETCH.popMatrix();
+      }
+    }
   }
 
   /* package */ void runPost() {
     // this.verifyKey(p_sceneKey);
-    for (NerdLayer l : this.LAYERS)
-      if (l != null)
-        if (l.isActive())
-          l.post();
+    if (this.SKETCH.POST_CALLBACK_ORDER == null)
+      throw new NullPointerException("`Sketch::POST_CALLBACK_ORDER` cannot be `null`.");
 
-    this.post();
+    // To avoid asynchronous changes from causing repetition, we put both parts in
+    // `if` and `else` block.
+
+    switch (this.SKETCH.PRE_CALLBACK_ORDER) {
+      case SCENE -> {
+        this.post();
+
+        for (NerdLayer l : this.LAYERS)
+          if (l != null)
+            if (l.isActive())
+              l.post();
+      }
+      case LAYER -> {
+        for (NerdLayer l : this.LAYERS)
+          if (l != null)
+            if (l.isActive())
+              l.post();
+
+        this.post();
+      }
+    }
   }
   // endregion
 
@@ -408,27 +464,12 @@ public class NerdScene implements InputEventHandling {
   protected void setup() {
   }
 
-  /**
-   * {@link NerdScene#pre()} is called first,<br>
-   * <br>
-   * {@link NerdLayer#pre()} is called for each {@link NerdLayer}, later.
-   */
   protected void pre() {
   }
 
-  /**
-   * {@link NerdLayer#draw()} is called for each {@link NerdLayer}, first.<br>
-   * <br>
-   * {@link NerdScene#draw()} is called later.
-   */
   protected void draw() {
   }
 
-  /**
-   * {@link NerdLayer#post()} is called for each {@link NerdLayer}, first.<br>
-   * <br>
-   * {@link NerdScene#post()} is called later.
-   */
   protected void post() {
   }
   // endregion

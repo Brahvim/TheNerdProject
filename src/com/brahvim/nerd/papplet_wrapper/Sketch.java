@@ -46,16 +46,6 @@ import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
 
-    public class CallbackOrder {
-        public final static boolean SCENE = true;
-        public final static boolean LAYER = false;
-
-        public static boolean PRE;
-        public static boolean DRAW;
-        public static boolean POST;
-
-    }
-
     // region Listener abstract classes.
     // Used classes instead of interfaces for these (two) reasons:
     /*
@@ -150,8 +140,18 @@ public class Sketch extends PApplet {
     // endregion
 
     // region `public` fields.
+    // region Callback orders.
+    public static enum CallbackOrder {
+        SCENE(), LAYER();
+    }
+
+    public CallbackOrder PRE_CALLBACK_ORDER = CallbackOrder.SCENE;
+    public CallbackOrder DRAW_CALLBACK_ORDER = CallbackOrder.LAYER;
+    public CallbackOrder POST_CALLBACK_ORDER = CallbackOrder.LAYER;
+    // endregion
+
     // region Constants.
-    // region Static constants.
+    // region `static` constants.
     public final static File EXEC_DIR = new File("");
     public final static String EXEC_DIR_PATH = Sketch.EXEC_DIR.getAbsolutePath().concat(File.separator);
 
@@ -178,20 +178,20 @@ public class Sketch extends PApplet {
 
     public final String NAME;
     public final Sketch SKETCH;
-    public final NerdCam DEFAULT_CAMERA;
-    public final StringTable STRINGS;
-    public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
-
     public final String RENDERER;
+    public final StringTable STRINGS;
+    public final NerdCam DEFAULT_CAMERA;
     public final int INIT_WIDTH, INIT_HEIGHT;
+    public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
     public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
             CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN, DO_FAKE_2D_CAMERA = false;
     // endregion
 
-    // Window object references::
+    // region Window object references.
     public GLWindow glWindow;
     public JFrame sketchFrame;
     // (Why check for errors at all? You know what renderer you used!)
+    // endregion
 
     // region Frame-wise states, Processing style (modifiable!).
     public char pkey; // Previous fraaaaame!...
@@ -254,6 +254,17 @@ public class Sketch extends PApplet {
         // endregion
 
         // region Key settings.
+        // region Setting `Sketch.CallbackOrder`s.
+        if (p_key.preCallOrder != null)
+            this.PRE_CALLBACK_ORDER = p_key.preCallOrder;
+
+        if (p_key.drawCallOrder != null)
+            this.DRAW_CALLBACK_ORDER = p_key.drawCallOrder;
+
+        if (p_key.postCallOrder != null)
+            this.POST_CALLBACK_ORDER = p_key.postCallOrder;
+        // endregion
+
         this.SKETCH = this;
         this.NAME = p_key.name;
         this.ICON_PATH = p_key.iconPath;

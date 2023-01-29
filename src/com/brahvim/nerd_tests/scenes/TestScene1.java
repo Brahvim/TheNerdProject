@@ -11,7 +11,7 @@ import processing.core.PConstants;
 public class TestScene1 extends NerdScene {
     @Override
     protected void setup() {
-        super.startAllLayers(
+        super.startLayers(
                 // Yes, these are started in order:
                 BackgroundLayer.class,
                 BoxAnimationLayer.class,

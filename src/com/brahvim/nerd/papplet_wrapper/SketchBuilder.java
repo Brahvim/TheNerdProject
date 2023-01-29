@@ -16,10 +16,11 @@ public final class SketchBuilder {
         public String renderer = PConstants.P3D, iconPath, name, stringTablePath;
         public boolean dontCloseOnEscape, startedFullscreen, canResize,
                 cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
+        public Sketch.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
         public Class<? extends NerdScene> firstScene;
 
         /**
-         * The {@code Boolean} tells whether or not assets are loaded async.
+         * The {@link Boolean} tells whether or not assets are loaded async.
          */
         public HashSet<Class<? extends NerdScene>> scenesToPreload;
 
@@ -111,6 +112,23 @@ public final class SketchBuilder {
         this.SKETCH_KEY.firstScene = p_firstScene;
         return this;
     }
+
+    // region `Sketch.CallbackOrder`.
+    public SketchBuilder setPreCallOrder(Sketch.CallbackOrder p_order) {
+        this.SKETCH_KEY.preCallOrder = p_order;
+        return this;
+    }
+
+    public SketchBuilder setDrawCallOrder(Sketch.CallbackOrder p_order) {
+        this.SKETCH_KEY.drawCallOrder = p_order;
+        return this;
+    }
+
+    public SketchBuilder setPostCallOrder(Sketch.CallbackOrder p_order) {
+        this.SKETCH_KEY.postCallOrder = p_order;
+        return this;
+    }
+    // endregion
     // endregion
 
     // region Window behaviors and properties.
