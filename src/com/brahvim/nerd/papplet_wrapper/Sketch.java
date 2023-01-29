@@ -169,7 +169,7 @@ public class Sketch extends PApplet {
     public final String NAME;
     public final Sketch SKETCH;
     public final NerdCam DEFAULT_CAMERA;
-    public final StringTable GLOBAL_STRINGS;
+    public final StringTable STRINGS;
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
     public final String RENDERER;
@@ -272,7 +272,7 @@ public class Sketch extends PApplet {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
-            this.GLOBAL_STRINGS = loadedTable;
+            this.STRINGS = loadedTable;
         }
         // endregion
 

@@ -42,7 +42,7 @@ public class NerdAsset {
         this.TYPE = p_type;
         this.SKETCH = p_key.SKETCH;
 
-        this.path = Sketch.getPathToRootFrom(p_path);
+        this.path = p_path;
         this.NAME = this.findName();
         this.startLoading();
     }
@@ -150,10 +150,14 @@ public class NerdAsset {
 
     private synchronized void fetchData() {
         // If the path is absolute,
-        if (Paths.get(this.path).isAbsolute())
-            this.path += Sketch.DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX;
-        System.out.println("fetchData path:");
+        System.out.println("`fetchData()` path:");
         System.out.println(this.path);
+
+        // if (Paths.get(this.path).isAbsolute())
+        // this.path = Sketch.getPathToRootFrom(Sketch.DATA_DIR_PATH) + this.path;
+
+        // System.out.println("fetchData path:");
+        // System.out.println(Sketch.DATA_DIR_PATH + this.path);
 
         switch (this.TYPE) {
             case FILESTREAM -> {

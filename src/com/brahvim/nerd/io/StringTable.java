@@ -82,26 +82,21 @@ public class StringTable {
                 // Find a `"` symbol *without* a `\` before it:
                 lastQuotePos = lineLen; // We assume it's at the end.
 
-                // String substr;
-                // // If the character before isn't a backslash,
-                // while (line.charAt(contentLastCharPos - 1) != '\\') {
-                // substr = line.substring(0, contentLastCharPos);
-                // System.out.println(substr);
-                // contentLastCharPos = line.lastIndexOf('"', contentLastCharPos);
-                // }
-
-                String substr;
+                // region Find the quote that ends the property's value.
+                // Go backwards through the string. When you see the first double-quote
+                // character, stop!:
                 for (int i = lineLenMinusOne; i != firstQuotePosPlusOne; i--) {
-
-                    substr = line.substring(firstQuotePosPlusOne, i);
-                    System.out.println(substr);
-
-                    if (line.charAt(i) == '"')
+                    // If the character you currently see is a double-quote,
+                    if (line.charAt(i) == '"') {
+                        // ...and the character *before* it isn't a backslash,
                         if (line.charAt(i - 1) != '\\') {
+                            // ...then it must be the quote marking the end of the property definition!
                             lastQuotePos = i;
                             break;
                         }
+                    }
                 }
+                // endregion
 
                 content = line.substring(firstQuotePosPlusOne + 1, lastQuotePos);
 

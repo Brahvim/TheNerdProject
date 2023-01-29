@@ -19,13 +19,11 @@ public class App {
     // endregion
 
     public static void main(String[] p_args) {
-        String path = Sketch.DATA_DIR_PATH + "Nerd_StringTable.ini";
-
         App.sketchInstance = new SketchBuilder()
-                .setStringTablePath(path)
                 .setTitle("The Nerd Project")
                 .setFirstScene(TestScene4.class)
                 .setIconPath("data/sunglass_nerd.png")
+                .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.ini")
 
                 // TODO: Add window resizing hint arrows to the `OpenGL` renderer.
                 // TODO: Perhaps find a fix for `JAVA2D` fullscreen windows not fitting well!

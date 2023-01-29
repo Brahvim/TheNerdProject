@@ -41,13 +41,18 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void setup() {
-        // ASSETS.ensureCompletion();
 
         if (SCENE.timesSceneWasLoaded() < 1) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();
         }
+
+        ASSETS.ensureCompletion();
+        System.out.println("We loaded:");
+        this.ASSETS.iterator().forEachRemaining((a) -> {
+            System.out.println(a.NAME);
+        });
 
         this.nerd = this.ASSETS.get("sunglass_nerd").getData();
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
@@ -63,6 +68,8 @@ public class TestScene4 extends NerdScene {
     @Override
     protected void draw() {
         SKETCH.background(0);
+
+        System.out.println(SKETCH.STRINGS.getString("SectionName.propertyName"));
 
         this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);
         this.magScroll += (this.magScrollVel *= this.MAG_SCROLL_DECAY_VEL);
