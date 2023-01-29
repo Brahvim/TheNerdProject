@@ -13,17 +13,18 @@ public final class SketchBuilder {
     // Hmmm... "`SketchSettings`" instead..?
     public class SketchKey extends NerdKey {
         public int width = 400, height = 400;
-        public String renderer = PConstants.P3D, iconPath, name, stringTablePath;
+        public Class<? extends NerdScene> firstScene;
+        public HashSet<Class<? extends NerdScene>> scenesToPreload;
+        public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
+        public Sketch.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
+
         public boolean dontCloseOnEscape, startedFullscreen, canResize,
                 cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
-        public Sketch.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
-        public Class<? extends NerdScene> firstScene;
 
-        /**
-         * The {@link Boolean} tells whether or not assets are loaded async.
-         */
-        public HashSet<Class<? extends NerdScene>> scenesToPreload;
+        public Sketch.SketchInsideListener exitListener, setupListener, disposalListener,
+                constructorListener;
 
+        // region Stuff that isn't a field.
         private SketchKey() {
             this.scenesToPreload = new HashSet<>(0);
         }
@@ -33,6 +34,8 @@ public final class SketchBuilder {
             // Putting `p_class` in the argument eliminates the need for a `null` check.
             return Sketch.class.isAssignableFrom(p_class);
         }
+        // endregion
+
     }
 
     // region Fields and the constructor.
@@ -83,6 +86,28 @@ public final class SketchBuilder {
 
     public SketchBuilder useDxfRenderer() {
         this.SKETCH_KEY.renderer = PConstants.DXF;
+        return this;
+    }
+    // endregion
+
+    // region `on()`.
+    public SketchBuilder onSketchConstruction(Sketch.SketchInsideListener p_constructionListener) {
+        this.SKETCH_KEY.constructorListener = p_constructionListener;
+        return this;
+    }
+
+    public SketchBuilder onSketchDispose(Sketch.SketchInsideListener p_disposaListener) {
+        this.SKETCH_KEY.disposalListener = p_disposaListener;
+        return this;
+    }
+
+    public SketchBuilder onSketchSetup(Sketch.SketchInsideListener p_setupListener) {
+        this.SKETCH_KEY.setupListener = p_setupListener;
+        return this;
+    }
+
+    public SketchBuilder onSketchExit(Sketch.SketchInsideListener p_setupListener) {
+        this.SKETCH_KEY.exitListener = p_setupListener;
         return this;
     }
     // endregion

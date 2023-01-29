@@ -46,7 +46,13 @@ import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
 
-    // region Listener abstract classes.
+    // region Listener interfaces and abstract classes.
+    @FunctionalInterface
+    public interface SketchInsideListener {
+        public void listen(Sketch p_sketch);
+    }
+
+    // region Input events.
     // Used classes instead of interfaces for these (two) reasons:
     /*
      * - No security for `ALL_REFERENCES` from the user! It'll be `public`!
@@ -138,6 +144,7 @@ public class Sketch extends PApplet {
 
     }
     // endregion
+    // endregion
 
     // region `public` fields.
     // region Callback orders.
@@ -146,7 +153,7 @@ public class Sketch extends PApplet {
     }
 
     public CallbackOrder PRE_CALLBACK_ORDER = CallbackOrder.SCENE;
-    public CallbackOrder DRAW_CALLBACK_ORDER = CallbackOrder.LAYER;
+    public CallbackOrder DRAW_CALLBACK_ORDER = CallbackOrder.SCENE;
     public CallbackOrder POST_CALLBACK_ORDER = CallbackOrder.LAYER;
     // endregion
 
@@ -225,12 +232,12 @@ public class Sketch extends PApplet {
     private SceneManager sceneMan; // Don't use static initialization for this..?
     public final String ICON_PATH;
     private final Unprojector unprojector;
-
     // `LinkedHashSet`s preserve order (and also disallow element repetition)!
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
     // endregion
 
-    // region Listeners sets!
+    // region Listeners!
+    private final SketchInsideListener EXIT_LISTENER, DISPOSAL_LISTENER, SETUP_LISTENER;
     private final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
     private final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
     private final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
@@ -279,11 +286,22 @@ public class Sketch extends PApplet {
         this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
         // endregion
 
+        // region ...of course, more key settings!
         this.pfullscreen = !this.fullscreen;
         this.unprojector = new Unprojector();
         this.sceneMan = new SceneManager(this);
         this.currentCamera = this.DEFAULT_CAMERA;
         this.fullscreen = this.STARTED_FULLSCREEN;
+
+        this.EXIT_LISTENER = p_key.exitListener;
+        this.SETUP_LISTENER = p_key.setupListener;
+        this.DISPOSAL_LISTENER = p_key.disposalListener;
+        // endregion
+
+        // region Setting icons.
+        if (this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D)
+            PJOGL.setIcon(this.ICON_PATH);
+        // endregion
 
         // region Loading the string table.
         StringTable loadedTable = null;
@@ -303,11 +321,6 @@ public class Sketch extends PApplet {
         }
         // endregion
 
-        // region Setting icons.
-        if (this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D)
-            PJOGL.setIcon(this.ICON_PATH);
-        // endregion
-
         // region Non-fullscreen window's dimensions when starting fullscreen.
         if (this.STARTED_FULLSCREEN) {
             this.INIT_WIDTH = 800;
@@ -317,6 +330,8 @@ public class Sketch extends PApplet {
             this.INIT_HEIGHT = p_key.height;
         }
         // endregion
+
+        p_key.constructorListener.listen(this);
     }
 
     @Override
@@ -378,24 +393,25 @@ public class Sketch extends PApplet {
                 break;
         }
 
+        // Should I make a "default styling" `SketchInsideListener`?
         super.rectMode(PConstants.CENTER);
         super.imageMode(PConstants.CENTER);
         super.textAlign(PConstants.CENTER, PConstants.CENTER);
+
+        if (this.SETUP_LISTENER != null)
+            this.SETUP_LISTENER.listen(this);
     }
 
     public void pre() {
         // When the window is resized, do the following!:
         if (!(this.pwidth == super.width || this.pheight == super.height)) {
             this.updateRatios();
-
-            for (SketchWindowListener l : this.WINDOW_LISTENERS) {
+            for (SketchWindowListener l : this.WINDOW_LISTENERS)
                 l.resized();
-            }
         }
 
-        if (this.pfullscreen != this.fullscreen) {
+        if (this.pfullscreen != this.fullscreen)
             this.centerWindow();
-        }
 
         this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
         this.mouse.set(super.mouseX, super.mouseY);
@@ -444,7 +460,7 @@ public class Sketch extends PApplet {
     public void post() {
         this.fullScreenCheck();
 
-        // region Boolean updates!!!
+        // region Previous state updates!!!
         this.pkey = super.key;
         this.pwidth = this.width;
         this.pheight = this.height;
@@ -463,11 +479,26 @@ public class Sketch extends PApplet {
         this.pmouseScrollDelta = this.mouseScrollDelta;
         // endregion
 
-        for (PVector v : this.UNPROJ_TOUCHES) {
+        for (PVector v : this.UNPROJ_TOUCHES)
             this.PREV_UNPROJ_TOUCHES.add(v);
-        }
 
         this.sceneMan.post();
+    }
+
+    @Override
+    public void exit() {
+        if (this.EXIT_LISTENER != null)
+            this.EXIT_LISTENER.listen(this);
+
+        super.exit();
+    }
+
+    @Override
+    public void dispose() {
+        if (this.DISPOSAL_LISTENER != null)
+            this.DISPOSAL_LISTENER.listen(this);
+
+        super.dispose();
     }
     // endregion
 

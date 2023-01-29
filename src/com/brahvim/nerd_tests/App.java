@@ -1,5 +1,7 @@
 package com.brahvim.nerd_tests;
 
+import java.util.List;
+
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuilder;
 import com.brahvim.nerd_tests.scenes.TestScene1;
@@ -27,6 +29,9 @@ public class App {
                 .setTitle("The Nerd Project")
                 .startFullscreen()
                 .canResize()
+                .onSketchConstruction((s) -> {
+                    System.out.println(s.STRINGS.getString("Meta.onConstruct"));
+                })
                 .build(p_args);
         // endregion
 

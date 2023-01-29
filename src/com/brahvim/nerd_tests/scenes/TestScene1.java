@@ -11,7 +11,11 @@ import processing.core.PConstants;
 public class TestScene1 extends NerdScene {
     @Override
     protected void setup() {
-        super.startLayers(
+        if (SCENE.timesSceneWasLoaded() == 0) {
+            SKETCH.centerWindow();
+        }
+
+        SCENE.startLayers(
                 // Yes, these are started in order:
                 BackgroundLayer.class,
                 BoxAnimationLayer.class,
@@ -25,6 +29,8 @@ public class TestScene1 extends NerdScene {
 
     @Override
     protected void draw() {
+        SKETCH.circle(SKETCH.mouseX, SKETCH.mouseY, 50);
+
         SKETCH.text("Scene `1`!",
                 SKETCH.cx, SKETCH.cy + PApplet.sin(SCENE.millisSinceStart() * 0.005f) * 25);
         // SKETCH.cx, SKETCH.cy + PApplet.sin(MANAGER.sinceSceneStarted() * 0.0125f) *

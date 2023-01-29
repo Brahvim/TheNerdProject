@@ -12,7 +12,8 @@ public class StringTable {
     // String tables exist for making it easy for TRANSLATORS to work with them.
     // Use a file!
 
-    // TODO: Declare this `public`, then try to give a way to save a modified table!
+    // TODO: Multiline strings! Please! Pleasea add them!
+    // NOTTODO: Declare this `public`, and try to save a modified table!
     // ..and please try not to mess up the file's comments...
     private final HashMap<String, String> TABLE = new HashMap<>();
     private File file;
