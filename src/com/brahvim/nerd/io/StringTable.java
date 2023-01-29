@@ -13,14 +13,14 @@ public class StringTable {
     // Use a file!
 
     public File file;
-    private HashMap<String, String> table;
+    private HashMap<String, String> table = new HashMap<>();
 
     // region Constructors.
     public StringTable(File p_file) throws FileNotFoundException {
-        this.table = new HashMap<>();
         this.file = p_file;
 
-        this.refresh();
+        if (this.file != null)
+            this.refresh();
     }
 
     public StringTable(String p_filePath) throws FileNotFoundException {

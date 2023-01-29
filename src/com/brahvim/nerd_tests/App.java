@@ -20,14 +20,15 @@ public class App {
 
     public static void main(String[] p_args) {
         App.sketchInstance = new SketchBuilder()
+                .setStringTablePath(null)
                 .setTitle("The Nerd Project")
                 .setFirstScene(TestScene1.class)
                 .setIconPath("data/sunglass_nerd.png")
-                // .preLoadAssets(TestScene4.class)
 
                 // TODO: Add window resizing hint arrows to the `OpenGL` renderer.
                 // TODO: Perhaps find a fix for `JAVA2D` fullscreen windows not fitting well!
                 // .useJavaRenderer()
+                .preLoadAssets(TestScene4.class)
                 // .preLoadAssets(TestScene1.class, TestScene2.class) // Works!
 
                 .startFullscreen()

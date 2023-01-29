@@ -42,27 +42,13 @@ public class NerdAsset {
         this.SKETCH = p_key.SKETCH;
         this.TYPE = p_type;
         this.PATH = p_path;
-
         this.NAME = this.findName();
-
         this.startLoading();
     }
 
     public NerdAsset(AssetManager.AssetKey p_key, AssetType p_type, String p_path, Runnable p_onLoad) {
-        this.verifyKey(p_key);
-        this.KEY = p_key;
-
-        if (p_type == null || p_path == null)
-            throw new IllegalArgumentException("`NerdAsset`s need data!");
-
-        this.SKETCH = p_key.SKETCH;
+        this(p_key, p_type, p_path);
         this.onLoad = p_onLoad;
-        this.TYPE = p_type;
-        this.PATH = p_path;
-
-        this.NAME = this.findName();
-        this.startLoading();
-
     }
     // endregion
 

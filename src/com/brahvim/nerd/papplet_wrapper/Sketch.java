@@ -147,6 +147,7 @@ public class Sketch extends PApplet {
 
     public final static File DATA_DIR = new File("data");
     public final static String DATA_DIR_PATH = Sketch.DATA_DIR.getAbsolutePath().concat(File.separator);
+    public final static String DATA_PATH_TO_DRIVE_ROOT_SUFFIX = Sketch.getPathToRootFrom(Sketch.DATA_DIR_PATH);
 
     public final static GraphicsDevice[] JAVA_SCREENS = GraphicsEnvironment
             .getLocalGraphicsEnvironment().getScreenDevices();
@@ -168,7 +169,7 @@ public class Sketch extends PApplet {
     public final String NAME;
     public final Sketch SKETCH;
     public final NerdCam DEFAULT_CAMERA;
-    public final StringTable STRINGS;
+    public final StringTable GLOBAL_STRINGS;
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
     public final String RENDERER;
@@ -271,7 +272,7 @@ public class Sketch extends PApplet {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
-            this.STRINGS = loadedTable;
+            this.GLOBAL_STRINGS = loadedTable;
         }
         // endregion
 
@@ -798,6 +799,31 @@ public class Sketch extends PApplet {
                 break;
         }
     }
+
+    // region Overloads for `getPathToRootFrom()`.
+    public static String getPathToRootFrom(File p_path) {
+        return getPathToRootFrom(p_path.getAbsolutePath());
+    }
+
+    public static String getPathToRootFrom(String p_path) {
+        final int PATH_LEN = p_path.length(), LAST_CHAR_ID = PATH_LEN - 1;
+        StringBuilder toRetBuilder = new StringBuilder();
+
+        if (p_path.charAt(LAST_CHAR_ID) != File.separatorChar)
+            toRetBuilder.append(File.separator);
+
+        for (int i = 0; i < PATH_LEN; i++) {
+            final char C = p_path.charAt(i);
+
+            if (C == File.separatorChar) {
+                toRetBuilder.append("..");
+                toRetBuilder.append(File.separatorChar);
+            }
+        }
+
+        return toRetBuilder.toString();
+    }
+    // endregion
 
     // region Drawing utilities!
     // region From `PGraphics`.

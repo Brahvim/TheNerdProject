@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetManKey;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.misc.NerdKey;
@@ -82,6 +83,7 @@ public class NerdScene implements HasSketchEvents {
   // Forgive me for breaking the naming conventions. Forgive me. Please!
   protected /* final */ Sketch SKETCH;
   protected /* final */ SceneState STATE;
+  protected /* final */ StringTable STRINGS;
   protected /* final */ AssetManager ASSETS;
   protected /* final */ SceneManager MANAGER;
   protected /* final */ AssetManKey ASSET_MAN_KEY;
