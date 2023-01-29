@@ -48,8 +48,6 @@ public class TestScene4 extends NerdScene {
             SKETCH.centerWindow();
         }
 
-        SKETCH.currentCamera.resetCamParams();
-
         this.nerd = this.ASSETS.get("sunglass_nerd").getData();
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
