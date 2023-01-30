@@ -1,7 +1,7 @@
 package com.brahvim.nerd_tests;
 
+import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.papplet_wrapper.SketchBuilder;
 import com.brahvim.nerd_tests.scenes.TestScene1;
 
 public class App {
@@ -19,11 +19,11 @@ public class App {
         LoadeableClasses.loadClasses(); // Handle this yourself, sorry!
 
         // region Building the `Sketch`!
-        App.sketchInstance = new SketchBuilder()
-                // .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
+        App.sketchInstance = new NerdSketchBuilder()
+                .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
                 .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.json")
                 .setIconPath("data/sunglass_nerd.png")
-                .setFirstScene(TestScene1.class)
+                // .setFirstScene(TestScene1.class)
                 .setTitle("The Nerd Project")
                 .startFullscreen()
                 .canResize()

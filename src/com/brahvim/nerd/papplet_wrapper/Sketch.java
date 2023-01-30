@@ -270,7 +270,7 @@ public class Sketch extends PApplet {
     // endregion
 
     // region Constructor[s], `settings()`...
-    public Sketch(SketchBuilder.SketchKey p_key) {
+    public Sketch(SketchKey p_key) {
         // region Verify and 'use' key.
         if (p_key == null) {
             throw new IllegalArgumentException("""
@@ -340,7 +340,7 @@ public class Sketch extends PApplet {
         }
         // endregion
 
-        // region Loading scenes to preload.
+        // region Preloading assets from scenes we want to!
         for (Class<? extends NerdScene> c : p_key.scenesToPreload) {
             this.sceneMan.loadSceneAssetsAsync(c);
         }
