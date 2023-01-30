@@ -31,8 +31,6 @@ public class TestScene2 extends NerdScene {
         SKETCH.translate(SKETCH.cx, SKETCH.cy);
         SKETCH.text("Scene `2`!", 0, 0);
 
-        System.out.println(SKETCH.modelX(0, 0, 0));
-
         // region Translation.
         // SKETCH.currentCamera.center.z = this.boxHorizWave.get() * SKETCH.qx -
         // SKETCH.qx / 1.5f;

@@ -29,7 +29,7 @@ import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.math.Unprojector;
-import com.brahvim.nerd.processing_wrappers.NerdCam;
+import com.brahvim.nerd.processing_wrappers.NerdCamera;
 import com.brahvim.nerd.processing_wrappers.NerdCameraBuilder;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
@@ -204,7 +204,7 @@ public class Sketch extends PApplet {
     public final Sketch SKETCH;
     public final String RENDERER;
     public final StringTable STRINGS;
-    public final NerdCam DEFAULT_CAMERA;
+    public final NerdCamera DEFAULT_CAMERA;
     public final int INIT_WIDTH, INIT_HEIGHT;
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
@@ -238,7 +238,7 @@ public class Sketch extends PApplet {
 
     public boolean fullscreen, pfullscreen;
     public boolean cursorConfined, cursorVisible = true; // nO previoS versiuN!11!!
-    public NerdCam previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
+    public NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
     public PVector mouse = new PVector(), pmouse = new PVector(); // MOUS!
 
     public boolean pmouseLeft, pmouseMid, pmouseRight; // Previous frame...
@@ -625,7 +625,9 @@ public class Sketch extends PApplet {
             }
         }
 
-        this.keysHeld.add(super.keyCode);
+        synchronized (this.keysHeld) {
+            this.keysHeld.add(super.keyCode);
+        }
 
         for (SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
             l.keyPressed();
@@ -634,7 +636,9 @@ public class Sketch extends PApplet {
 
     public void keyReleased() {
         try {
-            this.keysHeld.remove(super.keyCode);
+            synchronized (this.keysHeld) {
+                this.keysHeld.remove(super.keyCode);
+            }
         } catch (IndexOutOfBoundsException e) {
         }
 
@@ -1006,17 +1010,17 @@ public class Sketch extends PApplet {
         super.rotateZ(p_rotationVector.z);
     }
 
-    public void camera(NerdCam p_cam) {
+    public void camera(NerdCamera p_cam) {
         super.camera(p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
                 p_cam.center.x, p_cam.center.y, p_cam.center.z,
                 p_cam.up.x, p_cam.up.y, p_cam.up.z);
     }
 
-    public void perspective(NerdCam p_cam) {
+    public void perspective(NerdCamera p_cam) {
         super.perspective(p_cam.fov, (float) super.width / (float) super.height, p_cam.near, p_cam.far);
     }
 
-    public void ortho(NerdCam p_cam) {
+    public void ortho(NerdCamera p_cam) {
         super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_cam.near, p_cam.far);
     }
 

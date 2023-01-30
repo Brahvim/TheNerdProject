@@ -9,12 +9,12 @@ import processing.core.PVector;
 /**
  * @apiNote Please use {@link NerdCameraBuilder} to get a camera instance.
  */
-public class NerdCam {
+public class NerdCamera {
     // region Interface `Camera.Script`.
     // Needed to be able to clone cameras!
     @FunctionalInterface
     public interface Script {
-        public void onCamUpdate(NerdCam p_cam);
+        public void onCamUpdate(NerdCamera p_cam);
     }
     // endregion
 
@@ -22,14 +22,14 @@ public class NerdCam {
     public final static float DEFAULT_CAM_FOV = PApplet.radians(60),
             DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10000, DEFAULT_CAM_MOUSE_Z = 25;
 
-    public NerdCam.Script script;
+    public NerdCamera.Script script;
 
     public PVector pos, center, up;
     public PVector defaultCamUp, defaultCamPos, defaultCamCenter;
-    public float fov = NerdCam.DEFAULT_CAM_FOV,
-            far = NerdCam.DEFAULT_CAM_FAR,
-            near = NerdCam.DEFAULT_CAM_NEAR,
-            mouseZ = NerdCam.DEFAULT_CAM_MOUSE_Z;
+    public float fov = NerdCamera.DEFAULT_CAM_FOV,
+            far = NerdCamera.DEFAULT_CAM_FAR,
+            near = NerdCamera.DEFAULT_CAM_NEAR,
+            mouseZ = NerdCamera.DEFAULT_CAM_MOUSE_Z;
 
     public int clearColor = 0, projection = PConstants.PERSPECTIVE;
     public boolean doScript = true, doAutoClear = true;
@@ -37,7 +37,7 @@ public class NerdCam {
     public final Sketch SKETCH;
     // endregion
 
-    public NerdCam(Sketch p_sketch) {
+    public NerdCamera(Sketch p_sketch) {
         this.SKETCH = p_sketch;
 
         this.up = new PVector(0, 1, 0);
@@ -118,9 +118,9 @@ public class NerdCam {
         this.up.set(this.defaultCamUp);
         this.pos.set(this.defaultCamPos);
         this.center.set(this.defaultCamCenter);
-        this.far = NerdCam.DEFAULT_CAM_FAR;
-        this.fov = NerdCam.DEFAULT_CAM_FOV;
-        this.near = NerdCam.DEFAULT_CAM_NEAR;
+        this.far = NerdCamera.DEFAULT_CAM_FAR;
+        this.fov = NerdCamera.DEFAULT_CAM_FOV;
+        this.near = NerdCamera.DEFAULT_CAM_NEAR;
     }
 
     public void resetSettings() {
@@ -128,12 +128,12 @@ public class NerdCam {
         this.clearColor = 0;
         this.doScript = true;
         this.doAutoClear = true;
-        this.mouseZ = NerdCam.DEFAULT_CAM_MOUSE_Z;
+        this.mouseZ = NerdCamera.DEFAULT_CAM_MOUSE_Z;
         this.projection = PConstants.PERSPECTIVE;
     }
 
-    public NerdCam copy() {
-        NerdCam toRet = new NerdCam(this.SKETCH);
+    public NerdCamera copy() {
+        NerdCamera toRet = new NerdCamera(this.SKETCH);
 
         toRet.up.set(this.up);
         toRet.pos.set(this.pos);

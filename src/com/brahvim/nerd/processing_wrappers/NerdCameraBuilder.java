@@ -6,12 +6,12 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 public class NerdCameraBuilder {
-    private NerdCam build;
+    private NerdCamera build;
     private final Sketch SKETCH;
 
     public NerdCameraBuilder(Sketch p_sketch) {
         this.SKETCH = p_sketch; // Used by `setClearColor()`.
-        this.build = new NerdCam(p_sketch);
+        this.build = new NerdCamera(p_sketch);
         this.build.useProcessingDefaults();
 
         // region My defaults:
@@ -28,7 +28,7 @@ public class NerdCameraBuilder {
 
     }
 
-    public NerdCam build() {
+    public NerdCamera build() {
         return this.build;
     }
 
@@ -180,7 +180,7 @@ public class NerdCameraBuilder {
     }
     // endregion
 
-    public NerdCameraBuilder setScript(NerdCam.Script p_script) {
+    public NerdCameraBuilder setScript(NerdCamera.Script p_script) {
         this.build.script = p_script;
         return this;
     }
