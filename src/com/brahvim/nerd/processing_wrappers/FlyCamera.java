@@ -5,12 +5,11 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class FpsCamera {
+public class FlyCamera implements HasNerdCamera {
     // Mathematics thanks to [https://learnopengl.com/Getting-started/Camera]!
 
     // region Fields.
     public final Sketch SKETCH;
-    public final NerdCamera CAMERA;
 
     public float sensitivity = 0.1f;
     public float pitch, yaw;
@@ -18,16 +17,17 @@ public class FpsCamera {
             camFront = new PVector(),
             camAddent = new PVector();
 
+    private final NerdCamera CAMERA;
     private float sinYaw, cosYaw, sinPitch, cosPitch;
     // endregion
 
     // region Constructors.
-    public FpsCamera(Sketch p_sketch, NerdCamera p_camera) {
+    public FlyCamera(Sketch p_sketch, NerdCamera p_camera) {
         this.SKETCH = p_sketch;
         this.CAMERA = p_camera;
     }
 
-    public FpsCamera(Sketch p_sketch) {
+    public FlyCamera(Sketch p_sketch) {
         this(p_sketch, new NerdCamera(p_sketch));
     }
     // endregion
@@ -54,8 +54,8 @@ public class FpsCamera {
         // ...these two methods also wrap calls to `FpsCamera::CAMERA`.
     }
 
-    public FpsCamera clone() {
-        FpsCamera toRet = new FpsCamera(this.SKETCH, this.CAMERA.clone());
+    public FlyCamera clone() {
+        FlyCamera toRet = new FlyCamera(this.SKETCH, this.CAMERA.clone());
 
         // region Setting Euler angles.
         toRet.yaw = this.yaw;
@@ -131,6 +131,11 @@ public class FpsCamera {
 
     public void setScript(NerdCamera.Script p_script) {
         this.CAMERA.script = p_script;
+    }
+
+    @Override
+    public NerdCamera getNerdCamera() {
+        return this.CAMERA;
     }
 
 }

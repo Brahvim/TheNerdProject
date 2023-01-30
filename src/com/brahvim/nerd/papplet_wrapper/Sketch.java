@@ -29,6 +29,7 @@ import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.math.Unprojector;
+import com.brahvim.nerd.processing_wrappers.HasNerdCamera;
 import com.brahvim.nerd.processing_wrappers.NerdCamera;
 import com.brahvim.nerd.processing_wrappers.NerdCameraBuilder;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -237,7 +238,6 @@ public class Sketch extends PApplet {
 
     public boolean fullscreen, pfullscreen;
     public boolean cursorConfined, cursorVisible = true; // nO previoS versiuN!11!!
-    public NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
     public PVector mouse = new PVector(), pmouse = new PVector(); // MOUS!
 
     public boolean pmouseLeft, pmouseMid, pmouseRight; // Previous frame...
@@ -258,7 +258,7 @@ public class Sketch extends PApplet {
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
     private GraphicsDevice previousMonitor, currentMonitor;
     private SceneManager sceneMan; // Don't use static initialization for this..?
-    // endregion
+    private NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 
     // region Listeners!
     private final SketchInsideListener EXIT_LISTENER, DISPOSAL_LISTENER, SETUP_LISTENER;
@@ -266,6 +266,7 @@ public class Sketch extends PApplet {
     private final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
     private final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
     private final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
+    // endregion
     // endregion
 
     // region Constructor[s], `settings()`...
@@ -481,6 +482,11 @@ public class Sketch extends PApplet {
                     this.currentCamera.apply(); // Do all three tasks!
                     break;
             }
+        // If `this.currentCamera` is `null`, but wasn't,
+        else if (this.currentCamera != this.previousCamera)
+            System.out.printf("""
+                    Sketch `%s` no longer has a camera!
+                    \bConsider adding one...?""", this.NAME);
         // endregion
 
         // region If it doesn't yet exist, construct the scene!
@@ -721,7 +727,37 @@ public class Sketch extends PApplet {
     }
     // endregion
 
-    // region Unprojection.
+    // region Camera and unprojection.
+    // region Camera!
+    public NerdCamera getCurrentCamera() {
+        return this.currentCamera;
+    }
+
+    public NerdCamera getPreviousCamera() {
+        return this.previousCamera;
+    }
+
+    /**
+     * @return The previous camera the {@link Sketch} had access to.
+     */
+    public NerdCamera setCamera(NerdCamera p_camera) {
+        NerdCamera toRet = this.previousCamera;
+        this.previousCamera = this.currentCamera;
+        this.currentCamera = p_camera;
+        return toRet;
+    }
+
+    /**
+     * @return The previous camera the {@link Sketch} had access to.
+     */
+    public NerdCamera setCamera(HasNerdCamera p_cameraOwner) {
+        NerdCamera toRet = this.previousCamera;
+        this.previousCamera = this.currentCamera;
+        this.currentCamera = p_cameraOwner.getNerdCamera();
+        return toRet;
+    }
+    // endregion
+
     public void unprojectMouse() {
         if (this.currentCamera == null)
             return;

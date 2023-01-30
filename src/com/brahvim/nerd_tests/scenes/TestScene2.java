@@ -5,12 +5,13 @@ import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
 public class TestScene2 extends NerdScene {
+
     private SineWave boxHorizWave, boxVertWave;
 
     @Override
     protected void setup(SceneState p_state) {
-        SKETCH.currentCamera.resetCamParams();
-        SKETCH.currentCamera.resetSettings();
+        CAMERA.resetCamParams();
+        CAMERA.resetSettings();
 
         this.boxHorizWave = new SineWave(SKETCH, 100 / 60_000.0f);
         this.boxHorizWave.start();
@@ -32,17 +33,17 @@ public class TestScene2 extends NerdScene {
         SKETCH.text("Scene `2`!", 0, 0);
 
         // region Translation.
-        // SKETCH.currentCamera.center.z = this.boxHorizWave.get() * SKETCH.qx -
+        // CAMERA.center.z = this.boxHorizWave.get() * SKETCH.qx -
         // SKETCH.qx / 1.5f;
 
         // this.camHorizWave.absoluteValue = false;
-        // SKETCH.currentCamera.center.y = this.camHorizWave.get() * SKETCH.qy -
+        // CAMERA.center.y = this.camHorizWave.get() * SKETCH.qy -
         // SKETCH.qy / 2;
-        // SKETCH.currentCamera.center.y *= 0.5f;
-        // SKETCH.currentCamera.center.y += SKETCH.qy * 0.5f;
+        // CAMERA.center.y *= 0.5f;
+        // CAMERA.center.y += SKETCH.qy * 0.5f;
         // this.camHorizWave.absoluteValue = true;
 
-        // SKETCH.currentCamera.pos.y = this.boxVertWave.get() * SKETCH.qy;
+        // CAMERA.pos.y = this.boxVertWave.get() * SKETCH.qy;
         // endregion
 
         // SKETCH.translate(

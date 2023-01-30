@@ -53,7 +53,7 @@ public class TestScene4 extends NerdScene {
 
         SKETCH.noStroke();
         SKETCH.textureWrap(PConstants.REPEAT);
-        SKETCH.currentCamera.pos.z = 500;
+        SKETCH.getCurrentCamera().pos.z = 500;
 
         this.ncx = this.nerd.width * 0.5f;
         this.ncy = this.nerd.height * 0.5f;
@@ -65,7 +65,7 @@ public class TestScene4 extends NerdScene {
 
         this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);
         this.magScroll += (this.magScrollVel *= this.MAG_SCROLL_DECAY_VEL);
-        SKETCH.currentCamera.pos.z += this.magScrollVel;
+        CAMERA.pos.z += this.magScrollVel;
 
         // region Draw the nerds!!!
         SKETCH.beginShape();

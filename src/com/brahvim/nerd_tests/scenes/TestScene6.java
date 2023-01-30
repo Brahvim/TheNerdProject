@@ -1,21 +1,21 @@
 package com.brahvim.nerd_tests.scenes;
 
-import com.brahvim.nerd.processing_wrappers.FpsCamera;
+import com.brahvim.nerd.processing_wrappers.FlyCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
 public class TestScene6 extends NerdScene {
-
-    private FpsCamera camera;
+    private FlyCamera CAMERA;
 
     @Override
     protected void setup(SceneState p_state) {
-        this.camera = new FpsCamera(SKETCH);
+        CAMERA = new FlyCamera(SKETCH);
+        SKETCH.setCamera(CAMERA);
     }
 
     @Override
     protected void draw() {
-        
+
     }
 
 }

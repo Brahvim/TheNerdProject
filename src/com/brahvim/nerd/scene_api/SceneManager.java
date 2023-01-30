@@ -95,15 +95,34 @@ public class SceneManager {
 
     public static class SceneManagerSettings {
 
-        public final OnSceneSwitch ON_SCENE_SWITCH = new OnSceneSwitch();
-
         private class OnSceneSwitch {
-            public boolean doClear = false,
-                    completelyResetCam = true;
+
+            /**
+             * If set to {@code -1}, will call {@link Sketch#clear()} and not
+             * {@link Sketch#background()}. <b>This is the default behavior!</b>
+             */
+            public int clearColor = -1;
+
+            /**
+             * Clears the screen according to
+             * {@link SceneManager.SceneManagerSettings.OnSceneSwitch#clearColor}.<br>
+             * <br>
+             * {@code false} by default.
+             */
+            public boolean doClear = false;
+
+            /**
+             * Resets {@link Sketch#currentCamera} if {@code true}.
+             * {@code true} by default!
+             */
+            public boolean completelyResetCam = true;
 
             private OnSceneSwitch() {
             }
+
         }
+
+        public final OnSceneSwitch ON_SCENE_SWITCH = new OnSceneSwitch();
 
     }
     // endregion
@@ -366,6 +385,10 @@ public class SceneManager {
     // endregion
 
     // region [`public`] Getters.
+    public SceneManagerSettings getManagerSettings() {
+        return this.SETTINGS;
+    }
+
     public Sketch getSketch() {
         return this.SKETCH;
     }
@@ -631,16 +654,17 @@ public class SceneManager {
         // region Initialize it!
         final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
         final SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS);
+        final AssetManKey RETURNED_SCENE_ASSET_MANAGER_KEY = new AssetManKey(this.SKETCH);
 
         // Initialize fields as if this was a part of the construction.
         toRet.MANAGER = this;
         toRet.SKETCH = this.SKETCH;
-        toRet.ASSET_MAN_KEY = new AssetManKey(this.SKETCH);
-        toRet.ASSETS = new AssetManager(toRet.ASSET_MAN_KEY); // Is this actually a good idea?
+        toRet.CAMERA = this.SKETCH.getCurrentCamera();
+        // toRet.setAssetManagerKey(RETURNED_SCENE_ASSET_MANAGER_KEY);
+        toRet.ASSETS = new AssetManager(RETURNED_SCENE_ASSET_MANAGER_KEY); // Is this actually a good idea?
 
         // If this is the first time we're constructing this scene, ensure it has a
         // cache and a saved state!
-        // PS Don't worry about concurrency, `this.SCENE_CLASS_TO_CACHE` is `final`! ^-^
         if (SCENE_CACHE == null) {
             toRet.STATE = new SceneState();
             this.SCENE_CLASS_TO_CACHE.put(SCENE_CLASS, new SceneCache(p_sceneConstructor, toRet));
@@ -669,12 +693,16 @@ public class SceneManager {
 
     // The scene-deleter!!!
     private void setScene(NerdScene p_currentScene, SceneState p_state) {
-        // region `this.settings.onSceneSwitch` tasks.
-        if (this.SETTINGS.ON_SCENE_SWITCH.doClear)
-            this.SKETCH.clear();
+        // region `this.SETTINGS.onSceneSwitch` tasks.
+        if (this.SETTINGS.ON_SCENE_SWITCH.doClear) {
+            if (this.SETTINGS.ON_SCENE_SWITCH.clearColor == -1)
+                this.SKETCH.clear();
+            else
+                this.SKETCH.background(this.SETTINGS.ON_SCENE_SWITCH.clearColor);
+        }
 
         if (this.SETTINGS.ON_SCENE_SWITCH.completelyResetCam)
-            this.SKETCH.currentCamera.completeReset();
+            this.SKETCH.getCurrentCamera().completeReset();
         // endregion
 
         this.prevSceneClass = this.currSceneClass;

@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.StringTable;
-import com.brahvim.nerd.io.asset_loader.AssetManKey;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.processing_wrappers.NerdCamera;
 
 /**
  * <h2>Do not use as an anonymous class!</h2>
@@ -87,9 +87,9 @@ public class NerdScene implements InputEventHandling {
   public /* final */ StringTable STRINGS;
   public /* final */ AssetManager ASSETS;
   public /* final */ SceneManager MANAGER;
-  protected /* final */ AssetManKey ASSET_MAN_KEY;
 
   protected final NerdScene SCENE = this;
+  protected /* final */ NerdCamera CAMERA;
 
   // region `private` fields.
   private int startMillis;
@@ -99,6 +99,7 @@ public class NerdScene implements InputEventHandling {
   // duplicates won't be allowed in the former case. We need them!
 
   // Start at `0`. "Who needs layers anyway?"
+  // private AssetManKey ASSET_MAN_KEY;
   private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0);
   private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
 
@@ -141,10 +142,21 @@ public class NerdScene implements InputEventHandling {
     return this.MANAGER.timesGivenSceneWasLoaded(this.getClass());
   }
 
-  public boolean hasCompletedPreload(/* SceneManager.SceneKey p_key */) {
+  public boolean hasCompletedPreload(
+  /* SceneManager.SceneKey p_key */) {
     // this.verifyKey(p_key);
     return this.donePreloading;
   }
+
+  // public void setAssetManagerKey(AssetManKey p_assetManKey) {
+  /*
+   * if (p_assetManKey == null)
+   * throw new IllegalArgumentException("`NerdScene::setAssetManagerKey()` cannot
+   * take `null`s!");
+   * 
+   * this.ASSET_MAN_KEY = p_assetManKey;
+   * }
+   */
 
   // region Timing queries.
   public int startMillis() {
@@ -211,6 +223,7 @@ public class NerdScene implements InputEventHandling {
   private NerdLayer constructLayer(Constructor<? extends NerdLayer> p_layerConstructor) {
     NerdLayer toRet = null;
 
+    // region Construct `toRet`.
     try {
       toRet = (NerdLayer) p_layerConstructor.newInstance(
       // new NerdScene.LayerKey(this, this.SKETCH, p_layerClass)
@@ -224,9 +237,11 @@ public class NerdScene implements InputEventHandling {
     } catch (InvocationTargetException e) {
       e.printStackTrace();
     }
+    // endregion
 
     toRet.SCENE = this;
     toRet.SKETCH = this.SKETCH;
+    toRet.CAMERA = this.CAMERA;
     toRet.MANAGER = this.MANAGER;
 
     return toRet;

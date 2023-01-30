@@ -3,7 +3,6 @@ package com.brahvim.nerd_tests;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd_tests.scenes.TestScene2;
-import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
 
@@ -24,7 +23,7 @@ public class App {
                 // .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
                 .setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))
                 .setIconPath("data/sunglass_nerd.png")
-                .setFirstScene(TestScene4.class)
+                .setFirstScene(TestScene2.class)
                 .setTitle("The Nerd Project")
                 .startFullscreen()
                 .canResize()
