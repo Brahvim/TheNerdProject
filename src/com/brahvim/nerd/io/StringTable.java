@@ -136,19 +136,24 @@ public class StringTable {
                         content.append(line);
                     else
                         content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
+                    // ^^^ Need to use `firstQuotePosPlusOne + 1` here to avoid reading the quote.
+                    // ...yeah, I have no idea why that is so.
 
-                    String contentString = content.toString();
-                    System.out.printf("`contentString`: `%s`.\n", contentString);
+                    // Was used for I N T E N S E debugging:
+                    // String contentString = content.toString();
+                    // System.out.printf("`contentString`: `%s`.\n", contentString);
+
                     continue;
                 }
 
                 // If the value isn't a multi-liner, go on!
                 // Parse it, and add it to the map!
-
                 content.append(line.substring(firstQuotePosPlusOne, lastQuotePos));
+                // ..It used to be `firstQuotePosPlusOne + 1` up there. LOL.
 
-                String contentString = content.toString();
-                System.out.printf("`contentString`: `%s`.\n", contentString);
+                // Was used for I N T E N S E debugging:
+                // String contentString = content.toString();
+                // System.out.printf("`contentString`: `%s`.\n", contentString);
 
                 // `parsedContent` will experience changes according to delimiters:
                 parsedContent.delete(0, parsedContent.length());
@@ -207,12 +212,10 @@ public class StringTable {
 
             }
 
-        } catch (
-
-        IOException e) {
+        } catch (IOException e) {
             System.out.printf("""
-                    Failed to parse string table in file: `%s`.
-                    """, this.file.getAbsolutePath());
+                    Failed to parse string table in file: `%s` due to some I/O error.
+                        """, this.file.getAbsolutePath());
             e.printStackTrace();
         }
 
@@ -226,11 +229,20 @@ public class StringTable {
         }
 
         if (ret == null) {
-            System.err.printf("String table key `%s` not found!\n", p_key);
+            System.err.printf("""
+                    String table key `%s` not found!
+                    \tDid you make some syntactical errors in there?
+                    """, p_key);
             return "";
         }
 
         return ret;
+    }
+
+    public String getString(String p_key, String p_default) {
+        synchronized (this.TABLE) {
+            return this.TABLE.getOrDefault(p_key, p_default);
+        }
     }
 
 }
