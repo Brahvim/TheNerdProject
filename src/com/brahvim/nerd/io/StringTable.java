@@ -13,7 +13,7 @@ public class StringTable {
     // Use a file!
 
     // TODO: Multiline strings! Please! Please add them!
-    // TODO PS That backslash convertor is not acting correctly either.
+    // TODO PS That backslash converter is not acting correctly either.
 
     // NOTTODO: Declare this `public`, and try to save a modified table!
     // ..and please try not to mess up the file's comments...
@@ -53,10 +53,11 @@ public class StringTable {
 
         try (FileReader fileReader = new FileReader(this.file);
                 BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-            String section = null, content = null;
-            StringBuilder parsedContent;
+            String section = null;
+            StringBuilder content = new StringBuilder(), parsedContent = new StringBuilder();
             int firstQuotePosPlusOne = 0, lineLen = 0, lineLenMinusOne = 0,
                     delimiterCharPos = 0, lastQuotePos = 0, eqPos = 0;
+            boolean isMultiLine = false;
 
             // Remember that this loop goes through EACH LINE!
             // Not each *character!* :joy::
@@ -64,32 +65,37 @@ public class StringTable {
                 lineLen = line.length();
                 lineLenMinusOne = lineLen - 1;
 
-                // region Cases demanding skipping this iteration.
-                // Leave empty lines alone!:
-                if (line.isBlank())
-                    continue;
+                if (!isMultiLine) {
+                    content.delete(0, content.length());
 
-                // Skipping comments and registering sections,
-                // and skip this iteration if they exist:
-                switch (line.charAt(0)) {
-                    case ';': // Semicolons are also comments in INI files, apparently!
-                    case '#':
+                    // region Cases demanding skipping this iteration.
+                    // Leave empty lines alone!:
+                    if (line.isBlank())
                         continue;
-                    case '[':
-                        section = line.substring(1, line.indexOf(']'));
-                        continue;
+
+                    // Skipping comments and registering sections,
+                    // and skip this iteration if they exist:
+                    switch (line.charAt(0)) {
+                        case ';': // Semicolons are also comments in INI files, apparently!
+                        case '#':
+                            continue;
+                        case '[':
+                            section = line.substring(1, line.indexOf(']'));
+                            continue;
+                    }
+                    // endregion
+
+                    // Find where the `=` sign is!:
+                    eqPos = line.indexOf('=');
+
+                    // Finding an index since some people might prefer
+                    // putting spaces between the property name and `=`:
+                    firstQuotePosPlusOne = line.indexOf('"', eqPos);
                 }
-                // endregion
-
-                // Find where the `=` sign is!:
-                eqPos = line.indexOf('=');
-
-                // Finding an index since some people might prefer
-                // putting spaces between the property name and `=`:
-                firstQuotePosPlusOne = line.indexOf('"', eqPos);
 
                 // Find a `"` symbol *without* a `\` before it:
                 lastQuotePos = lineLen; // We assume it's at the end.
+                isMultiLine = true; // We also assume this till we find proof!
 
                 // region Find the quote that ends the property's value.
                 // Go backwards through the string. When you see the first double-quote
@@ -101,16 +107,21 @@ public class StringTable {
                         if (line.charAt(i - 1) != '\\') {
                             // ...then it must be the quote marking the end of the property definition!
                             lastQuotePos = i;
+                            isMultiLine = false;
                             break;
                         }
                     }
                 }
                 // endregion
 
-                content = line.substring(firstQuotePosPlusOne + 1, lastQuotePos);
+                content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
 
                 // This will experience changes according to delimiters:
-                parsedContent = new StringBuilder(content);
+                parsedContent.delete(0, parsedContent.length());
+                parsedContent.append(content);
+
+                // For multiline strings, this would go through the entire string again.
+                // Inefficient, but okay!
 
                 // region Parse out backslashes first! The others rely on them...:
                 while ((delimiterCharPos = parsedContent.indexOf("\\\\")) != -1) {
