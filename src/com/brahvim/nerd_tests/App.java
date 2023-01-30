@@ -3,9 +3,6 @@ package com.brahvim.nerd_tests;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd_tests.scenes.TestScene1;
-import com.brahvim.nerd_tests.scenes.TestScene2;
-import com.brahvim.nerd_tests.scenes.TestScene3;
-import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
 
@@ -23,10 +20,10 @@ public class App {
 
         // region Building the `Sketch`!
         App.sketchInstance = new NerdSketchBuilder()
-                .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
+                // .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
                 .setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))
                 .setIconPath("data/sunglass_nerd.png")
-                // .setFirstScene(TestScene1.class)
+                .setFirstScene(TestScene1.class)
                 .setTitle("The Nerd Project")
                 .startFullscreen()
                 .canResize()
@@ -34,7 +31,7 @@ public class App {
                 // ...apparently these listeners take literally `0` millseconds to finish
                 // calling! They're much faster, actually! That `0` millisecond time included
                 // starting and stopping a `MillisTimer`!
-
+                // ..they should be faster than a v-table thingy anyway, amirite?
                 .onSketchConstructed((s) -> {
                     System.out.println(s.STRINGS.get("Meta.onConstruct"));
 
@@ -42,6 +39,7 @@ public class App {
                     // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
                     // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
                 }).build(p_args);
+
         // endregion
 
         App.startTickThread();

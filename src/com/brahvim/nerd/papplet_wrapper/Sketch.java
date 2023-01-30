@@ -29,7 +29,6 @@ import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.math.Unprojector;
-import com.brahvim.nerd.math.timing.MillisTimer;
 import com.brahvim.nerd.processing_wrappers.NerdCam;
 import com.brahvim.nerd.processing_wrappers.NerdCameraBuilder;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -409,7 +408,6 @@ public class Sketch extends PApplet {
                 break;
         }
 
-        // TODO Should I make a "default styling" `SketchInsideListener`?
         super.rectMode(PConstants.CENTER);
         super.imageMode(PConstants.CENTER);
         super.textAlign(PConstants.CENTER, PConstants.CENTER);
