@@ -58,7 +58,7 @@ public class StringTable {
             StringBuilder content = new StringBuilder(), parsedContent = new StringBuilder();
             int firstQuotePosPlusOne = 0, lineLen = 0, lineLenMinusOne = 0,
                     delimiterCharPos = 0, lastQuotePos = 0, eqPos = 0;
-            boolean isMultiLine = false;
+            boolean valueIsMultiLine = false;
 
             // Remember that this loop goes through EACH LINE!
             // Not each *character!* :joy::
@@ -66,14 +66,14 @@ public class StringTable {
                 lineLen = line.length();
                 lineLenMinusOne = lineLen - 1;
 
-                if (!isMultiLine) {
+                // region Cases demanding skipping this iteration.
+                // Leave empty lines alone!:
+                if (line.isBlank())
+                    continue;
+
+                if (!valueIsMultiLine) {
+                    // If you're not a multi-line value, it should be safe to free memory.
                     content.delete(0, content.length());
-
-                    // region Cases demanding skipping this iteration.
-                    // Leave empty lines alone!:
-                    if (line.isBlank())
-                        continue;
-
                     // Skipping comments and registering sections,
                     // and even this iteration if they exist:
                     switch (line.charAt(0)) {
@@ -93,11 +93,13 @@ public class StringTable {
                     // Finding an index since some people might prefer
                     // putting spaces between the property name and `=`:
                     firstQuotePosPlusOne = line.indexOf('"', eqPos);
+                } else {
+                    firstQuotePosPlusOne = 0;
                 }
 
                 // Find a `"` symbol *without* a `\` before it:
                 lastQuotePos = lineLen; // We assume it's at the end.
-                isMultiLine = true; // We also assume this till we find proof!
+                valueIsMultiLine = true; // We also assume this till we find proof!
 
                 // region Find the quote that ends the property's value.
                 // Go backwards through the string. When you see the first double-quote
@@ -109,18 +111,29 @@ public class StringTable {
                         if (line.charAt(i - 1) != '\\') {
                             // ...then it must be the quote marking the end of the property definition!
                             lastQuotePos = i;
-                            isMultiLine = false;
+                            valueIsMultiLine = false;
                             break;
                         }
                     }
                 }
                 // endregion
 
+                // If the value *is* a multi-liner, don't perform parsing and saving.
+                // We need to finish scanning it!
+                if (valueIsMultiLine) {
+                    content.append(lineLen);
+                    String contentString = content.toString();
+                    System.out.println(contentString);
+                    continue;
+                }
+
+                // If the value isn't a multi-liner, go on!
+                // Parse it, and add it to the map!
+
                 content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
 
-                // Do not perform any parsing or saving. We need to finish scanning this value!
-                if (isMultiLine)
-                    continue;
+                String contentString = content.toString();
+                System.out.println(contentString);
 
                 // `parsedContent` will experience changes according to delimiters:
                 parsedContent.delete(0, parsedContent.length());
@@ -179,7 +192,9 @@ public class StringTable {
 
             }
 
-        } catch (IOException e) {
+        } catch (
+
+        IOException e) {
             System.out.printf("""
                     Failed to parse string table in file: `%s`.
                     """, this.file.getAbsolutePath());
