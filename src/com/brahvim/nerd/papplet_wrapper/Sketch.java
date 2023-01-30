@@ -3,6 +3,7 @@ package com.brahvim.nerd.papplet_wrapper;
 import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
@@ -170,16 +171,8 @@ public class Sketch extends PApplet {
 
     public final static File DATA_DIR = new File("data");
     public final static String DATA_DIR_PATH = Sketch.DATA_DIR.getAbsolutePath().concat(File.separator);
-    public final static String DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX = Sketch.getPathToRootFrom(Sketch.DATA_DIR_PATH);
-
-    public final static GraphicsDevice[] JAVA_SCREENS = GraphicsEnvironment
-            .getLocalGraphicsEnvironment().getScreenDevices();
-
-    public final static DisplayMode DEFAULT_JAVA_SCREEN_MODE = GraphicsEnvironment
-            .getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-
-    public final static int DEFAULT_REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
-            .getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+    // public final static String DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX =
+    // Sketch.getPathToRootFrom(Sketch.DATA_DIR_PATH);
 
     public final static char[] STANDARD_KEYBOARD_SYMBOLS = {
             '\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
@@ -187,8 +180,26 @@ public class Sketch extends PApplet {
             ']', ';', ',', '.', '/', '\\', ':', '|', '<',
             '>', '_', '+', '?'
     };
+
+    // region `java.awt` constants.
+    public final static GraphicsDevice[] JAVA_SCREENS = GraphicsEnvironment
+            .getLocalGraphicsEnvironment().getScreenDevices();
+
+    public final static GraphicsDevice DEFAULT_JAVA_SCREEN = GraphicsEnvironment
+            .getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
+    public final static DisplayMode DEFAULT_JAVA_SCREEN_MODE = GraphicsEnvironment
+            .getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+
+    public final static GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment
+            .getLocalGraphicsEnvironment();
+
+    public final static int DEFAULT_REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
+            .getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+    // endregion
     // endregion
 
+    // region Instance constants.
     public final String NAME;
     public final Sketch SKETCH;
     public final String RENDERER;
@@ -196,8 +207,15 @@ public class Sketch extends PApplet {
     public final NerdCam DEFAULT_CAMERA;
     public final int INIT_WIDTH, INIT_HEIGHT;
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
+
+    public final Point GLOBAL_MOUSE_POINT = new Point();
+    public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
+    public final Point PREV_GLOBAL_MOUSE_POINT = new Point();
+    public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
+
     public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
             CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN, DO_FAKE_2D_CAMERA = false;
+    // endregion
     // endregion
 
     // region Window object references.
@@ -235,11 +253,12 @@ public class Sketch extends PApplet {
     // endregion
 
     // region `private` ~~/ `protected`~~ fields.
-    private SceneManager sceneMan; // Don't use static initialization for this..?
     public final String ICON_PATH;
-    private final Unprojector unprojector;
+    private final Unprojector UNPROJECTOR;
     // `LinkedHashSet`s preserve order (and also disallow element repetition)!
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
+    private GraphicsDevice previousMonitor, currentMonitor;
+    private SceneManager sceneMan; // Don't use static initialization for this..?
     // endregion
 
     // region Listeners!
@@ -294,7 +313,7 @@ public class Sketch extends PApplet {
 
         // region ...of course, more key settings!
         this.pfullscreen = !this.fullscreen;
-        this.unprojector = new Unprojector();
+        this.UNPROJECTOR = new Unprojector();
         this.sceneMan = new SceneManager(this);
         this.currentCamera = this.DEFAULT_CAMERA;
         this.fullscreen = this.STARTED_FULLSCREEN;
@@ -360,18 +379,8 @@ public class Sketch extends PApplet {
         super.registerMethod("post", this);
         super.frameRate(Sketch.DEFAULT_REFRESH_RATE);
 
-        // TODO: Deal with multiple monitors!
-        // [https://stackoverflow.com/questions/21585121/java-getting-mouse-location-on-multiple-monitor-environment]
-        // TODO: Find app monitor. AWT tells what mouse's on. Check if app tracks mouse.
-        {
-            // DisplayMode mode = GraphicsEnvironment.getLocalGraphicsEnvironment()
-            // .getScreenDevices()[0].getDisplayMode();
-
-            // super.displayWidth = mode.getWidth();
-            // super.displayHeight = mode.getHeight();
-        }
-
-        // I should make a super slow "convenience" method to do this with `Runnable`s!
+        // I should make a super slow "convenience" method to perform this
+        // `switch (this.RENDERER)` using `Runnable`s!
         // :joy:!
 
         // Renderer-specific object initialization and settings!:
@@ -399,7 +408,7 @@ public class Sketch extends PApplet {
                 break;
         }
 
-        // Should I make a "default styling" `SketchInsideListener`?
+        // TODO Should I make a "default styling" `SketchInsideListener`?
         super.rectMode(PConstants.CENTER);
         super.imageMode(PConstants.CENTER);
         super.textAlign(PConstants.CENTER, PConstants.CENTER);
@@ -433,9 +442,30 @@ public class Sketch extends PApplet {
         this.frameTime = this.frameStartTime - this.pframeTime;
         this.pframeTime = this.frameStartTime;
 
+        // region Update frame-ly mouse settings.
         this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
         this.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
         this.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
+
+        // region "`GLOBAL_MOUSE`""
+        this.PREV_GLOBAL_MOUSE_POINT.setLocation(this.GLOBAL_MOUSE_POINT);
+        this.PREV_GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_VECTOR);
+
+        this.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
+        this.GLOBAL_MOUSE_VECTOR.set(GLOBAL_MOUSE_POINT.x, GLOBAL_MOUSE_POINT.y);
+        // endregion
+        // endregion
+
+        // region Current and previous frame monitor settings.
+        this.previousMonitor = this.currentMonitor;
+
+        if (super.focused)
+            this.currentMonitor = Sketch.getGraphicsDeviceAt(this.GLOBAL_MOUSE_POINT);
+
+        final DisplayMode CURRENT_MON_MODE = this.currentMonitor.getDisplayMode();
+        super.displayWidth = CURRENT_MON_MODE.getWidth();
+        super.displayHeight = CURRENT_MON_MODE.getHeight();
+        // endregion
 
         // region Apply the camera!:
         if (this.currentCamera != null)
@@ -678,6 +708,17 @@ public class Sketch extends PApplet {
         this.q3y = this.cy + this.qy;
     }
 
+    // region Get monitor info.
+    public GraphicsDevice getCurrentMonitor() {
+        return this.currentMonitor;
+    }
+
+    public GraphicsDevice getPreviousMonitor() {
+        return this.previousMonitor;
+    }
+    // endregion
+
+    // region Unprojection.
     public void unprojectMouse() {
         if (this.currentCamera == null)
             return;
@@ -687,10 +728,10 @@ public class Sketch extends PApplet {
         this.currentCamera.applyMatrix();
 
         // Unproject:
-        this.unprojector.captureViewMatrix((PGraphics3D) g);
+        this.UNPROJECTOR.captureViewMatrix((PGraphics3D) g);
         // `0.9f`: at the near clipping plane.
         // `0.9999f`: at the far clipping plane.
-        this.unprojector.gluUnProject(
+        this.UNPROJECTOR.gluUnProject(
                 super.mouseX, super.height - super.mouseY,
                 // 0.9f + map(mouseY, height, 0, 0, 0.1f),
                 0, this.mouse);
@@ -760,7 +801,9 @@ public class Sketch extends PApplet {
          * }
          */
     }
+    // endregion
 
+    // region Window queries.
     public void centerWindow() {
         this.updateRatios(); // You called this function when the window changed its size or position, right?
         // Remember: computers with multiple displays exist! We shouldn't cache this:
@@ -858,29 +901,46 @@ public class Sketch extends PApplet {
         }
     }
 
-    // region Overloads for `getPathToRootFrom()`.
-    public static String getPathToRootFrom(File p_path) {
-        return getPathToRootFrom(p_path.getAbsolutePath());
+    // I tried the 3rd-to-last method in
+    // [https://stackoverflow.com/a/21592711/13951505],
+    // but [https://stackoverflow.com/a/1248865/13951505] was what worked.
+    // And yes, I modified it.
+    public static GraphicsDevice getGraphicsDeviceAt(Point p_pos) {
+        for (GraphicsDevice d : Sketch.JAVA_SCREENS)
+            for (GraphicsConfiguration c : d.getConfigurations())
+                if (c.getBounds().contains(p_pos))
+                    return d;
+
+        // If the point is outside all monitors, default to the default monitor!:
+        return Sketch.DEFAULT_JAVA_SCREEN;
     }
+    // endregion
 
-    public static String getPathToRootFrom(String p_path) {
-        final int PATH_LEN = p_path.length(), LAST_CHAR_ID = PATH_LEN - 1;
-        StringBuilder toRetBuilder = new StringBuilder();
-
-        if (p_path.charAt(LAST_CHAR_ID) != File.separatorChar)
-            toRetBuilder.append(File.separator);
-
-        for (int i = 0; i < PATH_LEN; i++) {
-            final char C = p_path.charAt(i);
-
-            if (C == File.separatorChar) {
-                toRetBuilder.append("..");
-                toRetBuilder.append(File.separatorChar);
-            }
-        }
-
-        return toRetBuilder.toString();
-    }
+    // region [DEPRECATED] Overloads for `getPathToRootFrom()`.
+    /*
+     * public static String getPathToRootFrom(File p_path) {
+     * return getPathToRootFrom(p_path.getAbsolutePath());
+     * }
+     * 
+     * public static String getPathToRootFrom(String p_path) {
+     * final int PATH_LEN = p_path.length(), LAST_CHAR_ID = PATH_LEN - 1;
+     * StringBuilder toRetBuilder = new StringBuilder();
+     * 
+     * if (p_path.charAt(LAST_CHAR_ID) != File.separatorChar)
+     * toRetBuilder.append(File.separator);
+     * 
+     * for (int i = 0; i < PATH_LEN; i++) {
+     * final char C = p_path.charAt(i);
+     * 
+     * if (C == File.separatorChar) {
+     * toRetBuilder.append("..");
+     * toRetBuilder.append(File.separatorChar);
+     * }
+     * }
+     * 
+     * return toRetBuilder.toString();
+     * }
+     */
     // endregion
 
     // region Drawing utilities!
