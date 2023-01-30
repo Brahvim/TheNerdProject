@@ -1163,22 +1163,22 @@ public class Sketch extends PApplet {
     public void alphaBg(int p_color) {
         super.pushStyle();
         super.fill(p_color);
-        this.alphaBgRect();
+        this.alphaBgImplRect();
     }
 
     public void alphaBg(float p_grey, float p_alpha) {
         super.pushStyle();
         super.fill(p_grey, p_alpha);
-        this.alphaBgRect();
+        this.alphaBgImplRect();
     }
 
     public void alphaBg(float p_red, float p_green, float p_blue, float p_alpha) {
         super.pushStyle();
         super.fill(p_red, p_green, p_blue, p_alpha);
-        this.alphaBgRect();
+        this.alphaBgImplRect();
     }
 
-    private void alphaBgRect() {
+    private void alphaBgImplRect() {
         super.rectMode(PConstants.CORNER);
         super.rect(0, 0, super.width, super.height);
         super.popStyle();

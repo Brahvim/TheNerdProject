@@ -9,6 +9,9 @@ public class TestScene2 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
+        SKETCH.currentCamera.resetCamParams();
+        SKETCH.currentCamera.resetSettings();
+
         this.boxHorizWave = new SineWave(SKETCH, 100 / 60_000.0f);
         this.boxHorizWave.start();
 
@@ -17,20 +20,18 @@ public class TestScene2 extends NerdScene {
     }
 
     @Override
-    protected synchronized void preload() {
-        System.out.println("TestScene2.preload()");
-    }
-
-    @Override
     protected void draw() {
-        SKETCH.in2d(() -> SKETCH.alphaBg(0, 102, 153, 100));
-        // SKETCH.background(0x006699);
+        SKETCH.background(0x006699);
+        // SKETCH.in2d(() -> SKETCH.alphaBg(0, 102, 153, 0));
 
         // if (SKETCH.frameCount % 150 == 0)
         // System.out.println(SKETCH.frameRate);
 
+        SKETCH.translate(SKETCH.mouse.x, SKETCH.mouse.y);
         SKETCH.translate(SKETCH.cx, SKETCH.cy);
         SKETCH.text("Scene `2`!", 0, 0);
+
+        System.out.println(SKETCH.modelX(0, 0, 0));
 
         // region Translation.
         // SKETCH.currentCamera.center.z = this.boxHorizWave.get() * SKETCH.qx -
@@ -46,9 +47,9 @@ public class TestScene2 extends NerdScene {
         // SKETCH.currentCamera.pos.y = this.boxVertWave.get() * SKETCH.qy;
         // endregion
 
-        SKETCH.translate(
-                this.boxHorizWave.get() * SKETCH.qx,
-                this.boxVertWave.get() * SKETCH.qy, 0);
+        // SKETCH.translate(
+        // this.boxHorizWave.get() * SKETCH.qx,
+        // this.boxVertWave.get() * SKETCH.qy, 0);
         SKETCH.box(45);
     }
 
@@ -56,4 +57,5 @@ public class TestScene2 extends NerdScene {
     public void mouseClicked() {
         MANAGER.startScene(TestScene1.class);
     }
+
 }

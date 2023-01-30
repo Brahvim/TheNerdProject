@@ -155,9 +155,6 @@ public class SineWave {
         // System.out.println(this.endTime);
     }
 
-    /**
-     * Method to put the wave at given angle in given time.
-     */
     public SineWave endWhenAngleIs(float p_angle, float p_before) {
         this.endWhenAngleIs(p_angle);
 
@@ -175,9 +172,14 @@ public class SineWave {
     }
 
     public SineWave extendEndByAngle(float p_angle) {
-        this.endTime += 0.9f *
-                Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) / this.freqMult)
-                - this.endTime;
+        // ..here from, ChatGPT...
+        float time = (p_angle / (2 * PConstants.PI * this.freqMult)) / this.freq;
+        this.endTime += time * 1000;
+
+        // this.endTime += 0.9f *
+        // Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) /
+        // this.freqMult)
+        // - this.endTime;
         return this;
 
         // this.endTime += (p_angle * (p_angle * this.freqMult) - this.angleOffset);
