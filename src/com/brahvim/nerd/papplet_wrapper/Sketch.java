@@ -29,6 +29,7 @@ import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.math.Unprojector;
+import com.brahvim.nerd.math.timing.MillisTimer;
 import com.brahvim.nerd.processing_wrappers.NerdCam;
 import com.brahvim.nerd.processing_wrappers.NerdCameraBuilder;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -47,9 +48,9 @@ import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
 
-    // region Listener interfaces and abstract classes.
+    // region Event listener interfaces and abstract classes.
     @FunctionalInterface
-    public interface SketchInsideListener {
+    public static interface SketchInsideListener {
         public void listen(Sketch p_sketch);
     }
 

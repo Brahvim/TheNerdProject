@@ -1,4 +1,4 @@
-package com.brahvim.nerd.math;
+package com.brahvim.nerd.math.timing;
 
 public class MillisTimer {
     private boolean active;
@@ -8,6 +8,7 @@ public class MillisTimer {
         this.restart();
     }
 
+    // region State manipulation!
     public void stop() {
         this.active = false;
         this.endTime = System.currentTimeMillis();
@@ -17,6 +18,7 @@ public class MillisTimer {
         this.active = true;
         this.startTime = System.currentTimeMillis();
     }
+    // endregion
 
     // region Duration getters.
     public long get() {

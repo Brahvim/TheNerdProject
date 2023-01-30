@@ -30,17 +30,22 @@ public class App {
                 .setTitle("The Nerd Project")
                 .startFullscreen()
                 .canResize()
+
+                // ...apparently these listeners take literally `0` millseconds to finish
+                // calling! They're much faster, actually! That `0` millisecond time included
+                // starting and stopping a `MillisTimer`!
+
                 .onSketchConstructed((s) -> {
                     System.out.println(s.STRINGS.get("Meta.onConstruct"));
 
                     // These work too - commenting them out so they don't clog-the-log!:
                     // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
                     // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
-                })
-                .build(p_args);
+                }).build(p_args);
         // endregion
 
         App.startTickThread();
+
     }
 
     public Sketch getSketchInstance() {
