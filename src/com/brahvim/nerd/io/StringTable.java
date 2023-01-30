@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class StringTable {
@@ -53,7 +54,7 @@ public class StringTable {
 
         try (FileReader fileReader = new FileReader(this.file);
                 BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-            String section = null;
+            String section = null, propertyName = null;
             StringBuilder content = new StringBuilder(), parsedContent = new StringBuilder();
             int firstQuotePosPlusOne = 0, lineLen = 0, lineLenMinusOne = 0,
                     delimiterCharPos = 0, lastQuotePos = 0, eqPos = 0;
@@ -87,6 +88,7 @@ public class StringTable {
 
                     // Find where the `=` sign is!:
                     eqPos = line.indexOf('=');
+                    propertyName = line.substring(0, eqPos);
 
                     // Finding an index since some people might prefer
                     // putting spaces between the property name and `=`:
@@ -95,7 +97,7 @@ public class StringTable {
 
                 // Find a `"` symbol *without* a `\` before it:
                 lastQuotePos = lineLen; // We assume it's at the end.
-                // isMultiLine = true; // We also assume this till we find proof!
+                isMultiLine = true; // We also assume this till we find proof!
 
                 // region Find the quote that ends the property's value.
                 // Go backwards through the string. When you see the first double-quote
@@ -107,7 +109,7 @@ public class StringTable {
                         if (line.charAt(i - 1) != '\\') {
                             // ...then it must be the quote marking the end of the property definition!
                             lastQuotePos = i;
-                            // isMultiLine = false;
+                            isMultiLine = false;
                             break;
                         }
                     }
@@ -117,8 +119,8 @@ public class StringTable {
                 content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
 
                 // Do not perform any parsing or saving. We need to finish scanning this value!
-                // if (isMultiLine)
-                // continue;
+                if (isMultiLine)
+                    continue;
 
                 // `parsedContent` will experience changes according to delimiters:
                 parsedContent.delete(0, parsedContent.length());
@@ -155,7 +157,7 @@ public class StringTable {
                 }
                 // endregion
 
-                // region Parse out backslashes!:
+                // region Parse out backslashes last! This is better:
                 while ((delimiterCharPos = parsedContent.indexOf("\\\\")) != -1) {
                     if (parsedContent.charAt(delimiterCharPos - 1) == 0)
                         ;
@@ -170,14 +172,14 @@ public class StringTable {
                 synchronized (this.TABLE) {
                     // Format: `SectionName.propertyName`:
                     this.TABLE.put(
-                            section.concat(".").concat(line.substring(0, eqPos)),
+                            section.concat(".").concat(propertyName),
                             parsedContent.toString());
                 }
                 // endregion
 
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.printf("""
                     Failed to parse string table in file: `%s`.
                     """, this.file.getAbsolutePath());
