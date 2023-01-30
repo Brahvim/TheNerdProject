@@ -153,7 +153,13 @@ public class Sketch extends PApplet {
     }
 
     public CallbackOrder PRE_CALLBACK_ORDER = CallbackOrder.SCENE;
+
+    /**
+     * Ignored when using {@link PConstants.P2D} or {@link PConstants.P3D}
+     * as the renderer.
+     */
     public CallbackOrder DRAW_CALLBACK_ORDER = CallbackOrder.LAYER;
+
     public CallbackOrder POST_CALLBACK_ORDER = CallbackOrder.LAYER;
     // endregion
 
@@ -331,7 +337,7 @@ public class Sketch extends PApplet {
         }
         // endregion
 
-        p_key.sketchConstructedListener.listen(this);
+        p_key.sketchconstructedListener.listen(this);
     }
 
     @Override

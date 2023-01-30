@@ -22,7 +22,7 @@ public final class SketchBuilder {
                 cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 
         public Sketch.SketchInsideListener exitListener, setupListener, disposalListener,
-                sketchConstructedListener;
+                sketchconstructedListener;
 
         // region Stuff that isn't a field.
         private SketchKey() {
@@ -90,9 +90,9 @@ public final class SketchBuilder {
     }
     // endregion
 
-    // region `on()`.
-    public SketchBuilder onSketchConstructed(Sketch.SketchInsideListener p_sketchConstructedListener) {
-        this.SKETCH_KEY.sketchConstructedListener = p_sketchConstructedListener;
+    // region `onSketchEvent()`.
+    public SketchBuilder onSketchConstructed(Sketch.SketchInsideListener p_constructionListener) {
+        this.SKETCH_KEY.sketchconstructedListener = p_constructionListener;
         return this;
     }
 
@@ -113,6 +113,8 @@ public final class SketchBuilder {
     // endregion
 
     // region `set()`.
+    // region Window settings!
+    // region Dimensions.
     public SketchBuilder setWidth(int p_width) {
         this.SKETCH_KEY.width = p_width;
         return this;
@@ -122,11 +124,13 @@ public final class SketchBuilder {
         this.SKETCH_KEY.height = p_height;
         return this;
     }
+    // endregion
 
     public SketchBuilder setTitle(String p_name) {
         this.SKETCH_KEY.name = p_name;
         return this;
     }
+    // endregion
 
     public SketchBuilder setStringTablePath(String p_path) {
         this.SKETCH_KEY.stringTablePath = p_path;

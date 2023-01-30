@@ -354,13 +354,14 @@ public class NerdScene implements InputEventHandling {
 
   /* package */ void runDraw() {
     // this.verifyKey(p_sceneKey);
+
     if (this.SKETCH.DRAW_CALLBACK_ORDER == null)
       throw new NullPointerException("`Sketch::DRAW_CALLBACK_ORDER` cannot be `null`.");
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.SKETCH.PRE_CALLBACK_ORDER) {
+    switch (this.SKETCH.DRAW_CALLBACK_ORDER) {
       case SCENE -> {
         this.SKETCH.pushMatrix();
         this.SKETCH.pushStyle();
