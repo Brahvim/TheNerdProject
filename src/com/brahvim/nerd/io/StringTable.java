@@ -1,11 +1,10 @@
 package com.brahvim.nerd.io;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
+
+import processing.core.PApplet;
+import processing.data.JSONObject;
 
 public class StringTable {
     // ...I guess these tables should be specific to each scene.
@@ -13,20 +12,39 @@ public class StringTable {
     // String tables exist for making it easy for TRANSLATORS to work with them.
     // Use a file!
 
-    // TODO: Multiline strings! Please! Please add them!
-    // TODO PS That backslash converter is not acting correctly either.
-
-    // NOTTODO: Declare this `public`, and try to save a modified table!
-    // ..and please try not to mess up the file's comments...
-    private final HashMap<String, String> TABLE = new HashMap<>();
+    // region Fields.
     private File file;
+    private JSONObject json;
+    private String langauge;
+    // endregion
 
     // region Constructors.
+    public StringTable(File p_file, String p_lang) throws FileNotFoundException {
+        this.file = p_file;
+        this.langauge = p_lang;
+
+        if (this.file == null)
+            throw new NullPointerException("`StringTable`s cannot use `null` `File`s!");
+
+        if (this.langauge == null)
+            throw new NullPointerException(
+                    "`StringTable`s cannot use `null` for language identifier `String`!");
+
+        this.refresh();
+    }
+
+    public StringTable(String p_filePath, String p_lang) throws FileNotFoundException {
+        this(new File(p_filePath), p_lang);
+    }
+
     public StringTable(File p_file) throws FileNotFoundException {
         this.file = p_file;
+        this.langauge = "en";
 
-        if (this.file != null)
-            this.refresh();
+        if (this.file == null)
+            throw new NullPointerException("`StringTable`s cannot use `null` `File`s!");
+
+        this.refresh();
     }
 
     public StringTable(String p_filePath) throws FileNotFoundException {
@@ -34,181 +52,96 @@ public class StringTable {
     }
     // endregion
 
+    // region Language settings.
+    public void setLanguage(String p_lang) {
+        this.langauge = p_lang;
+    }
+
+    public void getLanguage(String p_lang) {
+        this.langauge = p_lang;
+    }
+    // endregion
+
+    // region `refresh()` overloads.
     public void refresh(File p_file) throws FileNotFoundException {
-        // This check should still be run.
-        // The purpose behind calling `refresh()` *is*
-        // to reflect upon changes in the file.
-        if (!p_file.exists()) {
-            System.out.printf("""
-                    No string table file `%s` exists.
-                    """, this.file.getAbsolutePath());
-        }
+        if (p_file == null)
+            throw new NullPointerException(
+                    "`StringTable::refresh(File)` cannot take a `null` `File`!");
 
         this.file = p_file;
-        this.refresh(this.file);
+        this.refresh();
     }
 
     // Actual implementation:
     public void refresh() throws FileNotFoundException {
-        this.TABLE.clear();
+        // This check should be run.
+        // The purpose behind calling `refresh()` *is*
+        // to reflect upon changes in the file.
 
-        try (FileReader fileReader = new FileReader(this.file);
-                BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-            String section = null;
-            StringBuilder content = new StringBuilder(), parsedContent = new StringBuilder();
-            int firstQuotePosPlusOne = 0, lineLen = 0, lineLenMinusOne = 0,
-                    delimiterCharPos = 0, lastQuotePos = 0, eqPos = 0;
-            boolean isMultiLine = false;
-
-            // Remember that this loop goes through EACH LINE!
-            // Not each *character!* :joy::
-            for (String line; (line = bufferedReader.readLine()) != null;) {
-                lineLen = line.length();
-                lineLenMinusOne = lineLen - 1;
-
-                if (!isMultiLine) {
-                    content.delete(0, content.length());
-
-                    // region Cases demanding skipping this iteration.
-                    // Leave empty lines alone!:
-                    if (line.isBlank())
-                        continue;
-
-                    // Skipping comments and registering sections,
-                    // and even this iteration if they exist:
-                    switch (line.charAt(0)) {
-                        case ';': // Semicolons are also comments in INI files, apparently!
-                        case '#':
-                            continue;
-                        case '[':
-                            section = line.substring(1, line.indexOf(']'));
-                            continue;
-                    }
-                    // endregion
-
-                    // Find where the `=` sign is!:
-                    eqPos = line.indexOf('=');
-
-                    // Finding an index since some people might prefer
-                    // putting spaces between the property name and `=`:
-                    firstQuotePosPlusOne = line.indexOf('"', eqPos);
-                }
-
-                // Find a `"` symbol *without* a `\` before it:
-                lastQuotePos = lineLen; // We assume it's at the end.
-                // isMultiLine = true; // We also assume this till we find proof!
-
-                // region Find the quote that ends the property's value.
-                // Go backwards through the string. When you see the first double-quote
-                // character, stop!:
-                for (int i = lineLenMinusOne; i != firstQuotePosPlusOne; i--) {
-                    // If the character you currently see is a double-quote,
-                    if (line.charAt(i) == '"') {
-                        // ...and the character *before* it isn't a backslash,
-                        if (line.charAt(i - 1) != '\\') {
-                            // ...then it must be the quote marking the end of the property definition!
-                            lastQuotePos = i;
-                            // isMultiLine = false;
-                            break;
-                        }
-                    }
-                }
-                // endregion
-
-                content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
-
-                // Do not perform any parsing or saving. We need to finish scanning this value!
-                // if (isMultiLine)
-                // continue;
-
-                // `parsedContent` will experience changes according to delimiters:
-                parsedContent.delete(0, parsedContent.length());
-                parsedContent.append(content);
-
-                // region Parse out `\n`s!:
-                while ((delimiterCharPos = parsedContent.indexOf("\\n")) != -1) {
-                    // Causes an infinite loop:
-                    // if (parsedContent.charAt(newLineCharPos - 1) == '\\')
-                    // continue;
-
-                    // Better solution:
-
-                    // Remove the `\n`:
-                    for (int i = 0; i < 2; i++)
-                        parsedContent.deleteCharAt(delimiterCharPos);
-
-                    // Insert a real one in its place:
-                    parsedContent.insert(delimiterCharPos, '\n');
-                }
-
-                // if (content.contains("<br>"))
-                // content = content.replace("\\\\n", App.NEWLINE);
-                // endregion
-
-                // region Parse out `\t`s!:
-                while ((delimiterCharPos = parsedContent.indexOf("\\t")) != -1) {
-                    // Remove the `\t`:
-                    for (int i = 0; i < 2; i++)
-                        parsedContent.deleteCharAt(delimiterCharPos);
-
-                    // Insert a real one in its place:
-                    parsedContent.insert(delimiterCharPos, '\t');
-                }
-                // endregion
-
-                // region Parse out backslashes!:
-                while ((delimiterCharPos = parsedContent.indexOf("\\\\")) != -1) {
-                    if (parsedContent.charAt(delimiterCharPos - 1) == 0)
-                        ;
-
-                    // Remove one of the backslashes. This gives us a single backslash,
-                    // which is what we need:
-                    parsedContent.deleteCharAt(delimiterCharPos);
-                }
-                // endregion
-
-                // region ...put `parsedContent` into the map (while the map is locked)!
-                synchronized (this.TABLE) {
-                    // Format: `SectionName.propertyName`:
-                    this.TABLE.put(
-                            section.concat(".").concat(line.substring(0, eqPos)),
-                            parsedContent.toString());
-                }
-                // endregion
-
-            }
-
-        } catch (Exception e) {
-            System.out.printf("""
-                    Failed to parse string table in file: `%s`.
-                    """, this.file.getAbsolutePath());
-            e.printStackTrace();
+        if (!this.file.exists()) {
+            throw new FileNotFoundException(
+                    "No string table file `"
+                            + this.file.getAbsolutePath()
+                            + "` exists.");
         }
 
+        this.json = PApplet.loadJSONObject(this.file);
     }
+    // endregion
 
+    // region `getString()` overloads.
     public String getString(String p_key) {
-        String ret = null;
+        // Split all the keys!
+        final String[] KEYS = PApplet.split(p_key, '.');
 
-        synchronized (this.TABLE) {
-            ret = this.TABLE.get(p_key);
+        // The last index of an array, is `1` less than its length.
+        // To get the last object, the loop should exit when `i` is `KEYS.length - 1`,
+        // because the object that deep in the JSON tree would be the one holding a
+        // string for every language.
+        final int STRING_HOLDER_ID = KEYS.length - 1;
+        JSONObject lastObject = null;
+
+        // Iterate till we see this 'holder' object,
+        for (int i = 0; i != STRING_HOLDER_ID; i++) {
+            synchronized (this.json) {
+                lastObject = this.json.getJSONObject(KEYS[i]);
+            }
         }
 
-        if (ret == null) {
-            System.err.printf("""
-                    String table key `%s` not found!
-                    \tDid you make some syntactical errors in there?
-                    """, p_key);
+        // ...get the string of the specified langauge!
+        String toRet = null;
+        synchronized (this.json) {
+            toRet = lastObject.getString(this.langauge);
+        }
+
+        if (toRet == null) {
+            System.err.printf("`StringTable` key `%s` not found!", p_key);
             return "";
         }
 
-        return ret;
+        return toRet;
     }
 
     public String getString(String p_key, String p_default) {
-        synchronized (this.TABLE) {
-            return this.TABLE.getOrDefault(p_key, p_default);
-        }
+        String toRet = this.getString(p_key);
+        return toRet == null ? p_default : toRet;
+    }
+    // endregion
+
+    // region `getStringArray()` overloads.
+    /*
+     * public String[] getStringArray(String p_key) {
+     * return null;
+     * }
+     * 
+     * public String[] getStringArray(String p_key, String[] p_default) {
+     * return p_default;
+     * }
+     */
+    // endregion
+
+    public JSONObject getUnderlyingJSON() {
+        return this.json;
     }
 
 }

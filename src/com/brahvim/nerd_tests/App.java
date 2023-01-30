@@ -20,7 +20,7 @@ public class App {
         // region Building the `Sketch`!
         App.sketchInstance = new SketchBuilder()
                 .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
-                .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.ini")
+                .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.json")
                 .setIconPath("data/sunglass_nerd.png")
                 // .setFirstScene(TestScene1.class)
                 .setTitle("The Nerd Project")

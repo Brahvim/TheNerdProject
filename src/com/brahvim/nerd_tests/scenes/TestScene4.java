@@ -40,7 +40,6 @@ public class TestScene4 extends NerdScene {
     @Override
     protected void setup() {
         System.out.println("TestScene4.setup(), " + SCENE.timesSceneWasLoaded());
-        System.out.println(SKETCH.STRINGS.getString("SectionName.propertyName"));
 
         if (SCENE.timesSceneWasLoaded() == 0) {
             SKETCH.fullscreen = false;
