@@ -331,7 +331,7 @@ public class Sketch extends PApplet {
         }
         // endregion
 
-        p_key.constructorListener.listen(this);
+        p_key.sketchConstructedListener.listen(this);
     }
 
     @Override

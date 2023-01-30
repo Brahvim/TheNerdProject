@@ -2,6 +2,7 @@ package com.brahvim.nerd_tests;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuilder;
+import com.brahvim.nerd_tests.scenes.TestScene1;
 
 public class App {
 
@@ -19,17 +20,19 @@ public class App {
 
         // region Building the `Sketch`!
         App.sketchInstance = new SketchBuilder()
-                .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
+                // .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
                 .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.json")
                 .setIconPath("data/sunglass_nerd.png")
-                // .setFirstScene(TestScene1.class)
+                .setFirstScene(TestScene1.class)
                 .setTitle("The Nerd Project")
                 .startFullscreen()
                 .canResize()
-                .onSketchConstruction((s) -> {
+                .onSketchConstructed((s) -> {
                     System.out.println(s.STRINGS.get("Meta.onConstruct"));
+
+                    // These work too - commenting them out so they don't clog-the-log!
                     // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
-                    System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
+                    // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
                 })
                 .build(p_args);
         // endregion

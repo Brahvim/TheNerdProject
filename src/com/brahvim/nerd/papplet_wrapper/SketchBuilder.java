@@ -22,7 +22,7 @@ public final class SketchBuilder {
                 cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 
         public Sketch.SketchInsideListener exitListener, setupListener, disposalListener,
-                constructorListener;
+                sketchConstructedListener;
 
         // region Stuff that isn't a field.
         private SketchKey() {
@@ -91,8 +91,8 @@ public final class SketchBuilder {
     // endregion
 
     // region `on()`.
-    public SketchBuilder onSketchConstruction(Sketch.SketchInsideListener p_constructionListener) {
-        this.SKETCH_KEY.constructorListener = p_constructionListener;
+    public SketchBuilder onSketchConstructed(Sketch.SketchInsideListener p_sketchConstructedListener) {
+        this.SKETCH_KEY.sketchConstructedListener = p_sketchConstructedListener;
         return this;
     }
 

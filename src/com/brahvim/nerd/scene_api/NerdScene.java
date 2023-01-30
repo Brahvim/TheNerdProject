@@ -15,8 +15,6 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
  * <h2>Do not use as an anonymous class!</h2>
  * <i>Always extend!</i>
  */
-// * The {@link PApplet} you passed into your
-// * {@link SceneManager} is what you get! :)
 
 public class NerdScene implements InputEventHandling {
 
@@ -380,6 +378,7 @@ public class NerdScene implements InputEventHandling {
               this.SKETCH.popMatrix();
             }
       }
+
       case LAYER -> {
         for (NerdLayer l : this.LAYERS)
           if (l != null)
@@ -398,6 +397,7 @@ public class NerdScene implements InputEventHandling {
         this.SKETCH.popMatrix();
       }
     }
+
   }
 
   /* package */ void runPost() {
