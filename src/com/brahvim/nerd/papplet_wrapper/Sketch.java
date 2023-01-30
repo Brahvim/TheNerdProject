@@ -916,31 +916,55 @@ public class Sketch extends PApplet {
     }
     // endregion
 
+    // region File system utlities.
+    public static String fromExecDir(String p_path) {
+        return Sketch.EXEC_DIR_PATH + p_path;
+    }
+
+    public static String fromDataDir(String p_path) {
+        return Sketch.DATA_DIR_PATH + p_path;
+    }
+
     // region [DEPRECATED] Overloads for `getPathToRootFrom()`.
-    /*
-     * public static String getPathToRootFrom(File p_path) {
-     * return getPathToRootFrom(p_path.getAbsolutePath());
-     * }
-     * 
-     * public static String getPathToRootFrom(String p_path) {
-     * final int PATH_LEN = p_path.length(), LAST_CHAR_ID = PATH_LEN - 1;
-     * StringBuilder toRetBuilder = new StringBuilder();
-     * 
-     * if (p_path.charAt(LAST_CHAR_ID) != File.separatorChar)
-     * toRetBuilder.append(File.separator);
-     * 
-     * for (int i = 0; i < PATH_LEN; i++) {
-     * final char C = p_path.charAt(i);
-     * 
-     * if (C == File.separatorChar) {
-     * toRetBuilder.append("..");
-     * toRetBuilder.append(File.separatorChar);
-     * }
-     * }
-     * 
-     * return toRetBuilder.toString();
-     * }
+    /**
+     * @deprecatedIneffective when using with {@link PApplet}'s "{@code load()}"
+     *                        methods. Also, all of these methods have some method
+     *                        of accessing files from outside the sketch's data
+     *                        folder! <b>Please also see {@code PApplet}'s
+     *                        {@code static} methods</b>
      */
+    @Deprecated
+    public static String getPathToRootFrom(File p_path) {
+        return getPathToRootFrom(p_path.getAbsolutePath());
+    }
+
+    /**
+     * @deprecatedIneffective when using with {@link PApplet}'s "{@code load()}"
+     *                        methods. Also, all of these methods have some method
+     *                        of accessing files from outside the sketch's data
+     *                        folder! <b>Please also see {@code PApplet}'s
+     *                        {@code static} methods</b>
+     */
+    @Deprecated
+    public static String getPathToRootFrom(String p_path) {
+        final int PATH_LEN = p_path.length(), LAST_CHAR_ID = PATH_LEN - 1;
+        StringBuilder toRetBuilder = new StringBuilder();
+
+        if (p_path.charAt(LAST_CHAR_ID) != File.separatorChar)
+            toRetBuilder.append(File.separator);
+
+        for (int i = 0; i < PATH_LEN; i++) {
+            final char C = p_path.charAt(i);
+
+            if (C == File.separatorChar) {
+                toRetBuilder.append("..");
+                toRetBuilder.append(File.separatorChar);
+            }
+        }
+
+        return toRetBuilder.toString();
+    }
+    // endregion
     // endregion
 
     // region Drawing utilities!

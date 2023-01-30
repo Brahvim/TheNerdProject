@@ -3,6 +3,9 @@ package com.brahvim.nerd_tests;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd_tests.scenes.TestScene1;
+import com.brahvim.nerd_tests.scenes.TestScene2;
+import com.brahvim.nerd_tests.scenes.TestScene3;
+import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
 
@@ -21,7 +24,7 @@ public class App {
         // region Building the `Sketch`!
         App.sketchInstance = new NerdSketchBuilder()
                 .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
-                .setStringTablePath(Sketch.DATA_DIR_PATH + "Nerd_StringTable.json")
+                .setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))
                 .setIconPath("data/sunglass_nerd.png")
                 // .setFirstScene(TestScene1.class)
                 .setTitle("The Nerd Project")
@@ -30,7 +33,7 @@ public class App {
                 .onSketchConstructed((s) -> {
                     System.out.println(s.STRINGS.get("Meta.onConstruct"));
 
-                    // These work too - commenting them out so they don't clog-the-log!
+                    // These work too - commenting them out so they don't clog-the-log!:
                     // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
                     // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
                 })
