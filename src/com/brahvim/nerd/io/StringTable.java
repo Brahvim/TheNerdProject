@@ -58,7 +58,7 @@ public class StringTable {
             StringBuilder content = new StringBuilder(), parsedContent = new StringBuilder();
             int firstQuotePosPlusOne = 0, lineLen = 0, lineLenMinusOne = 0,
                     delimiterCharPos = 0, lastQuotePos = 0, eqPos = 0;
-            boolean valueIsMultiLine = false;
+            boolean valueIsMultiLine = false, previousLineWasPartOfValue = false;
 
             // Remember that this loop goes through EACH LINE!
             // Not each *character!* :joy::
@@ -66,8 +66,9 @@ public class StringTable {
                 lineLen = line.length();
                 lineLenMinusOne = lineLen - 1;
 
-                // region Cases demanding skipping this iteration.
-                // Leave empty lines alone!:
+                // Following, are cases demanding skipping this iteration:
+
+                // Skip over empty lines:
                 if (line.isBlank())
                     continue;
 
@@ -84,21 +85,31 @@ public class StringTable {
                             section = line.substring(1, line.indexOf(']'));
                             continue;
                     }
-                    // endregion
 
-                    // Find where the `=` sign is!:
-                    eqPos = line.indexOf('=');
-                    propertyName = line.substring(0, eqPos);
-
-                    // Finding an index since some people might prefer
-                    // putting spaces between the property name and `=`:
-                    firstQuotePosPlusOne = line.indexOf('"', eqPos);
-                } else {
-                    firstQuotePosPlusOne = 0;
                 }
+
+                // Find where the `=` sign is!
+                // I don't care if the value is multi-line xD:
+                eqPos = line.indexOf('=');
+
+                // ...but don't derive any property-name :|
+                if (!valueIsMultiLine)
+                    propertyName = line.substring(0, eqPos);
+                // I'm not shifting away this assignment to some other `if` for performance.
+                // Who knows? Night need to modify this parser even more someday :joy:
+
+                // Finding an index since some people might prefer
+                // putting spaces between the property name and `=`:
+                firstQuotePosPlusOne = line.indexOf('"', eqPos);
+
+                // If the value is a multi-liner, the current line of the value won't have a
+                // beginning quote.
+                if (valueIsMultiLine)
+                    firstQuotePosPlusOne = 0;
 
                 // Find a `"` symbol *without* a `\` before it:
                 lastQuotePos = lineLen; // We assume it's at the end.
+                previousLineWasPartOfValue = valueIsMultiLine; // Will use this in just a bit.
                 valueIsMultiLine = true; // We also assume this till we find proof!
 
                 // region Find the quote that ends the property's value.
@@ -121,19 +132,23 @@ public class StringTable {
                 // If the value *is* a multi-liner, don't perform parsing and saving.
                 // We need to finish scanning it!
                 if (valueIsMultiLine) {
-                    content.append(lineLen);
+                    if (previousLineWasPartOfValue)
+                        content.append(line);
+                    else
+                        content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
+
                     String contentString = content.toString();
-                    System.out.println(contentString);
+                    System.out.printf("`contentString`: `%s`.\n", contentString);
                     continue;
                 }
 
                 // If the value isn't a multi-liner, go on!
                 // Parse it, and add it to the map!
 
-                content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
+                content.append(line.substring(firstQuotePosPlusOne, lastQuotePos));
 
                 String contentString = content.toString();
-                System.out.println(contentString);
+                System.out.printf("`contentString`: `%s`.\n", contentString);
 
                 // `parsedContent` will experience changes according to delimiters:
                 parsedContent.delete(0, parsedContent.length());
