@@ -108,29 +108,33 @@ public class SceneManager {
     }
     // endregion
 
-    // TODO: Scene-to-scene data transfer.
     public final AssetManager PERSISTENT_ASSETS;
 
-    // region `private` ~~/ `protected`~~ fields.
+    // region `private` fields.
     /**
      * This {@code HashMap} contains cached data about each {@code NerdScene} class
      * any {@code NerdSceneManager} instance has cached or ran.<br>
      * <br>
+     * 
      * Actual "caching" of a {@code NerdScene} is when its corresponding
-     * {@code SceneCache}'s {@code cachedReference} is not {@code null}.
+     * {@code SceneCache}'s {@code cachedReference} is not {@code null}.<br>
+     * <br>
+     * 
+     * The initial capacity here (`2`) is to aid performance, since, the JIT
+     * does no optimization till the first scene switch. All scene switches after
+     * that the initial should be fast enough!
      */
-
-    // Keep track of what `Sketch`es a manager exists for.
-    // private final static HashSet<? extends Sketch> SKETCHES = new HashSet<>(1);
-    // "Don't let anybody build another!"" <-- Cool idea I'm stupid enough to stop.
-
-    // The initial capacity is `2` here to aid performance, since, till the first
-    // scene switch, the JIT does no optimization. The one after that should be fast
-    // enough.
     private final HashMap<Class<? extends NerdScene>, SceneCache> SCENE_CLASS_TO_CACHE = new HashMap<>(2);
+
     private final SceneManager.SceneManagerSettings SETTINGS;
     private final AssetManKey PERSISTENT_ASSET_MAN_KEY;
     private final Sketch SKETCH;
+
+    // region Notes on some strange (useless? Useful?!) idea.
+    // Keep track of what `Sketch`es a manager exists for.
+    // private final static HashSet<? extends Sketch> SKETCHES = new HashSet<>(1);
+    // "Don't let anybody build another!" <-- ...idea I've stopped.
+    // endregion
 
     // region Sketch Event Listeners.
     @SuppressWarnings("unused")
@@ -361,7 +365,25 @@ public class SceneManager {
     }
     // endregion
 
-    // region Queries.
+    // region [`public`] Getters.
+    public Sketch getSketch() {
+        return this.SKETCH;
+    }
+
+    public NerdScene getCurrentScene() {
+        return this.currScene;
+    }
+
+    public Class<? extends NerdScene> getCurrentSceneClass() {
+        return this.currSceneClass;
+    }
+
+    public Class<? extends NerdScene> getPreviousSceneClass() {
+        return this.prevSceneClass;
+    }
+    // endregion
+
+    // region [`public`] Queries.
     // Older implementation:
     /*
      * @SuppressWarnings("unchecked")
@@ -391,10 +413,10 @@ public class SceneManager {
     }
     // endregion
 
-    // region App workflow callbacks.
-    public void setup() {
+    // region App workflow callbacks. Please don't use these outside any `PApplet`!
+    public void setup(SceneState p_state) {
         if (this.currScene != null)
-            this.setupCurrentScene();
+            this.setupCurrentScene(p_state);
     }
 
     public void pre() {
@@ -417,8 +439,8 @@ public class SceneManager {
     // endregion
 
     // region `Scene`-operations.
-    private boolean givenSceneRanPreload(Class<? extends NerdScene> p_sceneClass) {
-        return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference.hasCompletedPreload();
+    public int timesGivenSceneWasLoaded(Class<? extends NerdScene> p_sceneClass) {
+        return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).timesLoaded;
     }
 
     public void loadSceneAssetsAsync(Class<? extends NerdScene> p_sceneClass) {
@@ -452,34 +474,32 @@ public class SceneManager {
         cache.cachedReference.runPreload();
     }
 
-    private void loadSceneAssets(NerdScene p_scene) {
-        if (p_scene == null)
-            return;
-
-        if (p_scene.hasCompletedPreload())
-            return;
-
-        p_scene.runPreload();
-    }
-
     // region Starting a scene.
     public void restartScene() {
+        this.restartScene(null);
+    }
+
+    public void restartScene(SceneState p_state) {
         if (this.currSceneClass == null)
             return;
 
         // SceneCache data = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
         // NerdScene toUse = this.constructAndCacheScene(data.CONSTRUCTOR);
-        this.startSceneImpl(this.currSceneClass);
+        this.startSceneImpl(this.currSceneClass, p_state);
     }
 
     public void startPreviousScene() {
+        this.startPreviousScene(null);
+    }
+
+    public void startPreviousScene(SceneState p_state) {
         if (this.prevSceneClass == null)
             return;
 
         SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.prevSceneClass);
         NerdScene toUse = this.constructScene(cache.CONSTRUCTOR);
 
-        this.setScene(toUse);
+        this.setScene(toUse, p_state);
     }
 
     // "Cache if not cached" / "Start cached" method.
@@ -500,14 +520,18 @@ public class SceneManager {
      * restored from cache or started again.
      */
     public boolean startScene(Class<? extends NerdScene> p_sceneClass) {
+        return this.startScene(p_sceneClass, null);
+    }
+
+    public boolean startScene(Class<? extends NerdScene> p_sceneClass, SceneState p_state) {
         if (p_sceneClass == null)
             throw new NullPointerException("`SceneManager::startScene()` received `null`.");
 
         if (this.hasCached(p_sceneClass)) {
-            this.setScene(this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference);
+            this.setScene(this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference, p_state);
             return true;
         } else {
-            this.startSceneImpl(p_sceneClass);
+            this.startSceneImpl(p_sceneClass, p_state);
             return false;
         }
 
@@ -524,7 +548,22 @@ public class SceneManager {
     }
     // endregion
 
-    // region Caching.
+    // region `private`-`NerdScene` operations.
+    private boolean givenSceneRanPreload(Class<? extends NerdScene> p_sceneClass) {
+        return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference.hasCompletedPreload();
+    }
+
+    private void loadSceneAssets(NerdScene p_scene) {
+        if (p_scene == null)
+            return;
+
+        if (p_scene.hasCompletedPreload())
+            return;
+
+        p_scene.runPreload();
+    }
+
+    // region (`private`) Caching operations.
     @SuppressWarnings("unused")
     private void ensureCache(Class<? extends NerdScene> p_sceneClass) {
         if (!this.hasCached(p_sceneClass))
@@ -557,7 +596,7 @@ public class SceneManager {
     }
     // endregion
 
-    // region `private` Scene-operations.
+    // region `private` construction-and-setup operations!
     private Constructor<? extends NerdScene> getSceneConstructor(Class<? extends NerdScene> p_sceneClass) {
         Constructor<? extends NerdScene> toRet = null;
 
@@ -616,12 +655,8 @@ public class SceneManager {
         return toRet;
     }
 
-    public int numSceneLoads(Class<? extends NerdScene> p_sceneClass) {
-        return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).timesLoaded;
-    }
-
     // Yes, this checks for errors.
-    private void startSceneImpl(Class<? extends NerdScene> p_sceneClass) {
+    private void startSceneImpl(Class<? extends NerdScene> p_sceneClass, SceneState p_state) {
         Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
 
         NerdScene toStart = this.constructScene(sceneConstructor);
@@ -629,11 +664,11 @@ public class SceneManager {
         if (toStart == null)
             throw new RuntimeException("The scene could not be constructed.");
 
-        this.setScene(toStart);
+        this.setScene(toStart, p_state);
     }
 
     // The scene-deleter!!!
-    private void setScene(NerdScene p_currentScene) {
+    private void setScene(NerdScene p_currentScene, SceneState p_state) {
         // region `this.settings.onSceneSwitch` tasks.
         if (this.SETTINGS.ON_SCENE_SWITCH.doClear)
             this.SKETCH.clear();
@@ -667,11 +702,11 @@ public class SceneManager {
 
         this.currSceneClass = p_currentScene.getClass();
         this.currScene = p_currentScene;
-        this.setupCurrentScene();
+        this.setupCurrentScene(p_state);
     }
 
     // Set the time, *then* call `SceneManager::runSetup()`.
-    private void setupCurrentScene() {
+    private void setupCurrentScene(SceneState p_state) {
         this.loadSceneAssets(this.currScene);
 
         // Helps in resetting style and transformation info across scenes! YAY!:
@@ -680,27 +715,10 @@ public class SceneManager {
 
         this.SKETCH.push();
 
-        this.currScene.runSetup();
+        this.currScene.runSetup(p_state);
     }
     // endregion
     // endregion
-
-    // region Getters.
-    public Sketch getSketch() {
-        return this.SKETCH;
-    }
-
-    public NerdScene getCurrentScene() {
-        return this.currScene;
-    }
-
-    public Class<? extends NerdScene> getCurrentSceneClass() {
-        return this.currSceneClass;
-    }
-
-    public Class<? extends NerdScene> getPreviousSceneClass() {
-        return this.prevSceneClass;
-    }
     // endregion
 
 }

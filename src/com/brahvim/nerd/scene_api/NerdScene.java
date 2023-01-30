@@ -138,7 +138,7 @@ public class NerdScene implements InputEventHandling {
   }
 
   public int timesSceneWasLoaded() {
-    return this.MANAGER.numSceneLoads(this.getClass());
+    return this.MANAGER.timesGivenSceneWasLoaded(this.getClass());
   }
 
   public boolean hasCompletedPreload(/* SceneManager.SceneKey p_key */) {
@@ -316,10 +316,10 @@ public class NerdScene implements InputEventHandling {
     this.donePreloading = true;
   }
 
-  /* package */ void runSetup() {
+  /* package */ void runSetup(SceneState p_state) {
     // this.verifyKey(p_sceneKey);
     this.startMillis = this.SKETCH.millis();
-    this.setup();
+    this.setup(p_state);
 
     // `NerdLayer`s don't get to respond to this `setup()`.
   }
@@ -462,7 +462,7 @@ public class NerdScene implements InputEventHandling {
    * {@link NerdLayer#setup()} is called <i>when a {@link NerdLayer} is set
    * active</i> using {@link NerdLayer#setActive(boolean)}.
    */
-  protected void setup() {
+  protected void setup(SceneState p_state) {
   }
 
   protected void pre() {

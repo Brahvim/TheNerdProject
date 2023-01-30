@@ -2,6 +2,7 @@ package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneState;
 
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -38,7 +39,7 @@ public class TestScene4 extends NerdScene {
     // endregion
 
     @Override
-    protected void setup() {
+    protected void setup(SceneState p_state) {
         System.out.println("TestScene4.setup(), " + SCENE.timesSceneWasLoaded());
 
         if (SCENE.timesSceneWasLoaded() == 0) {

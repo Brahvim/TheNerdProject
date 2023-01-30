@@ -1,6 +1,7 @@
 package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.layers.BackgroundLayer;
 import com.brahvim.nerd_tests.layers.BoxAnimationLayer;
 import com.brahvim.nerd_tests.layers.RevolvingParticlesLayer;
@@ -10,7 +11,7 @@ import processing.core.PConstants;
 
 public class TestScene1 extends NerdScene {
     @Override
-    protected void setup() {
+    protected void setup(SceneState p_state) {
         if (SCENE.timesSceneWasLoaded() == 0)
             SKETCH.centerWindow();
 

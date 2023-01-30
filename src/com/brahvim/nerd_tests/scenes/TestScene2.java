@@ -2,12 +2,13 @@ package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.math.SineWave;
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneState;
 
 public class TestScene2 extends NerdScene {
     private SineWave boxHorizWave, boxVertWave;
 
     @Override
-    protected void setup() {
+    protected void setup(SceneState p_state) {
         this.boxHorizWave = new SineWave(SKETCH, 100 / 60_000.0f);
         this.boxHorizWave.start();
 
