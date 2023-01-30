@@ -2,11 +2,19 @@ package com.brahvim.nerd_tests;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd_tests.scenes.TestScene2;
+import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd_tests.scenes.TestScene6;
 
 public class App {
+    // TODO: Audio? Video! Do some Gradle build stuff to ensure a lower JAR size?
+    // (Oh yes, and LWJGL-OpenAL would be here soon, too!)
 
-    // region `App`'s Fields.
+    private final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
+
+            TestScene6.class;
+    // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
+
+    // region `App`'s other fields.
     public final static int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 
@@ -20,10 +28,9 @@ public class App {
 
         // region Building the `Sketch`!
         App.sketchInstance = new NerdSketchBuilder()
-                // .setFirstScene(LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene())
                 .setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))
                 .setIconPath("data/sunglass_nerd.png")
-                .setFirstScene(TestScene2.class)
+                .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
                 .startFullscreen()
                 .canResize()

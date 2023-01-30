@@ -14,6 +14,13 @@ public abstract class VecUtilsPVector {
         return toRet;
     }
 
+    public static PVector cross(PVector p_a, PVector p_b) {
+        // PVector toRet = new PVector(p_a.x, p_a.y, p_a.z);
+        // toRet.cross(p_b);
+        // return toRet;
+        return PVector.cross(p_b, p_a, null);
+    }
+
     // region `vecLerp()` overloads.
     public static PVector vecLerp(PVector p_from, PVector p_to, float p_lerpAmt) {
         return new PVector(p_from.x + (p_to.x - p_from.x) * p_lerpAmt,

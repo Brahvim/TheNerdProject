@@ -114,9 +114,21 @@ public class NerdCamera {
     }
 
     public void resetCamParams() {
-        this.up.set(this.defaultCamUp);
-        this.pos.set(this.defaultCamPos);
-        this.center.set(this.defaultCamCenter);
+        if (this.defaultCamUp == null)
+            this.up.set(0, 0, 0);
+        else
+            this.up.set(this.defaultCamUp);
+
+        if (this.defaultCamPos == null)
+            this.pos.set(0, 0, 0);
+        else
+            this.pos.set(this.defaultCamPos);
+
+        if (this.defaultCamCenter == null)
+            this.center.set(0, 0, 0);
+        else
+            this.center.set(this.defaultCamCenter);
+
         this.far = NerdCamera.DEFAULT_CAM_FAR;
         this.fov = NerdCamera.DEFAULT_CAM_FOV;
         this.near = NerdCamera.DEFAULT_CAM_NEAR;

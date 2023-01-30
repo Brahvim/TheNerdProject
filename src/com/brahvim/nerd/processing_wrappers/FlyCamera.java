@@ -1,5 +1,6 @@
 package com.brahvim.nerd.processing_wrappers;
 
+import com.brahvim.nerd.math.VecUtilsPVector;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
@@ -105,6 +106,23 @@ public class FlyCamera implements HasNerdCamera {
     }
     // endregion
 
+    // region Methods specific to `FlyCamera`.
+    public void moveX(float p_velX) {
+        this.camAddent.add(
+                VecUtilsPVector.normalize(VecUtilsPVector.cross(
+                        this.camFront, this.CAMERA.up)).mult(p_velX));
+    }
+
+    // TODO: Play around with this and figure the Math out!
+    public void moveY(float p_velY) {
+        this.CAMERA.pos.y += p_velY;
+        this.CAMERA.center.y += p_velY;
+    }
+
+    public void moveZ(float p_velZ) {
+        this.camAddent.add(PVector.mult(this.camFront, p_velZ));
+    }
+
     public void rotateCamera() {
         this.yaw += (this.SKETCH.mouseX - this.SKETCH.pmouseX) * this.sensitivity;
         this.pitch += (this.SKETCH.mouseY - this.SKETCH.pmouseY) * this.sensitivity;
@@ -114,24 +132,29 @@ public class FlyCamera implements HasNerdCamera {
         if (this.pitch < -89)
             this.pitch = -89;
 
-        this.mouseDir.set(0, 0, 0);
-
         this.sinYaw = PApplet.sin(PApplet.radians(this.yaw));
         this.cosYaw = PApplet.cos(PApplet.radians(this.yaw));
 
         this.sinPitch = PApplet.sin(PApplet.radians(this.pitch));
         this.cosPitch = PApplet.cos(PApplet.radians(this.pitch));
 
+        this.mouseDir.set(0, 0, 0);
+
         this.mouseDir.x = this.cosYaw * this.cosPitch;
         this.mouseDir.y = this.sinPitch;
         this.mouseDir.z = this.sinYaw * this.cosPitch;
 
         this.camFront.set(this.mouseDir.normalize());
+        this.CAMERA.pos.add(this.camAddent);
+        this.CAMERA.center.add(this.camFront);
+
+        this.camAddent.set(0, 0, 0);
     }
 
     public void setScript(NerdCamera.Script p_script) {
         this.CAMERA.script = p_script;
     }
+    // endregion
 
     @Override
     public NerdCamera getNerdCamera() {
