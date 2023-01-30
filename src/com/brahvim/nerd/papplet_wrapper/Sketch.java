@@ -204,7 +204,6 @@ public class Sketch extends PApplet {
     public final Sketch SKETCH;
     public final String RENDERER;
     public final StringTable STRINGS;
-    public final NerdCamera DEFAULT_CAMERA;
     public final int INIT_WIDTH, INIT_HEIGHT;
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
@@ -297,11 +296,16 @@ public class Sketch extends PApplet {
             this.POST_CALLBACK_ORDER = p_key.postCallOrder;
         // endregion
 
+        // region Assigning listeners.
+        this.EXIT_LISTENER = p_key.exitListener;
+        this.SETUP_LISTENER = p_key.setupListener;
+        this.DISPOSAL_LISTENER = p_key.disposalListener;
+        // endregion
+
         this.SKETCH = this;
         this.NAME = p_key.name;
         this.ICON_PATH = p_key.iconPath;
         this.RENDERER = p_key.renderer;
-        this.DEFAULT_CAMERA = new NerdCameraBuilder(this).build();
         this.FIRST_SCENE_CLASS = p_key.firstScene;
         this.INITIALLY_RESIZABLE = p_key.canResize;
         this.CAN_FULLSCREEN = !p_key.cannotFullscreen;
@@ -311,16 +315,12 @@ public class Sketch extends PApplet {
         this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
         // endregion
 
-        // region ...of course, more key settings!
+        // region Non-key settings.
         this.pfullscreen = !this.fullscreen;
         this.UNPROJECTOR = new Unprojector();
         this.sceneMan = new SceneManager(this);
-        this.currentCamera = this.DEFAULT_CAMERA;
         this.fullscreen = this.STARTED_FULLSCREEN;
-
-        this.EXIT_LISTENER = p_key.exitListener;
-        this.SETUP_LISTENER = p_key.setupListener;
-        this.DISPOSAL_LISTENER = p_key.disposalListener;
+        this.currentCamera = new NerdCameraBuilder(this).build();
         // endregion
 
         // region Setting icons.

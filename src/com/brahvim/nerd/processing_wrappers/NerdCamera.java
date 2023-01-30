@@ -21,6 +21,7 @@ public class NerdCamera {
     // region Fields.
     public final static float DEFAULT_CAM_FOV = PApplet.radians(60),
             DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10000, DEFAULT_CAM_MOUSE_Z = 25;
+    public final Sketch SKETCH;
 
     public NerdCamera.Script script;
 
@@ -33,8 +34,6 @@ public class NerdCamera {
 
     public int clearColor = 0, projection = PConstants.PERSPECTIVE;
     public boolean doScript = true, doAutoClear = true;
-
-    public final Sketch SKETCH;
     // endregion
 
     public NerdCamera(Sketch p_sketch) {
@@ -123,6 +122,7 @@ public class NerdCamera {
         this.near = NerdCamera.DEFAULT_CAM_NEAR;
     }
 
+    // Does not call `NerdCamera::resetCamParams()` so `FpsCamera` can work.
     public void resetSettings() {
         // this.script = null;
         this.clearColor = 0;
@@ -132,7 +132,7 @@ public class NerdCamera {
         this.projection = PConstants.PERSPECTIVE;
     }
 
-    public NerdCamera copy() {
+    public NerdCamera clone() {
         NerdCamera toRet = new NerdCamera(this.SKETCH);
 
         toRet.up.set(this.up);
