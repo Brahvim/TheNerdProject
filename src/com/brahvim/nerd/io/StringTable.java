@@ -91,22 +91,25 @@ public class StringTable {
 
     // region `getString()` overloads.
     public String getString(String p_key) {
+        return this.getString(p_key, "");
+    }
+
+    public String getString(String p_key, String p_default) {
         // Split all the keys!
         final String[] KEYS = PApplet.split(p_key, '.');
 
-        // The last index of an array, is `1` less than its length.
-        // To get the last object, the loop should exit when `i` is `KEYS.length - 1`,
-        // because the object that deep in the JSON tree would be the one holding a
-        // string for every language.
-        final int STRING_HOLDER_ID = KEYS.length - 1;
+        // Index of last object in the JSON tree:
+        final int LAST_OBJECT_ID = KEYS.length - 1;
         JSONObject lastObject = null;
 
-        // Iterate till we see this 'holder' object,
-        for (int i = 0; i != STRING_HOLDER_ID; i++) {
+        // Iterate till we see our query's last object,
+        for (int i = 0; i != LAST_OBJECT_ID; i++) {
             synchronized (this.json) {
                 lastObject = this.json.getJSONObject(KEYS[i]);
             }
         }
+
+        lastObject = lastObject.getJSONObject(KEYS[LAST_OBJECT_ID]);
 
         // ...get the string of the specified langauge!
         String toRet = null;
@@ -115,16 +118,14 @@ public class StringTable {
         }
 
         if (toRet == null) {
-            System.err.printf("`StringTable` key `%s` not found!", p_key);
-            return "";
+            System.err.printf("""
+                    `StringTable` key `%s` not found!
+                    \tGiving default value, `%s`.""",
+                    p_key, p_default);
+            return p_default;
         }
 
         return toRet;
-    }
-
-    public String getString(String p_key, String p_default) {
-        String toRet = this.getString(p_key);
-        return toRet == null ? p_default : toRet;
     }
     // endregion
 

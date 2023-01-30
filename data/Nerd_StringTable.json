@@ -1,7 +1,11 @@
 {
     "Meta": {
-        "appName": "The Nerd Project",
-        "onConstruct": "Hello, world! This is an application running via APIs from the Processing-based Nerd Engine!"
+        "appName": {
+            "en": "The Nerd Project"
+        },
+        "onConstruct": {
+            "en": "Hello, world! This is an application running via APIs from the Processing-based Nerd Engine!"
+        }
     },
     "Area1": {
         "beforePlayerRescued": {
