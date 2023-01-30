@@ -74,7 +74,7 @@ public class StringTable {
                         continue;
 
                     // Skipping comments and registering sections,
-                    // and skip this iteration if they exist:
+                    // and even this iteration if they exist:
                     switch (line.charAt(0)) {
                         case ';': // Semicolons are also comments in INI files, apparently!
                         case '#':
@@ -95,7 +95,7 @@ public class StringTable {
 
                 // Find a `"` symbol *without* a `\` before it:
                 lastQuotePos = lineLen; // We assume it's at the end.
-                isMultiLine = true; // We also assume this till we find proof!
+                // isMultiLine = true; // We also assume this till we find proof!
 
                 // region Find the quote that ends the property's value.
                 // Go backwards through the string. When you see the first double-quote
@@ -107,7 +107,7 @@ public class StringTable {
                         if (line.charAt(i - 1) != '\\') {
                             // ...then it must be the quote marking the end of the property definition!
                             lastQuotePos = i;
-                            isMultiLine = false;
+                            // isMultiLine = false;
                             break;
                         }
                     }
@@ -116,23 +116,13 @@ public class StringTable {
 
                 content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
 
-                // This will experience changes according to delimiters:
+                // Do not perform any parsing or saving. We need to finish scanning this value!
+                // if (isMultiLine)
+                // continue;
+
+                // `parsedContent` will experience changes according to delimiters:
                 parsedContent.delete(0, parsedContent.length());
                 parsedContent.append(content);
-
-                // For multiline strings, this would go through the entire string again.
-                // Inefficient, but okay!
-
-                // region Parse out backslashes first! The others rely on them...:
-                while ((delimiterCharPos = parsedContent.indexOf("\\\\")) != -1) {
-                    if (parsedContent.charAt(delimiterCharPos - 1) == 0)
-                        ;
-
-                    // Remove one of the backslashes. This gives us a single backslash,
-                    // which is what we need:
-                    parsedContent.deleteCharAt(delimiterCharPos);
-                }
-                // endregion
 
                 // region Parse out `\n`s!:
                 while ((delimiterCharPos = parsedContent.indexOf("\\n")) != -1) {
@@ -165,12 +155,22 @@ public class StringTable {
                 }
                 // endregion
 
-                // region ...put it into the map (while it is locked)!
+                // region Parse out backslashes!:
+                while ((delimiterCharPos = parsedContent.indexOf("\\\\")) != -1) {
+                    if (parsedContent.charAt(delimiterCharPos - 1) == 0)
+                        ;
+
+                    // Remove one of the backslashes. This gives us a single backslash,
+                    // which is what we need:
+                    parsedContent.deleteCharAt(delimiterCharPos);
+                }
+                // endregion
+
+                // region ...put `parsedContent` into the map (while the map is locked)!
                 synchronized (this.TABLE) {
+                    // Format: `SectionName.propertyName`:
                     this.TABLE.put(
-                            // Format: `SectionName.propertyName`:
-                            section.concat(".")
-                                    .concat(line.substring(0, eqPos)),
+                            section.concat(".").concat(line.substring(0, eqPos)),
                             parsedContent.toString());
                 }
                 // endregion
