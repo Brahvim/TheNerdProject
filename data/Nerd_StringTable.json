@@ -1,0 +1,17 @@
+{
+    "Area1": {
+        "beforePlayerRescued": {
+            "npc1": {
+                "en": "..so you see, we have this problem in our town here.",
+                "hi": ""
+            },
+            "npc2": "Oh COME ON! It HAS to be those goons!",
+            "npc3": "Yesh! I shaw demm! I shaw demm! Toward da eesht!"
+        },
+        "afterPlayerRescued": {
+            "npc1": "Wow. I saw that battle of yours with those thieves. Truly, truly brave of you, <player_name>!",
+            "npc2": "You caught the GOONS?! Oh my Gosh!!!",
+            "npc3": "You fough da goonzh! You are soooo awesome, <player_name>!"
+        }
+    }
+}

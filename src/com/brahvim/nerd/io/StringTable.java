@@ -54,11 +54,11 @@ public class StringTable {
 
         try (FileReader fileReader = new FileReader(this.file);
                 BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-            String section = null, propertyName = null;
+            String section = null;
             StringBuilder content = new StringBuilder(), parsedContent = new StringBuilder();
             int firstQuotePosPlusOne = 0, lineLen = 0, lineLenMinusOne = 0,
                     delimiterCharPos = 0, lastQuotePos = 0, eqPos = 0;
-            boolean valueIsMultiLine = false, previousLineWasPartOfValue = false;
+            boolean isMultiLine = false;
 
             // Remember that this loop goes through EACH LINE!
             // Not each *character!* :joy::
@@ -66,15 +66,14 @@ public class StringTable {
                 lineLen = line.length();
                 lineLenMinusOne = lineLen - 1;
 
-                // Following, are cases demanding skipping this iteration:
-
-                // Skip over empty lines:
-                if (line.isBlank())
-                    continue;
-
-                if (!valueIsMultiLine) {
-                    // If you're not a multi-line value, it should be safe to free memory.
+                if (!isMultiLine) {
                     content.delete(0, content.length());
+
+                    // region Cases demanding skipping this iteration.
+                    // Leave empty lines alone!:
+                    if (line.isBlank())
+                        continue;
+
                     // Skipping comments and registering sections,
                     // and even this iteration if they exist:
                     switch (line.charAt(0)) {
@@ -85,32 +84,19 @@ public class StringTable {
                             section = line.substring(1, line.indexOf(']'));
                             continue;
                     }
+                    // endregion
 
+                    // Find where the `=` sign is!:
+                    eqPos = line.indexOf('=');
+
+                    // Finding an index since some people might prefer
+                    // putting spaces between the property name and `=`:
+                    firstQuotePosPlusOne = line.indexOf('"', eqPos);
                 }
-
-                // Find where the `=` sign is!
-                // I don't care if the value is multi-line xD:
-                eqPos = line.indexOf('=');
-
-                // ...but don't derive any property-name :|
-                if (!valueIsMultiLine)
-                    propertyName = line.substring(0, eqPos);
-                // I'm not shifting away this assignment to some other `if` for performance.
-                // Who knows? Night need to modify this parser even more someday :joy:
-
-                // Finding an index since some people might prefer
-                // putting spaces between the property name and `=`:
-                firstQuotePosPlusOne = line.indexOf('"', eqPos);
-
-                // If the value is a multi-liner, the current line of the value won't have a
-                // beginning quote.
-                if (valueIsMultiLine)
-                    firstQuotePosPlusOne = 0;
 
                 // Find a `"` symbol *without* a `\` before it:
                 lastQuotePos = lineLen; // We assume it's at the end.
-                previousLineWasPartOfValue = valueIsMultiLine; // Will use this in just a bit.
-                valueIsMultiLine = true; // We also assume this till we find proof!
+                // isMultiLine = true; // We also assume this till we find proof!
 
                 // region Find the quote that ends the property's value.
                 // Go backwards through the string. When you see the first double-quote
@@ -122,38 +108,18 @@ public class StringTable {
                         if (line.charAt(i - 1) != '\\') {
                             // ...then it must be the quote marking the end of the property definition!
                             lastQuotePos = i;
-                            valueIsMultiLine = false;
+                            // isMultiLine = false;
                             break;
                         }
                     }
                 }
                 // endregion
 
-                // If the value *is* a multi-liner, don't perform parsing and saving.
-                // We need to finish scanning it!
-                if (valueIsMultiLine) {
-                    if (previousLineWasPartOfValue)
-                        content.append(line);
-                    else
-                        content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
-                    // ^^^ Need to use `firstQuotePosPlusOne + 1` here to avoid reading the quote.
-                    // ...yeah, I have no idea why that is so.
+                content.append(line.substring(firstQuotePosPlusOne + 1, lastQuotePos));
 
-                    // Was used for I N T E N S E debugging:
-                    // String contentString = content.toString();
-                    // System.out.printf("`contentString`: `%s`.\n", contentString);
-
-                    continue;
-                }
-
-                // If the value isn't a multi-liner, go on!
-                // Parse it, and add it to the map!
-                content.append(line.substring(firstQuotePosPlusOne, lastQuotePos));
-                // ..It used to be `firstQuotePosPlusOne + 1` up there. LOL.
-
-                // Was used for I N T E N S E debugging:
-                // String contentString = content.toString();
-                // System.out.printf("`contentString`: `%s`.\n", contentString);
+                // Do not perform any parsing or saving. We need to finish scanning this value!
+                // if (isMultiLine)
+                // continue;
 
                 // `parsedContent` will experience changes according to delimiters:
                 parsedContent.delete(0, parsedContent.length());
@@ -190,7 +156,7 @@ public class StringTable {
                 }
                 // endregion
 
-                // region Parse out backslashes last! This is better:
+                // region Parse out backslashes!:
                 while ((delimiterCharPos = parsedContent.indexOf("\\\\")) != -1) {
                     if (parsedContent.charAt(delimiterCharPos - 1) == 0)
                         ;
@@ -205,17 +171,17 @@ public class StringTable {
                 synchronized (this.TABLE) {
                     // Format: `SectionName.propertyName`:
                     this.TABLE.put(
-                            section.concat(".").concat(propertyName),
+                            section.concat(".").concat(line.substring(0, eqPos)),
                             parsedContent.toString());
                 }
                 // endregion
 
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.printf("""
-                    Failed to parse string table in file: `%s` due to some I/O error.
-                        """, this.file.getAbsolutePath());
+                    Failed to parse string table in file: `%s`.
+                    """, this.file.getAbsolutePath());
             e.printStackTrace();
         }
 
