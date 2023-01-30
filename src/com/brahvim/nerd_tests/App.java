@@ -27,7 +27,9 @@ public class App {
                 .startFullscreen()
                 .canResize()
                 .onSketchConstruction((s) -> {
-                    System.out.println(s.STRINGS.getString("Meta.onConstruct"));
+                    System.out.println(s.STRINGS.get("Meta.onConstruct"));
+                    // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
+                    System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
                 })
                 .build(p_args);
         // endregion

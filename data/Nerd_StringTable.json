@@ -5,6 +5,13 @@
         },
         "onConstruct": {
             "en": "Hello, world! This is an application running via APIs from the Processing-based Nerd Engine!"
+        },
+        "arrExample": {
+            "en": [
+                "Random word `#1`!",
+                "Random word `#2`!",
+                "Random word `#3`!"
+            ]
         }
     },
     "Area1": {
