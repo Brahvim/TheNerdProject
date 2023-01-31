@@ -60,7 +60,10 @@ public class NerdCamera {
         // #JIT_FTW!:
         this.clear();
         this.runScript();
-        this.applyMatrix();
+        switch (this.SKETCH.RENDERER) {
+            case PConstants.JAVA2D -> this.apply2dMatrix();
+            case PConstants.P3D, PConstants.P2D -> this.applyMatrix();
+        }
     }
 
     public void clear() {
@@ -108,6 +111,11 @@ public class NerdCamera {
         // Translate! People probably still prefer things on the top left corner `P3D`
         // ...even if it could mean translating twice in some cases, it's alright!
         this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
+    }
+
+    public void apply2dMatrix() {
+        this.SKETCH.translate(this.center);
+        this.SKETCH.translate(0, PVector.dot(this.center, this.up), 0); // :woozy_face:
     }
     // endregion
 
