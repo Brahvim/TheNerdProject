@@ -135,10 +135,10 @@ public class FlyCamera extends NerdCamera {
 
     private void updateFlyCamera() {
         // region Mouse movement updates.
-        // this.yaw += // this.SKETCH.frameTime *
-        // this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
-        // this.pitch += // this.SKETCH.frameTime *
-        // this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
+        this.yaw += // this.SKETCH.frameTime *
+                this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
+        this.pitch += // this.SKETCH.frameTime *
+                this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
 
         if (this.shouldConstrainPitch) {
             if (this.pitch > 89)

@@ -470,18 +470,19 @@ public class Sketch extends PApplet {
         // region Apply the camera!:
         if (this.currentCamera != null)
             switch (this.RENDERER) {
-                // "ToDo: iMpLeMeNt a 2d cAmErA."
+                // "ToDo: iMpLeMeNt a jAvA2d cAmErA."
                 // if (this.DO_FAKE_2D_CAMERA);
-
                 case PConstants.JAVA2D: // If using the 2D renderer, don't do any of these!
-                    this.currentCamera.runScript();
                     this.currentCamera.clear();
+                    this.currentCamera.runScript();
+                    // this.currentCamera.apply2dMatrix();
                     break;
 
                 case PConstants.P3D, PConstants.P2D:
                     this.currentCamera.apply(); // Do all three tasks!
                     break;
             }
+
         // If `this.currentCamera` is `null`, but wasn't,
         else if (this.currentCamera != this.previousCamera)
             System.out.printf("""

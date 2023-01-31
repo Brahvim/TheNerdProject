@@ -9,12 +9,15 @@ import com.brahvim.nerd.scene_api.SceneState;
 import processing.core.PVector;
 
 public class TestScene6 extends NerdScene {
+
+    // region Fields.
     private FlyCamera CAMERA;
     private PVector playerVel = new PVector(3, 2, 3);
 
     private final float GRAVITY = 2;
     private final float PLAYER_START_Y = -1500;
     private final float PLAYER_MIN_Y = -200 - this.GRAVITY;
+    // endregion
 
     @Override
     protected void setup(SceneState p_state) {
@@ -22,8 +25,9 @@ public class TestScene6 extends NerdScene {
             SKETCH.centerWindow();
 
         CAMERA = new FlyCamera(SKETCH);
-        SKETCH.setCamera(CAMERA);
         CAMERA.clearColor = 0x006699;
+        CAMERA.doAutoClear = true;
+        SKETCH.setCamera(CAMERA);
         CAMERA.pos.set(SKETCH.cx, this.PLAYER_START_Y, 160);
 
         // Do not forget to call!

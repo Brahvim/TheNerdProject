@@ -63,21 +63,25 @@ public class NerdCamera {
         this.applyMatrix();
     }
 
+    public void clear() {
+        // Removing this will not display the previous camera's view,
+        // but still show clipping:
+
+        this.SKETCH.camera();
+        this.SKETCH.background(0x006699);
+
+        // this.SKETCH.begin2d();
+        // this.SKETCH.camera();
+        // this.SKETCH.noStroke();
+        // this.SKETCH.fill(this.clearColor);
+        // this.SKETCH.rectMode(PConstants.CORNER);
+        // this.SKETCH.rect(0, 0, this.SKETCH.width, this.SKETCH.height);
+        // this.SKETCH.end2d();
+    }
+
     public void runScript() {
         if (this.script != null && this.doScript)
             this.script.onCamUpdate(this);
-    }
-
-    public void clear() {
-        this.SKETCH.begin2d();
-        // Removing this will not display the previous camera's view,
-        // but still show clipping:
-        // this.SKETCH.camera();
-        this.SKETCH.noStroke();
-        this.SKETCH.fill(this.clearColor);
-        this.SKETCH.rectMode(PConstants.CORNER);
-        this.SKETCH.rect(0, 0, this.SKETCH.width, this.SKETCH.height);
-        this.SKETCH.end2d();
     }
 
     public void applyMatrix() {
