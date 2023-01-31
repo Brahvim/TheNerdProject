@@ -26,13 +26,17 @@ public class TestScene6 extends NerdScene {
             SKETCH.fullscreen = true;
         }
 
+        // Need to do this!...:
         CAMERA = new FlyCamera(SKETCH);
         CAMERA.setClearColor(0x006699);
-        SKETCH.setCamera(CAMERA); // Do not forget to do!
-        CAMERA.pos.set(SKETCH.cx, this.PLAYER_START_Y, 160);
 
-        // Do not forget to call!
+        // Do not forget to do these!:
+        SKETCH.cursorVisible = false;
+        SKETCH.setCamera(CAMERA);
         // The camera won't be "auto-used" otherwise!!!
+
+        // Give us a "starting position"!:
+        CAMERA.pos.set(SKETCH.cx, this.PLAYER_START_Y, 160);
     }
 
     @Override

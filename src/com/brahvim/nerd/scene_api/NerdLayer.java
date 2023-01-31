@@ -63,13 +63,13 @@ public class NerdLayer implements InputEventHandling {
         if (this.active)
             this.setup();
         else
-            this.onLayerExit();
+            this.layerExit();
     }
     // endregion
 
     // Protected methods. Nobody can call them outside of this package!
     // region `Layer`-only (`protected`) callbacks!
-    protected void onLayerExit() {
+    protected void layerExit() {
     }
     // endregion
 

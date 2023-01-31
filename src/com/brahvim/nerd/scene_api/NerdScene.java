@@ -322,7 +322,7 @@ public class NerdScene implements InputEventHandling {
 
   /* package */ void runOnSceneExit() {
     // this.verifyKey(p_sceneKey);
-    this.onSceneExit();
+    this.sceneExited();
   }
 
   /* package */ void runPreload() {
@@ -461,7 +461,7 @@ public class NerdScene implements InputEventHandling {
   protected synchronized void preload() {
   }
 
-  protected void onSceneExit() {
+  protected void sceneExited() {
   }
   // endregion
 

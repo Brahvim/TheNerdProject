@@ -47,8 +47,45 @@ public abstract class NerdCamera {
     public abstract void applyMatrix();
 
     // region Pre-implemented methods.
+    public void apply() {
+        // #JIT_FTW!:
+        this.clear();
+        this.runScript();
+        this.applyMatrix();
+    }
+
     public void clear() {
         this.SKETCH.alphaBg(this.red, this.green, this.blue, this.alpha);
+    }
+
+    public void completeReset() {
+        this.resetParams();
+        this.resetSettings();
+    }
+
+    public void resetParams() {
+        // this.script = null;
+
+        this.red = 0;
+        this.green = 0;
+        this.blue = 0;
+        this.alpha = 255;
+
+        this.doScript = true;
+        this.doAutoClear = true;
+        this.mouseZ = BasicCamera.DEFAULT_CAM_MOUSE_Z;
+        this.projection = PConstants.PERSPECTIVE;
+    }
+
+    public void resetSettings() {
+        this.far = BasicCamera.DEFAULT_CAM_FAR;
+        this.fov = BasicCamera.DEFAULT_CAM_FOV;
+        this.near = BasicCamera.DEFAULT_CAM_NEAR;
+    }
+
+    public void runScript() {
+        if (this.script != null && this.doScript)
+            this.script.onCamUpdate(this);
     }
 
     // region `setClearColor()` overloads.
@@ -81,43 +118,6 @@ public abstract class NerdCamera {
         this.alpha = p_alpha;
     }
     // endregion
-
-    public void apply() {
-        // #JIT_FTW!:
-        this.clear();
-        this.runScript();
-        this.applyMatrix();
-    }
-
-    public void completeReset() {
-        this.resetParams();
-        this.resetSettings();
-    }
-
-    public void resetParams() {
-        // this.script = null;
-
-        this.red = 0;
-        this.green = 0;
-        this.blue = 0;
-        this.alpha = 255;
-
-        this.doScript = true;
-        this.doAutoClear = true;
-        this.mouseZ = BasicCamera.DEFAULT_CAM_MOUSE_Z;
-        this.projection = PConstants.PERSPECTIVE;
-    }
-
-    public void resetSettings() {
-        this.far = BasicCamera.DEFAULT_CAM_FAR;
-        this.fov = BasicCamera.DEFAULT_CAM_FOV;
-        this.near = BasicCamera.DEFAULT_CAM_NEAR;
-    }
-
-    public void runScript() {
-        if (this.script != null && this.doScript)
-            this.script.onCamUpdate(this);
-    }
     // endregion
 
 }

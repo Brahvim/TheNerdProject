@@ -263,7 +263,8 @@ public class Sketch extends PApplet {
     public final ArrayList<PVector> PREV_UNPROJ_TOUCHES = new ArrayList<>(10);
 
     public boolean fullscreen, pfullscreen;
-    public boolean cursorConfined, cursorVisible = true; // nO previoS versiuN!11!!
+    public boolean cursorConfined, cursorVisible = true; // "nO previoS versiuN!11!!"
+    public boolean pcursorConfined, pcursorVisible = true; // onU previoS versiuN!11!!1!!11!
     public PVector mouse = new PVector(), pmouse = new PVector(); // MOUS!
 
     public boolean pmouseLeft, pmouseMid, pmouseRight; // Previous frame...
@@ -272,6 +273,7 @@ public class Sketch extends PApplet {
 
     // region "Dimensions".
     public int frameStartTime, pframeTime, frameTime;
+    public int displayWidthHalf, displayHeightHalf;
     public float cx, cy, qx, qy, q3x, q3y, scr;
     public int pwidth, pheight;
     // endregion
@@ -512,7 +514,7 @@ public class Sketch extends PApplet {
     }
 
     public void post() {
-        this.fullScreenCheck();
+        this.framelyWindowSetup();
 
         // region Previous state updates!!!
         this.pkey = super.key;
@@ -530,6 +532,8 @@ public class Sketch extends PApplet {
         this.pmouseScroll = this.mouseScroll;
         this.pmousePressed = super.mousePressed;
         this.previousCamera = this.currentCamera;
+        this.pcursorVisible = this.cursorVisible;
+        this.pcursorConfined = this.cursorConfined;
         this.pmouseScrollDelta = this.mouseScrollDelta;
         // endregion
 
@@ -732,6 +736,9 @@ public class Sketch extends PApplet {
         this.q3y = this.cy + this.qy;
 
         this.scr = (float) super.width / (float) super.height;
+
+        this.displayWidthHalf = super.displayWidth / 2;
+        this.displayHeightHalf = super.displayHeight / 2;
     }
 
     // region Get monitor info.
@@ -869,7 +876,7 @@ public class Sketch extends PApplet {
         // (Well, changing the display does NOT effect those variables in any way :|)
     }
 
-    public void fullScreenCheck() {
+    private void framelyWindowSetup() {
         switch (this.RENDERER) {
             case PConstants.JAVA2D:
                 // Fullscreen?
@@ -903,7 +910,7 @@ public class Sketch extends PApplet {
                     this.sketchFrame.addNotify();
                 }
 
-                if (cursorVisible)
+                if (this.cursorVisible)
                     super.cursor();
                 else
                     super.noCursor();
@@ -936,13 +943,19 @@ public class Sketch extends PApplet {
 
                 }
 
-                this.glWindow.confinePointer(this.cursorConfined);
+                // I knew this already, but you may want to check out:
+                // [http://twicetwo.com/blog/processing/2016/03/01/processing-locking-the-mouse.html]
+
+                if (this.cursorConfined != this.pcursorConfined)
+                    this.glWindow.confinePointer(this.cursorConfined);
                 while (this.cursorConfined ? !this.glWindow.isPointerConfined() : this.glWindow.isPointerConfined())
                     ;
 
-                this.glWindow.setPointerVisible(this.cursorVisible);
-                while (this.cursorVisible ? !this.glWindow.isPointerVisible() : this.glWindow.isPointerVisible())
-                    ;
+                if (this.cursorVisible != this.pcursorVisible) {
+                    this.glWindow.setPointerVisible(this.cursorVisible);
+                    while (this.cursorVisible ? !this.glWindow.isPointerVisible() : this.glWindow.isPointerVisible())
+                        ;
+                }
                 break;
         }
     }

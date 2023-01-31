@@ -2,6 +2,7 @@ package com.brahvim.nerd_tests;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.processing_wrappers.FlyCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd_tests.scenes.TestScene6;
 
@@ -25,6 +26,7 @@ public class App {
 
     public static void main(String[] p_args) {
         LoadeableClasses.loadClasses(); // Handle this yourself, sorry!
+        FlyCamera.holdPointer = true;
 
         // region Building the `Sketch`!
         App.sketchInstance = new NerdSketchBuilder()
@@ -32,6 +34,7 @@ public class App {
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
+                // TODO: `NerdSketchBuilder::setCursorVisible(false)`?
                 .startFullscreen()
                 .canResize()
 

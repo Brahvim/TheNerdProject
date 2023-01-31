@@ -11,6 +11,7 @@ public class FlyCamera extends NerdCamera {
 
     // region Fields.
     public final static float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
+    public volatile static boolean holdPointer;
 
     public PVector front;
     public float yaw, zoom, pitch;
@@ -18,40 +19,41 @@ public class FlyCamera extends NerdCamera {
     public float mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
     // endregion
 
+    // region Construction.
     public FlyCamera(Sketch p_sketch) {
         super(p_sketch);
         this.front = new PVector(super.SKETCH.cx, super.SKETCH.cy, 0);
     }
+    // endregion
 
     // region From `NerdCamera`.
     @Override
     public void applyMatrix() {
-        if (super.SKETCH.mouseLeft)
-            this.mouseUpdate();
+        this.mouseUpdate();
 
         // Apply projection:
         switch (this.projection) {
             case PConstants.PERSPECTIVE:
-                this.SKETCH.perspective(this.fov,
-                        (float) this.SKETCH.width / (float) this.SKETCH.height,
+                super.SKETCH.perspective(this.fov,
+                        (float) super.SKETCH.width / (float) super.SKETCH.height,
                         this.near, this.far);
                 break;
             case PConstants.ORTHOGRAPHIC:
-                this.SKETCH.ortho(
-                        -this.SKETCH.cx, this.SKETCH.cx,
-                        -this.SKETCH.cy, this.SKETCH.cy,
+                super.SKETCH.ortho(
+                        -super.SKETCH.cx, super.SKETCH.cx,
+                        -super.SKETCH.cy, super.SKETCH.cy,
                         this.near, this.far);
         }
 
         // Apply the camera matrix:
-        this.SKETCH.camera(
+        super.SKETCH.camera(
                 this.pos.x, this.pos.y, this.pos.z,
                 this.front.x + this.pos.x, this.front.y + this.pos.y, this.front.z + this.pos.z,
                 this.up.x, this.up.y, this.up.z);
 
         // Translate! People probably still prefer things on the top left corner `P3D`
         // ...even if it could mean translating twice in some cases, it's alright!
-        // this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
+        // super.SKETCH.translate(-super.SKETCH.cx, -super.SKETCH.cy);
     }
 
     @Override
