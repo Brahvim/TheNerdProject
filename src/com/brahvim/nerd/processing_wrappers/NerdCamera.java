@@ -45,17 +45,17 @@ public abstract class NerdCamera {
 
     // region Pre-implmented methods.
     public void clear() {
-        this.SKETCH.begin2d();
+        this.SKETCH.background(this.clearColor);
 
+        // this.SKETCH.begin2d();
         // Removing this will not display the previous camera's view,
         // but still show clipping:
-        this.SKETCH.camera();
-
-        this.SKETCH.noStroke();
-        this.SKETCH.fill(this.clearColor);
-        this.SKETCH.rectMode(PConstants.CORNER);
-        this.SKETCH.rect(0, 0, this.SKETCH.width, this.SKETCH.height);
-        this.SKETCH.end2d();
+        // this.SKETCH.camera();
+        // this.SKETCH.noStroke();
+        // this.SKETCH.fill(this.clearColor);
+        // this.SKETCH.rectMode(PConstants.CORNER);
+        // this.SKETCH.rect(0, 0, this.SKETCH.width, this.SKETCH.height);
+        // this.SKETCH.end2d();
     }
 
     public void apply() {

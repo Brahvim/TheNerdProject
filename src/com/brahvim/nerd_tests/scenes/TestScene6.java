@@ -86,13 +86,13 @@ public class TestScene6 extends NerdScene {
             CAMERA.moveZ(velMultiplier * -playerVel.z);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_A))
-            CAMERA.moveX(velMultiplier * playerVel.x);
+            CAMERA.moveX(velMultiplier * -playerVel.x);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_S))
             CAMERA.moveZ(velMultiplier * playerVel.z);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_D))
-            CAMERA.moveX(velMultiplier * -playerVel.x);
+            CAMERA.moveX(velMultiplier * playerVel.x);
         // endregion
         // endregion
 
