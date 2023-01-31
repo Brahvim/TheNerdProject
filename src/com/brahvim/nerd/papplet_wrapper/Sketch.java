@@ -29,7 +29,7 @@ import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.math.Unprojector;
-import com.brahvim.nerd.processing_wrappers.HasNerdCamera;
+import com.brahvim.nerd.processing_wrappers.BasicCamera;
 import com.brahvim.nerd.processing_wrappers.NerdCamera;
 import com.brahvim.nerd.processing_wrappers.NerdCameraBuilder;
 import com.brahvim.nerd.scene_api.NerdLayer;
@@ -758,16 +758,6 @@ public class Sketch extends PApplet {
         this.currentCamera = p_camera;
         return toRet;
     }
-
-    /**
-     * @return The previous camera the {@link Sketch} had access to.
-     */
-    public NerdCamera setCamera(HasNerdCamera p_cameraOwner) {
-        NerdCamera toRet = this.previousCamera;
-        this.previousCamera = this.currentCamera;
-        this.currentCamera = p_cameraOwner.getNerdCamera();
-        return toRet;
-    }
     // endregion
 
     public void unprojectMouse() {
@@ -1058,17 +1048,17 @@ public class Sketch extends PApplet {
         super.rotateZ(p_rotationVector.z);
     }
 
-    public void camera(NerdCamera p_cam) {
+    public void camera(BasicCamera p_cam) {
         super.camera(p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
                 p_cam.center.x, p_cam.center.y, p_cam.center.z,
                 p_cam.up.x, p_cam.up.y, p_cam.up.z);
     }
 
-    public void perspective(NerdCamera p_cam) {
+    public void perspective(BasicCamera p_cam) {
         super.perspective(p_cam.fov, (float) super.width / (float) super.height, p_cam.near, p_cam.far);
     }
 
-    public void ortho(NerdCamera p_cam) {
+    public void ortho(BasicCamera p_cam) {
         super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_cam.near, p_cam.far);
     }
 

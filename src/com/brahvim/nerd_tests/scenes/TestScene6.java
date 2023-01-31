@@ -56,7 +56,7 @@ public class TestScene6 extends NerdScene {
 
     private void controlCamera() {
         // region Gravity:
-        CAMERA.pos.y += this.GRAVITY;
+        // CAMERA.pos.y += this.GRAVITY;
 
         // Don't-go-underneath check:
         if (CAMERA.pos.y > this.PLAYER_MIN_Y)
