@@ -45,13 +45,8 @@ public class FlyCamera extends NerdCamera {
 
     @Override
     public void applyMatrix() {
-        if (super.SKETCH.mouseLeft)
-            this.mouseUpdate();
+        this.mouseUpdate();
         super.applyMatrix();
-
-        // Was trying to fix that annoying `FlyCamera`-flips-at-origin bug.
-        // this.SKETCH.translate(Sketch.FLOAT_HALF, Sketch.FLOAT_HALF);
-        // ...didn't fix it :rofl:
     }
 
     @Override
@@ -111,7 +106,7 @@ public class FlyCamera extends NerdCamera {
     }
     // endregion
 
-    // region `public` methods specific to `FlyCamera`.
+    // region methods specific to `FlyCamera`.
     public void moveX(float p_velX) {
         super.pos.add(
                 PVector.mult(
@@ -128,7 +123,6 @@ public class FlyCamera extends NerdCamera {
     public void moveZ(float p_velZ) {
         super.pos.sub(PVector.mult(this.front, p_velZ));
     }
-    // endregion
 
     protected void mouseUpdate() {
         // Update `yaw` and `pitch`:
@@ -156,5 +150,6 @@ public class FlyCamera extends NerdCamera {
         // Set it!:
         super.center.add(this.front);
     }
+    // endregion
 
 }
