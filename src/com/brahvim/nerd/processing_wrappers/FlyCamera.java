@@ -140,10 +140,8 @@ public class FlyCamera extends NerdCamera {
     }
 
     public void rotateCamera() {
-        System.out.println(super.SKETCH.mouseX - super.SKETCH.pmouseX);
-
-        this.yaw += (super.SKETCH.mouseX - super.SKETCH.pmouseX) * this.sensitivity;
-        this.pitch += (super.SKETCH.mouseY - super.SKETCH.pmouseY) * this.sensitivity;
+        this.yaw -= (super.SKETCH.mouseX - super.SKETCH.pmouseX) * this.sensitivity;
+        this.pitch -= (super.SKETCH.mouseY - super.SKETCH.pmouseY) * this.sensitivity;
 
         if (this.pitch > 89)
             this.pitch = 89;
@@ -167,7 +165,7 @@ public class FlyCamera extends NerdCamera {
         super.pos.add(this.camAddent);
         this.camAddent.set(0, 0, 0);
 
-        // super.center.set(0, 0, 0);
+        super.center.set(0, 0, 0);
         super.center.add(super.pos);
         super.center.add(this.camFront);
 

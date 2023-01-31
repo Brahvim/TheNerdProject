@@ -16,7 +16,6 @@ public class TestScene6 extends NerdScene {
     private final float GRAVITY = 2;
     private final float PLAYER_START_Y = -1500;
     private final float PLAYER_MIN_Y = -200 - this.GRAVITY;
-    // private final float GRAVITY = 9.8f;
 
     @Override
     protected void setup(SceneState p_state) {
@@ -26,7 +25,6 @@ public class TestScene6 extends NerdScene {
         CAMERA = new FlyCamera(SKETCH);
         SKETCH.setCamera(CAMERA);
         CAMERA.clearColor = 0x006699;
-        CAMERA.doAutoClear = true;
         this.playerPos = CAMERA.pos; // Hah! Pointer trick...
         this.playerPos.set(SKETCH.cx, this.PLAYER_START_Y, 160);
 
@@ -36,6 +34,7 @@ public class TestScene6 extends NerdScene {
 
     @Override
     protected void draw() {
+        SKETCH.clear();
         this.controlCamera();
 
         // Box in center:
@@ -54,8 +53,6 @@ public class TestScene6 extends NerdScene {
     private void controlCamera() {
         // region Gravity:
         this.playerPos.y += this.GRAVITY;
-
-        // System.out.println(this.playerPos.y);
 
         // region Don't-go-underneath check:
         if (this.playerPos.y > this.PLAYER_MIN_Y)
@@ -79,27 +76,25 @@ public class TestScene6 extends NerdScene {
         if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
             CAMERA.camAddent.mult(4);
 
+        if (SKETCH.keyIsPressed(KeyEvent.VK_Q))
+            CAMERA.moveY(playerVel.y);
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_E))
+            CAMERA.moveY(playerVel.y);
+
+        // region `W`-`A`-`S`-`D` controls.
         if (SKETCH.keyIsPressed(KeyEvent.VK_W))
-            CAMERA.camAddent.add(PVector.mult(CAMERA.camFront, this.playerVel.z));
-        // CAMERA.moveZ(playerVel.z);
+            CAMERA.moveZ(playerVel.z);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_A))
-            CAMERA.camAddent.add(
-                    VecUtilsForPVector.normalize(PVector.cross(
-                            CAMERA.camFront, CAMERA.up, null))
-                            .mult(-this.playerVel.x));
-        // CAMERA.moveX(-playerVel.x);
+            CAMERA.moveX(-playerVel.x);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_S))
-            CAMERA.camAddent.add(PVector.mult(CAMERA.camFront, -this.playerVel.z));
-        // CAMERA.moveZ(-playerVel.z);
+            CAMERA.moveZ(-playerVel.z);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_D))
-            CAMERA.camAddent.add(
-                    VecUtilsForPVector.normalize(PVector.cross(
-                            CAMERA.camFront, CAMERA.up, null))
-                            .mult(this.playerVel.x));
-        // CAMERA.moveX(playerVel.x);
+            CAMERA.moveX(playerVel.x);
+        // endregion
         // endregion
 
     }
