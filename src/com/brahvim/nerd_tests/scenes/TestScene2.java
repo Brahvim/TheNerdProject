@@ -5,12 +5,11 @@ import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
 public class TestScene2 extends NerdScene {
-
     private SineWave boxHorizWave, boxVertWave;
 
     @Override
     protected void setup(SceneState p_state) {
-        CAMERA.resetCamParams();
+        CAMERA.resetParams();
         CAMERA.resetSettings();
 
         this.boxHorizWave = new SineWave(SKETCH, 100 / 60_000.0f);

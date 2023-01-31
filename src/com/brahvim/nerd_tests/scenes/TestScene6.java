@@ -21,8 +21,10 @@ public class TestScene6 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        if (SCENE.timesSceneWasLoaded() == 0)
+        if (SCENE.timesSceneWasLoaded() == 0) {
             SKETCH.centerWindow();
+            SKETCH.fullscreen = true;
+        }
 
         CAMERA = new FlyCamera(SKETCH);
         CAMERA.clearColor = 0x006699;
@@ -35,6 +37,9 @@ public class TestScene6 extends NerdScene {
 
     @Override
     protected void draw() {
+        if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
+            MANAGER.restartScene();
+
         this.controlCamera();
         System.out.println(CAMERA.pos);
 

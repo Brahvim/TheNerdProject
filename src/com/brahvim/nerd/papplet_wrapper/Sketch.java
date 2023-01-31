@@ -1,6 +1,7 @@
 package com.brahvim.nerd.papplet_wrapper;
 
 import java.awt.DisplayMode;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -29,9 +30,9 @@ import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.math.Unprojector;
-import com.brahvim.nerd.processing_wrappers.HasNerdCamera;
+import com.brahvim.nerd.processing_wrappers.BasicCamera;
+import com.brahvim.nerd.processing_wrappers.BasicCameraBuilder;
 import com.brahvim.nerd.processing_wrappers.NerdCamera;
-import com.brahvim.nerd.processing_wrappers.NerdCameraBuilder;
 import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
@@ -345,7 +346,7 @@ public class Sketch extends PApplet {
         this.UNPROJECTOR = new Unprojector();
         this.sceneMan = new SceneManager(this);
         this.fullscreen = this.STARTED_FULLSCREEN;
-        this.currentCamera = new NerdCameraBuilder(this).build();
+        this.currentCamera = new BasicCameraBuilder(this).build();
         // endregion
 
         // region Setting icons.
@@ -758,16 +759,6 @@ public class Sketch extends PApplet {
         this.currentCamera = p_camera;
         return toRet;
     }
-
-    /**
-     * @return The previous camera the {@link Sketch} had access to.
-     */
-    public NerdCamera setCamera(HasNerdCamera p_cameraOwner) {
-        NerdCamera toRet = this.previousCamera;
-        this.previousCamera = this.currentCamera;
-        this.currentCamera = p_cameraOwner.getNerdCamera();
-        return toRet;
-    }
     // endregion
 
     public void unprojectMouse() {
@@ -978,11 +969,11 @@ public class Sketch extends PApplet {
 
     // region [DEPRECATED] Overloads for `getPathToRootFrom()`.
     /**
-     * @deprecatedIneffective when using with {@link PApplet}'s "{@code load()}"
-     *                        methods. Also, all of these methods have some method
-     *                        of accessing files from outside the sketch's data
-     *                        folder! <b>Please also see {@code PApplet}'s
-     *                        {@code static} methods</b>
+     * @deprecated Ineffective when using with {@link PApplet}'s "{@code load()}"
+     *             methods. Also, all of these methods have some method
+     *             of accessing files from outside the sketch's data
+     *             folder! <b>Please also see {@code PApplet}'s
+     *             {@code static} methods</b>
      */
     @Deprecated
     public static String getPathToRootFrom(File p_path) {
@@ -990,11 +981,11 @@ public class Sketch extends PApplet {
     }
 
     /**
-     * @deprecatedIneffective when using with {@link PApplet}'s "{@code load()}"
-     *                        methods. Also, all of these methods have some method
-     *                        of accessing files from outside the sketch's data
-     *                        folder! <b>Please also see {@code PApplet}'s
-     *                        {@code static} methods</b>
+     * @deprecated Ineffective when using with {@link PApplet}'s "{@code load()}"
+     *             methods. Also, all of these methods have some method
+     *             of accessing files from outside the sketch's data
+     *             folder! <b>Please also see {@code PApplet}'s
+     *             {@code static} methods</b>
      */
     @Deprecated
     public static String getPathToRootFrom(String p_path) {
@@ -1058,17 +1049,17 @@ public class Sketch extends PApplet {
         super.rotateZ(p_rotationVector.z);
     }
 
-    public void camera(NerdCamera p_cam) {
+    public void camera(BasicCamera p_cam) {
         super.camera(p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
                 p_cam.center.x, p_cam.center.y, p_cam.center.z,
                 p_cam.up.x, p_cam.up.y, p_cam.up.z);
     }
 
-    public void perspective(NerdCamera p_cam) {
+    public void perspective(BasicCamera p_cam) {
         super.perspective(p_cam.fov, (float) super.width / (float) super.height, p_cam.near, p_cam.far);
     }
 
-    public void ortho(NerdCamera p_cam) {
+    public void ortho(BasicCamera p_cam) {
         super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_cam.near, p_cam.far);
     }
 
