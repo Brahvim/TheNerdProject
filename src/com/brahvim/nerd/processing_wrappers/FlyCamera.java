@@ -134,20 +134,6 @@ public class FlyCamera extends NerdCamera {
     // endregion
 
     private void updateFlyCamera() {
-        // region Mouse movement updates.
-        this.yaw += // this.SKETCH.frameTime *
-                this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
-        this.pitch += // this.SKETCH.frameTime *
-                this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
-
-        if (this.shouldConstrainPitch) {
-            if (this.pitch > 89)
-                this.pitch = 89;
-            if (this.pitch < -89)
-                this.pitch = -89;
-        }
-        // endregion
-
         final float YAW_SIN = PApplet.sin(PApplet.radians(this.yaw)),
                 PITCH_SIN = PApplet.sin(PApplet.radians(this.pitch));
         final float YAW_COS = PApplet.cos(PApplet.radians(this.yaw)),
@@ -163,6 +149,25 @@ public class FlyCamera extends NerdCamera {
 
         // Making sure `NerdCamera` uses these correctly with Processing:
         PVector.add(super.pos, this.front, super.center);
+
+        // Doing mouse updates after translational ones as advised by
+        // [https://stackoverflow.com/a/52949834/13951505] to prevent the camera from
+        // to prevent the camera from flipping at the origin!
+
+        // region Mouse movement updates.
+        // this.yaw += // this.SKETCH.frameTime *
+        // this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
+        // this.pitch += // this.SKETCH.frameTime *
+        // this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
+
+        if (this.shouldConstrainPitch) {
+            if (this.pitch > 89)
+                this.pitch = 89;
+            if (this.pitch < -89)
+                this.pitch = -89;
+        }
+        // endregion
+
     }
 
 }

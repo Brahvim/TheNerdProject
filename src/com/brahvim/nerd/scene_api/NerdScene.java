@@ -341,13 +341,13 @@ public class NerdScene implements InputEventHandling {
 
   /* package */ void runPre() {
     // this.verifyKey(p_sceneKey);
-    if (this.SKETCH.PRE_CALLBACK_ORDER == null)
+    if (this.SKETCH.PRE_FIRST_CALLER == null)
       throw new NullPointerException("`Sketch::PRE_CALLBACK_ORDER` cannot be `null`.");
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.SKETCH.PRE_CALLBACK_ORDER) {
+    switch (this.SKETCH.PRE_FIRST_CALLER) {
       case SCENE -> {
         this.pre();
 
@@ -370,13 +370,13 @@ public class NerdScene implements InputEventHandling {
   /* package */ void runDraw() {
     // this.verifyKey(p_sceneKey);
 
-    if (this.SKETCH.DRAW_CALLBACK_ORDER == null)
+    if (this.SKETCH.DRAW_FIRST_CALLER == null)
       throw new NullPointerException("`Sketch::DRAW_CALLBACK_ORDER` cannot be `null`.");
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.SKETCH.DRAW_CALLBACK_ORDER) {
+    switch (this.SKETCH.DRAW_FIRST_CALLER) {
       case SCENE -> {
         this.SKETCH.pushMatrix();
         this.SKETCH.pushStyle();
@@ -418,13 +418,13 @@ public class NerdScene implements InputEventHandling {
 
   /* package */ void runPost() {
     // this.verifyKey(p_sceneKey);
-    if (this.SKETCH.POST_CALLBACK_ORDER == null)
+    if (this.SKETCH.POST_FIRST_CALLER == null)
       throw new NullPointerException("`Sketch::POST_CALLBACK_ORDER` cannot be `null`.");
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.SKETCH.PRE_CALLBACK_ORDER) {
+    switch (this.SKETCH.PRE_FIRST_CALLER) {
       case SCENE -> {
         this.post();
 

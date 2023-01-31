@@ -32,6 +32,7 @@ import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.processing_wrappers.HasNerdCamera;
 import com.brahvim.nerd.processing_wrappers.NerdCamera;
 import com.brahvim.nerd.processing_wrappers.NerdCameraBuilder;
+import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
 import com.jogamp.newt.opengl.GLWindow;
@@ -48,9 +49,10 @@ import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
 
-    // region Event listener interfaces and abstract classes.
+    // region Event listener interfaces and abstract (inner) classes.
     @FunctionalInterface
-    public static interface SketchInsideListener {
+    public /* static */ interface SketchInsideListener {
+        // ^^^ It behaves like it is `static` anyway...
         public void listen(Sketch p_sketch);
     }
 
@@ -149,24 +151,10 @@ public class Sketch extends PApplet {
     // endregion
 
     // region `public` fields.
-    // region Callback orders.
-    public static enum CallbackOrder {
-        SCENE(), LAYER();
-    }
-
-    public CallbackOrder PRE_CALLBACK_ORDER = CallbackOrder.SCENE;
-
-    /**
-     * Ignored when using {@link PConstants.P2D} or {@link PConstants.P3D}
-     * as the renderer.
-     */
-    public CallbackOrder DRAW_CALLBACK_ORDER = CallbackOrder.LAYER;
-
-    public CallbackOrder POST_CALLBACK_ORDER = CallbackOrder.LAYER;
-    // endregion
-
     // region Constants.
     // region `static` constants.
+    public final static float FLOAT_HALF = Float.MAX_VALUE * 0.5f;
+
     public final static File EXEC_DIR = new File("");
     public final static String EXEC_DIR_PATH = Sketch.EXEC_DIR.getAbsolutePath().concat(File.separator);
 
@@ -216,6 +204,42 @@ public class Sketch extends PApplet {
     public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
             CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN, DO_FAKE_2D_CAMERA = false;
     // endregion
+    // endregion
+
+    // region App workflow callbacks scene-or-layer order.
+    /**
+     * Dictates to every {@link Sketch} instance, the order in which a
+     * {@link NerdScene} or {@link NerdLayer} is allowed to call certain "workflow
+     * events" ({@code pre()}, {@code draw()} and {@code post()}) from Processing
+     * 
+     * @see {@link Sketch#PRE_FIRST_CALLER} - {@link CallbackOrder#SCENE} by
+     *      default.
+     * @see {@link Sketch#DRAW_FIRST_CALLER} - {@link CallbackOrder#LAYER} by
+     *      default.
+     * @see {@link Sketch#POST_FIRST_CALLER} - {@link CallbackOrder#LAYER} by
+     *      default.
+     */
+    public static enum CallbackOrder {
+        SCENE(), LAYER();
+    }
+
+    /**
+     * Controls whether {@link NerdScene#pre()} or {@link NerdLayer#pre()} is
+     * called first by the sketch. {@link Sketch.CallbackOrder#SCENE} by default.
+     */
+    public CallbackOrder PRE_FIRST_CALLER = CallbackOrder.SCENE;
+
+    /**
+     * Controls whether {@link NerdScene#draw()} or {@link NerdLayer#draw()} is
+     * called first by the sketch. {@link Sketch.CallbackOrder#LAYER} by default.
+     */
+    public CallbackOrder DRAW_FIRST_CALLER = CallbackOrder.LAYER;
+
+    /**
+     * Controls whether {@link NerdScene#post()} or {@link NerdLayer#post()} is
+     * called first by the sketch. {@link Sketch.CallbackOrder#LAYER} by default.
+     */
+    public CallbackOrder POST_FIRST_CALLER = CallbackOrder.LAYER;
     // endregion
 
     // region Window object references.
@@ -288,13 +312,13 @@ public class Sketch extends PApplet {
         // region Key settings.
         // region Setting `Sketch.CallbackOrder`s.
         if (p_key.preCallOrder != null)
-            this.PRE_CALLBACK_ORDER = p_key.preCallOrder;
+            this.PRE_FIRST_CALLER = p_key.preCallOrder;
 
         if (p_key.drawCallOrder != null)
-            this.DRAW_CALLBACK_ORDER = p_key.drawCallOrder;
+            this.DRAW_FIRST_CALLER = p_key.drawCallOrder;
 
         if (p_key.postCallOrder != null)
-            this.POST_CALLBACK_ORDER = p_key.postCallOrder;
+            this.POST_FIRST_CALLER = p_key.postCallOrder;
         // endregion
 
         // region Assigning listeners.

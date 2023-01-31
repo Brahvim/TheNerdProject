@@ -9,12 +9,12 @@ public class App {
     // TODO: Audio? Video! Do some Gradle build stuff to ensure a lower JAR size?
     // (Oh yes, and LWJGL-OpenAL would be here soon, too!)
 
+    // region `App`'s fields.
     private final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
 
             // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
             TestScene6.class;
 
-    // region `App`'s other fields.
     public final static int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 

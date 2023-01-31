@@ -7,7 +7,8 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 /**
- * @apiNote Please use {@link NerdCameraBuilder} to get a camera instance.
+ * @apiNote Please use a {@link NerdCameraBuilder} to get instances of
+ *          {@link NerdCamera}.
  */
 public class NerdCamera {
     // region Interface `Camera.Script`.
@@ -110,6 +111,7 @@ public class NerdCamera {
 
         // Translate! People probably still prefer things on the top left corner `P3D`
         // ...even if it could mean translating twice in some cases, it's alright!
+        // this.SKETCH.translate(Sketch.FLOAT_HALF, Sketch.FLOAT_HALF);
         this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
     }
 
