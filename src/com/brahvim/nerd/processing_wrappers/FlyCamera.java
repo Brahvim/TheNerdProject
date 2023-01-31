@@ -142,10 +142,10 @@ public class FlyCamera extends NerdCamera {
                 pitch = -89.0f;
         }
 
-        final float YAW_COS = PApplet.cos(PApplet.radians(yaw)),
-                YAW_SIN = PApplet.sin(PApplet.radians(yaw)),
-                PITCH_COS = PApplet.cos(PApplet.radians(pitch)),
-                PITCH_SIN = PApplet.sin(PApplet.radians(pitch));
+        final float YAW_COS = PApplet.cos(PApplet.radians(this.yaw)),
+                YAW_SIN = PApplet.sin(PApplet.radians(this.yaw)),
+                PITCH_COS = PApplet.cos(PApplet.radians(this.pitch)),
+                PITCH_SIN = PApplet.sin(PApplet.radians(this.pitch));
 
         // Calculate actual direction:
         this.front.set(
