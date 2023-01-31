@@ -26,8 +26,7 @@ public class TestScene6 extends NerdScene {
 
         CAMERA = new FlyCamera(SKETCH);
         CAMERA.clearColor = 0x006699;
-        CAMERA.doAutoClear = true;
-        SKETCH.setCamera(CAMERA);
+        SKETCH.setCamera(CAMERA); // Do not forget to do!
         CAMERA.pos.set(SKETCH.cx, this.PLAYER_START_Y, 160);
 
         // Do not forget to call!
@@ -36,11 +35,10 @@ public class TestScene6 extends NerdScene {
 
     @Override
     protected void draw() {
-        SKETCH.clear();
         this.controlCamera();
-
         System.out.println(CAMERA.pos);
 
+        // region Actual rendering!
         // Box in center:
         SKETCH.pushMatrix();
         SKETCH.translate(0, 165, 0);
@@ -52,6 +50,8 @@ public class TestScene6 extends NerdScene {
         SKETCH.translate(0, 200);
         SKETCH.box(2000, 20, 2000);
         SKETCH.popMatrix();
+        // endregion
+
     }
 
     private void controlCamera() {

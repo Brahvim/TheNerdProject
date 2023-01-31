@@ -11,8 +11,8 @@ public class App {
 
     private final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
 
+            // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
             TestScene6.class;
-    // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
 
     // region `App`'s other fields.
     public final static int BPM = 100,
