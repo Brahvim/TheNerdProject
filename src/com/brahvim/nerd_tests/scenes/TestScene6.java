@@ -2,7 +2,6 @@ package com.brahvim.nerd_tests.scenes;
 
 import java.awt.event.KeyEvent;
 
-import com.brahvim.nerd.math.VecUtilsForPVector;
 import com.brahvim.nerd.processing_wrappers.FlyCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
@@ -36,6 +35,8 @@ public class TestScene6 extends NerdScene {
     protected void draw() {
         SKETCH.clear();
         this.controlCamera();
+
+        System.out.println(CAMERA.pos);
 
         // Box in center:
         SKETCH.pushMatrix();
@@ -73,27 +74,29 @@ public class TestScene6 extends NerdScene {
         // camAddent.add(normalize(cross(camFront, up)).mult(playerVel.x));
 
         // Increase speed when holding `Ctrl`:
+        float velMultiplier = 1;
+
         if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
-            CAMERA.camAddent.mult(4);
+            velMultiplier = 4;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_Q))
-            CAMERA.moveY(playerVel.y);
+            CAMERA.moveY(velMultiplier * playerVel.y);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_E))
-            CAMERA.moveY(playerVel.y);
+            CAMERA.moveY(velMultiplier * -playerVel.y);
 
         // region `W`-`A`-`S`-`D` controls.
         if (SKETCH.keyIsPressed(KeyEvent.VK_W))
-            CAMERA.moveZ(playerVel.z);
+            CAMERA.moveZ(velMultiplier * playerVel.z);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_A))
-            CAMERA.moveX(-playerVel.x);
+            CAMERA.moveX(velMultiplier * -playerVel.x);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_S))
-            CAMERA.moveZ(-playerVel.z);
+            CAMERA.moveZ(velMultiplier * -playerVel.z);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_D))
-            CAMERA.moveX(playerVel.x);
+            CAMERA.moveX(velMultiplier * playerVel.x);
         // endregion
         // endregion
 
