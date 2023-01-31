@@ -6,7 +6,7 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 public class FlyCamera extends NerdCamera {
-    // Mathematics thanks to [https://learnopengl.com/Getting-started/Camera]!
+    // Mathematics, thanks to [https://learnopengl.com/Getting-started/Camera]!
 
     // region Fields.
     public final static float DEFAULT_MOUSE_SENSITIVITY = 0.1f;
@@ -137,6 +137,8 @@ public class FlyCamera extends NerdCamera {
     // endregion
 
     private void updateFlyCamera() {
+        // Again, thanks to [https://learnopengl.com/Getting-started/Camera]!!!
+
         final float YAW_SIN = PApplet.sin(PApplet.radians(this.yaw)),
                 PITCH_SIN = PApplet.sin(PApplet.radians(this.pitch));
         final float YAW_COS = PApplet.cos(PApplet.radians(this.yaw)),
