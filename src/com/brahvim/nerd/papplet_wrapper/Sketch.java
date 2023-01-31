@@ -193,6 +193,7 @@ public class Sketch extends PApplet {
     public final String NAME;
     public final Sketch SKETCH;
     public final String RENDERER;
+    public final String ICON_PATH;
     public final StringTable STRINGS;
     public final int INIT_WIDTH, INIT_HEIGHT;
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
@@ -271,13 +272,12 @@ public class Sketch extends PApplet {
 
     // region "Dimensions".
     public int frameStartTime, pframeTime, frameTime;
-    public float cx, cy, qx, qy, q3x, q3y;
+    public float cx, cy, qx, qy, q3x, q3y, scr;
     public int pwidth, pheight;
     // endregion
     // endregion
 
     // region `private` ~~/ `protected`~~ fields.
-    public final String ICON_PATH;
     private final Unprojector UNPROJECTOR;
     // `LinkedHashSet`s preserve order (and also disallow element repetition)!
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
@@ -724,10 +724,14 @@ public class Sketch extends PApplet {
     public void updateRatios() {
         this.cx = super.width * 0.5f;
         this.cy = super.height * 0.5f;
+
         this.qx = this.cx * 0.5f;
         this.qy = this.cy * 0.5f;
+
         this.q3x = this.cx + this.qx;
         this.q3y = this.cy + this.qy;
+
+        this.scr = (float) super.width / (float) super.height;
     }
 
     // region Get monitor info.
@@ -1050,17 +1054,37 @@ public class Sketch extends PApplet {
     }
 
     public void camera(BasicCamera p_cam) {
-        super.camera(p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
+        super.camera(
+                p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
                 p_cam.center.x, p_cam.center.y, p_cam.center.z,
                 p_cam.up.x, p_cam.up.y, p_cam.up.z);
     }
 
-    public void perspective(BasicCamera p_cam) {
-        super.perspective(p_cam.fov, (float) super.width / (float) super.height, p_cam.near, p_cam.far);
+    public void camera(PVector p_pos, PVector p_center, PVector p_up) {
+        super.camera(
+                p_pos.x, p_pos.y, p_pos.z,
+                p_center.x, p_center.y, p_center.z,
+                p_up.x, p_up.y, p_up.z);
     }
 
-    public void ortho(BasicCamera p_cam) {
+    public void perspective(NerdCamera p_cam) {
+        super.perspective(p_cam.fov, p_cam.aspect, p_cam.near, p_cam.far);
+    }
+
+    public void perspective(float p_fov, float p_near, float p_far) {
+        super.perspective(p_fov, this.scr, p_near, p_far);
+    }
+
+    public void ortho(NerdCamera p_cam) {
         super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_cam.near, p_cam.far);
+    }
+
+    public void ortho(float p_near, float p_far) {
+        super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_near, p_far);
+    }
+
+    public void ortho(float p_cx, float p_cy, float p_near, float p_far) {
+        super.ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far);
     }
 
     // region The billion `image()` overloads.
@@ -1200,6 +1224,24 @@ public class Sketch extends PApplet {
     }
     // endregion
     // endregion
+
+    // region 2D rendering.
+    public void begin2d() {
+        super.hint(PConstants.DISABLE_DEPTH_TEST);
+        this.push(); // #JIT_FTW!
+    }
+
+    public void end2d() {
+        super.hint(PConstants.ENABLE_DEPTH_TEST);
+        this.pop(); // #JIT_FTW!
+    }
+
+    public void in2d(Runnable p_toDraw) {
+        // #JIT_FTW!
+        this.begin2d();
+        p_toDraw.run();
+        this.end2d();
+    }
     // endregion
 
     // region `Sketch::alphaBg()` overloads.
@@ -1226,6 +1268,7 @@ public class Sketch extends PApplet {
         super.rect(0, 0, super.width, super.height);
         super.popStyle();
     }
+    // endregion
     // endregion
 
     // region Key-press and key-type helper methods.
@@ -1368,34 +1411,6 @@ public class Sketch extends PApplet {
                 p_keyCode == 153 || // `Menu`/`Application` AKA "RightClick" key.
                 p_keyCode == 157 // "Meta", AKA the "OS key".
         );
-    }
-    // endregion
-
-    // region 2D rendering.
-    public void begin2d() {
-        super.hint(PConstants.DISABLE_DEPTH_TEST);
-        super.pushMatrix();
-        super.pushStyle();
-    }
-
-    public void end2d() {
-        super.hint(PConstants.ENABLE_DEPTH_TEST);
-        super.popMatrix();
-        super.popStyle();
-    }
-
-    public void in2d(Runnable p_toDraw) {
-        super.hint(PConstants.DISABLE_DEPTH_TEST);
-        super.pushMatrix();
-        super.pushStyle();
-        // this.begin2d();
-
-        p_toDraw.run();
-
-        // this.end2d();
-        super.hint(PConstants.ENABLE_DEPTH_TEST);
-        super.popMatrix();
-        super.popStyle();
     }
     // endregion
 

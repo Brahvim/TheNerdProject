@@ -25,7 +25,8 @@ public abstract class NerdCamera {
     public float fov = NerdCamera.DEFAULT_CAM_FOV,
             far = NerdCamera.DEFAULT_CAM_FAR,
             near = NerdCamera.DEFAULT_CAM_NEAR,
-            mouseZ = NerdCamera.DEFAULT_CAM_MOUSE_Z;
+            mouseZ = NerdCamera.DEFAULT_CAM_MOUSE_Z,
+            aspect /* `= 1`? */;
 
     public int clearColor = 0, projection = PConstants.PERSPECTIVE;
     public boolean doScript = true, doAutoClear = true;
@@ -39,23 +40,30 @@ public abstract class NerdCamera {
         this.up = new PVector(0, 1, 0);
         this.pos = new PVector(this.SKETCH.cx, this.SKETCH.cy,
                 this.SKETCH.cy / PApplet.tan(PConstants.PI * 30 / 180));
+        this.aspect = (float) this.SKETCH.width / (float) this.SKETCH.height;
     }
 
     public abstract void applyMatrix();
 
     // region Pre-implmented methods.
     public void clear() {
-        this.SKETCH.background(this.clearColor);
+        // this.SKETCH.background(this.clearColor);
 
-        // this.SKETCH.begin2d();
+        this.SKETCH.begin2d();
         // Removing this will not display the previous camera's view,
         // but still show clipping:
-        // this.SKETCH.camera();
-        // this.SKETCH.noStroke();
-        // this.SKETCH.fill(this.clearColor);
-        // this.SKETCH.rectMode(PConstants.CORNER);
-        // this.SKETCH.rect(0, 0, this.SKETCH.width, this.SKETCH.height);
-        // this.SKETCH.end2d();
+        this.SKETCH.camera();
+        this.SKETCH.noStroke();
+
+        this.SKETCH.fill(
+                this.SKETCH.red(this.clearColor),
+                this.SKETCH.green(this.clearColor),
+                this.SKETCH.blue(this.clearColor),
+                this.SKETCH.alpha(this.clearColor));
+
+        this.SKETCH.rectMode(PConstants.CORNER);
+        this.SKETCH.rect(0, 0, this.SKETCH.width, this.SKETCH.height);
+        this.SKETCH.end2d();
     }
 
     public void apply() {
