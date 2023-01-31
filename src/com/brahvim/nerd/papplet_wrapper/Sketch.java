@@ -1394,7 +1394,6 @@ public class Sketch extends PApplet {
         super.popMatrix();
         super.popStyle();
     }
-
     // endregion
 
     // region Start a `JAVA2D` sketch with an undecorated window.
