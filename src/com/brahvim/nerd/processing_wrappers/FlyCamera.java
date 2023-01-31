@@ -9,7 +9,7 @@ public class FlyCamera extends NerdCamera {
     // Mathematics thanks to [https://learnopengl.com/Getting-started/Camera]!
 
     // region Fields.
-    public final static float DEFAULT_MOUSE_SENSITIVITY = 0.9f;
+    public final static float DEFAULT_MOUSE_SENSITIVITY = 0.1f;
 
     public float yaw, zoom, pitch;
     public boolean shouldConstrainPitch = true;
@@ -116,14 +116,12 @@ public class FlyCamera extends NerdCamera {
     }
     // endregion
 
-    // TODO: Fix these!
-    // region Methods specific to `FlyCamera`.
+    // region `public` methods specific to `FlyCamera`.
     public void moveX(float p_velX) {
         p_velX *= this.SKETCH.frameTime;
         super.pos.add(PVector.mult(this.right, p_velX));
     }
 
-    // TODO: Play around with this and figure the Math out!
     public void moveY(float p_velY) {
         super.pos.y += p_velY;
         super.center.y += p_velY;
@@ -133,13 +131,14 @@ public class FlyCamera extends NerdCamera {
         p_velZ *= this.SKETCH.frameTime;
         super.pos.add(PVector.mult(this.front, p_velZ));
     }
+    // endregion
 
     private void updateFlyCamera() {
         // region Mouse movement updates.
-        this.yaw = /* this.SKETCH.frameTime * */
-                this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
-        this.pitch = /* this.SKETCH.frameTime * */
-                this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
+        // this.yaw += // this.SKETCH.frameTime *
+        // this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
+        // this.pitch += // this.SKETCH.frameTime *
+        // this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
 
         if (this.shouldConstrainPitch) {
             if (this.pitch > 89)
@@ -165,6 +164,5 @@ public class FlyCamera extends NerdCamera {
         // Making sure `NerdCamera` uses these correctly with Processing:
         PVector.add(super.pos, this.front, super.center);
     }
-    // endregion
 
 }

@@ -10,7 +10,7 @@ import processing.core.PVector;
 
 public class TestScene6 extends NerdScene {
     private FlyCamera CAMERA;
-    private PVector playerPos, playerVel = new PVector(3, 2, 3);
+    private PVector playerVel = new PVector(3, 2, 3);
 
     private final float GRAVITY = 2;
     private final float PLAYER_START_Y = -1500;
@@ -24,8 +24,7 @@ public class TestScene6 extends NerdScene {
         CAMERA = new FlyCamera(SKETCH);
         SKETCH.setCamera(CAMERA);
         CAMERA.clearColor = 0x006699;
-        this.playerPos = CAMERA.pos; // Hah! Pointer trick...
-        this.playerPos.set(SKETCH.cx, this.PLAYER_START_Y, 160);
+        CAMERA.pos.set(SKETCH.cx, this.PLAYER_START_Y, 160);
 
         // Do not forget to call!
         // The camera won't be "auto-used" otherwise!!!
@@ -53,26 +52,14 @@ public class TestScene6 extends NerdScene {
 
     private void controlCamera() {
         // region Gravity:
-        this.playerPos.y += this.GRAVITY;
+        CAMERA.pos.y += this.GRAVITY;
 
-        // region Don't-go-underneath check:
-        if (this.playerPos.y > this.PLAYER_MIN_Y)
-            this.playerPos.y = this.PLAYER_MIN_Y;
-        // `if (this.playerPos.y > groundLevel - playerHeight)`
-        // `(170 -35)`
-        // endregion
+        // Don't-go-underneath check:
+        if (CAMERA.pos.y > this.PLAYER_MIN_Y)
+            CAMERA.pos.y = this.PLAYER_MIN_Y;
         // endregion
 
         // region Key-press handling.
-        // if (keyIsPressed(KeyEvent.VK_W))
-        // camAddent.add(mult(camFront, playerVel.z));
-        // if (keyIsPressed(KeyEvent.VK_A))
-        // camAddent.add(normalize(cross(camFront, up)).mult(-playerVel.x));
-        // if (keyIsPressed(KeyEvent.VK_S))
-        // camAddent.add(mult(camFront, -playerVel.z));
-        // if (keyIsPressed(KeyEvent.VK_D))
-        // camAddent.add(normalize(cross(camFront, up)).mult(playerVel.x));
-
         // Increase speed when holding `Ctrl`:
         float velMultiplier = 1;
 
@@ -83,20 +70,20 @@ public class TestScene6 extends NerdScene {
             CAMERA.moveY(velMultiplier * playerVel.y);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_E))
-            CAMERA.moveY(velMultiplier * -playerVel.y);
+            CAMERA.moveY(this.GRAVITY * velMultiplier * -playerVel.y);
 
         // region `W`-`A`-`S`-`D` controls.
         if (SKETCH.keyIsPressed(KeyEvent.VK_W))
-            CAMERA.moveZ(velMultiplier * playerVel.z);
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_A))
-            CAMERA.moveX(velMultiplier * -playerVel.x);
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_S))
             CAMERA.moveZ(velMultiplier * -playerVel.z);
 
-        if (SKETCH.keyIsPressed(KeyEvent.VK_D))
+        if (SKETCH.keyIsPressed(KeyEvent.VK_A))
             CAMERA.moveX(velMultiplier * playerVel.x);
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_S))
+            CAMERA.moveZ(velMultiplier * playerVel.z);
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_D))
+            CAMERA.moveX(velMultiplier * -playerVel.x);
         // endregion
         // endregion
 
