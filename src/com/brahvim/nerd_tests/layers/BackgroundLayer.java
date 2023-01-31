@@ -17,10 +17,9 @@ public class BackgroundLayer extends NerdLayer {
     @Override
     protected void draw() {
         SKETCH.background(0x006699);
-        CAMERA.clearColor = SKETCH.lerpColor(
-                SKETCH.color(0x006699), SKETCH.color(255),
-                this.fadeWave.get()); // CAN USE `this` with lambdas!
+        CAMERA.setClearColor(0x006699);
 
+        // CAN USE `this` with lambdas!
         // ...kinda' like `with()` from Python mode in Processing?:
         // SKETCH.in2d(() -> {
         // SKETCH.rectMode(PConstants.CORNER);

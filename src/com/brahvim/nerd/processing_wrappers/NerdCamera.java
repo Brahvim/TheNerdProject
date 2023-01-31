@@ -20,18 +20,19 @@ public abstract class NerdCamera {
             DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10000, DEFAULT_CAM_MOUSE_Z = 25;
 
     public final Sketch SKETCH;
-
     public NerdCamera.Script script;
+
+    // ...yeah, for some reason `PApplet::color()` fails.
+    public float red, green, blue, alpha;
     public float fov = NerdCamera.DEFAULT_CAM_FOV,
             far = NerdCamera.DEFAULT_CAM_FAR,
             near = NerdCamera.DEFAULT_CAM_NEAR,
             mouseZ = NerdCamera.DEFAULT_CAM_MOUSE_Z,
             aspect /* `= 1`? */;
 
-    public int clearColor = 0, projection = PConstants.PERSPECTIVE;
-    public boolean doScript = true, doAutoClear = true;
-
     public PVector up, pos;
+    public int projection = PConstants.PERSPECTIVE;
+    public boolean doScript = true, doAutoClear = true;
     // endregion
 
     public NerdCamera(Sketch p_sketch) {
@@ -45,26 +46,41 @@ public abstract class NerdCamera {
 
     public abstract void applyMatrix();
 
-    // region Pre-implmented methods.
+    // region Pre-implemented methods.
     public void clear() {
-        // this.SKETCH.background(this.clearColor);
-
-        this.SKETCH.begin2d();
-        // Removing this will not display the previous camera's view,
-        // but still show clipping:
-        this.SKETCH.camera();
-        this.SKETCH.noStroke();
-
-        this.SKETCH.fill(
-                this.SKETCH.red(this.clearColor),
-                this.SKETCH.green(this.clearColor),
-                this.SKETCH.blue(this.clearColor),
-                this.SKETCH.alpha(this.clearColor));
-
-        this.SKETCH.rectMode(PConstants.CORNER);
-        this.SKETCH.rect(0, 0, this.SKETCH.width, this.SKETCH.height);
-        this.SKETCH.end2d();
+        this.SKETCH.alphaBg(this.red, this.green, this.blue, this.alpha);
     }
+
+    // region `setClearColor()` overloads.
+    public void setClearColor(int p_color) {
+        this.red = this.SKETCH.red(p_color);
+        this.green = this.SKETCH.green(p_color);
+        this.blue = this.SKETCH.blue(p_color);
+        this.alpha = 255; // I have to do this!
+        // this.alpha = this.SKETCH.alpha(p_color);
+    }
+
+    public void setClearColor(float p_grey, float p_alpha) {
+        this.red = p_grey;
+        this.green = p_grey;
+        this.blue = p_grey;
+        this.alpha = p_alpha;
+    }
+
+    public void setClearColor(float p_red, float p_green, float p_blue) {
+        this.red = p_red;
+        this.green = p_green;
+        this.blue = p_blue;
+        this.alpha = 255;
+    }
+
+    public void setClearColor(float p_red, float p_green, float p_blue, float p_alpha) {
+        this.red = p_red;
+        this.green = p_green;
+        this.blue = p_blue;
+        this.alpha = p_alpha;
+    }
+    // endregion
 
     public void apply() {
         // #JIT_FTW!:
@@ -80,7 +96,12 @@ public abstract class NerdCamera {
 
     public void resetParams() {
         // this.script = null;
-        this.clearColor = 0;
+
+        this.red = 0;
+        this.green = 0;
+        this.blue = 0;
+        this.alpha = 255;
+
         this.doScript = true;
         this.doAutoClear = true;
         this.mouseZ = BasicCamera.DEFAULT_CAM_MOUSE_Z;

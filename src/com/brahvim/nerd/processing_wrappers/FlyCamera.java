@@ -83,7 +83,6 @@ public class FlyCamera extends NerdCamera {
     @Override
     public void resetParams() {
         super.resetParams();
-
         this.yaw = 0;
         this.pitch = 0;
         this.front.set(0, 0, 0);
@@ -93,7 +92,6 @@ public class FlyCamera extends NerdCamera {
     @Override
     public void resetSettings() {
         super.resetSettings();
-
         this.shouldConstrainPitch = true;
     }
     // endregion

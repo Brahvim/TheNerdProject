@@ -78,13 +78,9 @@ public class BasicCamera extends NerdCamera {
 
     // region Copy and reset!
     @Override
-    public void completeReset() {
-        this.resetParams();
-        this.resetSettings();
-    }
-
-    @Override
     public void resetParams() {
+        super.resetParams();
+
         if (this.defaultCamUp == null)
             this.up.set(0, 0, 0);
         else

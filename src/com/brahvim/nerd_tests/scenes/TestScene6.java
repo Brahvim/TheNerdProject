@@ -27,7 +27,7 @@ public class TestScene6 extends NerdScene {
         }
 
         CAMERA = new FlyCamera(SKETCH);
-        CAMERA.clearColor = 0x006699;
+        CAMERA.setClearColor(0x006699);
         SKETCH.setCamera(CAMERA); // Do not forget to do!
         CAMERA.pos.set(SKETCH.cx, this.PLAYER_START_Y, 160);
 
@@ -41,7 +41,6 @@ public class TestScene6 extends NerdScene {
             MANAGER.restartScene();
 
         this.controlCamera();
-        System.out.println(CAMERA.pos);
 
         // region Actual rendering!
         // Box in center:

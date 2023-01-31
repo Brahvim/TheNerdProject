@@ -187,22 +187,35 @@ public class BasicCameraBuilder {
 
     // region `setClearColor()` overloads (they use `this.sketch`!).
     public BasicCameraBuilder setClearColor(int p_color) {
-        this.build.clearColor = p_color;
+        this.build.red = this.SKETCH.red(p_color);
+        this.build.green = this.SKETCH.green(p_color);
+        this.build.blue = this.SKETCH.blue(p_color);
+        this.build.alpha = 255; // I have to do this!
+        // this.alpha = this.SKETCH.alpha(p_color);
         return this;
     }
 
     public BasicCameraBuilder setClearColor(float p_grey, float p_alpha) {
-        this.build.clearColor = this.SKETCH.color(p_grey, p_alpha);
+        this.build.red = p_grey;
+        this.build.green = p_grey;
+        this.build.blue = p_grey;
+        this.build.alpha = p_alpha;
         return this;
     }
 
     public BasicCameraBuilder setClearColor(float p_red, float p_green, float p_blue) {
-        this.build.clearColor = this.SKETCH.color(p_red, p_green, p_blue);
+        this.build.red = p_red;
+        this.build.green = p_green;
+        this.build.blue = p_blue;
+        this.build.alpha = 255;
         return this;
     }
 
     public BasicCameraBuilder setClearColor(float p_red, float p_green, float p_blue, float p_alpha) {
-        this.build.clearColor = this.SKETCH.color(p_red, p_green, p_blue, p_alpha);
+        this.build.red = p_red;
+        this.build.green = p_green;
+        this.build.blue = p_blue;
+        this.build.alpha = p_alpha;
         return this;
     }
     // endregion

@@ -1246,27 +1246,30 @@ public class Sketch extends PApplet {
 
     // region `Sketch::alphaBg()` overloads.
     public void alphaBg(int p_color) {
-        super.pushStyle();
+        this.begin2d();
         super.fill(p_color);
         this.alphaBgImplRect();
     }
 
     public void alphaBg(float p_grey, float p_alpha) {
-        super.pushStyle();
+        this.begin2d();
         super.fill(p_grey, p_alpha);
         this.alphaBgImplRect();
     }
 
     public void alphaBg(float p_red, float p_green, float p_blue, float p_alpha) {
-        super.pushStyle();
+        this.begin2d();
         super.fill(p_red, p_green, p_blue, p_alpha);
         this.alphaBgImplRect();
     }
 
     private void alphaBgImplRect() {
+        // Removing this will not display the previous camera's view,
+        // but still show clipping:
+        this.SKETCH.camera();
         super.rectMode(PConstants.CORNER);
         super.rect(0, 0, super.width, super.height);
-        super.popStyle();
+        this.end2d();
     }
     // endregion
     // endregion
