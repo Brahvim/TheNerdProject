@@ -72,7 +72,7 @@ public class NerdCamera {
         this.SKETCH.begin2d();
         // Removing this will not display the previous camera's view,
         // but still show clipping:
-        // this.SKETCH.camera();
+        this.SKETCH.camera();
         this.SKETCH.noStroke();
         this.SKETCH.fill(this.clearColor);
         this.SKETCH.rectMode(PConstants.CORNER);

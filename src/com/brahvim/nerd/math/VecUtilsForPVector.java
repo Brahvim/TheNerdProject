@@ -3,7 +3,7 @@ package com.brahvim.nerd.math;
 import processing.core.PVector;
 
 // "pls no instance" ; ~ ;)
-public abstract class VecUtilsPVector {
+public abstract class VecUtilsForPVector {
     public static PVector normalize(PVector p_vec) {
         return new PVector(p_vec.x, p_vec.y, p_vec.z).normalize();
     }

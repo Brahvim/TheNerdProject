@@ -1,31 +1,37 @@
 package com.brahvim.nerd.processing_wrappers;
 
-import com.brahvim.nerd.math.VecUtilsPVector;
+import com.brahvim.nerd.math.VecUtilsForPVector;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class FlyCamera implements HasNerdCamera {
+public class FlyCamera extends NerdCamera {
     // Mathematics thanks to [https://learnopengl.com/Getting-started/Camera]!
 
     // region Fields.
-    public final Sketch SKETCH;
-
     public float sensitivity = 0.1f;
     public float pitch, yaw;
     public PVector mouseDir = new PVector(),
             camFront = new PVector(),
             camAddent = new PVector();
 
-    private final NerdCamera CAMERA;
     private float sinYaw, cosYaw, sinPitch, cosPitch;
     // endregion
 
     // region Constructors.
     public FlyCamera(Sketch p_sketch, NerdCamera p_camera) {
-        this.SKETCH = p_sketch;
-        this.CAMERA = p_camera;
+        super(p_sketch);
+
+        super.up.set(p_camera.up);
+        super.pos.set(p_camera.pos);
+        super.center.set(p_camera.center);
+
+        super.far = p_camera.far;
+        super.fov = p_camera.fov;
+        super.near = p_camera.near;
+
+        super.script = p_camera.script;
     }
 
     public FlyCamera(Sketch p_sketch) {
@@ -34,20 +40,24 @@ public class FlyCamera implements HasNerdCamera {
     // endregion
 
     // region From `NerdCamera`.
+    @Override
     public void apply() {
         this.rotateCamera();
-        this.CAMERA.apply();
+        super.apply();
     }
 
+    @Override
     public void applyMatrix() {
         this.rotateCamera();
-        this.CAMERA.applyMatrix();
+        super.applyMatrix();
     }
 
+    @Override
     public void clear() {
-        this.CAMERA.clear();
+        super.clear();
     }
 
+    @Override
     public void completeReset() {
         // Exactly what `NerdCamera` does.
         this.resetCamParams();
@@ -55,8 +65,9 @@ public class FlyCamera implements HasNerdCamera {
         // ...these two methods also wrap calls to `FpsCamera::CAMERA`.
     }
 
+    @Override
     public FlyCamera clone() {
-        FlyCamera toRet = new FlyCamera(this.SKETCH, this.CAMERA.clone());
+        FlyCamera toRet = new FlyCamera(super.SKETCH, super.clone());
 
         // region Setting Euler angles.
         toRet.yaw = this.yaw;
@@ -76,6 +87,7 @@ public class FlyCamera implements HasNerdCamera {
         return toRet;
     }
 
+    @Override
     public void resetCamParams() {
         this.yaw = 0;
         this.pitch = 0;
@@ -90,19 +102,22 @@ public class FlyCamera implements HasNerdCamera {
         this.camFront.set(0, 0, 0);
         this.camAddent.set(0, 0, 0);
 
-        this.CAMERA.resetCamParams();
+        super.resetCamParams();
     }
 
+    @Override
     public void resetSettings() {
-        this.CAMERA.resetSettings();
+        super.resetSettings();
     }
 
+    @Override
     public void runScript() {
-        this.CAMERA.runScript();
+        super.runScript();
     }
 
+    @Override
     public void useProcessingDefaults() {
-        this.CAMERA.useProcessingDefaults();
+        super.useProcessingDefaults();
     }
     // endregion
 
@@ -110,14 +125,14 @@ public class FlyCamera implements HasNerdCamera {
     // region Methods specific to `FlyCamera`.
     public void moveX(float p_velX) {
         this.camAddent.add(
-                VecUtilsPVector.normalize(VecUtilsPVector.cross(
-                        this.camFront, this.CAMERA.up)).mult(p_velX));
+                VecUtilsForPVector.normalize(VecUtilsForPVector.cross(
+                        this.camFront, super.up)).mult(p_velX));
     }
 
     // TODO: Play around with this and figure the Math out!
     public void moveY(float p_velY) {
-        this.CAMERA.pos.y += p_velY;
-        this.CAMERA.center.y += p_velY;
+        super.pos.y += p_velY;
+        super.center.y += p_velY;
     }
 
     public void moveZ(float p_velZ) {
@@ -125,8 +140,10 @@ public class FlyCamera implements HasNerdCamera {
     }
 
     public void rotateCamera() {
-        this.yaw += (this.SKETCH.mouseX - this.SKETCH.pmouseX) * this.sensitivity;
-        this.pitch += (this.SKETCH.mouseY - this.SKETCH.pmouseY) * this.sensitivity;
+        System.out.println(super.SKETCH.mouseX - super.SKETCH.pmouseX);
+
+        this.yaw += (super.SKETCH.mouseX - super.SKETCH.pmouseX) * this.sensitivity;
+        this.pitch += (super.SKETCH.mouseY - super.SKETCH.pmouseY) * this.sensitivity;
 
         if (this.pitch > 89)
             this.pitch = 89;
@@ -139,27 +156,22 @@ public class FlyCamera implements HasNerdCamera {
         this.sinPitch = PApplet.sin(PApplet.radians(this.pitch));
         this.cosPitch = PApplet.cos(PApplet.radians(this.pitch));
 
-        this.mouseDir.set(0, 0, 0);
-
+        // this.mouseDir.set(0, 0, 0);
         this.mouseDir.x = this.cosYaw * this.cosPitch;
         this.mouseDir.y = this.sinPitch;
         this.mouseDir.z = this.sinYaw * this.cosPitch;
 
         this.camFront.set(this.mouseDir.normalize());
-        this.CAMERA.pos.add(this.camAddent);
-        this.CAMERA.center.add(this.camFront);
 
+        // this.camAddent.y = 0;
+        super.pos.add(this.camAddent);
         this.camAddent.set(0, 0, 0);
-    }
 
-    public void setScript(NerdCamera.Script p_script) {
-        this.CAMERA.script = p_script;
+        // super.center.set(0, 0, 0);
+        super.center.add(super.pos);
+        super.center.add(this.camFront);
+
     }
     // endregion
-
-    @Override
-    public NerdCamera getNerdCamera() {
-        return this.CAMERA;
-    }
 
 }
