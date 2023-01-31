@@ -42,7 +42,6 @@ public class FlyCamera extends NerdCamera {
     // region From `NerdCamera`.
     @Override
     public void apply() {
-        this.updateFlyCamera();
         super.apply();
     }
 
@@ -50,6 +49,10 @@ public class FlyCamera extends NerdCamera {
     public void applyMatrix() {
         this.updateFlyCamera();
         super.applyMatrix();
+
+        // Was trying to fix that annoying `FlyCamera`-flips-at-origin bug.
+        // this.SKETCH.translate(Sketch.FLOAT_HALF, Sketch.FLOAT_HALF);
+        // ...didn't fix it :rofl:
     }
 
     @Override
@@ -62,7 +65,7 @@ public class FlyCamera extends NerdCamera {
         // Exactly what `NerdCamera` does.
         this.resetCamParams();
         this.resetSettings();
-        // ...these two methods also wrap calls to `FpsCamera::CAMERA`.
+        // ...these two methods also wrap calls to `FlyCamera::CAMERA`.
     }
 
     @Override
@@ -155,10 +158,10 @@ public class FlyCamera extends NerdCamera {
         // to prevent the camera from flipping at the origin!
 
         // region Mouse movement updates.
-        // this.yaw += // this.SKETCH.frameTime *
-        // this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
-        // this.pitch += // this.SKETCH.frameTime *
-        // this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
+        this.yaw += // this.SKETCH.frameTime *
+                this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
+        this.pitch += // this.SKETCH.frameTime *
+                this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
 
         if (this.shouldConstrainPitch) {
             if (this.pitch > 89)

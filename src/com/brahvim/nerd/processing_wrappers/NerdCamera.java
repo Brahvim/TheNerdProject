@@ -111,7 +111,6 @@ public class NerdCamera {
 
         // Translate! People probably still prefer things on the top left corner `P3D`
         // ...even if it could mean translating twice in some cases, it's alright!
-        // this.SKETCH.translate(Sketch.FLOAT_HALF, Sketch.FLOAT_HALF);
         this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
     }
 
@@ -148,7 +147,6 @@ public class NerdCamera {
         this.near = NerdCamera.DEFAULT_CAM_NEAR;
     }
 
-    // Does not call `NerdCamera::resetCamParams()` so `FpsCamera` can work.
     public void resetSettings() {
         // this.script = null;
         this.clearColor = 0;
