@@ -9,14 +9,12 @@ public class FlyCamera extends NerdCamera {
     // Mathematics, thanks to [https://learnopengl.com/Getting-started/Camera]!
 
     // region Fields.
-    public final static float DEFAULT_MOUSE_SENSITIVITY = 0.1f;
+    public final static float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
 
     public float yaw, zoom, pitch;
+    public PVector front = new PVector();
     public boolean shouldConstrainPitch = true;
     public float mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
-    public PVector front = new PVector(),
-            right = new PVector(),
-            worldUp = super.up;
     // endregion
 
     // region Constructors.
@@ -47,7 +45,8 @@ public class FlyCamera extends NerdCamera {
 
     @Override
     public void applyMatrix() {
-        this.updateFlyCamera();
+        if (super.SKETCH.mouseLeft)
+            this.mouseUpdate();
         super.applyMatrix();
 
         // Was trying to fix that annoying `FlyCamera`-flips-at-origin bug.
@@ -61,14 +60,6 @@ public class FlyCamera extends NerdCamera {
     }
 
     @Override
-    public void completeReset() {
-        // Exactly what `NerdCamera` does.
-        this.resetCamParams();
-        this.resetSettings();
-        // ...these two methods also wrap calls to `FlyCamera::CAMERA`.
-    }
-
-    @Override
     public FlyCamera clone() {
         FlyCamera toRet = new FlyCamera(super.SKETCH, super.clone());
 
@@ -76,10 +67,7 @@ public class FlyCamera extends NerdCamera {
         toRet.yaw = this.yaw;
         toRet.zoom = this.zoom;
         toRet.pitch = this.pitch;
-
         toRet.front.set(this.front);
-        toRet.right.set(this.right);
-        toRet.worldUp.set(this.worldUp);
 
         toRet.mouseSensitivity = this.mouseSensitivity;
         toRet.shouldConstrainPitch = this.shouldConstrainPitch;
@@ -89,14 +77,18 @@ public class FlyCamera extends NerdCamera {
     }
 
     @Override
+    public void completeReset() {
+        // Exactly what `NerdCamera` does.
+        this.resetCamParams();
+        this.resetSettings();
+        // ...these two methods also wrap calls to `FlyCamera::CAMERA`.
+    }
+
+    @Override
     public void resetCamParams() {
         this.yaw = 0;
         this.pitch = 0;
-
         this.front.set(0, 0, 0);
-        this.right.set(0, 0, 0);
-        this.worldUp.set(0, 1, 0);
-
         this.mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
 
         super.resetCamParams();
@@ -121,8 +113,11 @@ public class FlyCamera extends NerdCamera {
 
     // region `public` methods specific to `FlyCamera`.
     public void moveX(float p_velX) {
-        p_velX *= this.SKETCH.frameTime;
-        super.pos.add(PVector.mult(this.right, p_velX));
+        super.pos.add(
+                PVector.mult(
+                        PVector.cross(
+                                this.front, super.up, null).normalize(),
+                        p_velX));
     }
 
     public void moveY(float p_velY) {
@@ -131,48 +126,35 @@ public class FlyCamera extends NerdCamera {
     }
 
     public void moveZ(float p_velZ) {
-        p_velZ *= this.SKETCH.frameTime;
-        super.pos.add(PVector.mult(this.front, p_velZ));
+        super.pos.sub(PVector.mult(this.front, p_velZ));
     }
     // endregion
 
-    private void updateFlyCamera() {
-        // Again, thanks to [https://learnopengl.com/Getting-started/Camera]!!!
-
-        final float YAW_SIN = PApplet.sin(PApplet.radians(this.yaw)),
-                PITCH_SIN = PApplet.sin(PApplet.radians(this.pitch));
-        final float YAW_COS = PApplet.cos(PApplet.radians(this.yaw)),
-                PITCH_COS = PApplet.cos(PApplet.radians(this.pitch));
-
-        this.front.x = YAW_COS * PITCH_COS;
-        this.front.y = PITCH_SIN;
-        this.front.z = YAW_SIN * PITCH_COS;
-        this.front.normalize();
-
-        PVector.cross(this.front, this.worldUp, this.right).normalize();
-        PVector.cross(this.right, this.front, super.up).normalize();
-
-        // Making sure `NerdCamera` uses these correctly with Processing:
-        PVector.add(super.pos, this.front, super.center);
-
-        // Doing mouse updates after translational ones as advised by
-        // [https://stackoverflow.com/a/52949834/13951505] to prevent the camera from
-        // to prevent the camera from flipping at the origin!
-
-        // region Mouse movement updates.
-        this.yaw += // this.SKETCH.frameTime *
-                this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
-        this.pitch += // this.SKETCH.frameTime *
-                this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
+    protected void mouseUpdate() {
+        // Update `yaw` and `pitch`:
+        yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
+        pitch += this.mouseSensitivity * (super.SKETCH.pmouseY - super.SKETCH.mouseY); // Opposite!
 
         if (this.shouldConstrainPitch) {
-            if (this.pitch > 89)
-                this.pitch = 89;
-            if (this.pitch < -89)
-                this.pitch = -89;
+            if (pitch > 89.0f)
+                pitch = 89.0f;
+            if (pitch < -89.0f)
+                pitch = -89.0f;
         }
-        // endregion
 
+        final float YAW_COS = PApplet.cos(PApplet.radians(yaw)),
+                YAW_SIN = PApplet.sin(PApplet.radians(yaw)),
+                PITCH_COS = PApplet.cos(PApplet.radians(pitch)),
+                PITCH_SIN = PApplet.sin(PApplet.radians(pitch));
+
+        // Calculate actual direction:
+        this.front.set(
+                -YAW_COS * PITCH_COS,
+                PITCH_SIN,
+                YAW_SIN * PITCH_COS).normalize();
+
+        // Set it!:
+        super.center.add(this.front);
     }
 
 }
