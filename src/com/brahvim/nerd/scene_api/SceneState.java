@@ -83,6 +83,12 @@ public class SceneState {
         return (T) this.DATA.get(p_key);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T get(String p_key, T p_default) {
+        T toRet = (T) this.DATA.get(p_key); // ...let's not rely too much on the JIT!
+        return toRet == null ? p_default : toRet;
+    }
+
     /**
      * If an object with the given key is already saved, it is updated.<br>
      * <br>

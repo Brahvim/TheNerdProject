@@ -3,6 +3,7 @@ package com.brahvim.nerd_tests.scenes;
 import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.processing_wrappers.FlyCamera;
+import com.brahvim.nerd.processing_wrappers.FpsCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -27,8 +28,10 @@ public class TestScene6 extends NerdScene {
         }
 
         // Need to do this!...:
-        CAMERA = new FlyCamera(SKETCH);
+        CAMERA = new FpsCamera(SKETCH);
         CAMERA.setClearColor(0x006699);
+
+        CAMERA.pos = STATE.get("CamPos", CAMERA.pos);
 
         // Do not forget to do these!:
         SKETCH.cursorVisible = false;
@@ -41,12 +44,9 @@ public class TestScene6 extends NerdScene {
 
     @Override
     protected void draw() {
-        if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
-            MANAGER.restartScene();
-
-        if (SKETCH.frameCount % 600 == 0) {
-            FlyCamera.holdPointer = !FlyCamera.holdPointer;
-            System.out.println(FlyCamera.holdPointer);
+        if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
+            STATE.set("CamPos", CAMERA.pos);
+            MANAGER.restartScene(STATE);
         }
 
         this.controlCamera();
