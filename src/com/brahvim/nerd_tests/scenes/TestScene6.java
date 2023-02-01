@@ -44,6 +44,11 @@ public class TestScene6 extends NerdScene {
         if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
             MANAGER.restartScene();
 
+        if (SKETCH.frameCount % 600 == 0) {
+            FlyCamera.holdPointer = !FlyCamera.holdPointer;
+            System.out.println(FlyCamera.holdPointer);
+        }
+
         this.controlCamera();
 
         // region Actual rendering!

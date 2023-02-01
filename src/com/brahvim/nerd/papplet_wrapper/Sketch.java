@@ -1,5 +1,6 @@
 package com.brahvim.nerd.papplet_wrapper;
 
+import java.awt.AWTException;
 import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -8,6 +9,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -31,6 +33,7 @@ import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.processing_wrappers.BasicCamera;
 import com.brahvim.nerd.processing_wrappers.BasicCameraBuilder;
+import com.brahvim.nerd.processing_wrappers.FlyCamera;
 import com.brahvim.nerd.processing_wrappers.NerdCamera;
 import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -192,6 +195,7 @@ public class Sketch extends PApplet {
 
     // region Instance constants.
     public final String NAME;
+    public final Robot ROBOT;
     public final Sketch SKETCH;
     public final String RENDERER;
     public final String ICON_PATH;
@@ -201,8 +205,8 @@ public class Sketch extends PApplet {
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
     public final Point GLOBAL_MOUSE_POINT = new Point();
-    public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
     public final Point PREV_GLOBAL_MOUSE_POINT = new Point();
+    public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
     public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
 
     public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
@@ -290,8 +294,8 @@ public class Sketch extends PApplet {
     // `LinkedHashSet`s preserve order (and also disallow element repetition)!
     private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
     private GraphicsDevice previousMonitor, currentMonitor;
-    private SceneManager sceneMan; // Don't use static initialization for this..?
     private NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
+    private SceneManager sceneMan; // Don't use static initialization for this..?
 
     // region Listeners!
     private final SketchInsideListener EXIT_LISTENER, DISPOSAL_LISTENER, SETUP_LISTENER;
@@ -389,6 +393,19 @@ public class Sketch extends PApplet {
             this.INIT_WIDTH = p_key.width;
             this.INIT_HEIGHT = p_key.height;
         }
+        // endregion
+
+        // region Setting up `this.ROBOT`.
+        Robot toAssign = null;
+
+        try {
+            toAssign = new Robot();
+            toAssign.setAutoWaitForIdle(true);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+
+        this.ROBOT = toAssign;
         // endregion
 
         p_key.sketchconstructedListener.listen(this);
@@ -531,6 +548,8 @@ public class Sketch extends PApplet {
         this.framelyWindowSetup();
 
         // region Previous state updates!!!
+        FlyCamera.pholdPointer = FlyCamera.holdPointer;
+
         this.pkey = super.key;
         this.pwidth = this.width;
         this.pheight = this.height;

@@ -1,5 +1,7 @@
 package com.brahvim.nerd.processing_wrappers;
 
+import java.awt.Point;
+
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
@@ -11,6 +13,8 @@ public class FlyCamera extends NerdCamera {
 
     // region Fields.
     public final static float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
+    public volatile static Point mousePositionBeforeLock;
+    public volatile static boolean pholdPointer, holdPointer = true;
 
     public PVector front;
     public float yaw, zoom, pitch;
@@ -26,6 +30,25 @@ public class FlyCamera extends NerdCamera {
     // endregion
 
     // region From `NerdCamera`.
+    @Override
+    public void apply() {
+        super.apply();
+
+        if (FlyCamera.holdPointer && super.SKETCH.focused) {
+            // region `if (FlyCamera.mousePositionBeforeLock == null)`,
+            if (FlyCamera.mousePositionBeforeLock == null)
+                FlyCamera.mousePositionBeforeLock = new Point(
+                        super.SKETCH.displayWidthHalf,
+                        super.SKETCH.displayHeightHalf);
+            // endregion
+
+            super.SKETCH.ROBOT.mouseMove(
+                    FlyCamera.mousePositionBeforeLock.x,
+                    FlyCamera.mousePositionBeforeLock.y);
+        }
+
+    }
+
     @Override
     public void applyMatrix() {
         this.mouseUpdate();
@@ -115,9 +138,38 @@ public class FlyCamera extends NerdCamera {
     }
 
     protected void mouseUpdate() {
-        // Update `yaw` and `pitch`:
-        this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
-        this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY); // Opposite!
+        // region Update `yaw` and `pitch`:
+        if (!FlyCamera.pholdPointer && FlyCamera.holdPointer) {
+
+            // ...note of encouragement I left for myself back when the following line
+            // was `FlyCamera.mousePositionBeforeLock = super.SKETCH.GLOBAL_MOUSE_POINT;`:
+            /*
+             * """
+             * Don't worry, the GC is still going to do its job fine.
+             * It doesn't have any JIT that would be 'disturbed' by doing this!
+             * You're allocating TWO less `float`s by doing this! :joy:
+             * """
+             */
+
+            FlyCamera.mousePositionBeforeLock.setLocation(super.SKETCH.GLOBAL_MOUSE_POINT);
+            // ...buuuut assignment didn't work!
+        }
+
+        if (FlyCamera.holdPointer) {
+            if (FlyCamera.mousePositionBeforeLock == null) {
+                this.yaw += this.mouseSensitivity * super.SKETCH.GLOBAL_MOUSE_POINT.x;
+                this.pitch += this.mouseSensitivity * super.SKETCH.GLOBAL_MOUSE_POINT.y;
+            } else {
+                this.yaw += this.mouseSensitivity
+                        * (super.SKETCH.GLOBAL_MOUSE_POINT.x - FlyCamera.mousePositionBeforeLock.x);
+                this.pitch += this.mouseSensitivity
+                        * (super.SKETCH.GLOBAL_MOUSE_POINT.y - FlyCamera.mousePositionBeforeLock.y);
+            }
+        } else {
+            this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
+            this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY); // Remember! Opposite!
+        }
+        // endregion
 
         if (this.shouldConstrainPitch) {
             if (pitch > 89.0f)

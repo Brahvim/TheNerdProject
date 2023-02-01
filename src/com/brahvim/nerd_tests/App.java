@@ -14,7 +14,7 @@ public class App {
     // TODO: Collision Algorithms for 3D space!
 
     // region `App`'s fields.
-    private final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
+    public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
 
             // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
             TestScene6.class;
