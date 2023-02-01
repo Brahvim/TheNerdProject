@@ -31,6 +31,8 @@ public class TestScene6 extends NerdScene {
             SKETCH.fullscreen = true;
         }
 
+        SCENE.addLayers(PauseMenuLayer.class);
+
         // Need to do this!...:
         CAMERA = STATE.get("Camera", new FpsCamera(SKETCH));
         CAMERA.setClearColor(0x006699);
@@ -54,19 +56,19 @@ public class TestScene6 extends NerdScene {
         if (SKETCH.keyIsPressed(KeyEvent.VK_ESCAPE)) {
             SCENE.onLayersOfClass(PauseMenuLayer.class, (l) -> {
                 System.out.println("Reading from layer class!");
-                System.out.println(l.getClass().getName());
+                System.out.println(l.timesActivated());
                 l.setActive(false);
             });
-
-            SCENE.addLayers(PauseMenuLayer.class);
         }
 
-        System.out.println(CAMERA.fov = PConstants.PI / 3 + 0.01f * SKETCH.mouseScroll);
+        CAMERA.fov = PConstants.PI / 3 + 0.01f * SKETCH.mouseScroll;
         CAMERA.height = this.CAM_HEIGHT + PApplet.sin(SKETCH.millis() * 0.001f) * 25;
 
         this.controlCamera();
 
         // region Actual rendering!
+        SKETCH.translate(0, 500);
+
         // Box in center:
         SKETCH.pushMatrix();
         SKETCH.translate(0, 165, 0);

@@ -26,13 +26,11 @@ public class NerdLayer implements InputEventHandling {
     // endregion
 
     // region `private` fields.
-    private int timesActivated;
-    private boolean active = true;
-    // ^^^ `private` because otherwise you won't be able to track changes.
-    // This isn't C#!
+    private boolean active;
+    private int timesActivatedCount;
     // endregion
 
-    public NerdLayer() {
+    protected NerdLayer() {
         // region Verify and 'use' key.
         // if (p_key == null) {
         // throw new IllegalArgumentException("""
@@ -64,13 +62,13 @@ public class NerdLayer implements InputEventHandling {
 
         if (this.active) {
             this.setup();
-            this.timesActivated++;
+            this.timesActivatedCount++;
         } else
             this.layerExit();
     }
 
     public int timesActivated() {
-        return this.timesActivated;
+        return this.timesActivatedCount;
     }
     // endregion
 

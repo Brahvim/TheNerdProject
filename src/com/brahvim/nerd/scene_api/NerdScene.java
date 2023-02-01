@@ -83,7 +83,7 @@ public class NerdScene implements InputEventHandling {
   }
   // endregion
 
-  // region Fields.
+  // region `public` fields.
   public final NerdScene SCENE = this;
   // Forgive me for breaking naming conventions. Forgive me. Please!
   public /* final */ Sketch SKETCH;
@@ -92,17 +92,16 @@ public class NerdScene implements InputEventHandling {
   public /* final */ StringTable STRINGS;
   public /* final */ AssetManager ASSETS;
   public /* final */ SceneManager MANAGER;
+  // endregion
 
   // region `private` fields.
   private int startMillis;
   private boolean donePreloading;
 
+  // Start at `0`. "Who needs layers anyway?"
+  private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0);
   // Worth remembering: `LinkedHashSet`s allow duplicate objects, store everything
   // in *in order*, but have no `indexOf()` method!
-
-  // Start at `0`. "Who needs layers anyway?"
-  // private AssetManKey ASSET_MAN_KEY;
-  private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0);
 
   private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
 
@@ -129,12 +128,9 @@ public class NerdScene implements InputEventHandling {
    * decided not to do that.
    */
   // endregion
-  // endregion
 
-  // region Construction.
   protected NerdScene() {
   }
-  // endregion
 
   // region Queries.
   public int timesLoaded() {
