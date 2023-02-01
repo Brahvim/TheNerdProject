@@ -8,13 +8,10 @@ import com.brahvim.nerd_tests.scenes.TestScene6;
 
 public class App {
     // TODO: Audio? Video! Do some Gradle build stuff to ensure a lower JAR size?
+    // (Oh yes, and LWJGL-OpenAL would be here soon, too!)
 
     // TODO: LWJGL OpenAL,
-    // TODO: Video library DLL search,
-    // TODO: Collision Algorithms for 3D space,
-    // TODO: `PShape` wrapper!?!?!?!??!?!?!?!?!???
-
-    // (Oh yes, and LWJGL-OpenAL would be here soon, too!)
+    // TODO: Collision Algorithms for 3D space.
 
     // region `App`'s fields.
     private final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
