@@ -40,9 +40,9 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        System.out.println("TestScene4.setup(), " + SCENE.timesSceneWasLoaded());
+        System.out.println("TestScene4.setup(), " + SCENE.timesLoaded());
 
-        if (SCENE.timesSceneWasLoaded() == 0) {
+        if (SCENE.timesLoaded() == 0) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();

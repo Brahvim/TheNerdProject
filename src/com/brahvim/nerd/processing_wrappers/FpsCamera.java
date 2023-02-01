@@ -3,6 +3,8 @@ package com.brahvim.nerd.processing_wrappers;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class FpsCamera extends FlyCamera {
+    public float height;
+
     public FpsCamera(Sketch p_sketch) {
         super(p_sketch);
     }
@@ -11,7 +13,7 @@ public class FpsCamera extends FlyCamera {
     public void applyMatrix() {
         // float originalY = super.pos.y;
         super.applyMatrix();
-        super.pos.y = 0;
+        super.pos.y = this.height;
     }
 
 }

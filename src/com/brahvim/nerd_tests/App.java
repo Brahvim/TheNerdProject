@@ -36,6 +36,7 @@ public class App {
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
+                .preventCloseOnEscape()
                 .startFullscreen()
                 .canResize()
 

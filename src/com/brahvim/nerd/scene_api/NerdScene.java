@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
@@ -78,32 +77,36 @@ public class NerdScene implements InputEventHandling {
    * 
    * }
    */
+
+  public static interface LayerTask<T extends NerdLayer> {
+    public void performTask(T p_layer);
+  }
   // endregion
 
   // region Fields.
-  // Forgive me for breaking the naming conventions. Forgive me. Please!
+  public final NerdScene SCENE = this;
+  // Forgive me for breaking naming conventions. Forgive me. Please!
   public /* final */ Sketch SKETCH;
   public /* final */ SceneState STATE;
+  public /* final */ NerdCamera CAMERA; // ...why keep this `protected`?
   public /* final */ StringTable STRINGS;
   public /* final */ AssetManager ASSETS;
   public /* final */ SceneManager MANAGER;
-
-  protected final NerdScene SCENE = this;
-  protected /* final */ NerdCamera CAMERA;
 
   // region `private` fields.
   private int startMillis;
   private boolean donePreloading;
 
-  // Would've used a `LinkedHashSet`, but am using `ArrayList`s instead since
-  // duplicates won't be allowed in the former case. We need them!
+  // Worth remembering: `LinkedHashSet`s allow duplicate objects, store everything
+  // in *in order*, but have no `indexOf()` method!
 
   // Start at `0`. "Who needs layers anyway?"
   // private AssetManKey ASSET_MAN_KEY;
   private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0);
+
   private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
 
-  LAYER_CONSTRUCTORS = new HashMap<>(0);
+  LAYER_CONSTRUCTORS = new HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>(0);
 
   /*
    * Alternative approach: storing a reference to the constructor WITHIN the class
@@ -134,31 +137,15 @@ public class NerdScene implements InputEventHandling {
   // endregion
 
   // region Queries.
-  public Sketch getSketch() {
-    return this.SKETCH;
-  }
-
-  public int timesSceneWasLoaded() {
+  public int timesLoaded() {
     return this.MANAGER.timesGivenSceneWasLoaded(this.getClass());
   }
 
-  public boolean hasCompletedPreload(
-  /* SceneManager.SceneKey p_key */) {
-    // this.verifyKey(p_key);
+  public boolean hasCompletedPreload() {
     return this.donePreloading;
   }
 
-  // public void setAssetManagerKey(AssetManKey p_assetManKey) {
-  /*
-   * if (p_assetManKey == null)
-   * throw new IllegalArgumentException("`NerdScene::setAssetManagerKey()` cannot
-   * take `null`s!");
-   * 
-   * this.ASSET_MAN_KEY = p_assetManKey;
-   * }
-   */
-
-  // region Timing queries.
+  // region Time queries.
   public int startMillis() {
     return this.startMillis;
   }
@@ -171,19 +158,44 @@ public class NerdScene implements InputEventHandling {
 
   // region `Layer`-operations.
   // They get a running `Layer`'s reference from its (given) class.
-  public NerdLayer getLayerOfClass(Class<? extends NerdLayer> p_layerClass) {
+  @Deprecated
+  public NerdLayer getFirstLayerOfClass(Class<? extends NerdLayer> p_layerClass) {
     for (NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass))
         return l;
     return null;
   }
 
-  // Using a `LinkedHashSet` to retain order.
-  public LinkedHashSet<NerdLayer> getAllLayersOfClass(Class<? extends NerdLayer> p_layerClass) {
-    // Nobody's gunna do stuff like this. Ugh.
-    // No matter what I do, its still gunna crash their program.
+  /**
+   * Given a {@link NerdLayer} class, performs a task on the instance of that
+   * class being added first to this {@link NerdScene}.
+   */
+  @Deprecated
+  @SuppressWarnings("unchecked")
+  public <T extends NerdLayer> void onFirstLayerOfClass(Class<T> p_layerClass, LayerTask<T> p_task) {
+    T instance = (T) this.getFirstLayerOfClass(p_layerClass);
 
-    LinkedHashSet<NerdLayer> toRet = new LinkedHashSet<>();
+    if (instance != null)
+      p_task.performTask(instance);
+  }
+
+  /**
+   * Given a {@link NerdLayer} class, performs a task on all instances of that
+   * class being used by this {@link NerdScene}.
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends NerdLayer> void onLayersOfClass(Class<T> p_layerClass, LayerTask<T> p_task) {
+    for (NerdLayer l : this.LAYERS)// For every `NerdLayer`,
+      if (l.getClass().equals(p_layerClass)) // ...if it's from the same class,
+        p_task.performTask((T) l);
+  }
+
+  /**
+   * Gives an {@link ArrayList} of {@link NerdLayer} instances of the given
+   * subclass this {@link NerdScene} contains.
+   */
+  public ArrayList<NerdLayer> getLayers(Class<? extends NerdLayer> p_layerClass) {
+    ArrayList<NerdLayer> toRet = new ArrayList<>();
 
     for (NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass)) {
@@ -193,12 +205,69 @@ public class NerdScene implements InputEventHandling {
     return toRet;
   }
 
-  @SafeVarargs
-  public final void startLayers(Class<? extends NerdLayer>... p_layerClasses) {
-    for (Class<? extends NerdLayer> c : p_layerClasses)
-      this.startLayers(c);
+  /**
+   * This method gives the user access to all {@link NerdLayer} instances being
+   * used by this {@code NerdScene} along with rights such as changing layer
+   * rendering order.
+   */
+  public ArrayList<NerdLayer> getLayers() {
+    return this.LAYERS;
   }
 
+  // region `NerdLayer` state-management.
+  @SafeVarargs
+  public final void addLayers(Class<? extends NerdLayer>... p_layerClasses) {
+    for (Class<? extends NerdLayer> c : p_layerClasses)
+      this.addLayers(c);
+  }
+
+  public void addLayers(Class<? extends NerdLayer> p_layerClass) {
+    if (p_layerClass == null)
+      throw new NullPointerException(
+          "You weren't supposed to pass `null` into `NerdScene::startLayer()`.");
+
+    // We allow multiple layer instances, by the way.
+
+    Constructor<? extends NerdLayer> layerConstructor = this.getLayerConstructor(p_layerClass);
+    NerdLayer toStart = this.constructLayer(layerConstructor);
+
+    synchronized (this.LAYERS) {
+      this.LAYERS.add(toStart);
+    }
+    toStart.setActive(true);
+  }
+
+  @SafeVarargs
+  public final void restartLayers(Class<? extends NerdLayer>... p_layerClasses) {
+    for (Class<? extends NerdLayer> c : p_layerClasses)
+      this.restartLayers(c);
+  }
+
+  public void restartLayer(NerdLayer p_layer) {
+    if (p_layer == null)
+      return;
+
+    final Class<? extends NerdLayer> LAYER_CLASS = p_layer.getClass();
+
+    // If an instance of this layer does not already exist,
+    if (!this.LAYERS.contains(p_layer)) {
+      System.out.printf(
+          "No instance of `NerdLayer` `%s` exists. Making one...\n",
+          LAYER_CLASS.getSimpleName());
+
+      this.addLayers(LAYER_CLASS);
+      return;
+    }
+
+    NerdLayer toStart = this.constructLayer(this.getLayerConstructor(LAYER_CLASS));
+    this.LAYERS.set(this.LAYERS.indexOf(p_layer), toStart);
+
+    p_layer.setActive(false);
+    toStart.setActive(true);
+  }
+  // endregion
+
+  // region `NerdLayer` construction.
   private Constructor<? extends NerdLayer> getLayerConstructor(Class<? extends NerdLayer> p_layerClass) {
     Constructor<? extends NerdLayer> toRet = this.LAYER_CONSTRUCTORS.get(p_layerClass);
 
@@ -209,9 +278,8 @@ public class NerdScene implements InputEventHandling {
       toRet = p_layerClass.getConstructor();
     } catch (NoSuchMethodException e) {
       System.err.println("""
-          Every subclass of `NerdLayer` must have a `public` \"null-constructor\"
-          (A constructor taking no arguments), or no overriden constructors at all.
-          """);
+          Every subclass of `NerdLayer` must be `public` with a `public` \"null-constructor\"
+          (constructor with no arguments), or no overriden constructors at all.""");
     } catch (SecurityException e) {
       e.printStackTrace();
     }
@@ -245,59 +313,6 @@ public class NerdScene implements InputEventHandling {
     toRet.MANAGER = this.MANAGER;
 
     return toRet;
-  }
-
-  public void startLayers(Class<? extends NerdLayer> p_layerClass) {
-    if (p_layerClass == null)
-      throw new NullPointerException(
-          "You weren't supposed to pass `null` into `NerdScene::startLayer()`.");
-
-    // We allow multiple layer instances, by the way.
-
-    Constructor<? extends NerdLayer> layerConstructor = this.getLayerConstructor(p_layerClass);
-    NerdLayer toStart = this.constructLayer(layerConstructor);
-
-    synchronized (this.LAYERS) {
-      this.LAYERS.add(toStart);
-    }
-    toStart.setActive(true);
-  }
-
-  /**
-   * This method gives the user the freedoms such as changing
-   * layer rendering order.
-   */
-  public ArrayList<NerdLayer> allLayers() {
-    return this.LAYERS;
-  }
-
-  @SafeVarargs
-  public final void restartLayers(Class<? extends NerdLayer>... p_layerClasses) {
-    for (Class<? extends NerdLayer> c : p_layerClasses)
-      this.restartLayers(c);
-  }
-
-  public void restartLayer(NerdLayer p_layer) {
-    if (p_layer == null)
-      return;
-
-    final Class<? extends NerdLayer> LAYER_CLASS = p_layer.getClass();
-
-    // If an instance of this layer does not already exist,
-    if (!this.LAYERS.contains(p_layer)) {
-      System.out.printf(
-          "No instance of `NerdLayer` `%s` exists. Making one...\n",
-          LAYER_CLASS.getSimpleName());
-
-      this.startLayers(LAYER_CLASS);
-      return;
-    }
-
-    NerdLayer toStart = this.constructLayer(this.getLayerConstructor(LAYER_CLASS));
-    this.LAYERS.set(this.LAYERS.indexOf(p_layer), toStart);
-
-    p_layer.setActive(false);
-    toStart.setActive(true);
   }
   // endregion
 
@@ -488,6 +503,7 @@ public class NerdScene implements InputEventHandling {
 
   protected void post() {
   }
+  // endregion
   // endregion
   // endregion
 

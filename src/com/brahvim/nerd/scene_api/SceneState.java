@@ -85,7 +85,7 @@ public class SceneState {
 
     @SuppressWarnings("unchecked")
     public <T> T get(String p_key, T p_default) {
-        T toRet = (T) this.DATA.get(p_key); // ...let's not rely too much on the JIT!
+        T toRet = (T) this.get(p_key); // ...let's actually rely *too much* on the JIT.
         return toRet == null ? p_default : toRet;
     }
 

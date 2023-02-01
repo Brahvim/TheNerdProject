@@ -16,15 +16,17 @@ import com.brahvim.nerd.processing_wrappers.NerdCamera;
  */
 public class NerdLayer implements InputEventHandling {
 
-    // region `protected` fields.
-    protected final NerdLayer LAYER = this;
-    protected /* final */ Sketch SKETCH;
-    protected /* final */ NerdScene SCENE;
-    protected /* final */ NerdCamera CAMERA;
-    protected /* final */ SceneManager MANAGER;
+    // region `public` fields.
+    // Seriously, why did I set these to be `protected`?
+    public final NerdLayer LAYER = this;
+    public /* final */ Sketch SKETCH;
+    public /* final */ NerdScene SCENE;
+    public /* final */ NerdCamera CAMERA;
+    public /* final */ SceneManager MANAGER;
     // endregion
 
     // region `private` fields.
+    private int timesActivated;
     private boolean active = true;
     // ^^^ `private` because otherwise you won't be able to track changes.
     // This isn't C#!
@@ -60,14 +62,19 @@ public class NerdLayer implements InputEventHandling {
     public void setActive(boolean p_toggleState) {
         this.active = p_toggleState;
 
-        if (this.active)
+        if (this.active) {
             this.setup();
-        else
+            this.timesActivated++;
+        } else
             this.layerExit();
+    }
+
+    public int timesActivated() {
+        return this.timesActivated;
     }
     // endregion
 
-    // Protected methods. Nobody can call them outside of this package!
+    // region `protected` methods. Nobody can call them outside of this package!
     // region `Layer`-only (`protected`) callbacks!
     protected void layerExit() {
     }
@@ -85,6 +92,7 @@ public class NerdLayer implements InputEventHandling {
 
     protected void post() {
     }
+    // endregion
     // endregion
 
 }

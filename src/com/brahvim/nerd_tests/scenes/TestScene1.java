@@ -12,10 +12,10 @@ import processing.core.PConstants;
 public class TestScene1 extends NerdScene {
     @Override
     protected void setup(SceneState p_state) {
-        if (SCENE.timesSceneWasLoaded() == 0)
+        if (SCENE.timesLoaded() == 0)
             SKETCH.centerWindow();
 
-        SCENE.startLayers(
+        SCENE.addLayers(
                 // Yes, these are started in order:
                 BackgroundLayer.class,
                 BoxAnimationLayer.class,

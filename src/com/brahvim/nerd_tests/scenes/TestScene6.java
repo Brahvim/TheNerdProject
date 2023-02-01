@@ -2,17 +2,21 @@ package com.brahvim.nerd_tests.scenes;
 
 import java.awt.event.KeyEvent;
 
-import com.brahvim.nerd.processing_wrappers.FlyCamera;
 import com.brahvim.nerd.processing_wrappers.FpsCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
+import com.brahvim.nerd_tests.layers.PauseMenuLayer;
 
+import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 
 public class TestScene6 extends NerdScene {
 
     // region Fields.
-    private FlyCamera CAMERA;
+    public final float CAM_HEIGHT = 320;
+
+    private FpsCamera CAMERA;
     private PVector playerVel = new PVector(3, 2, 3);
 
     private final float GRAVITY = 2;
@@ -22,16 +26,14 @@ public class TestScene6 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        if (SCENE.timesSceneWasLoaded() == 0) {
+        if (SCENE.timesLoaded() == 0) {
             SKETCH.centerWindow();
             SKETCH.fullscreen = true;
         }
 
         // Need to do this!...:
-        CAMERA = new FpsCamera(SKETCH);
+        CAMERA = STATE.get("Camera", new FpsCamera(SKETCH));
         CAMERA.setClearColor(0x006699);
-
-        CAMERA.pos = STATE.get("CamPos", CAMERA.pos);
 
         // Do not forget to do these!:
         SKETCH.cursorVisible = false;
@@ -39,15 +41,28 @@ public class TestScene6 extends NerdScene {
         // The camera won't be "auto-used" otherwise!!!
 
         // Give us a "starting position"!:
-        CAMERA.pos.set(SKETCH.cx, this.PLAYER_START_Y, 160);
+        CAMERA.pos.set(SKETCH.cx, this.PLAYER_START_Y);
     }
 
     @Override
     protected void draw() {
         if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
-            STATE.set("CamPos", CAMERA.pos);
+            STATE.set("Camera", CAMERA);
             MANAGER.restartScene(STATE);
         }
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_ESCAPE)) {
+            SCENE.onLayersOfClass(PauseMenuLayer.class, (l) -> {
+                System.out.println("Reading from layer class!");
+                System.out.println(l.getClass().getName());
+                l.setActive(false);
+            });
+
+            SCENE.addLayers(PauseMenuLayer.class);
+        }
+
+        System.out.println(CAMERA.fov = PConstants.PI / 3 + 0.01f * SKETCH.mouseScroll);
+        CAMERA.height = this.CAM_HEIGHT + PApplet.sin(SKETCH.millis() * 0.001f) * 25;
 
         this.controlCamera();
 
@@ -103,7 +118,6 @@ public class TestScene6 extends NerdScene {
             CAMERA.moveX(velMultiplier * playerVel.x);
         // endregion
         // endregion
-
     }
 
 }

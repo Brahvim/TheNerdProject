@@ -627,6 +627,7 @@ public class Sketch extends PApplet {
 
     // @SuppressWarnings("unused")
     public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
+        this.mouseScroll += p_mouseEvent.getCount();
         for (SketchMouseListener l : this.MOUSE_LISTENERS) {
             l.mouseWheel(p_mouseEvent);
         }
@@ -649,8 +650,6 @@ public class Sketch extends PApplet {
         if (!this.CLOSE_ON_ESCAPE) {
             if (super.keyCode == 27)
                 super.key = ' ';
-            else
-                System.out.println("`Esc` exit!");
         }
 
         if (this.CAN_FULLSCREEN) {
