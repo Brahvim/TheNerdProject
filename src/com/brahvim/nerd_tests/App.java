@@ -30,7 +30,6 @@ public class App {
 
     public static void main(String[] p_args) {
         LoadeableClasses.loadClasses(); // Handle this yourself, sorry!
-        FlyCamera.holdPointer = true;
 
         // region Building the `Sketch`!
         App.sketchInstance = new NerdSketchBuilder()
@@ -38,7 +37,6 @@ public class App {
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
-                // TODO: `NerdSketchBuilder::setCursorVisible(false)`?
                 .startFullscreen()
                 .canResize()
 

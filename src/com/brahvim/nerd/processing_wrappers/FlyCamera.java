@@ -11,7 +11,6 @@ public class FlyCamera extends NerdCamera {
 
     // region Fields.
     public final static float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
-    public volatile static boolean holdPointer;
 
     public PVector front;
     public float yaw, zoom, pitch;
