@@ -10,7 +10,7 @@ public class App {
     // TODO: Audio? Video! Do some Gradle build stuff to ensure a lower JAR size?
 
     // TODO: Video library DLL search,
-    // TODO: LWJGL OpenAL.,
+    // TODO: LWJGL OpenAL,
     // TODO: Collision Algorithms for 3D space,
     // TODO: `PShape` wrapper?
 
