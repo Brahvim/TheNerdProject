@@ -10,8 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.brahvim.nerd.misc.OnCatch;
 
 // Brought to you, from my other (currently supa'-duper secret, ";P!) project, "AGC"!:
@@ -32,7 +30,6 @@ import com.brahvim.nerd.misc.OnCatch;
 // ...Throw-away, all exceptions!~
 public class ByteSerial {
 
-    @Nullable
     public static byte[] toBytes(Serializable p_object) {
         if (p_object == null)
             return null;
@@ -172,7 +169,6 @@ public class ByteSerial {
     }
     // endregion
 
-    @Nullable
     private static Object fromBytesImpl(byte[] p_data) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(p_data);
                 ObjectInputStream ois = new ObjectInputStream(bis)) {
