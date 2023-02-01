@@ -2,7 +2,6 @@ package com.brahvim.nerd_tests;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.processing_wrappers.FlyCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd_tests.scenes.TestScene6;
 
@@ -12,7 +11,7 @@ public class App {
 
     // TODO: LWJGL OpenAL,
     // TODO: Box2D and Bullet? :D?
-    // TODO: Collision Algorithms for 3D space.
+    // TODO: Collision Algorithms for 3D space!
 
     // region `App`'s fields.
     private final static Class<? extends NerdScene> FIRST_SCENE_CLASS =

@@ -1,7 +1,6 @@
 package com.brahvim.nerd.papplet_wrapper;
 
 import java.awt.DisplayMode;
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -45,7 +44,9 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
 import processing.core.PVector;
+import processing.opengl.PGL;
 import processing.opengl.PGraphics3D;
+import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
@@ -195,6 +196,7 @@ public class Sketch extends PApplet {
     public final String RENDERER;
     public final String ICON_PATH;
     public final StringTable STRINGS;
+    public final boolean USES_OPENGL;
     public final int INIT_WIDTH, INIT_HEIGHT;
     public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
@@ -245,9 +247,13 @@ public class Sketch extends PApplet {
     // endregion
 
     // region Window object references.
-    public GLWindow glWindow;
-    public JFrame sketchFrame;
     // (Why check for errors at all? You know what renderer you used!)
+    public JFrame sketchFrame;
+
+    // OpenGL context:
+    public PGL gl;
+    public GLWindow glWindow;
+    public PGraphicsOpenGL glGraphics;
     // endregion
 
     // region Frame-wise states, Processing style (modifiable!).
@@ -349,6 +355,7 @@ public class Sketch extends PApplet {
         this.sceneMan = new SceneManager(this);
         this.fullscreen = this.STARTED_FULLSCREEN;
         this.currentCamera = new BasicCameraBuilder(this).build();
+        this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
         // endregion
 
         // region Setting icons.
@@ -414,6 +421,7 @@ public class Sketch extends PApplet {
         // Renderer-specific object initialization and settings!:
         switch (this.RENDERER) {
             case PConstants.P2D, PConstants.P3D:
+                this.glGraphics = (PGraphicsOpenGL) super.g;
                 this.glWindow = (GLWindow) super.surface.getNative();
 
                 if (this.INITIALLY_RESIZABLE)
@@ -469,6 +477,9 @@ public class Sketch extends PApplet {
         this.frameTime = this.frameStartTime - this.pframeTime;
         this.pframeTime = this.frameStartTime;
 
+        if (this.USES_OPENGL)
+            this.gl = super.beginPGL();
+
         // region Update frame-ly mouse settings.
         this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
         this.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
@@ -511,6 +522,9 @@ public class Sketch extends PApplet {
         // endregion
 
         this.sceneMan.draw();
+
+        if (this.USES_OPENGL)
+            super.endPGL();
     }
 
     public void post() {
