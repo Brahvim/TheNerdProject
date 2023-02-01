@@ -11,6 +11,7 @@ public class App {
     // (Oh yes, and LWJGL-OpenAL would be here soon, too!)
 
     // TODO: LWJGL OpenAL,
+    // TODO: Box2D and Bullet? :D?
     // TODO: Collision Algorithms for 3D space.
 
     // region `App`'s fields.
