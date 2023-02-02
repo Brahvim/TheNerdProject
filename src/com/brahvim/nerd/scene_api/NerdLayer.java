@@ -26,7 +26,7 @@ public class NerdLayer implements InputEventHandling {
     // endregion
 
     // region `private` fields.
-    private boolean active;
+    private boolean active = true;
     private int timesActivatedCount;
     // endregion
 

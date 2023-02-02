@@ -12,8 +12,8 @@ public class FpsCamera extends FlyCamera {
     @Override
     public void applyMatrix() {
         // float originalY = super.pos.y;
+        // super.pos.y = this.height;
         super.applyMatrix();
-        super.pos.y = this.height;
     }
 
 }

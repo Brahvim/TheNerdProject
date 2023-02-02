@@ -354,7 +354,7 @@ public class Sketch extends PApplet {
         // endregion
 
         // region Non-key settings.
-        this.pfullscreen = !this.fullscreen;
+        // this.pfullscreen = !this.fullscreen;
         this.UNPROJECTOR = new Unprojector();
         this.sceneMan = new SceneManager(this);
         this.fullscreen = this.STARTED_FULLSCREEN;
@@ -470,6 +470,9 @@ public class Sketch extends PApplet {
     }
 
     public void pre() {
+        if (this.USES_OPENGL)
+            this.gl = super.beginPGL();
+
         // When the window is resized, do the following!:
         if (!(this.pwidth == super.width || this.pheight == super.height)) {
             this.updateRatios();
@@ -493,9 +496,6 @@ public class Sketch extends PApplet {
         this.frameStartTime = super.millis(); // Timestamp.
         this.frameTime = this.frameStartTime - this.pframeTime;
         this.pframeTime = this.frameStartTime;
-
-        if (this.USES_OPENGL)
-            this.gl = super.beginPGL();
 
         // region Update frame-ly mouse settings.
         this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
@@ -1311,7 +1311,7 @@ public class Sketch extends PApplet {
     private void alphaBgImplRect() {
         // Removing this will not display the previous camera's view,
         // but still show clipping:
-        this.SKETCH.camera();
+        super.camera();
         super.rectMode(PConstants.CORNER);
         super.rect(0, 0, super.width, super.height);
         this.end2d();

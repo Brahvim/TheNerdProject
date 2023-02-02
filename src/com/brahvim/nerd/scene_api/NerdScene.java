@@ -154,7 +154,6 @@ public class NerdScene implements InputEventHandling {
 
   // region `Layer`-operations.
   // They get a running `Layer`'s reference from its (given) class.
-  @Deprecated
   public NerdLayer getFirstLayerOfClass(Class<? extends NerdLayer> p_layerClass) {
     for (NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass))
@@ -164,9 +163,8 @@ public class NerdScene implements InputEventHandling {
 
   /**
    * Given a {@link NerdLayer} class, performs a task on the instance of that
-   * class being added first to this {@link NerdScene}.
+   * class, which was added <i>first</i> to this {@link NerdScene}.
    */
-  @Deprecated
   @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onFirstLayerOfClass(Class<T> p_layerClass, LayerTask<T> p_task) {
     T instance = (T) this.getFirstLayerOfClass(p_layerClass);
@@ -217,7 +215,7 @@ public class NerdScene implements InputEventHandling {
       this.addLayers(c);
   }
 
-  public void addLayers(Class<? extends NerdLayer> p_layerClass) {
+  public NerdLayer addLayers(Class<? extends NerdLayer> p_layerClass) {
     if (p_layerClass == null)
       throw new NullPointerException(
           "You weren't supposed to pass `null` into `NerdScene::startLayer()`.");
@@ -230,7 +228,9 @@ public class NerdScene implements InputEventHandling {
     synchronized (this.LAYERS) {
       this.LAYERS.add(toStart);
     }
+
     toStart.setActive(true);
+    return toStart;
   }
 
   @SafeVarargs
