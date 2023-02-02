@@ -67,7 +67,9 @@ public class BasicCamera extends NerdCamera {
 
         // Translate! People probably still prefer things on the top left corner `P3D`
         // ...even if it could mean translating twice in some cases, it's alright!
-        this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
+        // this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
+        // ...nope! I'll remove this! It causes the camera position to seem to change
+        // when you resize the window!
     }
 
     public void apply2dMatrix() {

@@ -11,7 +11,7 @@ public class FlyCamera extends NerdCamera {
 
     // region Fields.
     public final static float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
-    public volatile static boolean pholdPointer, holdPointer = true;
+    public volatile static boolean pholdPointer, holdCursor = true;
 
     public PVector front;
     public float yaw, zoom, pitch;
@@ -31,7 +31,7 @@ public class FlyCamera extends NerdCamera {
     public void apply() {
         super.apply();
 
-        if (FlyCamera.holdPointer && super.SKETCH.focused)
+        if (FlyCamera.holdCursor && super.SKETCH.focused)
             super.SKETCH.ROBOT.mouseMove(
                     super.SKETCH.displayWidthHalf,
                     super.SKETCH.displayHeightHalf);
@@ -63,7 +63,9 @@ public class FlyCamera extends NerdCamera {
 
         // Translate! People probably still prefer things on the top left corner `P3D`
         // ...even if it could mean translating twice in some cases, it's alright!
-        super.SKETCH.translate(-super.SKETCH.cx, -super.SKETCH.cy);
+        // super.SKETCH.translate(-super.SKETCH.cx, -super.SKETCH.cy);
+        // ...nope! I'll remove this! It causes the camera position to seem to change when
+        // you resize the window!
     }
 
     @Override
@@ -127,7 +129,7 @@ public class FlyCamera extends NerdCamera {
 
     protected void mouseUpdate() {
         // region Update `yaw` and `pitch`:
-        if (FlyCamera.holdPointer) {
+        if (FlyCamera.holdCursor) {
             this.yaw += this.mouseSensitivity
                     * (super.SKETCH.GLOBAL_MOUSE_POINT.x - super.SKETCH.displayWidthHalf);
             this.pitch += this.mouseSensitivity

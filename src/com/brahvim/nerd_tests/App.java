@@ -7,9 +7,6 @@ import com.brahvim.nerd_tests.scenes.TestScene4;
 import com.brahvim.nerd_tests.scenes.TestScene6;
 
 public class App {
-    // TODO: Audio? Video! Do some Gradle build stuff to ensure a lower JAR size?
-    // (Oh yes, and LWJGL-OpenAL would be here soon, too!)
-
     // TODO: LWJGL OpenAL,
     // TODO: Box2D and Bullet? :D?
     // TODO: Collision Algorithms for 3D space!

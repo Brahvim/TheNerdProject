@@ -3,6 +3,7 @@ package com.brahvim.nerd_tests.scenes;
 import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.processing_wrappers.FlyCamera;
+import com.brahvim.nerd.processing_wrappers.FpsCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.layers.PauseMenuLayer;
@@ -16,7 +17,7 @@ public class TestScene6 extends NerdScene {
     // region Fields.
     public final float CAM_HEIGHT = 320;
 
-    private FlyCamera CAMERA;
+    private FpsCamera CAMERA;
     private PVector playerVel = new PVector(3, 2, 3);
 
     private final float GRAVITY = 2;
@@ -34,7 +35,7 @@ public class TestScene6 extends NerdScene {
         SCENE.addLayers(PauseMenuLayer.class);
 
         // Need to do this!...:
-        CAMERA = STATE.get("Camera", new FlyCamera(SKETCH));
+        CAMERA = STATE.get("Camera", new FpsCamera(SKETCH));
         CAMERA.setClearColor(0x006699);
 
         // Do not forget to do these!:
@@ -53,16 +54,8 @@ public class TestScene6 extends NerdScene {
             MANAGER.restartScene(STATE);
         }
 
-        if (SKETCH.keyIsPressed(KeyEvent.VK_ESCAPE))
-
-            SCENE.onFirstLayerOfClass(PauseMenuLayer.class, (l) -> {
-                System.out.println("Unpaused!");
-                l.setActive(false);
-            });
-
         CAMERA.fov = PConstants.PI / 3 + 0.01f * SKETCH.mouseScroll;
-        CAMERA.pos.y = // SKETCH.cy +
-                PApplet.sin(SKETCH.millis() * 0.001f) * 25;
+        CAMERA.pos.y = PApplet.sin(SKETCH.millis() * 0.001f) * 25;
         this.controlCamera();
 
         // region Actual rendering!
@@ -82,6 +75,16 @@ public class TestScene6 extends NerdScene {
         // endregion
 
     }
+
+    // region Input events.
+    @Override
+    public void keyPressed() {
+        if (SKETCH.keyIsPressed(KeyEvent.VK_F)) {
+            SKETCH.cursorVisible = !SKETCH.cursorVisible;
+            FlyCamera.holdCursor = !FlyCamera.holdCursor;
+        }
+    }
+    // endregion
 
     private void controlCamera() {
         // region Gravity:

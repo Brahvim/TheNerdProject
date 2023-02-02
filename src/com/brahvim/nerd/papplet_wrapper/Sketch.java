@@ -549,7 +549,7 @@ public class Sketch extends PApplet {
         this.framelyWindowSetup();
 
         // region Previous state updates!!!
-        FlyCamera.pholdPointer = FlyCamera.holdPointer;
+        FlyCamera.pholdPointer = FlyCamera.holdCursor;
 
         this.pkey = super.key;
         this.pwidth = this.width;
