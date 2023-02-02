@@ -147,7 +147,7 @@ public class NerdAsset {
     // endregion
     // endregion
 
-    private synchronized void fetchData() {
+    private void fetchData() {
         // region Failed attempt at making absolute paths.
         // System.out.println("`fetchData()` path:");
         // System.out.println(this.path);
