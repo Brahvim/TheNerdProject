@@ -30,6 +30,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
+import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
+import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.processing_wrappers.BasicCamera;
 import com.brahvim.nerd.processing_wrappers.BasicCameraBuilder;
@@ -53,6 +55,35 @@ import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
+
+    // region Inner classes.
+    // region TODO `NerdAsset` types.
+    public final PImageAsset PIMAGE_ASSET_LOADER = this.new PImageAsset();
+
+    public class PImageAsset extends AssetType<PImage> {
+
+        private PImageAsset() {
+        }
+
+        @Override
+        public PImage fetchData(String p_path, Object... p_options)
+                throws AssetLoaderFailedException {
+            PImage img = SKETCH.loadImage(p_path);
+
+            // Oh, it failed?
+            boolean failure = img == null;
+
+            if (!failure)
+                failure = img.width == -1;
+
+            if (failure)
+                throw new AssetLoaderFailedException();
+
+            return img;
+        }
+
+    }
+    // endregion
 
     // region Event listener interfaces and abstract (inner) classes.
     @FunctionalInterface
@@ -156,6 +187,7 @@ public class Sketch extends PApplet {
         // endregion
 
     }
+    // endregion
     // endregion
     // endregion
 
@@ -774,121 +806,6 @@ public class Sketch extends PApplet {
         this.displayHeightHalf = super.displayHeight / 2;
     }
 
-    // region Get monitor info.
-    public GraphicsDevice getCurrentMonitor() {
-        return this.currentMonitor;
-    }
-
-    public GraphicsDevice getPreviousMonitor() {
-        return this.previousMonitor;
-    }
-    // endregion
-
-    // region Camera and unprojection.
-    // region Camera!
-    public NerdCamera getCurrentCamera() {
-        return this.currentCamera;
-    }
-
-    public NerdCamera getPreviousCamera() {
-        return this.previousCamera;
-    }
-
-    /**
-     * @return The previous camera the {@link Sketch} had access to.
-     */
-    public NerdCamera setCamera(NerdCamera p_camera) {
-        NerdCamera toRet = this.previousCamera;
-        this.previousCamera = this.currentCamera;
-        this.currentCamera = p_camera;
-        return toRet;
-    }
-    // endregion
-
-    public void unprojectMouse() {
-        if (this.currentCamera == null)
-            return;
-
-        float originalNear = this.currentCamera.near;
-        this.currentCamera.near = this.currentCamera.mouseZ;
-        this.currentCamera.applyMatrix();
-
-        // Unproject:
-        this.UNPROJECTOR.captureViewMatrix((PGraphics3D) g);
-        // `0.9f`: at the near clipping plane.
-        // `0.9999f`: at the far clipping plane.
-        this.UNPROJECTOR.gluUnProject(
-                super.mouseX, super.height - super.mouseY,
-                // 0.9f + map(mouseY, height, 0, 0, 0.1f),
-                0, this.mouse);
-
-        this.currentCamera.near = originalNear;
-    }
-
-    public void unprojectTouches() {
-        // Left empty, used on Android! (Implementation for Android, below:)
-        /*
-         * Sketch.UNPROJ_TOUCHES.clear();
-         * TouchEvent.Pointer[] touches = super.touches;
-         * 
-         * for (int i = 0; i < touches.length; i++) {
-         * // [WORKS, CHEAPEST, SAME LEVEL OF ACCURACY]
-         * // My own 'mapping' method!:
-         * /*
-         * PVector u = new PVector(
-         * PApplet.map(touches[i].x, 0, super.displayWidth,
-         * 0, super.width),
-         * PApplet.map(touches[i].y, 0, super.displayHeight,
-         * 0, super.height));
-         * <asterisk>/
-         * //u.add(super.cameraPos);
-         * 
-         * // [WORKS, NOT CHEAP + STILL INACCURATE]
-         * // Unprojection of my own:
-         * PVector u = new PVector(touches[i].x, touches[i].y);
-         * u = super.glGraphics.modelviewInv.mult(u, null);
-         * //u = super.glGraphics.cameraInv.mult(u, null);
-         * u.sub(super.width, super.height);
-         * u.add(super.cx, super.cy);
-         * 
-         * // [FAILURE] Unprojection using the `Unprojector` class:
-         * /*
-         * PVector u = new PVector(touches[i].x, touches[i].y);
-         * // Believe in the JIT!~
-         * Unprojector.captureViewMatrix(((PGraphics3D)super.getGraphics()
-         * ));
-         * System.out.printf("Was unprojection successful? %s\n",
-         * Unprojector.gluUnProject(u.x, u.y, u.z, u) // Yes, you can do that. Passing
-         * by value.
-         * ? "Yes!" : "No...");
-         * u.x *= 1.2f; //super.qx;
-         * u.y *= 1.2f; //super.qy;
-         * <asterisk>/
-         * 
-         * // (...here's longer text explaining that.. :)
-         * /*
-         * // [sic] "As different streams having their sources in different places all
-         * mingles
-         * // their water in the sea, so, O Lord, the different paths which men take
-         * through
-         * // tendencies, various touch as they appear, crooked or straight, all lead to
-         * Thee."
-         * // - Swami Vivekananda, quoting a hymn in his `1893` Chicago convention
-         * speech.
-         * // (((I do not guarantee complete correctness in the copying of that
-         * quote.)))
-         * <asterisk>/
-         * // ^^^ (...that basically, this `u.z` modfication will go unchanged,
-         * // no matter what un-projection method you use!:)
-         * u.z = touches[i].pressure; // Should be accessed in some other way, but
-         * whatever...
-         * 
-         * this.UNPROJ_TOUCHES.add(u);
-         * }
-         */
-    }
-    // endregion
-
     // region Window queries.
     public void centerWindow() {
         this.updateRatios(); // You called this function when the window changed its size or position, right?
@@ -1008,80 +925,150 @@ public class Sketch extends PApplet {
     }
     // endregion
 
-    // region File system utlities.
-    public static String fromExecDir(String p_path) {
-        return Sketch.EXEC_DIR_PATH + p_path;
+    // region Get monitor info.
+    public GraphicsDevice getCurrentMonitor() {
+        return this.currentMonitor;
     }
 
-    public static String fromDataDir(String p_path) {
-        return Sketch.DATA_DIR_PATH + p_path;
+    public GraphicsDevice getPreviousMonitor() {
+        return this.previousMonitor;
     }
-
-    // region [DEPRECATED] Overloads for `getPathToRootFrom()`.
-    /**
-     * @deprecated Ineffective when using with {@link PApplet}'s "{@code load()}"
-     *             methods. Also, all of these methods have some method
-     *             of accessing files from outside the sketch's data
-     *             folder! <b>Please also see {@code PApplet}'s
-     *             {@code static} methods</b>
-     */
-    @Deprecated
-    public static String getPathToRootFrom(File p_path) {
-        return getPathToRootFrom(p_path.getAbsolutePath());
-    }
-
-    /**
-     * @deprecated Ineffective when using with {@link PApplet}'s "{@code load()}"
-     *             methods. Also, all of these methods have some method
-     *             of accessing files from outside the sketch's data
-     *             folder! <b>Please also see {@code PApplet}'s
-     *             {@code static} methods</b>
-     */
-    @Deprecated
-    public static String getPathToRootFrom(String p_path) {
-        final int PATH_LEN = p_path.length(), LAST_CHAR_ID = PATH_LEN - 1;
-        StringBuilder toRetBuilder = new StringBuilder();
-
-        if (p_path.charAt(LAST_CHAR_ID) != File.separatorChar)
-            toRetBuilder.append(File.separator);
-
-        for (int i = 0; i < PATH_LEN; i++) {
-            final char C = p_path.charAt(i);
-
-            if (C == File.separatorChar) {
-                toRetBuilder.append("..");
-                toRetBuilder.append(File.separatorChar);
-            }
-        }
-
-        return toRetBuilder.toString();
-    }
-    // endregion
     // endregion
 
     // region Drawing utilities!
     // region From `PGraphics`.
-    public void translate(PVector p_translation) {
-        super.translate(p_translation.x, p_translation.y, p_translation.z);
+    // "Hah! Gott'em with the name alignment!"
+    public void translate(PVector p_vec) {
+        super.translate(p_vec.x, p_vec.y, p_vec.z);
     }
 
-    public void scale(PVector p_scalingVector) {
-        super.scale(p_scalingVector.x, p_scalingVector.y, p_scalingVector.z);
+    public void scale(PVector p_scaling) {
+        super.scale(p_scaling.x, p_scaling.y, p_scaling.z);
     }
 
-    // region `screenX()`, `screenY()` and `screenZ()`, `PVector` overloads.
+    public void rotate(PVector p_rotVec) {
+        super.rotateX(p_rotVec.x);
+        super.rotateY(p_rotVec.y);
+        super.rotateZ(p_rotVec.z);
+    }
+
+    // region `modelVec()` and `screenVec()`.
+    public PVector modelVec() {
+        return new PVector(
+                // "I passed these `0`s in myself, yeah. Let's not rely on the JIT too much!"
+                // - Me before re-thinking that.
+                this.modelX(),
+                this.modelY(),
+                this.modelZ());
+    }
+
+    public PVector modelVec(PVector p_vec) {
+        return new PVector(
+                super.modelX(p_vec.x, p_vec.y, p_vec.z),
+                super.modelY(p_vec.x, p_vec.y, p_vec.z),
+                super.modelZ(p_vec.x, p_vec.y, p_vec.z));
+    }
+
+    public PVector modelVec(float p_x, float p_y, float p_z) {
+        return new PVector(
+                super.modelX(p_x, p_y, p_z),
+                super.modelY(p_x, p_y, p_z),
+                super.modelZ(p_x, p_y, p_z));
+    }
+
+    public PVector screenVec() {
+        return new PVector(
+                this.screenX(),
+                this.screenY(),
+                this.screenZ());
+    }
+
+    public PVector screenVec(PVector p_vec) {
+        return new PVector(
+                this.screenX(p_vec.x, p_vec.y, p_vec.z),
+                this.screenY(p_vec.x, p_vec.y, p_vec.z),
+                this.screenZ(p_vec.x, p_vec.y, p_vec.z));
+    }
+
+    public PVector screenVec(float p_x, float p_y, float p_z) {
+        return new PVector(
+                this.screenX(p_x, p_y, p_z),
+                this.screenY(p_x, p_y, p_z),
+                this.screenZ(p_x, p_y, p_z));
+    }
+    // endregion
+
+    // region `modelX()`-`modelY()`-`modelZ()` `PVector` and no-parameter overloads.
+    // region Parameterless overloads.
+    public float modelX() {
+        return super.modelX(0, 0, 0);
+    }
+
+    public float modelY() {
+        return super.modelY(0, 0, 0);
+    }
+
+    public float modelZ() {
+        return super.modelZ(0, 0, 0);
+    }
+    // endregion
+
+    // region `p_vec`?
+    // ...how about `p_modelMatInvMulter`? :rofl:!
+    public float modelX(PVector p_vec) {
+        return super.modelX(p_vec.x, p_vec.y, p_vec.z);
+    }
+
+    public float modelY(PVector p) {
+        return super.modelY(p.x, p.y, p.z);
+    }
+
+    public float modelZ(PVector p) {
+        return super.modelZ(p.x, p.y, p.z);
+    }
+    // endregion
+    // endregion
+
+    // region `screenX()`-`screenY()`-`screenZ()`, `PVector` + no-arg overloads.
     // "Oh! And when the `z` is `-1`, you just add this and sub that. Optimization!"
     // - That ONE Mathematician.
+
+    // region Parameterless overloads.
+    public float screenX() {
+        return super.screenX(0, 0, 0);
+    }
+
+    public float screenY() {
+        return super.screenY(0, 0, 0);
+    }
+
+    public float screenZ() {
+        return super.screenY(0, 0, 0);
+    }
+    // endregion
+
+    // region `p_vec`!
+    // The following two were going to disclude the `z` if it was `0`.
+    // And later, I felt this was risky.
+    // This two-`float` overload ain't in the docs, scares me!
+    // ....ACTUALLY,
+    // [https://github.com/processing/processing/blob/459853d0dcdf1e1648b1049d3fdbb4bf233fded8/core/src/processing/opengl/PGraphicsOpenGL.java#L4611]
+    // ...they rely on the JIT too! :joy:
+
     public float screenX(PVector p_vec) {
-        return p_vec.z == 0
-                ? super.screenX(p_vec.x, p_vec.y)
-                : super.screenX(p_vec.x, p_vec.y, p_vec.z);
+        return super.screenX(p_vec.x, p_vec.y, p_vec.z);
+
+        // return p_vec.z == 0
+        // ? super.screenX(p_vec.x, p_vec.y)
+        // : super.screenX(p_vec.x, p_vec.y, p_vec.z);
     }
 
     public float screenY(PVector p_vec) {
-        return p_vec.z == 0
-                ? super.screenY(p_vec.x, p_vec.y)
-                : super.screenY(p_vec.x, p_vec.y, p_vec.z);
+        return super.screenY(p_vec.x, p_vec.y, p_vec.z);
+
+        // return p_vec.z == 0
+        // ? super.screenY(p_vec.x, p_vec.y)
+        // : super.screenY(p_vec.x, p_vec.y, p_vec.z);
     }
 
     public float screenZ(PVector p_vec) {
@@ -1092,17 +1079,24 @@ public class Sketch extends PApplet {
         return super.screenZ(p_vec.x, p_vec.y, p_vec.z);
     }
     // endregion
+    // endregion
 
-    public void rotate(PVector p_rotationVector) {
-        super.rotateX(p_rotationVector.x);
-        super.rotateY(p_rotationVector.y);
-        super.rotateZ(p_rotationVector.z);
-    }
-
+    // region Camera matrix configuration.
     public void camera(BasicCamera p_cam) {
         super.camera(
                 p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
                 p_cam.center.x, p_cam.center.y, p_cam.center.z,
+                p_cam.up.x, p_cam.up.y, p_cam.up.z);
+    }
+
+    public void camera(FlyCamera p_cam) {
+        super.camera(
+                p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
+
+                p_cam.pos.x + p_cam.front.x,
+                p_cam.pos.y + p_cam.front.y,
+                p_cam.pos.z + p_cam.front.z,
+
                 p_cam.up.x, p_cam.up.y, p_cam.up.z);
     }
 
@@ -1112,7 +1106,9 @@ public class Sketch extends PApplet {
                 p_center.x, p_center.y, p_center.z,
                 p_up.x, p_up.y, p_up.z);
     }
+    // endregion
 
+    // region Projection functions.
     public void perspective(NerdCamera p_cam) {
         super.perspective(p_cam.fov, p_cam.aspect, p_cam.near, p_cam.far);
     }
@@ -1129,11 +1125,15 @@ public class Sketch extends PApplet {
         super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_near, p_far);
     }
 
+    /**
+     * Expands to {@code PApplet::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
+     */
     public void ortho(float p_cx, float p_cy, float p_near, float p_far) {
         super.ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far);
     }
+    // endregion
 
-    // region The billion `image()` overloads.
+    // region [TODO, documentation for] The billion `image()` overloads.
     // region For `PImage`s.
     public void image(PImage p_image) {
         super.image(p_image, 0, 0);
@@ -1200,7 +1200,8 @@ public class Sketch extends PApplet {
     // endregion
     // endregion
 
-    // These simply don't work in `PApplet`...:
+    // region `push()` and `pop()` simply don't work in `PApplet`...:
+    // ..so I made them work myself!
     @Override
     public void push() {
         super.pushMatrix();
@@ -1212,6 +1213,7 @@ public class Sketch extends PApplet {
         super.popStyle();
         super.popMatrix();
     }
+    // endregion
     // endregion
 
     public PImage svgToImage(PShape p_shape, float p_width, float p_height) {
@@ -1318,6 +1320,162 @@ public class Sketch extends PApplet {
         this.end2d();
     }
     // endregion
+    // endregion
+
+    // region File system utlities.
+    public static String fromExecDir(String p_path) {
+        return Sketch.EXEC_DIR_PATH + p_path;
+    }
+
+    public static String fromDataDir(String p_path) {
+        return Sketch.DATA_DIR_PATH + p_path;
+    }
+
+    // region [DEPRECATED] Overloads for `getPathToRootFrom()`.
+    /**
+     * @deprecated Ineffective when using with {@link PApplet}'s "{@code load()}"
+     *             methods. Also, all of these methods have some method
+     *             of accessing files from outside the sketch's data
+     *             folder! <b>Please also see {@code PApplet}'s
+     *             {@code static} methods</b>
+     */
+    @Deprecated
+    public static String getPathToRootFrom(File p_path) {
+        return getPathToRootFrom(p_path.getAbsolutePath());
+    }
+
+    /**
+     * @deprecated Ineffective when using with {@link PApplet}'s "{@code load()}"
+     *             methods. Also, all of these methods have some method
+     *             of accessing files from outside the sketch's data
+     *             folder! <b>Please also see {@code PApplet}'s
+     *             {@code static} methods</b>
+     */
+    @Deprecated
+    public static String getPathToRootFrom(String p_path) {
+        final int PATH_LEN = p_path.length(), LAST_CHAR_ID = PATH_LEN - 1;
+        StringBuilder toRetBuilder = new StringBuilder();
+
+        if (p_path.charAt(LAST_CHAR_ID) != File.separatorChar)
+            toRetBuilder.append(File.separator);
+
+        for (int i = 0; i < PATH_LEN; i++) {
+            final char C = p_path.charAt(i);
+
+            if (C == File.separatorChar) {
+                toRetBuilder.append("..");
+                toRetBuilder.append(File.separatorChar);
+            }
+        }
+
+        return toRetBuilder.toString();
+    }
+    // endregion
+    // endregion
+
+    // region Camera and unprojection.
+    // region Camera!
+    public NerdCamera getCurrentCamera() {
+        return this.currentCamera;
+    }
+
+    public NerdCamera getPreviousCamera() {
+        return this.previousCamera;
+    }
+
+    /**
+     * @return The previous camera the {@link Sketch} had access to.
+     */
+    public NerdCamera setCamera(NerdCamera p_camera) {
+        NerdCamera toRet = this.previousCamera;
+        this.previousCamera = this.currentCamera;
+        this.currentCamera = p_camera;
+        return toRet;
+    }
+    // endregion
+
+    public void unprojectMouse() {
+        if (this.currentCamera == null)
+            return;
+
+        float originalNear = this.currentCamera.near;
+        this.currentCamera.near = this.currentCamera.mouseZ;
+        this.currentCamera.applyMatrix();
+
+        // Unproject:
+        this.UNPROJECTOR.captureViewMatrix((PGraphics3D) g);
+        // `0.9f`: at the near clipping plane.
+        // `0.9999f`: at the far clipping plane.
+        this.UNPROJECTOR.gluUnProject(
+                super.mouseX, super.height - super.mouseY,
+                // 0.9f + map(mouseY, height, 0, 0, 0.1f),
+                0, this.mouse);
+
+        this.currentCamera.near = originalNear;
+    }
+
+    public void unprojectTouches() {
+        // Left empty, used on Android! (Implementation for Android, below:)
+        /*
+         * Sketch.UNPROJ_TOUCHES.clear();
+         * TouchEvent.Pointer[] touches = super.touches;
+         * 
+         * for (int i = 0; i < touches.length; i++) {
+         * // [WORKS, CHEAPEST, SAME LEVEL OF ACCURACY]
+         * // My own 'mapping' method!:
+         * /*
+         * PVector u = new PVector(
+         * PApplet.map(touches[i].x, 0, super.displayWidth,
+         * 0, super.width),
+         * PApplet.map(touches[i].y, 0, super.displayHeight,
+         * 0, super.height));
+         * <asterisk>/
+         * //u.add(super.cameraPos);
+         * 
+         * // [WORKS, NOT CHEAP + STILL INACCURATE]
+         * // Unprojection of my own:
+         * PVector u = new PVector(touches[i].x, touches[i].y);
+         * u = super.glGraphics.modelviewInv.mult(u, null);
+         * //u = super.glGraphics.cameraInv.mult(u, null);
+         * u.sub(super.width, super.height);
+         * u.add(super.cx, super.cy);
+         * 
+         * // [FAILURE] Unprojection using the `Unprojector` class:
+         * /*
+         * PVector u = new PVector(touches[i].x, touches[i].y);
+         * // Believe in the JIT!~
+         * Unprojector.captureViewMatrix(((PGraphics3D)super.getGraphics()
+         * ));
+         * System.out.printf("Was unprojection successful? %s\n",
+         * Unprojector.gluUnProject(u.x, u.y, u.z, u) // Yes, you can do that. Passing
+         * by value.
+         * ? "Yes!" : "No...");
+         * u.x *= 1.2f; //super.qx;
+         * u.y *= 1.2f; //super.qy;
+         * <asterisk>/
+         * 
+         * // (...here's longer text explaining that.. :)
+         * /*
+         * // [sic] "As different streams having their sources in different places all
+         * mingles
+         * // their water in the sea, so, O Lord, the different paths which men take
+         * through
+         * // tendencies, various touch as they appear, crooked or straight, all lead to
+         * Thee."
+         * // - Swami Vivekananda, quoting a hymn in his `1893` Chicago convention
+         * speech.
+         * // (((I do not guarantee complete correctness in the copying of that
+         * quote.)))
+         * <asterisk>/
+         * // ^^^ (...that basically, this `u.z` modfication will go unchanged,
+         * // no matter what un-projection method you use!:)
+         * u.z = touches[i].pressure; // Should be accessed in some other way, but
+         * whatever...
+         * 
+         * this.UNPROJ_TOUCHES.add(u);
+         * }
+         */
+    }
     // endregion
 
     // region Key-press and key-type helper methods.

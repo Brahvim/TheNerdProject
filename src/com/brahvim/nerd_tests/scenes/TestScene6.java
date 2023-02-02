@@ -25,6 +25,7 @@ public class TestScene6 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
+        // Loaded this scene for the first time? Do this!:
         if (SCENE.timesLoaded() == 0) {
             SKETCH.centerWindow();
             SKETCH.fullscreen = true;

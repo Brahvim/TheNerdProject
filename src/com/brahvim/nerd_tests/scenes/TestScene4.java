@@ -1,6 +1,5 @@
 package com.brahvim.nerd_tests.scenes;
 
-import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -29,7 +28,7 @@ public class TestScene4 extends NerdScene {
         // "C:", "Projects", "Photo Edits", "Outputs", "Emojis",
         // "sunglass_nerd.png").toString());
 
-        ASSETS.add(AssetType.PIMAGE, SKETCH.ICON_PATH);
+        ASSETS.add(SKETCH.PIMAGE_ASSET_LOADER, SKETCH.ICON_PATH);
         System.out.println("This is async LOL!");
     }
 
@@ -42,6 +41,7 @@ public class TestScene4 extends NerdScene {
     protected void setup(SceneState p_state) {
         System.out.println("TestScene4.setup(), " + SCENE.timesLoaded());
 
+        // Loaded this scene for the first time? Do this!:
         if (SCENE.timesLoaded() == 0) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
@@ -62,6 +62,7 @@ public class TestScene4 extends NerdScene {
     @Override
     protected void draw() {
         SKETCH.background(0);
+        SKETCH.translate(-SKETCH.cx, -SKETCH.cy);
 
         this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);
         this.magScroll += (this.magScrollVel *= this.MAG_SCROLL_DECAY_VEL);

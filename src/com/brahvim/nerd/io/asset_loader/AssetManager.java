@@ -29,28 +29,27 @@ public class AssetManager {
     // endregion
 
     // region Fields.
+    private final Sketch SKETCH;
     private final AssetManKey ASSET_MAN_KEY;
-    private final AssetManager.AssetKey ASSET_KEY;
-    private final HashSet<NerdAsset> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
+    // private final AssetManager.AssetKey ASSET_KEY;
+    private final HashSet<NerdAsset<?>> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
     // Do we even *need* assets in any scene from the very beginning?
     // endregion
 
     // region Constructors.
     @SuppressWarnings("unused")
     private AssetManager() {
-        this.ASSET_KEY = null;
+        // this.ASSET_KEY = null;
+        this.SKETCH = null;
         this.ASSET_MAN_KEY = null;
     }
-
-    // public NerdAssetManager(Sketch p_sketch) {
-    // this.ASSET_KEY = new AssetManager.AssetKey(p_sketch);
-    // }
 
     public AssetManager(AssetManKey p_key) {
         this.verifyKey(p_key);
 
+        this.SKETCH = p_key.SKETCH;
         this.ASSET_MAN_KEY = p_key;
-        this.ASSET_KEY = new AssetManager.AssetKey(p_key.SKETCH);
+        // this.ASSET_KEY = new AssetManager.AssetKey(p_key.SKETCH);
     }
     // endregion
 
@@ -87,24 +86,41 @@ public class AssetManager {
      */
 
     // region Asset operations.
-    public NerdAsset makeAsset(AssetType p_type, String p_path) {
+    // region `makeAsset()` overloads.
+    public <T> NerdAsset<T> makeAsset(AssetType<T> p_type, String p_path, Object... p_options) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
 
-        return new NerdAsset(this.ASSET_KEY, p_type, p_path);
+        return new NerdAsset<T>(this.SKETCH, p_type, p_path, p_options);
     }
 
-    public AssetManager add(AssetType p_type, String p_path) {
-        this.ASSETS.add(this.makeAsset(p_type, p_path));
-        return this;
+    public <T> NerdAsset<T> makeAsset(AssetType<T> p_type, String p_path) {
+        return this.makeAsset(p_type, p_path, (Object[]) null);
     }
+    // endregion
 
-    public AssetManager add(AssetType p_type, String p_path, Runnable p_onLoad) {
+    // region `add()` overloads.
+    public <T> AssetManager add(AssetType<? extends T> p_type, String p_path, Runnable p_onLoad, Object... p_options) {
         this.ASSETS.add(
-                this.makeAsset(p_type, p_path)
-                        .setLoadCallback(p_onLoad));
+                this.makeAsset(p_type, p_path, p_onLoad, p_options)
+        // .setLoadCallback(p_onLoad)
+        );
         return this;
     }
+
+    public <T> AssetManager add(AssetType<? extends T> p_type, String p_path, Object... p_options) {
+        this.add(p_type, p_path, null, p_options);
+        return this;
+    }
+
+    public <T> AssetManager add(AssetType<? extends T> p_type, String p_path, Runnable p_onLoad) {
+        return this.add(p_type, p_path, p_onLoad, (Object[]) null);
+    }
+
+    public <T> AssetManager add(AssetType<? extends T> p_type, String p_path) {
+        return this.add(p_type, p_path, (Object[]) null);
+    }
+    // endregion
 
     /**
      * @deprecated since using {@link AssetManager#get()} is better. In cases
@@ -115,27 +131,27 @@ public class AssetManager {
      */
     @Deprecated
     public boolean contains(String p_fileName) {
-        for (NerdAsset a : this.ASSETS)
+        for (NerdAsset<?> a : this.ASSETS)
             if (a.NAME.equals(p_fileName))
                 return true;
         return false;
     }
 
-    public NerdAsset get(String p_fileName) {
-        for (NerdAsset a : this.ASSETS)
+    @SuppressWarnings("unchecked")
+    public <T> NerdAsset<T> get(String p_fileName) {
+        for (NerdAsset<?> a : this.ASSETS)
             if (a.NAME.equals(p_fileName))
-                return a;
+                return (NerdAsset<T>) a;
         return null;
     }
 
     // region `remove()` overloads.
-    public void remove(NerdAsset... p_assets) {
-        for (NerdAsset a : p_assets) {
+    public void remove(NerdAsset<?>... p_assets) {
+        for (NerdAsset<?> a : p_assets)
             this.ASSETS.remove(a);
-        }
     }
 
-    public void remove(NerdAsset p_asset) {
+    public void remove(NerdAsset<?> p_asset) {
         this.ASSETS.remove(p_asset);
     }
     // endregion
@@ -145,19 +161,19 @@ public class AssetManager {
     }
     // endregion
 
-    // region Load state...
+    // region Load state queries.
     /**
      * Has every asset completed loading?
      */
     public boolean wasComplete() {
-        for (NerdAsset a : this.ASSETS)
+        for (NerdAsset<?> a : this.ASSETS)
             if (!a.wasLoaded())
                 return false;
         return true;
     }
 
     public boolean hasCompleted() {
-        for (NerdAsset a : this.ASSETS)
+        for (NerdAsset<?> a : this.ASSETS)
             if (!a.hasLoaded())
                 return false;
         return true;
@@ -174,9 +190,8 @@ public class AssetManager {
     public void updatePreviousLoadState(AssetManKey p_key) {
         this.verifyKey(p_key);
 
-        for (NerdAsset a : this.ASSETS) {
-            a.updatePreviousLoadState(this.ASSET_KEY);
-        }
+        for (NerdAsset<?> a : this.ASSETS)
+            a.updatePreviousLoadState(/* this.ASSET_KEY */);
     }
     // endregion
 
@@ -186,7 +201,7 @@ public class AssetManager {
     }
 
     // Potential problem: Iterators allow you to remove elements!
-    public Iterator<NerdAsset> iterator() {
+    public Iterator<NerdAsset<?>> iterator() {
         return this.ASSETS.iterator();
     }
 
@@ -194,7 +209,7 @@ public class AssetManager {
         return this.ASSETS.size();
     }
 
-    public Spliterator<NerdAsset> spliterator() {
+    public Spliterator<NerdAsset<?>> spliterator() {
         return this.ASSETS.spliterator();
     }
 
@@ -206,15 +221,15 @@ public class AssetManager {
         return this.ASSETS.toArray(a);
     }
 
-    public Stream<NerdAsset> parallelStream() {
+    public Stream<NerdAsset<?>> parallelStream() {
         return this.ASSETS.parallelStream();
     }
 
-    public boolean removeIf(Predicate<? super NerdAsset> p_filter) {
+    public boolean removeIf(Predicate<? super NerdAsset<?>> p_filter) {
         return this.ASSETS.removeIf(p_filter);
     }
 
-    public Stream<NerdAsset> stream() {
+    public Stream<NerdAsset<?>> stream() {
         return this.ASSETS.stream();
     }
 
@@ -222,7 +237,7 @@ public class AssetManager {
         return this.ASSETS.toArray(p_generator);
     }
 
-    public void forEach(Consumer<? super NerdAsset> p_action) {
+    public void forEach(Consumer<? super NerdAsset<?>> p_action) {
         this.ASSETS.forEach(p_action);
     }
     // endregion
