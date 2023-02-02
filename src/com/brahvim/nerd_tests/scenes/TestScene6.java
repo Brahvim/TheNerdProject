@@ -54,6 +54,7 @@ public class TestScene6 extends NerdScene {
         }
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_ESCAPE))
+
             SCENE.onFirstLayerOfClass(PauseMenuLayer.class, (l) -> {
                 System.out.println("Unpaused!");
                 l.setActive(false);

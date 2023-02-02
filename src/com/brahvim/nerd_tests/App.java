@@ -18,7 +18,7 @@ public class App {
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
 
             // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
-            TestScene4.class;
+            TestScene6.class;
 
     public final static int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);

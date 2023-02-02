@@ -153,6 +153,138 @@ public class NerdScene implements InputEventHandling {
   // endregion
 
   // region `Layer`-operations.
+  // region `onFirstLayerOfClass()` overloads.
+  /**
+   * Given a {@link NerdLayer} class, performs a task on the instance of that
+   * class, which was added <i>first</i> to this {@link NerdScene}.
+   */
+  public <T extends NerdLayer> void onFirstLayerOfClass(Class<T> p_layerClass, LayerTask<T> p_task) {
+    this.onFirstLayerOfClass(p_layerClass, p_task, null);
+  }
+
+  /**
+   * Given a {@link NerdLayer} class, performs a task on the instance of that
+   * class, which was added <i>first</i> to this {@link NerdScene}. If there is no
+   * instance of the given class, performs the other given task.
+   */
+  // Actual implementation!:
+  @SuppressWarnings("unchecked")
+  public <T extends NerdLayer> void onFirstLayerOfClass(
+      Class<T> p_layerClass, LayerTask<T> p_onFoundTask, Runnable p_notFoundTask) {
+    T instance = (T) this.getFirstLayerOfClass(p_layerClass);
+
+    // Check if we have any such layers:
+    if (instance != null) {
+      // On finding one, perform the given task!
+      if (p_onFoundTask != null)
+        p_onFoundTask.performTask(instance);
+    } else {
+      // On finding none, perform the other task!
+      if (p_notFoundTask != null)
+        p_notFoundTask.run();
+    }
+  }
+  // endregion
+
+  // region `onLayersOfClass()` and similar.
+  // region `onInactiveLayersOfClass()` overloads.
+  public <T extends NerdLayer> void onInactiveLayersOfClass(
+      Class<T> p_layerClass, LayerTask<T> p_task) {
+    this.onInactiveLayersOfClass(p_layerClass, p_task, null);
+  }
+
+  // Actual implementation!:
+  @SuppressWarnings("unchecked")
+  public <T extends NerdLayer> void onInactiveLayersOfClass(
+      Class<T> p_layerClass, LayerTask<T> p_task, Runnable p_notFoundTask) {
+
+    int i = 0;
+    final int LAYERS_SIZE = this.LAYERS.size();
+
+    // For every `NerdLayer`,
+    for (; i != LAYERS_SIZE; i++) {
+      NerdLayer l = this.LAYERS.get(i);
+
+      if (l != null)
+        if (l.getClass().equals(p_layerClass))
+          if (!l.isActive()) // ...if it's from the same class,
+            p_task.performTask((T) l); // ...perform the given task!
+    }
+
+    // If no `NerdLayer`s were found, perform the other task!:
+    if (i == 0 && p_notFoundTask != null)
+      p_notFoundTask.run();
+  }
+  // endregion
+
+  // region `onActiveLayersOfClass()` overloads.
+  public <T extends NerdLayer> void onActiveLayersOfClass(
+      Class<T> p_layerClass, LayerTask<T> p_task) {
+    this.onActiveLayersOfClass(p_layerClass, p_task, null);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends NerdLayer> void onActiveLayersOfClass(
+      Class<T> p_layerClass, LayerTask<T> p_task, Runnable p_notFoundTask) {
+
+    int i = 0;
+    final int LAYERS_SIZE = this.LAYERS.size();
+
+    // For every `NerdLayer`,
+    for (; i != LAYERS_SIZE; i++) {
+      NerdLayer l = this.LAYERS.get(i);
+
+      if (l != null)
+        if (l.getClass().equals(p_layerClass))
+          if (l.isActive()) // ...if it's from the same class,
+            p_task.performTask((T) l); // ...perform the given task!
+    }
+
+    // If no `NerdLayer`s were found, perform the other task!:
+    if (i == 0 && p_notFoundTask != null)
+      p_notFoundTask.run();
+  }
+  // endregion
+
+  // region `onLayersOfClass()` overloads.
+  /**
+   * Given a {@link NerdLayer} class, performs a task on all instances of that
+   * class being used by this {@link NerdScene}.
+   */
+  public <T extends NerdLayer> void onLayersOfClass(
+      Class<T> p_layerClass, LayerTask<T> p_task) {
+    this.onLayersOfClass(p_layerClass, p_task, null);
+  }
+
+  /**
+   * Given a {@link NerdLayer} class, performs a task on all instances of that
+   * class being used by this {@link NerdScene}. If no instance is found, performs
+   * the other given task.
+   */
+  // Actual implementation!:
+  @SuppressWarnings("unchecked")
+  public <T extends NerdLayer> void onLayersOfClass(
+      Class<T> p_layerClass, LayerTask<T> p_task, Runnable p_notFoundTask) {
+
+    int i = 0;
+    final int LAYERS_SIZE = this.LAYERS.size();
+
+    // For every `NerdLayer`,
+    for (; i != LAYERS_SIZE; i++) {
+      NerdLayer l = this.LAYERS.get(i);
+
+      if (l.getClass().equals(p_layerClass)) // ...if it's from the same class,
+        p_task.performTask((T) l); // ...perform the given task!
+    }
+
+    // If no `NerdLayer`s were found, perform the other task!:
+    if (i == 0 && p_notFoundTask != null)
+      p_notFoundTask.run();
+  }
+  // endregion
+  // endregion
+
+  // region `getLayers()` and similar.
   // They get a running `Layer`'s reference from its (given) class.
   public NerdLayer getFirstLayerOfClass(Class<? extends NerdLayer> p_layerClass) {
     for (NerdLayer l : this.LAYERS)
@@ -162,26 +294,33 @@ public class NerdScene implements InputEventHandling {
   }
 
   /**
-   * Given a {@link NerdLayer} class, performs a task on the instance of that
-   * class, which was added <i>first</i> to this {@link NerdScene}.
+   * Gives an {@link ArrayList} of {@link NerdLayer} instances of the given
+   * subclass this {@link NerdScene} contains, which are <b>not</b> active.
    */
-  @SuppressWarnings("unchecked")
-  public <T extends NerdLayer> void onFirstLayerOfClass(Class<T> p_layerClass, LayerTask<T> p_task) {
-    T instance = (T) this.getFirstLayerOfClass(p_layerClass);
+  public ArrayList<NerdLayer> getInactiveLayers(Class<? extends NerdLayer> p_layerClass) {
+    ArrayList<NerdLayer> toRet = new ArrayList<>();
 
-    if (instance != null)
-      p_task.performTask(instance);
+    for (NerdLayer l : this.LAYERS)
+      if (l != null)
+        if (l.getClass().equals(p_layerClass) && !l.isActive())
+          toRet.add(l);
+
+    return toRet;
   }
 
   /**
-   * Given a {@link NerdLayer} class, performs a task on all instances of that
-   * class being used by this {@link NerdScene}.
+   * Gives an {@link ArrayList} of {@link NerdLayer} instances of the given
+   * subclass this {@link NerdScene} contains, which are also active.
    */
-  @SuppressWarnings("unchecked")
-  public <T extends NerdLayer> void onLayersOfClass(Class<T> p_layerClass, LayerTask<T> p_task) {
-    for (NerdLayer l : this.LAYERS)// For every `NerdLayer`,
-      if (l.getClass().equals(p_layerClass)) // ...if it's from the same class,
-        p_task.performTask((T) l);
+  public ArrayList<NerdLayer> getActiveLayers(Class<? extends NerdLayer> p_layerClass) {
+    ArrayList<NerdLayer> toRet = new ArrayList<>();
+
+    for (NerdLayer l : this.LAYERS)
+      if (l != null)
+        if (l.getClass().equals(p_layerClass) && l.isActive())
+          toRet.add(l);
+
+    return toRet;
   }
 
   /**
@@ -192,9 +331,10 @@ public class NerdScene implements InputEventHandling {
     ArrayList<NerdLayer> toRet = new ArrayList<>();
 
     for (NerdLayer l : this.LAYERS)
-      if (l.getClass().equals(p_layerClass)) {
-        toRet.add(l);
-      }
+      if (l != null)
+        if (l.getClass().equals(p_layerClass)) {
+          toRet.add(l);
+        }
 
     return toRet;
   }
@@ -207,6 +347,7 @@ public class NerdScene implements InputEventHandling {
   public ArrayList<NerdLayer> getLayers() {
     return this.LAYERS;
   }
+  // endregion
 
   // region `NerdLayer` state-management.
   @SafeVarargs

@@ -262,7 +262,6 @@ public class SceneManager {
                         if (l.isActive())
                             l.mouseWheel(p_mouseEvent);
             }
-
         };
 
         this.touchListener = this.SKETCH.new SketchTouchListener() {
@@ -301,7 +300,6 @@ public class SceneManager {
                         if (l.isActive())
                             l.touchEnded();
             }
-
         };
 
         this.windowListener = this.SKETCH.new SketchWindowListener() {
@@ -340,7 +338,6 @@ public class SceneManager {
                         if (l.isActive())
                             l.focusGained();
             }
-
         };
 
         this.keyboardListener = this.SKETCH.new SketchKeyboardListener() {
@@ -379,7 +376,6 @@ public class SceneManager {
                         if (l.isActive())
                             l.keyReleased();
             }
-
         };
     }
     // endregion

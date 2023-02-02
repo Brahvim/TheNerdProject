@@ -72,6 +72,7 @@ public class Sketch extends PApplet {
      */
 
     public abstract class SketchMouseListener {
+
         public SketchMouseListener() {
             SKETCH.MOUSE_LISTENERS.add(this);
         }
@@ -100,6 +101,7 @@ public class Sketch extends PApplet {
     }
 
     public abstract class SketchTouchListener {
+
         public SketchTouchListener() {
             SKETCH.TOUCH_LISTENERS.add(this);
         }
@@ -118,6 +120,7 @@ public class Sketch extends PApplet {
     }
 
     public abstract class SketchWindowListener {
+
         public SketchWindowListener() {
             SKETCH.WINDOW_LISTENERS.add(this);
         }
@@ -136,6 +139,7 @@ public class Sketch extends PApplet {
     }
 
     public abstract class SketchKeyboardListener {
+
         public SketchKeyboardListener() {
             SKETCH.KEYBOARD_LISTENERS.add(this);
         }
@@ -480,9 +484,6 @@ public class Sketch extends PApplet {
                 l.resized();
         }
 
-        if (this.pfullscreen != this.fullscreen)
-            this.centerWindow();
-
         this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
         this.mouse.set(super.mouseX, super.mouseY);
         if (this.RENDERER == PConstants.P3D)
@@ -539,12 +540,12 @@ public class Sketch extends PApplet {
         // endregion
 
         this.sceneMan.draw();
-
-        if (this.USES_OPENGL)
-            super.endPGL();
     }
 
     public void post() {
+        if (this.USES_OPENGL)
+            super.endPGL();
+
         this.framelyWindowSetup();
 
         // region Previous state updates!!!
