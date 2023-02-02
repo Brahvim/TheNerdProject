@@ -112,6 +112,7 @@ public class FlyCamera extends NerdCamera {
     // endregion
 
     // region Methods specific to `FlyCamera`.
+    // region Movement.
     public void moveX(float p_velX) {
         super.pos.add(
                 PVector.mult(
@@ -127,6 +128,13 @@ public class FlyCamera extends NerdCamera {
     public void moveZ(float p_velZ) {
         super.pos.sub(PVector.mult(this.front, p_velZ));
     }
+    // endregion
+
+    // region Rolling.
+    public void roll(float p_roll) {
+        super.up.x += p_roll;
+    }
+    // endregion
 
     protected void mouseUpdate() {
         // region Update `yaw` and `pitch`:

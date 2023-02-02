@@ -1,4 +1,4 @@
-    package com.brahvim.nerd_tests.scenes;
+package com.brahvim.nerd_tests.scenes;
 
 import java.awt.event.KeyEvent;
 
