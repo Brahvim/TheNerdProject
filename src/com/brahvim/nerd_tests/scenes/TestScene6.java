@@ -15,8 +15,6 @@ import processing.core.PVector;
 public class TestScene6 extends NerdScene {
 
     // region Fields.
-    public final float CAM_HEIGHT = 320;
-
     private FpsCamera CAMERA;
     private PVector playerVel = new PVector(3, 2, 3);
 

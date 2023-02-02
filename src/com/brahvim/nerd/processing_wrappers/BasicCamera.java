@@ -70,6 +70,7 @@ public class BasicCamera extends NerdCamera {
         // this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
         // ...nope! I'll remove this! It causes the camera position to seem to change
         // when you resize the window!
+        // Lesson learnt: **use this only if your camera never moves!**
     }
 
     public void apply2dMatrix() {
@@ -119,6 +120,7 @@ public class BasicCamera extends NerdCamera {
                 this.defaultCamCenter.z);
         // endregion
 
+        // region Copying camera parameters.
         toRet.up.set(this.up);
         toRet.pos.set(this.pos);
         toRet.center.set(this.center);
@@ -128,6 +130,8 @@ public class BasicCamera extends NerdCamera {
         toRet.near = this.near;
 
         toRet.script = this.script;
+        // endregion
+
         return toRet;
     }
     // endregion
