@@ -146,6 +146,10 @@ public class NerdAsset<AssetDataT> {
         return (RetT) this.data;
     }
 
+    public int getLoadFrame() {
+        return this.frame;
+    }
+
     public long getLoadMillis() {
         return this.millis;
     }
