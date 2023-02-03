@@ -1133,10 +1133,22 @@ public class Sketch extends PApplet {
     }
     // endregion
 
-    // region [TODO, documentation for] The billion `image()` overloads.
+    // region The billion `image()` overloads. Help me make "standards"?
     // region For `PImage`s.
     public void image(PImage p_image) {
+        // `https://processing.org/reference/set_.html`.
+        // Faster than `image()`!:
+        // `super.set(0, 0, p_image);`
+        // However, we also need to remember that it doesn't render the image on to a
+        // quad, meaning that transformations won't apply.
         super.image(p_image, 0, 0);
+    }
+
+    /**
+     * @param p_side The length of the side of the square.
+     */
+    public void image(PImage p_image, float p_side) {
+        super.image(p_image, 0, 0, p_side, p_side);
     }
 
     public void image(PImage p_image, PVector p_pos) {
@@ -1146,19 +1158,18 @@ public class Sketch extends PApplet {
         super.popMatrix();
     }
 
-    public void image(PImage p_image, float p_scale) {
-        super.image(p_image, 0, 0, p_scale, p_scale);
-    }
-
-    public void image(PImage p_image, PVector p_pos, float p_scaleMod) {
+    public void image(PImage p_image, PVector p_pos, float p_size) {
         super.pushMatrix();
         super.translate(p_pos.x, p_pos.y, p_pos.z);
-        this.image(p_image, p_pos.x, p_pos.y, p_scaleMod, p_scaleMod);
+        this.image(p_image, p_pos.x, p_pos.y, p_size, p_size);
         super.popMatrix();
     }
 
-    public void image(PImage p_image, float p_x, float p_y, float p_scaleMod) {
-        this.image(p_image, p_x, p_y, p_scaleMod, p_scaleMod);
+    public void image(PImage p_image, float p_x, float p_y, float p_z) {
+        super.pushMatrix();
+        super.translate(p_x, p_y, p_z);
+        super.image(p_image, 0, 0);
+        super.popMatrix();
     }
     // endregion
 
@@ -1185,10 +1196,8 @@ public class Sketch extends PApplet {
         super.popMatrix();
     }
 
-    public void image(PGraphics p_graphics, float p_x, float p_y, float p_scaleMod) {
-        this.image(p_graphics, p_x, p_y,
-                p_graphics.width * p_scaleMod,
-                p_graphics.height * p_scaleMod);
+    public void image(PGraphics p_graphics, float p_x, float p_y, float p_z) {
+        this.image(p_graphics, p_x, p_y, p_z);
     }
 
     public void image(PGraphics p_graphics, PVector p_pos, float p_width, float p_height) {
