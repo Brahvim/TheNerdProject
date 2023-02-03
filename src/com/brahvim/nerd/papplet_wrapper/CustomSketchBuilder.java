@@ -4,7 +4,17 @@ import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PConstants;
 
-// If "`SketchT`" sounds weird to you, check out [https://stackoverflow.com/a/30146204/13951505]
+/**
+ * Want to hack into the `Sketch` class and control its inner workings?
+ * Why not extend it!
+ *
+ * Override/Implement this class's `build()` method and return an instance of
+ * that `Sketch` subclass!
+ */
+
+// If "`SketchT`" sounds weird to you, check out:
+// [https://stackoverflow.com/a/30146204/13951505]
+
 public abstract class CustomSketchBuilder<SketchT extends Sketch> {
 
     // region Fields and the constructor.

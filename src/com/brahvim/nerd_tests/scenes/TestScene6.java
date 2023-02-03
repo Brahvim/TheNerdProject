@@ -36,6 +36,7 @@ public class TestScene6 extends NerdScene {
         // Need to do this!...:
         CAMERA = STATE.get("Camera", new FpsCamera(SKETCH));
         CAMERA.setClearColor(0x006699);
+        STATE.set("TimesLoaded", SCENE.timesLoaded());
 
         // Do not forget to do these!:
         SKETCH.cursorVisible = false;

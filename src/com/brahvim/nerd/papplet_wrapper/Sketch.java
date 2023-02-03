@@ -291,7 +291,7 @@ public class Sketch extends PApplet {
     public JFrame sketchFrame;
 
     // OpenGL context:
-    public PGL gl;
+    public PGL pgl;
     public GLWindow glWindow;
     public PGraphicsOpenGL glGraphics;
     // endregion
@@ -507,7 +507,7 @@ public class Sketch extends PApplet {
 
     public void pre() {
         if (this.USES_OPENGL)
-            this.gl = super.beginPGL();
+            this.pgl = super.beginPGL();
 
         // When the window is resized, do the following!:
         if (!(this.pwidth == super.width || this.pheight == super.height)) {

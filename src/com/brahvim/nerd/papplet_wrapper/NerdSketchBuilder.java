@@ -3,6 +3,7 @@ package com.brahvim.nerd.papplet_wrapper;
 import processing.core.PApplet;
 
 public final class NerdSketchBuilder extends CustomSketchBuilder<Sketch> {
+
     public Sketch build(String[] p_javaMainArgs) {
         Sketch constructedSketch = new Sketch(super.SKETCH_KEY);
         String[] args = new String[] { constructedSketch.getClass().getName() };
@@ -14,4 +15,5 @@ public final class NerdSketchBuilder extends CustomSketchBuilder<Sketch> {
 
         return constructedSketch;
     }
+
 }

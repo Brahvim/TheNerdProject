@@ -4,18 +4,20 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd_tests.scenes.TestScene4;
+import com.brahvim.nerd_tests.scenes.TestScene6;
 
 public class App {
+
     // TODO: Build system,
     // TODO: LWJGL OpenAL,
     // TODO: Box2D and Bullet? :D?
     // TODO: Collision Algorithms for 3D space,
-    // TODO: `Sketch` and Scene-Layer API independence.
+    // TODO: `Sketch` and Scene-Layer API independence (if possible...).
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
 
             // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
-            TestScene4.class;
+            TestScene6.class;
 
     // region `App`'s *other* fields.
     public final static int BPM = 100,
@@ -51,7 +53,6 @@ public class App {
                     // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
                 })
                 .build(p_args);
-
         // endregion
 
         App.startTickThread();
