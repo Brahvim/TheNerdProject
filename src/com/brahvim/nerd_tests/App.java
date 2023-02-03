@@ -6,16 +6,18 @@ import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
+    // TODO: Build system,
     // TODO: LWJGL OpenAL,
     // TODO: Box2D and Bullet? :D?
-    // TODO: Collision Algorithms for 3D space!
+    // TODO: Collision Algorithms for 3D space,
+    // TODO: `Sketch` and Scene-Layer API independence.
 
-    // region `App`'s fields.
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
 
             // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
             TestScene4.class;
 
+    // region `App`'s *other* fields.
     public final static int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 
