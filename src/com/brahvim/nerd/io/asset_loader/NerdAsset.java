@@ -11,6 +11,7 @@ public class NerdAsset<AssetDataT> {
 
     private AssetDataT data;
     private Runnable onLoad;
+    private int frame;
     private long millis = -1;
     private boolean loaded, ploaded, failure;
 
@@ -154,35 +155,18 @@ public class NerdAsset<AssetDataT> {
     private void fetchData() {
         try {
             this.data = this.TYPE.fetchData(this.PATH, this.loaderArgs);
-        } catch (Exception e) {
+        } catch (AssetLoaderFailedException e) {
             this.data = null;
             this.failure = true;
             e.printStackTrace();
         }
 
+        this.frame = this.SKETCH.frameCount;
         this.millis = this.SKETCH.millis();
 
         /*
-         * switch (this.TYPE) {
-         * case FILESTREAM -> {
-         * try {
-         * this.data = new FileInputStream(new File(this.PATH));
-         * } catch (FileNotFoundException e) {
-         * this.failure = true;
-         * this.data = e;
-         * }
-         * }
+         * switch (this.TYPE) {{
          * 
-         * case SVG, MODEL_3D -> {
-         * PShape shape = SKETCH.loadShape(this.PATH);
-         * 
-         * if (shape == null)
-         * this.failure = true;
-         * 
-         * this.data = shape;
-         * }
-         * 
-         * /*
          * case PAUDIO -> {
          * SoundFile file = new SoundFile(SKETCH, this.PATH,
          * NerdAsset.CACHE_SOUNDFILES);
@@ -196,71 +180,6 @@ public class NerdAsset<AssetDataT> {
          * }
          * 
          * this.data = file;
-         * }
-         * 
-         * case PVIDEO -> {}
-         */
-        /*
-         * case PBYTES -> {
-         * byte[] bytes = this.SKETCH.loadBytes(this.PATH);
-         * this.failure = bytes == null;
-         * this.data = bytes; // Compiler: No complaints!
-         * 
-         * // // *Me wen typing:* `bufer`, `bugfer`, `bugfestival`...
-         * // ByteBuffer buffer = ByteBuffer.wrap(bytes);
-         * }
-         * 
-         * case PJSON_ARRAY -> {
-         * try {
-         * this.data = SKETCH.loadJSONArray(this.PATH);
-         * } catch (NullPointerException e) {
-         * this.failure = true;
-         * this.data = e;
-         * }
-         * }
-         * 
-         * case PJSON_OBJECT -> {
-         * try {
-         * this.data = SKETCH.loadJSONObject(this.PATH);
-         * } catch (NullPointerException e) {
-         * this.failure = true;
-         * this.data = e;
-         * }
-         * }
-         * 
-         * case PSHADER -> {
-         * PShader shader = SKETCH.loadShader(this.PATH);
-         * 
-         * if (shader == null)
-         * this.failure = true;
-         * 
-         * this.data = shader;
-         * }
-         * 
-         * case PSTRINGS -> {
-         * String[] strings = SKETCH.loadStrings(this.PATH);
-         * 
-         * if (strings == null)
-         * this.failure = true;
-         * 
-         * this.data = strings;
-         * // haha space else vscode no fold dis
-         * }
-         * 
-         * case XML -> {
-         * XML markup = SKETCH.loadXML(this.PATH);
-         * 
-         * if (markup == null)
-         * this.failure = true;
-         * 
-         * this.data = markup;
-         * }
-         * 
-         * case SERIALIZED -> {
-         * this.data = ByteSerial.fromFile(new File(this.PATH));
-         * 
-         * if (this.data == null)
-         * this.failure = true;
          * }
          * 
          * // I know where the `default` may be used!

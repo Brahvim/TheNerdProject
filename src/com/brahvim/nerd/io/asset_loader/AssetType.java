@@ -18,6 +18,6 @@ public abstract class AssetType<T> {
      */
 
     public abstract T fetchData(String p_path, Object... p_options)
-            throws AssetLoaderFailedException, IllegalArgumentException;
+            throws AssetLoaderFailedException; // , IllegalArgumentException;
 
 }

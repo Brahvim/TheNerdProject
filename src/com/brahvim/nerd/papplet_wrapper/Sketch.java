@@ -21,6 +21,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -29,6 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.brahvim.nerd.io.ByteSerial;
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
 import com.brahvim.nerd.io.asset_loader.AssetType;
@@ -49,16 +51,33 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
 import processing.core.PVector;
+import processing.data.JSONArray;
+import processing.data.JSONObject;
+import processing.data.XML;
 import processing.opengl.PGL;
 import processing.opengl.PGraphics3D;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
+import processing.opengl.PShader;
 
 public class Sketch extends PApplet {
 
     // region Inner classes.
-    // region TODO `NerdAsset` types.
-    public final PImageAsset PIMAGE_ASSET_LOADER = this.new PImageAsset();
+    // region `NerdAsset` types.
+    public class XMLAsset extends AssetType<XML> {
+
+        private XMLAsset() {
+        }
+
+        @Override
+        public XML fetchData(String p_path, Object... p_options)
+                throws AssetLoaderFailedException {
+            XML markup = SKETCH.loadXML(p_path);
+            if (markup == null)
+                throw new AssetLoaderFailedException();
+            return markup;
+        }
+    }
 
     public class PImageAsset extends AssetType<PImage> {
 
@@ -80,6 +99,138 @@ public class Sketch extends PApplet {
                 throw new AssetLoaderFailedException();
 
             return img;
+        }
+    }
+
+    public class PShapeAsset extends AssetType<PShape> {
+
+        private PShapeAsset() {
+        }
+
+        @Override
+        public PShape fetchData(String p_path, Object... p_options)
+                throws AssetLoaderFailedException {
+            PShape shape = SKETCH.loadShape(p_path);
+
+            if (shape == null)
+                throw new AssetLoaderFailedException();
+
+            return shape;
+        }
+    }
+
+    public class PBytesAsset extends AssetType<byte[]> {
+
+        private PBytesAsset() {
+        }
+
+        @Override
+        public byte[] fetchData(String p_path, Object... p_options)
+                throws AssetLoaderFailedException {
+            byte[] bytes = SKETCH.loadBytes(p_path);
+
+            if (bytes == null)
+                throw new AssetLoaderFailedException();
+
+            return bytes;
+        }
+    }
+
+    public class PShaderAsset extends AssetType<PShader> {
+
+        private PShaderAsset() {
+        }
+
+        @Override
+        public PShader fetchData(String p_path, Object... p_options)
+                throws AssetLoaderFailedException {
+            PShader shader = SKETCH.loadShader(p_path);
+
+            if (shader == null)
+                throw new AssetLoaderFailedException();
+
+            return shader;
+        }
+    }
+
+    public class PStringsAsset extends AssetType<String[]> {
+        private PStringsAsset() {
+        }
+
+        @Override
+        public String[] fetchData(String p_path, Object... p_options) throws AssetLoaderFailedException {
+            String[] strings = SKETCH.loadStrings(p_path);
+
+            if (strings == null)
+                throw new AssetLoaderFailedException();
+
+            return strings;
+        }
+    }
+
+    public class SerializedAsset extends AssetType<Object> {
+
+        private SerializedAsset() {
+        }
+
+        @Override
+        public Object fetchData(String p_path, Object... p_options)
+                throws AssetLoaderFailedException {
+            try {
+                return ByteSerial.fromFile(p_path);
+            } catch (Exception e) {
+                throw new AssetLoaderFailedException();
+            }
+        }
+
+    }
+
+    public class JSONArrayAsset extends AssetType<JSONArray> {
+
+        private JSONArrayAsset() {
+        }
+
+        @Override
+        public JSONArray fetchData(String p_path, Object... p_options)
+                throws AssetLoaderFailedException {
+            try {
+                return SKETCH.loadJSONArray(p_path);
+            } catch (NullPointerException e) {
+                throw new AssetLoaderFailedException();
+            }
+        }
+    }
+
+    public class JSONObjectAsset extends AssetType<JSONObject> {
+
+        private JSONObjectAsset() {
+        }
+
+        @Override
+        public JSONObject fetchData(String p_path, Object... p_options)
+                throws AssetLoaderFailedException {
+            try {
+                return SKETCH.loadJSONObject(p_path);
+            } catch (NullPointerException e) {
+                throw new AssetLoaderFailedException();
+            }
+        }
+    }
+
+    public class FileInputStreamAsset extends AssetType<FileInputStream> {
+
+        private FileInputStreamAsset() {
+        }
+
+        @Override
+        public FileInputStream fetchData(String p_path, Object... p_options)
+                throws AssetLoaderFailedException {
+            try {
+                return new FileInputStream(new File(p_path));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                throw new AssetLoaderFailedException();
+            }
         }
 
     }
@@ -247,6 +398,10 @@ public class Sketch extends PApplet {
 
     public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
             CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN, DO_FAKE_2D_CAMERA = false;
+
+    // region Loaders.
+    public final PImageAsset PIMAGE_ASSET_LOADER = this.new PImageAsset();
+    // endregion
     // endregion
     // endregion
 
