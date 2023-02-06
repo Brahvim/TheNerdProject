@@ -28,7 +28,7 @@ public class TestScene4 extends NerdScene {
         // "C:", "Projects", "Photo Edits", "Outputs", "Emojis",
         // "sunglass_nerd.png").toString());
 
-        ASSETS.add(SKETCH.PIMAGE_ASSET_LOADER, SKETCH.ICON_PATH);
+        ASSETS.add(SKETCH.LOADERS.PIMAGE_ASSET_LOADER, SKETCH.ICON_PATH);
         System.out.println("This is async LOL!");
     }
 

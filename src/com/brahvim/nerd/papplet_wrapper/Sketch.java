@@ -63,8 +63,34 @@ import processing.opengl.PShader;
 public class Sketch extends PApplet {
 
     // region Inner classes.
+    public class ProcessingAssetLoaders {
+        public final XMLAsset XML_ASSET_LOADER = SKETCH.new XMLAsset(); // VM1250:15
+        public final PImageAsset PIMAGE_ASSET_LOADER = SKETCH.new PImageAsset(); // VM1250:15
+        public final PShapeAsset PSHAPE_ASSET_LOADER = SKETCH.new PShapeAsset(); // VM1250:15
+        public final PBytesAsset PBYTES_ASSET_LOADER = SKETCH.new PBytesAsset(); // VM1250:15
+        public final PShaderAsset PSHADER_ASSET_LOADER = SKETCH.new PShaderAsset(); // VM1250:15
+        public final PStringsAsset PSTRINGS_ASSET_LOADER = SKETCH.new PStringsAsset(); // VM1250:15
+        public final JSONArrayAsset JSON_ARRAY_ASSET_LOADER = SKETCH.new JSONArrayAsset(); // VM1250:15
+        public final JSONObjectAsset JSON_OBJECT_ASSET_LOADER = SKETCH.new JSONObjectAsset(); // VM1250:15
+        public final SerializedAsset SERIALIZED_ASSET_LOADER = SKETCH.new SerializedAsset(); // VM1250:15
+        public final FileInputStreamAsset FILEINPUTSTREAM_ASSET_LOADER = SKETCH.new FileInputStreamAsset();
+    }
+
     // region `NerdAsset` types.
-    public class XMLAsset extends AssetType<XML> {
+    // region Lazy at typing? Use this list and some JS LOL:
+    // "XML",
+    // "PImage",
+    // "PShape",
+    // "PBytes",
+    // "PShader",
+    // "PStrings",
+    // "Serialized",
+    // "JSONArray",
+    // "JSONObject",
+    // "FileInputStream"
+    // endregion
+
+    private class XMLAsset extends AssetType<XML> {
 
         private XMLAsset() {
         }
@@ -79,7 +105,7 @@ public class Sketch extends PApplet {
         }
     }
 
-    public class PImageAsset extends AssetType<PImage> {
+    private class PImageAsset extends AssetType<PImage> {
 
         private PImageAsset() {
         }
@@ -102,7 +128,7 @@ public class Sketch extends PApplet {
         }
     }
 
-    public class PShapeAsset extends AssetType<PShape> {
+    private class PShapeAsset extends AssetType<PShape> {
 
         private PShapeAsset() {
         }
@@ -119,7 +145,7 @@ public class Sketch extends PApplet {
         }
     }
 
-    public class PBytesAsset extends AssetType<byte[]> {
+    private class PBytesAsset extends AssetType<byte[]> {
 
         private PBytesAsset() {
         }
@@ -136,7 +162,7 @@ public class Sketch extends PApplet {
         }
     }
 
-    public class PShaderAsset extends AssetType<PShader> {
+    private class PShaderAsset extends AssetType<PShader> {
 
         private PShaderAsset() {
         }
@@ -153,7 +179,7 @@ public class Sketch extends PApplet {
         }
     }
 
-    public class PStringsAsset extends AssetType<String[]> {
+    private class PStringsAsset extends AssetType<String[]> {
         private PStringsAsset() {
         }
 
@@ -168,7 +194,7 @@ public class Sketch extends PApplet {
         }
     }
 
-    public class SerializedAsset extends AssetType<Object> {
+    private class SerializedAsset extends AssetType<Object> {
 
         private SerializedAsset() {
         }
@@ -185,7 +211,7 @@ public class Sketch extends PApplet {
 
     }
 
-    public class JSONArrayAsset extends AssetType<JSONArray> {
+    private class JSONArrayAsset extends AssetType<JSONArray> {
 
         private JSONArrayAsset() {
         }
@@ -201,7 +227,7 @@ public class Sketch extends PApplet {
         }
     }
 
-    public class JSONObjectAsset extends AssetType<JSONObject> {
+    private class JSONObjectAsset extends AssetType<JSONObject> {
 
         private JSONObjectAsset() {
         }
@@ -217,7 +243,7 @@ public class Sketch extends PApplet {
         }
     }
 
-    public class FileInputStreamAsset extends AssetType<FileInputStream> {
+    private class FileInputStreamAsset extends AssetType<FileInputStream> {
 
         private FileInputStreamAsset() {
         }
@@ -383,7 +409,7 @@ public class Sketch extends PApplet {
     // region Instance constants.
     public final String NAME;
     public final Robot ROBOT;
-    public final Sketch SKETCH;
+    public final Sketch SKETCH = this;
     public final String RENDERER;
     public final String ICON_PATH;
     public final StringTable STRINGS;
@@ -395,13 +421,10 @@ public class Sketch extends PApplet {
     public final Point PREV_GLOBAL_MOUSE_POINT = new Point();
     public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
     public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
+    public final Sketch.ProcessingAssetLoaders LOADERS = this.new ProcessingAssetLoaders();
 
     public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
             CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN, DO_FAKE_2D_CAMERA = false;
-
-    // region Loaders.
-    public final PImageAsset PIMAGE_ASSET_LOADER = this.new PImageAsset();
-    // endregion
     // endregion
     // endregion
 
@@ -441,7 +464,7 @@ public class Sketch extends PApplet {
     public CallbackOrder POST_FIRST_CALLER = CallbackOrder.LAYER;
     // endregion
 
-    // region Window object references.
+    // region Window object and native renderer references ("hacky stuff").
     // (Why check for errors at all? You know what renderer you used!)
     public JFrame sketchFrame;
 
@@ -531,7 +554,6 @@ public class Sketch extends PApplet {
         this.DISPOSAL_LISTENER = p_key.disposalListener;
         // endregion
 
-        this.SKETCH = this;
         this.NAME = p_key.name;
         this.ICON_PATH = p_key.iconPath;
         this.RENDERER = p_key.renderer;
@@ -553,7 +575,7 @@ public class Sketch extends PApplet {
         this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
         // endregion
 
-        // region Setting icons.
+        // region Setting OpenGL renderer icons.
         if (this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D)
             PJOGL.setIcon(this.ICON_PATH);
         // endregion
@@ -764,7 +786,7 @@ public class Sketch extends PApplet {
         this.sceneMan.post();
     }
 
-    @Override
+    @Override // TODO: Do a callback for `exit()`.
     public void exit() {
         if (this.EXIT_LISTENER != null)
             this.EXIT_LISTENER.listen(this);
