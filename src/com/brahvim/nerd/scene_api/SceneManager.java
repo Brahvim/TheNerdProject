@@ -436,11 +436,6 @@ public class SceneManager {
     // endregion
 
     // region App workflow callbacks. Please don't use these outside any `PApplet`!
-    public void setup(SceneState p_state) {
-        if (this.currScene != null)
-            this.setupCurrentScene(p_state);
-    }
-
     public void pre() {
         if (this.currScene != null)
             this.currScene.runPre();
@@ -457,6 +452,11 @@ public class SceneManager {
 
         if (this.currScene != null)
             this.currScene.runPost();
+    }
+
+    public void exit() {
+        if (this.currScene != null)
+            this.currScene.runExit();
     }
     // endregion
 
@@ -710,7 +710,7 @@ public class SceneManager {
         this.prevSceneClass = this.currSceneClass;
         if (this.prevSceneClass != null) {
             // Exit the scene, and nullify the cache.
-            this.currScene.runOnSceneExit();
+            this.currScene.runSceneExited();
 
             if (!this.hasCached(this.currSceneClass))
                 this.currScene.ASSETS.clear();

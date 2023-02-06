@@ -76,7 +76,7 @@ public class TestScene6 extends NerdScene {
 
     }
 
-    // region Input events.
+    // region Events.
     @Override
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_F)) {

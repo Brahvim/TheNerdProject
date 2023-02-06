@@ -452,9 +452,10 @@ public class NerdScene implements InputEventHandling {
     return toRet;
   }
   // endregion
+  // endregion
 
   // region Anything callback-related, LOL.
-  // region `SceneManager.SceneKey` app-workflow callback runners.
+  // region ~~`SceneManager.SceneKey`~~ app-workflow callback runners.
   /*
    * 
    * private void verifyKey(SceneManager.SceneKey p_key) {
@@ -472,18 +473,7 @@ public class NerdScene implements InputEventHandling {
    * }
    */
 
-  /* package */ void runOnSceneExit() {
-    // this.verifyKey(p_sceneKey);
-    this.sceneExited();
-  }
-
-  /* package */ void runPreload() {
-    // this.verifyKey(p_sceneKey);
-    this.preload();
-    this.donePreloading = true;
-  }
-
-  /* package */ void runSetup(SceneState p_state) {
+  /* `package` */ void runSetup(SceneState p_state) {
     // this.verifyKey(p_sceneKey);
     this.startMillis = this.SKETCH.millis();
     this.setup(p_state);
@@ -491,35 +481,18 @@ public class NerdScene implements InputEventHandling {
     // `NerdLayer`s don't get to respond to this `setup()`.
   }
 
-  /* package */ void runPre() {
+  /* `package` */ void runSceneExited() {
     // this.verifyKey(p_sceneKey);
-    if (this.SKETCH.PRE_FIRST_CALLER == null)
-      throw new NullPointerException("`Sketch::PRE_CALLBACK_ORDER` cannot be `null`.");
-
-    // To avoid asynchronous changes from causing repetition, we put both parts in
-    // `if` and `else` block.
-
-    switch (this.SKETCH.PRE_FIRST_CALLER) {
-      case SCENE -> {
-        this.pre();
-
-        for (NerdLayer l : this.LAYERS)
-          if (l != null)
-            if (l.isActive())
-              l.pre();
-      }
-      case LAYER -> {
-        for (NerdLayer l : this.LAYERS)
-          if (l != null)
-            if (l.isActive())
-              l.pre();
-
-        this.pre();
-      }
-    }
+    this.sceneExited();
   }
 
-  /* package */ void runDraw() {
+  /* `package` */ void runPreload() {
+    // this.verifyKey(p_sceneKey);
+    this.preload();
+    this.donePreloading = true;
+  }
+
+  /* `package` */ void runDraw() {
     // this.verifyKey(p_sceneKey);
 
     if (this.SKETCH.DRAW_FIRST_CALLER == null)
@@ -568,7 +541,7 @@ public class NerdScene implements InputEventHandling {
 
   }
 
-  /* package */ void runPost() {
+  /* `package` */ void runPost() {
     // this.verifyKey(p_sceneKey);
     if (this.SKETCH.POST_FIRST_CALLER == null)
       throw new NullPointerException("`Sketch::POST_CALLBACK_ORDER` cannot be `null`.");
@@ -594,6 +567,45 @@ public class NerdScene implements InputEventHandling {
         this.post();
       }
     }
+
+  }
+
+  /* `package` */ void runExit() {
+    for (NerdLayer l : this.LAYERS)
+      if (l != null)
+        if (l.isActive())
+          l.exit();
+
+    this.exit();
+  }
+
+  /* `package` */ void runPre() {
+    // this.verifyKey(p_sceneKey);
+    if (this.SKETCH.PRE_FIRST_CALLER == null)
+      throw new NullPointerException("`Sketch::PRE_CALLBACK_ORDER` cannot be `null`.");
+
+    // To avoid asynchronous changes from causing repetition, we put both parts in
+    // `if` and `else` block.
+
+    switch (this.SKETCH.PRE_FIRST_CALLER) {
+      case SCENE -> {
+        this.pre();
+
+        for (NerdLayer l : this.LAYERS)
+          if (l != null)
+            if (l.isActive())
+              l.pre();
+      }
+      case LAYER -> {
+        for (NerdLayer l : this.LAYERS)
+          if (l != null)
+            if (l.isActive())
+              l.pre();
+
+        this.pre();
+      }
+    }
+
   }
   // endregion
 
@@ -640,7 +652,6 @@ public class NerdScene implements InputEventHandling {
 
   protected void post() {
   }
-  // endregion
   // endregion
   // endregion
 

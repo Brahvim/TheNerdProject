@@ -111,6 +111,11 @@ public class TestScene4 extends NerdScene {
     public void mouseWheel(MouseEvent p_mouseEvent) {
         this.magScrollAcc += p_mouseEvent.getCount() * this.MAG_SCROLL_ACC_MOD;
     }
+
+    @Override
+    public void exit() {
+        System.out.println("Nerd exited!");
+    }
     // endregion
 
 }

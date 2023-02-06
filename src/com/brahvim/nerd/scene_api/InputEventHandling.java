@@ -80,6 +80,9 @@ package com.brahvim.nerd.scene_api;
     public default void focusLost() {
     }
 
+    public default void exit() {
+    }
+
     public default void resized() {
     }
 
