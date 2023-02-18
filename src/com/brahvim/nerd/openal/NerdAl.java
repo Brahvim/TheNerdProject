@@ -81,6 +81,9 @@ public class NerdAl {
 		this.dvId = 0;
 	}
 
+	public void framelyCall() {
+	}
+
 	private void verifyContext() {
 		if (this.ctxId == 0 || !ALC11.alcMakeContextCurrent(this.ctxId))
 			this.dispose();

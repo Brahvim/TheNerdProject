@@ -761,7 +761,9 @@ public class Sketch extends PApplet {
 		if (this.USES_OPENGL)
 			super.endPGL();
 
+		// Love how these fit so snuggly together. <3!~
 		this.framelyWindowSetup();
+		this.framelyOpenAlTasks();
 
 		// region Previous state updates!!!
 		FlyCamera.pholdPointer = FlyCamera.holdCursor;
@@ -977,7 +979,7 @@ public class Sketch extends PApplet {
 
 	// region OpenAL tasks.
 	private void framelyOpenAlTasks() {
-
+		this.OPENAL.framelyCall();
 	}
 	// endregion
 
