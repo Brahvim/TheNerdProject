@@ -12,39 +12,41 @@ import org.lwjgl.openal.ALUtil;
 public class NerdAl {
 
 	// region Fields.
-	// region Constants.
-	// public static final int NULL_DEVICE = 0;
-
-	// Nope! Not a thing that I can do!:
-	// public final static int DEFAULT_OPENAL_DEVICE_ID = ALC11.alcGetInteger(0,
-	// ALC11.ALC_DEFAULT_DEVICE_SPECIFIER);
-	public final static String DEFAULT_OPENAL_DEVICE_NAME = ALC11
-			.alcGetString(0, ALC11.ALC_DEFAULT_DEVICE_SPECIFIER);
-	// endregion
-
+	private String dvName;
 	private long dvId, ctxId;
 	private ALCapabilities alCap;
 	private ALCCapabilities alCtxCap;
+	private boolean isDvDefault = true;
 	// endregion
 
 	public NerdAl() {
-		this.dvId = ALC11.alcOpenDevice(NerdAl.DEFAULT_OPENAL_DEVICE_NAME);
-		this.ctxId = ALC11.alcCreateContext(this.dvId, new int[] { 0 });
-		this.verifyContext();
+		this(NerdAl.getDefaultDeviceName());
+	}
 
-		this.alCtxCap = ALC.createCapabilities(this.dvId);
-		this.alCap = AL.createCapabilities(this.alCtxCap);
+	public NerdAl(String p_deviceName) {
+		this.createAl(p_deviceName);
+	}
 
-		this.checkForErrors();
+	public static boolean isDeviceConnected(String p_deviceName) {
+		final List<String> DEVICES = NerdAl.getDevices();
+		return DEVICES.contains(p_deviceName);
 	}
 
 	// region Getters.
-	public static List<String> getOpenAlDevices() {
+	public static List<String> getDevices() {
 		return ALUtil.getStringList(0, ALC11.ALC_ALL_DEVICES_SPECIFIER);
+	}
+
+	public static String getDefaultDeviceName() {
+		return ALC11.alcGetString(0, ALC11.ALC_DEFAULT_DEVICE_SPECIFIER);
 	}
 
 	public long getDeviceId() {
 		return this.dvId;
+	}
+
+	public String getDeviceName() {
+		return this.dvName;
 	}
 
 	public long getContextId() {
@@ -67,6 +69,27 @@ public class NerdAl {
 		return error;
 	}
 
+	private void createAl(String p_deviceName) {
+		this.isDvDefault = p_deviceName.equals(NerdAl.getDefaultDeviceName());
+
+		this.dvId = ALC11.alcOpenDevice(p_deviceName);
+		this.ctxId = ALC11.alcCreateContext(this.dvId, new int[] { 0 });
+		this.verifyContext();
+
+		this.alCtxCap = ALC.createCapabilities(this.dvId);
+		this.alCap = AL.createCapabilities(this.alCtxCap);
+
+		this.checkForErrors();
+	}
+
+	public void deviceConnectionCheck() {
+		if (NerdAl.isDeviceConnected(this.dvName)) {
+			if (this.isDvDefault) {
+				this.createAl(NerdAl.getDefaultDeviceName());
+			}
+		}
+	}
+
 	public void dispose() {
 		ALC11.alcMakeContextCurrent(0);
 
@@ -81,7 +104,8 @@ public class NerdAl {
 		this.dvId = 0;
 	}
 
-	public void framelyCall() {
+	public boolean usesDefaultDevice() {
+		return this.dvName.equals(NerdAl.getDefaultDeviceName());
 	}
 
 	private void verifyContext() {

@@ -570,15 +570,12 @@ public class Sketch extends PApplet {
 
 		// region Non-key settings.
 		// this.pfullscreen = !this.fullscreen;
+		this.OPENAL = new NerdAl();
 		this.UNPROJECTOR = new Unprojector();
 		this.sceneMan = new SceneManager(this);
 		this.fullscreen = this.STARTED_FULLSCREEN;
 		this.currentCamera = new BasicCameraBuilder(this).build();
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
-		// endregion
-
-		// region OpenAL.
-		this.OPENAL = new NerdAl();
 		// endregion
 
 		// region Setting OpenGL renderer icons.
@@ -761,7 +758,7 @@ public class Sketch extends PApplet {
 		if (this.USES_OPENGL)
 			super.endPGL();
 
-		// Love how these fit so snuggly together. <3!~
+		// Love how these fit togetha'. You?
 		this.framelyWindowSetup();
 		this.framelyOpenAlTasks();
 
@@ -979,7 +976,7 @@ public class Sketch extends PApplet {
 
 	// region OpenAL tasks.
 	private void framelyOpenAlTasks() {
-		this.OPENAL.framelyCall();
+		this.OPENAL.deviceConnectionCheck();
 	}
 	// endregion
 
