@@ -35,6 +35,7 @@ import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.math.Unprojector;
+import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.processing_wrappers.BasicCamera;
 import com.brahvim.nerd.processing_wrappers.BasicCameraBuilder;
 import com.brahvim.nerd.processing_wrappers.FlyCamera;
@@ -409,11 +410,12 @@ public class Sketch extends PApplet {
 	// region Instance constants.
 	public final String NAME;
 	public final Robot ROBOT;
-	public final Sketch SKETCH = this;
+	public final NerdAl OPENAL;
 	public final String RENDERER;
 	public final String ICON_PATH;
 	public final StringTable STRINGS;
 	public final boolean USES_OPENGL;
+	public final Sketch SKETCH = this;
 	public final int INIT_WIDTH, INIT_HEIGHT;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
@@ -573,6 +575,10 @@ public class Sketch extends PApplet {
 		this.fullscreen = this.STARTED_FULLSCREEN;
 		this.currentCamera = new BasicCameraBuilder(this).build();
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
+		// endregion
+
+		// region OpenAL.
+		this.OPENAL = new NerdAl();
 		// endregion
 
 		// region Setting OpenGL renderer icons.
@@ -801,6 +807,7 @@ public class Sketch extends PApplet {
 		if (this.DISPOSAL_LISTENER != null)
 			this.DISPOSAL_LISTENER.listen(this);
 
+		this.OPENAL.dispose();
 		super.dispose();
 	}
 	// endregion
@@ -966,6 +973,12 @@ public class Sketch extends PApplet {
 			}
 	}
 	// endregion
+	// endregion
+
+	// region OpenAL tasks.
+	private void framelyOpenAlTasks() {
+
+	}
 	// endregion
 
 	// region Utilities!~
