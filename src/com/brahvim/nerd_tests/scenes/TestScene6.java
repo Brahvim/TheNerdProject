@@ -103,20 +103,19 @@ public class TestScene6 extends NerdScene {
             velMultiplier = 5;
 
         // region Roll.
-        if (SKETCH.keyIsPressed(KeyEvent.VK_Q))
+        if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
             CAMERA.up.x += (velMultiplier * 0.01f);
 
-        if (SKETCH.keyIsPressed(KeyEvent.VK_E))
+        if (SKETCH.keyIsPressed(KeyEvent.VK_C))
             CAMERA.up.x += (-velMultiplier * 0.01f);
         // endregion
 
         // region Elevation.
-        if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE)) {
-            if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
-                CAMERA.moveY(velMultiplier * playerVel.y);
-            else
-                CAMERA.moveY(this.GRAVITY * velMultiplier * -playerVel.y);
-        }
+        if (SKETCH.keyIsPressed(KeyEvent.VK_Q))
+            CAMERA.moveY(this.GRAVITY * velMultiplier * -playerVel.y);
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_E))
+            CAMERA.moveY(velMultiplier * playerVel.y);
         // endregion
 
         // region `W`-`A`-`S`-`D` controls.

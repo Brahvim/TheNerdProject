@@ -21,7 +21,6 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -30,11 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import com.brahvim.nerd.io.ByteSerial;
 import com.brahvim.nerd.io.StringTable;
-import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
-import com.brahvim.nerd.io.asset_loader.AssetType;
-import com.brahvim.nerd.io.asset_loader.processing_loaders.XMLAsset;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.processing_wrappers.BasicCamera;
@@ -53,199 +48,12 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
 import processing.core.PVector;
-import processing.data.JSONArray;
-import processing.data.JSONObject;
 import processing.opengl.PGL;
 import processing.opengl.PGraphics3D;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
-import processing.opengl.PShader;
 
 public class Sketch extends PApplet {
-
-	// region Inner classes.
-	public class ProcessingAssetLoaders {
-		public final PImageAsset PIMAGE = SKETCH.new PImageAsset(); // VM1250:15
-		public final PShapeAsset PSHAPE = SKETCH.new PShapeAsset(); // VM1250:15
-		public final PBytesAsset PBYTES = SKETCH.new PBytesAsset(); // VM1250:15
-		public final PShaderAsset PSHADER = SKETCH.new PShaderAsset(); // VM1250:15
-		public final PStringsAsset PSTRINGS = SKETCH.new PStringsAsset(); // VM1250:15
-		public final JSONArrayAsset JSON_ARRAY = SKETCH.new JSONArrayAsset(); // VM1250:15
-		public final JSONObjectAsset JSON_OBJECT = SKETCH.new JSONObjectAsset(); // VM1250:15
-		public final SerializedAsset SERIALIZED = SKETCH.new SerializedAsset(); // VM1250:15
-		public final FileInputStreamAsset FILE_INPUT_STREAM = SKETCH.new FileInputStreamAsset();
-	}
-
-	// region `NerdAsset` types.
-	// region Lazy at typing? Use this list and some JS LOL:
-	// "XML",
-	// "PImage",
-	// "PShape",
-	// "PBytes",
-	// "PShader",
-	// "PStrings",
-	// "Serialized",
-	// "JSONArray",
-	// "JSONObject",
-	// "FileInputStream"
-	// endregion
-
-	private class PImageAsset extends AssetType<PImage> {
-
-		private PImageAsset() {
-		}
-
-		@Override
-		public PImage fetchData(String p_path, Object... p_options)
-				throws AssetLoaderFailedException {
-			PImage img = SKETCH.loadImage(p_path);
-
-			// Oh, it failed?
-			boolean failure = img == null;
-
-			if (!failure)
-				failure = img.width == -1;
-
-			if (failure)
-				throw new AssetLoaderFailedException();
-
-			return img;
-		}
-	}
-
-	private class PShapeAsset extends AssetType<PShape> {
-
-		private PShapeAsset() {
-		}
-
-		@Override
-		public PShape fetchData(String p_path, Object... p_options)
-				throws AssetLoaderFailedException {
-			PShape shape = SKETCH.loadShape(p_path);
-
-			if (shape == null)
-				throw new AssetLoaderFailedException();
-
-			return shape;
-		}
-	}
-
-	private class PBytesAsset extends AssetType<byte[]> {
-
-		private PBytesAsset() {
-		}
-
-		@Override
-		public byte[] fetchData(String p_path, Object... p_options)
-				throws AssetLoaderFailedException {
-			byte[] bytes = SKETCH.loadBytes(p_path);
-
-			if (bytes == null)
-				throw new AssetLoaderFailedException();
-
-			return bytes;
-		}
-	}
-
-	private class PShaderAsset extends AssetType<PShader> {
-
-		private PShaderAsset() {
-		}
-
-		@Override
-		public PShader fetchData(String p_path, Object... p_options)
-				throws AssetLoaderFailedException {
-			PShader shader = SKETCH.loadShader(p_path);
-
-			if (shader == null)
-				throw new AssetLoaderFailedException();
-
-			return shader;
-		}
-	}
-
-	private class PStringsAsset extends AssetType<String[]> {
-		private PStringsAsset() {
-		}
-
-		@Override
-		public String[] fetchData(String p_path, Object... p_options) throws AssetLoaderFailedException {
-			String[] strings = SKETCH.loadStrings(p_path);
-
-			if (strings == null)
-				throw new AssetLoaderFailedException();
-
-			return strings;
-		}
-	}
-
-	private class SerializedAsset extends AssetType<Object> {
-
-		private SerializedAsset() {
-		}
-
-		@Override
-		public Object fetchData(String p_path, Object... p_options)
-				throws AssetLoaderFailedException {
-			try {
-				return ByteSerial.fromFile(p_path);
-			} catch (Exception e) {
-				throw new AssetLoaderFailedException();
-			}
-		}
-
-	}
-
-	private class JSONArrayAsset extends AssetType<JSONArray> {
-
-		private JSONArrayAsset() {
-		}
-
-		@Override
-		public JSONArray fetchData(String p_path, Object... p_options)
-				throws AssetLoaderFailedException {
-			try {
-				return SKETCH.loadJSONArray(p_path);
-			} catch (NullPointerException e) {
-				throw new AssetLoaderFailedException();
-			}
-		}
-	}
-
-	private class JSONObjectAsset extends AssetType<JSONObject> {
-
-		private JSONObjectAsset() {
-		}
-
-		@Override
-		public JSONObject fetchData(String p_path, Object... p_options)
-				throws AssetLoaderFailedException {
-			try {
-				return SKETCH.loadJSONObject(p_path);
-			} catch (NullPointerException e) {
-				throw new AssetLoaderFailedException();
-			}
-		}
-	}
-
-	private class FileInputStreamAsset extends AssetType<FileInputStream> {
-
-		private FileInputStreamAsset() {
-		}
-
-		@Override
-		public FileInputStream fetchData(String p_path, Object... p_options)
-				throws AssetLoaderFailedException {
-			try {
-				return new FileInputStream(new File(p_path));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				throw new AssetLoaderFailedException();
-			}
-		}
-
-	}
-	// endregion
 
 	// region Event listener interfaces and abstract (inner) classes.
 	@FunctionalInterface
@@ -351,7 +159,6 @@ public class Sketch extends PApplet {
 	}
 	// endregion
 	// endregion
-	// endregion
 
 	// region `public` fields.
 	// region Constants.
@@ -407,7 +214,6 @@ public class Sketch extends PApplet {
 	public final Point PREV_GLOBAL_MOUSE_POINT = new Point();
 	public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
 	public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
-	public final Sketch.ProcessingAssetLoaders LOADERS = this.new ProcessingAssetLoaders();
 
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
 			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN, DO_FAKE_2D_CAMERA = false;

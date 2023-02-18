@@ -1,5 +1,6 @@
 package com.brahvim.nerd_tests.scenes;
 
+import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -21,21 +22,15 @@ public class TestScene4 extends NerdScene {
     private float magScrollAcc, magScrollVel, magScroll = 1;
     // endregion
 
-    // region ...stuff!
     @Override
     protected void preload() {
-        // ASSETS.add(AssetType.PIMAGE, Paths.get(
-        // "C:", "Projects", "Photo Edits", "Outputs", "Emojis",
-        // "sunglass_nerd.png").toString());
-
-        ASSETS.add(null, SKETCH.ICON_PATH);
+        ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
         System.out.println("This is async LOL!");
     }
 
     private float nerdRotTime() {
         return SCENE.millisSinceStart() * 0.1f;
     }
-    // endregion
 
     @Override
     protected void setup(SceneState p_state) {

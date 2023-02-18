@@ -3,7 +3,7 @@ package com.brahvim.nerd_tests;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd_tests.scenes.TestScene4;
+import com.brahvim.nerd_tests.scenes.TestScene6;
 
 public class App {
 
@@ -20,7 +20,7 @@ public class App {
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
             // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
-            TestScene4.class;
+            TestScene6.class;
 
     // region `App`'s *other* fields.
     public final static int BPM = 100,
