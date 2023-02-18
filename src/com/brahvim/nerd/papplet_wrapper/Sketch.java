@@ -34,6 +34,7 @@ import com.brahvim.nerd.io.ByteSerial;
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
 import com.brahvim.nerd.io.asset_loader.AssetType;
+import com.brahvim.nerd.io.asset_loader.processing_loaders.XMLAsset;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.processing_wrappers.BasicCamera;
@@ -54,7 +55,6 @@ import processing.core.PShape;
 import processing.core.PVector;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
-import processing.data.XML;
 import processing.opengl.PGL;
 import processing.opengl.PGraphics3D;
 import processing.opengl.PGraphicsOpenGL;
@@ -65,16 +65,15 @@ public class Sketch extends PApplet {
 
 	// region Inner classes.
 	public class ProcessingAssetLoaders {
-		public final XMLAsset XML_ASSET_LOADER = SKETCH.new XMLAsset(); // VM1250:15
-		public final PImageAsset PIMAGE_ASSET_LOADER = SKETCH.new PImageAsset(); // VM1250:15
-		public final PShapeAsset PSHAPE_ASSET_LOADER = SKETCH.new PShapeAsset(); // VM1250:15
-		public final PBytesAsset PBYTES_ASSET_LOADER = SKETCH.new PBytesAsset(); // VM1250:15
-		public final PShaderAsset PSHADER_ASSET_LOADER = SKETCH.new PShaderAsset(); // VM1250:15
-		public final PStringsAsset PSTRINGS_ASSET_LOADER = SKETCH.new PStringsAsset(); // VM1250:15
-		public final JSONArrayAsset JSON_ARRAY_ASSET_LOADER = SKETCH.new JSONArrayAsset(); // VM1250:15
-		public final JSONObjectAsset JSON_OBJECT_ASSET_LOADER = SKETCH.new JSONObjectAsset(); // VM1250:15
-		public final SerializedAsset SERIALIZED_ASSET_LOADER = SKETCH.new SerializedAsset(); // VM1250:15
-		public final FileInputStreamAsset FILEINPUTSTREAM_ASSET_LOADER = SKETCH.new FileInputStreamAsset();
+		public final PImageAsset PIMAGE = SKETCH.new PImageAsset(); // VM1250:15
+		public final PShapeAsset PSHAPE = SKETCH.new PShapeAsset(); // VM1250:15
+		public final PBytesAsset PBYTES = SKETCH.new PBytesAsset(); // VM1250:15
+		public final PShaderAsset PSHADER = SKETCH.new PShaderAsset(); // VM1250:15
+		public final PStringsAsset PSTRINGS = SKETCH.new PStringsAsset(); // VM1250:15
+		public final JSONArrayAsset JSON_ARRAY = SKETCH.new JSONArrayAsset(); // VM1250:15
+		public final JSONObjectAsset JSON_OBJECT = SKETCH.new JSONObjectAsset(); // VM1250:15
+		public final SerializedAsset SERIALIZED = SKETCH.new SerializedAsset(); // VM1250:15
+		public final FileInputStreamAsset FILE_INPUT_STREAM = SKETCH.new FileInputStreamAsset();
 	}
 
 	// region `NerdAsset` types.
@@ -90,21 +89,6 @@ public class Sketch extends PApplet {
 	// "JSONObject",
 	// "FileInputStream"
 	// endregion
-
-	private class XMLAsset extends AssetType<XML> {
-
-		private XMLAsset() {
-		}
-
-		@Override
-		public XML fetchData(String p_path, Object... p_options)
-				throws AssetLoaderFailedException {
-			XML markup = SKETCH.loadXML(p_path);
-			if (markup == null)
-				throw new AssetLoaderFailedException();
-			return markup;
-		}
-	}
 
 	private class PImageAsset extends AssetType<PImage> {
 
@@ -976,7 +960,7 @@ public class Sketch extends PApplet {
 
 	// region OpenAL tasks.
 	private void framelyOpenAlTasks() {
-		this.OPENAL.deviceConnectionCheck();
+		this.OPENAL.framelyCallback();
 	}
 	// endregion
 

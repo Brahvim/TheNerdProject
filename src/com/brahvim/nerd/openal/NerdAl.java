@@ -1,6 +1,7 @@
 package com.brahvim.nerd.openal;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
@@ -12,11 +13,16 @@ import org.lwjgl.openal.ALUtil;
 public class NerdAl {
 
 	// region Fields.
+	public final static Function<Void, String> DEFAULT_DISCONNECTION_CALLBACK = (Void a) -> {
+		return NerdAl.getDefaultDeviceName();
+	};
+
 	private String dvName;
 	private long dvId, ctxId;
 	private ALCapabilities alCap;
 	private ALCCapabilities alCtxCap;
 	private boolean isDvDefault = true;
+	private Function<Void, String> disconnectionCallback = NerdAl.DEFAULT_DISCONNECTION_CALLBACK;
 	// endregion
 
 	public NerdAl() {
@@ -33,12 +39,12 @@ public class NerdAl {
 	}
 
 	// region Getters.
-	public static List<String> getDevices() {
-		return ALUtil.getStringList(0, ALC11.ALC_ALL_DEVICES_SPECIFIER);
-	}
-
 	public static String getDefaultDeviceName() {
 		return ALC11.alcGetString(0, ALC11.ALC_DEFAULT_DEVICE_SPECIFIER);
+	}
+
+	public static List<String> getDevices() {
+		return ALUtil.getStringList(0, ALC11.ALC_ALL_DEVICES_SPECIFIER);
 	}
 
 	public long getDeviceId() {
@@ -62,6 +68,14 @@ public class NerdAl {
 	}
 	// endregion
 
+	// region Setters.
+	// region Event callback setters.
+	public void setDisconnectionCallback(Function<Void, String> p_callback) {
+		this.disconnectionCallback = p_callback;
+	}
+	// endregion
+	// endregion
+
 	public int checkForErrors() throws NerdAlException {
 		int error = ALC11.alcGetError(this.dvId);
 		if (error != 0)
@@ -71,6 +85,8 @@ public class NerdAl {
 
 	private void createAl(String p_deviceName) {
 		this.isDvDefault = p_deviceName.equals(NerdAl.getDefaultDeviceName());
+
+		// TODO: Copy over the previous context's info to the new device!
 
 		this.dvId = ALC11.alcOpenDevice(p_deviceName);
 		this.ctxId = ALC11.alcCreateContext(this.dvId, new int[] { 0 });
@@ -82,12 +98,19 @@ public class NerdAl {
 		this.checkForErrors();
 	}
 
-	public void deviceConnectionCheck() {
-		if (NerdAl.isDeviceConnected(this.dvName)) {
-			if (this.isDvDefault) {
-				this.createAl(NerdAl.getDefaultDeviceName());
-			}
-		}
+	// Should probably *not* have a 'default' version for this.
+	public boolean deviceDisconnectionCheck() {
+		String deviceName = this.disconnectionCallback.apply(null);
+		boolean canUseNewDevice = NerdAl.isDeviceConnected(deviceName);
+
+		if (canUseNewDevice)
+			this.createAl(deviceName);
+
+		return canUseNewDevice;
+	}
+
+	public void framelyCallback() {
+		this.deviceDisconnectionCheck();
 	}
 
 	public void dispose() {
@@ -104,8 +127,8 @@ public class NerdAl {
 		this.dvId = 0;
 	}
 
-	public boolean usesDefaultDevice() {
-		return this.dvName.equals(NerdAl.getDefaultDeviceName());
+	public boolean isUsingDefaultDevice() {
+		return this.isDvDefault;
 	}
 
 	private void verifyContext() {

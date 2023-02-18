@@ -18,7 +18,6 @@ public class App {
      */
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
-
             // Use directly in `setFirstSceneClass()` below!:
             // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
             TestScene4.class;

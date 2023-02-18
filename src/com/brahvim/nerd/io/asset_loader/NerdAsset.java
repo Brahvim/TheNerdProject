@@ -3,13 +3,13 @@ package com.brahvim.nerd.io.asset_loader;
 import java.io.File;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-public class NerdAsset<AssetDataT> {
+public class NerdAsset<AssetT> {
 
     // region Fields!
     public static boolean CACHE_SOUNDFILES = false;
     public final String NAME;
 
-    private AssetDataT data;
+    private AssetT data;
     private Runnable onLoad;
     private int frame;
     private long millis = -1;
@@ -17,14 +17,14 @@ public class NerdAsset<AssetDataT> {
 
     private final String PATH;
     private final Sketch SKETCH;
-    private final AssetType<AssetDataT> TYPE;
+    private final AssetType<AssetT> TYPE;
     // private final AssetManager.AssetKey KEY;
 
     private Object[] loaderArgs;
     // endregion
 
     // region Constructors!
-    public NerdAsset(Sketch p_sketch, AssetType<AssetDataT> p_type, String p_path) {
+    public NerdAsset(Sketch p_sketch, AssetType<AssetT> p_type, String p_path) {
         // this.verifyKey(p_key);
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
@@ -39,17 +39,17 @@ public class NerdAsset<AssetDataT> {
         this.startLoading();
     }
 
-    public NerdAsset(Sketch p_sketch, AssetType<AssetDataT> p_type, String p_path, Runnable p_onLoad) {
+    public NerdAsset(Sketch p_sketch, AssetType<AssetT> p_type, String p_path, Runnable p_onLoad) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
     }
 
-    public NerdAsset(Sketch p_sketch, AssetType<AssetDataT> p_type, String p_path, Object... p_loaderArgs) {
+    public NerdAsset(Sketch p_sketch, AssetType<AssetT> p_type, String p_path, Object... p_loaderArgs) {
         this(p_sketch, p_type, p_path);
         this.loaderArgs = p_loaderArgs;
     }
 
-    public NerdAsset(Sketch p_sketch, AssetType<AssetDataT> p_type, String p_path,
+    public NerdAsset(Sketch p_sketch, AssetType<AssetT> p_type, String p_path,
             Runnable p_onLoad, Object... p_loaderArgs) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
@@ -96,12 +96,12 @@ public class NerdAsset<AssetDataT> {
      */
 
     // region Load status requests.
-    public NerdAsset<AssetDataT> setLoadCallback(Runnable p_onLoad) {
+    public NerdAsset<AssetT> setLoadCallback(Runnable p_onLoad) {
         this.onLoad = p_onLoad;
         return this;
     }
 
-    public NerdAsset<AssetDataT> completeLoad() {
+    public NerdAsset<AssetT> completeLoad() {
         while (!this.loaded)
             System.out.println("Waiting for `" + this.NAME + "` to load...");
 
@@ -146,6 +146,12 @@ public class NerdAsset<AssetDataT> {
         return (RetT) this.data;
     }
 
+    // Tends to return `Object`s instead :|
+    // public AssetDataT getData() {
+    // this.completeLoad();
+    // return this.data;
+    // }
+
     public int getLoadFrame() {
         return this.frame;
     }
@@ -158,7 +164,7 @@ public class NerdAsset<AssetDataT> {
 
     private void fetchData() {
         try {
-            this.data = this.TYPE.fetchData(this.PATH, this.loaderArgs);
+            this.data = this.TYPE.fetchData(this.SKETCH, this.PATH, this.loaderArgs);
         } catch (AssetLoaderFailedException e) {
             this.data = null;
             this.failure = true;
