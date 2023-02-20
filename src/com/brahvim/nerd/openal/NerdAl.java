@@ -1,5 +1,6 @@
 package com.brahvim.nerd.openal;
 
+import java.nio.IntBuffer;
 import java.util.List;
 import java.util.function.Function;
 
@@ -9,6 +10,8 @@ import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.openal.ALUtil;
+import org.lwjgl.openal.EXTDisconnect;
+import org.lwjgl.system.MemoryStack;
 
 public class NerdAl {
 
@@ -36,9 +39,15 @@ public class NerdAl {
 	// endregion
 
 	// region `static` methods.
-	public static boolean isDeviceConnected(String p_deviceName) {
-		final List<String> DEVICES = NerdAl.getDevices();
-		return DEVICES.contains(p_deviceName);
+	public static boolean isDeviceConnected(long p_deviceId) {
+		// No idea why this bad stack read works.
+		MemoryStack.stackPush();
+		IntBuffer buffer = MemoryStack.stackMallocInt(1);
+		ALC11.alcGetIntegerv(p_deviceId, EXTDisconnect.ALC_CONNECTED, buffer);
+		MemoryStack.stackPop();
+
+		int bufOut = buffer.get();
+		return bufOut == 1;
 	}
 	// endregion
 
@@ -88,29 +97,35 @@ public class NerdAl {
 	}
 
 	private void createAl(String p_deviceName) {
+		this.dvName = p_deviceName;
 		this.isDvDefault = p_deviceName.equals(NerdAl.getDefaultDeviceName());
 
 		// TODO: Copy over the previous context's info to the new device!
 
-		this.dvId = ALC11.alcOpenDevice(p_deviceName);
+		this.dvId = ALC11.alcOpenDevice(this.dvName);
 		this.ctxId = ALC11.alcCreateContext(this.dvId, new int[] { 0 });
 		this.verifyContext();
 
 		this.alCtxCap = ALC.createCapabilities(this.dvId);
 		this.alCap = AL.createCapabilities(this.alCtxCap);
 
+		// Throws no exception!
+		// if (!ALC11.alcIsExtensionPresent(this.dvId, "ALC_EXT_disconnect"))
+		// throw new NerdAlException(0);
+
 		this.checkForErrors();
 	}
 
 	// Should probably *not* have a 'default' version for this.
 	public boolean deviceDisconnectionCheck() {
-		String deviceName = this.disconnectionCallback.apply(null);
-		boolean canUseNewDevice = NerdAl.isDeviceConnected(deviceName);
+		boolean connected = NerdAl.isDeviceConnected(this.dvId);
 
-		if (canUseNewDevice)
-			this.createAl(deviceName);
+		if (!connected) {
+			System.out.println("Device disconnected!");
+			this.createAl(this.disconnectionCallback.apply(null));
+		}
 
-		return canUseNewDevice;
+		return connected;
 	}
 
 	public void framelyCallback() {

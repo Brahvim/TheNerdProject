@@ -36,6 +36,7 @@ public class AlBuffer {
 
 	public int getSize() {
 		// Not using `MemoryStack` to allocate here! This stuff is being returned!
+		// ...but WAIT, it works..?!
 		MemoryStack.stackPush();
 		IntBuffer retVal = MemoryStack.stackMallocInt(1);
 		AL11.alGetBufferiv(this.bufId, AL11.AL_SIZE, retVal);
@@ -44,9 +45,13 @@ public class AlBuffer {
 		return retVal.get();
 	}
 
-	public void getData() {
-		// TODO Retain the type of data loaded an fe
-		// AL11.getBuffer
+	public void getIntegerData() {
+		IntBuffer retVal = IntBuffer.allocate(this.getSize());
+		AL11.alBufferiv(bufId, bufId, null);
+	}
+
+	public void getFloatData() {
+		AL11.
 	}
 	// endregion
 
