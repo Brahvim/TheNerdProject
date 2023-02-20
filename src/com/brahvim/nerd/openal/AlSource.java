@@ -3,6 +3,7 @@ package com.brahvim.nerd.openal;
 import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.openal.AL11;
 import org.lwjgl.system.MemoryStack;
@@ -16,6 +17,8 @@ import processing.core.PVector;
 public class AlSource {
 
 	// region Fields.
+	public final static ArrayList<AlSource> sources = new ArrayList<>();
+
 	private int id;
 	private NerdAl manager;
 	private AlBuffer<?> buffer;
@@ -33,6 +36,11 @@ public class AlSource {
 	}
 	// endregion
 
+	@SuppressWarnings("unchecked")
+	public static ArrayList<AlSource> getEverySourceEver() {
+		return (ArrayList<AlSource>) AlSource.sources.clone();
+	}
+
 	// region ...literal "buffer distribution", :joy:
 	public AlBuffer<?> getBuffer() {
 		return this.buffer;
@@ -47,7 +55,6 @@ public class AlSource {
 		if (this.buffer == null)
 			this.buffer = new AlOggBuffer(this.manager, AlBufferLoader.loadOgg(p_file));
 	}
-
 	// endregion
 
 	// region C-style AL-API getters.
@@ -354,6 +361,15 @@ public class AlSource {
 		this.setInt(AL11.AL_LOOPING, p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
 	}
 	// endregion
+	// endregion
+
+	// region Actual state management!
+	public void dispose() {
+		this.manager.getContextSources().remove(this);
+		AlSource.sources.remove(this);
+		AL11.alDeleteSources(this.id);
+		this.manager.checkAlErrors();
+	}
 	// endregion
 
 }

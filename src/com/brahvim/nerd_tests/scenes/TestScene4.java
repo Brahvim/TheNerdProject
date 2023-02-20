@@ -30,8 +30,8 @@ public class TestScene4 extends NerdScene {
     protected void preload() {
         ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
 
-
-        this.rubberDuck = new AlSource(SKETCH.OPENAL, new AlOggBuffer(SKETCH.OPENAL).loadFrom(""));
+        this.rubberDuck = new AlSource(SKETCH.OPENAL,
+                new AlOggBuffer(SKETCH.OPENAL).loadFrom("data/RUBBER DUCK.ogg"));
         System.out.println("This is async LOL!");
     }
 
@@ -105,6 +105,7 @@ public class TestScene4 extends NerdScene {
     // region Events.
     @Override
     public void mousePressed() {
+        //this.rubberDuck.play();
         System.out.println("TestScene4.mousePressed()");
         MANAGER.restartScene();
     }

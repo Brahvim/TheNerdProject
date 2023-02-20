@@ -1,5 +1,7 @@
 package com.brahvim.nerd.openal;
 
+import java.util.ArrayList;
+
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.ALC;
@@ -7,16 +9,29 @@ import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 
+import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlException;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
 
 public class NerdAl {
 
+	// region Inner classes, interfaces and enums.
+	interface ContextUse {
+		public void withContext(AlContext p_ctx) {
+
+		}
+	}
+	// endregion
+
 	// region Fields.
-	private AlDevice device;
+	private final ArrayList<AlBuffer<?>> deviceBuffers = new ArrayList<>();
+	private final ArrayList<AlSource> contextSources = new ArrayList<>();
+
+	private volatile AlDevice device;
+	private volatile AlContext context;
 	private ALCapabilities alCap;
-	private AlContext context;
 	private ALCCapabilities alCtxCap;
+
 	// endregion
 
 	// region Constructors.
@@ -33,17 +48,15 @@ public class NerdAl {
 	}
 	// endregion
 
-	// region [DEPRECATED] Locks.
-	// public void setDeviceLock(boolean p_lockStatus) {
-	// this.dvLock = p_lockStatus;
-	// }
-
-	// public void setContextLock(boolean p_lockStatus) {
-	// this.ctxLock = p_lockStatus;
-	// }
-	// endregion
-
 	// region Getters.
+	public ArrayList<AlBuffer<?>> getDeviceBuffers() {
+		return this.deviceBuffers;
+	}
+
+	public ArrayList<AlSource> getContextSources() {
+		return this.contextSources;
+	}
+
 	public long getDeviceId() {
 		return this.device.getId();
 	}
@@ -77,6 +90,14 @@ public class NerdAl {
 		if (ALC11.alcGetContextsDevice(p_ctx.getId()) != this.device.getId())
 			throw new AlException(ALC11.ALC_INVALID_CONTEXT);
 		this.context = p_ctx;
+	}
+	// endregion
+
+	// region `using()` methods.
+	public void usingDevice() {
+	}
+
+	public void usingContext() {
 	}
 	// endregion
 

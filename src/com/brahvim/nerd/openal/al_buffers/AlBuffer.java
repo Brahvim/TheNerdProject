@@ -1,7 +1,9 @@
 package com.brahvim.nerd.openal.al_buffers;
 
+import java.io.File;
 import java.nio.Buffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.ALC11;
@@ -11,32 +13,52 @@ import com.brahvim.nerd.openal.NerdAl;
 
 public abstract class AlBuffer<BufferT extends Buffer> {
 
-	protected int bufId;
-	protected NerdAl alInst;
+	// region Fields.
+	protected int id;
+	protected NerdAl manager;
 
 	// LWJGL does not provide `AL_DATA` anywhere, :/
 	// Storing it here for access.
 	protected BufferT data;
 
+	private final static ArrayList<AlBuffer<?>> buffers = new ArrayList<>();
+	// endregion
+
 	// region Constructors.
 	public AlBuffer(NerdAl p_alInst) {
-		this.alInst = p_alInst;
+		this.manager = p_alInst;
 
-		this.bufId = AL11.alGenBuffers();
-		this.alInst.checkAlErrors();
+		this.id = AL11.alGenBuffers();
+		this.manager.checkAlErrors();
 	}
 
 	public AlBuffer(NerdAl p_alInst, BufferT p_data) {
-		this.alInst = p_alInst;
+		this.manager = p_alInst;
 
-		this.bufId = AL11.alGenBuffers();
-		this.alInst.checkAlErrors();
+		this.id = AL11.alGenBuffers();
+		this.manager.checkAlErrors();
 	}
 	// endregion
 
+	@SuppressWarnings("unchecked")
+	public static ArrayList<AlBuffer<?>> getEveryBufferEver() {
+		return (ArrayList<AlBuffer<?>>) AlBuffer.buffers.clone();
+	}
+
+	// region `abstract` methods.
+	public abstract void setData(int p_dataType, BufferT p_buffer, int p_sampleRate);
+
+	public abstract AlBuffer<?> loadFrom(File p_file);
+	// endregion
+
+	public AlBuffer<?> loadFrom(String p_path) {
+		this.loadFrom(new File(p_path));
+		return this;
+	}
+
 	// region Getters.
 	public int getId() {
-		return this.bufId;
+		return this.id;
 	}
 
 	public int getSize() {
@@ -44,7 +66,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		// ...but WAIT, it works..?!
 		MemoryStack.stackPush();
 		IntBuffer retVal = MemoryStack.stackMallocInt(1);
-		AL11.alGetBufferiv(this.bufId, AL11.AL_SIZE, retVal);
+		AL11.alGetBufferiv(this.id, AL11.AL_SIZE, retVal);
 		MemoryStack.stackPop();
 
 		return retVal.get();
@@ -55,7 +77,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		// ...but WAIT, it works..?!
 		MemoryStack.stackPush();
 		IntBuffer retVal = MemoryStack.stackMallocInt(1);
-		AL11.alGetBufferiv(this.bufId, AL11.AL_BITS, retVal);
+		AL11.alGetBufferiv(this.id, AL11.AL_BITS, retVal);
 		MemoryStack.stackPop();
 
 		return retVal.get();
@@ -66,7 +88,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		// ...but WAIT, it works..?!
 		MemoryStack.stackPush();
 		IntBuffer retVal = MemoryStack.stackMallocInt(1);
-		AL11.alGetBufferiv(this.bufId, AL11.AL_CHANNELS, retVal);
+		AL11.alGetBufferiv(this.id, AL11.AL_CHANNELS, retVal);
 		MemoryStack.stackPop();
 
 		return retVal.get();
@@ -79,7 +101,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	public int getSampleRate() {
 		MemoryStack.stackPush();
 		IntBuffer sampleRateBuffer = MemoryStack.stackMallocInt(1);
-		AL11.alBufferiv(this.bufId, ALC11.ALC_FREQUENCY, sampleRateBuffer);
+		AL11.alBufferiv(this.id, ALC11.ALC_FREQUENCY, sampleRateBuffer);
 		MemoryStack.stackPop();
 
 		return sampleRateBuffer.get();
@@ -87,18 +109,17 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	// endregion
 
 	// region Setters.
-	public abstract void setData(int p_dataType, BufferT p_buffer, int p_sampleRate);
 
 	public void setBits(int p_bits) {
-		AL11.alBufferi(this.bufId, AL11.AL_BITS, p_bits);
+		AL11.alBufferi(this.id, AL11.AL_BITS, p_bits);
 	}
 
 	public void setSampleRate(int p_sampleRate) {
-		AL11.alBufferi(this.bufId, AL11.AL_FREQUENCY, p_sampleRate);
+		AL11.alBufferi(this.id, AL11.AL_FREQUENCY, p_sampleRate);
 	}
 
 	public void setChannels(int p_channels) {
-		AL11.alBufferi(this.bufId, AL11.AL_CHANNELS, p_channels);
+		AL11.alBufferi(this.id, AL11.AL_CHANNELS, p_channels);
 	}
 
 	// Older `setData()` overloads. No longer used thanks to generics!:
@@ -153,7 +174,10 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	// endregion
 
 	public void dispose() {
-		AL11.alDeleteBuffers(this.bufId);
+		this.manager.getDeviceBuffers().remove(this);
+		AlBuffer.buffers.remove(this);
+		AL11.alDeleteBuffers(this.id);
+		this.manager.checkAlErrors();
 	}
 
 }
