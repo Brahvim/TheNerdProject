@@ -14,19 +14,17 @@ public class AlSource {
 	// region Fields.
 	private int id;
 	private NerdAl manager;
-	private NerdAlContext context;
 	private NerdAlTypedBuffer<?> buffer;
 	// endregion
 
 	// region Constructors.
-	public AlSource(NerdAlContext p_ctx) {
-		this.context = p_ctx;
+	public AlSource(NerdAl p_manager) {
+		this.manager = p_manager;
 		this.id = AL11.alGenSources();
-		this.manager = p_ctx.getManager();
 	}
 
-	public AlSource(NerdAlContext p_ctx, NerdAlTypedBuffer<?> p_buffer) {
-		this(p_ctx);
+	public AlSource(NerdAl p_manager, NerdAlTypedBuffer<?> p_buffer) {
+		this(p_manager);
 		this.setBuffer(p_buffer);
 	}
 	// endregion
