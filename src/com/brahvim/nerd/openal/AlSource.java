@@ -12,13 +12,15 @@ import processing.core.PVector;
 
 public class AlSource {
 	private int id;
-	private NerdAlContext manager;
+	private NerdAl manager;
+	private NerdAlContext context;
 	private NerdAlTypedBuffer<?> buffer;
 
 	// region Constructors.
 	public AlSource(NerdAlContext p_ctx) {
-		this.manager = p_ctx;
+		this.context = p_ctx;
 		this.id = AL11.alGenSources();
+		this.manager = p_ctx.getManager();
 	}
 
 	public AlSource(NerdAlContext p_ctx, NerdAlTypedBuffer<?> p_buffer) {
@@ -43,6 +45,7 @@ public class AlSource {
 		AL11.alSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
+		this.manager.checkAlErrors();
 		return intBuffer.get();
 	}
 
@@ -52,6 +55,7 @@ public class AlSource {
 		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
+		this.manager.checkAlErrors();
 		return floatBuffer.get();
 	}
 
@@ -62,6 +66,7 @@ public class AlSource {
 		AL11.alSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
+		this.manager.checkAlErrors();
 		return intBuffer.array();
 	}
 
@@ -71,6 +76,7 @@ public class AlSource {
 		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
+		this.manager.checkAlErrors();
 		return floatBuffer.array();
 	}
 
@@ -80,6 +86,7 @@ public class AlSource {
 		AL11.alSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
+		this.manager.checkAlErrors();
 		return intBuffer.array();
 	}
 
@@ -89,6 +96,7 @@ public class AlSource {
 		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
+		this.manager.checkAlErrors();
 		// return floatBuffer.array();
 		return new PVector(floatBuffer.get(), floatBuffer.get(), floatBuffer.get());
 	}
@@ -97,14 +105,17 @@ public class AlSource {
 	// region C-style AL-API setters.
 	public void setInt(int p_alEnum, int p_value) {
 		AL11.alSourcei(this.id, p_alEnum, p_value);
+		this.manager.checkAlErrors();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		AL11.alSourcef(this.id, p_alEnum, p_value);
+		this.manager.checkAlErrors();
 	}
 
 	public void setIntVector(int p_alEnum, int[] p_value) {
 		AL11.alSourceiv(this.id, p_alEnum, p_value);
+		this.manager.checkAlErrors();
 	}
 
 	public void setIntTriplet(int p_alEnum, int[] p_value) {
@@ -113,10 +124,12 @@ public class AlSource {
 					"`AlSource::setIntTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alSource3i(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
+		this.manager.checkAlErrors();
 	}
 
 	public void setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
 		AL11.alSource3i(this.id, p_alEnum, p_i1, p_i2, p_i3);
+		this.manager.checkAlErrors();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float[] p_value) {
@@ -125,39 +138,143 @@ public class AlSource {
 					"`AlSource::setFloatTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alSource3f(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
+		this.manager.checkAlErrors();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
 		AL11.alSource3f(this.id, p_alEnum, p_f1, p_f2, p_f3);
+		this.manager.checkAlErrors();
 	}
 
 	public void setFloatTriplet(int p_alEnum, PVector p_value) {
 		AL11.alSource3f(this.id, p_alEnum, p_value.x, p_value.y, p_value.z);
+		this.manager.checkAlErrors();
 	}
 
 	public void setFloatVector(int p_alEnum, float[] p_value) {
 		AL11.alSourcefv(this.id, p_alEnum, p_value);
+		this.manager.checkAlErrors();
 	}
 	// endregion
 
 	// region Source getters.
-	public float getPitch() {
-		return this.getFloat(AL11.AL_PITCH);
-	}
-
+	// region `float` getters.
 	public float getGain() {
 		return this.getFloat(AL11.AL_GAIN);
 	}
+
+	public float getPitchMultiplier() {
+		return this.getFloat(AL11.AL_PITCH);
+	}
+
+	public float getMaxDistance() {
+		return this.getFloat(AL11.AL_MAX_DISTANCE);
+	}
+
+	public float getRolloff() {
+		return this.getFloat(AL11.AL_ROLLOFF_FACTOR);
+	}
+
+	public float getReferenceDistance() {
+		return this.getFloat(AL11.AL_REFERENCE_DISTANCE);
+	}
+
+	public float getMinGain() {
+		return this.getFloat(AL11.AL_MIN_GAIN);
+	}
+
+	public float getMaxGain() {
+		return this.getFloat(AL11.AL_MAX_GAIN);
+	}
+
+	public float getConeOuterGain() {
+		return this.getFloat(AL11.AL_CONE_OUTER_GAIN);
+	}
+
+	public float getConeInnerAngle() {
+		return this.getFloat(AL11.AL_CONE_INNER_ANGLE);
+	}
+
+	public float getConeOuterAngle() {
+		return this.getFloat(AL11.AL_CONE_OUTER_ANGLE);
+	}
+	// endregion
+
+	// region Triplet getters (`float[]`s only).
+	// endregion
 	// endregion
 
 	// region Source setters.
+	// region `float` setters.
 	public void setGain(float p_value) {
 		this.setFloat(AL11.AL_GAIN, p_value);
 	}
 
-	public void setPitch(float value) {
+	public void setPitchMultiplier(float value) {
 		AL11.alSourcef(this.id, AL11.AL_PITCH, value);
 	}
+
+	public void setMaxDistance(float p_value) {
+		this.setFloat(AL11.AL_MAX_DISTANCE, p_value);
+	}
+
+	public void setRolloff(float p_value) {
+		this.setFloat(AL11.AL_ROLLOFF_FACTOR, p_value);
+	}
+
+	public void setReferenceDistance(float p_value) {
+		this.setFloat(AL11.AL_REFERENCE_DISTANCE, p_value);
+	}
+
+	public void setMinGain(float p_value) {
+		this.setFloat(AL11.AL_MIN_GAIN, p_value);
+	}
+
+	public void setMaxGain(float p_value) {
+		this.setFloat(AL11.AL_MAX_GAIN, p_value);
+	}
+
+	public void setConeOuterGain(float p_value) {
+		this.setFloat(AL11.AL_CONE_OUTER_GAIN, p_value);
+	}
+
+	public void setConeInnerAngle(float p_value) {
+		this.setFloat(AL11.AL_CONE_INNER_ANGLE, p_value);
+	}
+
+	public void setConeOuterAngle(float p_value) {
+		this.setFloat(AL11.AL_CONE_OUTER_ANGLE, p_value);
+	}
+	// endregion
+
+	// region Triplet setters.
+	public void setPosition(float[] p_triplet) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	}
+
+	public void setVelocity(float[] p_triplet) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	}
+
+	public void setOrientation(float[] p_triplet) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	}
+	// endregion
+
+	// region `PVector` overloads.
+	public void setPosition(PVector p_triplet) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	}
+
+	public void setVelocity(PVector p_triplet) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	}
+
+	public void setOrientation(PVector p_triplet) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	}
+	// endregion
+	// endregion
 	// endregion
 
 }
