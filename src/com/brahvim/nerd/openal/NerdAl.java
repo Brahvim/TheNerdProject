@@ -25,6 +25,7 @@ public class NerdAl {
 	private Function<Void, String> disconnectionCallback = NerdAl.DEFAULT_DISCONNECTION_CALLBACK;
 	// endregion
 
+	// region Constructors.
 	public NerdAl() {
 		this(NerdAl.getDefaultDeviceName());
 	}
@@ -32,11 +33,14 @@ public class NerdAl {
 	public NerdAl(String p_deviceName) {
 		this.createAl(p_deviceName);
 	}
+	// endregion
 
+	// region `static` methods.
 	public static boolean isDeviceConnected(String p_deviceName) {
 		final List<String> DEVICES = NerdAl.getDevices();
 		return DEVICES.contains(p_deviceName);
 	}
+	// endregion
 
 	// region Getters.
 	public static String getDefaultDeviceName() {
@@ -111,6 +115,10 @@ public class NerdAl {
 
 	public void framelyCallback() {
 		this.deviceDisconnectionCheck();
+	}
+
+	public void changeDeviceTo(String p_deviceName) {
+		// LWJGL no longer supports `SOFTReopenDevice`!
 	}
 
 	public void dispose() {
