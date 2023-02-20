@@ -1,4 +1,4 @@
-package com.brahvim.nerd.openal;
+package com.brahvim.nerd.openal.al_buffers;
 
 import org.lwjgl.openal.AL11;
 

@@ -1,4 +1,4 @@
-package com.brahvim.nerd.openal;
+package com.brahvim.nerd.openal.al_exceptions;
 
 public class NerdAlExtException extends RuntimeException {
 	private static final long serialVersionUID = -8468435964L;
