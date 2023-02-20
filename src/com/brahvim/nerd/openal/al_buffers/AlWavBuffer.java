@@ -6,7 +6,7 @@ import org.lwjgl.openal.AL11;
 
 import com.brahvim.nerd.openal.NerdAl;
 
-public class AlWavBuffer extends NerdAlTypedBuffer<ByteBuffer> {
+public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 
 	// region Constructors.
 	public AlWavBuffer(NerdAl p_alInst) {

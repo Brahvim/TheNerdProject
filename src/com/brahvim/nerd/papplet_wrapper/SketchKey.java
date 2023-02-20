@@ -15,7 +15,7 @@ import processing.core.PConstants;
     public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
     public Sketch.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
-    public boolean dontCloseOnEscape, startedFullscreen, canResize,
+    public boolean useOpenal = true, dontCloseOnEscape, startedFullscreen, canResize,
             cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 
     public Sketch.SketchInsideListener exitListener, setupListener, disposalListener,

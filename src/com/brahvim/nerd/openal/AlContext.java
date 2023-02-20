@@ -4,21 +4,21 @@ import java.util.ArrayList;
 
 import org.lwjgl.openal.ALC11;
 
-import com.brahvim.nerd.openal.al_buffers.NerdAlTypedBuffer;
-import com.brahvim.nerd.openal.al_exceptions.NerdAlExtException;
-import com.brahvim.nerd.openal.al_exceptions.NerdAlcException;
+import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd.openal.al_exceptions.AlExtException;
+import com.brahvim.nerd.openal.al_exceptions.AlcException;
 
-public class NerdAlContext {
+public class AlContext {
 
 	// region Fields.
 	private long id;
 	private NerdAl manager;
 	private final long deviceId;
-	private ArrayList<NerdAlTypedBuffer<?>> buffers;
+	private ArrayList<AlBuffer<?>> buffers;
 	// endregion
 
 	// region Constructors.
-	public NerdAlContext(NerdAl p_manager) {
+	public AlContext(NerdAl p_manager) {
 		this.manager = p_manager;
 		this.buffers = new ArrayList<>();
 		this.deviceId = p_manager.getDeviceId();
@@ -26,7 +26,7 @@ public class NerdAlContext {
 		this.createCtx();
 	}
 
-	public NerdAlContext(NerdAlContext p_ctx) {
+	public AlContext(AlContext p_ctx) {
 		this.manager = p_ctx.manager;
 		this.buffers = p_ctx.getBuffers();
 
@@ -37,10 +37,10 @@ public class NerdAlContext {
 	}
 	// endregion
 
-	public int checkForErrors() throws NerdAlcException {
+	public int checkForErrors() throws AlcException {
 		int alcError = ALC11.alcGetError(this.deviceId);
 		if (alcError != 0)
-			throw new NerdAlcException(alcError);
+			throw new AlcException(alcError);
 
 		return alcError;
 	}
@@ -63,8 +63,8 @@ public class NerdAlContext {
 	}
 
 	@SuppressWarnings("unchecked")
-	public ArrayList<NerdAlTypedBuffer<?>> getBuffers() {
-		return (ArrayList<NerdAlTypedBuffer<?>>) this.buffers.clone();
+	public ArrayList<AlBuffer<?>> getBuffers() {
+		return (ArrayList<AlBuffer<?>>) this.buffers.clone();
 	}
 	// endregion
 
@@ -77,7 +77,7 @@ public class NerdAlContext {
 		}
 
 		if (!ALC11.alcIsExtensionPresent(this.deviceId, "ALC_EXT_disconnect"))
-			throw new NerdAlExtException("ALC_EXT_disconnect");
+			throw new AlExtException("ALC_EXT_disconnect");
 	}
 
 }

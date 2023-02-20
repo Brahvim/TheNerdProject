@@ -7,28 +7,28 @@ import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 
-import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
-import com.brahvim.nerd.openal.al_exceptions.NerdAlcException;
+import com.brahvim.nerd.openal.al_exceptions.AlException;
+import com.brahvim.nerd.openal.al_exceptions.AlcException;
 
 public class NerdAl {
 
 	// region Fields.
-	private NerdAlDevice device;
+	private AlDevice device;
 	private ALCapabilities alCap;
-	private NerdAlContext context;
+	private AlContext context;
 	private ALCCapabilities alCtxCap;
 	// endregion
 
 	// region Constructors.
 	public NerdAl() {
-		this(NerdAlDevice.getDefaultDeviceName());
+		this(AlDevice.getDefaultDeviceName());
 	}
 
 	public NerdAl(String p_deviceName) {
 		this.createAl(p_deviceName);
 	}
 
-	public NerdAl(NerdAlContext p_ctx) {
+	public NerdAl(AlContext p_ctx) {
 		this.createAl(p_ctx);
 	}
 	// endregion
@@ -66,32 +66,32 @@ public class NerdAl {
 	// endregion
 
 	// region Setters.
-	public void changeDevice(NerdAlDevice p_dv, NerdAlContext p_ctx) {
+	public void changeDevice(AlDevice p_dv, AlContext p_ctx) {
 		this.device = p_dv;
 		if (ALC11.alcGetContextsDevice(p_ctx.getId()) != p_dv.getId())
-			throw new NerdAlException(ALC11.ALC_INVALID_CONTEXT);
+			throw new AlException(ALC11.ALC_INVALID_CONTEXT);
 		this.context = p_ctx;
 	}
 
-	public void setContext(NerdAlContext p_ctx) {
+	public void setContext(AlContext p_ctx) {
 		if (ALC11.alcGetContextsDevice(p_ctx.getId()) != this.device.getId())
-			throw new NerdAlException(ALC11.ALC_INVALID_CONTEXT);
+			throw new AlException(ALC11.ALC_INVALID_CONTEXT);
 		this.context = p_ctx;
 	}
 	// endregion
 
-	public int checkAlErrors() throws NerdAlException {
+	public int checkAlErrors() throws AlException {
 		int alError = AL11.alGetError();
 		if (alError != 0)
-			throw new NerdAlException(alError);
+			throw new AlException(alError);
 
 		return alError;
 	}
 
-	public int checkAlcErrors() throws NerdAlcException {
+	public int checkAlcErrors() throws AlcException {
 		int alcError = ALC11.alcGetError(this.device.getId());
 		if (alcError != 0)
-			throw new NerdAlcException(alcError);
+			throw new AlcException(alcError);
 
 		return alcError;
 	}
@@ -107,10 +107,10 @@ public class NerdAl {
 
 	// region `private` and `protected` methods.
 	protected void createAl(String p_deviceName) {
-		this.device = new NerdAlDevice(this);
+		this.device = new AlDevice(this);
 		this.checkAlcErrors();
 
-		this.context = new NerdAlContext(this);
+		this.context = new AlContext(this);
 		this.checkAlcErrors();
 
 		// LWJGL objects:
@@ -122,11 +122,11 @@ public class NerdAl {
 	}
 
 	// Copies the previous context's buffers and reuses them here.
-	protected void createAl(NerdAlContext p_ctx) {
-		this.device = new NerdAlDevice(this);
+	protected void createAl(AlContext p_ctx) {
+		this.device = new AlDevice(this);
 		this.checkAlcErrors();
 
-		this.context = new NerdAlContext(p_ctx);
+		this.context = new AlContext(p_ctx);
 		this.checkAlcErrors();
 
 		// LWJGL objects:

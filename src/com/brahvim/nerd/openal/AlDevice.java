@@ -8,11 +8,11 @@ import org.lwjgl.openal.ALUtil;
 import org.lwjgl.openal.EXTDisconnect;
 import org.lwjgl.system.MemoryStack;
 
-public class NerdAlDevice {
+public class AlDevice {
 
 	public interface DisconnectionCallback {
 		public default String onDisconnect() {
-			return NerdAlDevice.getDefaultDeviceName();
+			return AlDevice.getDefaultDeviceName();
 		}
 	}
 
@@ -21,21 +21,21 @@ public class NerdAlDevice {
 	private String name;
 	private NerdAl manager;
 	private boolean isDefaultDevice = true;
-	private NerdAlDevice.DisconnectionCallback disconnectionCallback
+	private AlDevice.DisconnectionCallback disconnectionCallback
 	// // // // // // // // // // // // // // // // // // // // // //
-			= new NerdAlDevice.DisconnectionCallback() {
+			= new AlDevice.DisconnectionCallback() {
 			};
 	// endregion
 
 	// region Constructors.
-	public NerdAlDevice(NerdAl p_manager) {
-		this(p_manager, NerdAlDevice.getDefaultDeviceName());
+	public AlDevice(NerdAl p_manager) {
+		this(p_manager, AlDevice.getDefaultDeviceName());
 	}
 
-	public NerdAlDevice(NerdAl p_manager, String p_deviceName) {
+	public AlDevice(NerdAl p_manager, String p_deviceName) {
 		this.name = p_deviceName;
 		this.manager = p_manager;
-		this.isDefaultDevice = p_deviceName.equals(NerdAlDevice.getDefaultDeviceName());
+		this.isDefaultDevice = p_deviceName.equals(AlDevice.getDefaultDeviceName());
 
 		this.id = ALC11.alcOpenDevice(this.name);
 	}
@@ -51,7 +51,7 @@ public class NerdAlDevice {
 	}
 	// endregion
 
-	public void setDisconnectionCallback(NerdAlDevice.DisconnectionCallback p_callback) {
+	public void setDisconnectionCallback(AlDevice.DisconnectionCallback p_callback) {
 		this.disconnectionCallback = p_callback;
 	}
 

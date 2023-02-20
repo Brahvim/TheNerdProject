@@ -9,7 +9,7 @@ import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.NerdAl;
 
-public abstract class NerdAlTypedBuffer<BufferT extends Buffer> {
+public abstract class AlBuffer<BufferT extends Buffer> {
 
 	protected int bufId;
 	protected NerdAl alInst;
@@ -19,14 +19,14 @@ public abstract class NerdAlTypedBuffer<BufferT extends Buffer> {
 	protected BufferT data;
 
 	// region Constructors.
-	public NerdAlTypedBuffer(NerdAl p_alInst) {
+	public AlBuffer(NerdAl p_alInst) {
 		this.alInst = p_alInst;
 
 		this.bufId = AL11.alGenBuffers();
 		this.alInst.checkAlErrors();
 	}
 
-	public NerdAlTypedBuffer(NerdAl p_alInst, BufferT p_data) {
+	public AlBuffer(NerdAl p_alInst, BufferT p_data) {
 		this.alInst = p_alInst;
 
 		this.bufId = AL11.alGenBuffers();

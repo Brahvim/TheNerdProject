@@ -1,12 +1,15 @@
 package com.brahvim.nerd.openal;
 
+import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.openal.AL11;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.al_buffers.NerdAlTypedBuffer;
+import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
+import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 
 import processing.core.PVector;
 
@@ -15,7 +18,7 @@ public class AlSource {
 	// region Fields.
 	private int id;
 	private NerdAl manager;
-	private NerdAlTypedBuffer<?> buffer;
+	private AlBuffer<?> buffer;
 	// endregion
 
 	// region Constructors.
@@ -24,21 +27,27 @@ public class AlSource {
 		this.id = AL11.alGenSources();
 	}
 
-	public AlSource(NerdAl p_manager, NerdAlTypedBuffer<?> p_buffer) {
+	public AlSource(NerdAl p_manager, AlBuffer<?> p_buffer) {
 		this(p_manager);
 		this.setBuffer(p_buffer);
 	}
 	// endregion
 
 	// region ...literal "buffer distribution", :joy:
-	public NerdAlTypedBuffer<?> getBuffer() {
+	public AlBuffer<?> getBuffer() {
 		return this.buffer;
 	}
 
-	public void setBuffer(NerdAlTypedBuffer<?> p_buffer) {
+	public void setBuffer(AlBuffer<?> p_buffer) {
 		this.buffer = p_buffer;
 		AL11.alSourcei(this.id, AL11.AL_BUFFER, this.buffer.getId());
 	}
+
+	public void loadOggBuffer(File p_file) {
+		if (this.buffer == null)
+			this.buffer = new AlOggBuffer(this.manager, AlBufferLoader.loadOgg(p_file));
+	}
+
 	// endregion
 
 	// region C-style AL-API getters.

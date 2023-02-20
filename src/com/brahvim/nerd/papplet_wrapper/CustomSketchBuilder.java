@@ -28,36 +28,40 @@ public abstract class CustomSketchBuilder<SketchT extends Sketch> {
     public abstract SketchT build(String[] p_javaMainArgs);
 
     // region Renderer selection.
-    public CustomSketchBuilder<SketchT> useJavaRenderer() {
+    public CustomSketchBuilder<SketchT> usesJavaRenderer() {
         this.SKETCH_KEY.renderer = PConstants.JAVA2D;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> useOpenGlRenderer() {
+    public CustomSketchBuilder<SketchT> usesOpenGlRenderer() {
         this.SKETCH_KEY.renderer = PConstants.P3D;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> useJavaFxRenderer() {
+    public CustomSketchBuilder<SketchT> usesJavaFxRenderer() {
         this.SKETCH_KEY.renderer = PConstants.FX2D;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> usePdfRenderer() {
+    public CustomSketchBuilder<SketchT> usesPdfRenderer() {
         this.SKETCH_KEY.renderer = PConstants.PDF;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> useSvgRenderer() {
+    public CustomSketchBuilder<SketchT> usesSvgRenderer() {
         this.SKETCH_KEY.renderer = PConstants.SVG;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> useDxfRenderer() {
+    public CustomSketchBuilder<SketchT> usesDxfRenderer() {
         this.SKETCH_KEY.renderer = PConstants.DXF;
         return this;
     }
     // endregion
+
+    public void usesOpenal() {
+        this.SKETCH_KEY.useOpenal = true;
+    }
 
     // region `onSketchEvent()`.
     public CustomSketchBuilder<SketchT> onSketchConstructed(Sketch.SketchInsideListener p_constructionListener) {

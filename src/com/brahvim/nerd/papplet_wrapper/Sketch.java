@@ -355,12 +355,12 @@ public class Sketch extends PApplet {
 		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
+		this.OPENAL = p_key.useOpenal ? new NerdAl() : null;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
 		// endregion
 
 		// region Non-key settings.
 		// this.pfullscreen = !this.fullscreen;
-		this.OPENAL = new NerdAl();
 		this.UNPROJECTOR = new Unprojector();
 		this.sceneMan = new SceneManager(this);
 		this.fullscreen = this.STARTED_FULLSCREEN;
