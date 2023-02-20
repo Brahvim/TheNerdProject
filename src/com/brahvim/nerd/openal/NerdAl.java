@@ -39,19 +39,6 @@ public class NerdAl {
 	// endregion
 
 	// region `static` methods.
-	public static boolean isDeviceConnected(long p_deviceId) {
-		// No idea why this bad stack read works.
-		MemoryStack.stackPush();
-		IntBuffer buffer = MemoryStack.stackMallocInt(1);
-		ALC11.alcGetIntegerv(p_deviceId, EXTDisconnect.ALC_CONNECTED, buffer);
-		MemoryStack.stackPop();
-
-		int bufOut = buffer.get();
-		return bufOut == 1;
-	}
-	// endregion
-
-	// region Getters.
 	public static String getDefaultDeviceName() {
 		return ALC11.alcGetString(0, ALC11.ALC_DEFAULT_DEVICE_SPECIFIER);
 	}
@@ -59,7 +46,9 @@ public class NerdAl {
 	public static List<String> getDevices() {
 		return ALUtil.getStringList(0, ALC11.ALC_ALL_DEVICES_SPECIFIER);
 	}
+	// endregion
 
+	// region Getters.
 	public long getDeviceId() {
 		return this.dvId;
 	}
@@ -118,7 +107,7 @@ public class NerdAl {
 
 	// Should probably *not* have a 'default' version for this.
 	public boolean deviceDisconnectionCheck() {
-		boolean connected = NerdAl.isDeviceConnected(this.dvId);
+		boolean connected = this.isDeviceConnected();
 
 		if (!connected) {
 			System.out.println("Device disconnected!");
@@ -128,13 +117,9 @@ public class NerdAl {
 		return connected;
 	}
 
-	public void framelyCallback() {
-		this.deviceDisconnectionCheck();
-	}
-
-	public void changeDeviceTo(String p_deviceName) {
-		// LWJGL no longer supports `SOFTReopenDevice`!
-	}
+	// public void changeDeviceTo(String p_deviceName) {
+	// // LWJGL no longer supports `SOFTReopenDevice`!
+	// }
 
 	public void dispose() {
 		ALC11.alcMakeContextCurrent(0);
@@ -148,6 +133,21 @@ public class NerdAl {
 		ALC11.alcCloseDevice(this.dvId);
 		this.checkForErrors();
 		this.dvId = 0;
+	}
+
+	public void framelyCallback() {
+		this.deviceDisconnectionCheck();
+	}
+
+	// This uses device handles and not device names. Thus, no `static` version.
+	public boolean isDeviceConnected() {
+		// No idea why this bad stack read works.
+		MemoryStack.stackPush();
+		IntBuffer buffer = MemoryStack.stackMallocInt(1);
+		ALC11.alcGetIntegerv(this.dvId, EXTDisconnect.ALC_CONNECTED, buffer);
+		MemoryStack.stackPop();
+
+		return buffer.get() == 1;
 	}
 
 	public boolean isUsingDefaultDevice() {
