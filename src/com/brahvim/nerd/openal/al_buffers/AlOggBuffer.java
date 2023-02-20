@@ -6,8 +6,9 @@ import org.lwjgl.openal.AL11;
 
 import com.brahvim.nerd.openal.NerdAl;
 
-public class AlOggBuffer extends AlTypedBuffer<ShortBuffer> {
+public class AlOggBuffer extends NerdAlTypedBuffer<ShortBuffer> {
 
+	// region Constructors.
 	public AlOggBuffer(NerdAl p_alInst) {
 		super(p_alInst);
 	}
@@ -15,6 +16,7 @@ public class AlOggBuffer extends AlTypedBuffer<ShortBuffer> {
 	public AlOggBuffer(NerdAl p_alInst, ShortBuffer p_data) {
 		super(p_alInst, p_data);
 	}
+	// endregion
 
 	@Override
 	public void setData(int p_dataType, ShortBuffer p_buffer, int p_sampleRate) {

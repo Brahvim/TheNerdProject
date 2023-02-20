@@ -3,6 +3,7 @@ package com.brahvim.nerd.openal.al_exceptions;
 import org.lwjgl.openal.ALC11;
 
 public class NerdAlcException extends NerdAbstractOpenAlException {
+
 	private static final long serialVersionUID = -79354861264L;
 
 	public NerdAlcException(int p_alErrorCode) {
@@ -10,7 +11,8 @@ public class NerdAlcException extends NerdAbstractOpenAlException {
 		super.errCode = p_alErrorCode;
 	}
 
-	public int getAlErrorCode() {
-		return super.errCode;
+	public NerdAlcException(String p_error) {
+		super(p_error);
 	}
+
 }

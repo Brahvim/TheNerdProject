@@ -1,32 +1,43 @@
 package com.brahvim.nerd.openal;
 
+import java.nio.IntBuffer;
 import java.util.List;
 
 import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.ALUtil;
+import org.lwjgl.openal.EXTDisconnect;
+import org.lwjgl.system.MemoryStack;
 
 public class NerdAlDevice {
 
 	public interface DisconnectionCallback {
 		public default String onDisconnect() {
-			return NerdAl.getDefaultDeviceName();
+			return NerdAlDevice.getDefaultDeviceName();
 		}
 	}
 
+	// region Fields.
 	private long id;
+	private String name;
 	private NerdAl manager;
-	private NerdAlDevice.DisconnectionCallback disconnectionCallback = new NerdAlDevice.DisconnectionCallback() {
-
-	};
+	private boolean isDefaultDevice = true;
+	private NerdAlDevice.DisconnectionCallback disconnectionCallback
+	// // // // // // // // // // // // // // // // // // // // // //
+			= new NerdAlDevice.DisconnectionCallback() {
+			};
+	// endregion
 
 	// region Constructors.
 	public NerdAlDevice(NerdAl p_manager) {
-		this.manager = p_manager;
-		this(NerdAlDevice.getDefaultDeviceName())
+		this(p_manager, NerdAlDevice.getDefaultDeviceName());
 	}
 
-	public NerdAlDevice(String p_deviceName) {
+	public NerdAlDevice(NerdAl p_manager, String p_deviceName) {
+		this.name = p_deviceName;
+		this.manager = p_manager;
+		this.isDefaultDevice = p_deviceName.equals(NerdAlDevice.getDefaultDeviceName());
 
+		this.id = ALC11.alcOpenDevice(this.name);
 	}
 	// endregion
 
@@ -44,14 +55,48 @@ public class NerdAlDevice {
 		this.disconnectionCallback = p_callback;
 	}
 
+	public boolean disconnectionCheck() {
+		boolean connected = this.isConnected();
+
+		if (!connected)
+			this.manager.createAl(this.disconnectionCallback.onDisconnect());
+
+		return connected;
+	}
+
+	// region Getters.
 	public long getId() {
 		return this.id;
 	}
 
+	public String getName() {
+		return this.name;
+	}
+
+	public NerdAl getManager() {
+		return this.manager;
+	}
+	// endregion
+
 	public void dispose() {
-		ALC11.alcCloseDevice(this.dvId);
-		this.checkAlcErrors();
-		this.dvId = 0;
+		ALC11.alcCloseDevice(this.id);
+		this.manager.checkAlcErrors();
+		this.id = 0;
+	}
+
+	public boolean isDefault() {
+		return this.isDefaultDevice;
+	}
+
+	// This uses device handles and not device names. Thus, no `static` version.
+	public boolean isConnected() {
+		// No idea why this bad stack read works.
+		MemoryStack.stackPush();
+		IntBuffer buffer = MemoryStack.stackMallocInt(1); // Stack allocation, "should" be "faster".
+		ALC11.alcGetIntegerv(this.id, EXTDisconnect.ALC_CONNECTED, buffer);
+		MemoryStack.stackPop();
+
+		return buffer.get() == 1;
 	}
 
 }
