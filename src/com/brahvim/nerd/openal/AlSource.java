@@ -11,10 +11,12 @@ import com.brahvim.nerd.openal.al_buffers.NerdAlTypedBuffer;
 import processing.core.PVector;
 
 public class AlSource {
+	// region Fields.0
 	private int id;
 	private NerdAl manager;
 	private NerdAlContext context;
 	private NerdAlTypedBuffer<?> buffer;
+	// endregion
 
 	// region Constructors.
 	public AlSource(NerdAlContext p_ctx) {
@@ -29,6 +31,7 @@ public class AlSource {
 	}
 	// endregion
 
+	// region ...literal "buffer distribution", :joy:
 	public NerdAlTypedBuffer<?> getBuffer() {
 		return this.buffer;
 	}
@@ -37,6 +40,7 @@ public class AlSource {
 		this.buffer = p_buffer;
 		AL11.alSourcei(this.id, AL11.AL_BUFFER, this.buffer.getId());
 	}
+	// endregion
 
 	// region C-style AL-API getters.
 	public int getInt(int p_alEnum) {
@@ -90,15 +94,15 @@ public class AlSource {
 		return intBuffer.array();
 	}
 
-	public /* `float[]` */ PVector getFloatTriplet(int p_alEnum) {
+	public /* `float[]` */ float[] getFloatTriplet(int p_alEnum) {
 		MemoryStack.stackPush();
 		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
 		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
 		this.manager.checkAlErrors();
-		// return floatBuffer.array();
-		return new PVector(floatBuffer.get(), floatBuffer.get(), floatBuffer.get());
+		return floatBuffer.array();
+		// return new PVector(floatBuffer.get(), floatBuffer.get(), floatBuffer.get());
 	}
 	// endregion
 
@@ -158,6 +162,28 @@ public class AlSource {
 	// endregion
 
 	// region Source getters.
+	// region `int` getters.
+	public int getBuffersQueued() {
+		return this.getInt(AL11.AL_BUFFERS_QUEUED);
+	}
+
+	public int getBuffersProcessed() {
+		return this.getInt(AL11.AL_BUFFERS_PROCESSED);
+	}
+
+	public int getSecOffset() {
+		return this.getInt(AL11.AL_SEC_OFFSET);
+	}
+
+	public int getSampleOffset() {
+		return this.getInt(AL11.AL_SAMPLE_OFFSET);
+	}
+
+	public int getByteOffset() {
+		return this.getInt(AL11.AL_BYTE_OFFSET);
+	}
+	// endregion
+
 	// region `float` getters.
 	public float getGain() {
 		return this.getFloat(AL11.AL_GAIN);
@@ -201,10 +227,46 @@ public class AlSource {
 	// endregion
 
 	// region Triplet getters (`float[]`s only).
+	public float[] getPosition() {
+		return this.getFloatTriplet(AL11.AL_POSITION);
+	}
+
+	public float[] getVelocity() {
+		return this.getFloatTriplet(AL11.AL_VELOCITY);
+	}
+
+	public float[] getOrientation() {
+		return this.getFloatTriplet(AL11.AL_ORIENTATION);
+	}
+
+	// endregion
+
+	// region State getters.
+	public int getSourceType() {
+		return this.getInt(AL11.AL_SOURCE_TYPE);
+	}
+
+	public boolean isLooping() {
+		return this.getInt(AL11.AL_LOOPING) == 1;
+	}
 	// endregion
 	// endregion
 
 	// region Source setters.
+	// region `int` setters.
+	public void setSecOffset(int p_value) {
+		this.setInt(AL11.AL_SEC_OFFSET, p_value);
+	}
+
+	public void setSampleOffset(int p_value) {
+		this.setInt(AL11.AL_SAMPLE_OFFSET, p_value);
+	}
+
+	public void setByteOffset(int p_value) {
+		this.setInt(AL11.AL_BYTE_OFFSET, p_value);
+	}
+	// endregion
+
 	// region `float` setters.
 	public void setGain(float p_value) {
 		this.setFloat(AL11.AL_GAIN, p_value);
@@ -248,32 +310,41 @@ public class AlSource {
 	// endregion
 
 	// region Triplet setters.
-	public void setPosition(float[] p_triplet) {
-		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	public void setPosition(float[] p_value) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 	}
 
-	public void setVelocity(float[] p_triplet) {
-		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	public void setVelocity(float[] p_value) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 	}
 
-	public void setOrientation(float[] p_triplet) {
-		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	public void setOrientation(float[] p_value) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 	}
-	// endregion
 
 	// region `PVector` overloads.
-	public void setPosition(PVector p_triplet) {
-		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	public void setPosition(PVector p_value) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 	}
 
-	public void setVelocity(PVector p_triplet) {
-		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	public void setVelocity(PVector p_value) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 	}
 
-	public void setOrientation(PVector p_triplet) {
-		this.setFloatTriplet(AL11.AL_POSITION, p_triplet);
+	public void setOrientation(PVector p_value) {
+		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 	}
 	// endregion
+	// endregion
+
+	// region State setters.
+	public void setSourceType(int p_value) {
+		this.setInt(AL11.AL_SOURCE_TYPE, p_value);
+	}
+
+	public void setLooping(boolean p_value) {
+		this.setInt(AL11.AL_LOOPING, p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
+	}
 	// endregion
 	// endregion
 
