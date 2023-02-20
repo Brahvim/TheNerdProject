@@ -1,6 +1,9 @@
 package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
+import com.brahvim.nerd.openal.AlSource;
+import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
+import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -14,6 +17,7 @@ public class TestScene4 extends NerdScene {
     // region Fields!
     private PImage nerd;
     private PGraphics nerdGraphics;
+    private AlSource rubberDuck;
     private float ncx, ncy;
 
     private final float MAG_SCROLL_ACC_MOD = 0.001f,
@@ -25,11 +29,10 @@ public class TestScene4 extends NerdScene {
     @Override
     protected void preload() {
         ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
-        System.out.println("This is async LOL!");
-    }
 
-    private float nerdRotTime() {
-        return SCENE.millisSinceStart() * 0.1f;
+
+        this.rubberDuck = new AlSource(SKETCH.OPENAL, new AlOggBuffer(SKETCH.OPENAL).loadFrom(""));
+        System.out.println("This is async LOL!");
     }
 
     @Override
@@ -93,6 +96,10 @@ public class TestScene4 extends NerdScene {
         SKETCH.endShape();
         // endregion
 
+    }
+
+    private float nerdRotTime() {
+        return SCENE.millisSinceStart() * 0.1f;
     }
 
     // region Events.
