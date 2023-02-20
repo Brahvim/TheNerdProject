@@ -11,6 +11,7 @@ import com.brahvim.nerd.openal.al_buffers.NerdAlTypedBuffer;
 import processing.core.PVector;
 
 public class AlSource {
+
 	// region Fields.
 	private int id;
 	private NerdAl manager;
