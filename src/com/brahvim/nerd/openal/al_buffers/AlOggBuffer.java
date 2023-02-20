@@ -20,7 +20,7 @@ public class AlOggBuffer extends AlTypedBuffer<ShortBuffer> {
 	public void setData(int p_dataType, ShortBuffer p_buffer, int p_sampleRate) {
 		super.data = p_buffer;
 		AL11.alBufferData(super.bufId, p_dataType, p_buffer.array(), p_sampleRate);
-		super.alInst.checkAlcErrors();
+		super.alInst.checkAlErrors();
 	}
 
 }

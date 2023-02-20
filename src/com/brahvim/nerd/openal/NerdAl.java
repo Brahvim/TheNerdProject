@@ -2,7 +2,6 @@ package com.brahvim.nerd.openal;
 
 import java.nio.IntBuffer;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import org.lwjgl.openal.AL;
@@ -21,35 +20,20 @@ import com.brahvim.nerd.openal.al_exceptions.NerdAlcException;
 public class NerdAl {
 
 	// region Fields.
-	public final static Function<Void, String> DEFAULT_DISCONNECTION_CALLBACK = (Void a) -> {
-		return NerdAl.getDefaultDeviceName();
-	};
-
 	private String dvName;
 	private long dvId, ctxId;
 	private ALCapabilities alCap;
 	private ALCCapabilities alCtxCap;
 	private boolean isDvDefault = true;
-	private Function<Void, String> disconnectionCallback = NerdAl.DEFAULT_DISCONNECTION_CALLBACK;
 	// endregion
 
 	// region Constructors.
 	public NerdAl() {
-		this(NerdAl.getDefaultDeviceName());
+		this(NerdAlDevice.getDefaultDeviceName());
 	}
 
 	public NerdAl(String p_deviceName) {
 		this.createAl(p_deviceName);
-	}
-	// endregion
-
-	// region `static` methods.
-	public static String getDefaultDeviceName() {
-		return ALC11.alcGetString(0, ALC11.ALC_DEFAULT_DEVICE_SPECIFIER);
-	}
-
-	public static List<String> getDevices() {
-		return ALUtil.getStringList(0, ALC11.ALC_ALL_DEVICES_SPECIFIER);
 	}
 	// endregion
 
@@ -95,18 +79,20 @@ public class NerdAl {
 	// endregion
 	// endregion
 
-	public int checkAlError() {
+	public int checkAlErrors() throws NerdAlException {
 		int alError = AL11.alGetError();
 		if (alError != 0)
 			throw new NerdAlException(alError);
+
+		return alError;
 	}
 
-	public int[] checkAlcErrors() throws NerdAlException {
+	public int checkAlcErrors() throws NerdAlcException {
 		int alcError = ALC11.alcGetError(this.dvId);
 		if (alcError != 0)
 			throw new NerdAlcException(alcError);
 
-		return new int[] { alError, alcError };
+		return alcError;
 
 		// Returning a `Map.Entry<Integer, Integer>` because there is no "pair" utility
 		// class, :joy:!
@@ -150,17 +136,8 @@ public class NerdAl {
 	// endregion
 
 	public void dispose() {
-		ALC11.alcMakeContextCurrent(0);
-
-		ALC11.alcDestroyContext(this.ctxId);
-		this.checkAlcErrors();
-		this.ctxId = 0;
-
-		// TODO: Cleanup for the buffers!
-
-		ALC11.alcCloseDevice(this.dvId);
-		this.checkAlcErrors();
-		this.dvId = 0;
+		this.context.dispose();
+		this.device.dispose();
 	}
 
 	// region `is()`.
@@ -183,7 +160,7 @@ public class NerdAl {
 	// region `private` methods.
 	private void createAl(String p_deviceName) {
 		this.dvName = p_deviceName;
-		this.isDvDefault = p_deviceName.equals(NerdAl.getDefaultDeviceName());
+		this.isDvDefault = p_deviceName.equals(NerdAlDevice.getDefaultDeviceName());
 
 		// TODO: Copy over the previous context's info to the new device!
 
@@ -198,16 +175,9 @@ public class NerdAl {
 		// if (!ALC11.alcIsExtensionPresent(this.dvId, "ALC_EXT_disconnect"))
 		// throw new NerdAlException(0);
 
+		this.checkAlErrors();
 		this.checkAlcErrors();
-	}
-
-	private void verifyContext() {
-		if (this.ctxId == 0 || !ALC11.alcMakeContextCurrent(this.ctxId))
-			this.dispose();
-
-		if (ALC11.alcIsExtensionPresent(this.dvId, "AL_EXT_FLOAT32"))
-			throw new RuntimeException("`ALC_EXT_FLOAT32` not found...");
-	}
+	}	
 	// endregion
 
 }

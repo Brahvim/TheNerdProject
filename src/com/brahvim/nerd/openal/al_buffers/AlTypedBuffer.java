@@ -23,14 +23,14 @@ import com.brahvim.nerd.openal.NerdAl;
 		this.alInst = p_alInst;
 
 		this.bufId = AL11.alGenBuffers();
-		this.alInst.checkAlcErrors();
+		this.alInst.checkAlErrors();
 	}
 
 	public AlTypedBuffer(NerdAl p_alInst, BufferT p_data) {
 		this.alInst = p_alInst;
 
 		this.bufId = AL11.alGenBuffers();
-		this.alInst.checkAlcErrors();
+		this.alInst.checkAlErrors();
 	}
 	// endregion
 
