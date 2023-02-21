@@ -3,7 +3,9 @@ package com.brahvim.nerd_tests;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd_tests.scenes.JavaRendererScene;
 import com.brahvim.nerd_tests.scenes.TestScene4;
+import com.brahvim.nerd_tests.scenes.TestScene6;
 
 public class App {
 
@@ -17,7 +19,7 @@ public class App {
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
             // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
-            TestScene4.class;
+            JavaRendererScene.class;
 
     // region `App`'s *other* fields.
     public final static int BPM = 100,
@@ -38,7 +40,8 @@ public class App {
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
                 // .preventCloseOnEscape()
-                .startFullscreen()
+                .usesJavaRenderer()
+                // .startFullscreen()
                 .canResize()
 
                 // ...apparently these listeners take literally `0` millseconds to finish

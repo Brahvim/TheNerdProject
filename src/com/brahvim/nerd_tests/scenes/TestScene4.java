@@ -95,7 +95,6 @@ public class TestScene4 extends NerdScene {
 
         SKETCH.endShape();
         // endregion
-
     }
 
     private float nerdRotTime() {
@@ -104,7 +103,7 @@ public class TestScene4 extends NerdScene {
 
     // region Events.
     @Override
-    public void mousePressed() {
+    public void mouseClicked() {
         try {
             // if (!this.rubberDuck.isPlaying()) {
             this.rubberDuck.setPosition(

@@ -520,9 +520,12 @@ public class Sketch extends PApplet {
 		if (super.focused)
 			this.currentMonitor = Sketch.getGraphicsDeviceAt(this.GLOBAL_MOUSE_POINT);
 
-		final DisplayMode CURRENT_MON_MODE = this.currentMonitor.getDisplayMode();
-		super.displayWidth = CURRENT_MON_MODE.getWidth();
-		super.displayHeight = CURRENT_MON_MODE.getHeight();
+		// Update `super.displayWidth` and `super.displayHeight`.
+		if (this.currentMonitor != null) {
+			final DisplayMode CURRENT_MON_MODE = this.currentMonitor.getDisplayMode();
+			super.displayWidth = CURRENT_MON_MODE.getWidth();
+			super.displayHeight = CURRENT_MON_MODE.getHeight();
+		}
 		// endregion
 
 		// region Apply the camera!:
