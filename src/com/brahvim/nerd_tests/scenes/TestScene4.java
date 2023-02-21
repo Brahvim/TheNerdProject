@@ -2,7 +2,6 @@ package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
-import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.al_exceptions.AlException;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
@@ -107,17 +106,13 @@ public class TestScene4 extends NerdScene {
     @Override
     public void mousePressed() {
         try {
-            if (!this.rubberDuck.isPlaying()) {
-                this.rubberDuck.setPosition(
-                        SKETCH.random(SKETCH.width), SKETCH.random(SKETCH.height), SKETCH.random(5600));
-                this.rubberDuck.play();
-            }
+            // if (!this.rubberDuck.isPlaying()) {
+            this.rubberDuck.setPosition(
+                    SKETCH.random(SKETCH.width), SKETCH.random(SKETCH.height), SKETCH.random(5600));
+            this.rubberDuck.play();
+            // }
         } catch (AlException e) {
             e.printStackTrace();
-
-            // TODO: This fails, too!:
-            System.err.printf("ESTR2CODE test, oof: `%d`.\n",
-                    NerdAl.errorStringToCode(e.getMessage()));
         }
 
         System.out.println("TestScene4.mousePressed()");

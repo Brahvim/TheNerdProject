@@ -15,7 +15,6 @@ import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlException;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
-import com.brahvim.nerd.openal.al_exceptions.NerdAbstractOpenAlException;
 
 public class NerdAl {
 
@@ -129,10 +128,14 @@ public class NerdAl {
 	// endregion
 
 	// region Error checks.
-	public static int errorStringToCode(String p_errorString) {
-		return AL11.alGetEnumValue(p_errorString
-				.split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]);
-	}
+	// @Deprecated
+	// /**
+	// * @deprecated Doesn't work, ...for some reason!
+	// */
+	// public static int errorStringToCode(String p_errorString) {
+	// return AL11.alGetEnumValue(p_errorString
+	// .split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]);
+	// }
 
 	public int checkAlErrors() throws AlException {
 		int alError = AL11.alGetError();
