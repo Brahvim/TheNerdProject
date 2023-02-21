@@ -64,7 +64,6 @@ public class AlSource {
 		AL11.alSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
-		this.manager.checkAlErrors();
 		return intBuffer.get();
 	}
 
@@ -74,7 +73,6 @@ public class AlSource {
 		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
-		this.manager.checkAlErrors();
 		return floatBuffer.get();
 	}
 
@@ -85,7 +83,6 @@ public class AlSource {
 		AL11.alSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
-		this.manager.checkAlErrors();
 		return intBuffer.array();
 	}
 
@@ -95,7 +92,6 @@ public class AlSource {
 		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
-		this.manager.checkAlErrors();
 		return floatBuffer.array();
 	}
 
@@ -105,7 +101,6 @@ public class AlSource {
 		AL11.alSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
-		this.manager.checkAlErrors();
 		return intBuffer.array();
 	}
 
@@ -115,7 +110,6 @@ public class AlSource {
 		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
-		this.manager.checkAlErrors();
 		return floatBuffer.array();
 		// return new PVector(floatBuffer.get(), floatBuffer.get(), floatBuffer.get());
 	}
@@ -132,8 +126,13 @@ public class AlSource {
 		this.manager.checkAlErrors();
 	}
 
-	public void setIntVector(int p_alEnum, int[] p_value) {
+	public void setIntVector(int p_alEnum, int... p_value) {
 		AL11.alSourceiv(this.id, p_alEnum, p_value);
+		this.manager.checkAlErrors();
+	}
+
+	public void setFloatVector(int p_alEnum, float... p_values) {
+		AL11.alSourcefv(this.id, p_alEnum, p_values);
 		this.manager.checkAlErrors();
 	}
 
@@ -169,15 +168,14 @@ public class AlSource {
 		AL11.alSource3f(this.id, p_alEnum, p_value.x, p_value.y, p_value.z);
 		this.manager.checkAlErrors();
 	}
-
-	public void setFloatVector(int p_alEnum, float[] p_value) {
-		AL11.alSourcefv(this.id, p_alEnum, p_value);
-		this.manager.checkAlErrors();
-	}
 	// endregion
 
 	// region Source getters.
 	// region `int` getters.
+	public int getSourceType() {
+		return this.getInt(AL11.AL_SOURCE_TYPE);
+	}
+
 	public int getBuffersQueued() {
 		return this.getInt(AL11.AL_BUFFERS_QUEUED);
 	}
@@ -256,19 +254,34 @@ public class AlSource {
 
 	// endregion
 
-	// region State getters.
-	public int getSourceType() {
-		return this.getInt(AL11.AL_SOURCE_TYPE);
+	// TODO: Study OpenAL error `40964`.
+	// region [DEPRECATED: Faulty!] State (`boolean`) getters.
+	// ..could be made faster with some `boolean`s in this class, y'know?
+	// ...just sayin'...
+	public boolean isLooping() {
+		return this.getInt(AL11.AL_SOURCE_STATE) == AL11.AL_LOOPING;
 	}
 
-	public boolean isLooping() {
-		return this.getInt(AL11.AL_LOOPING) == 1;
+	public boolean isPaused() {
+		return this.getInt(AL11.AL_SOURCE_STATE) == AL11.AL_PAUSED;
+	}
+
+	public boolean isStopped() {
+		return this.getInt(AL11.AL_SOURCE_STATE) == AL11.AL_STOPPED;
+	}
+
+	public boolean isPlaying() {
+		return this.getInt(AL11.AL_SOURCE_STATE) == AL11.AL_PLAYING;
 	}
 	// endregion
 	// endregion
 
 	// region Source setters.
 	// region `int` setters.
+	public void setSourceType(int p_value) {
+		this.setInt(AL11.AL_SOURCE_TYPE, p_value);
+	}
+
 	public void setSecOffset(int p_value) {
 		this.setInt(AL11.AL_SEC_OFFSET, p_value);
 	}
@@ -329,12 +342,24 @@ public class AlSource {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 	}
 
+	public void setPosition(float p_x, float p_y, float p_z) {
+		this.setFloatTriplet(AL11.AL_POSITION, new float[] { p_x, p_y, p_z });
+	}
+
 	public void setVelocity(float[] p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 	}
 
+	public void setVelocity(float p_x, float p_y, float p_z) {
+		this.setFloatTriplet(AL11.AL_POSITION, new float[] { p_x, p_y, p_z });
+	}
+
 	public void setOrientation(float[] p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
+	}
+
+	public void setOrientation(float p_x, float p_y, float p_z) {
+		this.setFloatTriplet(AL11.AL_POSITION, new float[] { p_x, p_y, p_z });
 	}
 
 	// region `PVector` overloads.
@@ -351,19 +376,56 @@ public class AlSource {
 	}
 	// endregion
 	// endregion
-
-	// region State setters.
-	public void setSourceType(int p_value) {
-		this.setInt(AL11.AL_SOURCE_TYPE, p_value);
-	}
-
-	public void setLooping(boolean p_value) {
-		this.setInt(AL11.AL_LOOPING, p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
-	}
-	// endregion
 	// endregion
 
 	// region Actual state management!
+	public void setSourceState(int p_alEnum, boolean p_value) {
+		this.setInt(p_alEnum, p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
+	}
+
+	public void play() {
+		AL11.alSourcePlay(this.id);
+	}
+
+	public void loop() {
+		this.setInt(AL11.AL_LOOPING, AL11.AL_TRUE);
+		this.play();
+	}
+
+	public void loop(boolean p_value) {
+		this.setInt(AL11.AL_LOOPING, p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
+	}
+
+	public void stop() {
+		AL11.alSourceStop(this.id);
+	}
+
+	public void pause() {
+		AL11.alSourcePause(this.id);
+	}
+
+	public void rewind() {
+		AL11.alSourceRewind(this.id);
+	}
+
+	public void queueBuffers(AlBuffer<?> p_buffer) {
+		AL11.alSourceQueueBuffers(this.id, p_buffer.getId());
+	}
+
+	public void queueBuffers(AlBuffer<?>... p_buffers) {
+		int[] buffers = new int[p_buffers.length];
+		AL11.alSourceQueueBuffers(this.id, buffers);
+	}
+
+	public void unqueueBuffers(AlBuffer<?>... p_buffers) {
+		int[] buffers = new int[p_buffers.length];
+		AL11.alSourceUnqueueBuffers(this.id, buffers);
+	}
+
+	public void unqueueProcessedBuffers(AlBuffer<?> p_buffer) {
+		AL11.alSourceUnqueueBuffers(this.id);
+	}
+
 	public void dispose() {
 		this.manager.getContextSources().remove(this);
 		AlSource.sources.remove(this);

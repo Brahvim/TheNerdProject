@@ -1,5 +1,6 @@
 package com.brahvim.nerd.openal;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.lwjgl.openal.AL;
@@ -10,16 +11,28 @@ import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
+import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlException;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
+import com.brahvim.nerd.openal.al_exceptions.NerdAbstractOpenAlException;
 
 public class NerdAl {
 
 	// region Inner classes, interfaces and enums.
-	interface ContextUse {
-		public void withContext(AlContext p_ctx) {
+	@FunctionalInterface
+	interface DeviceUse {
+		public void use(AlDevice p_device);
+	}
 
-		}
+	@FunctionalInterface
+	interface ContextUse {
+		public void use(AlContext p_context);
+	}
+
+	@FunctionalInterface
+	interface DeviceAndContextUse {
+		public void use(AlDevice p_device, AlContext p_context);
 	}
 	// endregion
 
@@ -94,28 +107,73 @@ public class NerdAl {
 	// endregion
 
 	// region `using()` methods.
-	public void usingDevice() {
+	public void usingDevice(NerdAl.DeviceUse p_use) {
+		synchronized (this.device) {
+			p_use.use(this.device);
+		}
 	}
 
-	public void usingContext() {
+	public void usingContext(NerdAl.ContextUse p_use) {
+		synchronized (this.context) {
+			p_use.use(this.context);
+		}
+	}
+
+	public void usingContextAndDevice(NerdAl.DeviceAndContextUse p_use) {
+		synchronized (this.device) {
+			synchronized (this.context) {
+				p_use.use(this.device, this.context);
+			}
+		}
 	}
 	// endregion
 
+	// region Error checks.
+	public static int errorStringToCode(String p_errorString) {
+		return AL11.alGetEnumValue(p_errorString
+				.split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]);
+	}
+
 	public int checkAlErrors() throws AlException {
 		int alError = AL11.alGetError();
-		if (alError != 0)
+
+		if (!(alError == 0)) // || alError == 40964))
 			throw new AlException(alError);
 
 		return alError;
 	}
 
 	public int checkAlcErrors() throws AlcException {
-		int alcError = ALC11.alcGetError(this.device.getId());
+		int alcError;
+
+		synchronized (this.device) {
+			alcError = ALC11.alcGetError(this.device.getId());
+		}
+
 		if (alcError != 0)
 			throw new AlcException(alcError);
 
 		return alcError;
 	}
+	// endregion
+
+	// region Loading.
+	public AlSource sourceFromOgg(File p_file) {
+		return new AlSource(this, new AlOggBuffer(this).loadFrom(p_file));
+	}
+
+	public AlSource sourceFromWav(File p_file) {
+		return new AlSource(this, new AlWavBuffer(this).loadFrom(p_file));
+	}
+
+	public AlSource sourceFromOgg(String p_filePath) {
+		return new AlSource(this, new AlOggBuffer(this).loadFrom(p_filePath));
+	}
+
+	public AlSource sourceFromWav(String p_filePath) {
+		return new AlSource(this, new AlWavBuffer(this).loadFrom(p_filePath));
+	}
+	// endregion
 
 	public void framelyCallback() {
 		this.device.disconnectionCheck();

@@ -2,8 +2,8 @@ package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
-import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
-import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
+import com.brahvim.nerd.openal.NerdAl;
+import com.brahvim.nerd.openal.al_exceptions.AlException;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -30,8 +30,7 @@ public class TestScene4 extends NerdScene {
     protected void preload() {
         ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
 
-        this.rubberDuck = new AlSource(SKETCH.OPENAL,
-                new AlOggBuffer(SKETCH.OPENAL).loadFrom("data/RUBBER DUCK.ogg"));
+        this.rubberDuck = SKETCH.OPENAL.sourceFromOgg("data/RUBBER DUCK.ogg");
         System.out.println("This is async LOL!");
     }
 
@@ -55,6 +54,8 @@ public class TestScene4 extends NerdScene {
 
         this.ncx = this.nerd.width * 0.5f;
         this.ncy = this.nerd.height * 0.5f;
+
+        this.rubberDuck.setGain(0.1f);
     }
 
     @Override
@@ -105,7 +106,20 @@ public class TestScene4 extends NerdScene {
     // region Events.
     @Override
     public void mousePressed() {
-        //this.rubberDuck.play();
+        try {
+            if (!this.rubberDuck.isPlaying()) {
+                this.rubberDuck.setPosition(
+                        SKETCH.random(SKETCH.width), SKETCH.random(SKETCH.height), SKETCH.random(5600));
+                this.rubberDuck.play();
+            }
+        } catch (AlException e) {
+            e.printStackTrace();
+
+            // TODO: This fails, too!:
+            System.err.printf("ESTR2CODE test, oof: `%d`.\n",
+                    NerdAl.errorStringToCode(e.getMessage()));
+        }
+
         System.out.println("TestScene4.mousePressed()");
         MANAGER.restartScene();
     }

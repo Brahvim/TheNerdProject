@@ -9,12 +9,9 @@ public class App {
 
     // TODOs!:
     /*
-     * 
-     * // TODO: Build system,
-     * // TODO: LWJGL OpenAL,
      * // TODO: Box2D and Bullet? :D?
-     * // TODO: Collision Algorithms for 3D space,
-     * // TODO: `Sketch` and Scene-Layer API independence (if possible...).
+     * // TODO: Multiple monitor support!
+     * // TODO: Collision Algorithms for 3D space.
      */
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
