@@ -1,5 +1,7 @@
 package com.brahvim.nerd_tests.scenes;
 
+import org.lwjgl.openal.AL11;
+
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_exceptions.AlException;
@@ -105,6 +107,20 @@ public class TestScene4 extends NerdScene {
     @Override
     public void mouseClicked() {
         try {
+            System.out.printf("Rubber duck source state: `%d`.\n",
+                    this.rubberDuck.getSourceState());
+            System.out.printf("""
+                    OpenAL source states:
+                    - `AL_PAUSED`  : `%d`,
+                    - `AL_STOPPED` : `%d`,
+                    - `AL_INITIAL` : `%d`,
+                    - `AL_PLAYING` : `%d`.
+                    """,
+                    AL11.AL_PAUSED,
+                    AL11.AL_STOPPED,
+                    AL11.AL_INITIAL,
+                    AL11.AL_PLAYING);
+
             // if (!this.rubberDuck.isPlaying()) {
             this.rubberDuck.setPosition(
                     SKETCH.random(SKETCH.width), SKETCH.random(SKETCH.height), SKETCH.random(5600));

@@ -19,7 +19,7 @@ public class App {
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
             // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
-            JavaRendererScene.class;
+            TestScene4.class;
 
     // region `App`'s *other* fields.
     public final static int BPM = 100,
@@ -40,7 +40,7 @@ public class App {
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
                 // .preventCloseOnEscape()
-                .usesJavaRenderer()
+                // .usesJavaRenderer()
                 // .startFullscreen()
                 .canResize()
 

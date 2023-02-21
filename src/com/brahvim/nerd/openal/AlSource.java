@@ -176,6 +176,10 @@ public class AlSource {
 		return this.getInt(AL11.AL_SOURCE_TYPE);
 	}
 
+	public int getSourceState() {
+		return this.getInt(AL11.AL_SOURCE_STATE);
+	}
+
 	public int getBuffersQueued() {
 		return this.getInt(AL11.AL_BUFFERS_QUEUED);
 	}
