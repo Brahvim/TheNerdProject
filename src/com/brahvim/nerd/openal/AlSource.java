@@ -59,28 +59,18 @@ public class AlSource {
 
 	// region C-style AL-API getters.
 	public int getInt(int p_alEnum) {
-		MemoryStack.stackPush();
-		IntBuffer intBuffer = MemoryStack.stackMallocInt(1);
-		AL11.alSourceiv(this.id, p_alEnum, intBuffer);
-		MemoryStack.stackPop();
-
-		return intBuffer.get();
+		return AL11.alGetSourcei(this.id, p_alEnum);
 	}
 
 	public float getFloat(int p_alEnum) {
-		MemoryStack.stackPush();
-		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(1);
-		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
-		MemoryStack.stackPop();
-
-		return floatBuffer.get();
+		return AL11.alGetSourcef(this.id, p_alEnum);
 	}
 
 	// Vectors in OpenAL are not large and can be allocated on the stack just fine.
 	public int[] getIntVector(int p_alEnum, int p_vecSize) {
 		MemoryStack.stackPush();
 		IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
-		AL11.alSourceiv(this.id, p_alEnum, intBuffer);
+		AL11.alGetSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
 		return intBuffer.array();
@@ -89,7 +79,7 @@ public class AlSource {
 	public float[] getFloatVector(int p_alEnum, int p_vecSize) {
 		MemoryStack.stackPush();
 		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
-		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
+		AL11.alGetSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
 		return floatBuffer.array();
@@ -98,7 +88,7 @@ public class AlSource {
 	public int[] getIntTriplet(int p_alEnum) {
 		MemoryStack.stackPush();
 		IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
-		AL11.alSourceiv(this.id, p_alEnum, intBuffer);
+		AL11.alGetSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
 		return intBuffer.array();
@@ -107,7 +97,7 @@ public class AlSource {
 	public /* `float[]` */ float[] getFloatTriplet(int p_alEnum) {
 		MemoryStack.stackPush();
 		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
-		AL11.alSourcefv(this.id, p_alEnum, floatBuffer);
+		AL11.alGetSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
 		return floatBuffer.array();
