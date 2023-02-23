@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 
 import processing.core.PConstants;
 
@@ -11,11 +12,12 @@ import processing.core.PConstants;
 /* package */ class SketchKey extends NerdKey {
     public int width = 400, height = 400;
     public Class<? extends NerdScene> firstScene;
+    public SceneManagerSettings sceneManagerSettings;
     public HashSet<Class<? extends NerdScene>> scenesToPreload;
     public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
     public Sketch.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
-    public boolean useOpenal = true, dontCloseOnEscape, startedFullscreen, canResize,
+    public boolean useOpenal, dontCloseOnEscape, startedFullscreen, canResize,
             cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 
     public Sketch.SketchInsideListener exitListener, setupListener, disposalListener,

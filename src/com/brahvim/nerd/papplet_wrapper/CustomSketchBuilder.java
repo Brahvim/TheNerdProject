@@ -1,7 +1,9 @@
 package com.brahvim.nerd.papplet_wrapper;
 
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 
+import processing.core.PApplet;
 import processing.core.PConstants;
 
 /**
@@ -12,74 +14,87 @@ import processing.core.PConstants;
  * that `Sketch` subclass!
  */
 
-// If "`SketchT`" sounds weird to you, check out:
+// If "`Sketch`" sounds weird to you, check out:
 // [https://stackoverflow.com/a/30146204/13951505]
 
-public abstract class CustomSketchBuilder<SketchT extends Sketch> {
+public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
 
-    // region Fields and the constructor.
+    // region Fields, constructor, building...
     protected final SketchKey SKETCH_KEY;
 
     public CustomSketchBuilder() {
         this.SKETCH_KEY = new SketchKey();
     }
+
+    public final Sketch build(String[] p_javaMainArgs) {
+        Sketch constructedSketch = this.buildImpl(p_javaMainArgs);
+        String[] args = new String[] { constructedSketch.getClass().getName() };
+
+        if (p_javaMainArgs == null || p_javaMainArgs.length == 0)
+            PApplet.runSketch(args, constructedSketch);
+        else
+            PApplet.runSketch(PApplet.concat(args, p_javaMainArgs), constructedSketch);
+
+        return constructedSketch;
+    }
+
+    protected abstract Sketch buildImpl(String[] p_javaMainArgs);
     // endregion
 
-    public abstract SketchT build(String[] p_javaMainArgs);
-
     // region Renderer selection.
-    public CustomSketchBuilder<SketchT> usesJavaRenderer() {
+    public CustomSketchBuilder usesJavaRenderer() {
         this.SKETCH_KEY.renderer = PConstants.JAVA2D;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> usesOpenGlRenderer() {
+    public CustomSketchBuilder usesOpenGlRenderer() {
         this.SKETCH_KEY.renderer = PConstants.P3D;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> usesJavaFxRenderer() {
+    public CustomSketchBuilder usesJavaFxRenderer() {
         this.SKETCH_KEY.renderer = PConstants.FX2D;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> usesPdfRenderer() {
+    public CustomSketchBuilder usesPdfRenderer() {
         this.SKETCH_KEY.renderer = PConstants.PDF;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> usesSvgRenderer() {
+    public CustomSketchBuilder usesSvgRenderer() {
         this.SKETCH_KEY.renderer = PConstants.SVG;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> usesDxfRenderer() {
+    public CustomSketchBuilder usesDxfRenderer() {
         this.SKETCH_KEY.renderer = PConstants.DXF;
         return this;
     }
     // endregion
 
-    public void usesOpenal() {
+    public CustomSketchBuilder usesOpenAl() {
         this.SKETCH_KEY.useOpenal = true;
+        return this;
     }
 
     // region `onSketchEvent()`.
-    public CustomSketchBuilder<SketchT> onSketchConstructed(Sketch.SketchInsideListener p_constructionListener) {
+    public CustomSketchBuilder onSketchConstructed(Sketch.SketchInsideListener p_constructionListener) {
         this.SKETCH_KEY.sketchconstructedListener = p_constructionListener;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> onSketchDispose(Sketch.SketchInsideListener p_disposaListener) {
+    public CustomSketchBuilder onSketchDispose(Sketch.SketchInsideListener p_disposaListener) {
         this.SKETCH_KEY.disposalListener = p_disposaListener;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> onSketchSetup(Sketch.SketchInsideListener p_setupListener) {
+    public CustomSketchBuilder onSketchSetup(Sketch.SketchInsideListener p_setupListener) {
         this.SKETCH_KEY.setupListener = p_setupListener;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> onSketchExit(Sketch.SketchInsideListener p_setupListener) {
+    public CustomSketchBuilder onSketchExit(Sketch.SketchInsideListener p_setupListener) {
         this.SKETCH_KEY.exitListener = p_setupListener;
         return this;
     }
@@ -88,45 +103,53 @@ public abstract class CustomSketchBuilder<SketchT extends Sketch> {
     // region `set()`.
     // region Window settings!
     // region Dimensions.
-    public CustomSketchBuilder<SketchT> setWidth(int p_width) {
+    public CustomSketchBuilder setWidth(int p_width) {
         this.SKETCH_KEY.width = p_width;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> setHeight(int p_height) {
+    public CustomSketchBuilder setHeight(int p_height) {
         this.SKETCH_KEY.height = p_height;
         return this;
     }
     // endregion
 
-    public CustomSketchBuilder<SketchT> setTitle(String p_name) {
+    public CustomSketchBuilder setTitle(String p_name) {
         this.SKETCH_KEY.name = p_name;
         return this;
     }
     // endregion
 
-    public CustomSketchBuilder<SketchT> setStringTablePath(String p_path) {
-        this.SKETCH_KEY.stringTablePath = p_path;
+    public CustomSketchBuilder setSceneManagerSettings(SceneManagerSettings p_settings) {
+        if (p_settings != null)
+            this.SKETCH_KEY.sceneManagerSettings = p_settings;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> setFirstScene(Class<? extends NerdScene> p_firstScene) {
+    public CustomSketchBuilder setFirstScene(Class<? extends NerdScene> p_firstScene) {
+        // Objects.requireNonNull(p_firstScene, "The first scene needs to be set, and
+        // cannot be `null`!");
         this.SKETCH_KEY.firstScene = p_firstScene;
         return this;
     }
 
+    public CustomSketchBuilder setStringTablePath(String p_path) {
+        this.SKETCH_KEY.stringTablePath = p_path;
+        return this;
+    }
+
     // region `Sketch.CallbackOrder`.
-    public CustomSketchBuilder<SketchT> setPreCallOrder(Sketch.CallbackOrder p_order) {
+    public CustomSketchBuilder setPreCallOrder(Sketch.CallbackOrder p_order) {
         this.SKETCH_KEY.preCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> setDrawCallOrder(Sketch.CallbackOrder p_order) {
+    public CustomSketchBuilder setDrawCallOrder(Sketch.CallbackOrder p_order) {
         this.SKETCH_KEY.drawCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> setPostCallOrder(Sketch.CallbackOrder p_order) {
+    public CustomSketchBuilder setPostCallOrder(Sketch.CallbackOrder p_order) {
         this.SKETCH_KEY.postCallOrder = p_order;
         return this;
     }
@@ -134,44 +157,44 @@ public abstract class CustomSketchBuilder<SketchT extends Sketch> {
     // endregion
 
     // region Window behaviors and properties.
-    public CustomSketchBuilder<SketchT> setIconPath(String p_pathString) {
+    public CustomSketchBuilder setIconPath(String p_pathString) {
         this.SKETCH_KEY.iconPath = p_pathString;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> canResize() {
+    public CustomSketchBuilder canResize() {
         this.SKETCH_KEY.canResize = true;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> preventCloseOnEscape() {
+    public CustomSketchBuilder preventCloseOnEscape() {
         this.SKETCH_KEY.dontCloseOnEscape = true;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> startFullscreen() {
+    public CustomSketchBuilder startFullscreen() {
         this.SKETCH_KEY.startedFullscreen = true;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> cannotFullscreen() {
+    public CustomSketchBuilder cannotFullscreen() {
         this.SKETCH_KEY.cannotFullscreen = false;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> cannotF11Fullscreen() {
+    public CustomSketchBuilder cannotF11Fullscreen() {
         this.SKETCH_KEY.cannotF11Fullscreen = true;
         return this;
     }
 
-    public CustomSketchBuilder<SketchT> cannotAltEnterFullscreen() {
+    public CustomSketchBuilder cannotAltEnterFullscreen() {
         this.SKETCH_KEY.cannotAltEnterFullscreen = true;
         return this;
     }
     // endregion
 
     // region Any kind of pre-loading.
-    public CustomSketchBuilder<SketchT> preLoadAssets(Class<? extends NerdScene> p_sceneClass) {
+    public CustomSketchBuilder preLoadAssets(Class<? extends NerdScene> p_sceneClass) {
         if (p_sceneClass == null)
             return this;
 
@@ -179,8 +202,9 @@ public abstract class CustomSketchBuilder<SketchT extends Sketch> {
         return this;
     }
 
-    @SafeVarargs
-    public final CustomSketchBuilder<SketchT> preLoadAssets(Class<? extends NerdScene>... p_sceneClasses) {
+    @SuppressWarnings("all")
+    // @SafeVarargs
+    public CustomSketchBuilder preLoadAssets(Class<? extends NerdScene>... p_sceneClasses) {
         if (p_sceneClasses == null)
             return this;
 

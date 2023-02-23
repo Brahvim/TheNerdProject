@@ -1,10 +1,7 @@
 package com.brahvim.nerd_tests.scenes;
 
-import org.lwjgl.openal.AL11;
-
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
-import com.brahvim.nerd.openal.al_exceptions.AlException;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -37,10 +34,10 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        System.out.println("TestScene4.setup(), " + SCENE.timesLoaded());
+        System.out.println("TestScene4.setup(), " + SCENE.getTimesLoaded());
 
         // Loaded this scene for the first time? Do this!:
-        if (SCENE.timesLoaded() == 0) {
+        if (SCENE.getTimesLoaded() == 0) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();
@@ -97,37 +94,36 @@ public class TestScene4 extends NerdScene {
 
         SKETCH.endShape();
         // endregion
+
     }
 
     private float nerdRotTime() {
-        return SCENE.millisSinceStart() * 0.1f;
+        return SCENE.getMillisSinceStart() * 0.1f;
     }
 
     // region Events.
     @Override
     public void mouseClicked() {
-        try {
-            System.out.printf("Rubber duck source state: `%d`.\n",
-                    this.rubberDuck.getSourceState());
-            System.out.printf("""
-                    OpenAL source states:
-                    - `AL_PAUSED`  : `%d`,
-                    - `AL_STOPPED` : `%d`,
-                    - `AL_INITIAL` : `%d`,
-                    - `AL_PLAYING` : `%d`.
-                    """,
-                    AL11.AL_PAUSED,
-                    AL11.AL_STOPPED,
-                    AL11.AL_INITIAL,
-                    AL11.AL_PLAYING);
+        /*
+         * 
+         * System.out.printf("""
+         * OpenAL source states:
+         * - `AL_PAUSED` : `%d`,
+         * - `AL_STOPPED` : `%d`,
+         * - `AL_INITIAL` : `%d`,
+         * - `AL_PLAYING` : `%d`.
+         * """,
+         * AL11.AL_PAUSED,
+         * AL11.AL_STOPPED,
+         * AL11.AL_INITIAL,
+         * AL11.AL_PLAYING);
+         */
+        // System.out.println(this.rubberDuck.getSourceState());
 
-            // if (!this.rubberDuck.isPlaying()) {
+        if (!this.rubberDuck.isPlaying()) {
             this.rubberDuck.setPosition(
-                    SKETCH.random(SKETCH.width), SKETCH.random(SKETCH.height), SKETCH.random(5600));
+                    SKETCH.mouseX, SKETCH.mouseY, SKETCH.random(5600));
             this.rubberDuck.play();
-            // }
-        } catch (AlException e) {
-            e.printStackTrace();
         }
 
         System.out.println("TestScene4.mousePressed()");

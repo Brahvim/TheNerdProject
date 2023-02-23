@@ -248,7 +248,6 @@ public class AlSource {
 
 	// endregion
 
-	// TODO: Study OpenAL error `40964`.
 	// region [DEPRECATED: Faulty!] State (`boolean`) getters.
 	// ..could be made faster with some `boolean`s in this class, y'know?
 	// ...just sayin'...

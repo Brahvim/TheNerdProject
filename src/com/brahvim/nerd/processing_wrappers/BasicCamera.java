@@ -33,18 +33,14 @@ public class BasicCamera extends NerdCamera {
 
     // region Camera runtime.
     @Override
-    public void apply() {
-        // #JIT_FTW!:
-        this.clear();
-        this.runScript();
-        switch (this.SKETCH.RENDERER) {
-            case PConstants.JAVA2D -> this.apply2dMatrix();
-            case PConstants.P3D, PConstants.P2D -> this.applyMatrix();
-        }
-    }
-
-    @Override
     public void applyMatrix() {
+        switch (this.SKETCH.RENDERER) {
+            case PConstants.JAVA2D:
+                this.apply2dMatrix();
+                return;
+            // case PConstants.P3D, PConstants.P2D -> this.applyMatrix();
+        }
+
         // Apply projection:
         switch (this.projection) {
             case PConstants.PERSPECTIVE:
@@ -59,11 +55,12 @@ public class BasicCamera extends NerdCamera {
                         this.near, this.far);
         }
 
-        // Apply the camera matrix:
+        // region Apply the camera matrix:
         this.SKETCH.camera(
                 this.pos.x, this.pos.y, this.pos.z,
                 this.center.x, this.center.y, this.center.z,
                 this.up.x, this.up.y, this.up.z);
+        // endregion
 
         // Translate! People probably still prefer things on the top left corner `P3D`
         // ...even if it could mean translating twice in some cases, it's alright!
@@ -73,6 +70,7 @@ public class BasicCamera extends NerdCamera {
         // Lesson learnt: **use this only if your camera never moves!**
     }
 
+    @Deprecated
     public void apply2dMatrix() {
         this.SKETCH.translate(this.center);
         this.SKETCH.translate(0, PVector.dot(this.center, this.up), 0); // :woozy_face:

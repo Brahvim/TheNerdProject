@@ -66,9 +66,10 @@ public class SceneManager {
         // region Fields.
         private final Constructor<? extends NerdScene> CONSTRUCTOR;
         private final SceneState STATE;
-        private int timesLoaded = 0;
 
         private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
+        private AssetManager ASSETS;
+        private int timesLoaded = 0;
         // endregion
 
         // region Constructor[s].
@@ -84,7 +85,7 @@ public class SceneManager {
             return this.cachedReference == null;
         }
 
-        public void /* nullifyCache() { */ deleteCache() {
+        public void /* deleteCache() { */ nullifyCache() {
             // If this was (hopefully) the only reference to the scene object, it gets GCed!
             this.cachedReference = null;
             System.gc();
@@ -95,13 +96,25 @@ public class SceneManager {
 
     public static class SceneManagerSettings {
 
+        private class OnScenePreload {
+
+            /**
+             * When {@code true}, {@code NerdScene::preload()} is run only the first time
+             * the {@link NerdScene} is used.<br>
+             * <br>
+             * {@code true} by default!
+             */
+            public volatile boolean moreThanOnePreload = true;
+
+        }
+
         private class OnSceneSwitch {
 
             /**
              * If set to {@code -1}, will call {@link Sketch#clear()} and not
              * {@link Sketch#background()}. <b>This is the default behavior!</b>
              */
-            public int clearColor = -1;
+            public volatile int clearColor = -1;
 
             /**
              * Clears the screen according to
@@ -109,25 +122,25 @@ public class SceneManager {
              * <br>
              * {@code false} by default.
              */
-            public boolean doClear = false;
+            public volatile boolean doClear = false;
 
             /**
              * Resets {@link Sketch#currentCamera} if {@code true}.
              * {@code true} by default!
              */
-            public boolean completelyResetCam = true;
-
-            private OnSceneSwitch() {
-            }
+            public volatile boolean completelyResetCam = true;
 
         }
 
         public final OnSceneSwitch ON_SCENE_SWITCH = new OnSceneSwitch();
 
+        public final OnScenePreload ON_SCENE_PRELOAD = new OnScenePreload();
+
     }
     // endregion
 
     public final AssetManager PERSISTENT_ASSETS;
+    public final SceneManager.SceneManagerSettings SETTINGS;
 
     // region `private` fields.
     /**
@@ -136,15 +149,15 @@ public class SceneManager {
      * <br>
      * 
      * Actual "caching" of a {@code NerdScene} is when its corresponding
-     * {@code SceneCache}'s {@code cachedReference} is not {@code null}.<br>
+     * {@code SceneManager.SceneCache}'s {@code cachedReference} is not
+     * {@code null}.<br>
      * <br>
      * 
      * The initial capacity here (`2`) is to aid performance, since, the JIT
      * does no optimization till the first scene switch. All scene switches after
      * that the initial should be fast enough!
      */
-    private final HashMap<Class<? extends NerdScene>, SceneCache> SCENE_CLASS_TO_CACHE = new HashMap<>(2);
-    private final SceneManager.SceneManagerSettings SETTINGS;
+    private final HashMap<Class<? extends NerdScene>, SceneManager.SceneCache> SCENE_CLASS_TO_CACHE = new HashMap<>(2);
     private final AssetManKey PERSISTENT_ASSET_MAN_KEY;
     private final Sketch SKETCH;
 
@@ -476,7 +489,9 @@ public class SceneManager {
         if (this.givenSceneRanPreload(p_sceneClass))
             return;
 
+        // TODO: Don't make a new thread with a chance of quitting right away...?
         Thread thread = new Thread(() -> {
+            // Lambdas allow for `this!:
             this.loadSceneAssets(p_sceneClass);
         });
 
@@ -491,13 +506,14 @@ public class SceneManager {
         if (this.givenSceneRanPreload(p_sceneClass))
             return;
 
-        SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(p_sceneClass);
+        final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE
+                .get(p_sceneClass);
 
-        if (cache != null)
-            if (cache.cachedReference.hasCompletedPreload())
+        if (SCENE_CACHE != null)
+            if (SCENE_CACHE.cachedReference.hasCompletedPreload())
                 return;
 
-        cache.cachedReference.runPreload();
+        this.loadSceneAssets(SCENE_CACHE.cachedReference);
     }
 
     // region Starting a scene.
@@ -509,7 +525,8 @@ public class SceneManager {
         if (this.currSceneClass == null)
             return;
 
-        // SceneCache data = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
+        // SceneManager.SceneCache data =
+        // this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
         // NerdScene toUse = this.constructAndCacheScene(data.CONSTRUCTOR);
         this.startSceneImpl(this.currSceneClass, p_setupState);
     }
@@ -522,7 +539,7 @@ public class SceneManager {
         if (this.prevSceneClass == null)
             return;
 
-        SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.prevSceneClass);
+        SceneManager.SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.prevSceneClass);
         NerdScene toUse = this.constructScene(cache.CONSTRUCTOR);
 
         this.setScene(toUse, p_setupState);
@@ -562,7 +579,7 @@ public class SceneManager {
         }
 
         /*
-         * // This is where `HashSets` shine more than `ArrayList`s!:
+         * // This is where `HashSet`s shine more than `ArrayList`s!:
          * if (this.SCENE_CLASSES.add(p_sceneClass))
          * this.startSceneImpl(p_sceneClass);
          * else
@@ -583,10 +600,33 @@ public class SceneManager {
         if (p_scene == null)
             return;
 
-        if (p_scene.hasCompletedPreload())
-            return;
+        // Older logic (re-loads each time a `NerdScene` instance is built):
+        /*
+         * if (p_scene.hasCompletedPreload())
+         * return;
+         * p_scene.runPreload();
+         */
 
-        p_scene.runPreload();
+        // Newer logic (supports both!):
+
+        // If you're told to load each time, do that instead!:
+        if (this.SETTINGS.ON_SCENE_PRELOAD.moreThanOnePreload) {
+            if (p_scene.hasCompletedPreload())
+                return;
+            p_scene.runPreload();
+
+        } else { // If you're allowed to load only once per scene,
+            final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE
+                    .get(p_scene.getClass());
+
+            // ...And if you're loading another time,
+            if (SCENE_CACHE.timesLoaded == 0) {
+                p_scene.runPreload(); // Just load the data in.
+                SCENE_CACHE.ASSETS = p_scene.ASSETS;
+            } else // Else, don't re-load, just use the cache!
+                p_scene.ASSETS = SCENE_CACHE.ASSETS;
+        }
+
     }
 
     // region (`private`) Caching operations.
@@ -655,7 +695,7 @@ public class SceneManager {
 
         // region Initialize it!
         final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
-        final SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS);
+        final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS);
         final AssetManKey RETURNED_SCENE_ASSET_MANAGER_KEY = new AssetManKey(this.SKETCH);
 
         // Initialize fields as if this was a part of the construction.
@@ -669,7 +709,8 @@ public class SceneManager {
         // cache and a saved state!
         if (SCENE_CACHE == null) {
             toRet.STATE = new SceneState();
-            this.SCENE_CLASS_TO_CACHE.put(SCENE_CLASS, new SceneCache(p_sceneConstructor, toRet));
+            this.SCENE_CLASS_TO_CACHE.put(SCENE_CLASS,
+                    new SceneManager.SceneCache(p_sceneConstructor, toRet));
         } else {
             toRet.STATE = SCENE_CACHE.STATE;
         }
@@ -715,15 +756,16 @@ public class SceneManager {
             if (!this.hasCached(this.currSceneClass))
                 this.currScene.ASSETS.clear();
 
-            SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
-            cache.deleteCache();
+            SceneManager.SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
+            cache.nullifyCache();
 
             // What `deleteCacheIfCan()` did, I guess (or used to do)!:
             /*
              * // Delete the scene reference if needed:
-             * SceneCache oldSceneCache = this.SCENE_CACHE.get(this.previousSceneClass);
-             * if (!oldSceneCache.doNotDelete)
-             * oldSceneCache.deleteCache();
+             * SceneManager.SceneCache oldSceneManager.SceneCache =
+             * this.SCENE_CACHE.get(this.previousSceneClass);
+             * if (!oldSceneManager.SceneCache.doNotDelete)
+             * oldSceneManager.SceneCache.deleteCache();
              * // If this was the only reference to the scene object, the scene gets GCed!
              * System.gc();
              */

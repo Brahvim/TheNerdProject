@@ -1,6 +1,8 @@
 package com.brahvim.nerd.openal;
 
 import java.io.File;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import org.lwjgl.openal.AL;
@@ -9,6 +11,7 @@ import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
+import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
@@ -18,21 +21,24 @@ import com.brahvim.nerd.openal.al_exceptions.AlcException;
 
 public class NerdAl {
 
-	// region Inner classes, interfaces and enums.
-	@FunctionalInterface
-	interface DeviceUse {
-		public void use(AlDevice p_device);
-	}
-
-	@FunctionalInterface
-	interface ContextUse {
-		public void use(AlContext p_context);
-	}
-
-	@FunctionalInterface
-	interface DeviceAndContextUse {
-		public void use(AlDevice p_device, AlContext p_context);
-	}
+	// region [DEPRECATED] Inner classes, interfaces and enums.
+	/*
+	 * 
+	 * @FunctionalInterface
+	 * interface DeviceUse {
+	 * public void use(AlDevice p_device);
+	 * }
+	 * 
+	 * @FunctionalInterface
+	 * interface ContextUse {
+	 * public void use(AlContext p_context);
+	 * }
+	 * 
+	 * @FunctionalInterface
+	 * interface DeviceAndContextUse {
+	 * public void use(AlDevice p_device, AlContext p_context);
+	 * }
+	 */
 	// endregion
 
 	// region Fields.
@@ -60,9 +66,66 @@ public class NerdAl {
 	}
 	// endregion
 
+	// region C-style AL-API getters.
+	public int getInt(int p_alEnum, int p_value) {
+		int toRet = AL11.alGetInteger(p_alEnum);
+		this.checkAlErrors();
+		return toRet;
+	}
+
+	public float getFloat(int p_alEnum, float p_value) {
+		float toRet = AL11.alGetFloat(p_alEnum);
+		this.checkAlErrors();
+		return toRet;
+	}
+
+	public int[] getIntVector(int p_alEnum, int p_vectorSize) {
+		MemoryStack.stackPush();
+		IntBuffer buffer = MemoryStack.stackMallocInt(p_vectorSize);
+		AL11.alGetIntegerv(p_alEnum, buffer);
+		MemoryStack.stackPop();
+
+		this.checkAlErrors();
+		return buffer.array();
+	}
+
+	public float[] getFloatVector(int p_alEnum, int p_vectorSize) {
+		MemoryStack.stackPush();
+		FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vectorSize);
+		AL11.alGetFloatv(p_alEnum, buffer);
+		MemoryStack.stackPop();
+
+		this.checkAlErrors();
+		return buffer.array();
+	}
+	// endregion
+
+	// region OpenAL API getters.
+	public float getDistanceModel() {
+		return this.getFloat(AL11.AL_DISTANCE_MODEL, this.getContextId());
+	}
+
+	public float getDopplerFactor() {
+		return this.getFloat(AL11.AL_DOPPLER_FACTOR, this.getContextId());
+	}
+
+	public float getSpeedOfSound() {
+		return this.getFloat(AL11.AL_SPEED_OF_SOUND, this.getContextId());
+	}
+	// endregion
+
+	// TODO: ...Let's wrap `alIsBuffer()` and `alIsSource()` anyway, haha.
 	// region Getters.
 	public ArrayList<AlBuffer<?>> getDeviceBuffers() {
 		return this.deviceBuffers;
+	}
+
+	public AlDevice getDevice() {
+		return this.device;
+	}
+
+	public AlContext getContext() {
+		return this.context;
 	}
 
 	public ArrayList<AlSource> getContextSources() {
@@ -103,31 +166,54 @@ public class NerdAl {
 			throw new AlException(ALC11.ALC_INVALID_CONTEXT);
 		this.context = p_ctx;
 	}
-	// endregion
 
-	// region `using()` methods.
-	public void usingDevice(NerdAl.DeviceUse p_use) {
-		synchronized (this.device) {
-			p_use.use(this.device);
-		}
+	public void setDistanceModel(int p_value) {
+		AL11.alDistanceModel(p_value);
 	}
 
-	public void usingContext(NerdAl.ContextUse p_use) {
-		synchronized (this.context) {
-			p_use.use(this.context);
-		}
+	public void setDopplerFactor(float p_value) {
+		AL11.alDopplerFactor(p_value);
 	}
 
-	public void usingContextAndDevice(NerdAl.DeviceAndContextUse p_use) {
-		synchronized (this.device) {
-			synchronized (this.context) {
-				p_use.use(this.device, this.context);
-			}
-		}
+	public void setSpeedOfSound(float p_value) {
+		AL11.alSpeedOfSound(p_value);
 	}
 	// endregion
 
-	// region Error checks.
+	// region [DEPRECATED] `using()` methods.
+	/*
+	 * 
+	 * public void usingDevice(NerdAl.DeviceUse p_use) {
+	 * synchronized (this.device) {
+	 * p_use.use(this.device);
+	 * }
+	 * }
+	 * 
+	 * public void usingContext(NerdAl.ContextUse p_use) {
+	 * synchronized (this.context) {
+	 * p_use.use(this.context);
+	 * }
+	 * }
+	 * 
+	 * public void usingContextAndDevice(NerdAl.DeviceAndContextUse p_use) {
+	 * synchronized (this.device) {
+	 * synchronized (this.context) {
+	 * p_use.use(this.device, this.context);
+	 * }
+	 * }
+	 * }
+	 */
+	// endregion
+
+	// region Error, and other checks.
+	public static boolean isSource(int p_id) {
+		return AL11.alIsSource(p_id);
+	}
+
+	public static boolean isBuffer(int p_id) {
+		return AL11.alIsBuffer(p_id);
+	}
+
 	// @Deprecated
 	// /**
 	// * @deprecated Doesn't work, ...for some reason!

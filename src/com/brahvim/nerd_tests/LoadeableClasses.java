@@ -8,6 +8,30 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
 
+/*
+ * TODO: Improve `LoadeableClasses`!
+ *
+ * Make this a full class with the same fields.
+ * (...as `final` objects, that get set in the constructor, just like here!)
+ *
+ * Declare a `public static HashSet<LoadeableClass>` field, which would store every
+ * `LoadeableClass` instance.
+ *
+ * Make a `public static` method, `loadClasses()`, just like the one here, and load 'em all up!
+ *
+ * Users would then be able to make `enum`s storing `LoadeableClass`es, and also organize them
+ * all they like, :D!~
+ *
+ * It is possible to include in `LoadeableClass` a generic parameter, then `LoadeableClass<ClassT>` 
+ * could be extended to make `LoadeableNerdScene` and `LoadeableNerdLayer`, from where on, it would 
+ * be possible even to make a class that stored a `NerdScene` and related `NerdLayer`s. The JAR or 
+ * CLASS file containing this `NerdScene` subclass could also be parsed to help know what needs to 
+ * be loaded and linked beforehand in an automated manner. Users can always do it themselves instead.
+ * Users could even make their own `enum` worrying  just about `NerdScene`s (and the names of the
+ * `NerdLayer`s used by them - a process I wish to see us successfully automate!), and this could
+ * lead to the users being able to dynamically load **parts of an app** with extreme ease!
+*/
+
 public enum LoadeableClasses {
     // PS *I beg you,* layers first!
     // `Layer`s are a parameterized type - they won't exist without a scene!
@@ -19,10 +43,8 @@ public enum LoadeableClasses {
 
     // region Fields, methods, ...the usual OOP, y'know?
     // region Fields.
-    public Class<? extends NerdScene> SCENE_CLASSES;
-
-    private final URL URL;
-    private final String QUAL_NAME;
+    public final URL URL;
+    public final String QUAL_NAME;
 
     private Class<?> loadedClass;
     // endregion Fields.

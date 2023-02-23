@@ -312,7 +312,7 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
-	// region Constructor[s], `settings()`...
+	// region Construction, `settings()`...
 	public Sketch(SketchKey p_key) {
 		// region Verify and 'use' key.
 		if (p_key == null) {
@@ -540,7 +540,10 @@ public class Sketch extends PApplet {
 
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.sceneMan.getCurrentScene() == null) {
-			this.sceneMan.startScene(this.FIRST_SCENE_CLASS);
+			if (this.FIRST_SCENE_CLASS == null)
+				System.err.println("There is no first `NerdScene`! It's `null`!");
+			else
+				this.sceneMan.startScene(this.FIRST_SCENE_CLASS);
 		}
 		// endregion
 

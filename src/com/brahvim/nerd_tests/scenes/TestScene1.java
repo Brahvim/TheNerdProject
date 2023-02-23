@@ -12,7 +12,7 @@ import processing.core.PConstants;
 public class TestScene1 extends NerdScene {
     @Override
     protected void setup(SceneState p_state) {
-        if (SCENE.timesLoaded() == 0)
+        if (SCENE.getTimesLoaded() == 0)
             SKETCH.centerWindow();
 
         SCENE.addLayers(
@@ -25,10 +25,10 @@ public class TestScene1 extends NerdScene {
     @Override
     protected void draw() {
         SKETCH.text("Scene `1`!",
-                SKETCH.cx, SKETCH.cy + PApplet.sin(SCENE.millisSinceStart() * 0.005f) * 25);
+                SKETCH.cx, SKETCH.cy + PApplet.sin(SCENE.getMillisSinceStart() * 0.005f) * 25);
         // SKETCH.cx, SKETCH.cy + PApplet.sin(MANAGER.sinceSceneStarted() * 0.0125f) *
         // 25);
-        CAMERA.pos.z = PApplet.abs(PApplet.sin(SCENE.millisSinceStart() *
+        CAMERA.pos.z = PApplet.abs(PApplet.sin(SCENE.getMillisSinceStart() *
                 0.001f)) * 500;
 
         /*

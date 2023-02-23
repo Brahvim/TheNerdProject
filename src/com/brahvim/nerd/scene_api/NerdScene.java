@@ -133,7 +133,7 @@ public class NerdScene implements InputEventHandling {
   }
 
   // region Queries.
-  public int timesLoaded() {
+  public int getTimesLoaded() {
     return this.MANAGER.timesGivenSceneWasLoaded(this.getClass());
   }
 
@@ -142,11 +142,11 @@ public class NerdScene implements InputEventHandling {
   }
 
   // region Time queries.
-  public int startMillis() {
+  public int getStartMillis() {
     return this.startMillis;
   }
 
-  public int millisSinceStart() {
+  public int getMillisSinceStart() {
     return this.SKETCH.millis() - this.startMillis;
   }
   // endregion
