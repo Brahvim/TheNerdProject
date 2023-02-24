@@ -284,6 +284,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		AlBuffer.buffers.remove(this);
 		AL11.alDeleteBuffers(this.id);
 		this.manager.checkAlErrors();
+		this.manager.checkAlcErrors();
 	}
 
 }

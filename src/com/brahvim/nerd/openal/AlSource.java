@@ -424,6 +424,7 @@ public class AlSource {
 		AlSource.sources.remove(this);
 		AL11.alDeleteSources(this.id);
 		this.manager.checkAlErrors();
+		this.manager.checkAlcErrors();
 	}
 	// endregion
 

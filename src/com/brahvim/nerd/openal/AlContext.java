@@ -38,7 +38,7 @@ public class AlContext {
 	}
 	// endregion
 
-	public int checkForErrors() throws AlcException {
+	public int checkAlcErrors() throws AlcException {
 		int alcError = ALC11.alcGetError(this.deviceId);
 		if (alcError != 0)
 			throw new AlcException(alcError);
@@ -50,7 +50,7 @@ public class AlContext {
 		ALC11.alcMakeContextCurrent(0);
 
 		ALC11.alcDestroyContext(this.id);
-		this.checkForErrors();
+		this.checkAlcErrors();
 		this.id = 0;
 	}
 

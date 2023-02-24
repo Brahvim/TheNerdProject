@@ -80,6 +80,7 @@ public class AlDevice {
 
 	public void dispose() {
 		ALC11.alcCloseDevice(this.id);
+		this.manager.checkAlErrors();
 		this.manager.checkAlcErrors();
 		this.id = 0;
 	}

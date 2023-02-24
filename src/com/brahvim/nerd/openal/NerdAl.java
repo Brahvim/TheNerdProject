@@ -49,7 +49,6 @@ public class NerdAl {
 	private volatile AlContext context;
 	private ALCapabilities alCap;
 	private ALCCapabilities alCtxCap;
-
 	// endregion
 
 	// region Constructors.
@@ -114,7 +113,6 @@ public class NerdAl {
 	}
 	// endregion
 
-	// TODO: ...Let's wrap `alIsBuffer()` and `alIsSource()` anyway, haha.
 	// region Getters.
 	public ArrayList<AlBuffer<?>> getDeviceBuffers() {
 		return this.deviceBuffers;
@@ -269,6 +267,13 @@ public class NerdAl {
 	}
 
 	public void dispose() {
+		for (AlSource s : AlSource.getEverySourceEver()) {
+			s.dispose();
+		}
+
+		for (AlBuffer<?> b : AlBuffer.getEveryBufferEver()) {
+			b.dispose();
+		}
 		this.context.dispose();
 		this.device.dispose();
 	}
