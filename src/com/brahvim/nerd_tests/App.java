@@ -8,7 +8,7 @@ public class App {
 
     // TODOs!:
     /*
-     * // TODO: Stuff OpenAL odes on device disconnection!
+     * // TODO: Stuff OpenAL does on device disconnection!
      * // TODO: `EXTEfx` wrapper!!!
      * // TODO: Box2D and Bullet? :D?
      * // TODO: Multiple monitor support!

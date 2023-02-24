@@ -28,6 +28,10 @@ public class AlSource {
 	public AlSource(NerdAl p_manager) {
 		this.manager = p_manager;
 		this.id = AL11.alGenSources();
+
+		this.setInt(AL11.AL_SOURCE_TYPE, 0);
+		this.manager.checkAlErrors();
+		this.manager.checkAlcErrors();
 	}
 
 	public AlSource(NerdAl p_manager, AlBuffer<?> p_buffer) {
@@ -36,10 +40,16 @@ public class AlSource {
 	}
 	// endregion
 
+	// region Get every source, ever!
+	/* `package` */ static ArrayList<AlSource> getEverySourceEverByReference() {
+		return AlSource.sources;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static ArrayList<AlSource> getEverySourceEver() {
 		return (ArrayList<AlSource>) AlSource.sources.clone();
 	}
+	// endregion
 
 	// region ...literal "buffer distribution", :joy:
 	public AlBuffer<?> getBuffer() {

@@ -46,10 +46,18 @@ public class AlContext {
 		return alcError;
 	}
 
-	public void dispose() {
-		ALC11.alcMakeContextCurrent(0);
+	/* `package` */ void dispose() {
+		// Unlink the current context object:
+		if (!ALC11.alcMakeContextCurrent(0))
+			throw new RuntimeException("Could not change the OpenAL context!");
 
+		this.manager.checkAlErrors();
+		this.checkAlcErrors();
+
+		// *Actually* destroy the context object:
 		ALC11.alcDestroyContext(this.id);
+
+		this.manager.checkAlErrors();
 		this.checkAlcErrors();
 		this.id = 0;
 	}

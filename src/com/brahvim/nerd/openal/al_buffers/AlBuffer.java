@@ -43,10 +43,16 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	}
 	// endregion
 
+	// region Get every buffer, ever!
+	/* `package` */ static ArrayList<AlBuffer<?>> getEveryBufferEverByReference() {
+		return AlBuffer.buffers;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static ArrayList<AlBuffer<?>> getEveryBufferEver() {
 		return (ArrayList<AlBuffer<?>>) AlBuffer.buffers.clone();
 	}
+	// endregion
 
 	// region `abstract` methods.
 	public abstract void setData(int p_dataType, BufferT p_buffer, int p_sampleRate);

@@ -65,6 +65,7 @@ public class NerdAl {
 	}
 	// endregion
 
+	// region Getters and setters!...
 	// region C-style AL-API getters.
 	public int getInt(int p_alEnum, int p_value) {
 		int toRet = AL11.alGetInteger(p_alEnum);
@@ -99,6 +100,7 @@ public class NerdAl {
 	}
 	// endregion
 
+	// region Getters.
 	// region OpenAL API getters.
 	public float getDistanceModel() {
 		return this.getFloat(AL11.AL_DISTANCE_MODEL, this.getContextId());
@@ -113,7 +115,6 @@ public class NerdAl {
 	}
 	// endregion
 
-	// region Getters.
 	public ArrayList<AlBuffer<?>> getDeviceBuffers() {
 		return this.deviceBuffers;
 	}
@@ -152,6 +153,20 @@ public class NerdAl {
 	// endregion
 
 	// region Setters.
+	// region OpenAL API setters.
+	public void setDistanceModel(int p_value) {
+		AL11.alDistanceModel(p_value);
+	}
+
+	public void setDopplerFactor(float p_value) {
+		AL11.alDopplerFactor(p_value);
+	}
+
+	public void setSpeedOfSound(float p_value) {
+		AL11.alSpeedOfSound(p_value);
+	}
+	// endregion
+
 	public void changeDevice(AlDevice p_dv, AlContext p_ctx) {
 		this.device = p_dv;
 		if (ALC11.alcGetContextsDevice(p_ctx.getId()) != p_dv.getId())
@@ -164,18 +179,7 @@ public class NerdAl {
 			throw new AlException(ALC11.ALC_INVALID_CONTEXT);
 		this.context = p_ctx;
 	}
-
-	public void setDistanceModel(int p_value) {
-		AL11.alDistanceModel(p_value);
-	}
-
-	public void setDopplerFactor(float p_value) {
-		AL11.alDopplerFactor(p_value);
-	}
-
-	public void setSpeedOfSound(float p_value) {
-		AL11.alSpeedOfSound(p_value);
-	}
+	// endregion
 	// endregion
 
 	// region [DEPRECATED] `using()` methods.
@@ -212,30 +216,24 @@ public class NerdAl {
 		return AL11.alIsBuffer(p_id);
 	}
 
-	// @Deprecated
-	// /**
-	// * @deprecated Doesn't work, ...for some reason!
-	// */
-	// public static int errorStringToCode(String p_errorString) {
-	// return AL11.alGetEnumValue(p_errorString
-	// .split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]);
-	// }
+	public static int errorStringToCode(String p_errorString) {
+		return AL11.alGetEnumValue(p_errorString);
+		// .split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]);
+	}
 
 	public int checkAlErrors() throws AlException {
 		int alError = AL11.alGetError();
 
-		if (!(alError == 0)) // || alError == 40964))
+		// `40964` is THE MOST annoying error.
+		// Its error string is literally "No Error"!
+		if (!(alError == 0) || alError == 40964)
 			throw new AlException(alError);
 
 		return alError;
 	}
 
 	public int checkAlcErrors() throws AlcException {
-		int alcError;
-
-		synchronized (this.device) {
-			alcError = ALC11.alcGetError(this.device.getId());
-		}
+		int alcError = ALC11.alcGetError(this.device.getId());
 
 		if (alcError != 0)
 			throw new AlcException(alcError);

@@ -205,9 +205,9 @@ public class Sketch extends PApplet {
 	public final String RENDERER;
 	public final String ICON_PATH;
 	public final StringTable STRINGS;
-	public final boolean USES_OPENGL;
 	public final Sketch SKETCH = this;
 	public final int INIT_WIDTH, INIT_HEIGHT;
+	public final boolean USES_OPENGL, USES_OPENAL;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
 	public final Point GLOBAL_MOUSE_POINT = new Point();
@@ -363,7 +363,7 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Non-key settings.
-		// this.pfullscreen = !this.fullscreen;
+		this.USES_OPENAL = this.AL != null;
 		this.UNPROJECTOR = new Unprojector();
 		this.sceneMan = new SceneManager(this);
 		this.fullscreen = this.STARTED_FULLSCREEN;
@@ -485,6 +485,9 @@ public class Sketch extends PApplet {
 		if (this.USES_OPENGL)
 			this.pgl = super.beginPGL();
 
+		if (this.AL != null)
+			this.AL.framelyCallback();
+
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == super.width || this.pheight == super.height)) {
 			this.updateRatios();
@@ -560,9 +563,7 @@ public class Sketch extends PApplet {
 		if (this.USES_OPENGL)
 			super.endPGL();
 
-		// Love how these fit togetha'. You?
 		this.framelyWindowSetup();
-		this.framelyOpenAlTasks();
 
 		// region Previous state updates!!!
 		FlyCamera.pholdPointer = FlyCamera.holdCursor;
@@ -608,7 +609,8 @@ public class Sketch extends PApplet {
 		if (this.DISPOSAL_LISTENER != null)
 			this.DISPOSAL_LISTENER.listen(this);
 
-		this.AL.dispose();
+		if (this.AL != null)
+			this.AL.dispose();
 		super.dispose();
 	}
 	// endregion
@@ -776,28 +778,20 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
-	// region OpenAL tasks.
-	private void framelyOpenAlTasks() {
-		this.AL.framelyCallback();
+	// region Utilities!~
+	// region `callIfNotNull()`.
+	// ChatGPT prompts:
+	// "Write a Java method that calls a given method on an object."
+	// "Is it possible to do this with method references?"
+	// PS I use ChatGPT more for learning and trivial things like this rather than
+	// 'cheating'. I never like to cheat - it stops me from learning!
+
+	public static <ObjT> void callIfNotNull(ObjT p_object, Runnable p_method) {
+		System.out.println(p_object);
+		if (p_object != null)
+			p_method.run();
 	}
 	// endregion
-
-	// region Utilities!~
-	public void updateRatios() {
-		this.cx = super.width * 0.5f;
-		this.cy = super.height * 0.5f;
-
-		this.qx = this.cx * 0.5f;
-		this.qy = this.cy * 0.5f;
-
-		this.q3x = this.cx + this.qx;
-		this.q3y = this.cy + this.qy;
-
-		this.scr = (float) super.width / (float) super.height;
-
-		this.displayWidthHalf = super.displayWidth / 2;
-		this.displayHeightHalf = super.displayHeight / 2;
-	}
 
 	// region Window queries.
 	public void centerWindow() {
@@ -939,7 +933,23 @@ public class Sketch extends PApplet {
 	}
 	// endregion
 
-	// region Drawing utilities!
+	// region Rendering utilities!
+	public void updateRatios() {
+		this.cx = super.width * 0.5f;
+		this.cy = super.height * 0.5f;
+
+		this.qx = this.cx * 0.5f;
+		this.qy = this.cy * 0.5f;
+
+		this.q3x = this.cx + this.qx;
+		this.q3y = this.cy + this.qy;
+
+		this.scr = (float) super.width / (float) super.height;
+
+		this.displayWidthHalf = super.displayWidth / 2;
+		this.displayHeightHalf = super.displayHeight / 2;
+	}
+
 	// region From `PGraphics`.
 	// "Hah! Gott'em with the name alignment!"
 	public void translate(PVector p_vec) {

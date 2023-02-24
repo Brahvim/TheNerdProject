@@ -8,6 +8,8 @@ import org.lwjgl.openal.ALUtil;
 import org.lwjgl.openal.EXTDisconnect;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.al_exceptions.AlcException;
+
 public class AlDevice {
 
 	public interface DisconnectionCallback {
@@ -78,10 +80,12 @@ public class AlDevice {
 	}
 	// endregion
 
-	public void dispose() {
-		ALC11.alcCloseDevice(this.id);
-		this.manager.checkAlErrors();
-		this.manager.checkAlcErrors();
+	/* `package` */ void dispose() {
+		if (!ALC11.alcCloseDevice(this.id))
+			throw new RuntimeException("Could not close OpenAL device!");
+
+		// this.manager.checkAlErrors();
+		// this.manager.checkAlcErrors();
 		this.id = 0;
 	}
 
