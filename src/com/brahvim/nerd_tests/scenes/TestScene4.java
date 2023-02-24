@@ -28,7 +28,7 @@ public class TestScene4 extends NerdScene {
     protected void preload() {
         ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
 
-        this.rubberDuck = SKETCH.OPENAL.sourceFromOgg("data/RUBBER DUCK.ogg");
+        this.rubberDuck = SKETCH.AL.sourceFromOgg("data/RUBBER DUCK.ogg");
         System.out.println("This is async LOL!");
     }
 

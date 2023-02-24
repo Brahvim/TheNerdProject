@@ -199,9 +199,9 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Instance constants.
+	public final NerdAl AL;
 	public final String NAME;
 	public final Robot ROBOT;
-	public final NerdAl OPENAL;
 	public final String RENDERER;
 	public final String ICON_PATH;
 	public final StringTable STRINGS;
@@ -355,7 +355,7 @@ public class Sketch extends PApplet {
 		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
-		this.OPENAL = p_key.useOpenal ? new NerdAl() : null;
+		this.AL = p_key.useOpenal ? new NerdAl() : null;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
 		// endregion
 
@@ -602,7 +602,7 @@ public class Sketch extends PApplet {
 		if (this.DISPOSAL_LISTENER != null)
 			this.DISPOSAL_LISTENER.listen(this);
 
-		this.OPENAL.dispose();
+		this.AL.dispose();
 		super.dispose();
 	}
 	// endregion
@@ -772,7 +772,7 @@ public class Sketch extends PApplet {
 
 	// region OpenAL tasks.
 	private void framelyOpenAlTasks() {
-		this.OPENAL.framelyCallback();
+		this.AL.framelyCallback();
 	}
 	// endregion
 

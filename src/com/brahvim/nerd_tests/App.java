@@ -1,5 +1,6 @@
 package com.brahvim.nerd_tests;
 
+import com.brahvim.nerd.io.class_loaders.LoadeableClass;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -30,7 +31,8 @@ public class App {
     // endregion
 
     public static void main(String[] p_args) {
-        LoadeableClasses.loadClasses(); // Handle this yourself, sorry!
+        LoadeableClass.loadClasses();
+        // LoadeableClasses.loadClasses(); // Handle this yourself, sorry!
 
         // region Building the `Sketch`!
         App.sketchInstance = new NerdSketchBuilder()

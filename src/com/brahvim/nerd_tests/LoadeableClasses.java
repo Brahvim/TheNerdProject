@@ -8,7 +8,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
 
-/*
+/*kl
  * TODO: Improve `LoadeableClasses`!
  *
  * Make this a full class with the same fields.
@@ -33,6 +33,7 @@ import com.brahvim.nerd.scene_api.NerdScene;
 */
 
 public enum LoadeableClasses {
+
     // PS *I beg you,* layers first!
     // `Layer`s are a parameterized type - they won't exist without a scene!
 
