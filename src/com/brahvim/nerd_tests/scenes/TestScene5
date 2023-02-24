@@ -1,17 +1,29 @@
 package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneState;
+
+import processing.core.PApplet;
 
 public class TestScene5 extends NerdScene {
 
     @Override
-    protected void setup() {
+    protected void setup(SceneState p_state) {
         System.out.println("Welcome to `TestScene5`!");
     }
 
     @Override
     protected void draw() {
-        SKETCH.text(SCENE.getClass().getSimpleName(), SKETCH.cx, SKETCH.cy);
+        SKETCH.background(0x006699, PApplet.sin(super.getMillisSinceStart()));
+        SKETCH.fill(233);
+
+        SKETCH.pushMatrix();
+        SKETCH.translate(SKETCH.cx, SKETCH.cy);
+        SKETCH.scale(2);
+        SKETCH.text(SCENE.getClass().getSimpleName(), 0, 0);
+        SKETCH.popMatrix();
+
+        SKETCH.circle(SKETCH.mouseX, SKETCH.mouseY, 20);
     }
 
     @Override

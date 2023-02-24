@@ -105,7 +105,7 @@ public class UdpSocket {
          * @apiNote Is {@code 65535} ({@link Receiver#PACKET_MAX_SIZE}) by default.
          * @implNote This <i>should</i> instead, be {@code 576} by default.
          *           To know why, please see {@link<a href=
-         *           "https://stackoverflow.com/a/9235558/13951505">this</a>}.
+         *           "https://stackoverflow.com/a/9235558/">this</a>}.
          *
          *           <br>
          *           </br>

@@ -15,7 +15,7 @@ import processing.core.PConstants;
  */
 
 // If "`Sketch`" sounds weird to you, check out:
-// [https://stackoverflow.com/a/30146204/13951505]
+// [https://stackoverflow.com/a/30146204/]
 
 public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
 

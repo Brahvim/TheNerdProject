@@ -300,6 +300,7 @@ public class Sketch extends PApplet {
 	private final Unprojector UNPROJECTOR;
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
 	private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
+
 	private GraphicsDevice previousMonitor, currentMonitor;
 	private NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	private SceneManager sceneMan; // Don't use static initialization for this..?
@@ -469,6 +470,8 @@ public class Sketch extends PApplet {
 				// super.surface.setIcon(super.loadImage(this.iconPath));
 				break;
 		}
+
+		this.centerWindow();
 
 		super.rectMode(PConstants.CENTER);
 		super.imageMode(PConstants.CENTER);
@@ -801,15 +804,25 @@ public class Sketch extends PApplet {
 		this.updateRatios(); // You called this function when the window changed its size or position, right?
 		// Remember: computers with multiple displays exist! We shouldn't cache this:
 
-		final int WIDTH = Sketch.DEFAULT_JAVA_SCREEN_MODE.getWidth(),
-				HEIGHT = Sketch.DEFAULT_JAVA_SCREEN_MODE.getHeight();
+		final DisplayMode CURRENT_DISPLAY_MODE = this.currentMonitor == null
+				? Sketch.DEFAULT_JAVA_SCREEN_MODE
+				: this.currentMonitor.getDisplayMode();
 
-		int winX = (int) ((WIDTH * 0.5f) - this.cx),
-				winY = (int) ((HEIGHT * 0.5f) - this.cy);
+		final int WIDTH = CURRENT_DISPLAY_MODE.getWidth(),
+				HEIGHT = CURRENT_DISPLAY_MODE.getHeight();
 
 		switch (this.RENDERER) {
-			case PConstants.P3D, PConstants.P2D -> this.glWindow.setPosition(winX, winY);
-			default -> super.surface.setLocation(winX, winY);
+			case PConstants.P3D, PConstants.P2D:
+				this.glWindow.setPosition(
+						(int) ((WIDTH * 0.5f) - this.cx),
+						(int) ((HEIGHT * 0.5f) - this.cy));
+				break;
+
+			default:
+				super.surface.setLocation(
+						(int) (WIDTH / 2 - this.width),
+						(int) (HEIGHT / 2 - this.q3y));
+				break;
 		}
 
 		// super.surface.setLocation(winX, winY);
@@ -820,7 +833,7 @@ public class Sketch extends PApplet {
 		switch (this.RENDERER) {
 			case PConstants.JAVA2D:
 				// Fullscreen?
-				// https://stackoverflow.com/a/11570414/13951505
+				// https://stackoverflow.com/a/11570414/
 
 				if (this.pfullscreen != this.fullscreen) {
 					this.sketchFrame.removeNotify();
@@ -897,12 +910,13 @@ public class Sketch extends PApplet {
 						;
 				}
 				break;
+
 		}
 	}
 
 	// I tried the 3rd-to-last method in
-	// [https://stackoverflow.com/a/21592711/13951505],
-	// but [https://stackoverflow.com/a/1248865/13951505] was what worked.
+	// [https://stackoverflow.com/a/21592711/],
+	// but [https://stackoverflow.com/a/1248865/] was what worked.
 	// And yes, I modified it.
 	public static GraphicsDevice getGraphicsDeviceAt(Point p_pos) {
 		for (GraphicsDevice d : Sketch.JAVA_SCREENS)
