@@ -296,6 +296,7 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region `private` ~~/ `protected`~~ fields.
+	private final int ANTI_ALIASING;
 	private final Unprojector UNPROJECTOR;
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
 	private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
@@ -347,15 +348,16 @@ public class Sketch extends PApplet {
 		// endregion
 
 		this.NAME = p_key.name;
-		this.ICON_PATH = p_key.iconPath;
 		this.RENDERER = p_key.renderer;
+		this.ICON_PATH = p_key.iconPath;
+		this.ANTI_ALIASING = p_key.antiAliasing;
 		this.FIRST_SCENE_CLASS = p_key.firstScene;
 		this.INITIALLY_RESIZABLE = p_key.canResize;
 		this.CAN_FULLSCREEN = !p_key.cannotFullscreen;
 		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
+		this.AL = p_key.useOpenal ? new NerdAl() : null;
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
-		this.AL = p_key.useOpenal ? new NerdAl() : null;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
 		// endregion
 
@@ -424,6 +426,7 @@ public class Sketch extends PApplet {
 		// super.fullScreen(this.RENDERER);
 		// else
 
+		super.smooth(this.ANTI_ALIASING);
 		super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER);
 	}
 	// endregion

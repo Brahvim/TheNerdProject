@@ -19,7 +19,7 @@ public enum LoadedSceneClass {
 		this.sceneClassLoader = new SceneClassLoader(p_urlString, p_fullyQualifiedName);
 	}
 
-	public Class<NerdScene> getSceneClassLoader() {
+	public Class<? extends NerdScene> getSceneClassLoader() {
 		return this.sceneClassLoader.getLoadedClass();
 	}
 

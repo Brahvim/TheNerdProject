@@ -126,6 +126,11 @@ public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
         return this;
     }
 
+    public CustomSketchBuilder setStringTablePath(String p_path) {
+        this.SKETCH_KEY.stringTablePath = p_path;
+        return this;
+    }
+
     public CustomSketchBuilder setFirstScene(Class<? extends NerdScene> p_firstScene) {
         // Objects.requireNonNull(p_firstScene, "The first scene needs to be set, and
         // cannot be `null`!");
@@ -133,8 +138,8 @@ public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
         return this;
     }
 
-    public CustomSketchBuilder setStringTablePath(String p_path) {
-        this.SKETCH_KEY.stringTablePath = p_path;
+    public CustomSketchBuilder setAntiAliasing(int p_value) {
+        this.SKETCH_KEY.antiAliasing = p_value;
         return this;
     }
 

@@ -1,5 +1,7 @@
 package com.brahvim.nerd.io.class_loaders;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -10,69 +12,63 @@ public class LoadeableClass<ClassT> {
 	// region Fields.
 	private final static ArrayList<LoadeableClass<?>> ALL_LOADEABLE_CLASSES = new ArrayList<>();
 
-	public final URL URL;
-	public final String QUAL_NAME;
+	public URL url;
+	public String qualifiedName;
 
-	private Class<ClassT> loadedClass;
+	private Class<? extends ClassT> loadedClass;
 	// endregion
 
+	// region Constructors.
 	public LoadeableClass(URL p_url, String p_fullyQualifiedName) {
-		this.URL = p_url;
-		this.QUAL_NAME = p_fullyQualifiedName;
-		LoadeableClass.ALL_LOADEABLE_CLASSES.add(this);
+		this.loadClass(p_url, p_fullyQualifiedName);
 	}
 
-	public LoadeableClass(String p_urlString, String p_fullyQualifiedName) {
-		URL urlToSet = null;
+	public LoadeableClass(File p_jarOrClassFolder, String p_fullyQualifiedName) {
 		try {
-			urlToSet = new URL(p_urlString);
+			this.loadClass(new URL(p_jarOrClassFolder.getAbsolutePath()), p_fullyQualifiedName);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-
-		this.URL = urlToSet;
-		this.QUAL_NAME = p_fullyQualifiedName;
-		LoadeableClass.ALL_LOADEABLE_CLASSES.add(this);
 	}
+
+	public LoadeableClass(String p_jarOrClassFolder, String p_fullyQualifiedName) {
+		try {
+			this.loadClass(new URL(p_jarOrClassFolder), p_fullyQualifiedName);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+	// endregion
 
 	// region Methods.
-	public final static void loadClasses() {
-		// region Get all URLs and construct the loader.
-		final URL[] URL_ARRAY = new URL[LoadeableClass.ALL_LOADEABLE_CLASSES.size()];
-
-		for (int i = 0; i < URL_ARRAY.length; i++)
-			URL_ARRAY[i] = LoadeableClass.ALL_LOADEABLE_CLASSES.get(i).getUrl();
+	@SuppressWarnings("unchecked")
+	public void loadClass(URL p_url, String p_fullyQualifiedName) {
+		this.url = p_url;
+		this.qualifiedName = p_fullyQualifiedName;
 
 		final URLClassLoader LOADER = new URLClassLoader(
-				URL_ARRAY, ClassLoader.getSystemClassLoader());
-		// endregion
+				this.qualifiedName, new URL[] { this.url },
+				ClassLoader.getSystemClassLoader());
 
-		for (LoadeableClass<?> c : LoadeableClass.ALL_LOADEABLE_CLASSES) { // Link classes using `forName()`.
-			try {
-				final Class<?> LOADED_CLASS = Class.forName(c.QUAL_NAME, true, LOADER);
-				c.setLoadedClass(LOADED_CLASS);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
+		try (LOADER) {
+			this.loadedClass = (Class<? extends ClassT>) LOADER.loadClass(this.qualifiedName);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
+
+		LoadeableClass.ALL_LOADEABLE_CLASSES.add(this);
 
 	}
 
-	// region Getters and setters.
-	public Class<ClassT> getLoadedClass() {
+	public Class<? extends ClassT> getLoadedClass() {
 		return this.loadedClass;
 	}
 
-	private URL getUrl() {
-		return this.URL;
+	public URL getUrl() {
+		return this.url;
 	}
-
-	@SuppressWarnings("unchecked")
-	// This has to be a bad idea...
-	protected void setLoadedClass(Class<?> p_class) throws ClassCastException {
-		this.loadedClass = (Class<ClassT>) p_class;
-	}
-	// endregion
 	// endregion
 
 }
