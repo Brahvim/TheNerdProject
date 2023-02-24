@@ -8,8 +8,6 @@ import org.lwjgl.openal.ALUtil;
 import org.lwjgl.openal.EXTDisconnect;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.al_exceptions.AlcException;
-
 public class AlDevice {
 
 	public interface DisconnectionCallback {

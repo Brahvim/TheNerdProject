@@ -29,9 +29,9 @@ public class AlSource {
 		this.manager = p_manager;
 		this.id = AL11.alGenSources();
 
-		this.setInt(AL11.AL_SOURCE_TYPE, 0);
 		this.manager.checkAlErrors();
 		this.manager.checkAlcErrors();
+		this.setInt(AL11.AL_SOURCE_TYPE, AL11.AL_STATIC);
 	}
 
 	public AlSource(NerdAl p_manager, AlBuffer<?> p_buffer) {

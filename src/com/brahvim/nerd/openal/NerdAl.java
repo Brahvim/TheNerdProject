@@ -226,7 +226,7 @@ public class NerdAl {
 
 		// `40964` is THE MOST annoying error.
 		// Its error string is literally "No Error"!
-		if (!(alError == 0) || alError == 40964)
+		if (!(alError == 0 || alError == 40964))
 			throw new AlException(alError);
 
 		return alError;
