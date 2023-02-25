@@ -17,14 +17,14 @@ import processing.core.PVector;
 public abstract class AlBuffer<BufferT extends Buffer> {
 
 	// region Fields.
-	protected int id;
-	protected NerdAl manager;
+	public final static ArrayList<AlBuffer<?>> buffers = new ArrayList<>();
 
 	// LWJGL does not provide `AL_DATA` anywhere, :/
 	// Storing it here for access.
 	protected BufferT data;
 
-	private final static ArrayList<AlBuffer<?>> buffers = new ArrayList<>();
+	protected NerdAl manager;
+	protected int id, dataType;
 	// endregion
 
 	// region Constructors.
@@ -32,6 +32,18 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		this.manager = p_alInst;
 
 		this.id = AL11.alGenBuffers();
+		this.manager.checkAlErrors();
+	}
+
+	@SuppressWarnings("unchecked")
+	public AlBuffer(AlBuffer<?> p_buffer) {
+		this.manager = p_buffer.manager;
+
+		this.id = AL11.alGenBuffers();
+
+		this.setBits(p_buffer.getBits());
+		this.setChannels(p_buffer.getChannels());
+		this.setData(p_buffer.dataType, (BufferT) p_buffer.getData(), p_buffer.getSampleRate());
 		this.manager.checkAlErrors();
 	}
 
@@ -43,21 +55,10 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	}
 	// endregion
 
-	// region Get every buffer, ever!
-	/* `package` */ static ArrayList<AlBuffer<?>> getEveryBufferEverByReference() {
-		return AlBuffer.buffers;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static ArrayList<AlBuffer<?>> getEveryBufferEver() {
-		return (ArrayList<AlBuffer<?>>) AlBuffer.buffers.clone();
-	}
-	// endregion
-
 	// region `abstract` methods.
-	public abstract void setData(int p_dataType, BufferT p_buffer, int p_sampleRate);
-
 	public abstract AlBuffer<?> loadFrom(File p_file);
+
+	public abstract void setData(int p_dataType, BufferT p_buffer, int p_sampleRate);
 	// endregion
 
 	public AlBuffer<?> loadFrom(String p_path) {
@@ -221,7 +222,6 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	// endregion
 
 	// region Setters.
-
 	public void setBits(int p_bits) {
 		AL11.alBufferi(this.id, AL11.AL_BITS, p_bits);
 	}
@@ -234,7 +234,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		AL11.alBufferi(this.id, AL11.AL_CHANNELS, p_channels);
 	}
 
-	// Older `setData()` overloads. No longer used thanks to generics!:
+	// Older `setData()` overloads. No longer used due to problems with generics!:
 	/*
 	 * public void setData(int p_dataType, float[] p_data, int p_sampleRate) {
 	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
@@ -282,7 +282,6 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	 * 
 	 * }
 	 */
-
 	// endregion
 
 	public void dispose() {

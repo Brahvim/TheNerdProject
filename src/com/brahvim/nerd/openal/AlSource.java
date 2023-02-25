@@ -19,12 +19,40 @@ public class AlSource {
 	// region Fields.
 	public final static ArrayList<AlSource> sources = new ArrayList<>();
 
-	private int id;
+	private int id, pstate;
 	private NerdAl manager;
 	private AlBuffer<?> buffer;
 	// endregion
 
 	// region Constructors.
+	public AlSource(AlSource p_source) {
+		this.manager = p_source.manager;
+		this.id = AL11.alGenSources();
+
+		this.manager.checkAlErrors();
+		this.manager.checkAlcErrors();
+
+		// region Transfer properties over (hopefully, the JIT inlines!):
+		this.setBuffer(p_source.buffer);
+		this.setGain(p_source.getGain());
+		this.setMinGain(p_source.getMinGain());
+		this.setMaxGain(p_source.getMaxGain());
+		this.setRolloff(p_source.getRolloff());
+		this.setPosition(p_source.getPosition());
+		this.setVelocity(p_source.getVelocity());
+		this.setSourceType(p_source.getSourceType());
+		this.setOrientation(p_source.getOrientation());
+		this.setMaxDistance(p_source.getMaxDistance());
+		this.setSampleOffset(p_source.getSampleOffset());
+		this.setConeOuterGain(p_source.getConeOuterGain());
+		this.setConeOuterAngle(p_source.getConeOuterAngle());
+		this.setConeInnerAngle(p_source.getConeInnerAngle());
+		this.setPitchMultiplier(p_source.getPitchMultiplier());
+		this.setReferenceDistance(p_source.getReferenceDistance());
+		// endregion
+
+	}
+
 	public AlSource(NerdAl p_manager) {
 		this.manager = p_manager;
 		this.id = AL11.alGenSources();
@@ -37,17 +65,6 @@ public class AlSource {
 	public AlSource(NerdAl p_manager, AlBuffer<?> p_buffer) {
 		this(p_manager);
 		this.setBuffer(p_buffer);
-	}
-	// endregion
-
-	// region Get every source, ever!
-	/* `package` */ static ArrayList<AlSource> getEverySourceEverByReference() {
-		return AlSource.sources;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static ArrayList<AlSource> getEverySourceEver() {
-		return (ArrayList<AlSource>) AlSource.sources.clone();
 	}
 	// endregion
 
@@ -382,10 +399,6 @@ public class AlSource {
 	// endregion
 
 	// region Actual state management!
-	public void setSourceState(int p_alEnum, boolean p_value) {
-		this.setInt(p_alEnum, p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
-	}
-
 	public void play() {
 		AL11.alSourcePlay(this.id);
 	}
@@ -435,6 +448,18 @@ public class AlSource {
 		AL11.alDeleteSources(this.id);
 		this.manager.checkAlErrors();
 		this.manager.checkAlcErrors();
+	}
+
+	/* `package` */ void framelyCallback() {
+		this.pstate = this.getSourceState();
+
+		// "Device disconnection framely callback". <Sigh>.
+		// if (this.manager.getDeviceId() != )
+	}
+
+	/* `package` */ void deviceDisconnectionCallback() {
+		switch (this.pstate) {
+		}
 	}
 	// endregion
 

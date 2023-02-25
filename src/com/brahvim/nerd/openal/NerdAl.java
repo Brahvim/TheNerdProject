@@ -1,6 +1,7 @@
 package com.brahvim.nerd.openal;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -42,13 +43,13 @@ public class NerdAl {
 	// endregion
 
 	// region Fields.
-	private final ArrayList<AlBuffer<?>> deviceBuffers = new ArrayList<>();
 	private final ArrayList<AlSource> contextSources = new ArrayList<>();
+	private final ArrayList<AlBuffer<?>> deviceBuffers = new ArrayList<>();
 
-	private volatile AlDevice device;
-	private volatile AlContext context;
 	private ALCapabilities alCap;
 	private ALCCapabilities alCtxCap;
+	private /* `volatile` */ AlDevice device;
+	private /* `volatile` */ AlContext context;
 	// endregion
 
 	// region Constructors.
@@ -175,36 +176,12 @@ public class NerdAl {
 	}
 
 	public void setContext(AlContext p_ctx) {
-		if (ALC11.alcGetContextsDevice(p_ctx.getId()) != this.device.getId())
-			throw new AlException(ALC11.ALC_INVALID_CONTEXT);
-		this.context = p_ctx;
+		if (ALC11.alcGetContextsDevice(p_ctx.getId()) == this.device.getId())
+			this.context = p_ctx;
+		else
+			this.context = new AlContext(p_ctx);
 	}
 	// endregion
-	// endregion
-
-	// region [DEPRECATED] `using()` methods.
-	/*
-	 * 
-	 * public void usingDevice(NerdAl.DeviceUse p_use) {
-	 * synchronized (this.device) {
-	 * p_use.use(this.device);
-	 * }
-	 * }
-	 * 
-	 * public void usingContext(NerdAl.ContextUse p_use) {
-	 * synchronized (this.context) {
-	 * p_use.use(this.context);
-	 * }
-	 * }
-	 * 
-	 * public void usingContextAndDevice(NerdAl.DeviceAndContextUse p_use) {
-	 * synchronized (this.device) {
-	 * synchronized (this.context) {
-	 * p_use.use(this.device, this.context);
-	 * }
-	 * }
-	 * }
-	 */
 	// endregion
 
 	// region Error, and other checks.
@@ -265,13 +242,12 @@ public class NerdAl {
 	}
 
 	public void dispose() {
-		for (AlSource s : AlSource.getEverySourceEver()) {
+		for (AlSource s : AlSource.sources)
 			s.dispose();
-		}
 
-		for (AlBuffer<?> b : AlBuffer.getEveryBufferEver()) {
+		for (AlBuffer<?> b : AlBuffer.buffers)
 			b.dispose();
-		}
+
 		this.context.dispose();
 		this.device.dispose();
 	}
@@ -297,8 +273,52 @@ public class NerdAl {
 		this.device = new AlDevice(this);
 		this.checkAlcErrors();
 
+		// region Transferring device buffers:
+		AlBuffer<?>[] buffers = new AlBuffer<?>[this.deviceBuffers.size()];
+
+		for (int i = 0; i < buffers.length; i++) {
+			AlBuffer<?> b = this.deviceBuffers.get(i);
+			try {
+				buffers[i] = b.getClass()
+						.getConstructor(AlBuffer.class).newInstance(b);
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+
+		AlBuffer.buffers.clear();
+		this.deviceBuffers.clear();
+
+		for (AlBuffer<?> b : buffers)
+			this.deviceBuffers.add(b);
+		// endregion
+
+		// TODO Transfer context parameters.
+
 		this.context = new AlContext(p_ctx);
 		this.checkAlcErrors();
+
+		// region Transferring sources.
+		AlSource[] sources = new AlSource[this.contextSources.size()];
+		for (int i = 0; i < sources.length; i++)
+			sources[i] = new AlSource(this.contextSources.get(i));
+
+		AlSource.sources.clear();
+		this.contextSources.clear();
+
+		for (AlSource s : sources)
+			this.contextSources.add(s);
+		// endregion
 
 		// LWJGL objects:
 		this.alCtxCap = ALC.createCapabilities(this.device.getId());

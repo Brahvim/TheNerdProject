@@ -3,6 +3,7 @@ package com.brahvim.nerd_tests;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
 
@@ -10,6 +11,7 @@ public class App {
     /*
      * // TODO: Stuff OpenAL does on device disconnection!
      * // TODO: `EXTEfx` wrapper!!!
+     * // TODO: Don't forget - AL can record audio!
      * // TODO: Box2D and Bullet? :D?
      * // TODO: Multiple monitor support!
      * // TODO: Collision Algorithms for 3D space.
@@ -18,8 +20,8 @@ public class App {
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
-            // LoadeableClasses.TEST_SCENE_5.getLoadedClassAsScene();
-            LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();
+            TestScene4.class;
+    // LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();
 
     // region `App`'s *other* fields.
     public final static int BPM = 100,
@@ -31,8 +33,6 @@ public class App {
     // endregion
 
     public static void main(String[] p_args) {
-        // LoadeableClasses.loadClasses(); // Handle this yourself, sorry!
-
         // region Building the `Sketch`!
         App.sketchInstance = new NerdSketchBuilder()
                 .setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))

@@ -58,8 +58,15 @@ public class AlDevice {
 	public boolean disconnectionCheck() {
 		boolean connected = this.isConnected();
 
-		if (!connected)
-			this.manager.createAl(this.disconnectionCallback.onDisconnect());
+		if (!connected) {
+			this.disconnectionCallback.onDisconnect();
+			System.out.println("Creating a new device.");
+			this.manager.createAl(this.manager.getContext());
+		}
+
+		for (AlSource s : AlSource.sources) {
+			s.deviceDisconnectionCallback();
+		}
 
 		return connected;
 	}

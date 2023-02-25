@@ -27,6 +27,7 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 	@Override
 	public void setData(int p_dataType, ShortBuffer p_buffer, int p_sampleRate) {
 		super.data = p_buffer;
+		super.dataType = p_dataType;
 		AL11.alBufferData(super.id, p_dataType, p_buffer.array(), p_sampleRate);
 		super.manager.checkAlErrors();
 	}
@@ -71,8 +72,11 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 			}
 
 			// Give the OpenAL buffer the data:
+
 			AL11.alBufferData(super.id,
-					channelsBuffer.get() == 1 ? AL11.AL_FORMAT_MONO16 : AL11.AL_FORMAT_STEREO16,
+					super.dataType = channelsBuffer.get() == 1
+							? AL11.AL_FORMAT_MONO16
+							: AL11.AL_FORMAT_STEREO16,
 					rawAudioBuffer, sampleRateBuffer.get());
 
 			// We're done. Remove the previous two allocations.

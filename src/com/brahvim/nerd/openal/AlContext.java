@@ -32,8 +32,7 @@ public class AlContext {
 		this.buffers = p_ctx.getBuffers();
 
 		// Get the newer device's ID / handle:
-		this.deviceId = this.manager.getDeviceId();
-
+		this.deviceId = p_ctx.deviceId;
 		this.createCtx();
 	}
 	// endregion
