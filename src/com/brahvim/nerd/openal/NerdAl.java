@@ -244,12 +244,14 @@ public class NerdAl {
 
 		for (AlSource s : this.contextSources)
 			if (s.getScene() != this.SKETCH.getCurrentScene())
-				s.dispose();
+				// The source object is no longer in the JVM's memory either,
+				// delete the buffer, too! ¯\_(ツ)_/¯
+				s.dispose(true);
 	}
 
 	public void dispose() {
 		for (AlSource s : this.contextSources)
-			s.dispose();
+			s.dispose(false);
 
 		for (AlBuffer<?> b : this.deviceBuffers)
 			b.dispose();

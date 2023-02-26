@@ -453,8 +453,16 @@ public class AlSource {
 	}
 
 	public void dispose() {
+		this.dispose(false);
+	}
+
+	public void dispose(boolean p_alsoBuffer) {
 		if (this.hasDisposed)
 			return;
+
+		// TODO: MAKE `AssetLoaderOptions` (finally) and make buffers persistent :D
+		if (p_alsoBuffer)
+			this.buffer.dispose();
 
 		this.alMan.getContextSources().remove(this);
 		AL11.alDeleteSources(this.id);

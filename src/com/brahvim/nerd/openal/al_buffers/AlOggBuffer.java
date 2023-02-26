@@ -32,7 +32,7 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 		super.alMan.checkAlErrors();
 	}
 
-	@Override // STBVorbis needs to free memory!!!
+	@Override // Free the buffer (or not) :D
 	public void dispose() {
 		super.dispose();
 		LibCStdlib.free(super.data); // Yep, we literally made Java, C. "Welcome to JavaC!" :joy:
@@ -66,7 +66,7 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 					p_file.getCanonicalPath(), channelsBuffer, sampleRateBuffer);
 
 			if (rawAudioBuffer == null) {
-				//System.err.println("STB failed to load audio data!");
+				// System.err.println("STB failed to load audio data!");
 				MemoryStack.stackPop();
 				MemoryStack.stackPop();
 			}

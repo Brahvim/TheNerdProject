@@ -15,6 +15,7 @@ import org.lwjgl.stb.STBVorbis;
 import org.lwjgl.system.MemoryStack;
 
 public class AlBufferLoader {
+
 	public static ShortBuffer loadOgg(File p_file) {
 		try {
 			MemoryStack.stackPush();
