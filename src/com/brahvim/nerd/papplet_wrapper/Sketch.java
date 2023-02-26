@@ -437,9 +437,10 @@ public class Sketch extends PApplet {
 	// region Processing sketch workflow.
 	@Override
 	public void setup() {
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			this.dispose();
-		}));
+		// Causes a NPE in LWJGL. Yes, 'a':
+		// Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+		// this.dispose();
+		// }));
 
 		this.updateRatios();
 		super.surface.setTitle(this.NAME);
