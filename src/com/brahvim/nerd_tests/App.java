@@ -9,8 +9,9 @@ public class App {
 
     // TODOs!:
     /*
-     * // TODO: `EXTEfx` wrapper!!!
      * // TODO: Don't forget - AL can record audio!
+     * // TODO: Don't forget - AL can STREAM audio!
+     * // TODO: `EXTEfx` wrapper!!!
      * // TODO: Box2D and Bullet? :D?
      * // TODO: Multiple monitor support!
      * // TODO: Collision Algorithms for 3D space.
