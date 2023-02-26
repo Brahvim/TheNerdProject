@@ -105,7 +105,7 @@ public class SceneManager {
              * <br>
              * {@code true} by default!
              */
-            public volatile boolean onlyFirstPreload = true;
+            public volatile boolean onlyFirstPreload;
 
         }
 
