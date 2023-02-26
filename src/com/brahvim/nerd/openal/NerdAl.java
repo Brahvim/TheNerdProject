@@ -21,9 +21,9 @@ import com.brahvim.nerd.openal.al_exceptions.AlcException;
 import com.brahvim.nerd.openal.al_exceptions.NerdAbstractOpenAlException;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-public class NerdAl {
-	// TODO: Listener functions!
+import processing.core.PVector;
 
+public class NerdAl {
 	// region [DEPRECATED] Inner classes, interfaces and enums.
 	/*
 	 * 
@@ -66,7 +66,118 @@ public class NerdAl {
 	}
 	// endregion
 
+	// region Listener functions.
+	// region C-style OpenAL API functions.
+	// region C-style OpenAL getters.
+	public int getListenerInt(int p_alEnum) {
+		return AL11.alGetListeneri(p_alEnum);
+	}
+
+	public float getListenerFloat(int p_alEnum) {
+		return AL11.alGetListenerf(p_alEnum);
+	}
+
+	// Vectors in OpenAL are not large and can be allocated on the stack just fine.
+	public int[] getListenerIntVector(int p_alEnum, int p_vecSize) {
+		MemoryStack.stackPush();
+		IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
+		AL11.alGetListeneriv(p_alEnum, intBuffer);
+		MemoryStack.stackPop();
+
+		return intBuffer.array();
+	}
+
+	public float[] getListenerFloatVector(int p_alEnum, int p_vecSize) {
+		MemoryStack.stackPush();
+		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
+		AL11.alGetListenerfv(p_alEnum, floatBuffer);
+		MemoryStack.stackPop();
+
+		return floatBuffer.array();
+	}
+
+	public int[] getListenerIntTriplet(int p_alEnum) {
+		MemoryStack.stackPush();
+		IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
+		AL11.alGetListeneriv(p_alEnum, intBuffer);
+		MemoryStack.stackPop();
+
+		return intBuffer.array();
+	}
+
+	public /* `float[]` */ float[] getListenerFloatTriplet(int p_alEnum) {
+		MemoryStack.stackPush();
+		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
+		AL11.alGetListenerfv(p_alEnum, floatBuffer);
+		MemoryStack.stackPop();
+
+		return floatBuffer.array();
+		// return new PVector(floatBuffer.get(), floatBuffer.get(), floatBuffer.get());
+	}
+	// endregion
+
+	// region C-style OpenAL setters.
+	public void setListenerInt(int p_alEnum, int p_value) {
+		AL11.alListeneri(p_alEnum, p_value);
+		this.checkAlErrors();
+	}
+
+	public void setListenerFloat(int p_alEnum, float p_value) {
+		AL11.alListenerf(p_alEnum, p_value);
+		this.checkAlErrors();
+	}
+
+	public void setListenerIntVector(int p_alEnum, int... p_value) {
+		AL11.alListeneriv(p_alEnum, p_value);
+		this.checkAlErrors();
+	}
+
+	public void setListenerFloatVector(int p_alEnum, float... p_values) {
+		AL11.alListenerfv(p_alEnum, p_values);
+		this.checkAlErrors();
+	}
+
+	public void setListenerIntTriplet(int p_alEnum, int[] p_value) {
+		if (p_value.length != 3)
+			throw new IllegalArgumentException(
+					"`AlSource::setIntTriplet()` cannot take an array of size other than `3`!");
+
+		AL11.alListener3i(p_alEnum, p_value[0], p_value[1], p_value[2]);
+		this.checkAlErrors();
+	}
+
+	public void setListenerIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
+		AL11.alListener3i(p_alEnum, p_i1, p_i2, p_i3);
+		this.checkAlErrors();
+	}
+
+	public void setListenerFloatTriplet(int p_alEnum, float[] p_value) {
+		if (p_value.length != 3)
+			throw new IllegalArgumentException(
+					"`AlSource::setFloatTriplet()` cannot take an array of size other than `3`!");
+
+		AL11.alListener3f(p_alEnum, p_value[0], p_value[1], p_value[2]);
+		this.checkAlErrors();
+	}
+
+	public void setListenerFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
+		AL11.alListener3f(p_alEnum, p_f1, p_f2, p_f3);
+		this.checkAlErrors();
+	}
+
+	public void setListenerFloatTriplet(int p_alEnum, PVector p_value) {
+		AL11.alListener3f(p_alEnum, p_value.x, p_value.y, p_value.z);
+		this.checkAlErrors();
+	}
+	// endregion
+	// endregion
+
+	// region Listener getters.
+	
+	// endregion
+
 	// region Getters and setters!...
+	// Yes, there are no C-style setters.
 	// region C-style OpenAL getters.
 	public int getInt(int p_alEnum, int p_value) {
 		int toRet = AL11.alGetInteger(p_alEnum);
@@ -228,7 +339,7 @@ public class NerdAl {
 	}
 	// endregion
 
-	// region Loading.
+	// region Loading sources from disk.
 	public AlSource sourceFromOgg(File p_file) {
 		return new AlSource(this, new AlOggBuffer(this).loadFrom(p_file));
 	}
