@@ -11,6 +11,59 @@ import com.brahvim.nerd.openal.NerdAl;
 
 public class AlEffectSlot {
 
+	/*
+	 * let arr = [
+	 * "DENSITY",
+	 * "DIFFUSION",
+	 * "GAIN",
+	 * "GAINHF",
+	 * "GAINLF",
+	 * "DECAY_TIME",
+	 * "DECAY_HFRATIO",
+	 * "DECAY_LFRATIO",
+	 * "REFLECTIONS_GAIN",
+	 * "REFLECTIONS_DELAY",
+	 * "REFLECTIONS_PAN",
+	 * "LATE_REVERB_GAIN",
+	 * "LATE_REVERB_DELAY",
+	 * "LATE_REVERB_PAN",
+	 * "ECHO_TIME",
+	 * "ECHO_DEPTH",
+	 * "MODULATION_TIME",
+	 * "MODULATION_DEPTH",
+	 * "AIR_ABSORPTION_GAINHF",
+	 * "HFREFERENCE",
+	 * "ROOM_ROLLOFF_FACTOR",
+	 * "DECAYHF_LIMIT"
+	 * ];
+	 * 
+	 * let camelCaseArr = [];
+	 * 
+	 * for (let i = 0; i < arr.length; i++) {
+	 * let s = arr[i];
+	 * let split = s.split('_');
+	 * 
+	 * if (split.length == 1)
+	 * camelCaseArr[i] = s.toLowerCase();
+	 * continue;
+	 * 
+	 * let result;
+	 * for (let j = 0; j < split.length; j++) {
+	 * let t = split[j].toLowerCase();
+	 * result = '';
+	 * 
+	 * if (j > 0)
+	 * result.charAt(1).toUpperCase()
+	 * .concat(t.substring(1, t.length));
+	 * }
+	 * }
+	 * 
+	 * for (let i = 0; i < arr.length; i++)
+	 * console.log(`public void set${camelCaseArr[i]}(float p_value) {
+	 * super.setFloat(EXTEfx.AL_${"REVERB"}_${arr[i]}, p_value);
+	 * }`);
+	 */
+
 	// region Fields.
 	private int id;
 	private NerdAl alMan;
