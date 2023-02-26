@@ -9,7 +9,6 @@ public class App {
 
     // TODOs!:
     /*
-     * // TODO: Stuff OpenAL does on device disconnection!
      * // TODO: `EXTEfx` wrapper!!!
      * // TODO: Don't forget - AL can record audio!
      * // TODO: Box2D and Bullet? :D?

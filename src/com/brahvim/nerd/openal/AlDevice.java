@@ -6,6 +6,7 @@ import java.util.List;
 import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.ALUtil;
 import org.lwjgl.openal.EXTDisconnect;
+import org.lwjgl.openal.SOFTReopenDevice;
 import org.lwjgl.system.MemoryStack;
 
 public class AlDevice {
@@ -51,6 +52,7 @@ public class AlDevice {
 	}
 	// endregion
 
+	// region Connection status.
 	public void setDisconnectionCallback(AlDevice.DisconnectionCallback p_callback) {
 		this.disconnectionCallback = p_callback;
 	}
@@ -59,17 +61,26 @@ public class AlDevice {
 		boolean connected = this.isConnected();
 
 		if (!connected) {
-			this.disconnectionCallback.onDisconnect();
-			System.out.println("Creating a new device.");
-			this.manager.createAl(this.manager.getContext());
-		}
-
-		for (AlSource s : AlSource.sources) {
-			s.deviceDisconnectionCallback();
+			SOFTReopenDevice.alcReopenDeviceSOFT(
+					this.id,
+					this.disconnectionCallback.onDisconnect(),
+					new int[] { 0 });
 		}
 
 		return connected;
 	}
+
+	// This uses device handles and not device names. Thus, no `static` version.
+	public boolean isConnected() {
+		// No idea why this bad stack read works.
+		MemoryStack.stackPush();
+		IntBuffer buffer = MemoryStack.stackMallocInt(1); // Stack allocation, "should" be "faster".
+		ALC11.alcGetIntegerv(this.id, EXTDisconnect.ALC_CONNECTED, buffer);
+		MemoryStack.stackPop();
+
+		return buffer.get() == 1;
+	}
+	// endregion
 
 	// region Getters.
 	public long getId() {
@@ -96,17 +107,6 @@ public class AlDevice {
 
 	public boolean isDefault() {
 		return this.isDefaultDevice;
-	}
-
-	// This uses device handles and not device names. Thus, no `static` version.
-	public boolean isConnected() {
-		// No idea why this bad stack read works.
-		MemoryStack.stackPush();
-		IntBuffer buffer = MemoryStack.stackMallocInt(1); // Stack allocation, "should" be "faster".
-		ALC11.alcGetIntegerv(this.id, EXTDisconnect.ALC_CONNECTED, buffer);
-		MemoryStack.stackPop();
-
-		return buffer.get() == 1;
 	}
 
 }
