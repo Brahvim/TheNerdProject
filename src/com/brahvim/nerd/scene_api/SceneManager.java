@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
+import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class SceneManager {
@@ -105,7 +106,7 @@ public class SceneManager {
              * <br>
              * {@code true} by default!
              */
-            public volatile boolean onlyFirstPreload;
+            public volatile boolean onlyFirstPreload = true;
 
         }
 
@@ -608,6 +609,7 @@ public class SceneManager {
 
         // If this scene has never been loaded up before, preload the data!
         if (this.timesGivenSceneWasLoaded(SCENE_CLASS) == 0) {
+            // p_scene.ASSETS.clear();
             p_scene.runPreload();
             this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
             return;
@@ -616,10 +618,14 @@ public class SceneManager {
         // region Preloads other than the first one.
         // You're allowed to preload only once?
         // Don't re-load, just use the cache!:
-        if (this.SETTINGS.ON_SCENE_PRELOAD.onlyFirstPreload)
-            p_scene.ASSETS = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS;
-        else // Else, since you're supposed to run `preload()` every time, do that!:
+        if (this.SETTINGS.ON_SCENE_PRELOAD.onlyFirstPreload) {
+            final AssetManager a = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS;
+            p_scene.ASSETS = a;
+        } else { // Else, since you're supposed to run `preload()` every time, do that!:
+            p_scene.ASSETS.clear();
             p_scene.runPreload();
+            this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
+        }
         // endregion
 
     }
@@ -747,8 +753,9 @@ public class SceneManager {
             // Exit the scene, and nullify the cache.
             this.currScene.runSceneExited();
 
-            if (!this.hasCached(this.currSceneClass))
-                this.currScene.ASSETS.clear();
+            // Do not clear! Theyr're cached!
+            // if (!this.hasCached(this.currSceneClass))
+            // this.currScene.ASSETS.clear();
 
             SceneManager.SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
             cache.nullifyCache();
