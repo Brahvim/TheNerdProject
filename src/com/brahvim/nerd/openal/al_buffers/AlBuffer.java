@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.ALC11;
@@ -17,10 +16,8 @@ import processing.core.PVector;
 public abstract class AlBuffer<BufferT extends Buffer> {
 
 	// region Fields.
-	public final static ArrayList<AlBuffer<?>> buffers = new ArrayList<>();
-
-	// LWJGL does not provide `AL_DATA` anywhere, :/
-	// Storing it here for access.
+	// No OpenAL implementation provides `AL_DATA`.
+	// Storing it here!
 	protected BufferT data;
 
 	protected NerdAl manager;
@@ -286,7 +283,6 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 
 	public void dispose() {
 		this.manager.getDeviceBuffers().remove(this);
-		AlBuffer.buffers.remove(this);
 		AL11.alDeleteBuffers(this.id);
 		this.manager.checkAlErrors();
 		this.manager.checkAlcErrors();

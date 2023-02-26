@@ -1,7 +1,6 @@
 package com.brahvim.nerd.openal;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -59,10 +58,6 @@ public class NerdAl {
 
 	public NerdAl(String p_deviceName) {
 		this.createAl(p_deviceName);
-	}
-
-	public NerdAl(AlContext p_ctx) {
-		this.createAl(p_ctx);
 	}
 	// endregion
 
@@ -242,10 +237,10 @@ public class NerdAl {
 	}
 
 	public void dispose() {
-		for (AlSource s : AlSource.sources)
+		for (AlSource s : this.contextSources)
 			s.dispose();
 
-		for (AlBuffer<?> b : AlBuffer.buffers)
+		for (AlBuffer<?> b : this.deviceBuffers)
 			b.dispose();
 
 		this.context.dispose();
@@ -259,66 +254,6 @@ public class NerdAl {
 
 		this.context = new AlContext(this);
 		this.checkAlcErrors();
-
-		// LWJGL objects:
-		this.alCtxCap = ALC.createCapabilities(this.device.getId());
-		this.alCap = AL.createCapabilities(this.alCtxCap);
-
-		this.checkAlErrors();
-		this.checkAlcErrors();
-	}
-
-	// Copies the previous context's buffers and reuses them here.
-	protected void createAl(AlContext p_ctx) {
-		this.device = new AlDevice(this);
-		this.checkAlcErrors();
-
-		// region Transferring device buffers:
-		AlBuffer<?>[] buffers = new AlBuffer<?>[this.deviceBuffers.size()];
-
-		for (int i = 0; i < buffers.length; i++) {
-			AlBuffer<?> b = this.deviceBuffers.get(i);
-			try {
-				buffers[i] = b.getClass()
-						.getConstructor(AlBuffer.class).newInstance(b);
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			}
-		}
-
-		AlBuffer.buffers.clear();
-		this.deviceBuffers.clear();
-
-		for (AlBuffer<?> b : buffers)
-			this.deviceBuffers.add(b);
-		// endregion
-
-		// TODO Transfer context parameters.
-
-		this.context = new AlContext(p_ctx);
-		this.checkAlcErrors();
-
-		// region Transferring sources.
-		AlSource[] sources = new AlSource[this.contextSources.size()];
-		for (int i = 0; i < sources.length; i++)
-			sources[i] = new AlSource(this.contextSources.get(i));
-
-		AlSource.sources.clear();
-		this.contextSources.clear();
-
-		for (AlSource s : sources)
-			this.contextSources.add(s);
-		// endregion
 
 		// LWJGL objects:
 		this.alCtxCap = ALC.createCapabilities(this.device.getId());

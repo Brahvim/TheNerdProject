@@ -8,82 +8,20 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class AssetManager {
 
-    // region Class `AssetManager.AssetKey`.
-    public class AssetKey extends NerdKey {
-        public final Sketch SKETCH;
-
-        private AssetKey(Sketch p_sketch) {
-            this.SKETCH = p_sketch;
-        }
-
-        public boolean isFor(Class<?> p_class) {
-            // Putting `p_class` in the argument eliminates the need for a `null` check.
-            return NerdAsset.class.equals(p_class);
-        }
-    }
-    // endregion
-
     // region Fields.
     private final Sketch SKETCH;
-    private final AssetManKey ASSET_MAN_KEY;
     // private final AssetManager.AssetKey ASSET_KEY;
     private final HashSet<NerdAsset<?>> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
     // Do we even *need* assets in any scene from the very beginning?
     // endregion
 
-    // region Constructors.
-    @SuppressWarnings("unused")
-    private AssetManager() {
-        // this.ASSET_KEY = null;
-        this.SKETCH = null;
-        this.ASSET_MAN_KEY = null;
+    public AssetManager(Sketch p_key) {
+        this.SKETCH = p_key;
     }
-
-    public AssetManager(AssetManKey p_key) {
-        this.verifyKey(p_key);
-
-        this.SKETCH = p_key.SKETCH;
-        this.ASSET_MAN_KEY = p_key;
-        // this.ASSET_KEY = new AssetManager.AssetKey(p_key.SKETCH);
-    }
-    // endregion
-
-    private boolean verifyKey(AssetManKey p_key) {
-        if (this.ASSET_MAN_KEY != null)
-            return p_key == this.ASSET_MAN_KEY;
-
-        if (p_key == null) {
-            throw new IllegalArgumentException("""
-                    \"Keys cannot be `null`!\" - a `NerdAssetManager` instance.""");
-        } else if (p_key.isUsed()) {
-            throw new IllegalArgumentException("""
-                    \"That is a used key!\" - a `NerdAssetManager` instance.""");
-        } else if (!p_key.isFor(this.getClass()))
-            throw new IllegalArgumentException("""
-                    That key is not for a `NerdAssetManager`!""");
-
-        p_key.use();
-        return true;
-    }
-
-    /*
-     * private NerdAssetManager add(NerdAsset p_asset) {
-     * this.ASSETS.add(p_asset);
-     * return this;
-     * }
-     * 
-     * private NerdAssetManager add(NerdAsset... p_assets) {
-     * for (NerdAsset a : p_assets)
-     * this.ASSETS.add(a);
-     * 
-     * return this;
-     * }
-     */
 
     // region Asset operations.
     // region `makeAsset()` overloads.
@@ -120,6 +58,21 @@ public class AssetManager {
     public <T> AssetManager add(AssetType<? extends T> p_type, String p_path) {
         return this.add(p_type, p_path, (Object[]) null);
     }
+
+    // Old code:
+    /*
+     * private NerdAssetManager add(NerdAsset p_asset) {
+     * this.ASSETS.add(p_asset);
+     * return this;
+     * }
+     * 
+     * private NerdAssetManager add(NerdAsset... p_assets) {
+     * for (NerdAsset a : p_assets)
+     * this.ASSETS.add(a);
+     * 
+     * return this;
+     * }
+     */
     // endregion
 
     /**
@@ -159,6 +112,11 @@ public class AssetManager {
     public void clear() {
         this.ASSETS.clear();
     }
+
+    public void updatePreviousLoadState() {
+        for (NerdAsset<?> a : this.ASSETS)
+            a.updatePreviousLoadState();
+    }
     // endregion
 
     // region Load state queries.
@@ -185,13 +143,6 @@ public class AssetManager {
     public void ensureCompletion() {
         while (this.hasCompleted())
             ;
-    }
-
-    public void updatePreviousLoadState(AssetManKey p_key) {
-        this.verifyKey(p_key);
-
-        for (NerdAsset<?> a : this.ASSETS)
-            a.updatePreviousLoadState(/* this.ASSET_KEY */);
     }
     // endregion
 

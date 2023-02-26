@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.brahvim.nerd.io.asset_loader.AssetManKey;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -21,7 +20,8 @@ public class SceneManager {
      * ...of course, it's extra code that you have to write out, and..
      * 
      * I learnt that `protected` fields can also be accessed by any class in the
-     * same package as the declaring class. If somebody were to construct a
+     * same package as the declaring class (yes, specifying no modifier does that,
+     * but apparently `protected` does, too!). If somebody were to construct a
      * `NerdScene` instance (for example, by using a `static` method in their
      * subclass, which could access the constructor because it's `protected`),
      * they won't be able to initialize important fields like `STATE` and `ASSETS`
@@ -58,6 +58,9 @@ public class SceneManager {
      */
     // endregion
 
+    // My code style: If it is an inner class, also write the name of the outer
+    // class. I do this to prevent namespace pollution.
+
     /**
      * Stores scene data while a scene is not active.
      */
@@ -72,13 +75,11 @@ public class SceneManager {
         private int timesLoaded = 0;
         // endregion
 
-        // region Constructor[s].
         private SceneCache(Constructor<? extends NerdScene> p_constructor, NerdScene p_cachedReference) {
             this.CONSTRUCTOR = p_constructor;
             this.cachedReference = p_cachedReference;
             this.STATE = this.cachedReference.STATE;
         }
-        // endregion
 
         // region Cache queries.
         public boolean cacheIsNull() {
@@ -104,7 +105,7 @@ public class SceneManager {
              * <br>
              * {@code true} by default!
              */
-            public volatile boolean moreThanOnePreload = true;
+            public volatile boolean onlyFirstPreload = true;
 
         }
 
@@ -132,9 +133,9 @@ public class SceneManager {
 
         }
 
-        public final OnSceneSwitch ON_SCENE_SWITCH = new OnSceneSwitch();
+        public final SceneManager.SceneManagerSettings.OnSceneSwitch ON_SCENE_SWITCH = new OnSceneSwitch();
 
-        public final OnScenePreload ON_SCENE_PRELOAD = new OnScenePreload();
+        public final SceneManager.SceneManagerSettings.OnScenePreload ON_SCENE_PRELOAD = new OnScenePreload();
 
     }
     // endregion
@@ -157,8 +158,9 @@ public class SceneManager {
      * does no optimization till the first scene switch. All scene switches after
      * that the initial should be fast enough!
      */
-    private final HashMap<Class<? extends NerdScene>, SceneManager.SceneCache> SCENE_CLASS_TO_CACHE = new HashMap<>(2);
-    private final AssetManKey PERSISTENT_ASSET_MAN_KEY;
+    private final HashMap<Class<? extends NerdScene>, SceneManager.SceneCache>
+    //
+    SCENE_CLASS_TO_CACHE = new HashMap<>(2);
     private final Sketch SKETCH;
 
     // Notes on some strange (useless? Useful?!) idea.
@@ -191,11 +193,10 @@ public class SceneManager {
         this(p_sketch, new SceneManager.SceneManagerSettings());
     }
 
-    public SceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
+    public SceneManager(Sketch p_sketch, SceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
         this.SETTINGS = p_settings;
-        this.PERSISTENT_ASSET_MAN_KEY = new AssetManKey(p_sketch);
-        this.PERSISTENT_ASSETS = new AssetManager(this.PERSISTENT_ASSET_MAN_KEY);
+        this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
 
         this.initSceneListeners();
     }
@@ -402,7 +403,7 @@ public class SceneManager {
         return this.currScene;
     }
 
-    public SceneManagerSettings getManagerSettings() {
+    public SceneManager.SceneManagerSettings getManagerSettings() {
         return this.SETTINGS;
     }
 
@@ -461,7 +462,7 @@ public class SceneManager {
 
     public void post() {
         if (this.PERSISTENT_ASSETS != null)
-            this.PERSISTENT_ASSETS.updatePreviousLoadState(this.PERSISTENT_ASSET_MAN_KEY);
+            this.PERSISTENT_ASSETS.updatePreviousLoadState();
 
         if (this.currScene != null)
             this.currScene.runPost();
@@ -489,13 +490,12 @@ public class SceneManager {
         if (this.givenSceneRanPreload(p_sceneClass))
             return;
 
-        // TODO: Don't make a new thread with a chance of quitting right away...?
         Thread thread = new Thread(() -> {
             // Lambdas allow for `this!:
             this.loadSceneAssets(p_sceneClass);
         });
 
-        thread.setName("AssetLoader_" + this.getClass().getSimpleName());
+        thread.setName("NerdAssetLoader_" + this.getClass().getSimpleName());
         thread.start();
     }
 
@@ -593,39 +593,34 @@ public class SceneManager {
 
     // region `private` `NerdScene` operations.
     private boolean givenSceneRanPreload(Class<? extends NerdScene> p_sceneClass) {
-        return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference.hasCompletedPreload();
+        final NerdScene SCENE_CACHE = this.SCENE_CLASS_TO_CACHE
+                .get(p_sceneClass).cachedReference;
+
+        return SCENE_CACHE == null ? false : SCENE_CACHE.hasCompletedPreload();
+
     }
 
     private void loadSceneAssets(NerdScene p_scene) {
         if (p_scene == null)
             return;
 
-        // Older logic (re-loads each time a `NerdScene` instance is built):
-        /*
-         * if (p_scene.hasCompletedPreload())
-         * return;
-         * p_scene.runPreload();
-         */
+        final Class<? extends NerdScene> SCENE_CLASS = p_scene.getClass();
 
-        // Newer logic (supports both!):
-
-        // If you're told to load each time, do that instead!:
-        if (this.SETTINGS.ON_SCENE_PRELOAD.moreThanOnePreload) {
-            if (p_scene.hasCompletedPreload())
-                return;
+        // If this scene has never been loaded up before, preload the data!
+        if (this.timesGivenSceneWasLoaded(SCENE_CLASS) == 0) {
             p_scene.runPreload();
-
-        } else { // If you're allowed to load only once per scene,
-            final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE
-                    .get(p_scene.getClass());
-
-            // ...And if you're loading another time,
-            if (SCENE_CACHE.timesLoaded == 0) {
-                p_scene.runPreload(); // Just load the data in.
-                SCENE_CACHE.ASSETS = p_scene.ASSETS;
-            } else // Else, don't re-load, just use the cache!
-                p_scene.ASSETS = SCENE_CACHE.ASSETS;
+            this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
+            return;
         }
+
+        // region Preloads other than the first one.
+        // You're allowed to preload only once?
+        // Don't re-load, just use the cache!:
+        if (this.SETTINGS.ON_SCENE_PRELOAD.onlyFirstPreload)
+            p_scene.ASSETS = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS;
+        else // Else, since you're supposed to run `preload()` every time, do that!:
+            p_scene.runPreload();
+        // endregion
 
     }
 
@@ -681,6 +676,7 @@ public class SceneManager {
     private NerdScene constructScene(Constructor<? extends NerdScene> p_sceneConstructor) {
         NerdScene toRet = null;
 
+        // region Get an instance.
         try {
             toRet = (NerdScene) p_sceneConstructor.newInstance();
         } catch (InstantiationException e) {
@@ -692,18 +688,17 @@ public class SceneManager {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+        // endregion
 
         // region Initialize it!
         final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
         final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS);
-        final AssetManKey RETURNED_SCENE_ASSET_MANAGER_KEY = new AssetManKey(this.SKETCH);
 
         // Initialize fields as if this was a part of the construction.
         toRet.MANAGER = this;
         toRet.SKETCH = this.SKETCH;
         toRet.CAMERA = this.SKETCH.getCurrentCamera();
-        // toRet.setAssetManagerKey(RETURNED_SCENE_ASSET_MANAGER_KEY);
-        toRet.ASSETS = new AssetManager(RETURNED_SCENE_ASSET_MANAGER_KEY); // Is this actually a good idea?
+        toRet.ASSETS = new AssetManager(this.SKETCH); // Is this actually a good idea?
 
         // If this is the first time we're constructing this scene, ensure it has a
         // cache and a saved state!
@@ -711,9 +706,8 @@ public class SceneManager {
             toRet.STATE = new SceneState();
             this.SCENE_CLASS_TO_CACHE.put(SCENE_CLASS,
                     new SceneManager.SceneCache(p_sceneConstructor, toRet));
-        } else {
+        } else
             toRet.STATE = SCENE_CACHE.STATE;
-        }
 
         if (SCENE_CACHE != null)
             SCENE_CACHE.timesLoaded++;

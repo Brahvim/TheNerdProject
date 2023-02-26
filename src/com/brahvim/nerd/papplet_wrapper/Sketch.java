@@ -295,22 +295,22 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
-	// region `private` ~~/ `protected`~~ fields.
-	private final int ANTI_ALIASING;
-	private final Unprojector UNPROJECTOR;
+	// region `protected` ~~/ `protected`~~ fields.
+	protected final int ANTI_ALIASING;
+	protected final Unprojector UNPROJECTOR;
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
-	private final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
+	protected final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
 
-	private GraphicsDevice previousMonitor, currentMonitor;
-	private NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
-	private SceneManager sceneMan; // Don't use static initialization for this..?
+	protected GraphicsDevice previousMonitor, currentMonitor;
+	protected NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
+	protected SceneManager sceneMan; // Don't use static initialization for this..?
 
 	// region Listeners!
-	private final SketchInsideListener EXIT_LISTENER, DISPOSAL_LISTENER, SETUP_LISTENER;
-	private final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
-	private final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
-	private final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
-	private final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
+	protected final SketchInsideListener EXIT_LISTENER, DISPOSAL_LISTENER, SETUP_LISTENER;
+	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
 	// endregion
 	// endregion
 
@@ -823,7 +823,7 @@ public class Sketch extends PApplet {
 		// (Well, changing the display does NOT effect those variables in any way :|)
 	}
 
-	private void framelyWindowSetup() {
+	protected void framelyWindowSetup() {
 		switch (this.RENDERER) {
 			case PConstants.JAVA2D:
 				// Fullscreen?
@@ -1334,7 +1334,7 @@ public class Sketch extends PApplet {
 		this.alphaBgImplRect();
 	}
 
-	private void alphaBgImplRect() {
+	protected void alphaBgImplRect() {
 		// Removing this will not display the previous camera's view,
 		// but still show clipping:
 		super.camera();
@@ -1755,7 +1755,7 @@ public class Sketch extends PApplet {
 		// Listener for `PApplet::keyPressed()`, `PApplet::keyReleased()`
 		// and `PApplet::keyTyped()`:
 		panel.addKeyListener(new KeyAdapter() {
-			private boolean sketchExited;
+			protected boolean sketchExited;
 
 			@Override
 			public void keyTyped(KeyEvent p_keyEvent) {
@@ -1801,7 +1801,7 @@ public class Sketch extends PApplet {
 
 	// Used by `Sketch::createSketchPanel()`:
 	// ~~Should've made a method-class for this.~~
-	private void updateSketchMouse() {
+	protected void updateSketchMouse() {
 		Point mousePoint = MouseInfo.getPointerInfo().getLocation();
 		super.mouseX = mousePoint.x - this.sketchFrame.getLocation().x;
 		super.mouseY = mousePoint.y - this.sketchFrame.getLocation().y;
