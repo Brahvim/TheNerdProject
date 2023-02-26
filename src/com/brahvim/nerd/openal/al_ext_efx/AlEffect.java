@@ -65,7 +65,7 @@ public abstract class AlEffect {
 		return buffer.array();
 	}
 
-	public float getFloat(int p_alEnum, float p_value) {
+	public float getFloat(int p_alEnum) {
 		MemoryStack.stackPush();
 		FloatBuffer buffer = MemoryStack.stackMallocFloat(1);
 
