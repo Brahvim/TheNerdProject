@@ -34,19 +34,28 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        System.out.println("TestScene4.setup(), " + SCENE.getTimesLoaded());
+        System.out.printf("`TestScene4.setup()` here, I was called `%d` times!\n",
+                SCENE.getTimesLoaded());
+
+        this.rubberDuck = new AlSource(SKETCH.AL, ASSETS.get("RUBBER DUCK").getData());
+        this.rubberDuck.setGain(0.1f);
 
         // Loaded this scene for the first time? Do this!:
         if (SCENE.getTimesLoaded() == 0) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();
+        } else {
+            this.rubberDuck.setPosition(
+                    0.01f * (SKETCH.mouseX - SKETCH.cx),
+                    0,
+                    0.01f * (SKETCH.mouseY - SKETCH.cy));
+            if (!this.rubberDuck.isPlaying())
+                this.rubberDuck.play();
         }
 
         this.nerd = this.ASSETS.get("sunglass_nerd").getData();
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
-
-        this.rubberDuck = new AlSource(SKETCH.AL, ASSETS.get("RUBBER DUCK").getData());
 
         SKETCH.noStroke();
         SKETCH.textureWrap(PConstants.REPEAT);
@@ -55,12 +64,12 @@ public class TestScene4 extends NerdScene {
         this.ncx = this.nerd.width * 0.5f;
         this.ncy = this.nerd.height * 0.5f;
 
-        this.rubberDuck.setGain(0.1f);
     }
 
     @Override
     protected void draw() {
         SKETCH.background(0);
+
         SKETCH.translate(-SKETCH.cx, -SKETCH.cy);
 
         this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);
@@ -106,12 +115,6 @@ public class TestScene4 extends NerdScene {
     // region Events.
     @Override
     public void mouseClicked() {
-        if (!this.rubberDuck.isPlaying()) {
-            this.rubberDuck.setPosition(
-                    SKETCH.mouseX, SKETCH.mouseY, SKETCH.random(5600));
-            this.rubberDuck.play();
-        }
-
         MANAGER.restartScene();
     }
 

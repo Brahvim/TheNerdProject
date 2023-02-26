@@ -132,7 +132,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		this.alMan.checkAlErrors();
 	}
 
-	public void setIntTriplet(int p_alEnum, int[] p_value) {
+	public void setIntTriplet(int p_alEnum, int... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`alBuffer::setIntTriplet()` cannot take an array of size other than `3`!");
@@ -146,7 +146,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		this.alMan.checkAlErrors();
 	}
 
-	public void setFloatTriplet(int p_alEnum, float[] p_value) {
+	public void setFloatTriplet(int p_alEnum, float... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`alBuffer::setFloatTriplet()` cannot take an array of size other than `3`!");

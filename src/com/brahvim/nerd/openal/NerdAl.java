@@ -136,7 +136,7 @@ public class NerdAl {
 		this.checkAlErrors();
 	}
 
-	public void setListenerIntTriplet(int p_alEnum, int[] p_value) {
+	public void setListenerIntTriplet(int p_alEnum, int... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`AlSource::setIntTriplet()` cannot take an array of size other than `3`!");
@@ -150,7 +150,7 @@ public class NerdAl {
 		this.checkAlErrors();
 	}
 
-	public void setListenerFloatTriplet(int p_alEnum, float[] p_value) {
+	public void setListenerFloatTriplet(int p_alEnum, float... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`AlSource::setFloatTriplet()` cannot take an array of size other than `3`!");
@@ -406,12 +406,6 @@ public class NerdAl {
 
 	public void framelyCallback() {
 		this.device.disconnectionCheck();
-
-		for (AlSource s : this.contextSources)
-			if (s.getScene() != this.SKETCH.getCurrentScene())
-				// The source object is no longer in the JVM's memory either,
-				// delete the buffer, too! ¯\_(ツ)_/¯
-				s.dispose(true);
 	}
 
 	public void dispose() {

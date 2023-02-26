@@ -494,9 +494,6 @@ public class Sketch extends PApplet {
 		if (this.USES_OPENGL)
 			this.pgl = super.beginPGL();
 
-		if (this.AL != null)
-			this.AL.framelyCallback();
-
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == super.width || this.pheight == super.height)) {
 			this.updateRatios();
@@ -571,6 +568,9 @@ public class Sketch extends PApplet {
 	public void post() {
 		if (this.USES_OPENGL)
 			super.endPGL();
+
+		if (this.AL != null)
+			this.AL.framelyCallback();
 
 		this.framelyWindowSetup();
 
@@ -793,11 +793,6 @@ public class Sketch extends PApplet {
 
 	// region Utilities!~
 	// region Ah yes, GETTERS AND SETTERS. Even here!
-	public NerdScene getCurrentScene() {
-		// return this.currentScene;
-		return this.sceneMan.getCurrentScene();
-	}
-
 	public SceneManager getSceneManager() {
 		return this.sceneMan;
 	}

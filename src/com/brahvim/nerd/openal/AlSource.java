@@ -33,6 +33,8 @@ public class AlSource {
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 
+		this.alMan.getContextSources().add(this);
+
 		// region Transfer properties over (hopefully, the JIT inlines!):
 		this.setBuffer(p_source.buffer);
 		this.setGain(p_source.getGain());
@@ -57,11 +59,11 @@ public class AlSource {
 	public AlSource(NerdAl p_manager) {
 		this.alMan = p_manager;
 		this.id = AL11.alGenSources();
+		this.alMan.getContextSources().add(this);
 		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
 
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
-		this.setInt(AL11.AL_SOURCE_TYPE, AL11.AL_STATIC);
 	}
 
 	public AlSource(NerdAl p_manager, AlBuffer<?> p_buffer) {
@@ -155,7 +157,7 @@ public class AlSource {
 		this.alMan.checkAlErrors();
 	}
 
-	public void setIntTriplet(int p_alEnum, int[] p_value) {
+	public void setIntTriplet(int p_alEnum, int... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`AlSource::setIntTriplet()` cannot take an array of size other than `3`!");
@@ -169,7 +171,7 @@ public class AlSource {
 		this.alMan.checkAlErrors();
 	}
 
-	public void setFloatTriplet(int p_alEnum, float[] p_value) {
+	public void setFloatTriplet(int p_alEnum, float... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`AlSource::setFloatTriplet()` cannot take an array of size other than `3`!");
@@ -196,6 +198,10 @@ public class AlSource {
 
 	public boolean isDisposed() {
 		return this.hasDisposed;
+	}
+
+	public int getId() {
+		return this.id;
 	}
 
 	// region `int` getters.
@@ -414,8 +420,7 @@ public class AlSource {
 	}
 
 	public void loop() {
-		this.setInt(AL11.AL_LOOPING, AL11.AL_TRUE);
-		this.play();
+		this.loop(true);
 	}
 
 	public void loop(boolean p_value) {

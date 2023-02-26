@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.lwjgl.openal.ALC11;
 
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
-import com.brahvim.nerd.openal.al_exceptions.AlExtException;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
 
 public class AlContext {
@@ -80,11 +79,8 @@ public class AlContext {
 
 		if (this.id == 0 || !ALC11.alcMakeContextCurrent(this.id)) {
 			this.dispose();
-			throw new RuntimeException();
+			this.checkAlcErrors();
 		}
-
-		if (!ALC11.alcIsExtensionPresent(this.deviceId, "ALC_EXT_disconnect"))
-			throw new AlExtException("ALC_EXT_disconnect");
 
 	}
 

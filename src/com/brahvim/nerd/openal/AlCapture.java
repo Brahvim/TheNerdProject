@@ -90,6 +90,7 @@ public class AlCapture {
 
 				// region Check if the device gets disconnected (cause of `ALC_INVALID_DEVICE`):
 				try {
+					this.alMan.checkAlErrors();
 					this.alMan.checkAlcErrors();
 				} catch (Exception e) {
 					deviceGotRemoved = true;
