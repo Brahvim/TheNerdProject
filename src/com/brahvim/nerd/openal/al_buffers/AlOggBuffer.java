@@ -25,10 +25,10 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 	// endregion
 
 	@Override
-	public void setData(int p_dataType, ShortBuffer p_buffer, int p_sampleRate) {
+	public void setData(int p_format, ShortBuffer p_buffer, int p_sampleRate) {
 		super.data = p_buffer;
-		super.dataType = p_dataType;
-		AL11.alBufferData(super.id, p_dataType, p_buffer.array(), p_sampleRate);
+		super.dataType = p_format;
+		AL11.alBufferData(super.id, p_format, p_buffer.array(), p_sampleRate);
 		super.alMan.checkAlErrors();
 	}
 

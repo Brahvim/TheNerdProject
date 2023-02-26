@@ -39,7 +39,7 @@ public class AlContext {
 	public int checkAlcErrors() throws AlcException {
 		int alcError = ALC11.alcGetError(this.deviceId);
 		if (alcError != 0)
-			throw new AlcException(alcError);
+			throw new AlcException(this.deviceId, alcError);
 
 		return alcError;
 	}
@@ -87,4 +87,5 @@ public class AlContext {
 			throw new AlExtException("ALC_EXT_disconnect");
 
 	}
+
 }

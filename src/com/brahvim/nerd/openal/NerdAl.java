@@ -18,9 +18,11 @@ import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlException;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
+import com.brahvim.nerd.openal.al_exceptions.NerdAbstractOpenAlException;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class NerdAl {
+	// TODO: Listener functions!
 
 	// region [DEPRECATED] Inner classes, interfaces and enums.
 	/*
@@ -195,9 +197,14 @@ public class NerdAl {
 		return AL11.alIsBuffer(p_id);
 	}
 
+	@Deprecated
 	public static int errorStringToCode(String p_errorString) {
-		return AL11.alGetEnumValue(p_errorString);
-		// .split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]);
+		return AL11.alGetEnumValue(p_errorString
+				.split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]);
+	}
+
+	public static int errorStringToCode(NerdAbstractOpenAlException p_exception) {
+		return AL11.alGetEnumValue(p_exception.getAlErrorString());
 	}
 
 	public int checkAlErrors() throws AlException {
@@ -215,7 +222,7 @@ public class NerdAl {
 		int alcError = ALC11.alcGetError(this.device.getId());
 
 		if (alcError != 0)
-			throw new AlcException(alcError);
+			throw new AlcException(this.getDeviceId(), alcError);
 
 		return alcError;
 	}

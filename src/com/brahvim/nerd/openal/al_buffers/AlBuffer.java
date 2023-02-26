@@ -233,47 +233,47 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 
 	// Older `setData()` overloads. No longer used due to problems with generics!:
 	/*
-	 * public void setData(int p_dataType, float[] p_data, int p_sampleRate) {
+	 * public void setData(int p_format, float[] p_data, int p_sampleRate) {
 	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
 	 * this.alInst.checkForErrors();
 	 * 
 	 * }
 	 * 
-	 * public void setData(int p_dataType, FloatBuffer p_data, int p_sampleRate) {
+	 * public void setData(int p_format, FloatBuffer p_data, int p_sampleRate) {
 	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
 	 * this.alInst.checkForErrors();
 	 * 
 	 * }
 	 * 
-	 * public void setData(int p_dataType, byte[] p_data, int p_sampleRate) {
+	 * public void setData(int p_format, byte[] p_data, int p_sampleRate) {
 	 * this.setData(p_dataType, ByteBuffer.wrap(p_data), p_sampleRate);
 	 * }
 	 * 
-	 * public void setData(int p_dataType, ByteBuffer p_data, int p_sampleRate) {
+	 * public void setData(int p_format, ByteBuffer p_data, int p_sampleRate) {
 	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
 	 * this.alInst.checkForErrors();
 	 * 
 	 * }
 	 * 
-	 * public void setData(int p_dataType, short[] p_data, int p_sampleRate) {
+	 * public void setData(int p_format, short[] p_data, int p_sampleRate) {
 	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
 	 * this.alInst.checkForErrors();
 	 * 
 	 * }
 	 * 
-	 * public void setData(int p_dataType, ShortBuffer p_data, int p_sampleRate) {
+	 * public void setData(int p_format, ShortBuffer p_data, int p_sampleRate) {
 	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
 	 * this.alInst.checkForErrors();
 	 * 
 	 * }
 	 * 
-	 * public void setData(int p_dataType, int[] p_data, int p_sampleRate) {
+	 * public void setData(int p_format, int[] p_data, int p_sampleRate) {
 	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
 	 * this.alInst.checkForErrors();
 	 * 
 	 * }
 	 * 
-	 * public void setData(int p_dataType, IntBuffer p_data, int p_sampleRate) {
+	 * public void setData(int p_format, IntBuffer p_data, int p_sampleRate) {
 	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
 	 * this.alInst.checkForErrors();
 	 * 
