@@ -15,6 +15,7 @@ public class AlEffectSlot {
 	}
 
 	public AlEffect setEffect(AlEffect p_effect) {
+		EXTEfx.alAuxiliaryEffectSloti(id, id, id);
 		return this.effect = p_effect;
 	}
 

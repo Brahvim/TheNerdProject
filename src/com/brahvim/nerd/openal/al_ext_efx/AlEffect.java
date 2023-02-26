@@ -9,6 +9,10 @@ public class AlEffect {
 		this.id = EXTEfx.alGenEffects();
 	}
 
+	public int getId() {
+		return this.id;
+	}
+
 	public void dispose() {
 		EXTEfx.alDeleteEffects(this.id);
 	}

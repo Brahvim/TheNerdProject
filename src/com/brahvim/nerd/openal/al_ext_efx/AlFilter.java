@@ -9,6 +9,10 @@ public class AlFilter {
 		this.id = EXTEfx.alGenFilters();
 	}
 
+	public int getId() {
+		return this.id;
+	}
+
 	public void dispose() {
 		EXTEfx.alDeleteFilters(this.id);
 	}

@@ -67,8 +67,7 @@ public class NerdAl {
 	// endregion
 
 	// region Listener functions.
-	// region C-style OpenAL API functions.
-	// region C-style OpenAL getters.
+	// region C-style OpenAL Listener getters.
 	public int getListenerInt(int p_alEnum) {
 		return AL11.alGetListeneri(p_alEnum);
 	}
@@ -116,7 +115,7 @@ public class NerdAl {
 	}
 	// endregion
 
-	// region C-style OpenAL setters.
+	// region C-style OpenAL Listener setters.
 	public void setListenerInt(int p_alEnum, int p_value) {
 		AL11.alListeneri(p_alEnum, p_value);
 		this.checkAlErrors();
@@ -170,10 +169,58 @@ public class NerdAl {
 		this.checkAlErrors();
 	}
 	// endregion
-	// endregion
 
 	// region Listener getters.
-	
+	public float getListenerGain() {
+		return this.getListenerFloat(AL11.AL_GAIN);
+	}
+
+	public float[] getListenerPosition() {
+		return this.getListenerFloatTriplet(AL11.AL_POSITION);
+	}
+
+	public float[] getListenerVelocity() {
+		return this.getListenerFloatTriplet(AL11.AL_VELOCITY);
+	}
+
+	public float[] getListenerOrientation() {
+		return this.getListenerFloatTriplet(AL11.AL_ORIENTATION);
+	}
+	// endregion
+
+	// region Listener setters.
+	public void setListenerGain(float p_value) {
+		this.setListenerFloat(AL11.AL_GAIN, p_value);
+	}
+
+	// region `float...` overloads for listener vectors.
+	public void setListenerPosition(float... p_values) {
+		this.setListenerFloatTriplet(AL11.AL_POSITION, p_values);
+	}
+
+	public void setListenerVelocity(float... p_values) {
+		this.setListenerFloatTriplet(AL11.AL_VELOCITY, p_values);
+	}
+
+	public void setListenerOrientation(float... p_values) {
+		this.setListenerFloatTriplet(AL11.AL_ORIENTATION, p_values);
+	}
+	// endregion
+
+	// region `PVector` overloads for listener vectors.
+	public void setListenerPosition(PVector p_value) {
+		this.setListenerFloatTriplet(AL11.AL_POSITION, p_value.x, p_value.y, p_value.z);
+	}
+
+	public void setListenerVelocity(PVector p_value) {
+		this.setListenerFloatTriplet(AL11.AL_VELOCITY, p_value.x, p_value.y, p_value.z);
+	}
+
+	public void setListenerOrientation(PVector p_value) {
+		this.setListenerFloatTriplet(AL11.AL_ORIENTATION, p_value.x, p_value.y, p_value.z);
+	}
+	// endregion
+	// endregion
 	// endregion
 
 	// region Getters and setters!...
