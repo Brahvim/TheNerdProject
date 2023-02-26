@@ -303,6 +303,7 @@ public class Sketch extends PApplet {
 
 	protected GraphicsDevice previousMonitor, currentMonitor;
 	protected NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
+	protected NerdScene currentScene;
 	protected SceneManager sceneMan; // Don't use static initialization for this..?
 
 	// region Listeners!
@@ -482,6 +483,8 @@ public class Sketch extends PApplet {
 	}
 
 	public void pre() {
+		this.currentScene = this.sceneMan.getCurrentScene();
+
 		if (this.USES_OPENGL)
 			this.pgl = super.beginPGL();
 
@@ -548,7 +551,7 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region If it doesn't yet exist, construct the scene!
-		if (super.frameCount == 1 && this.sceneMan.getCurrentScene() == null) {
+		if (super.frameCount == 1 && this.currentScene == null) {
 			if (this.FIRST_SCENE_CLASS == null)
 				System.err.println("There is no first `NerdScene`! It's `null`!");
 			else
@@ -566,7 +569,13 @@ public class Sketch extends PApplet {
 		this.framelyWindowSetup();
 
 		// region Previous state updates!!!
+		for (PVector v : this.UNPROJ_TOUCHES)
+			this.PREV_UNPROJ_TOUCHES.add(v);
+
 		FlyCamera.pholdPointer = FlyCamera.holdCursor;
+
+		if (this.currentScene != null)
+			this.currentScene.ASSETS.updatePreviousLoadState();
 
 		this.pkey = super.key;
 		this.pwidth = this.width;
@@ -587,9 +596,6 @@ public class Sketch extends PApplet {
 		this.pcursorConfined = this.cursorConfined;
 		this.pmouseScrollDelta = this.mouseScrollDelta;
 		// endregion
-
-		for (PVector v : this.UNPROJ_TOUCHES)
-			this.PREV_UNPROJ_TOUCHES.add(v);
 
 		this.sceneMan.post();
 	}

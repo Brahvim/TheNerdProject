@@ -70,31 +70,6 @@ public class NerdAsset<AssetT> {
         return toRet;
     }
 
-    /*
-     * private boolean verifyKey(AssetManager.AssetKey p_key) {
-     * // * if (this.KEY != null)
-     * // * return p_key == this.KEY;
-     * 
-     * if (p_key == null) {
-     * throw new IllegalArgumentException("""
-     * Please use an `AssetManager` instance to make a `NerdAsset`!""");
-     * }
-     * // else if (p_key.isUsed()) {
-     * // throw new IllegalArgumentException("""
-     * // Please use a `NerdSceneManager` instance to make a `NerdScene`! That is a
-     * // used key!""");
-     * // }
-     * else if (!p_key.isFor(this.getClass()))
-     * throw new IllegalArgumentException("""
-     * Please use a `AssetManager` instance to make a `NerdAsset`! That key is not
-     * for me!""");
-     * 
-     * p_key.use();
-     * return true;
-     * 
-     * }
-     */
-
     // region Load status requests.
     public NerdAsset<AssetT> setLoadCallback(Runnable p_onLoad) {
         this.onLoad = p_onLoad;
