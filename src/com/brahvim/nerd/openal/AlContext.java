@@ -12,14 +12,14 @@ public class AlContext {
 
 	// region Fields.
 	private long id;
-	private NerdAl manager;
+	private NerdAl alMan;
 	private final long deviceId;
 	private ArrayList<AlBuffer<?>> buffers;
 	// endregion
 
 	// region Constructors.
 	public AlContext(NerdAl p_manager) {
-		this.manager = p_manager;
+		this.alMan = p_manager;
 		this.buffers = new ArrayList<>();
 		this.deviceId = p_manager.getDeviceId();
 
@@ -27,7 +27,7 @@ public class AlContext {
 	}
 
 	public AlContext(AlContext p_ctx) {
-		this.manager = p_ctx.manager;
+		this.alMan = p_ctx.alMan;
 		this.buffers = p_ctx.getBuffers();
 
 		// Get the newer device's ID / handle:
@@ -49,13 +49,13 @@ public class AlContext {
 		if (!ALC11.alcMakeContextCurrent(0))
 			throw new RuntimeException("Could not change the OpenAL context!");
 
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 		this.checkAlcErrors();
 
 		// *Actually* destroy the context object:
 		ALC11.alcDestroyContext(this.id);
 
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 		this.checkAlcErrors();
 		this.id = 0;
 	}
@@ -65,8 +65,8 @@ public class AlContext {
 		return this.id;
 	}
 
-	public NerdAl getManager() {
-		return this.manager;
+	public NerdAl getAlMan() {
+		return this.alMan;
 	}
 
 	@SuppressWarnings("unchecked")

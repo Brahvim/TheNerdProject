@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -357,7 +358,7 @@ public class Sketch extends PApplet {
 		this.INITIALLY_RESIZABLE = p_key.canResize;
 		this.CAN_FULLSCREEN = !p_key.cannotFullscreen;
 		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
-		this.AL = p_key.useOpenal ? new NerdAl() : null;
+		this.AL = p_key.useOpenal ? new NerdAl(this) : null;
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
@@ -436,6 +437,10 @@ public class Sketch extends PApplet {
 	// region Processing sketch workflow.
 	@Override
 	public void setup() {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			this.dispose();
+		}));
+
 		this.updateRatios();
 		super.surface.setTitle(this.NAME);
 		super.registerMethod("pre", this);
@@ -617,6 +622,7 @@ public class Sketch extends PApplet {
 
 		if (this.AL != null)
 			this.AL.dispose();
+
 		super.dispose();
 	}
 	// endregion
@@ -785,17 +791,20 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Utilities!~
-	// region `callIfNotNull()`.
-	// ChatGPT prompts:
-	// "Write a Java method that calls a given method on an object."
-	// "Is it possible to do this with method references?"
-	// PS I use ChatGPT more for learning and trivial things like this rather than
-	// 'cheating'. I never like to cheat - it stops me from learning!
+	// region Ah yes, GETTERS AND SETTERS. Even here!
+	public NerdScene getCurrentScene() {
+		// return this.currentScene;
+		return this.sceneMan.getCurrentScene();
+	}
 
-	public static <ObjT> void callIfNotNull(ObjT p_object, Runnable p_method) {
-		System.out.println(p_object);
-		if (p_object != null)
-			p_method.run();
+	public SceneManager getSceneManager() {
+		return this.sceneMan;
+	}
+
+	public SceneManager setSceneManager(SceneManager p_sceneMan) {
+		Objects.requireNonNull(p_sceneMan,
+				"`Sketch::setSceneManager()` cannot take in a `null`!");
+		return this.sceneMan = p_sceneMan;
 	}
 	// endregion
 

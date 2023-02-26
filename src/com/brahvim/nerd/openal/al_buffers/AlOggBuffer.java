@@ -29,7 +29,7 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 		super.data = p_buffer;
 		super.dataType = p_dataType;
 		AL11.alBufferData(super.id, p_dataType, p_buffer.array(), p_sampleRate);
-		super.manager.checkAlErrors();
+		super.alMan.checkAlErrors();
 	}
 
 	@Override // STBVorbis needs to free memory!!!
@@ -66,7 +66,7 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 					p_file.getCanonicalPath(), channelsBuffer, sampleRateBuffer);
 
 			if (rawAudioBuffer == null) {
-				System.err.println("STB failed to load audio data!");
+				//System.err.println("STB failed to load audio data!");
 				MemoryStack.stackPop();
 				MemoryStack.stackPop();
 			}

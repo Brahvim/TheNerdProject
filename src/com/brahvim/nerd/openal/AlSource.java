@@ -10,6 +10,7 @@ import org.lwjgl.system.MemoryStack;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
+import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
 
@@ -17,17 +18,20 @@ public class AlSource {
 
 	// region Fields.
 	private int id;
-	private NerdAl manager;
+	private NerdAl alMan;
+	private NerdScene scene;
 	private AlBuffer<?> buffer;
+	private boolean hasDisposed;
 	// endregion
 
 	// region Constructors.
 	public AlSource(AlSource p_source) {
-		this.manager = p_source.manager;
+		this.scene = p_source.scene;
+		this.alMan = p_source.alMan;
 		this.id = AL11.alGenSources();
 
-		this.manager.checkAlErrors();
-		this.manager.checkAlcErrors();
+		this.alMan.checkAlErrors();
+		this.alMan.checkAlcErrors();
 
 		// region Transfer properties over (hopefully, the JIT inlines!):
 		this.setBuffer(p_source.buffer);
@@ -51,11 +55,12 @@ public class AlSource {
 	}
 
 	public AlSource(NerdAl p_manager) {
-		this.manager = p_manager;
+		this.alMan = p_manager;
 		this.id = AL11.alGenSources();
+		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
 
-		this.manager.checkAlErrors();
-		this.manager.checkAlcErrors();
+		this.alMan.checkAlErrors();
+		this.alMan.checkAlcErrors();
 		this.setInt(AL11.AL_SOURCE_TYPE, AL11.AL_STATIC);
 	}
 
@@ -77,11 +82,11 @@ public class AlSource {
 
 	public void loadOggBuffer(File p_file) {
 		if (this.buffer == null)
-			this.buffer = new AlOggBuffer(this.manager, AlBufferLoader.loadOgg(p_file));
+			this.buffer = new AlOggBuffer(this.alMan, AlBufferLoader.loadOgg(p_file));
 	}
 	// endregion
 
-	// region C-style AL-API getters.
+	// region C-style OpenAL getters.
 	public int getInt(int p_alEnum) {
 		return AL11.alGetSourcei(this.id, p_alEnum);
 	}
@@ -129,25 +134,25 @@ public class AlSource {
 	}
 	// endregion
 
-	// region C-style AL-API setters.
+	// region C-style OpenAL setters.
 	public void setInt(int p_alEnum, int p_value) {
 		AL11.alSourcei(this.id, p_alEnum, p_value);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		AL11.alSourcef(this.id, p_alEnum, p_value);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_value) {
 		AL11.alSourceiv(this.id, p_alEnum, p_value);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
 		AL11.alSourcefv(this.id, p_alEnum, p_values);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setIntTriplet(int p_alEnum, int[] p_value) {
@@ -156,12 +161,12 @@ public class AlSource {
 					"`AlSource::setIntTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alSource3i(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
 		AL11.alSource3i(this.id, p_alEnum, p_i1, p_i2, p_i3);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float[] p_value) {
@@ -170,21 +175,29 @@ public class AlSource {
 					"`AlSource::setFloatTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alSource3f(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
 		AL11.alSource3f(this.id, p_alEnum, p_f1, p_f2, p_f3);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloatTriplet(int p_alEnum, PVector p_value) {
 		AL11.alSource3f(this.id, p_alEnum, p_value.x, p_value.y, p_value.z);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 	// endregion
 
 	// region Source getters.
+	public NerdScene getScene() {
+		return this.scene;
+	}
+
+	public boolean isDisposed() {
+		return this.hasDisposed;
+	}
+
 	// region `int` getters.
 	public int getSourceType() {
 		return this.getInt(AL11.AL_SOURCE_TYPE);
@@ -440,10 +453,14 @@ public class AlSource {
 	}
 
 	public void dispose() {
-		this.manager.getContextSources().remove(this);
+		if (this.hasDisposed)
+			return;
+
+		this.alMan.getContextSources().remove(this);
 		AL11.alDeleteSources(this.id);
-		this.manager.checkAlErrors();
-		this.manager.checkAlcErrors();
+		this.alMan.checkAlErrors();
+		this.alMan.checkAlcErrors();
+		this.hasDisposed = true;
 	}
 	// endregion
 

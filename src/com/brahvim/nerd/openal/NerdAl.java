@@ -18,6 +18,7 @@ import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlException;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class NerdAl {
 
@@ -44,6 +45,7 @@ public class NerdAl {
 	// region Fields.
 	private final ArrayList<AlSource> contextSources = new ArrayList<>();
 	private final ArrayList<AlBuffer<?>> deviceBuffers = new ArrayList<>();
+	private final Sketch SKETCH;
 
 	private ALCapabilities alCap;
 	private ALCCapabilities alCtxCap;
@@ -52,17 +54,18 @@ public class NerdAl {
 	// endregion
 
 	// region Constructors.
-	public NerdAl() {
-		this(AlDevice.getDefaultDeviceName());
+	public NerdAl(Sketch p_sketch) {
+		this(p_sketch, AlDevice.getDefaultDeviceName());
 	}
 
-	public NerdAl(String p_deviceName) {
+	public NerdAl(Sketch p_sketch, String p_deviceName) {
+		this.SKETCH = p_sketch;
 		this.createAl(p_deviceName);
 	}
 	// endregion
 
 	// region Getters and setters!...
-	// region C-style AL-API getters.
+	// region C-style OpenAL getters.
 	public int getInt(int p_alEnum, int p_value) {
 		int toRet = AL11.alGetInteger(p_alEnum);
 		this.checkAlErrors();
@@ -113,6 +116,10 @@ public class NerdAl {
 
 	public ArrayList<AlBuffer<?>> getDeviceBuffers() {
 		return this.deviceBuffers;
+	}
+
+	public Sketch getSketch() {
+		return this.SKETCH;
 	}
 
 	public AlDevice getDevice() {
@@ -234,6 +241,10 @@ public class NerdAl {
 
 	public void framelyCallback() {
 		this.device.disconnectionCheck();
+
+		for (AlSource s : this.contextSources)
+			if (s.getScene() != this.SKETCH.getCurrentScene())
+				s.dispose();
 	}
 
 	public void dispose() {

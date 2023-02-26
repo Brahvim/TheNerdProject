@@ -20,7 +20,7 @@ public class AlDevice {
 	// region Fields.
 	private long id;
 	private String name;
-	private NerdAl manager;
+	private NerdAl alMan;
 	private boolean isDefaultDevice = true;
 	private AlDevice.DisconnectionCallback disconnectionCallback
 	// // // // // // // // // // // // // // // // // // // // // //
@@ -34,8 +34,8 @@ public class AlDevice {
 	}
 
 	public AlDevice(NerdAl p_manager, String p_deviceName) {
+		this.alMan = p_manager;
 		this.name = p_deviceName;
-		this.manager = p_manager;
 		this.isDefaultDevice = p_deviceName.equals(AlDevice.getDefaultDeviceName());
 
 		this.id = ALC11.alcOpenDevice(this.name);
@@ -91,8 +91,8 @@ public class AlDevice {
 		return this.name;
 	}
 
-	public NerdAl getManager() {
-		return this.manager;
+	public NerdAl getAlMan() {
+		return this.alMan;
 	}
 	// endregion
 
@@ -100,8 +100,8 @@ public class AlDevice {
 		if (!ALC11.alcCloseDevice(this.id))
 			throw new RuntimeException("Could not close OpenAL device!");
 
-		// this.manager.checkAlErrors();
-		// this.manager.checkAlcErrors();
+		// this.alMan.checkAlErrors();
+		// this.alMan.checkAlcErrors();
 		this.id = 0;
 	}
 

@@ -17,7 +17,7 @@ public class NerdAsset<AssetT> {
 
     private final String PATH;
     private final Sketch SKETCH;
-    private final AssetType<AssetT> TYPE;
+    private final AssetType<AssetT> LOADER;
     // private final AssetManager.AssetKey KEY;
 
     private Object[] loaderArgs;
@@ -30,7 +30,7 @@ public class NerdAsset<AssetT> {
             throw new IllegalArgumentException("`NerdAsset`s need data!");
 
         // this.KEY = p_key;
-        this.TYPE = p_type;
+        this.LOADER = p_type;
         this.SKETCH = p_sketch;
         this.loaderArgs = null;
 
@@ -139,7 +139,7 @@ public class NerdAsset<AssetT> {
 
     private void fetchData() {
         try {
-            this.data = this.TYPE.fetchData(this.SKETCH, this.PATH, this.loaderArgs);
+            this.data = this.LOADER.fetchData(this.SKETCH, this.PATH, this.loaderArgs);
         } catch (AssetLoaderFailedException e) {
             this.data = null;
             this.failure = true;

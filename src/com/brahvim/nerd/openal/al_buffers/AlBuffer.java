@@ -20,35 +20,35 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	// Storing it here!
 	protected BufferT data;
 
-	protected NerdAl manager;
+	protected NerdAl alMan;
 	protected int id, dataType;
 	// endregion
 
 	// region Constructors.
 	public AlBuffer(NerdAl p_alInst) {
-		this.manager = p_alInst;
+		this.alMan = p_alInst;
 
 		this.id = AL11.alGenBuffers();
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	@SuppressWarnings("unchecked")
 	public AlBuffer(AlBuffer<?> p_buffer) {
-		this.manager = p_buffer.manager;
+		this.alMan = p_buffer.alMan;
 
 		this.id = AL11.alGenBuffers();
 
 		this.setBits(p_buffer.getBits());
 		this.setChannels(p_buffer.getChannels());
 		this.setData(p_buffer.dataType, (BufferT) p_buffer.getData(), p_buffer.getSampleRate());
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public AlBuffer(NerdAl p_alInst, BufferT p_data) {
-		this.manager = p_alInst;
+		this.alMan = p_alInst;
 
 		this.id = AL11.alGenBuffers();
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 	// endregion
 
@@ -63,7 +63,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		return this;
 	}
 
-	// region C-style AL-API getters.
+	// region C-style OpenAL getters.
 	public int getInt(int p_alEnum) {
 		return AL11.alGetBufferi(this.id, p_alEnum);
 	}
@@ -111,25 +111,25 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	}
 	// endregion
 
-	// region C-style AL-API setters.
+	// region C-style OpenAL setters.
 	public void setInt(int p_alEnum, int p_value) {
 		AL11.alBufferi(this.id, p_alEnum, p_value);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		AL11.alBufferf(this.id, p_alEnum, p_value);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_value) {
 		AL11.alBufferiv(this.id, p_alEnum, p_value);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
 		AL11.alBufferfv(this.id, p_alEnum, p_values);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setIntTriplet(int p_alEnum, int[] p_value) {
@@ -138,12 +138,12 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 					"`alBuffer::setIntTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alBuffer3i(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
 		AL11.alBuffer3i(this.id, p_alEnum, p_i1, p_i2, p_i3);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float[] p_value) {
@@ -152,17 +152,17 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 					"`alBuffer::setFloatTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alBuffer3f(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
 		AL11.alBuffer3f(this.id, p_alEnum, p_f1, p_f2, p_f3);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 
 	public void setFloatTriplet(int p_alEnum, PVector p_value) {
 		AL11.alBuffer3f(this.id, p_alEnum, p_value.x, p_value.y, p_value.z);
-		this.manager.checkAlErrors();
+		this.alMan.checkAlErrors();
 	}
 	// endregion
 
@@ -282,10 +282,10 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	// endregion
 
 	public void dispose() {
-		this.manager.getDeviceBuffers().remove(this);
+		this.alMan.getDeviceBuffers().remove(this);
 		AL11.alDeleteBuffers(this.id);
-		this.manager.checkAlErrors();
-		this.manager.checkAlcErrors();
+		this.alMan.checkAlErrors();
+		this.alMan.checkAlcErrors();
 	}
 
 }

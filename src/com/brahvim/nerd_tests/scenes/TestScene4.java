@@ -2,6 +2,7 @@ package com.brahvim.nerd_tests.scenes;
 
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
+import com.brahvim.nerd.openal.al_asset_loaders.OggBufferAsset;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -26,9 +27,9 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void preload() {
-        ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
-        this.rubberDuck = SKETCH.AL.sourceFromOgg("data/RUBBER DUCK.ogg");
         System.out.println("This is async LOL!");
+        ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
+        ASSETS.add(OggBufferAsset.getLoader(), "data/RUBBER DUCK.ogg");
     }
 
     @Override
@@ -44,6 +45,9 @@ public class TestScene4 extends NerdScene {
 
         this.nerd = this.ASSETS.get("sunglass_nerd").getData();
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
+        // this.rubberDuck = new AlSource(SKETCH.AL, ASSETS.get("RUBBER
+        // DUCK").getData());
+        this.rubberDuck = SKETCH.AL.sourceFromOgg("data/RUBBER DUCK.ogg");
 
         SKETCH.noStroke();
         SKETCH.textureWrap(PConstants.REPEAT);

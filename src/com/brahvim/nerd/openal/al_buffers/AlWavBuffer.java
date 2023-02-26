@@ -30,7 +30,7 @@ public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 		super.data = p_buffer;
 		super.dataType = p_dataType;
 		AL11.alBufferData(super.id, p_dataType, p_buffer, p_sampleRate);
-		super.manager.checkAlErrors();
+		super.alMan.checkAlErrors();
 	}
 
 	@Override
