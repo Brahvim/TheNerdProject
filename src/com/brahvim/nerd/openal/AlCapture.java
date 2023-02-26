@@ -1,4 +1,4 @@
-package com.brahvim.nerd.openal.al_capture;
+package com.brahvim.nerd.openal;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
@@ -6,7 +6,6 @@ import java.util.Objects;
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.ALC11;
 
-import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 
 public class AlCapture {
@@ -54,6 +53,11 @@ public class AlCapture {
 	}
 
 	public void startCapturing(int p_sampleRate, int p_format, int p_samplesPerBuffer) {
+		if (this.isCapturing()) {
+			System.err.println("OpenAL cannot start capturing whilst already doing it!");
+			return;
+		}
+
 		AlCapture.numActiveCaptures++;
 
 		// region Preparing to capture.
@@ -122,6 +126,12 @@ public class AlCapture {
 
 	public boolean isCapturing() {
 		return this.captureThread == null ? false : this.captureThread.isAlive();
+	}
+
+	public AlWavBuffer stopCapturing(AlWavBuffer p_buffer) {
+		this.stopCapturing();
+		this.storeIntoBuffer(p_buffer);
+		return p_buffer;
 	}
 
 	public ByteBuffer stopCapturing() {

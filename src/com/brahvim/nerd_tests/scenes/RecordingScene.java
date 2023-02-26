@@ -1,8 +1,8 @@
 package com.brahvim.nerd_tests.scenes;
 
+import com.brahvim.nerd.openal.AlCapture;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
-import com.brahvim.nerd.openal.al_capture.AlCapture;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -25,16 +25,15 @@ public class RecordingScene extends NerdScene {
 		switch (SKETCH.mouseButton) {
 			case PConstants.LEFT -> {
 				this.capturePlayback.stop();
-
-				if (!this.capture.isCapturing())
-					this.capture.startCapturing();
+				this.capture.startCapturing();
 			}
+
 			case PConstants.RIGHT -> {
-				this.capture.stopCapturing();
-				this.capture.storeIntoBuffer(this.capturedAudio);
-				this.capturePlayback.setBuffer(this.capturedAudio);
+				this.capturePlayback.setBuffer(
+						this.capture.stopCapturing(this.capturedAudio));
 				this.capturePlayback.play();
 			}
 		}
 	}
+
 }
