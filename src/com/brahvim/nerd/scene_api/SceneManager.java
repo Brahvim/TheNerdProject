@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
-import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class SceneManager {

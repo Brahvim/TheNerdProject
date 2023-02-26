@@ -27,9 +27,9 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void preload() {
-        System.out.println("This is async LOL!");
         ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
         ASSETS.add(OggBufferDataAsset.getLoader(), "data/RUBBER DUCK.ogg");
+        System.out.println("Test Scene 4 asset preload completed!");
     }
 
     @Override
@@ -47,7 +47,6 @@ public class TestScene4 extends NerdScene {
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
         this.rubberDuck = new AlSource(SKETCH.AL, ASSETS.get("RUBBER DUCK").getData());
-        // this.rubberDuck = SKETCH.AL.sourceFromOgg("data/RUBBER DUCK.ogg");
 
         SKETCH.noStroke();
         SKETCH.textureWrap(PConstants.REPEAT);
@@ -107,29 +106,12 @@ public class TestScene4 extends NerdScene {
     // region Events.
     @Override
     public void mouseClicked() {
-        /*
-         * 
-         * System.out.printf("""
-         * OpenAL source states:
-         * - `AL_PAUSED` : `%d`,
-         * - `AL_STOPPED` : `%d`,
-         * - `AL_INITIAL` : `%d`,
-         * - `AL_PLAYING` : `%d`.
-         * """,
-         * AL11.AL_PAUSED,
-         * AL11.AL_STOPPED,
-         * AL11.AL_INITIAL,
-         * AL11.AL_PLAYING);
-         */
-        // System.out.println(this.rubberDuck.getSourceState());
-
         if (!this.rubberDuck.isPlaying()) {
             this.rubberDuck.setPosition(
                     SKETCH.mouseX, SKETCH.mouseY, SKETCH.random(5600));
             this.rubberDuck.play();
         }
 
-        System.out.println("TestScene4.mousePressed()");
         MANAGER.restartScene();
     }
 
