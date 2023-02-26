@@ -10,8 +10,12 @@ import com.brahvim.nerd.openal.NerdAl;
 
 public abstract class AlEffect {
 
+	// region Fields.
 	protected int id;
 	protected NerdAl alMan;
+	protected boolean used;
+	protected AlEffectSlot slot;
+	// endregion
 
 	public AlEffect(NerdAl p_NerdAl) {
 		this.alMan = p_NerdAl;
@@ -28,9 +32,10 @@ public abstract class AlEffect {
 	public int getId() {
 		return this.id;
 	}
-	// endregion
 
-	// region Setters!
+	public boolean isUsed() {
+		return this.used;
+	}
 	// endregion
 
 	// region C-style OpenAL getters.
@@ -90,28 +95,28 @@ public abstract class AlEffect {
 	// region C-style OpenAL setters.
 	public void setInt(int p_alEnum, int p_value) {
 		EXTEfx.alEffecti(this.id, p_alEnum, p_value);
-
+		this.slot.setEffect(this);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_values) {
 		EXTEfx.alEffectiv(this.id, p_alEnum, p_values);
-
+		this.slot.setEffect(this);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		EXTEfx.alEffectf(this.id, p_alEnum, p_value);
-
+		this.slot.setEffect(this);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
 		EXTEfx.alEffectfv(this.id, p_alEnum, p_values);
-
+		this.slot.setEffect(this);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
