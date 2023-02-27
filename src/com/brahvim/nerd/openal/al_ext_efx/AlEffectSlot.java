@@ -8,6 +8,20 @@ import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.NerdAl;
+import com.brahvim.nerd.openal.al_effects.AlAutowah;
+import com.brahvim.nerd.openal.al_effects.AlChorus;
+import com.brahvim.nerd.openal.al_effects.AlCompressor;
+import com.brahvim.nerd.openal.al_effects.AlDistortion;
+import com.brahvim.nerd.openal.al_effects.AlEaxReverb;
+import com.brahvim.nerd.openal.al_effects.AlEcho;
+import com.brahvim.nerd.openal.al_effects.AlEqualizer;
+import com.brahvim.nerd.openal.al_effects.AlFlanger;
+import com.brahvim.nerd.openal.al_effects.AlFrequencyShifter;
+import com.brahvim.nerd.openal.al_effects.AlPitchShifter;
+import com.brahvim.nerd.openal.al_effects.AlReverb;
+import com.brahvim.nerd.openal.al_effects.AlRingModulator;
+import com.brahvim.nerd.openal.al_effects.AlVocalMorpher;
+import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
 public class AlEffectSlot {
 
@@ -93,7 +107,6 @@ public class AlEffectSlot {
 		return this.id;
 	}
 
-	// TODO: Do this same 'native get' thing for sources and buffers too!
 	@SuppressWarnings("unchecked")
 	public <T extends AlEffect> T getEffect() {
 		final int ID = this.getInt(EXTEfx.AL_EFFECTSLOT_EFFECT);
@@ -108,162 +121,186 @@ public class AlEffectSlot {
 
 		final int EFFECT_TYPE = EXTEfx.alGetEffecti(ID, EXTEfx.AL_EFFECT_TYPE);
 
+		// region Construct new effect according to `EFFECT_TYPE`.
 		// The JS code that generated the next part. Hee-hee!:
 		/*
-		// I literally copied these from the documentation.
-		// Edited 'em using VSCode's selection features LOL.
+		 * // I literally copied these from the documentation.
+		 * // Edited 'em using VSCode's selection features LOL.
+		 * 
+		 * let arr = [
+		 * "AL_EFFECT_EAXREVERB",
+		 * "AL_EFFECT_REVERB",
+		 * "AL_EFFECT_CHORUS",
+		 * "AL_EFFECT_DISTORTION",
+		 * "AL_EFFECT_ECHO",
+		 * "AL_EFFECT_FLANGER",
+		 * "AL_EFFECT_FREQUENCY_SHIFTER",
+		 * "AL_EFFECT_VOCAL_MORPHER",
+		 * "AL_EFFECT_PITCH_SHIFTER",
+		 * "AL_EFFECT_RING_MODULATOR",
+		 * "AL_EFFECT_AUTOWAH",
+		 * "AL_EFFECT_COMPRESSOR",
+		 * "AL_EFFECT_EQUALIZER",
+		 * ];
+		 * 
+		 * for (let x of arr)
+		 * console.log(
+		 * 
+		 * `else if (EFFECT_TYPE == EXTEfx.${x})
+		 * return (T) new ${capitalizeFirstChar(
+		 * upperSnakeToCamelCase(x))}() {
+		 * 
+		 * @Override
+		 * protected int getEffectType() {
+		 * return EFFECT_TYPE;
+		 * }
+		 * 
+		 * };`);
+		 * 
+		 * function upperSnakeToCamelCase(p_str) {
+		 * p_str = p_str.toLowerCase();
+		 * let build = '';
+		 * 
+		 * const STR_LEN = p_str.length;
+		 * let lastUn = 0, secLastUn = 0;
+		 * 
+		 * for (let i = 0; i != STR_LEN; i++) {
+		 * if (p_str.charAt(i) != '_')
+		 * continue;
+		 * 
+		 * secLastUn = lastUn;
+		 * lastUn = i;
+		 * 
+		 * if (secLastUn == 0)
+		 * build += p_str.substring(0, i);
+		 * else build += capitalizeFirstChar(p_str.substring(
+		 * secLastUn + 1, lastUn
+		 * ));
+		 * }
+		 * 
+		 * build += capitalizeFirstChar(p_str.substring(1 + p_str.lastIndexOf('_')));
+		 * 
+		 * return build;
+		 * }
+		 * 
+		 * function capitalizeFirstChar(p_str) {
+		 * return p_str.charAt(0).toUpperCase() + p_str.substring(1);
+		 * }
+		 */
 
-		let arr = [
-			"AL_EFFECT_EAXREVERB",
-			"AL_EFFECT_REVERB",
-			"AL_EFFECT_CHORUS",
-			"AL_EFFECT_DISTORTION",
-			"AL_EFFECT_ECHO",
-			"AL_EFFECT_FLANGER",
-			"AL_EFFECT_FREQUENCY_SHIFTER",
-			"AL_EFFECT_VOCAL_MORPHER",
-			"AL_EFFECT_PITCH_SHIFTER",
-			"AL_EFFECT_RING_MODULATOR",
-			"AL_EFFECT_AUTOWAH",
-			"AL_EFFECT_COMPRESSOR",
-			"AL_EFFECT_EQUALIZER",
-		];
+		if (EFFECT_TYPE == EXTEfx.AL_EFFECT_EAXREVERB)
+			return (T) new AlEaxReverb() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
 
-		for (let x of arr)
-		    console.log(
-		        `else if (EFFECT_TYPE == EXTEfx.${x})
-		          return (T) new ${capitalizeFirstChar(
-		              upperSnakeToCamelCase(x))}() {
-					
-			@Override
-			protected int getEffectType() {
-				return EFFECT_TYPE;
-			}
-		
-			};`);
-		
-		function upperSnakeToCamelCase(p_str) {
-		    p_str = p_str.toLowerCase();
-		    let build = '';
-		
-		    const STR_LEN = p_str.length;
-		    let lastUn = 0, secLastUn = 0;
-		
-		    for (let i =  0; i != STR_LEN; i++) {
-		        if (p_str.charAt(i) != '_')
-		            continue;
-			
-		        secLastUn = lastUn;
-		        lastUn = i;
-			
-		        if (secLastUn == 0)
-		            build += p_str.substring(0, i);
-		        else build += capitalizeFirstChar(p_str.substring(
-		            secLastUn + 1, lastUn
-		        ));
-		    }
-		
-		    build += capitalizeFirstChar(p_str.substring(1 + p_str.lastIndexOf('_')));
-		
-		    return build;
-		}
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_REVERB)
+			return (T) new AlReverb() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
 
-		function capitalizeFirstChar(p_str) {
-		    return p_str.charAt(0).toUpperCase() + p_str.substring(1);
-		}
-*/
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_CHORUS)
+			return (T) new AlChorus() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
 
-  if (EFFECT_TYPE == EXTEfx.AL_EFFECT_EAXREVERB)
-          return (T) new AlEaxReverb() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_REVERB)
-          return (T) new AlReverb() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_CHORUS)
-          return (T) new AlChorus() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_DISTORTION)
-          return (T) new AlDistortion() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_ECHO)
-          return (T) new AlEcho() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_FLANGER)
-          return (T) new AlFlanger() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_FREQUENCY_SHIFTER)
-          return (T) new AlFrequencyShifter() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_VOCAL_MORPHER)
-          return (T) new AlVocalMorpher() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_PITCH_SHIFTER)
-          return (T) new AlPitchShifter() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_RING_MODULATOR)
-          return (T) new AlRingModulator() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_AUTOWAH)
-          return (T) new AlAutowah() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_COMPRESSOR)
-          return (T) new AlCompressor() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-        };
- else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_EQUALIZER)
-          return (T) new AlEqualizer() {
-              @Override
-                protected int getEffectType() {
-                    return EFFECT_TYPE;
-            }
-			else throw new Exception();
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_DISTORTION)
+			return (T) new AlDistortion() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_ECHO)
+			return (T) new AlEcho() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_FLANGER)
+			return (T) new AlFlanger() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_FREQUENCY_SHIFTER)
+			return (T) new AlFrequencyShifter() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_VOCAL_MORPHER)
+			return (T) new AlVocalMorpher() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_PITCH_SHIFTER)
+			return (T) new AlPitchShifter() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_RING_MODULATOR)
+			return (T) new AlRingModulator() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_AUTOWAH)
+			return (T) new AlAutowah() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_COMPRESSOR)
+			return (T) new AlCompressor() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_EQUALIZER)
+			return (T) new AlEqualizer() {
+				@Override
+				protected int getEffectType() {
+					return EFFECT_TYPE;
+				}
+			};
+
+		// Instead of throwing this exception, I could just use reflection to see
+		// what classes extend `AlEffect` with the assumption that the default
+		// constructor exists in them...
+		else
+			throw new NerdAlException("""
+					No idea what this OpenAL effect is!
+					Come to this line and modify Nerd's source to fix this...""");
+		// endregion
+
 	}
 	// endregion
 

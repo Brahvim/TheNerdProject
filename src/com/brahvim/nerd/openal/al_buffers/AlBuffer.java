@@ -25,11 +25,16 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	// endregion
 
 	// region Constructors.
-	public AlBuffer(NerdAl p_alInst) {
-		this.alMan = p_alInst;
+	public AlBuffer(NerdAl p_alMan) {
+		this.alMan = p_alMan;
 
 		this.id = AL11.alGenBuffers();
 		this.alMan.checkAlErrors();
+	}
+
+	public AlBuffer(NerdAl p_alMan, int p_id) {
+		this.id = p_id;
+		this.alMan = p_alMan;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -55,7 +60,7 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	// region `abstract` methods.
 	public abstract AlBuffer<?> loadFrom(File p_file);
 
-	public abstract void setData(int p_dataType, BufferT p_buffer, int p_sampleRate);
+	public abstract void setData(int p_format, BufferT p_buffer, int p_sampleRate);
 	// endregion
 
 	public AlBuffer<?> loadFrom(String p_path) {

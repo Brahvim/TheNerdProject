@@ -9,6 +9,8 @@ import org.lwjgl.openal.EXTDisconnect;
 import org.lwjgl.openal.SOFTReopenDevice;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
+
 public class AlDevice {
 
 	public interface DisconnectionCallback {
@@ -98,7 +100,7 @@ public class AlDevice {
 
 	/* `package` */ void dispose() {
 		if (!ALC11.alcCloseDevice(this.id))
-			throw new RuntimeException("Could not close OpenAL device!");
+			throw new NerdAlException("Could not close OpenAL device!");
 
 		// this.alMan.checkAlErrors();
 		// this.alMan.checkAlcErrors();

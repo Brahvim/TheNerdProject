@@ -9,6 +9,7 @@ import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
+import com.brahvim.nerd.openal.al_buffers.AlNativeBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 import com.brahvim.nerd.scene_api.NerdScene;
 
@@ -25,6 +26,10 @@ public class AlSource {
 	// endregion
 
 	// region Constructors.
+	/**
+	 * @deprecated Use `AlSource::AlSource(NerdAl, int)` instead. It is much faster.
+	 */
+	@Deprecated
 	public AlSource(AlSource p_source) {
 		this.scene = p_source.scene;
 		this.alMan = p_source.alMan;
@@ -56,8 +61,8 @@ public class AlSource {
 
 	}
 
-	public AlSource(NerdAl p_manager) {
-		this.alMan = p_manager;
+	public AlSource(NerdAl p_alMan) {
+		this.alMan = p_alMan;
 		this.id = AL11.alGenSources();
 		this.alMan.getContextSources().add(this);
 		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
@@ -66,20 +71,33 @@ public class AlSource {
 		this.alMan.checkAlcErrors();
 	}
 
-	public AlSource(NerdAl p_manager, AlBuffer<?> p_buffer) {
-		this(p_manager);
+	public AlSource(NerdAl p_alMan, int p_id) {
+		this.alMan = p_alMan;
+		this.id = p_id;
+
+		this.alMan.getContextSources().add(this);
+		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
+	}
+
+	public AlSource(NerdAl p_alMan, AlBuffer<?> p_buffer) {
+		this(p_alMan);
 		this.setBuffer(p_buffer);
 	}
 	// endregion
 
 	// region ...literal "buffer distribution", :joy:
 	public AlBuffer<?> getBuffer() {
-		return this.buffer;
+		final int BUFFER_ID = this.getInt(AL11.AL_BUFFER);
+		if (BUFFER_ID == this.buffer.getId())
+			return this.buffer;
+
+		AlNativeBuffer toRet = new AlNativeBuffer(this.alMan, BUFFER_ID);
+		return toRet;
 	}
 
 	public void setBuffer(AlBuffer<?> p_buffer) {
 		this.buffer = p_buffer;
-		AL11.alSourcei(this.id, AL11.AL_BUFFER, this.buffer.getId());
+		this.setInt(AL11.AL_BUFFER, this.buffer.getId());
 	}
 
 	public void loadOggBuffer(File p_file) {

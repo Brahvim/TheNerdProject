@@ -6,6 +6,7 @@ import org.lwjgl.openal.ALC11;
 
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
+import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
 public class AlContext {
 
@@ -46,7 +47,7 @@ public class AlContext {
 	/* `package` */ void dispose() {
 		// Unlink the current context object:
 		if (!ALC11.alcMakeContextCurrent(0))
-			throw new RuntimeException("Could not change the OpenAL context!");
+			throw new NerdAlException("Could not change the OpenAL context!");
 
 		this.alMan.checkAlErrors();
 		this.checkAlcErrors();
