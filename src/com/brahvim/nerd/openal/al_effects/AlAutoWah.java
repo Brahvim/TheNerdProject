@@ -1,5 +1,5 @@
 package com.brahvim.nerd.openal.al_effects;
 
-public class AlAutoWah {
+public class AlAutowah extends AlEffect {
 	
 }

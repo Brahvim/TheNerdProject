@@ -2,6 +2,7 @@ package com.brahvim.nerd.openal.al_ext_efx;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
@@ -11,13 +12,21 @@ import com.brahvim.nerd.openal.NerdAl;
 public abstract class AlEffect {
 
 	// region Fields.
+	public final static ArrayList<AlEffect> effects = new ArrayList<>();
+
 	protected int id;
 	protected NerdAl alMan;
 	protected boolean used;
 	protected AlEffectSlot slot;
 	// endregion
 
+	protected AlEffect() {
+		AlEffect.effects.add(this);
+	}
+
 	public AlEffect(NerdAl p_NerdAl) {
+		AlEffect.effects.add(this);
+
 		this.alMan = p_NerdAl;
 		this.id = EXTEfx.alGenEffects();
 		this.setInt(EXTEfx.AL_EFFECT_TYPE, this.getEffectType());
@@ -123,6 +132,7 @@ public abstract class AlEffect {
 	// endregion
 
 	public void dispose() {
+		AlEffect.effects.remove(this);
 		EXTEfx.alDeleteEffects(this.id);
 	}
 
