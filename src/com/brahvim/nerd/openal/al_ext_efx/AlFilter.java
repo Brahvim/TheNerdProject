@@ -135,7 +135,7 @@ public class AlFilter {
 	// endregion
 
 	// region OpenAL Setters.
-
+	
 	// endregion
 
 	public void dispose() {
