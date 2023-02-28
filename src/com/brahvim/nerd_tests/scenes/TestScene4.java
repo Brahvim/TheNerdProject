@@ -4,16 +4,7 @@ import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlAutowah;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlChorus;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlEaxReverb;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlEcho;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlFlanger;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlPitchShifter;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlReverb;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlRingModulator;
-import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlHighpassFilter;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlLowpassFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
@@ -50,15 +41,18 @@ public class TestScene4 extends NerdScene {
                 SCENE.getTimesLoaded());
 
         AlAuxiliaryEffectSlot slot = new AlAuxiliaryEffectSlot(SKETCH.AL);
-        AlRingModulator effect = new AlRingModulator(SKETCH.AL);
+        AlEcho effect = new AlEcho(SKETCH.AL);
         slot.setEffect(effect);
+        effect.setEchoDelay(0.01f);
+        effect.setEchoDamping(0.8f);
+        effect.setEchoFeedback(0.001f);
 
         AlLowpassFilter filter = new AlLowpassFilter(SKETCH.AL);
-        filter.setLowpassGain(0.1f);
+        filter.setLowpassGain(1);
         filter.setLowpassGainHf(0.1f);
 
         this.rubberDuck = new AlSource(SKETCH.AL, ASSETS.get("RUBBER DUCK").getData());
-        // this.rubberDuck.attachDirectFilter(filter);
+        this.rubberDuck.attachDirectFilter(filter);
         this.rubberDuck.setGain(0.1f);
         this.rubberDuck.setEffectSlot(slot);
 
@@ -91,7 +85,6 @@ public class TestScene4 extends NerdScene {
     @Override
     protected void draw() {
         SKETCH.background(0);
-
         SKETCH.translate(-SKETCH.cx, -SKETCH.cy);
 
         this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);

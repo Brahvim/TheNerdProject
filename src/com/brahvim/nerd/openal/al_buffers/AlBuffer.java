@@ -19,9 +19,9 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	// No OpenAL implementation provides `AL_DATA`.
 	// Storing it here!
 	protected BufferT data;
-
 	protected NerdAl alMan;
 	protected int id, dataType;
+	protected boolean hasDisposed;
 	// endregion
 
 	// region Constructors.
@@ -287,6 +287,10 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	// endregion
 
 	public void dispose() {
+		if (this.hasDisposed)
+			return;
+		this.hasDisposed = true;
+
 		this.alMan.getDeviceBuffers().remove(this);
 		AL11.alDeleteBuffers(this.id);
 		this.alMan.checkAlErrors();

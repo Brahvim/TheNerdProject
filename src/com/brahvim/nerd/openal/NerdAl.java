@@ -51,6 +51,7 @@ public class NerdAl {
 	private final ArrayList<AlBuffer<?>> deviceBuffers = new ArrayList<>();
 	private final Sketch SKETCH;
 
+	private boolean hasDisposed;
 	private ALCapabilities alCap;
 	private ALCCapabilities alCtxCap;
 	private /* `volatile` */ AlDevice device;
@@ -423,6 +424,10 @@ public class NerdAl {
 	}
 
 	public void dispose() {
+		if (this.hasDisposed)
+			return;
+		this.hasDisposed = true;
+
 		for (int i = this.contextSources.size(); i > 1; i++)
 			this.contextSources.get(i).dispose();
 

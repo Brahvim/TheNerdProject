@@ -145,7 +145,10 @@ public abstract class AlEffect {
 	}
 
 	public void dispose() {
+		if (this.hasDisposed)
+			return;
 		this.hasDisposed = true;
+
 		this.slot.setEffect(null);
 		AlEffect.effects.remove(this);
 		EXTEfx.alDeleteEffects(this.id);

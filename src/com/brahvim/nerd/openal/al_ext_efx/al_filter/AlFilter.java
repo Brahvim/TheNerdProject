@@ -153,7 +153,10 @@ public class AlFilter {
 	}
 
 	public void dispose() {
+		if (this.hasDisposed)
+			return;
 		this.hasDisposed = true;
+
 		EXTEfx.alDeleteFilters(this.id);
 	}
 	// endregion
