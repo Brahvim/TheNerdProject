@@ -13,19 +13,9 @@ public class AlFilter {
 
 	private int id;
 	private NerdAl alMan;
-	private AlSource source;
 
 	public AlFilter(NerdAl p_alMan) {
 		this.alMan = p_alMan;
-		this.id = EXTEfx.alGenFilters();
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
-	}
-
-	public AlFilter(NerdAl p_alMan, AlSource p_source) {
-		this.alMan = p_alMan;
-		this.source = p_source;
 		this.id = EXTEfx.alGenFilters();
 
 		this.alMan.checkAlErrors();
@@ -112,22 +102,40 @@ public class AlFilter {
 	}
 	// endregion
 
-	// region Getters.
-	public AlSource getSource() {
-		return this.source;
-	}
-
-	public int getSourceId() {
-		return this.source.getId();
-	}
-
 	public int getId() {
 		return this.id;
+	}
+
+	// region Mass source attachment.
+	public void attachAsDirect(AlSource... p_sources) {
+		for (AlSource s : p_sources)
+			if (s != null)
+				s.attachDirectFilter(this);
+	}
+
+	public void attachAsAuxilliarySend(AlSource... p_sources) {
+		for (AlSource s : p_sources)
+			if (s != null)
+				s.attachAuxiliarySendFilter(this);
+	}
+
+	public void detachIfDirect(AlSource... p_sources) {
+		for (AlSource s : p_sources)
+			if (s != null)
+				if (s.getDirectFilter() == this)
+					s.detachDirectFilter();
+	}
+
+	public void detachIfAuxiliarySend(AlSource... p_sources) {
+		for (AlSource s : p_sources)
+			if (s != null)
+				if (s.getAuxiliarySendFilter() == this)
+					s.detachAuxiliarySendFilter();
 	}
 	// endregion
 
 	// region OpenAL Setters.
-	
+
 	// endregion
 
 	public void dispose() {

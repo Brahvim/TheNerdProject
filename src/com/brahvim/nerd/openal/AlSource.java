@@ -5,12 +5,14 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.openal.AL11;
+import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
 import com.brahvim.nerd.openal.al_buffers.AlNativeBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
+import com.brahvim.nerd.openal.al_ext_efx.AlFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
@@ -23,6 +25,7 @@ public class AlSource {
 	private NerdScene scene;
 	private AlBuffer<?> buffer;
 	private boolean hasDisposed;
+	private AlFilter directFilter, auxiliarySendFilter;
 	// endregion
 
 	// region Constructors.
@@ -212,6 +215,14 @@ public class AlSource {
 	// region Source getters.
 	public NerdScene getScene() {
 		return this.scene;
+	}
+
+	public AlFilter getDirectFilter() {
+		return this.directFilter;
+	}
+
+	public AlFilter getAuxiliarySendFilter() {
+		return this.auxiliarySendFilter;
 	}
 
 	public boolean isDisposed() {
@@ -430,6 +441,28 @@ public class AlSource {
 	}
 	// endregion
 	// endregion
+	// endregion
+
+	// region Filter attachment.
+	public void attachDirectFilter(AlFilter p_filter) {
+		this.directFilter = p_filter;
+		this.setInt(EXTEfx.AL_DIRECT_FILTER, this.directFilter.getId());
+	}
+
+	public void detachDirectFilter() {
+		this.directFilter = null;
+		this.setInt(EXTEfx.AL_DIRECT_FILTER, EXTEfx.AL_FILTER_NULL);
+	}
+
+	public void attachAuxiliarySendFilter(AlFilter p_filter) {
+		this.auxiliarySendFilter = p_filter;
+		this.setInt(EXTEfx.AL_AUXILIARY_SEND_FILTER, this.auxiliarySendFilter.getId());
+	}
+
+	public void detachAuxiliarySendFilter() {
+		this.auxiliarySendFilter = null;
+		this.setInt(EXTEfx.AL_AUXILIARY_SEND_FILTER, EXTEfx.AL_FILTER_NULL);
+	}
 	// endregion
 
 	// region Actual state management!
