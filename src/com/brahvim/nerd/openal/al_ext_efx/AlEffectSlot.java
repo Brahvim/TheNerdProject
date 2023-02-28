@@ -20,7 +20,6 @@ import com.brahvim.nerd.openal.al_effects.AlFrequencyShifter;
 import com.brahvim.nerd.openal.al_effects.AlPitchShifter;
 import com.brahvim.nerd.openal.al_effects.AlReverb;
 import com.brahvim.nerd.openal.al_effects.AlRingModulator;
-import com.brahvim.nerd.openal.al_effects.AlVocalMorpher;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
 public class AlEffectSlot {
@@ -191,116 +190,60 @@ public class AlEffectSlot {
 		 */
 
 		if (EFFECT_TYPE == EXTEfx.AL_EFFECT_EAXREVERB)
-			return (T) new AlEaxReverb() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlEaxReverb(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_REVERB)
-			return (T) new AlReverb() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlReverb(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_CHORUS)
-			return (T) new AlChorus() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlChorus(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_DISTORTION)
-			return (T) new AlDistortion() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlDistortion(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_ECHO)
-			return (T) new AlEcho() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlEcho(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_FLANGER)
-			return (T) new AlFlanger() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlFlanger(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_FREQUENCY_SHIFTER)
-			return (T) new AlFrequencyShifter() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlFrequencyShifter(this.alMan);
 
-		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_VOCAL_MORPHER)
-			return (T) new AlVocalMorpher() {
+		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_VOCAL_MORPHER) {
+			System.err.println(
+					"LWJGL has not yet implemented `AL_VOCAL_MORPHER`, sorry.");
+			// `return (T) new AlVocalMorpher();`
+			return (T) new AlEffect(this.alMan) {
 				@Override
 				protected int getEffectType() {
 					return EFFECT_TYPE;
 				}
 			};
+		}
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_PITCH_SHIFTER)
-			return (T) new AlPitchShifter() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlPitchShifter(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_RING_MODULATOR)
-			return (T) new AlRingModulator() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlRingModulator(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_AUTOWAH)
-			return (T) new AlAutowah() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlAutowah(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_COMPRESSOR)
-			return (T) new AlCompressor() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlCompressor(this.alMan);
 
 		else if (EFFECT_TYPE == EXTEfx.AL_EFFECT_EQUALIZER)
-			return (T) new AlEqualizer() {
-				@Override
-				protected int getEffectType() {
-					return EFFECT_TYPE;
-				}
-			};
+			return (T) new AlEqualizer(this.alMan);
 
 		// Instead of throwing this exception, I could just use reflection to see
 		// what classes extend `AlEffect` with the assumption that the default
 		// constructor exists in them...
 		else
 			throw new NerdAlException("""
-					No idea what this OpenAL effect is!
-					Come to this line and modify Nerd's source to fix this...""");
+					No idea what this OpenAL effect is...
+					Come to this line and modify Nerd's source to fix this!""");
 		// endregion
 
 	}

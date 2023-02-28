@@ -3,9 +3,14 @@ package com.brahvim.nerd.openal.al_effects;
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
 
+import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 
 public class AlReverb extends AlEffect {
+
+	public AlReverb(NerdAl p_NerdAl) {
+		super(p_NerdAl);
+	}
 
 	@Override
 	protected int getEffectType() {
