@@ -1,4 +1,4 @@
-package com.brahvim.nerd.openal.al_ext_efx;
+package com.brahvim.nerd.openal.al_ext_efx.al_filter;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -6,10 +6,9 @@ import java.nio.IntBuffer;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.NerdAl;
 
-public class AlFilter {
+/* `package` */ class AlFilter {
 
 	private int id;
 	private NerdAl alMan;
@@ -21,6 +20,8 @@ public class AlFilter {
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
+
+	// public AlFilter(AlFilter p_filter) { }
 
 	// region C-style OpenAL getters.
 	public int getInt(int p_alEnum) {
@@ -106,36 +107,8 @@ public class AlFilter {
 		return this.id;
 	}
 
-	// region Mass source attachment.
-	public void attachAsDirect(AlSource... p_sources) {
-		for (AlSource s : p_sources)
-			if (s != null)
-				s.attachDirectFilter(this);
-	}
-
-	public void attachAsAuxilliarySend(AlSource... p_sources) {
-		for (AlSource s : p_sources)
-			if (s != null)
-				s.attachAuxiliarySendFilter(this);
-	}
-
-	public void detachIfDirect(AlSource... p_sources) {
-		for (AlSource s : p_sources)
-			if (s != null)
-				if (s.getDirectFilter() == this)
-					s.detachDirectFilter();
-	}
-
-	public void detachIfAuxiliarySend(AlSource... p_sources) {
-		for (AlSource s : p_sources)
-			if (s != null)
-				if (s.getAuxiliarySendFilter() == this)
-					s.detachAuxiliarySendFilter();
-	}
-	// endregion
-
 	// region OpenAL Setters.
-		
+
 	// endregion
 
 	public void dispose() {

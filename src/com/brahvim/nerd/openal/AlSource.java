@@ -12,7 +12,8 @@ import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
 import com.brahvim.nerd.openal.al_buffers.AlNativeBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
-import com.brahvim.nerd.openal.al_ext_efx.AlFilter;
+import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlAuxiliarySendFilter;
+import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlDirectFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
@@ -25,7 +26,8 @@ public class AlSource {
 	private NerdScene scene;
 	private AlBuffer<?> buffer;
 	private boolean hasDisposed;
-	private AlFilter directFilter, auxiliarySendFilter;
+	private AlDirectFilter directFilter;
+	private AlAuxiliarySendFilter auxiliarySendFilter;
 	// endregion
 
 	// region Constructors.
@@ -33,6 +35,17 @@ public class AlSource {
 	 * @deprecated Use `AlSource::AlSource(NerdAl, int)` where `int` is the source's
 	 *             `id` instead. It is way faster!
 	 */
+
+	public AlSource(NerdAl p_alMan) {
+		this.alMan = p_alMan;
+		this.id = AL11.alGenSources();
+		this.alMan.getContextSources().add(this);
+		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
+
+		this.alMan.checkAlErrors();
+		this.alMan.checkAlcErrors();
+	}
+
 	@Deprecated
 	public AlSource(AlSource p_source) {
 		this.scene = p_source.scene;
@@ -53,11 +66,12 @@ public class AlSource {
 		this.setPosition(p_source.getPosition());
 		this.setVelocity(p_source.getVelocity());
 		this.setSourceType(p_source.getSourceType());
+		this.attachDirectFilter(p_source.getDirectFilter());
 		this.setOrientation(p_source.getOrientation());
 		this.setMaxDistance(p_source.getMaxDistance());
 		this.setSampleOffset(p_source.getSampleOffset());
 		this.setConeOuterGain(p_source.getConeOuterGain());
-		this.attachDirectFilter(p_source.getDirectFilter());
+		this.attachAuxiliarySendFilter(p_source.getAuxiliarySendFilter());
 		this.setConeOuterAngle(p_source.getConeOuterAngle());
 		this.setConeInnerAngle(p_source.getConeInnerAngle());
 		this.setConeOuterGainHf(p_source.getConeOuterGainHf());
@@ -65,22 +79,11 @@ public class AlSource {
 		this.setReferenceDistance(p_source.getReferenceDistance());
 		this.setRoomRolloffFactor(p_source.getRoomRolloffFactor());
 		this.setAirAbsorptionFactor(p_source.getAirAbsorptionFactor());
-		this.attachAuxiliarySendFilter(p_source.getAuxiliarySendFilter());
 		this.setDirectFilterGainHfAuto(p_source.getDirectFilterGainHfAuto());
 		this.setAuxiliarySendFilterGainAuto(p_source.getAuxiliarySendFilterGainAuto());
 		this.setAuxiliarySendFilterGainHfAuto(p_source.getAuxiliarySendFilterGainHfAuto());
 		// endregion
 
-	}
-
-	public AlSource(NerdAl p_alMan) {
-		this.alMan = p_alMan;
-		this.id = AL11.alGenSources();
-		this.alMan.getContextSources().add(this);
-		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
 	}
 
 	public AlSource(NerdAl p_alMan, int p_id) {
@@ -226,11 +229,11 @@ public class AlSource {
 		return this.scene;
 	}
 
-	public AlFilter getDirectFilter() {
+	public AlDirectFilter getDirectFilter() {
 		return this.directFilter;
 	}
 
-	public AlFilter getAuxiliarySendFilter() {
+	public AlAuxiliarySendFilter getAuxiliarySendFilter() {
 		return this.auxiliarySendFilter;
 	}
 
@@ -453,12 +456,7 @@ public class AlSource {
 	// endregion
 
 	// region Filter attachment.
-	// TODO: Filter types have to be specified at filter construction.
-	// TODO: Make `interface AlFilter` and let sources attach its subclasses
-	// TODO: (which would be `AlDirectFilter` and `AlAuxiliarySendFilter`).
-	// TODO: Make the superclass be able to transfer filter parameters over.
-
-	public void attachDirectFilter(AlFilter p_filter) {
+	public void attachDirectFilter(AlDirectFilter p_filter) {
 		this.directFilter = p_filter;
 		this.setInt(EXTEfx.AL_DIRECT_FILTER, this.directFilter.getId());
 	}
@@ -468,7 +466,7 @@ public class AlSource {
 		this.setInt(EXTEfx.AL_DIRECT_FILTER, EXTEfx.AL_FILTER_NULL);
 	}
 
-	public void attachAuxiliarySendFilter(AlFilter p_filter) {
+	public void attachAuxiliarySendFilter(AlAuxiliarySendFilter p_filter) {
 		this.auxiliarySendFilter = p_filter;
 		this.setInt(EXTEfx.AL_AUXILIARY_SEND_FILTER, this.auxiliarySendFilter.getId());
 	}
@@ -479,7 +477,7 @@ public class AlSource {
 	}
 	// endregion
 
-	// region `EXTEfx` Getters.
+	// region `EXTEfx` property getters.
 	public float getAirAbsorptionFactor() {
 		return this.getFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR);
 	}
@@ -505,7 +503,7 @@ public class AlSource {
 	}
 	// endregion
 
-	// region `EXTEfx` Setters.
+	// region `EXTEfx` property setters.
 	public void setAirAbsorptionFactor(float p_value) {
 		this.setFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR, p_value);
 	}
