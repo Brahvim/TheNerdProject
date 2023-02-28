@@ -20,10 +20,6 @@ public abstract class AlEffect {
 	protected AlEffectSlot slot;
 	// endregion
 
-	protected AlEffect() {
-		AlEffect.effects.add(this);
-	}
-
 	public AlEffect(NerdAl p_NerdAl) {
 		AlEffect.effects.add(this);
 

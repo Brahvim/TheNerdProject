@@ -84,6 +84,7 @@ public class AlEffectSlot {
 	private int id = EXTEfx.AL_EFFECT_NULL;
 	// endregion
 
+	// region Constructors.
 	public AlEffectSlot(NerdAl p_alMan) {
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
@@ -101,6 +102,7 @@ public class AlEffectSlot {
 
 		this.setEffect(p_effect);
 	}
+	// endregion
 
 	// region Getters.
 	public int getId() {
@@ -405,6 +407,13 @@ public class AlEffectSlot {
 	// endregion
 
 	public void dispose() {
+		this.dispose(false);
+	}
+
+	public void dispose(boolean p_alsoEffect) {
+		if (p_alsoEffect)
+			this.effect.dispose();
+
 		EXTEfx.alDeleteAuxiliaryEffectSlots(this.id);
 	}
 
