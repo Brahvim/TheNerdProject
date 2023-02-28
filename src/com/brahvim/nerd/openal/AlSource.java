@@ -30,7 +30,8 @@ public class AlSource {
 
 	// region Constructors.
 	/**
-	 * @deprecated Use `AlSource::AlSource(NerdAl, int)` instead. It is much faster.
+	 * @deprecated Use `AlSource::AlSource(NerdAl, int)` where `int` is the source's
+	 *             `id` instead. It is way faster!
 	 */
 	@Deprecated
 	public AlSource(AlSource p_source) {
@@ -56,10 +57,18 @@ public class AlSource {
 		this.setMaxDistance(p_source.getMaxDistance());
 		this.setSampleOffset(p_source.getSampleOffset());
 		this.setConeOuterGain(p_source.getConeOuterGain());
+		this.attachDirectFilter(p_source.getDirectFilter());
 		this.setConeOuterAngle(p_source.getConeOuterAngle());
 		this.setConeInnerAngle(p_source.getConeInnerAngle());
+		this.setConeOuterGainHf(p_source.getConeOuterGainHf());
 		this.setPitchMultiplier(p_source.getPitchMultiplier());
 		this.setReferenceDistance(p_source.getReferenceDistance());
+		this.setRoomRolloffFactor(p_source.getRoomRolloffFactor());
+		this.setAirAbsorptionFactor(p_source.getAirAbsorptionFactor());
+		this.attachAuxiliarySendFilter(p_source.getAuxiliarySendFilter());
+		this.setDirectFilterGainHfAuto(p_source.getDirectFilterGainHfAuto());
+		this.setAuxiliarySendFilterGainAuto(p_source.getAuxiliarySendFilterGainAuto());
+		this.setAuxiliarySendFilterGainHfAuto(p_source.getAuxiliarySendFilterGainHfAuto());
 		// endregion
 
 	}
@@ -444,6 +453,11 @@ public class AlSource {
 	// endregion
 
 	// region Filter attachment.
+	// TODO: Filter types have to be specified at filter construction.
+	// TODO: Make `interface AlFilter` and let sources attach its subclasses
+	// TODO: (which would be `AlDirectFilter` and `AlAuxiliarySendFilter`).
+	// TODO: Make the superclass be able to transfer filter parameters over.
+
 	public void attachDirectFilter(AlFilter p_filter) {
 		this.directFilter = p_filter;
 		this.setInt(EXTEfx.AL_DIRECT_FILTER, this.directFilter.getId());
@@ -462,6 +476,58 @@ public class AlSource {
 	public void detachAuxiliarySendFilter() {
 		this.auxiliarySendFilter = null;
 		this.setInt(EXTEfx.AL_AUXILIARY_SEND_FILTER, EXTEfx.AL_FILTER_NULL);
+	}
+	// endregion
+
+	// region `EXTEfx` Getters.
+	public float getAirAbsorptionFactor() {
+		return this.getFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR);
+	}
+
+	public float getRoomRolloffFactor() {
+		return this.getFloat(EXTEfx.AL_ROOM_ROLLOFF_FACTOR);
+	}
+
+	public float getConeOuterGainHf() {
+		return this.getFloat(EXTEfx.AL_CONE_OUTER_GAINHF);
+	}
+
+	public float getDirectFilterGainHfAuto() {
+		return this.getFloat(EXTEfx.AL_DIRECT_FILTER_GAINHF_AUTO);
+	}
+
+	public float getAuxiliarySendFilterGainAuto() {
+		return this.getFloat(EXTEfx.AL_AUXILIARY_SEND_FILTER_GAIN_AUTO);
+	}
+
+	public float getAuxiliarySendFilterGainHfAuto() {
+		return this.getFloat(EXTEfx.AL_AUXILIARY_SEND_FILTER_GAINHF_AUTO);
+	}
+	// endregion
+
+	// region `EXTEfx` Setters.
+	public void setAirAbsorptionFactor(float p_value) {
+		this.setFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR, p_value);
+	}
+
+	public void setRoomRolloffFactor(float p_value) {
+		this.setFloat(EXTEfx.AL_ROOM_ROLLOFF_FACTOR, p_value);
+	}
+
+	public void setConeOuterGainHf(float p_value) {
+		this.setFloat(EXTEfx.AL_CONE_OUTER_GAINHF, p_value);
+	}
+
+	public void setDirectFilterGainHfAuto(float p_value) {
+		this.setFloat(EXTEfx.AL_DIRECT_FILTER_GAINHF_AUTO, p_value);
+	}
+
+	public void setAuxiliarySendFilterGainAuto(float p_value) {
+		this.setFloat(EXTEfx.AL_AUXILIARY_SEND_FILTER_GAIN_AUTO, p_value);
+	}
+
+	public void setAuxiliarySendFilterGainHfAuto(float p_value) {
+		this.setFloat(EXTEfx.AL_AUXILIARY_SEND_FILTER_GAINHF_AUTO, p_value);
 	}
 	// endregion
 

@@ -409,11 +409,11 @@ public class NerdAl {
 	}
 
 	public void dispose() {
-		for (AlSource s : this.contextSources)
-			s.dispose(false);
+		for (int i = this.contextSources.size(); i > 1; i++)
+			this.contextSources.get(i).dispose();
 
-		for (AlBuffer<?> b : this.deviceBuffers)
-			b.dispose();
+		for (int i = this.deviceBuffers.size(); i > 1; i++)
+			this.deviceBuffers.get(i).dispose();
 
 		this.context.dispose();
 		this.device.dispose();
