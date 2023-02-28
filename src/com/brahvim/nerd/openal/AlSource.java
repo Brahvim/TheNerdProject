@@ -615,6 +615,7 @@ public class AlSource {
 	public void dispose(boolean p_alsoBuffer) {
 		if (this.hasDisposed)
 			return;
+		this.hasDisposed = true;
 
 		// TODO: MAKE `AssetLoaderOptions` (finally) and make buffers persistent :D
 		if (p_alsoBuffer)
@@ -624,7 +625,6 @@ public class AlSource {
 		AL11.alDeleteSources(this.id);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
-		this.hasDisposed = true;
 	}
 	// endregion
 
