@@ -31,11 +31,6 @@ public class AlSource {
 	// endregion
 
 	// region Constructors.
-	/**
-	 * @deprecated Use `AlSource::AlSource(NerdAl, int)` where `int` is the source's
-	 *             `id` instead. It is way faster!
-	 */
-
 	public AlSource(NerdAl p_alMan) {
 		this.alMan = p_alMan;
 		this.id = AL11.alGenSources();
@@ -46,6 +41,10 @@ public class AlSource {
 		this.alMan.checkAlcErrors();
 	}
 
+	/**
+	 * @deprecated Use `AlSource::AlSource(NerdAl, int)` where `int` is the source's
+	 *             `id` instead. It is way faster!
+	 */
 	@Deprecated
 	public AlSource(AlSource p_source) {
 		this.scene = p_source.scene;
