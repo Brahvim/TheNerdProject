@@ -16,8 +16,8 @@ public abstract class AlEffect {
 
 	protected int id;
 	protected NerdAl alMan;
-	protected boolean used;
-	protected AlEffectSlot slot;
+	protected boolean used, hasDisposed;
+	protected AlAuxiliaryEffectSlot slot;
 	// endregion
 
 	public AlEffect(NerdAl p_NerdAl) {
@@ -100,36 +100,56 @@ public abstract class AlEffect {
 	// region C-style OpenAL setters.
 	public void setInt(int p_alEnum, int p_value) {
 		EXTEfx.alEffecti(this.id, p_alEnum, p_value);
-		this.slot.setEffect(this);
+		if (this.slot != null)
+			this.slot.setEffect(this);
+
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_values) {
 		EXTEfx.alEffectiv(this.id, p_alEnum, p_values);
-		this.slot.setEffect(this);
+		if (this.slot != null)
+			this.slot.setEffect(this);
+
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		EXTEfx.alEffectf(this.id, p_alEnum, p_value);
-		this.slot.setEffect(this);
+		if (this.slot != null)
+			this.slot.setEffect(this);
+
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
 		EXTEfx.alEffectfv(this.id, p_alEnum, p_values);
-		this.slot.setEffect(this);
+		if (this.slot != null)
+			this.slot.setEffect(this);
+
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
 	// endregion
 
+	public AlAuxiliaryEffectSlot getSlot() {
+		return this.slot;
+	}
+
+	// region Disposal.
+	public boolean isDisposed() {
+		return this.hasDisposed;
+	}
+
 	public void dispose() {
+		this.hasDisposed = true;
+		this.slot.setEffect(null);
 		AlEffect.effects.remove(this);
 		EXTEfx.alDeleteEffects(this.id);
 	}
+	// endregion
 
 }

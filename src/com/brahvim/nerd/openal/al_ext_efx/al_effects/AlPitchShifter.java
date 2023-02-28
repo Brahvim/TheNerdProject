@@ -17,22 +17,22 @@ public class AlPitchShifter extends AlEffect {
 	}
 
 	// region Getters.
-	public float getPitchShifterCoarseTune() {
-		return super.getFloat(EXTEfx.AL_PITCH_SHIFTER_COARSE_TUNE);
+	public int getPitchShifterFineTune() {
+		return super.getInt(EXTEfx.AL_PITCH_SHIFTER_FINE_TUNE);
 	}
 
-	public float getPitchShifterFineTune() {
-		return super.getFloat(EXTEfx.AL_PITCH_SHIFTER_FINE_TUNE);
+	public int getPitchShifterCoarseTune() {
+		return super.getInt(EXTEfx.AL_PITCH_SHIFTER_COARSE_TUNE);
 	}
 	// endregion
 
 	// region Setters.
-	public void setPitchShifterCoarseTune(float p_value) {
-		super.setFloat(EXTEfx.AL_PITCH_SHIFTER_COARSE_TUNE, p_value);
+	public void setPitchShifterFineTune(int p_value) {
+		super.setInt(EXTEfx.AL_PITCH_SHIFTER_FINE_TUNE, p_value);
 	}
 
-	public void setPitchShifterFineTune(float p_value) {
-		super.setFloat(EXTEfx.AL_PITCH_SHIFTER_FINE_TUNE, p_value);
+	public void setPitchShifterCoarseTune(int p_value) {
+		super.setInt(EXTEfx.AL_PITCH_SHIFTER_COARSE_TUNE, p_value);
 	}
 	// endregion
 

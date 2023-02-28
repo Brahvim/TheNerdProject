@@ -15,11 +15,11 @@ public class AlBandpassFilter extends AlFilter {
 		return super.getFloat(EXTEfx.AL_BANDPASS_GAIN);
 	}
 
-	public float getBandpassGainlf() {
+	public float getBandpassGainLf() {
 		return super.getFloat(EXTEfx.AL_BANDPASS_GAINLF);
 	}
 
-	public float getBandpassGainhf() {
+	public float getBandpassGainHf() {
 		return super.getFloat(EXTEfx.AL_BANDPASS_GAINHF);
 	}
 	// endregion
@@ -29,11 +29,11 @@ public class AlBandpassFilter extends AlFilter {
 		super.setFloat(EXTEfx.AL_BANDPASS_GAIN, p_value);
 	}
 
-	public void setBandpassGainlf(float p_value) {
+	public void setBandpassGainLf(float p_value) {
 		super.setFloat(EXTEfx.AL_BANDPASS_GAINLF, p_value);
 	}
 
-	public void setBandpassGainhf(float p_value) {
+	public void setBandpassGainHf(float p_value) {
 		super.setFloat(EXTEfx.AL_BANDPASS_GAINHF, p_value);
 	}
 	// endregion

@@ -22,7 +22,7 @@ import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlPitchShifter;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlReverb;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlRingModulator;
 
-public class AlEffectSlot {
+public class AlAuxiliaryEffectSlot {
 
 	/*
 	 * let arr = [
@@ -80,11 +80,12 @@ public class AlEffectSlot {
 	// region Fields.
 	private NerdAl alMan;
 	private AlEffect effect;
+	private boolean hasDisposed;
 	private int id = EXTEfx.AL_EFFECT_NULL;
 	// endregion
 
 	// region Constructors.
-	public AlEffectSlot(NerdAl p_alMan) {
+	public AlAuxiliaryEffectSlot(NerdAl p_alMan) {
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
 
@@ -92,7 +93,7 @@ public class AlEffectSlot {
 		this.alMan.checkAlcErrors();
 	}
 
-	public AlEffectSlot(NerdAl p_alMan, AlEffect p_effect) {
+	public AlAuxiliaryEffectSlot(NerdAl p_alMan, AlEffect p_effect) {
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
 
@@ -108,6 +109,10 @@ public class AlEffectSlot {
 		return this.id;
 	}
 
+	public float getGain() {
+		return this.getFloat(EXTEfx.AL_EFFECTSLOT_GAIN);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T extends AlEffect> T getEffect() {
 		final int ID = this.getInt(EXTEfx.AL_EFFECTSLOT_EFFECT);
@@ -120,7 +125,7 @@ public class AlEffectSlot {
 					return (T) e;
 			}
 
-		final int EFFECT_TYPE = EXTEfx.alGetEffecti(ID, EXTEfx.AL_EFFECT_TYPE);
+		final int EFFECT_TYPE = EXTEfx.alGetEffecti(ID, EXTEfx.AL_EFFECTSLOT_EFFECT);
 
 		// region Construct new effect according to `EFFECT_TYPE`.
 		// The JS code that generated the next part. Hee-hee!:
@@ -255,8 +260,15 @@ public class AlEffectSlot {
 	}
 
 	public void setEffect(AlEffect p_effect) {
-		this.effect.dispose();
-		EXTEfx.alAuxiliaryEffectSloti(this.id, EXTEfx.AL_EFFECT_TYPE, p_effect.id);
+		if (p_effect == null) {
+			this.effect = null;
+			EXTEfx.alAuxiliaryEffectSloti(this.id, EXTEfx.AL_EFFECTSLOT_EFFECT, EXTEfx.AL_EFFECT_NULL);
+			return;
+		}
+
+		this.effect = p_effect;
+		this.effect.slot = this;
+		EXTEfx.alAuxiliaryEffectSloti(this.id, EXTEfx.AL_EFFECTSLOT_EFFECT, p_effect.id);
 	}
 
 	public void setAutoSend(boolean p_value) {
@@ -292,7 +304,7 @@ public class AlEffectSlot {
 		return buffer.array();
 	}
 
-	public float getFloat(int p_alEnum, float p_value) {
+	public float getFloat(int p_alEnum) {
 		MemoryStack.stackPush();
 		FloatBuffer buffer = MemoryStack.stackMallocFloat(1);
 
@@ -349,15 +361,23 @@ public class AlEffectSlot {
 	}
 	// endregion
 
+	// region Disposal.
+	public boolean isDisposed() {
+		return this.hasDisposed;
+	}
+
 	public void dispose() {
 		this.dispose(false);
 	}
 
 	public void dispose(boolean p_alsoEffect) {
+		this.hasDisposed = true;
+
 		if (p_alsoEffect)
 			this.effect.dispose();
 
 		EXTEfx.alDeleteAuxiliaryEffectSlots(this.id);
 	}
+	// endregion
 
 }

@@ -228,21 +228,21 @@ public class NerdAl {
 	// region Getters and setters!...
 	// Yes, there are no C-style setters.
 	// region C-style OpenAL getters.
-	public int getInt(int p_alEnum, int p_value) {
+	public int getInt(int p_alEnum) {
 		int toRet = AL11.alGetInteger(p_alEnum);
 		this.checkAlErrors();
 		return toRet;
 	}
 
-	public float getFloat(int p_alEnum, float p_value) {
+	public float getFloat(int p_alEnum) {
 		float toRet = AL11.alGetFloat(p_alEnum);
 		this.checkAlErrors();
 		return toRet;
 	}
 
-	public int[] getIntVector(int p_alEnum, int p_vectorSize) {
+	public int[] getIntVector(int p_alEnum, int p_vecSize) {
 		MemoryStack.stackPush();
-		IntBuffer buffer = MemoryStack.stackMallocInt(p_vectorSize);
+		IntBuffer buffer = MemoryStack.stackMallocInt(p_vecSize);
 		AL11.alGetIntegerv(p_alEnum, buffer);
 		MemoryStack.stackPop();
 
@@ -250,9 +250,9 @@ public class NerdAl {
 		return buffer.array();
 	}
 
-	public float[] getFloatVector(int p_alEnum, int p_vectorSize) {
+	public float[] getFloatVector(int p_alEnum, int p_vecSize) {
 		MemoryStack.stackPush();
-		FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vectorSize);
+		FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vecSize);
 		AL11.alGetFloatv(p_alEnum, buffer);
 		MemoryStack.stackPop();
 
@@ -264,15 +264,15 @@ public class NerdAl {
 	// region Getters.
 	// region OpenAL API getters.
 	public float getDistanceModel() {
-		return this.getFloat(AL11.AL_DISTANCE_MODEL, this.getContextId());
+		return this.getFloat(AL11.AL_DISTANCE_MODEL);
 	}
 
 	public float getDopplerFactor() {
-		return this.getFloat(AL11.AL_DOPPLER_FACTOR, this.getContextId());
+		return this.getFloat(AL11.AL_DOPPLER_FACTOR);
 	}
 
 	public float getSpeedOfSound() {
-		return this.getFloat(AL11.AL_SPEED_OF_SOUND, this.getContextId());
+		return this.getFloat(AL11.AL_SPEED_OF_SOUND);
 	}
 	// endregion
 

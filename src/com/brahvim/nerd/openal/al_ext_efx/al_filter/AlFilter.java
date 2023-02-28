@@ -13,6 +13,7 @@ public class AlFilter {
 
 	private NerdAl alMan;
 	private int id, filterName;
+	private boolean hasDisposed;
 
 	public AlFilter(NerdAl p_alMan, int p_filterName) {
 		this.alMan = p_alMan;
@@ -146,8 +147,15 @@ public class AlFilter {
 	}
 	// endregion
 
+	// region Disposal.
+	public boolean isDisposed() {
+		return this.hasDisposed;
+	}
+
 	public void dispose() {
+		this.hasDisposed = true;
 		EXTEfx.alDeleteFilters(this.id);
 	}
+	// endregion
 
 }

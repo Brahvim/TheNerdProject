@@ -127,8 +127,8 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		this.alMan.checkAlErrors();
 	}
 
-	public void setIntVector(int p_alEnum, int... p_value) {
-		AL11.alBufferiv(this.id, p_alEnum, p_value);
+	public void setIntVector(int p_alEnum, int... p_values) {
+		AL11.alBufferiv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlErrors();
 	}
 
@@ -137,12 +137,12 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		this.alMan.checkAlErrors();
 	}
 
-	public void setIntTriplet(int p_alEnum, int... p_value) {
-		if (p_value.length != 3)
+	public void setIntTriplet(int p_alEnum, int... p_values) {
+		if (p_values.length != 3)
 			throw new IllegalArgumentException(
 					"`alBuffer::setIntTriplet()` cannot take an array of size other than `3`!");
 
-		AL11.alBuffer3i(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
+		AL11.alBuffer3i(this.id, p_alEnum, p_values[0], p_values[1], p_values[2]);
 		this.alMan.checkAlErrors();
 	}
 
@@ -151,12 +151,12 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		this.alMan.checkAlErrors();
 	}
 
-	public void setFloatTriplet(int p_alEnum, float... p_value) {
-		if (p_value.length != 3)
+	public void setFloatTriplet(int p_alEnum, float... p_values) {
+		if (p_values.length != 3)
 			throw new IllegalArgumentException(
 					"`alBuffer::setFloatTriplet()` cannot take an array of size other than `3`!");
 
-		AL11.alBuffer3f(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
+		AL11.alBuffer3f(this.id, p_alEnum, p_values[0], p_values[1], p_values[2]);
 		this.alMan.checkAlErrors();
 	}
 
@@ -165,8 +165,8 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		this.alMan.checkAlErrors();
 	}
 
-	public void setFloatTriplet(int p_alEnum, PVector p_value) {
-		AL11.alBuffer3f(this.id, p_alEnum, p_value.x, p_value.y, p_value.z);
+	public void setFloatTriplet(int p_alEnum, PVector p_values) {
+		AL11.alBuffer3f(this.id, p_alEnum, p_values.x, p_values.y, p_values.z);
 		this.alMan.checkAlErrors();
 	}
 	// endregion

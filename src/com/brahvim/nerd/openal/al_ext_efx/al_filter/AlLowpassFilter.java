@@ -15,7 +15,7 @@ public class AlLowpassFilter extends AlFilter {
 		return super.getFloat(EXTEfx.AL_LOWPASS_GAIN);
 	}
 
-	public float getLowpassGainhf() {
+	public float getLowpassGainHf() {
 		return super.getFloat(EXTEfx.AL_LOWPASS_GAINHF);
 	}
 	// endregion
@@ -25,7 +25,7 @@ public class AlLowpassFilter extends AlFilter {
 		super.setFloat(EXTEfx.AL_LOWPASS_GAIN, p_value);
 	}
 
-	public void setLowpassGainhf(float p_value) {
+	public void setLowpassGainHf(float p_value) {
 		super.setFloat(EXTEfx.AL_LOWPASS_GAINHF, p_value);
 	}
 	// endregion

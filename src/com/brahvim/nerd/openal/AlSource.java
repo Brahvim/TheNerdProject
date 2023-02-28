@@ -12,6 +12,7 @@ import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
 import com.brahvim.nerd.openal.al_buffers.AlNativeBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
+import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 
@@ -25,6 +26,7 @@ public class AlSource {
 	private NerdScene scene;
 	private AlBuffer<?> buffer;
 	private boolean hasDisposed;
+	private AlAuxiliaryEffectSlot effectSlot;
 	private AlFilter directFilter, auxiliarySendFilter;
 	// endregion
 
@@ -178,8 +180,8 @@ public class AlSource {
 		this.alMan.checkAlErrors();
 	}
 
-	public void setIntVector(int p_alEnum, int... p_value) {
-		AL11.alSourceiv(this.id, p_alEnum, p_value);
+	public void setIntVector(int p_alEnum, int... p_values) {
+		AL11.alSourceiv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlErrors();
 	}
 
@@ -446,6 +448,22 @@ public class AlSource {
 	// endregion
 
 	// region Anything `EXTEfx`.
+	public AlAuxiliaryEffectSlot getEffectSlot() {
+		return this.effectSlot;
+	}
+
+	public AlAuxiliaryEffectSlot setEffectSlot(AlAuxiliaryEffectSlot p_effectSlot) {
+		AlAuxiliaryEffectSlot toRet = this.effectSlot;
+		this.effectSlot = p_effectSlot;
+		this.setIntTriplet(
+				EXTEfx.AL_AUXILIARY_SEND_FILTER,
+				this.effectSlot.getId(), 0,
+				this.auxiliarySendFilter == null
+						? EXTEfx.AL_FILTER_NULL
+						: this.auxiliarySendFilter.getId());
+		return toRet;
+	}
+
 	// region Methods for `AlFilter`s.
 	public AlFilter getDirectFilter() {
 		return this.directFilter;
@@ -462,7 +480,9 @@ public class AlSource {
 	public AlFilter attachDirectFilter(AlFilter p_filter) {
 		AlFilter toRet = this.directFilter;
 		this.directFilter = p_filter;
-		this.setInt(EXTEfx.AL_DIRECT_FILTER, this.directFilter.getId());
+		this.setInt(EXTEfx.AL_DIRECT_FILTER, this.directFilter == null
+				? EXTEfx.AL_FILTER_NULL
+				: this.directFilter.getId());
 
 		return toRet;
 	}
@@ -482,7 +502,12 @@ public class AlSource {
 	public AlFilter attachAuxiliarySendFilter(AlFilter p_filter) {
 		AlFilter toRet = this.auxiliarySendFilter;
 		this.auxiliarySendFilter = p_filter;
-		this.setInt(EXTEfx.AL_AUXILIARY_SEND_FILTER, this.auxiliarySendFilter.getId());
+		this.setIntTriplet(
+				EXTEfx.AL_AUXILIARY_SEND_FILTER,
+				this.effectSlot.getId(), 0,
+				this.auxiliarySendFilter == null
+						? EXTEfx.AL_FILTER_NULL
+						: this.auxiliarySendFilter.getId());
 
 		return toRet;
 	}

@@ -3,6 +3,18 @@ package com.brahvim.nerd_tests.scenes;
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
+import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlAutowah;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlChorus;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlEaxReverb;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlEcho;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlFlanger;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlPitchShifter;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlReverb;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlRingModulator;
+import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlHighpassFilter;
+import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlLowpassFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -37,8 +49,18 @@ public class TestScene4 extends NerdScene {
         System.out.printf("`TestScene4.setup()` here, I was called `%d` times!\n",
                 SCENE.getTimesLoaded());
 
+        AlAuxiliaryEffectSlot slot = new AlAuxiliaryEffectSlot(SKETCH.AL);
+        AlRingModulator effect = new AlRingModulator(SKETCH.AL);
+        slot.setEffect(effect);
+
+        AlLowpassFilter filter = new AlLowpassFilter(SKETCH.AL);
+        filter.setLowpassGain(0.1f);
+        filter.setLowpassGainHf(0.1f);
+
         this.rubberDuck = new AlSource(SKETCH.AL, ASSETS.get("RUBBER DUCK").getData());
+        // this.rubberDuck.attachDirectFilter(filter);
         this.rubberDuck.setGain(0.1f);
+        this.rubberDuck.setEffectSlot(slot);
 
         // Loaded this scene for the first time? Do this!:
         if (SCENE.getTimesLoaded() == 0) {
