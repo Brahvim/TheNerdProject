@@ -8,19 +8,19 @@ import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.NerdAl;
-import com.brahvim.nerd.openal.al_effects.AlAutowah;
-import com.brahvim.nerd.openal.al_effects.AlChorus;
-import com.brahvim.nerd.openal.al_effects.AlCompressor;
-import com.brahvim.nerd.openal.al_effects.AlDistortion;
-import com.brahvim.nerd.openal.al_effects.AlEaxReverb;
-import com.brahvim.nerd.openal.al_effects.AlEcho;
-import com.brahvim.nerd.openal.al_effects.AlEqualizer;
-import com.brahvim.nerd.openal.al_effects.AlFlanger;
-import com.brahvim.nerd.openal.al_effects.AlFrequencyShifter;
-import com.brahvim.nerd.openal.al_effects.AlPitchShifter;
-import com.brahvim.nerd.openal.al_effects.AlReverb;
-import com.brahvim.nerd.openal.al_effects.AlRingModulator;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlAutowah;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlChorus;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlCompressor;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlEaxReverb;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlEcho;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlEqualizer;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlFlanger;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlFrequencyShifter;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlPitchShifter;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlReverb;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlRingModulator;
 
 public class AlEffectSlot {
 

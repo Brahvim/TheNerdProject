@@ -11,6 +11,7 @@ import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
+import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
@@ -24,6 +25,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import processing.core.PVector;
 
 public class NerdAl {
+
 	// region [DEPRECATED] Inner classes, interfaces and enums.
 	/*
 	 * 
@@ -353,6 +355,18 @@ public class NerdAl {
 
 	public static boolean isBuffer(int p_id) {
 		return AL11.alIsBuffer(p_id);
+	}
+
+	public static boolean isEffect(int p_id) {
+		return EXTEfx.alIsEffect(p_id);
+	}
+
+	public static boolean isFilter(int p_id) {
+		return EXTEfx.alIsFilter(p_id);
+	}
+
+	public static boolean isEffectSlot(int p_id) {
+		return EXTEfx.alIsAuxiliaryEffectSlot(p_id);
 	}
 
 	@Deprecated

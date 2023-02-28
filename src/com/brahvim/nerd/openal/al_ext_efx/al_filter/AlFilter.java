@@ -6,22 +6,27 @@ import java.nio.IntBuffer;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.NerdAl;
 
-/* `package` */ class AlFilter {
+public class AlFilter {
 
-	private int id;
 	private NerdAl alMan;
+	private int id, filterName;
 
-	public AlFilter(NerdAl p_alMan) {
+	public AlFilter(NerdAl p_alMan, int p_filterName) {
 		this.alMan = p_alMan;
+		this.filterName = p_filterName;
 		this.id = EXTEfx.alGenFilters();
 
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
-	}
 
-	// public AlFilter(AlFilter p_filter) { }
+		this.setInt(EXTEfx.AL_FILTER_TYPE, this.filterName);
+
+		this.alMan.checkAlErrors();
+		this.alMan.checkAlcErrors();
+	}
 
 	// region C-style OpenAL getters.
 	public int getInt(int p_alEnum) {
@@ -103,12 +108,42 @@ import com.brahvim.nerd.openal.NerdAl;
 	}
 	// endregion
 
+	// region Getters.
 	public int getId() {
 		return this.id;
 	}
 
-	// region OpenAL Setters.
+	public int getName() {
+		return this.filterName;
+	}
+	// endregion
 
+	// region Mass source attachment.
+	public void attachToSources(int p_filterType, AlSource... p_sources) {
+		if (p_filterType == EXTEfx.AL_DIRECT_FILTER)
+			for (AlSource s : p_sources) {
+				if (s != null)
+					s.attachDirectFilter(this);
+			}
+		else
+			for (AlSource s : p_sources) {
+				if (s != null)
+					s.attachAuxiliarySendFilter(this);
+			}
+	}
+
+	public void detachFromSources(int p_filterType, AlSource... p_sources) {
+		if (p_filterType == EXTEfx.AL_DIRECT_FILTER)
+			for (AlSource s : p_sources) {
+				if (s != null)
+					s.detachDirectFilter();
+			}
+		else
+			for (AlSource s : p_sources) {
+				if (s != null)
+					s.detachAuxiliarySendFilter();
+			}
+	}
 	// endregion
 
 	public void dispose() {

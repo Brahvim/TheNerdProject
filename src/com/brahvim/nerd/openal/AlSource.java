@@ -12,8 +12,7 @@ import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
 import com.brahvim.nerd.openal.al_buffers.AlNativeBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
-import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlAuxiliarySendFilter;
-import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlDirectFilter;
+import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
@@ -26,8 +25,7 @@ public class AlSource {
 	private NerdScene scene;
 	private AlBuffer<?> buffer;
 	private boolean hasDisposed;
-	private AlDirectFilter directFilter;
-	private AlAuxiliarySendFilter auxiliarySendFilter;
+	private AlFilter directFilter, auxiliarySendFilter;
 	// endregion
 
 	// region Constructors.
@@ -227,14 +225,6 @@ public class AlSource {
 	// region Source getters.
 	public NerdScene getScene() {
 		return this.scene;
-	}
-
-	public AlDirectFilter getDirectFilter() {
-		return this.directFilter;
-	}
-
-	public AlAuxiliarySendFilter getAuxiliarySendFilter() {
-		return this.auxiliarySendFilter;
 	}
 
 	public boolean isDisposed() {
@@ -455,25 +445,46 @@ public class AlSource {
 	// endregion
 	// endregion
 
-	// region Filter attachment.
-	public void attachDirectFilter(AlDirectFilter p_filter) {
-		this.directFilter = p_filter;
-		this.setInt(EXTEfx.AL_DIRECT_FILTER, this.directFilter.getId());
+	// region Anything `EXTEfx`.
+	// region Methods for `AlFilter`s.
+	public AlFilter getDirectFilter() {
+		return this.directFilter;
 	}
 
-	public void detachDirectFilter() {
+	public AlFilter detachDirectFilter() {
+		AlFilter toRet = this.directFilter;
 		this.directFilter = null;
 		this.setInt(EXTEfx.AL_DIRECT_FILTER, EXTEfx.AL_FILTER_NULL);
+
+		return toRet;
 	}
 
-	public void attachAuxiliarySendFilter(AlAuxiliarySendFilter p_filter) {
-		this.auxiliarySendFilter = p_filter;
-		this.setInt(EXTEfx.AL_AUXILIARY_SEND_FILTER, this.auxiliarySendFilter.getId());
+	public AlFilter attachDirectFilter(AlFilter p_filter) {
+		AlFilter toRet = this.directFilter;
+		this.directFilter = p_filter;
+		this.setInt(EXTEfx.AL_DIRECT_FILTER, this.directFilter.getId());
+
+		return toRet;
 	}
 
-	public void detachAuxiliarySendFilter() {
+	public AlFilter getAuxiliarySendFilter() {
+		return this.auxiliarySendFilter;
+	}
+
+	public AlFilter detachAuxiliarySendFilter() {
+		AlFilter toRet = this.auxiliarySendFilter;
 		this.auxiliarySendFilter = null;
 		this.setInt(EXTEfx.AL_AUXILIARY_SEND_FILTER, EXTEfx.AL_FILTER_NULL);
+
+		return toRet;
+	}
+
+	public AlFilter attachAuxiliarySendFilter(AlFilter p_filter) {
+		AlFilter toRet = this.auxiliarySendFilter;
+		this.auxiliarySendFilter = p_filter;
+		this.setInt(EXTEfx.AL_AUXILIARY_SEND_FILTER, this.auxiliarySendFilter.getId());
+
+		return toRet;
 	}
 	// endregion
 
@@ -527,6 +538,7 @@ public class AlSource {
 	public void setAuxiliarySendFilterGainHfAuto(float p_value) {
 		this.setFloat(EXTEfx.AL_AUXILIARY_SEND_FILTER_GAINHF_AUTO, p_value);
 	}
+	// endregion
 	// endregion
 
 	// region Actual state management!
