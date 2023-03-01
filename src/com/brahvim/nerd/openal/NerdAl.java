@@ -434,8 +434,8 @@ public class NerdAl {
 		for (int i = this.deviceBuffers.size(); i > 1; i++)
 			this.deviceBuffers.get(i).dispose();
 
-		this.context.dispose();
-		this.device.dispose();
+		this.context.disposeImpl();
+		this.device.disposeImpl();
 	}
 
 	// region `private` and `protected` methods.

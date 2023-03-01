@@ -9,11 +9,12 @@ import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.ALC11;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlObject;
 import com.brahvim.nerd.openal.NerdAl;
 
 import processing.core.PVector;
 
-public abstract class AlBuffer<BufferT extends Buffer> {
+public abstract class AlBuffer<BufferT extends Buffer> extends AlObject {
 
 	// region Fields.
 	// No OpenAL implementation provides `AL_DATA`.
@@ -21,7 +22,6 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	protected BufferT data;
 	protected NerdAl alMan;
 	protected int id, dataType;
-	protected boolean hasDisposed;
 	// endregion
 
 	// region Constructors.
@@ -32,21 +32,22 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 		this.alMan.checkAlErrors();
 	}
 
-	public AlBuffer(NerdAl p_alMan, int p_id) {
-		this.id = p_id;
-		this.alMan = p_alMan;
-	}
-
 	@SuppressWarnings("unchecked")
-	public AlBuffer(AlBuffer<?> p_buffer) {
+	protected AlBuffer(AlBuffer<?> p_buffer) {
 		this.alMan = p_buffer.alMan;
-
 		this.id = AL11.alGenBuffers();
+		this.dataType = p_buffer.dataType;
 
 		this.setBits(p_buffer.getBits());
 		this.setChannels(p_buffer.getChannels());
 		this.setData(p_buffer.dataType, (BufferT) p_buffer.getData(), p_buffer.getSampleRate());
+
 		this.alMan.checkAlErrors();
+	}
+
+	public AlBuffer(NerdAl p_alMan, int p_id) {
+		this.id = p_id;
+		this.alMan = p_alMan;
 	}
 
 	public AlBuffer(NerdAl p_alInst, BufferT p_data) {
@@ -57,16 +58,16 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	}
 	// endregion
 
-	// region `abstract` methods.
-	public abstract AlBuffer<?> loadFrom(File p_file);
-
-	public abstract void setData(int p_format, BufferT p_buffer, int p_sampleRate);
-	// endregion
-
+	// region `abstract` methods (and overloads).
 	public AlBuffer<?> loadFrom(String p_path) {
 		this.loadFrom(new File(p_path));
 		return this;
 	}
+
+	public abstract AlBuffer<?> loadFrom(File p_file);
+
+	public abstract void setData(int p_format, BufferT p_buffer, int p_sampleRate);
+	// endregion
 
 	// region C-style OpenAL getters.
 	public int getInt(int p_alEnum) {
@@ -286,11 +287,8 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	 */
 	// endregion
 
-	public void dispose() {
-		if (this.hasDisposed)
-			return;
-		this.hasDisposed = true;
-
+	@Override
+	protected void disposeImpl() {
 		this.alMan.getDeviceBuffers().remove(this);
 		AL11.alDeleteBuffers(this.id);
 		this.alMan.checkAlErrors();

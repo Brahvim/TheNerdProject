@@ -8,7 +8,7 @@ import org.lwjgl.openal.ALC11;
 
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 
-public class AlCapture extends AlNativeResource {
+public class AlCapture extends AlObject {
 
 	// region Fields.
 	// This is here literally just for naming threads!:
@@ -176,10 +176,8 @@ public class AlCapture extends AlNativeResource {
 	// endregion
 
 	@Override
-	protected void dispose() {
-		// TODO Auto-generated method stub
-		
+	protected void disposeImpl() {
+		ALC11.alcCaptureCloseDevice(this.id);
 	}
 
 }
-

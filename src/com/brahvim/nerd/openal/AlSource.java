@@ -1,6 +1,7 @@
 package com.brahvim.nerd.openal;
 
 import java.io.File;
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -10,22 +11,22 @@ import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlBufferLoader;
-import com.brahvim.nerd.openal.al_buffers.AlNativeBuffer;
+import com.brahvim.nerd.openal.al_buffers.AlNoTypeBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
+import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
 
-public class AlSource extends AlNativeResource {
+public class AlSource extends AlObject {
 
 	// region Fields.
 	private int id;
 	private NerdAl alMan;
 	private NerdScene scene;
 	private AlBuffer<?> buffer;
-	private boolean hasDisposed;
 	private AlAuxiliaryEffectSlot effectSlot;
 	private AlFilter directFilter, auxiliarySendFilter;
 	// endregion
@@ -100,13 +101,18 @@ public class AlSource extends AlNativeResource {
 	// endregion
 
 	// region ...literal "buffer distribution", :joy:
-	public AlBuffer<?> getBuffer() {
+	@SuppressWarnings("unchecked")
+	public <T extends Buffer> AlBuffer<T> getBuffer() {
 		final int BUFFER_ID = this.getInt(AL11.AL_BUFFER);
 		if (BUFFER_ID == this.buffer.getId())
-			return this.buffer;
+			return (AlBuffer<T>) this.buffer;
 
-		AlNativeBuffer toRet = new AlNativeBuffer(this.alMan, BUFFER_ID);
-		return toRet;
+		if (this.buffer instanceof AlOggBuffer)
+			return (AlBuffer<T>) this.buffer;
+		else if (this.buffer instanceof AlWavBuffer)
+			return (AlBuffer<T>) this.buffer;
+		else
+			return (AlBuffer<T>) new AlNoTypeBuffer(this.alMan, BUFFER_ID);
 	}
 
 	public void setBuffer(AlBuffer<?> p_buffer) {
@@ -226,10 +232,6 @@ public class AlSource extends AlNativeResource {
 	// region Source getters.
 	public NerdScene getScene() {
 		return this.scene;
-	}
-
-	public boolean isDisposed() {
-		return this.hasDisposed;
 	}
 
 	public int getId() {
@@ -608,30 +610,15 @@ public class AlSource extends AlNativeResource {
 		AL11.alSourceUnqueueBuffers(this.id);
 	}
 
-	public void dispose() {
-		this.dispose(false);
-	}
+	// TODO: MAKE `AssetLoaderOptions` (finally) and make buffers persistent :D
 
-	public void dispose(boolean p_alsoBuffer) {
-		if (this.hasDisposed)
-			return;
-		this.hasDisposed = true;
-
-		// TODO: MAKE `AssetLoaderOptions` (finally) and make buffers persistent :D
-		if (p_alsoBuffer)
-			this.buffer.dispose();
-
+	@Override
+	protected void disposeImpl() {
 		this.alMan.getContextSources().remove(this);
 		AL11.alDeleteSources(this.id);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 	}
 	// endregion
-
-	@Override
-	protected void finalize() throws Throwable {
-		// TODO Auto-generated method stub
-		super.finalize();
-	}
 
 }

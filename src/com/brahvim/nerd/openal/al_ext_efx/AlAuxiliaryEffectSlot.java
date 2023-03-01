@@ -8,6 +8,7 @@ import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlObject;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlAutowah;
@@ -23,7 +24,7 @@ import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlPitchShifter;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlReverb;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlRingModulator;
 
-public class AlAuxiliaryEffectSlot {
+public class AlAuxiliaryEffectSlot extends AlObject {
 
 	/*
 	 * let arr = [
@@ -83,7 +84,6 @@ public class AlAuxiliaryEffectSlot {
 
 	private NerdAl alMan;
 	private AlEffect effect;
-	private boolean hasDisposed;
 	private int id = EXTEfx.AL_EFFECT_NULL;
 	// endregion
 
@@ -368,24 +368,10 @@ public class AlAuxiliaryEffectSlot {
 	}
 	// endregion
 
-	// region Disposal.
-	public boolean isDisposed() {
-		return this.hasDisposed;
-	}
-
-	public void dispose() {
-		this.dispose(false);
-	}
-
-	public void dispose(boolean p_alsoEffect) {
-		this.hasDisposed = true;
-
-		if (p_alsoEffect)
-			this.effect.dispose();
-
+	@Override
+	protected void disposeImpl() {
 		EXTEfx.alDeleteAuxiliaryEffectSlots(this.id);
 		AlAuxiliaryEffectSlot.slots.remove(this);
 	}
-	// endregion
 
 }

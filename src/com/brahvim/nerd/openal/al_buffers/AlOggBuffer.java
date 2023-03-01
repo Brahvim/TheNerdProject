@@ -15,8 +15,16 @@ import com.brahvim.nerd.openal.NerdAl;
 public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 
 	// region Constructors.
-	public AlOggBuffer(NerdAl p_alInst) {
-		super(p_alInst);
+	public AlOggBuffer(NerdAl p_alMan) {
+		super(p_alMan);
+	}
+
+	public AlOggBuffer(AlBuffer<?> p_buffer) {
+		super(p_buffer);
+	}
+
+	public AlOggBuffer(NerdAl p_alMan, int p_id) {
+		super(p_alMan, p_id);
 	}
 
 	public AlOggBuffer(NerdAl p_alInst, ShortBuffer p_data) {
@@ -24,18 +32,18 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 	}
 	// endregion
 
+	@Override // Free the buffer (or not) :D
+	public void disposeImpl() {
+		super.disposeImpl();
+		LibCStdlib.free(super.data); // Yep, we literally made Java, C. "Welcome to JavaC!" :joy:
+	}
+
 	@Override
 	public void setData(int p_format, ShortBuffer p_buffer, int p_sampleRate) {
 		super.data = p_buffer;
 		super.dataType = p_format;
 		AL11.alBufferData(super.id, p_format, p_buffer.array(), p_sampleRate);
 		super.alMan.checkAlErrors();
-	}
-
-	@Override // Free the buffer (or not) :D
-	public void dispose() {
-		super.dispose();
-		LibCStdlib.free(super.data); // Yep, we literally made Java, C. "Welcome to JavaC!" :joy:
 	}
 
 	@Override

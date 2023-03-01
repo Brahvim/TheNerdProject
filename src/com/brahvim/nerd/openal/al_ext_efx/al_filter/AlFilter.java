@@ -6,14 +6,14 @@ import java.nio.IntBuffer;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlObject;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.NerdAl;
 
-public class AlFilter {
+public class AlFilter extends AlObject {
 
 	private NerdAl alMan;
 	private int id, filterName;
-	private boolean hasDisposed;
 
 	public AlFilter(NerdAl p_alMan, int p_filterName) {
 		this.alMan = p_alMan;
@@ -147,18 +147,9 @@ public class AlFilter {
 	}
 	// endregion
 
-	// region Disposal.
-	public boolean isDisposed() {
-		return this.hasDisposed;
-	}
-
-	public void dispose() {
-		if (this.hasDisposed)
-			return;
-		this.hasDisposed = true;
-
+	@Override
+	protected void disposeImpl() {
 		EXTEfx.alDeleteFilters(this.id);
 	}
-	// endregion
 
 }

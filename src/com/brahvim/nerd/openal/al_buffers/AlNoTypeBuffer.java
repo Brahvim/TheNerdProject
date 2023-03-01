@@ -8,28 +8,27 @@ import org.lwjgl.openal.AL11;
 
 import com.brahvim.nerd.openal.NerdAl;
 
-public class AlNativeBuffer extends AlBuffer<Buffer> {
+public class AlNoTypeBuffer extends AlBuffer<Buffer> {
 
 	// region Constructors.
-	public AlNativeBuffer(NerdAl p_alInst) {
-		super(p_alInst);
+	public AlNoTypeBuffer(NerdAl p_alMan) {
+		super(p_alMan);
 	}
 
-	public AlNativeBuffer(NerdAl p_alMan, int p_id) {
-		super(p_alMan, p_id);
-	}
-
-	public AlNativeBuffer(AlBuffer<?> p_buffer) {
+	public AlNoTypeBuffer(AlBuffer<?> p_buffer) {
 		super(p_buffer);
 	}
 
-	public AlNativeBuffer(NerdAl p_alInst, Buffer p_data) {
+	public AlNoTypeBuffer(NerdAl p_alMan, int p_id) {
+		super(p_alMan, p_id);
+	}
+
+	public AlNoTypeBuffer(NerdAl p_alInst, Buffer p_data) {
 		super(p_alInst, p_data);
 	}
 	// endregion
 
-	@Override
-	public AlBuffer<?> loadFrom(File p_file) {
+	public AlBuffer<Buffer> loadFrom(File p_file) {
 		throw new UnsupportedOperationException("""
 				`AlNativeBuffer` exists for types you may add yourself!
 				`AlNativeBuffer::loadFrom(File)` has no idea what you're trying to do.

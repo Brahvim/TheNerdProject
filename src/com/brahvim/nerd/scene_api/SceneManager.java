@@ -794,14 +794,14 @@ public class SceneManager {
 
         this.SKETCH.push();
 
-        // Delete all OpenAL sources:
-        if (this.SKETCH.AL != null) {
-            for (int i = this.SKETCH.AL.getContextSources().size() - 1; i > 0; i--) {
-                // The source object is no longer in the JVM's memory either,
-                // delete the buffer, too! ¯\_(ツ)_/¯
-                this.SKETCH.AL.getContextSources().get(i).dispose();
-            }
-        }
+        // Delete all OpenAL sources. Commented due to the new finalization method!:
+        // if (this.SKETCH.AL != null) {
+        // for (int i = this.SKETCH.AL.getContextSources().size() - 1; i > 0; i--) {
+        // // The source object is no longer in the JVM's memory either,
+        // // delete the buffer, too! ¯\_(ツ)_/¯
+        // this.SKETCH.AL.getContextSources().get(i).dispose();
+        // }
+        // }
 
         this.currScene.runSetup(p_state);
     }

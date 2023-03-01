@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlObject;
 import com.brahvim.nerd.openal.NerdAl;
 
-public abstract class AlEffect {
+public abstract class AlEffect extends AlObject {
 
 	// region Fields.
 	public final static ArrayList<AlEffect> effects = new ArrayList<>();
@@ -144,7 +145,7 @@ public abstract class AlEffect {
 		return this.hasDisposed;
 	}
 
-	public void dispose() {
+	public void disposeImpl() {
 		if (this.hasDisposed)
 			return;
 		this.hasDisposed = true;

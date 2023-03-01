@@ -68,21 +68,4 @@ public class AlBufferLoader {
 
 	}
 
-	// `onAlc()`, a method from the older days!
-	/*
-	 * // Nope! I'm not supporting multithreading here O_O
-	 * private static /<asterisk>`synchronized`<asterisk>/ void onAlc(long p_ctx,
-	 * Runnable p_runnable) {
-	 * long prevCtx = ALC11.alcGetCurrentContext();
-	 * 
-	 * if (!ALC11.alcMakeContextCurrent(p_ctx))
-	 * throw new AlException(0);
-	 * 
-	 * p_runnable.run();
-	 * 
-	 * if (!ALC11.alcMakeContextCurrent(prevCtx))
-	 * throw new AlException(0);
-	 * }
-	 */
-
 }

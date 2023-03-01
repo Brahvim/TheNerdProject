@@ -16,8 +16,16 @@ import com.brahvim.nerd.openal.NerdAl;
 public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 
 	// region Constructors.
-	public AlWavBuffer(NerdAl p_alInst) {
-		super(p_alInst);
+	public AlWavBuffer(NerdAl p_alMan) {
+		super(p_alMan);
+	}
+
+	public AlWavBuffer(AlBuffer<?> p_buffer) {
+		super(p_buffer);
+	}
+
+	public AlWavBuffer(NerdAl p_alMan, int p_id) {
+		super(p_alMan, p_id);
 	}
 
 	public AlWavBuffer(NerdAl p_alInst, ByteBuffer p_data) {
