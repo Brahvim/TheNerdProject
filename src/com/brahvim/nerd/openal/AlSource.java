@@ -18,7 +18,7 @@ import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
 
-public class AlSource {
+public class AlSource extends AlNativeResource {
 
 	// region Fields.
 	private int id;

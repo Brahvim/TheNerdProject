@@ -8,7 +8,7 @@ import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
-public class AlContext {
+public class AlContext extends AlNativeResource {
 
 	// region Fields.
 	private long id;
@@ -44,7 +44,7 @@ public class AlContext {
 		return alcError;
 	}
 
-	/* `package` */ void dispose() {
+	public void dispose() {
 		// Unlink the current context object:
 		if (!ALC11.alcMakeContextCurrent(0))
 			throw new NerdAlException("Could not change the OpenAL context!");

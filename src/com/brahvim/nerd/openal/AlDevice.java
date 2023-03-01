@@ -11,7 +11,7 @@ import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
-public class AlDevice {
+public class AlDevice extends AlNativeResource {
 
 	public interface DisconnectionCallback {
 		public default String onDisconnect() {
@@ -98,7 +98,7 @@ public class AlDevice {
 	}
 	// endregion
 
-	/* `package` */ void dispose() {
+	public void dispose() {
 		if (!ALC11.alcCloseDevice(this.id))
 			throw new NerdAlException("Could not close OpenAL device!");
 
