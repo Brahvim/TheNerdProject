@@ -8,6 +8,7 @@ import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlNativeResource;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlAutowah;
@@ -23,7 +24,7 @@ import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlPitchShifter;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlReverb;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlRingModulator;
 
-public class AlAuxiliaryEffectSlot {
+public class AlAuxiliaryEffectSlot extends AlNativeResource {
 
 	/*
 	 * let arr = [
@@ -79,7 +80,7 @@ public class AlAuxiliaryEffectSlot {
 	 */
 
 	// region Fields.
-	public final static ArrayList<AlAuxiliaryEffectSlot> slots = new ArrayList<>();
+	public final static ArrayList<AlAuxiliaryEffectSlot> ALL_INSTANCES = new ArrayList<>();
 
 	private NerdAl alMan;
 	private AlEffect effect;
@@ -94,7 +95,7 @@ public class AlAuxiliaryEffectSlot {
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 
-		AlAuxiliaryEffectSlot.slots.add(this);
+		AlAuxiliaryEffectSlot.ALL_INSTANCES.add(this);
 	}
 
 	public AlAuxiliaryEffectSlot(NerdAl p_alMan, AlEffect p_effect) {
@@ -106,7 +107,7 @@ public class AlAuxiliaryEffectSlot {
 
 		this.setEffect(p_effect);
 
-		AlAuxiliaryEffectSlot.slots.add(this);
+		AlAuxiliaryEffectSlot.ALL_INSTANCES.add(this);
 	}
 	// endregion
 
@@ -126,7 +127,7 @@ public class AlAuxiliaryEffectSlot {
 		if (ID == this.effect.id)
 			return (T) this.effect;
 		else
-			for (AlEffect e : AlEffect.effects) {
+			for (AlEffect e : AlEffect.ALL_INSTANCES) {
 				if (e.id == ID)
 					return (T) e;
 			}
@@ -367,9 +368,10 @@ public class AlAuxiliaryEffectSlot {
 	}
 	// endregion
 
-	public void dispose() {
+	@Override
+    protected void disposeImpl() {
 		EXTEfx.alDeleteAuxiliaryEffectSlots(this.id);
-		AlAuxiliaryEffectSlot.slots.remove(this);
+		AlAuxiliaryEffectSlot.ALL_INSTANCES.remove(this);
 	}
 
 }

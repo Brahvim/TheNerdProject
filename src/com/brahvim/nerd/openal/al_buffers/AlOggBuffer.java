@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.openal.AL11;
 import org.lwjgl.stb.STBVorbis;
@@ -13,37 +14,41 @@ import org.lwjgl.system.libc.LibCStdlib;
 import com.brahvim.nerd.openal.NerdAl;
 
 public class AlOggBuffer extends AlBuffer<ShortBuffer> {
+	public final static ArrayList<AlOggBuffer> ALL_INSTANCES = new ArrayList<>();
 
 	// region Constructors.
 	public AlOggBuffer(NerdAl p_alMan) {
 		super(p_alMan);
+		AlOggBuffer.ALL_INSTANCES.add(this);
 	}
 
 	public AlOggBuffer(AlBuffer<?> p_buffer) {
 		super(p_buffer);
+		AlOggBuffer.ALL_INSTANCES.add(this);
 	}
 
 	public AlOggBuffer(NerdAl p_alMan, int p_id) {
 		super(p_alMan, p_id);
+		AlOggBuffer.ALL_INSTANCES.add(this);
 	}
 
 	public AlOggBuffer(NerdAl p_alInst, ShortBuffer p_data) {
 		super(p_alInst, p_data);
+		AlOggBuffer.ALL_INSTANCES.add(this);
 	}
 	// endregion
 
-	@Override // Free the buffer (or not) :D
-	public void dispose() {
-		super.dispose();
+	// Free the buffer (or not) :D
+	@Override
+	protected void disposeImpl() {
+		super.disposeImpl();
 		LibCStdlib.free(super.data); // Yep, we literally made Java, C. "Welcome to JavaC!" :joy:
+		AlOggBuffer.ALL_INSTANCES.remove(this);
 	}
 
 	@Override
-	public void setData(int p_format, ShortBuffer p_buffer, int p_sampleRate) {
-		super.data = p_buffer;
-		super.dataType = p_format;
-		AL11.alBufferData(this.id, p_format, p_buffer.array(), p_sampleRate);
-		super.alMan.checkAlErrors();
+	public void setDataImpl(int p_format, ShortBuffer p_buffer, int p_sampleRate) {
+		AL11.alBufferData(this.id, p_format, p_buffer, p_sampleRate);
 	}
 
 	@Override

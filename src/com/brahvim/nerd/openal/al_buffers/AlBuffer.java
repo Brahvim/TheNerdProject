@@ -4,18 +4,22 @@ import java.io.File;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.ALC11;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlNativeResource;
 import com.brahvim.nerd.openal.NerdAl;
 
 import processing.core.PVector;
 
-public abstract class AlBuffer<BufferT extends Buffer> {
+public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource {
 
 	// region Fields.
+	public final static ArrayList<AlBuffer<?>> ALL_INSTANCES = new ArrayList<>();
+
 	// No OpenAL implementation provides `AL_DATA`.
 	// Storing it here!
 	protected BufferT data;
@@ -25,39 +29,48 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 
 	// region Constructors.
 	public AlBuffer(NerdAl p_alMan) {
+		AlBuffer.ALL_INSTANCES.add(this);
 		this.alMan = p_alMan;
 
 		this.id = AL11.alGenBuffers();
 		this.alMan.checkAlErrors();
+		this.alMan.checkAlcErrors();
 	}
 
 	@SuppressWarnings("unchecked")
-	protected AlBuffer(AlBuffer<?> p_buffer) {
+	public AlBuffer(AlBuffer<?> p_buffer) {
+		AlBuffer.ALL_INSTANCES.add(this);
+
 		this.alMan = p_buffer.alMan;
 		this.id = AL11.alGenBuffers();
 		this.dataType = p_buffer.dataType;
 
 		this.setBits(p_buffer.getBits());
 		this.setChannels(p_buffer.getChannels());
-		this.setData(p_buffer.dataType, (BufferT) p_buffer.getData(), p_buffer.getSampleRate());
+		this.setDataImpl(p_buffer.dataType, (BufferT) p_buffer.getData(), p_buffer.getSampleRate());
 
 		this.alMan.checkAlErrors();
+		this.alMan.checkAlcErrors();
 	}
 
 	public AlBuffer(NerdAl p_alMan, int p_id) {
+		AlBuffer.ALL_INSTANCES.add(this);
+
 		this.id = p_id;
 		this.alMan = p_alMan;
 	}
 
 	public AlBuffer(NerdAl p_alInst, BufferT p_data) {
+		AlBuffer.ALL_INSTANCES.add(this);
 		this.alMan = p_alInst;
 
 		this.id = AL11.alGenBuffers();
 		this.alMan.checkAlErrors();
+		this.alMan.checkAlcErrors();
 	}
 	// endregion
 
-	// region `abstract` methods (and overloads).
+	// region `abstract` methods (and overloads, and implementations).
 	public AlBuffer<?> loadFrom(String p_path) {
 		this.loadFrom(new File(p_path));
 		return this;
@@ -65,7 +78,14 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 
 	public abstract AlBuffer<?> loadFrom(File p_file);
 
-	public abstract void setData(int p_format, BufferT p_buffer, int p_sampleRate);
+	public void setData(int p_format, BufferT p_buffer, int p_sampleRate) {
+		this.data = p_buffer;
+		this.dataType = p_format;
+		this.setDataImpl(p_format, p_buffer, p_sampleRate);
+		this.alMan.checkAlErrors();
+	}
+
+	public abstract void setDataImpl(int p_format, BufferT p_buffer, int p_sampleRate);
 	// endregion
 
 	// region C-style OpenAL getters.
@@ -235,61 +255,14 @@ public abstract class AlBuffer<BufferT extends Buffer> {
 	public void setChannels(int p_channels) {
 		AL11.alBufferi(this.id, AL11.AL_CHANNELS, p_channels);
 	}
-
-	// Older `setData()` overloads. No longer used due to problems with generics!:
-	/*
-	 * public void setData(int p_format, float[] p_data, int p_sampleRate) {
-	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
-	 * this.alInst.checkForErrors();
-	 * 
-	 * }
-	 * 
-	 * public void setData(int p_format, FloatBuffer p_data, int p_sampleRate) {
-	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
-	 * this.alInst.checkForErrors();
-	 * 
-	 * }
-	 * 
-	 * public void setData(int p_format, byte[] p_data, int p_sampleRate) {
-	 * this.setData(p_dataType, ByteBuffer.wrap(p_data), p_sampleRate);
-	 * }
-	 * 
-	 * public void setData(int p_format, ByteBuffer p_data, int p_sampleRate) {
-	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
-	 * this.alInst.checkForErrors();
-	 * 
-	 * }
-	 * 
-	 * public void setData(int p_format, short[] p_data, int p_sampleRate) {
-	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
-	 * this.alInst.checkForErrors();
-	 * 
-	 * }
-	 * 
-	 * public void setData(int p_format, ShortBuffer p_data, int p_sampleRate) {
-	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
-	 * this.alInst.checkForErrors();
-	 * 
-	 * }
-	 * 
-	 * public void setData(int p_format, int[] p_data, int p_sampleRate) {
-	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
-	 * this.alInst.checkForErrors();
-	 * 
-	 * }
-	 * 
-	 * public void setData(int p_format, IntBuffer p_data, int p_sampleRate) {
-	 * AL11.alBufferData(this.bufId, p_dataType, p_data, p_sampleRate);
-	 * this.alInst.checkForErrors();
-	 * 
-	 * }
-	 */
 	// endregion
 
-	public void dispose() {
+	@Override
+	protected void disposeImpl() {
 		AL11.alDeleteBuffers(this.id);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
+		AlBuffer.ALL_INSTANCES.remove(this);
 	}
 
 }

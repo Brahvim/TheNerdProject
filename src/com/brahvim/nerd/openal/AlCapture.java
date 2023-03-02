@@ -1,6 +1,7 @@
 package com.brahvim.nerd.openal;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import org.lwjgl.openal.AL11;
@@ -8,10 +9,11 @@ import org.lwjgl.openal.ALC11;
 
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 
-public class AlCapture {
+public class AlCapture extends AlNativeResource {
 
 	// region Fields.
 	// This is here literally just for naming threads!:
+	public final static ArrayList<AlCapture> ALL_INSTANCES = new ArrayList<>();
 	private volatile static int numActiveCaptures;
 
 	private long id;
@@ -27,10 +29,12 @@ public class AlCapture {
 	// region Constructors.
 	public AlCapture(NerdAl p_alMan) {
 		this(p_alMan, AlCapture.getDefaultDeviceName());
+		AlCapture.ALL_INSTANCES.add(this);
 	}
 
 	public AlCapture(NerdAl p_alMan, String p_deviceName) {
 		this.alMan = p_alMan;
+		AlCapture.ALL_INSTANCES.add(this);
 	}
 	// endregion
 
@@ -164,19 +168,21 @@ public class AlCapture {
 		if (this.lastCapFormat == -1 || this.lastCapSampleRate == -1)
 			return this.capturedData;
 
-		p_buffer.setData(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
+		p_buffer.setDataImpl(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
 		return this.capturedData;
 	}
 
 	public AlWavBuffer storeIntoBuffer() {
 		AlWavBuffer toRet = new AlWavBuffer(this.alMan);
-		toRet.setData(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
+		toRet.setDataImpl(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
 		return toRet;
 	}
 	// endregion
 
-	public void dispose() {
+	@Override
+	protected void disposeImpl() {
 		ALC11.alcCaptureCloseDevice(this.id);
+		AlCapture.ALL_INSTANCES.remove(this);
 	}
 
 }

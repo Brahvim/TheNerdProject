@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
@@ -20,9 +21,11 @@ import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
 
-public class AlSource  {
+public class AlSource extends AlNativeResource {
 
 	// region Fields.
+	public final static ArrayList<AlSource> ALL_INSTANCES = new ArrayList<>();
+
 	private int id;
 	private NerdAl alMan;
 	private NerdScene scene;
@@ -33,9 +36,10 @@ public class AlSource  {
 
 	// region Constructors.
 	public AlSource(NerdAl p_alMan) {
+		AlSource.ALL_INSTANCES.add(this);
+
 		this.alMan = p_alMan;
 		this.id = AL11.alGenSources();
-		this.alMan.getContextSources().add(this);
 		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
 
 		this.alMan.checkAlErrors();
@@ -48,14 +52,14 @@ public class AlSource  {
 	 */
 	@Deprecated
 	public AlSource(AlSource p_source) {
+		AlSource.ALL_INSTANCES.add(this);
+
 		this.scene = p_source.scene;
 		this.alMan = p_source.alMan;
 		this.id = AL11.alGenSources();
 
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
-
-		this.alMan.getContextSources().add(this);
 
 		// region Transfer properties over (hopefully, the JIT inlines!):
 		this.setBuffer(p_source.buffer);
@@ -87,10 +91,11 @@ public class AlSource  {
 	}
 
 	public AlSource(NerdAl p_alMan, int p_id) {
+		AlSource.ALL_INSTANCES.add(this);
+
 		this.alMan = p_alMan;
 		this.id = p_id;
 
-		this.alMan.getContextSources().add(this);
 		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
 	}
 
@@ -612,10 +617,12 @@ public class AlSource  {
 
 	// TODO: MAKE `AssetLoaderOptions` (finally) and make buffers persistent :D
 
-	public void dispose() {
+	@Override
+	protected void disposeImpl() {
 		AL11.alDeleteSources(this.id);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
+		AlSource.ALL_INSTANCES.remove(this);
 	}
 	// endregion
 

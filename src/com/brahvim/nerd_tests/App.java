@@ -10,8 +10,7 @@ public class App {
     // TODOs!:
     /*
      * // ????: Don't forget - AL can stream audio!
-     * // TODO: Learn to use `PhantomReference<AlObject>`!
-     * // TODO: Get Listener functions done! (Also `EXEfx.AL_METERS_PER_UNIT`.)
+     * // TODO: Get Context functions done! (Also `EXEfx.AL_METERS_PER_UNIT`.)
      * // TODO: Box2D and Bullet? :D?
      * // TODO: Multiple monitor support!
      * // TODO: Collision Algorithms for 3D space.

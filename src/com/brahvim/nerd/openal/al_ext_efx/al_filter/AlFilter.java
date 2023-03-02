@@ -2,19 +2,27 @@ package com.brahvim.nerd.openal.al_ext_efx.al_filter;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlNativeResource;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.NerdAl;
 
-public class AlFilter {
+public class AlFilter extends AlNativeResource {
+
+	// region Fields.
+	public final static ArrayList<AlFilter> ALL_INSTANCES = new ArrayList<>();
 
 	private NerdAl alMan;
 	private int id, filterName;
+	// endregion
 
 	public AlFilter(NerdAl p_alMan, int p_filterName) {
+		AlFilter.ALL_INSTANCES.add(this);
+
 		this.alMan = p_alMan;
 		this.filterName = p_filterName;
 		this.id = EXTEfx.alGenFilters();
@@ -146,8 +154,10 @@ public class AlFilter {
 	}
 	// endregion
 
-	public void dispose() {
+	@Override
+	protected void disposeImpl() {
 		EXTEfx.alDeleteFilters(this.id);
+		AlFilter.ALL_INSTANCES.remove(this);
 	}
 
 }

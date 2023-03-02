@@ -8,9 +8,11 @@ import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
-public class AlContext  {
+public class AlContext extends AlNativeResource {
 
 	// region Fields.
+	public final static ArrayList<AlContext> ALL_INSTANCES = new ArrayList<>();
+
 	private long id;
 	private NerdAl alMan;
 	private final long deviceId;
@@ -44,7 +46,8 @@ public class AlContext  {
 		return alcError;
 	}
 
-	public void dispose() {
+	@Override
+	protected void disposeImpl() {
 		// Unlink the current context object:
 		if (!ALC11.alcMakeContextCurrent(0))
 			throw new NerdAlException("Could not change the OpenAL context!");
@@ -58,6 +61,8 @@ public class AlContext  {
 		this.alMan.checkAlErrors();
 		this.checkAlcErrors();
 		this.id = 0;
+
+		AlContext.ALL_INSTANCES.remove(this);
 	}
 
 	// region Getters.
@@ -73,13 +78,19 @@ public class AlContext  {
 	public ArrayList<AlBuffer<?>> getBuffers() {
 		return (ArrayList<AlBuffer<?>>) this.buffers.clone();
 	}
+	// region OpenAL context getters.
+
+	// endregion
+	// endregion
+
+	// region OpenAL context setters.
 	// endregion
 
 	private void createCtx() {
 		this.id = ALC11.alcCreateContext(this.deviceId, new int[] { 0 });
 
 		if (this.id == 0 || !ALC11.alcMakeContextCurrent(this.id)) {
-			this.dispose();
+			this.disposeImpl();
 			this.checkAlcErrors();
 		}
 

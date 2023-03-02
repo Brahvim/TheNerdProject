@@ -34,11 +34,8 @@ public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 	// endregion
 
 	@Override
-	public void setData(int p_format, ByteBuffer p_buffer, int p_sampleRate) {
-		super.data = p_buffer;
-		super.dataType = p_format;
+	public void setDataImpl(int p_format, ByteBuffer p_buffer, int p_sampleRate) {
 		AL11.alBufferData(this.id, p_format, p_buffer, p_sampleRate);
-		super.alMan.checkAlErrors();
 	}
 
 	@Override

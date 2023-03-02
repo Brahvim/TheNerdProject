@@ -7,21 +7,21 @@ import java.util.ArrayList;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlNativeResource;
 import com.brahvim.nerd.openal.NerdAl;
 
-public abstract class AlEffect {
+public abstract class AlEffect extends AlNativeResource {
 
 	// region Fields.
-	public final static ArrayList<AlEffect> effects = new ArrayList<>();
+	public final static ArrayList<AlEffect> ALL_INSTANCES = new ArrayList<>();
 
 	protected int id;
 	protected NerdAl alMan;
-	protected boolean used, hasDisposed;
 	protected AlAuxiliaryEffectSlot slot;
 	// endregion
 
 	public AlEffect(NerdAl p_NerdAl) {
-		AlEffect.effects.add(this);
+		AlEffect.ALL_INSTANCES.add(this);
 
 		this.alMan = p_NerdAl;
 		this.id = EXTEfx.alGenEffects();
@@ -39,7 +39,7 @@ public abstract class AlEffect {
 	}
 
 	public boolean isUsed() {
-		return this.used;
+		return this.slot != null;
 	}
 	// endregion
 
@@ -139,14 +139,11 @@ public abstract class AlEffect {
 		return this.slot;
 	}
 
-	public void dispose() {
-		if (this.hasDisposed)
-			return;
-		this.hasDisposed = true;
-
+	@Override
+	protected void disposeImpl() {
 		this.slot.setEffect(null);
-		AlEffect.effects.remove(this);
 		EXTEfx.alDeleteEffects(this.id);
+		AlEffect.ALL_INSTANCES.remove(this);
 	}
 
 }

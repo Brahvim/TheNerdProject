@@ -1,6 +1,7 @@
 package com.brahvim.nerd.openal;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.openal.ALC11;
@@ -11,7 +12,7 @@ import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
-public class AlDevice  {
+public class AlDevice extends AlNativeResource {
 
 	public interface DisconnectionCallback {
 		public default String onDisconnect() {
@@ -20,6 +21,8 @@ public class AlDevice  {
 	}
 
 	// region Fields.
+	public final static ArrayList<AlDevice> ALL_INSTANCES = new ArrayList<>();
+
 	private long id;
 	private String name;
 	private NerdAl alMan;
@@ -36,6 +39,8 @@ public class AlDevice  {
 	}
 
 	public AlDevice(NerdAl p_manager, String p_deviceName) {
+		AlDevice.ALL_INSTANCES.add(this);
+
 		this.alMan = p_manager;
 		this.name = p_deviceName;
 		this.isDefaultDevice = p_deviceName.equals(AlDevice.getDefaultDeviceName());
@@ -98,13 +103,15 @@ public class AlDevice  {
 	}
 	// endregion
 
-	public void dispose() {
+	@Override
+	protected void disposeImpl() {
 		if (!ALC11.alcCloseDevice(this.id))
 			throw new NerdAlException("Could not close OpenAL device!");
 
 		// this.alMan.checkAlErrors();
 		// this.alMan.checkAlcErrors();
 		this.id = 0;
+		AlDevice.ALL_INSTANCES.remove(this);
 	}
 
 	public boolean isDefault() {

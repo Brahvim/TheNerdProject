@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL11;
@@ -21,38 +20,18 @@ import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlException;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
 import com.brahvim.nerd.openal.al_exceptions.NerdAbstractOpenAlException;
+import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
+import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
+import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlFilter;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PVector;
 
-public class NerdAl {
-
-	// region [DEPRECATED] Inner classes, interfaces and enums.
-	/*
-	 * 
-	 * @FunctionalInterface
-	 * interface DeviceUse {
-	 * public void use(AlDevice p_device);
-	 * }
-	 * 
-	 * @FunctionalInterface
-	 * interface ContextUse {
-	 * public void use(AlContext p_context);
-	 * }
-	 * 
-	 * @FunctionalInterface
-	 * interface DeviceAndContextUse {
-	 * public void use(AlDevice p_device, AlContext p_context);
-	 * }
-	 */
-	// endregion
+public class NerdAl extends AlNativeResource {
 
 	// region Fields.
-	private final ArrayList<AlSource> contextSources = new ArrayList<>();
-	private final ArrayList<AlBuffer<?>> deviceBuffers = new ArrayList<>();
 	private final Sketch SKETCH;
 
-	private boolean hasDisposed;
 	private ALCapabilities alCap;
 	private ALCCapabilities alCtxCap;
 	private /* `volatile` */ AlDevice device;
@@ -175,6 +154,10 @@ public class NerdAl {
 	// endregion
 
 	// region Listener getters.
+	public float getMetersPerUnit() {
+		return this.getListenerFloat(EXTEfx.AL_METERS_PER_UNIT);
+	}
+
 	public float getListenerGain() {
 		return this.getListenerFloat(AL11.AL_GAIN);
 	}
@@ -195,6 +178,10 @@ public class NerdAl {
 	// region Listener setters.
 	public void setListenerGain(float p_value) {
 		this.setListenerFloat(AL11.AL_GAIN, p_value);
+	}
+
+	public void setMetersPerUnit(float p_value) {
+		this.setListenerFloat(EXTEfx.AL_METERS_PER_UNIT, p_value);
 	}
 
 	// region `float...` overloads for listener vectors.
@@ -230,19 +217,19 @@ public class NerdAl {
 	// region Getters and setters!...
 	// Yes, there are no C-style setters.
 	// region C-style OpenAL getters.
-	public int getInt(int p_alEnum) {
+	public int getAlInt(int p_alEnum) {
 		int toRet = AL11.alGetInteger(p_alEnum);
 		this.checkAlErrors();
 		return toRet;
 	}
 
-	public float getFloat(int p_alEnum) {
+	public float getAlFloat(int p_alEnum) {
 		float toRet = AL11.alGetFloat(p_alEnum);
 		this.checkAlErrors();
 		return toRet;
 	}
 
-	public int[] getIntVector(int p_alEnum, int p_vecSize) {
+	public int[] getAlIntVector(int p_alEnum, int p_vecSize) {
 		MemoryStack.stackPush();
 		IntBuffer buffer = MemoryStack.stackMallocInt(p_vecSize);
 		AL11.alGetIntegerv(p_alEnum, buffer);
@@ -252,7 +239,7 @@ public class NerdAl {
 		return buffer.array();
 	}
 
-	public float[] getFloatVector(int p_alEnum, int p_vecSize) {
+	public float[] getAlFloatVector(int p_alEnum, int p_vecSize) {
 		MemoryStack.stackPush();
 		FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vecSize);
 		AL11.alGetFloatv(p_alEnum, buffer);
@@ -266,21 +253,17 @@ public class NerdAl {
 	// region Getters.
 	// region OpenAL API getters.
 	public float getDistanceModel() {
-		return this.getFloat(AL11.AL_DISTANCE_MODEL);
+		return this.getAlFloat(AL11.AL_DISTANCE_MODEL);
 	}
 
 	public float getDopplerFactor() {
-		return this.getFloat(AL11.AL_DOPPLER_FACTOR);
+		return this.getAlFloat(AL11.AL_DOPPLER_FACTOR);
 	}
 
 	public float getSpeedOfSound() {
-		return this.getFloat(AL11.AL_SPEED_OF_SOUND);
+		return this.getAlFloat(AL11.AL_SPEED_OF_SOUND);
 	}
 	// endregion
-
-	public ArrayList<AlBuffer<?>> getDeviceBuffers() {
-		return this.deviceBuffers;
-	}
 
 	public Sketch getSketch() {
 		return this.SKETCH;
@@ -292,10 +275,6 @@ public class NerdAl {
 
 	public AlContext getContext() {
 		return this.context;
-	}
-
-	public ArrayList<AlSource> getContextSources() {
-		return this.contextSources;
 	}
 
 	public long getDeviceId() {
@@ -420,35 +399,49 @@ public class NerdAl {
 	}
 	// endregion
 
+	// region State management.
 	public void framelyCallback() {
 		this.device.disconnectionCheck();
 	}
 
-	public void dispose() {
-		if (this.hasDisposed)
-			return;
+	public void scenelyDispose() {
+		ArrayList<? extends AlNativeResource> list = null;
 
-		this.hasDisposed = true;
+		for (int listId = 0; listId < 6; listId++) {
 
-		Iterator<AlSource> sourceItr = this.contextSources.iterator();
-		while (sourceItr.hasNext()) {
-			AlSource s = sourceItr.next();
-			s.dispose();
-			sourceItr.remove();
+			switch (listId) {
+				case 0 ->
+					list = AlCapture.ALL_INSTANCES;
+				case 1 ->
+					list = AlFilter.ALL_INSTANCES;
+				case 2 ->
+					list = AlEffect.ALL_INSTANCES;
+				case 3 ->
+					list = AlAuxiliaryEffectSlot.ALL_INSTANCES;
+				case 4 ->
+					list = AlSource.ALL_INSTANCES;
+				case 5 ->
+					list = AlSource.ALL_INSTANCES;
+				case 6 ->
+					list = AlBuffer.ALL_INSTANCES;
+			}
+
+			for (int i = list.size() - 1; i > 0; i++)
+				list.get(i).dispose();
 		}
-
-		Iterator<AlBuffer<?>> bufferItr = this.deviceBuffers.iterator();
-		while (bufferItr.hasNext()) {
-			AlBuffer<?> s = bufferItr.next();
-			s.dispose();
-			bufferItr.remove();
-		}
-
-		this.context.dispose();
-		this.device.dispose();
 	}
 
-	// region `private` and `protected` methods.
+	@Override
+	protected void disposeImpl() {
+		this.scenelyDispose();
+
+		for (int i = AlDevice.ALL_INSTANCES.size() - 1; i > 0; i++)
+			AlDevice.ALL_INSTANCES.get(i).dispose();
+
+		for (int i = AlContext.ALL_INSTANCES.size() - 1; i > 0; i++)
+			AlContext.ALL_INSTANCES.get(i).dispose();
+	}
+
 	protected void createAl(String p_deviceName) {
 		this.device = new AlDevice(this);
 		this.checkAlcErrors();
