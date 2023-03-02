@@ -33,8 +33,8 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 	// endregion
 
 	@Override // Free the buffer (or not) :D
-	public void disposeImpl() {
-		super.disposeImpl();
+	public void dispose() {
+		super.dispose();
 		LibCStdlib.free(super.data); // Yep, we literally made Java, C. "Welcome to JavaC!" :joy:
 	}
 
@@ -42,7 +42,7 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 	public void setData(int p_format, ShortBuffer p_buffer, int p_sampleRate) {
 		super.data = p_buffer;
 		super.dataType = p_format;
-		AL11.alBufferData(super.id, p_format, p_buffer.array(), p_sampleRate);
+		AL11.alBufferData(this.id, p_format, p_buffer.array(), p_sampleRate);
 		super.alMan.checkAlErrors();
 	}
 
@@ -81,7 +81,7 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 
 			// Give the OpenAL buffer the data:
 
-			AL11.alBufferData(super.id,
+			AL11.alBufferData(this.id,
 					super.dataType = channelsBuffer.get() == 1
 							? AL11.AL_FORMAT_MONO16
 							: AL11.AL_FORMAT_STEREO16,

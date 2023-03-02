@@ -8,7 +8,7 @@ import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.AlObject;
+import com.brahvim.nerd.openal.AlResourceHolder;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlAutowah;
@@ -24,7 +24,7 @@ import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlPitchShifter;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlReverb;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlRingModulator;
 
-public class AlAuxiliaryEffectSlot extends AlObject {
+public class AlAuxiliaryEffectSlot extends AlResourceHolder {
 
 	/*
 	 * let arr = [
@@ -369,7 +369,7 @@ public class AlAuxiliaryEffectSlot extends AlObject {
 	// endregion
 
 	@Override
-	protected void disposeImpl() {
+	public void dispose() {
 		EXTEfx.alDeleteAuxiliaryEffectSlots(this.id);
 		AlAuxiliaryEffectSlot.slots.remove(this);
 	}

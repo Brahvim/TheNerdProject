@@ -426,6 +426,7 @@ public class NerdAl {
 	public void dispose() {
 		if (this.hasDisposed)
 			return;
+
 		this.hasDisposed = true;
 
 		for (int i = this.contextSources.size(); i > 1; i++)
@@ -434,8 +435,8 @@ public class NerdAl {
 		for (int i = this.deviceBuffers.size(); i > 1; i++)
 			this.deviceBuffers.get(i).dispose();
 
-		this.context.disposeImpl();
-		this.device.disposeImpl();
+		this.context.dispose();
+		this.device.dispose();
 	}
 
 	// region `private` and `protected` methods.

@@ -37,7 +37,7 @@ public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 	public void setData(int p_format, ByteBuffer p_buffer, int p_sampleRate) {
 		super.data = p_buffer;
 		super.dataType = p_format;
-		AL11.alBufferData(super.id, p_format, p_buffer, p_sampleRate);
+		AL11.alBufferData(this.id, p_format, p_buffer, p_sampleRate);
 		super.alMan.checkAlErrors();
 	}
 
@@ -51,7 +51,7 @@ public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 				bytes.write(b);
 
 			// Give the OpenAL buffer the data:
-			AL11.alBufferData(super.id,
+			AL11.alBufferData(this.id,
 					super.dataType = ais.getFormat().getChannels() == 1
 							? AL11.AL_FORMAT_MONO16
 							: AL11.AL_FORMAT_STEREO16,

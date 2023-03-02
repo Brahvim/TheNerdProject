@@ -20,7 +20,7 @@ import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
 
-public class AlSource extends AlObject {
+public class AlSource extends AlResourceHolder {
 
 	// region Fields.
 	private int id;
@@ -613,7 +613,7 @@ public class AlSource extends AlObject {
 	// TODO: MAKE `AssetLoaderOptions` (finally) and make buffers persistent :D
 
 	@Override
-	protected void disposeImpl() {
+	public void dispose() {
 		this.alMan.getContextSources().remove(this);
 		AL11.alDeleteSources(this.id);
 		this.alMan.checkAlErrors();

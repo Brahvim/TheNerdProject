@@ -9,12 +9,12 @@ import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.ALC11;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.AlObject;
+import com.brahvim.nerd.openal.AlResourceHolder;
 import com.brahvim.nerd.openal.NerdAl;
 
 import processing.core.PVector;
 
-public abstract class AlBuffer<BufferT extends Buffer> extends AlObject {
+public abstract class AlBuffer<BufferT extends Buffer> extends AlResourceHolder {
 
 	// region Fields.
 	// No OpenAL implementation provides `AL_DATA`.
@@ -288,7 +288,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlObject {
 	// endregion
 
 	@Override
-	protected void disposeImpl() {
+	public void dispose() {
 		this.alMan.getDeviceBuffers().remove(this);
 		AL11.alDeleteBuffers(this.id);
 		this.alMan.checkAlErrors();

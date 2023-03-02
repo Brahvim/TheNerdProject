@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.AlObject;
+import com.brahvim.nerd.openal.AlNativeResource;
+import com.brahvim.nerd.openal.AlResourceHolder;
 import com.brahvim.nerd.openal.NerdAl;
 
-public abstract class AlEffect extends AlObject {
+public abstract class AlEffect extends AlResourceHolder {
 
 	// region Fields.
 	public final static ArrayList<AlEffect> effects = new ArrayList<>();
@@ -140,12 +141,8 @@ public abstract class AlEffect extends AlObject {
 		return this.slot;
 	}
 
-	// region Disposal.
-	public boolean isDisposed() {
-		return this.hasDisposed;
-	}
-
-	public void disposeImpl() {
+	@Override
+	public void dispose() {
 		if (this.hasDisposed)
 			return;
 		this.hasDisposed = true;
@@ -154,6 +151,5 @@ public abstract class AlEffect extends AlObject {
 		AlEffect.effects.remove(this);
 		EXTEfx.alDeleteEffects(this.id);
 	}
-	// endregion
 
 }
