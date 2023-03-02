@@ -458,12 +458,25 @@ public class AlSource extends AlNativeResource {
 		return this.effectSlot;
 	}
 
+	/**
+	 * @return The older effect slot object (may be {@code null}).
+	 */
 	public AlAuxiliaryEffectSlot setEffectSlot(AlAuxiliaryEffectSlot p_effectSlot) {
 		AlAuxiliaryEffectSlot toRet = this.effectSlot;
 		this.effectSlot = p_effectSlot;
+
+		final int EFFECT_SLOT_ID;
+
+		if (this.effectSlot == null)
+			EFFECT_SLOT_ID = EXTEfx.AL_EFFECTSLOT_NULL;
+		else {
+			this.effectSlot.setSource(this);
+			EFFECT_SLOT_ID = this.effectSlot.getId();
+		}
+
 		this.setIntTriplet(
 				EXTEfx.AL_AUXILIARY_SEND_FILTER,
-				this.effectSlot.getId(), 0,
+				EFFECT_SLOT_ID, 0,
 				this.auxiliarySendFilter == null
 						? EXTEfx.AL_FILTER_NULL
 						: this.auxiliarySendFilter.getId());

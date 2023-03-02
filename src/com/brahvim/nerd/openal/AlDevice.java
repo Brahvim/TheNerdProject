@@ -68,10 +68,11 @@ public class AlDevice extends AlNativeResource {
 		boolean connected = this.isConnected();
 
 		if (!connected) {
-			SOFTReopenDevice.alcReopenDeviceSOFT(
+			if (SOFTReopenDevice.alcReopenDeviceSOFT(
 					this.id,
 					this.disconnectionCallback.onDisconnect(),
-					new int[] { 0 });
+					new int[] { 0 }))
+				throw new NerdAlException("`SOFTReopenDevice` failed.");
 		}
 
 		return connected;

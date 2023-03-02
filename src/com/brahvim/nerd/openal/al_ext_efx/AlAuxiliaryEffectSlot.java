@@ -9,6 +9,7 @@ import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.AlNativeResource;
+import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlAutowah;
@@ -84,6 +85,7 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 
 	private NerdAl alMan;
 	private AlEffect effect;
+	private AlSource source;
 	private int id = EXTEfx.AL_EFFECT_NULL;
 	// endregion
 
@@ -118,6 +120,10 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 
 	public float getGain() {
 		return this.getFloat(EXTEfx.AL_EFFECTSLOT_GAIN);
+	}
+
+	public AlSource getSource() {
+		return this.source;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -266,6 +272,10 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		this.setFloat(EXTEfx.AL_EFFECTSLOT_GAIN, p_value);
 	}
 
+	public void setSource(AlSource p_source) {
+		this.source = p_source;
+	}
+
 	public void setEffect(AlEffect p_effect) {
 		if (p_effect == null) {
 			this.effect = null;
@@ -370,6 +380,8 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 
 	@Override
     protected void disposeImpl() {
+		this.setEffect(null);
+		this.source.setEffectSlot(null);
 		EXTEfx.alDeleteAuxiliaryEffectSlots(this.id);
 		AlAuxiliaryEffectSlot.ALL_INSTANCES.remove(this);
 	}

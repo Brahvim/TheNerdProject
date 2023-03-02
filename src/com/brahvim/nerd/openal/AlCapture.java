@@ -8,6 +8,7 @@ import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.ALC11;
 
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
+import com.brahvim.nerd.openal.al_exceptions.AlcException;
 
 public class AlCapture extends AlNativeResource {
 
@@ -71,12 +72,10 @@ public class AlCapture extends AlNativeResource {
 
 		// Open the capture device,
 		this.id = ALC11.alcCaptureOpenDevice(this.deviceName, p_sampleRate, p_format, p_samplesPerBuffer);
-		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 
 		// Begin capturing!:
 		ALC11.alcCaptureStart(this.id);
-		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 		// endregion
 
@@ -86,7 +85,6 @@ public class AlCapture extends AlNativeResource {
 
 			// Capture till `stopCapturing()` is called:
 			while (!Thread.interrupted()) {
-				this.alMan.checkAlErrors();
 				this.alMan.checkAlcErrors();
 
 				final ByteBuffer SAMPLES = ByteBuffer.allocate(p_samplesPerBuffer);
@@ -94,9 +92,8 @@ public class AlCapture extends AlNativeResource {
 
 				// region Check if the device gets disconnected (cause of `ALC_INVALID_DEVICE`):
 				try {
-					this.alMan.checkAlErrors();
 					this.alMan.checkAlcErrors();
-				} catch (Exception e) {
+				} catch (AlcException e) {
 					deviceGotRemoved = true;
 					System.err.printf("""
 							Audio capture device on thread \"%s\" has been disconnected amidst a session.
@@ -148,7 +145,6 @@ public class AlCapture extends AlNativeResource {
 		this.captureThread.interrupt();
 
 		ALC11.alcCaptureCloseDevice(this.id);
-		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
 
 		AlCapture.numActiveCaptures--;

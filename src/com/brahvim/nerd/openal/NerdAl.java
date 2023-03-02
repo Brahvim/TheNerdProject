@@ -337,7 +337,8 @@ public class NerdAl extends AlNativeResource {
 	@Deprecated
 	public static int errorStringToCode(String p_errorString) {
 		return AL11.alGetEnumValue(p_errorString
-				.split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]);
+		// .split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]
+		);
 	}
 
 	public static int errorStringToCode(NerdAbstractOpenAlException p_exception) {
@@ -410,7 +411,7 @@ public class NerdAl extends AlNativeResource {
 					list = AlBuffer.ALL_INSTANCES;
 			}
 
-			for (int i = list.size() - 1; i > 0; i++)
+			for (int i = list.size() - 1; i > -1; i--)
 				list.get(i).dispose();
 		}
 	}
@@ -419,10 +420,10 @@ public class NerdAl extends AlNativeResource {
 	protected void disposeImpl() {
 		this.scenelyDispose();
 
-		for (int i = AlDevice.ALL_INSTANCES.size() - 1; i > 0; i++)
+		for (int i = AlDevice.ALL_INSTANCES.size() - 1; i > -1; i--)
 			AlDevice.ALL_INSTANCES.get(i).dispose();
 
-		for (int i = AlContext.ALL_INSTANCES.size() - 1; i > 0; i++)
+		for (int i = AlContext.ALL_INSTANCES.size() - 1; i > -1; i--)
 			AlContext.ALL_INSTANCES.get(i).dispose();
 	}
 
