@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.AlNativeResource;
 import com.brahvim.nerd.openal.AlResourceHolder;
 import com.brahvim.nerd.openal.NerdAl;
 

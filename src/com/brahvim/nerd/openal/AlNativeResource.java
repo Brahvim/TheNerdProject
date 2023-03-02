@@ -1,11 +1,11 @@
 package com.brahvim.nerd.openal;
 
+import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 // [https://www.oracle.com/technical-resources/articles/javase/finalization.html]
-public final class AlNativeResource extends WeakReference<AlResourceHolder> {
+public final class AlNativeResource extends PhantomReference<AlResourceHolder> {
     public static int numResourcesToGc = 5;
     public final static ArrayList<AlNativeResource> RESOURCES = new ArrayList<>();
 
@@ -21,8 +21,10 @@ public final class AlNativeResource extends WeakReference<AlResourceHolder> {
     public static void performNativeGc() {
         for (int i = 0; i != AlNativeResource.numResourcesToGc; i++) {
             AlNativeResource nativeObject = (AlNativeResource) AlNativeResource.REFERENCE_QUEUE.poll();
-            if (nativeObject == null)
+            if (nativeObject == null) {
+                System.gc();
                 break;
+            }
             nativeObject.onGc.run();
         }
     }

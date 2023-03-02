@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL11;
@@ -420,6 +421,7 @@ public class NerdAl {
 	// endregion
 
 	public void framelyCallback() {
+		AlNativeResource.performNativeGc();
 		this.device.disconnectionCheck();
 	}
 
@@ -429,11 +431,19 @@ public class NerdAl {
 
 		this.hasDisposed = true;
 
-		for (int i = this.contextSources.size(); i > 1; i++)
-			this.contextSources.get(i).dispose();
+		Iterator<AlSource> sourceItr = this.contextSources.iterator();
+		while (sourceItr.hasNext()) {
+			AlSource s = sourceItr.next();
+			s.dispose();
+			sourceItr.remove();
+		}
 
-		for (int i = this.deviceBuffers.size(); i > 1; i++)
-			this.deviceBuffers.get(i).dispose();
+		Iterator<AlBuffer<?>> bufferItr = this.deviceBuffers.iterator();
+		while (bufferItr.hasNext()) {
+			AlBuffer<?> s = bufferItr.next();
+			s.dispose();
+			bufferItr.remove();
+		}
 
 		this.context.dispose();
 		this.device.dispose();

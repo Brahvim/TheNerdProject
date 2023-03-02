@@ -614,7 +614,6 @@ public class AlSource extends AlResourceHolder {
 
 	@Override
 	public void dispose() {
-		this.alMan.getContextSources().remove(this);
 		AL11.alDeleteSources(this.id);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();

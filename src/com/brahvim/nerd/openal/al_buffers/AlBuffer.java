@@ -289,7 +289,6 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlResourceHolder 
 
 	@Override
 	public void dispose() {
-		this.alMan.getDeviceBuffers().remove(this);
 		AL11.alDeleteBuffers(this.id);
 		this.alMan.checkAlErrors();
 		this.alMan.checkAlcErrors();
