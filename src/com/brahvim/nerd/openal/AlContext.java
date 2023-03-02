@@ -59,6 +59,10 @@ public class AlContext extends AlNativeResource {
 		return this.alMan;
 	}
 
+	public AlDevice getDevice() {
+		return device;
+	}
+
 	@SuppressWarnings("unchecked")
 	public ArrayList<AlBuffer<?>> getBuffers() {
 		return (ArrayList<AlBuffer<?>>) this.buffers.clone();
