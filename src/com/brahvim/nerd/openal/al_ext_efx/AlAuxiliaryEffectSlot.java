@@ -1,7 +1,5 @@
 package com.brahvim.nerd.openal.al_ext_efx;
 
-import java.lang.ref.Cleaner;
-import java.lang.ref.Cleaner.Cleanable;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -82,9 +80,6 @@ public class AlAuxiliaryEffectSlot {
 
 	// region Fields.
 	public final static ArrayList<AlAuxiliaryEffectSlot> slots = new ArrayList<>();
-	public final static Cleaner CLEANER = Cleaner.create();
-
-	private final Cleanable cleanable;
 
 	private NerdAl alMan;
 	private AlEffect effect;
@@ -93,10 +88,6 @@ public class AlAuxiliaryEffectSlot {
 
 	// region Constructors.
 	public AlAuxiliaryEffectSlot(NerdAl p_alMan) {
-		this.cleanable = AlAuxiliaryEffectSlot.CLEANER.register(this, () -> {
-			this.dispose();
-		});
-
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
 
@@ -107,10 +98,6 @@ public class AlAuxiliaryEffectSlot {
 	}
 
 	public AlAuxiliaryEffectSlot(NerdAl p_alMan, AlEffect p_effect) {
-		this.cleanable = AlAuxiliaryEffectSlot.CLEANER.register(this, () -> {
-			this.dispose();
-		});
-
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
 
@@ -383,7 +370,6 @@ public class AlAuxiliaryEffectSlot {
 	public void dispose() {
 		EXTEfx.alDeleteAuxiliaryEffectSlots(this.id);
 		AlAuxiliaryEffectSlot.slots.remove(this);
-		this.cleanable.clean();
 	}
 
 }
