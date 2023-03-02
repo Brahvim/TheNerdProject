@@ -1,11 +1,11 @@
 package com.brahvim.nerd.openal;
 
-import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 
 // [https://www.oracle.com/technical-resources/articles/javase/finalization.html]
-public final class AlNativeResource extends PhantomReference<AlResourceHolder> {
+public final class AlNativeResource extends SoftReference<AlResourceHolder> {
     public static int numResourcesToGc = 5;
     public final static ArrayList<AlNativeResource> RESOURCES = new ArrayList<>();
 
@@ -25,6 +25,7 @@ public final class AlNativeResource extends PhantomReference<AlResourceHolder> {
                 System.gc();
                 break;
             }
+
             nativeObject.onGc.run();
         }
     }
