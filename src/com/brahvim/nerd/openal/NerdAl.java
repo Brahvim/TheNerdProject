@@ -334,11 +334,8 @@ public class NerdAl extends AlNativeResource {
 		return EXTEfx.alIsAuxiliaryEffectSlot(p_id);
 	}
 
-	@Deprecated
 	public static int errorStringToCode(String p_errorString) {
-		return AL11.alGetEnumValue(p_errorString
-		// .split(NerdAbstractOpenAlException.ERR_CODE_MIDFIX, 0)[0]
-		);
+		return AL11.alGetEnumValue(p_errorString.split("\"")[1]);
 	}
 
 	public static int errorStringToCode(NerdAbstractOpenAlException p_exception) {
@@ -371,6 +368,7 @@ public class NerdAl extends AlNativeResource {
 		return new AlSource(this, new AlOggBuffer(this).loadFrom(p_file));
 	}
 
+	@Deprecated
 	public AlSource sourceFromWav(File p_file) {
 		return new AlSource(this, new AlWavBuffer(this).loadFrom(p_file));
 	}
@@ -379,6 +377,7 @@ public class NerdAl extends AlNativeResource {
 		return new AlSource(this, new AlOggBuffer(this).loadFrom(p_filePath));
 	}
 
+	@Deprecated
 	public AlSource sourceFromWav(String p_filePath) {
 		return new AlSource(this, new AlWavBuffer(this).loadFrom(p_filePath));
 	}
@@ -406,8 +405,6 @@ public class NerdAl extends AlNativeResource {
 				case 4 ->
 					list = AlSource.ALL_INSTANCES;
 				case 5 ->
-					list = AlSource.ALL_INSTANCES;
-				case 6 ->
 					list = AlBuffer.ALL_INSTANCES;
 			}
 

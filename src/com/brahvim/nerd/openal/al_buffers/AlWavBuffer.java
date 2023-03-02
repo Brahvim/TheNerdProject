@@ -39,6 +39,13 @@ public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 	}
 
 	@Override
+	@Deprecated
+	public AlBuffer<?> loadFrom(String p_path) {
+		return super.loadFrom(p_path);
+	}
+
+	@Override
+	@Deprecated
 	public AlWavBuffer loadFrom(File p_file) {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream(
 				(int) Math.min((long) Integer.MAX_VALUE, p_file.length()));

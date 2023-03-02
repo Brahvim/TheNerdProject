@@ -5,6 +5,7 @@ import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
+@Deprecated
 public class WavBufferDataAsset extends AssetType<AlWavBuffer> {
 	private final static WavBufferDataAsset LOADER = new WavBufferDataAsset();
 

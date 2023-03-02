@@ -9,7 +9,7 @@ import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
 public class AlContext extends AlNativeResource {
 
-	public static class AlContextSettings {
+	/* `package` */ static class AlContextSettings {
 
 		public int frequency = 44100, monoSources = 32, stereoSources = 8, refresh = 40;
 		public boolean sync;

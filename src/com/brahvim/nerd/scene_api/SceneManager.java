@@ -788,14 +788,16 @@ public class SceneManager {
     private void setupCurrentScene(SceneState p_state) {
         this.loadSceneAssets(this.currScene);
 
+        boolean prevSceneClassNotNull = this.prevSceneClass != null;
+
         // Helps in resetting style and transformation info across scenes! YAY!:
-        if (this.prevSceneClass != null)
+        if (prevSceneClassNotNull)
             this.SKETCH.pop();
 
         this.SKETCH.push();
 
         // Delete all OpenAL native data:
-        if (this.SKETCH.AL != null)
+        if (this.SKETCH.AL != null && prevSceneClassNotNull)
             this.SKETCH.AL.scenelyDispose();
 
         this.currScene.runSetup(p_state);

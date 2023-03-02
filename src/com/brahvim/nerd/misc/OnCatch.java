@@ -7,7 +7,7 @@ package com.brahvim.nerd.misc;
 // `@Deprecated`-
 // ACTUALLY-ACTUALLY,
 // WAIT, WAIT!
-// Overloading with just a different throws decl is not a thing!
+// Overloading with just a different *throws-decl* is not a thing!
 // ....long-live the `OnCatch`!
 
 public interface OnCatch {
