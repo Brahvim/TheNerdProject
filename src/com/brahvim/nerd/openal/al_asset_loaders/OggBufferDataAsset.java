@@ -17,6 +17,7 @@ public class OggBufferDataAsset extends AssetType<AlOggBuffer> {
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			AlOggBuffer oggBuffer = new AlOggBuffer(p_sketch.AL);
+			oggBuffer.shouldDispose(false);
 			oggBuffer.loadFrom(p_path);
 			return oggBuffer;
 		} catch (Exception e) {

@@ -70,7 +70,7 @@ public class AlContext extends AlNativeResource {
 
 		if (this.id == 0 || !ALC11.alcMakeContextCurrent(this.id)) {
 			this.disposeImpl();
-			this.alMan.checkAlcErrors();
+			this.alMan.checkAlcError();
 		}
 	}
 
@@ -80,14 +80,13 @@ public class AlContext extends AlNativeResource {
 		if (!ALC11.alcMakeContextCurrent(0))
 			throw new NerdAlException("Could not change the OpenAL context (whilst disposing)!");
 
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlcError();
 
 		// *Actually* destroy the context object:
 		ALC11.alcDestroyContext(this.id);
 
-		this.alMan.checkAlcErrors();
 		this.id = 0;
-
+		this.alMan.checkAlcError();
 		AlContext.ALL_INSTANCES.remove(this);
 	}
 

@@ -47,12 +47,12 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 	}
 
 	@Override
-	public void setDataImpl(int p_format, ShortBuffer p_buffer, int p_sampleRate) {
+	protected void setDataImpl(int p_format, ShortBuffer p_buffer, int p_sampleRate) {
 		AL11.alBufferData(this.id, p_format, p_buffer, p_sampleRate);
 	}
 
 	@Override
-	public AlOggBuffer loadFrom(File p_file) {
+	protected AlOggBuffer loadFromImpl(File p_file) {
 		// A note about the use of `org.lwjgl.system.MemoryStack`:
 		/*
 		 * LWJGL's `MemoryStack` class allows for stack allocations.

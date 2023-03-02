@@ -7,7 +7,12 @@ import com.brahvim.nerd.openal.NerdAl;
 public class AlHighpassFilter extends AlFilter {
 
 	public AlHighpassFilter(NerdAl p_alMan) {
-		super(p_alMan, EXTEfx.AL_FILTER_HIGHPASS);
+		super(p_alMan);
+	}
+
+	@Override
+	public int getName() {
+		return EXTEfx.AL_FILTER_HIGHPASS;
 	}
 
 	// region Getters.

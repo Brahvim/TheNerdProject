@@ -109,9 +109,8 @@ public class AlDevice extends AlNativeResource {
 		if (!ALC11.alcCloseDevice(this.id))
 			throw new NerdAlException("Could not close OpenAL device!");
 
-		// this.alMan.checkAlErrors();
-		// this.alMan.checkAlcErrors();
 		this.id = 0;
+		// this.alMan.checkAlcErrors();
 		AlDevice.ALL_INSTANCES.remove(this);
 	}
 

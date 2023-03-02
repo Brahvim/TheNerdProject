@@ -40,6 +40,7 @@ public class TestScene4 extends NerdScene {
         System.out.printf("`TestScene4.setup()` here, I was called `%d` times!\n",
                 SCENE.getTimesLoaded());
 
+        // region OpenAL Test.
         AlAuxiliaryEffectSlot slot = new AlAuxiliaryEffectSlot(SKETCH.AL);
         AlEcho effect = new AlEcho(SKETCH.AL);
         slot.setEffect(effect);
@@ -55,13 +56,14 @@ public class TestScene4 extends NerdScene {
         this.rubberDuck.attachDirectFilter(filter);
         this.rubberDuck.setGain(0.1f);
         this.rubberDuck.setEffectSlot(slot);
+        // endregion
 
         // Loaded this scene for the first time? Do this!:
         if (SCENE.getTimesLoaded() == 0) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();
-        } else {
+        } else { // Do not play `this.rubberDuck` if this is the first start!
             this.rubberDuck.setPosition(
                     0.01f * (SKETCH.mouseX - SKETCH.cx),
                     0,
@@ -79,7 +81,6 @@ public class TestScene4 extends NerdScene {
 
         this.ncx = this.nerd.width * 0.5f;
         this.ncy = this.nerd.height * 0.5f;
-
     }
 
     @Override

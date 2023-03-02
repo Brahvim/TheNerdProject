@@ -28,7 +28,8 @@ public class AlNoTypeBuffer extends AlBuffer<Buffer> {
 	}
 	// endregion
 
-	public AlBuffer<Buffer> loadFrom(File p_file) {
+	@Override
+	protected AlBuffer<Buffer> loadFromImpl(File p_file) {
 		throw new UnsupportedOperationException("""
 				`AlNativeBuffer` exists for types you may add yourself!
 				`AlNativeBuffer::loadFrom(File)` has no idea what you're trying to do.
@@ -40,7 +41,7 @@ public class AlNoTypeBuffer extends AlBuffer<Buffer> {
 	}
 
 	@Override
-	public void setDataImpl(int p_format, Buffer p_buffer, int p_sampleRate) {
+	protected void setDataImpl(int p_format, Buffer p_buffer, int p_sampleRate) {
 		AL11.alBufferData(this.id, p_format, (ByteBuffer) p_buffer, p_sampleRate);
 	}
 

@@ -93,22 +93,16 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 	public AlAuxiliaryEffectSlot(NerdAl p_alMan) {
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
-
+		this.alMan.checkAlError();
 		AlAuxiliaryEffectSlot.ALL_INSTANCES.add(this);
 	}
 
 	public AlAuxiliaryEffectSlot(NerdAl p_alMan, AlEffect p_effect) {
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		this.setEffect(p_effect);
-
 		AlAuxiliaryEffectSlot.ALL_INSTANCES.add(this);
 	}
 	// endregion
@@ -302,8 +296,7 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		EXTEfx.alGetAuxiliaryEffectSloti(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.get();
 	}
@@ -315,8 +308,7 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		EXTEfx.alGetAuxiliaryEffectSlotiv(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.array();
 	}
@@ -328,8 +320,7 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		EXTEfx.alGetAuxiliaryEffectSlotf(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.get();
 	}
@@ -341,8 +332,7 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		EXTEfx.alGetAuxiliaryEffectSlotfv(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.array();
 	}
@@ -351,35 +341,27 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 	// region C-style OpenAL setters.
 	public void setInt(int p_alEnum, int p_value) {
 		EXTEfx.alAuxiliaryEffectSloti(this.id, p_alEnum, p_value);
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_values) {
 		EXTEfx.alAuxiliaryEffectSlotiv(this.id, p_alEnum, p_values);
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		EXTEfx.alAuxiliaryEffectSlotf(this.id, p_alEnum, p_value);
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
 		EXTEfx.alAuxiliaryEffectSlotfv(this.id, p_alEnum, p_values);
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 	// endregion
 
 	@Override
-    protected void disposeImpl() {
+	protected void disposeImpl() {
 		this.setEffect(null);
 		this.source.setEffectSlot(null);
 		EXTEfx.alDeleteAuxiliaryEffectSlots(this.id);

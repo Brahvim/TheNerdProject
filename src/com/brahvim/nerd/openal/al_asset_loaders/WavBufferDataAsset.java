@@ -18,6 +18,7 @@ public class WavBufferDataAsset extends AssetType<AlWavBuffer> {
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			AlWavBuffer wavBuffer = new AlWavBuffer(p_sketch.AL);
+			wavBuffer.shouldDispose(false);
 			wavBuffer.loadFrom(p_path);
 			return wavBuffer;
 		} catch (Exception e) {

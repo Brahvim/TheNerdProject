@@ -9,12 +9,11 @@ public class App {
 
     // TODOs!:
     /*
-     * // ????: Don't forget - AL can stream audio!
-     * // TODO: Get Context settings done! (Also `EXEfx.AL_METERS_PER_UNIT`.)
      * // TODO: Box2D and Bullet? :D?
-     * // TODO: Multiple monitor support!
-     * // TODO: Collision Algorithms for 3D space.
-     * // TODO: Learn to compile OpenAL for Android.
+     * // TODO: Multiple monitor support!!!
+     * // TODO: Collision Algorithms for 3D space?!
+     * // TODO: Don't forget - OpenAL can stream audio!
+     * // TODO: Learn to use LWLJGL on Android for OpenAL.
      */
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =

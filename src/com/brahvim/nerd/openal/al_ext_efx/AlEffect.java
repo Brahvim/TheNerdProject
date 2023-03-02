@@ -20,15 +20,13 @@ public abstract class AlEffect extends AlNativeResource {
 	protected AlAuxiliaryEffectSlot slot;
 	// endregion
 
-	public AlEffect(NerdAl p_NerdAl) {
+	public AlEffect(NerdAl p_nerdAl) {
 		AlEffect.ALL_INSTANCES.add(this);
 
-		this.alMan = p_NerdAl;
+		this.alMan = p_nerdAl;
 		this.id = EXTEfx.alGenEffects();
 		this.setInt(EXTEfx.AL_EFFECT_TYPE, this.getEffectType());
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	// region Getters!
@@ -51,8 +49,7 @@ public abstract class AlEffect extends AlNativeResource {
 		EXTEfx.alGetEffecti(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.get();
 	}
@@ -64,8 +61,7 @@ public abstract class AlEffect extends AlNativeResource {
 		EXTEfx.alGetEffectiv(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.array();
 	}
@@ -77,8 +73,7 @@ public abstract class AlEffect extends AlNativeResource {
 		EXTEfx.alGetEffectf(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.get();
 	}
@@ -90,8 +85,7 @@ public abstract class AlEffect extends AlNativeResource {
 		EXTEfx.alGetEffectfv(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.array();
 	}
@@ -102,36 +96,28 @@ public abstract class AlEffect extends AlNativeResource {
 		EXTEfx.alEffecti(this.id, p_alEnum, p_value);
 		if (this.slot != null)
 			this.slot.setEffect(this);
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_values) {
 		EXTEfx.alEffectiv(this.id, p_alEnum, p_values);
 		if (this.slot != null)
 			this.slot.setEffect(this);
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		EXTEfx.alEffectf(this.id, p_alEnum, p_value);
 		if (this.slot != null)
 			this.slot.setEffect(this);
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
 		EXTEfx.alEffectfv(this.id, p_alEnum, p_values);
 		if (this.slot != null)
 			this.slot.setEffect(this);
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 	// endregion
 

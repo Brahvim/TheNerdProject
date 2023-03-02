@@ -33,8 +33,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 		this.alMan = p_alMan;
 
 		this.id = AL11.alGenBuffers();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -49,8 +48,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 		this.setChannels(p_buffer.getChannels());
 		this.setDataImpl(p_buffer.dataType, (BufferT) p_buffer.getData(), p_buffer.getSampleRate());
 
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public AlBuffer(NerdAl p_alMan, int p_id) {
@@ -65,27 +63,32 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 		this.alMan = p_alInst;
 
 		this.id = AL11.alGenBuffers();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 	// endregion
 
 	// region `abstract` methods (and overloads, and implementations).
 	public AlBuffer<?> loadFrom(String p_path) {
-		this.loadFrom(new File(p_path));
+		this.loadFrom(new File(p_path)); // Also invoke `AlNativeResource::shouldDispose()`.
 		return this;
 	}
 
-	public abstract AlBuffer<?> loadFrom(File p_file);
+	public AlBuffer<?> loadFrom(File p_file) {
+		super.shouldDispose(false);
+		this.loadFromImpl(p_file);
+		return this;
+	}
+
+	protected abstract AlBuffer<?> loadFromImpl(File p_file);
 
 	public void setData(int p_format, BufferT p_buffer, int p_sampleRate) {
 		this.data = p_buffer;
 		this.dataType = p_format;
 		this.setDataImpl(p_format, p_buffer, p_sampleRate);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
-	public abstract void setDataImpl(int p_format, BufferT p_buffer, int p_sampleRate);
+	protected abstract void setDataImpl(int p_format, BufferT p_buffer, int p_sampleRate);
 	// endregion
 
 	// region C-style OpenAL getters.
@@ -139,22 +142,22 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	// region C-style OpenAL setters.
 	public void setInt(int p_alEnum, int p_value) {
 		AL11.alBufferi(this.id, p_alEnum, p_value);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		AL11.alBufferf(this.id, p_alEnum, p_value);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_values) {
 		AL11.alBufferiv(this.id, p_alEnum, p_values);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
 		AL11.alBufferfv(this.id, p_alEnum, p_values);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setIntTriplet(int p_alEnum, int... p_values) {
@@ -163,12 +166,12 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 					"`alBuffer::setIntTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alBuffer3i(this.id, p_alEnum, p_values[0], p_values[1], p_values[2]);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
 		AL11.alBuffer3i(this.id, p_alEnum, p_i1, p_i2, p_i3);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float... p_values) {
@@ -177,17 +180,17 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 					"`alBuffer::setFloatTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alBuffer3f(this.id, p_alEnum, p_values[0], p_values[1], p_values[2]);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
 		AL11.alBuffer3f(this.id, p_alEnum, p_f1, p_f2, p_f3);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatTriplet(int p_alEnum, PVector p_values) {
 		AL11.alBuffer3f(this.id, p_alEnum, p_values.x, p_values.y, p_values.z);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 	// endregion
 
@@ -260,8 +263,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	@Override
 	protected void disposeImpl() {
 		AL11.alDeleteBuffers(this.id);
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 		AlBuffer.ALL_INSTANCES.remove(this);
 	}
 

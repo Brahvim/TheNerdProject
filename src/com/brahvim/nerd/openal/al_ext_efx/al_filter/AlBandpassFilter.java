@@ -7,7 +7,12 @@ import com.brahvim.nerd.openal.NerdAl;
 public class AlBandpassFilter extends AlFilter {
 
 	public AlBandpassFilter(NerdAl p_alMan) {
-		super(p_alMan, EXTEfx.AL_FILTER_BANDPASS);
+		super(p_alMan);
+	}
+
+	@Override
+	public int getName() {
+		return EXTEfx.AL_FILTER_BANDPASS;
 	}
 
 	// region Getters.

@@ -34,7 +34,7 @@ public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 	// endregion
 
 	@Override
-	public void setDataImpl(int p_format, ByteBuffer p_buffer, int p_sampleRate) {
+	protected void setDataImpl(int p_format, ByteBuffer p_buffer, int p_sampleRate) {
 		AL11.alBufferData(this.id, p_format, p_buffer, p_sampleRate);
 	}
 
@@ -46,7 +46,7 @@ public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 
 	@Override
 	@Deprecated
-	public AlWavBuffer loadFrom(File p_file) {
+	protected AlWavBuffer loadFromImpl(File p_file) {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream(
 				(int) Math.min((long) Integer.MAX_VALUE, p_file.length()));
 

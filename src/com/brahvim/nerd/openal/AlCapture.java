@@ -72,11 +72,11 @@ public class AlCapture extends AlNativeResource {
 
 		// Open the capture device,
 		this.id = ALC11.alcCaptureOpenDevice(this.deviceName, p_sampleRate, p_format, p_samplesPerBuffer);
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlcError();
 
 		// Begin capturing!:
 		ALC11.alcCaptureStart(this.id);
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlcError();
 		// endregion
 
 		this.captureThread = new Thread(() -> {
@@ -85,14 +85,14 @@ public class AlCapture extends AlNativeResource {
 
 			// Capture till `stopCapturing()` is called:
 			while (!Thread.interrupted()) {
-				this.alMan.checkAlcErrors();
+				this.alMan.checkAlcError();
 
 				final ByteBuffer SAMPLES = ByteBuffer.allocate(p_samplesPerBuffer);
 				ALC11.alcCaptureSamples(this.id, SAMPLES, p_samplesPerBuffer);
 
 				// region Check if the device gets disconnected (cause of `ALC_INVALID_DEVICE`):
 				try {
-					this.alMan.checkAlcErrors();
+					this.alMan.checkAlcError();
 				} catch (AlcException e) {
 					deviceGotRemoved = true;
 					System.err.printf("""
@@ -145,7 +145,7 @@ public class AlCapture extends AlNativeResource {
 		this.captureThread.interrupt();
 
 		ALC11.alcCaptureCloseDevice(this.id);
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlcError();
 
 		AlCapture.numActiveCaptures--;
 		return this.capturedData;
@@ -164,13 +164,13 @@ public class AlCapture extends AlNativeResource {
 		if (this.lastCapFormat == -1 || this.lastCapSampleRate == -1)
 			return this.capturedData;
 
-		p_buffer.setDataImpl(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
+		p_buffer.setData(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
 		return this.capturedData;
 	}
 
 	public AlWavBuffer storeIntoBuffer() {
 		AlWavBuffer toRet = new AlWavBuffer(this.alMan);
-		toRet.setDataImpl(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
+		toRet.setData(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
 		return toRet;
 	}
 	// endregion

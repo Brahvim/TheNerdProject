@@ -11,29 +11,24 @@ import com.brahvim.nerd.openal.AlNativeResource;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.NerdAl;
 
-public class AlFilter extends AlNativeResource {
+public abstract class AlFilter extends AlNativeResource {
 
 	// region Fields.
 	public final static ArrayList<AlFilter> ALL_INSTANCES = new ArrayList<>();
 
+	private int id;
 	private NerdAl alMan;
-	private int id, filterName;
 	// endregion
 
-	public AlFilter(NerdAl p_alMan, int p_filterName) {
+	public AlFilter(NerdAl p_alMan) {
 		AlFilter.ALL_INSTANCES.add(this);
 
 		this.alMan = p_alMan;
-		this.filterName = p_filterName;
 		this.id = EXTEfx.alGenFilters();
+		this.alMan.checkAlError();
 
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
-
-		this.setInt(EXTEfx.AL_FILTER_TYPE, this.filterName);
-
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.setInt(EXTEfx.AL_FILTER_TYPE, this.getName());
+		this.alMan.checkAlError();
 	}
 
 	// region C-style OpenAL getters.
@@ -44,8 +39,7 @@ public class AlFilter extends AlNativeResource {
 		EXTEfx.alGetFilteri(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.get();
 	}
@@ -57,8 +51,7 @@ public class AlFilter extends AlNativeResource {
 		EXTEfx.alGetFilteriv(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.array();
 	}
@@ -70,8 +63,7 @@ public class AlFilter extends AlNativeResource {
 		EXTEfx.alGetFilterf(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.get();
 	}
@@ -83,8 +75,7 @@ public class AlFilter extends AlNativeResource {
 		EXTEfx.alGetFilterfv(this.id, p_alEnum, buffer);
 
 		MemoryStack.stackPop();
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		return buffer.array();
 	}
@@ -93,26 +84,22 @@ public class AlFilter extends AlNativeResource {
 	// region C-style OpenAL setters.
 	public void setInt(int p_alEnum, int p_value) {
 		EXTEfx.alFilteri(this.id, p_alEnum, p_value);
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_values) {
 		EXTEfx.alFilteriv(this.id, p_alEnum, p_values);
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		EXTEfx.alFilterf(this.id, p_alEnum, p_value);
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
 		EXTEfx.alFilterfv(this.id, p_alEnum, p_values);
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 	// endregion
 
@@ -121,9 +108,7 @@ public class AlFilter extends AlNativeResource {
 		return this.id;
 	}
 
-	public int getName() {
-		return this.filterName;
-	}
+	public abstract int getName();
 	// endregion
 
 	// region Mass source attachment.

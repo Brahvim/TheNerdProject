@@ -101,22 +101,22 @@ public class NerdAl extends AlNativeResource {
 	// region C-style OpenAL Listener setters.
 	public void setListenerInt(int p_alEnum, int p_value) {
 		AL11.alListeneri(p_alEnum, p_value);
-		this.checkAlErrors();
+		this.checkAlError();
 	}
 
 	public void setListenerFloat(int p_alEnum, float p_value) {
 		AL11.alListenerf(p_alEnum, p_value);
-		this.checkAlErrors();
+		this.checkAlError();
 	}
 
 	public void setListenerIntVector(int p_alEnum, int... p_value) {
 		AL11.alListeneriv(p_alEnum, p_value);
-		this.checkAlErrors();
+		this.checkAlError();
 	}
 
 	public void setListenerFloatVector(int p_alEnum, float... p_values) {
 		AL11.alListenerfv(p_alEnum, p_values);
-		this.checkAlErrors();
+		this.checkAlError();
 	}
 
 	public void setListenerIntTriplet(int p_alEnum, int... p_value) {
@@ -125,12 +125,12 @@ public class NerdAl extends AlNativeResource {
 					"`AlSource::setIntTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alListener3i(p_alEnum, p_value[0], p_value[1], p_value[2]);
-		this.checkAlErrors();
+		this.checkAlError();
 	}
 
 	public void setListenerIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
 		AL11.alListener3i(p_alEnum, p_i1, p_i2, p_i3);
-		this.checkAlErrors();
+		this.checkAlError();
 	}
 
 	public void setListenerFloatTriplet(int p_alEnum, float... p_value) {
@@ -139,17 +139,17 @@ public class NerdAl extends AlNativeResource {
 					"`AlSource::setFloatTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alListener3f(p_alEnum, p_value[0], p_value[1], p_value[2]);
-		this.checkAlErrors();
+		this.checkAlError();
 	}
 
 	public void setListenerFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
 		AL11.alListener3f(p_alEnum, p_f1, p_f2, p_f3);
-		this.checkAlErrors();
+		this.checkAlError();
 	}
 
 	public void setListenerFloatTriplet(int p_alEnum, PVector p_value) {
 		AL11.alListener3f(p_alEnum, p_value.x, p_value.y, p_value.z);
-		this.checkAlErrors();
+		this.checkAlError();
 	}
 	// endregion
 
@@ -218,13 +218,13 @@ public class NerdAl extends AlNativeResource {
 	// region C-style OpenAL getters.
 	public int getAlInt(int p_alEnum) {
 		int toRet = AL11.alGetInteger(p_alEnum);
-		this.checkAlErrors();
+		this.checkAlError();
 		return toRet;
 	}
 
 	public float getAlFloat(int p_alEnum) {
 		float toRet = AL11.alGetFloat(p_alEnum);
-		this.checkAlErrors();
+		this.checkAlError();
 		return toRet;
 	}
 
@@ -234,7 +234,7 @@ public class NerdAl extends AlNativeResource {
 		AL11.alGetIntegerv(p_alEnum, buffer);
 		MemoryStack.stackPop();
 
-		this.checkAlErrors();
+		this.checkAlError();
 		return buffer.array();
 	}
 
@@ -244,7 +244,7 @@ public class NerdAl extends AlNativeResource {
 		AL11.alGetFloatv(p_alEnum, buffer);
 		MemoryStack.stackPop();
 
-		this.checkAlErrors();
+		this.checkAlError();
 		return buffer.array();
 	}
 	// endregion
@@ -342,7 +342,7 @@ public class NerdAl extends AlNativeResource {
 		return AL11.alGetEnumValue(p_exception.getAlErrorString());
 	}
 
-	public int checkAlErrors() throws AlException {
+	public int checkAlError() throws AlException {
 		int alError = AL11.alGetError();
 
 		// `40964` is THE MOST annoying error.
@@ -353,7 +353,7 @@ public class NerdAl extends AlNativeResource {
 		return alError;
 	}
 
-	public int checkAlcErrors() throws AlcException {
+	public int checkAlcError() throws AlcException {
 		int alcError = ALC11.alcGetError(this.device.getId());
 
 		if (alcError != 0)
@@ -408,9 +408,13 @@ public class NerdAl extends AlNativeResource {
 					list = AlBuffer.ALL_INSTANCES;
 			}
 
+			if (list == null)
+				continue;
+
 			for (int i = list.size() - 1; i > -1; i--)
 				list.get(i).dispose();
 		}
+
 	}
 
 	@Override
@@ -426,17 +430,17 @@ public class NerdAl extends AlNativeResource {
 
 	protected void createAl(String p_deviceName) {
 		this.device = new AlDevice(this);
-		this.checkAlcErrors();
+		this.checkAlcError();
 
 		this.context = new AlContext(this);
-		this.checkAlcErrors();
+		this.checkAlcError();
 
 		// LWJGL objects:
 		this.alCtxCap = ALC.createCapabilities(this.device.getId());
 		this.alCap = AL.createCapabilities(this.alCtxCap);
 
-		this.checkAlErrors();
-		this.checkAlcErrors();
+		this.checkAlError();
+		this.checkAlcError();
 	}
 	// endregion
 

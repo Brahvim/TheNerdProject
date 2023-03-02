@@ -42,8 +42,7 @@ public class AlSource extends AlNativeResource {
 		this.id = AL11.alGenSources();
 		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
 
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 	}
 
 	/**
@@ -58,8 +57,7 @@ public class AlSource extends AlNativeResource {
 		this.alMan = p_source.alMan;
 		this.id = AL11.alGenSources();
 
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 
 		// region Transfer properties over (hopefully, the JIT inlines!):
 		this.setBuffer(p_source.buffer);
@@ -182,22 +180,22 @@ public class AlSource extends AlNativeResource {
 	// region C-style OpenAL setters.
 	public void setInt(int p_alEnum, int p_value) {
 		AL11.alSourcei(this.id, p_alEnum, p_value);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
 		AL11.alSourcef(this.id, p_alEnum, p_value);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_values) {
 		AL11.alSourceiv(this.id, p_alEnum, p_values);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
 		AL11.alSourcefv(this.id, p_alEnum, p_values);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setIntTriplet(int p_alEnum, int... p_value) {
@@ -206,12 +204,12 @@ public class AlSource extends AlNativeResource {
 					"`AlSource::setIntTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alSource3i(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
 		AL11.alSource3i(this.id, p_alEnum, p_i1, p_i2, p_i3);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float... p_value) {
@@ -220,17 +218,17 @@ public class AlSource extends AlNativeResource {
 					"`AlSource::setFloatTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alSource3f(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
 		AL11.alSource3f(this.id, p_alEnum, p_f1, p_f2, p_f3);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 
 	public void setFloatTriplet(int p_alEnum, PVector p_value) {
 		AL11.alSource3f(this.id, p_alEnum, p_value.x, p_value.y, p_value.z);
-		this.alMan.checkAlErrors();
+		this.alMan.checkAlError();
 	}
 	// endregion
 
@@ -633,8 +631,7 @@ public class AlSource extends AlNativeResource {
 	@Override
 	protected void disposeImpl() {
 		AL11.alDeleteSources(this.id);
-		this.alMan.checkAlErrors();
-		this.alMan.checkAlcErrors();
+		this.alMan.checkAlError();
 		AlSource.ALL_INSTANCES.remove(this);
 	}
 	// endregion
