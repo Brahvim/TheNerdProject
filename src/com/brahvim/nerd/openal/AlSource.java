@@ -626,8 +626,6 @@ public class AlSource extends AlNativeResource {
 		AL11.alSourceUnqueueBuffers(this.id);
 	}
 
-	// TODO: MAKE `AssetLoaderOptions` (finally) and make buffers persistent :D
-
 	@Override
 	protected void disposeImpl() {
 		AL11.alDeleteSources(this.id);
