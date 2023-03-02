@@ -1,5 +1,7 @@
 package com.brahvim.nerd.openal.al_ext_efx;
 
+import java.lang.ref.Cleaner;
+import java.lang.ref.Cleaner.Cleanable;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -8,7 +10,6 @@ import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.AlResourceHolder;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlAutowah;
@@ -24,7 +25,7 @@ import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlPitchShifter;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlReverb;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlRingModulator;
 
-public class AlAuxiliaryEffectSlot extends AlResourceHolder {
+public class AlAuxiliaryEffectSlot {
 
 	/*
 	 * let arr = [
@@ -81,6 +82,9 @@ public class AlAuxiliaryEffectSlot extends AlResourceHolder {
 
 	// region Fields.
 	public final static ArrayList<AlAuxiliaryEffectSlot> slots = new ArrayList<>();
+	public final static Cleaner CLEANER = Cleaner.create();
+
+	private final Cleanable cleanable;
 
 	private NerdAl alMan;
 	private AlEffect effect;
@@ -89,6 +93,10 @@ public class AlAuxiliaryEffectSlot extends AlResourceHolder {
 
 	// region Constructors.
 	public AlAuxiliaryEffectSlot(NerdAl p_alMan) {
+		this.cleanable = AlAuxiliaryEffectSlot.CLEANER.register(this, () -> {
+			this.dispose();
+		});
+
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
 
@@ -99,6 +107,10 @@ public class AlAuxiliaryEffectSlot extends AlResourceHolder {
 	}
 
 	public AlAuxiliaryEffectSlot(NerdAl p_alMan, AlEffect p_effect) {
+		this.cleanable = AlAuxiliaryEffectSlot.CLEANER.register(this, () -> {
+			this.dispose();
+		});
+
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
 
@@ -368,10 +380,10 @@ public class AlAuxiliaryEffectSlot extends AlResourceHolder {
 	}
 	// endregion
 
-	@Override
 	public void dispose() {
 		EXTEfx.alDeleteAuxiliaryEffectSlots(this.id);
 		AlAuxiliaryEffectSlot.slots.remove(this);
+		this.cleanable.clean();
 	}
 
 }

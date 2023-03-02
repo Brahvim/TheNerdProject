@@ -1,8 +1,5 @@
 package com.brahvim.nerd_tests;
 
-import java.lang.ref.PhantomReference;
-import java.lang.ref.ReferenceQueue;
-
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;

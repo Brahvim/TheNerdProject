@@ -8,7 +8,7 @@ import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
-public class AlContext extends AlResourceHolder {
+public class AlContext  {
 
 	// region Fields.
 	private long id;

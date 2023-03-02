@@ -616,7 +616,6 @@ public class Sketch extends PApplet {
 		super.exit();
 	}
 
-	@Override
 	public void dispose() {
 		if (this.DISPOSAL_LISTENER != null)
 			this.DISPOSAL_LISTENER.listen(this);

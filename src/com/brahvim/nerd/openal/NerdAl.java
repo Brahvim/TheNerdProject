@@ -421,7 +421,6 @@ public class NerdAl {
 	// endregion
 
 	public void framelyCallback() {
-		//AlNativeResource.performNativeGc();
 		this.device.disconnectionCheck();
 	}
 

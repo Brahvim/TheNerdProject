@@ -6,11 +6,10 @@ import java.nio.IntBuffer;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.AlResourceHolder;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.NerdAl;
 
-public class AlFilter extends AlResourceHolder {
+public class AlFilter {
 
 	private NerdAl alMan;
 	private int id, filterName;
@@ -147,7 +146,6 @@ public class AlFilter extends AlResourceHolder {
 	}
 	// endregion
 
-	@Override
 	public void dispose() {
 		EXTEfx.alDeleteFilters(this.id);
 	}

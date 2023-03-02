@@ -11,7 +11,7 @@ import org.lwjgl.system.MemoryStack;
 
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
-public class AlDevice extends AlResourceHolder {
+public class AlDevice  {
 
 	public interface DisconnectionCallback {
 		public default String onDisconnect() {
