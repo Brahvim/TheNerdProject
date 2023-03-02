@@ -15,7 +15,7 @@ public class AlContext extends AlNativeResource {
 
 	private long id;
 	private NerdAl alMan;
-	private final long deviceId;
+	private final AlDevice device;
 	private ArrayList<AlBuffer<?>> buffers;
 	// endregion
 
@@ -23,25 +23,32 @@ public class AlContext extends AlNativeResource {
 	public AlContext(NerdAl p_manager) {
 		this.alMan = p_manager;
 		this.buffers = new ArrayList<>();
-		this.deviceId = p_manager.getDeviceId();
+		this.device = p_manager.getDevice();
 
 		this.createCtx();
 	}
 
+	/**
+	 * <h1><b><i>Not</b></i> a copy constructor.</h1>
+	 * This constructor creates a new context object inside OpenAL, disposing off
+	 * the one that is passed in.
+	 */
 	public AlContext(AlContext p_ctx) {
 		this.alMan = p_ctx.alMan;
 		this.buffers = p_ctx.getBuffers();
 
 		// Get the newer device's ID / handle:
-		this.deviceId = p_ctx.deviceId;
+		this.device = p_ctx.device;
 		this.createCtx();
+
+		p_ctx.dispose();
 	}
 	// endregion
 
 	public int checkAlcErrors() throws AlcException {
-		int alcError = ALC11.alcGetError(this.deviceId);
+		int alcError = ALC11.alcGetError(this.device);
 		if (alcError != 0)
-			throw new AlcException(this.deviceId, alcError);
+			throw new AlcException(this.device, alcError);
 
 		return alcError;
 	}
@@ -78,16 +85,10 @@ public class AlContext extends AlNativeResource {
 	public ArrayList<AlBuffer<?>> getBuffers() {
 		return (ArrayList<AlBuffer<?>>) this.buffers.clone();
 	}
-	// region OpenAL context getters.
-
-	// endregion
-	// endregion
-
-	// region OpenAL context setters.
 	// endregion
 
 	private void createCtx() {
-		this.id = ALC11.alcCreateContext(this.deviceId, new int[] { 0 });
+		this.id = ALC11.alcCreateContext(this.device, new int[] { 0 });
 
 		if (this.id == 0 || !ALC11.alcMakeContextCurrent(this.id)) {
 			this.disposeImpl();

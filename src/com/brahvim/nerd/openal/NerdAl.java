@@ -215,7 +215,6 @@ public class NerdAl extends AlNativeResource {
 	// endregion
 
 	// region Getters and setters!...
-	// Yes, there are no C-style setters.
 	// region C-style OpenAL getters.
 	public int getAlInt(int p_alEnum) {
 		int toRet = AL11.alGetInteger(p_alEnum);
@@ -298,7 +297,7 @@ public class NerdAl extends AlNativeResource {
 	}
 	// endregion
 
-	// region Setters.
+	// Only these three setters.
 	// region OpenAL API setters.
 	public void setDistanceModel(int p_value) {
 		AL11.alDistanceModel(p_value);
@@ -310,21 +309,6 @@ public class NerdAl extends AlNativeResource {
 
 	public void setSpeedOfSound(float p_value) {
 		AL11.alSpeedOfSound(p_value);
-	}
-	// endregion
-
-	public void changeDevice(AlDevice p_dv, AlContext p_ctx) {
-		this.device = p_dv;
-		if (ALC11.alcGetContextsDevice(p_ctx.getId()) != p_dv.getId())
-			throw new AlException(ALC11.ALC_INVALID_CONTEXT);
-		this.context = p_ctx;
-	}
-
-	public void setContext(AlContext p_ctx) {
-		if (ALC11.alcGetContextsDevice(p_ctx.getId()) == this.device.getId())
-			this.context = p_ctx;
-		else
-			this.context = new AlContext(p_ctx);
 	}
 	// endregion
 	// endregion
