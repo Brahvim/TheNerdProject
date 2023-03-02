@@ -45,6 +45,7 @@ public class AlContext extends AlNativeResource {
 		this.buffers = new ArrayList<>();
 		this.device = p_manager.getDevice();
 		this.deviceId = this.device.getId();
+		AlContext.ALL_INSTANCES.add(this);
 
 		this.createCtx(p_settings.asAttribArray());
 	}

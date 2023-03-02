@@ -419,13 +419,35 @@ public class NerdAl extends AlNativeResource {
 
 	@Override
 	protected void disposeImpl() {
-		this.scenelyDispose();
+		ArrayList<? extends AlNativeResource> list = null;
 
-		for (int i = AlDevice.ALL_INSTANCES.size() - 1; i > -1; i--)
-			AlDevice.ALL_INSTANCES.get(i).dispose();
+		for (int listId = 0; listId < 8; listId++) {
 
-		for (int i = AlContext.ALL_INSTANCES.size() - 1; i > -1; i--)
-			AlContext.ALL_INSTANCES.get(i).dispose();
+			switch (listId) {
+				case 0 ->
+					list = AlCapture.ALL_INSTANCES;
+				case 1 ->
+					list = AlFilter.ALL_INSTANCES;
+				case 2 ->
+					list = AlEffect.ALL_INSTANCES;
+				case 3 ->
+					list = AlAuxiliaryEffectSlot.ALL_INSTANCES;
+				case 4 ->
+					list = AlSource.ALL_INSTANCES;
+				case 5 ->
+					list = AlBuffer.ALL_INSTANCES;
+				case 6 ->
+					list = AlContext.ALL_INSTANCES;
+				case 7 ->
+					list = AlDevice.ALL_INSTANCES;
+			}
+
+			if (list == null)
+				continue;
+
+			for (int i = list.size() - 1; i > -1; i--)
+				list.get(i).disposeForcibly();
+		}
 	}
 
 	protected void createAl(String p_deviceName) {
