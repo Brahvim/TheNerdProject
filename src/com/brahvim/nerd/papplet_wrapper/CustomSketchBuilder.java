@@ -1,5 +1,6 @@
 package com.brahvim.nerd.papplet_wrapper;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.brahvim.nerd.openal.AlContext.AlContextSettings;
@@ -82,22 +83,22 @@ public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
     }
 
     // region `onSketchEvent()`.
-    public CustomSketchBuilder onSketchConstructed(Sketch.SketchInsideListener p_constructionListener) {
-        this.SKETCH_KEY.sketchconstructedListener = p_constructionListener;
+    public CustomSketchBuilder onSketchConstructed(Consumer<Sketch> p_constructionListener) {
+        this.SKETCH_KEY.sketchConstructedListener = p_constructionListener;
         return this;
     }
 
-    public CustomSketchBuilder onSketchDispose(Sketch.SketchInsideListener p_disposaListener) {
+    public CustomSketchBuilder onSketchDispose(Consumer<Sketch> p_disposaListener) {
         this.SKETCH_KEY.disposalListener = p_disposaListener;
         return this;
     }
 
-    public CustomSketchBuilder onSketchSetup(Sketch.SketchInsideListener p_setupListener) {
+    public CustomSketchBuilder onSketchSetup(Consumer<Sketch> p_setupListener) {
         this.SKETCH_KEY.setupListener = p_setupListener;
         return this;
     }
 
-    public CustomSketchBuilder onSketchExit(Sketch.SketchInsideListener p_setupListener) {
+    public CustomSketchBuilder onSketchExit(Consumer<Sketch> p_setupListener) {
         this.SKETCH_KEY.exitListener = p_setupListener;
         return this;
     }

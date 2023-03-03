@@ -1,5 +1,7 @@
 package com.brahvim.nerd.processing_wrappers;
 
+import java.util.function.Consumer;
+
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
@@ -7,20 +9,12 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 public abstract class NerdCamera {
-    // region Interface `NerdCamera.Script`.
-    // Needed to be able to clone cameras!
-    @FunctionalInterface // Either add more stuff, or TODO: Convert to `Consumer<>`.
-    public interface Script {
-        public void onCamUpdate(NerdCamera p_cam);
-    }
-    // endregion
-
     // region Fields.
     public final static float DEFAULT_CAM_FOV = PApplet.radians(60),
             DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10000, DEFAULT_CAM_MOUSE_Z = 25;
 
     public final Sketch SKETCH;
-    public NerdCamera.Script script;
+    public Consumer<NerdCamera> script;
 
     // ...yeah, for some reason `PApplet::color()` fails.
     public float red, green, blue, alpha;
@@ -85,7 +79,7 @@ public abstract class NerdCamera {
 
     public void runScript() {
         if (this.script != null && this.doScript)
-            this.script.onCamUpdate(this);
+            this.script.accept(this);
     }
 
     // region `setClearColor()` overloads.

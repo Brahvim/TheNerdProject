@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -56,14 +57,7 @@ import processing.opengl.PJOGL;
 
 public class Sketch extends PApplet {
 
-	// region Event listener interfaces and abstract (inner) classes.
-	@FunctionalInterface // TODO: Could use a `java.util.Consumer` instead?
-	public /* static */ interface SketchInsideListener {
-		// ^^^ It behaves like it is `static` anyway...
-		public void listen(Sketch p_sketch);
-	}
-
-	// region Input events.
+	// region Abstract inner classes.
 	// Used classes instead of interfaces for these (two) reasons:
 	/*
 	 * - No security for `ALL_REFERENCES` from the user! It'll be `public`!
@@ -158,7 +152,6 @@ public class Sketch extends PApplet {
 		// endregion
 
 	}
-	// endregion
 	// endregion
 
 	// region `public` fields.
@@ -308,7 +301,7 @@ public class Sketch extends PApplet {
 	protected SceneManager sceneMan; // Don't use static initialization for this..?
 
 	// region Listeners!
-	protected final SketchInsideListener EXIT_LISTENER, DISPOSAL_LISTENER, SETUP_LISTENER;
+	protected final Consumer<Sketch> EXIT_LISTENER, DISPOSAL_LISTENER, SETUP_LISTENER;
 	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
@@ -419,7 +412,7 @@ public class Sketch extends PApplet {
 		this.ROBOT = toAssign;
 		// endregion
 
-		p_key.sketchconstructedListener.listen(this);
+		p_key.sketchConstructedListener.accept(this);
 	}
 
 	@Override
@@ -485,7 +478,7 @@ public class Sketch extends PApplet {
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
 		if (this.SETUP_LISTENER != null)
-			this.SETUP_LISTENER.listen(this);
+			this.SETUP_LISTENER.accept(this);
 	}
 
 	public void pre() {
@@ -611,7 +604,7 @@ public class Sketch extends PApplet {
 		this.sceneMan.exit();
 
 		if (this.EXIT_LISTENER != null)
-			this.EXIT_LISTENER.listen(this);
+			this.EXIT_LISTENER.accept(this);
 
 		super.exit();
 	}
@@ -619,7 +612,7 @@ public class Sketch extends PApplet {
 	@Override
 	public void dispose() {
 		if (this.DISPOSAL_LISTENER != null)
-			this.DISPOSAL_LISTENER.listen(this);
+			this.DISPOSAL_LISTENER.accept(this);
 
 		if (this.AL != null)
 			this.AL.dispose();

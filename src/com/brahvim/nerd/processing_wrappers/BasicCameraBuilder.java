@@ -1,5 +1,7 @@
 package com.brahvim.nerd.processing_wrappers;
 
+import java.util.function.Consumer;
+
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PConstants;
@@ -180,7 +182,7 @@ public class BasicCameraBuilder {
     }
     // endregion
 
-    public BasicCameraBuilder setScript(NerdCamera.Script p_script) {
+    public BasicCameraBuilder setScript(Consumer<NerdCamera> p_script) {
         this.build.script = p_script;
         return this;
     }
