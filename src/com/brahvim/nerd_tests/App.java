@@ -15,6 +15,7 @@ public class App {
      * // TODO: Collision Algorithms for 3D space?!
      * // TODO: Don't forget - OpenAL can stream audio!
      * // TODO: Learn to use LWLJGL on Android for OpenAL.
+     * // TODO: SHADERS. Remake the "PostFX" Processing library?
      */
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
