@@ -48,13 +48,12 @@ public class App {
                 // calling! They're much faster, actually! That `0` millisecond time included
                 // starting and stopping a `MillisTimer`!
                 // ..they should be faster than a v-table thingy anyway, amirite?
-                .onSketchConstructed((s) -> {
-                    System.out.println(s.STRINGS.get("Meta.onConstruct"));
+                .onSketchConstructed((s) -> System.out.println(s.STRINGS.get("Meta.onConstruct"))
 
-                    // These work too - commenting them out so they don't clog-the-log!:
-                    // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
-                    // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
-                })
+                // These work too - commenting them out so they don't clog-the-log!:
+                // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
+                // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
+                )
 
                 .setSceneManagerSettings(() -> {
                     var toRet = new SceneManagerSettings();
