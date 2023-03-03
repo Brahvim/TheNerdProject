@@ -9,7 +9,7 @@ import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
 public class AlContext extends AlNativeResource {
 
-	/* `package` */ static class AlContextSettings {
+	public static class AlContextSettings {
 
 		public int frequency = 44100, monoSources = 32, stereoSources = 8, refresh = 40;
 		public boolean sync;
@@ -47,7 +47,12 @@ public class AlContext extends AlNativeResource {
 		this.deviceId = this.device.getId();
 		AlContext.ALL_INSTANCES.add(this);
 
-		this.createCtx(p_settings.asAttribArray());
+		if (p_settings == null) {
+			System.err.println(
+					"`AlContext(NerdAl, AlContextSettings)` received a `null` settings object.");
+			this.createCtx(new AlContext.AlContextSettings().asAttribArray());
+		} else
+			this.createCtx(p_settings.asAttribArray());
 	}
 	// endregion
 

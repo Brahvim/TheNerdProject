@@ -3,6 +3,7 @@ package com.brahvim.nerd.papplet_wrapper;
 import java.util.HashSet;
 
 import com.brahvim.nerd.misc.NerdKey;
+import com.brahvim.nerd.openal.AlContext.AlContextSettings;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 
@@ -10,18 +11,19 @@ import processing.core.PConstants;
 
 // Hmmm... "`SketchSettings`" instead..?
 /* package */ class SketchKey extends NerdKey {
+    public AlContextSettings alContextSettings;
     public Class<? extends NerdScene> firstScene;
-    public int width = 400, height = 400, antiAliasing;
     public SceneManagerSettings sceneManagerSettings;
+    public int width = 400, height = 400, antiAliasing;
     public HashSet<Class<? extends NerdScene>> scenesToPreload;
-    public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
     public Sketch.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
-
-    public boolean useOpenal, dontCloseOnEscape, startedFullscreen, canResize,
-            cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
+    public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
 
     public Sketch.SketchInsideListener exitListener, setupListener, disposalListener,
             sketchconstructedListener;
+
+    public boolean useOpenal, dontCloseOnEscape, startedFullscreen, canResize,
+            cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 
     // region Stuff that isn't a field.
     public SketchKey() {

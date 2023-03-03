@@ -1,5 +1,8 @@
 package com.brahvim.nerd.papplet_wrapper;
 
+import java.util.function.Supplier;
+
+import com.brahvim.nerd.openal.AlContext.AlContextSettings;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 
@@ -14,7 +17,7 @@ import processing.core.PConstants;
  * that `Sketch` subclass!
  */
 
-// If "`Sketch`" sounds weird to you, check out:
+// If "`SketchT`" sounds weird to you, check out:
 // [https://stackoverflow.com/a/30146204/]
 
 public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
@@ -120,9 +123,27 @@ public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
     }
     // endregion
 
+    public CustomSketchBuilder setSceneManagerSettings(Supplier<SceneManagerSettings> p_settingsBuilder) {
+        if (p_settingsBuilder != null)
+            this.SKETCH_KEY.sceneManagerSettings = p_settingsBuilder.get();
+        return this;
+    }
+
     public CustomSketchBuilder setSceneManagerSettings(SceneManagerSettings p_settings) {
         if (p_settings != null)
             this.SKETCH_KEY.sceneManagerSettings = p_settings;
+        return this;
+    }
+
+    public CustomSketchBuilder setAlContextSettings(Supplier<AlContextSettings> p_settingsBuilder) {
+        if (p_settingsBuilder != null)
+            this.SKETCH_KEY.alContextSettings = p_settingsBuilder.get();
+        return this;
+    }
+
+    public CustomSketchBuilder setAlContextSettings(AlContextSettings p_settings) {
+        if (p_settings != null)
+            this.SKETCH_KEY.alContextSettings = p_settings;
         return this;
     }
 

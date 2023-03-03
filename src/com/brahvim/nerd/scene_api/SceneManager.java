@@ -97,7 +97,9 @@ public class SceneManager {
 
     public static class SceneManagerSettings {
 
-        private class OnScenePreload {
+        public class OnScenePreload {
+            private OnScenePreload() {
+            }
 
             /**
              * When {@code true}, {@code NerdScene::preload()} is run only the first time
@@ -110,7 +112,9 @@ public class SceneManager {
 
         }
 
-        private class OnSceneSwitch {
+        public class OnSceneSwitch {
+            private OnSceneSwitch() {
+            }
 
             /**
              * If set to {@code -1}, will call {@link Sketch#clear()} and not
@@ -134,9 +138,9 @@ public class SceneManager {
 
         }
 
-        public final SceneManager.SceneManagerSettings.OnSceneSwitch ON_SCENE_SWITCH = new OnSceneSwitch();
+        public final SceneManager.SceneManagerSettings.OnSceneSwitch onSceneSwitch = new OnSceneSwitch();
 
-        public final SceneManager.SceneManagerSettings.OnScenePreload ON_SCENE_PRELOAD = new OnScenePreload();
+        public final SceneManager.SceneManagerSettings.OnScenePreload onScenePreload = new OnScenePreload();
 
     }
     // endregion
@@ -487,13 +491,14 @@ public class SceneManager {
         return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).timesLoaded;
     }
 
-    // To those who want vararg versions
-    // of these `loadSceneAssets` tasks:
+    // To those who want vararg versions of these `loadSceneAssets` tasks:
     // "...no!". (I mean, should I just make a bean of some kind?)
 
-    // TODO: "Load scene assets forcibly".
-
     public void loadSceneAssetsAsync(Class<? extends NerdScene> p_sceneClass) {
+        this.loadSceneAssetsAsync(p_sceneClass, false);
+    }
+
+    public void loadSceneAssetsAsync(Class<? extends NerdScene> p_sceneClass, boolean p_forcibly) {
         if (!this.hasCached(p_sceneClass))
             this.cacheScene(p_sceneClass, true);
 
@@ -502,14 +507,19 @@ public class SceneManager {
 
         Thread thread = new Thread(() -> {
             // Lambdas allow for `this!:
-            this.loadSceneAssets(p_sceneClass);
+            this.loadSceneAssets(p_sceneClass, p_forcibly);
         });
 
         thread.setName("NerdAssetLoader_" + this.getClass().getSimpleName());
         thread.start();
     }
 
+    // Non-async versions:
     public void loadSceneAssets(Class<? extends NerdScene> p_sceneClass) {
+        this.loadSceneAssets(p_sceneClass, false);
+    }
+
+    public void loadSceneAssets(Class<? extends NerdScene> p_sceneClass, boolean p_forcibly) {
         if (!this.hasCached(p_sceneClass))
             this.cacheScene(p_sceneClass, true);
 
@@ -523,7 +533,7 @@ public class SceneManager {
             if (SCENE_CACHE.cachedReference.hasCompletedPreload())
                 return;
 
-        this.loadSceneAssets(SCENE_CACHE.cachedReference);
+        this.loadSceneAssets(SCENE_CACHE.cachedReference, p_forcibly);
     }
 
     // region Starting a scene.
@@ -610,9 +620,14 @@ public class SceneManager {
 
     }
 
-    private void loadSceneAssets(NerdScene p_scene) {
+    private void loadSceneAssets(NerdScene p_scene, boolean p_forcibly) {
         if (p_scene == null)
             return;
+
+        if (p_forcibly) {
+            p_scene.runPreload();
+            return;
+        }
 
         final Class<? extends NerdScene> SCENE_CLASS = p_scene.getClass();
 
@@ -627,7 +642,7 @@ public class SceneManager {
         // region Preloads other than the first one.
         // You're allowed to preload only once?
         // Don't re-load, just use the cache!:
-        if (this.settings.ON_SCENE_PRELOAD.onlyFirstPreload) {
+        if (this.settings.onScenePreload.onlyFirstPreload) {
             final AssetManager a = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS;
             p_scene.ASSETS = a;
         } else { // Else, since you're supposed to run `preload()` every time, do that!:
@@ -746,14 +761,14 @@ public class SceneManager {
     // The scene-deleter!!!
     private void setScene(NerdScene p_currentScene, SceneState p_state) {
         // region `this.SETTINGS.onSceneSwitch` tasks.
-        if (this.settings.ON_SCENE_SWITCH.doClear) {
-            if (this.settings.ON_SCENE_SWITCH.clearColor == -1)
+        if (this.settings.onSceneSwitch.doClear) {
+            if (this.settings.onSceneSwitch.clearColor == -1)
                 this.SKETCH.clear();
             else
-                this.SKETCH.background(this.settings.ON_SCENE_SWITCH.clearColor);
+                this.SKETCH.background(this.settings.onSceneSwitch.clearColor);
         }
 
-        if (this.settings.ON_SCENE_SWITCH.completelyResetCam)
+        if (this.settings.onSceneSwitch.completelyResetCam)
             this.SKETCH.getCurrentCamera().completeReset();
         // endregion
 
@@ -789,7 +804,7 @@ public class SceneManager {
 
     // Set the time, *then* call `SceneManager::runSetup()`.
     private void setupCurrentScene(SceneState p_state) {
-        this.loadSceneAssets(this.currScene);
+        this.loadSceneAssets(this.currScene, false);
 
         boolean prevSceneClassNotNull = this.prevSceneClass != null;
 

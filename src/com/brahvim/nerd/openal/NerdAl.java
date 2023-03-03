@@ -14,6 +14,7 @@ import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.AlContext.AlContextSettings;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
@@ -46,6 +47,16 @@ public class NerdAl extends AlNativeResource {
 	public NerdAl(Sketch p_sketch, String p_deviceName) {
 		this.SKETCH = p_sketch;
 		this.createAl(p_deviceName);
+	}
+
+	public NerdAl(Sketch p_sketch, AlContextSettings p_settings) {
+		this.SKETCH = p_sketch;
+		this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
+	}
+
+	public NerdAl(Sketch p_sketch, String p_deviceName, AlContextSettings p_settings) {
+		this.SKETCH = p_sketch;
+		this.createAl(p_deviceName, p_settings);
 	}
 	// endregion
 
@@ -451,10 +462,14 @@ public class NerdAl extends AlNativeResource {
 	}
 
 	protected void createAl(String p_deviceName) {
+		this.createAl(p_deviceName, null);
+	}
+
+	protected void createAl(String p_deviceName, AlContextSettings p_contextSettings) {
 		this.device = new AlDevice(this);
 		this.checkAlcError();
 
-		this.context = new AlContext(this);
+		this.context = new AlContext(this, p_contextSettings);
 		this.checkAlcError();
 
 		// LWJGL objects:

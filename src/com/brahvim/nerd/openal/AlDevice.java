@@ -3,6 +3,7 @@ package com.brahvim.nerd.openal;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.ALUtil;
@@ -14,12 +15,6 @@ import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
 public class AlDevice extends AlNativeResource {
 
-	public interface DisconnectionCallback {
-		public default String onDisconnect() {
-			return AlDevice.getDefaultDeviceName();
-		}
-	}
-
 	// region Fields.
 	public final static ArrayList<AlDevice> ALL_INSTANCES = new ArrayList<>();
 
@@ -27,10 +22,9 @@ public class AlDevice extends AlNativeResource {
 	private String name;
 	private NerdAl alMan;
 	private boolean isDefaultDevice = true;
-	private AlDevice.DisconnectionCallback disconnectionCallback
-	// // // // // // // // // // // // // // // // // // // // // //
-			= new AlDevice.DisconnectionCallback() {
-			};
+	private Supplier<String> disconnectionCallback = () -> {
+		return AlDevice.getDefaultDeviceName();
+	};
 	// endregion
 
 	// region Constructors.
@@ -60,7 +54,7 @@ public class AlDevice extends AlNativeResource {
 	// endregion
 
 	// region Connection status.
-	public void setDisconnectionCallback(AlDevice.DisconnectionCallback p_callback) {
+	public void setDisconnectionCallback(Supplier<String> p_callback) {
 		this.disconnectionCallback = p_callback;
 	}
 
@@ -68,9 +62,9 @@ public class AlDevice extends AlNativeResource {
 		boolean connected = this.isConnected();
 
 		if (!connected) {
-			if (SOFTReopenDevice.alcReopenDeviceSOFT(
+			if (!SOFTReopenDevice.alcReopenDeviceSOFT(
 					this.id,
-					this.disconnectionCallback.onDisconnect(),
+					this.disconnectionCallback.get(),
 					new int[] { 0 }))
 				throw new NerdAlException("`SOFTReopenDevice` failed.");
 		}

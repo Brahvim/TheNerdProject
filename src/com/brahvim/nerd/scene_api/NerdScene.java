@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
@@ -78,9 +79,6 @@ public class NerdScene implements InputEventHandling {
    * }
    */
 
-  public static interface LayerTask<T extends NerdLayer> {
-    public void performTask(T p_layer);
-  }
   // endregion
 
   // region `public` fields.
@@ -158,7 +156,7 @@ public class NerdScene implements InputEventHandling {
    * Given a {@link NerdLayer} class, performs a task on the instance of that
    * class, which was added <i>first</i> to this {@link NerdScene}.
    */
-  public <T extends NerdLayer> void onFirstLayerOfClass(Class<T> p_layerClass, LayerTask<T> p_task) {
+  public <T extends NerdLayer> void onFirstLayerOfClass(Class<T> p_layerClass, Consumer<T> p_task) {
     this.onFirstLayerOfClass(p_layerClass, p_task, null);
   }
 
@@ -170,14 +168,14 @@ public class NerdScene implements InputEventHandling {
   // Actual implementation!:
   @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onFirstLayerOfClass(
-      Class<T> p_layerClass, LayerTask<T> p_onFoundTask, Runnable p_notFoundTask) {
+      Class<T> p_layerClass, Consumer<T> p_onFoundTask, Runnable p_notFoundTask) {
     T instance = (T) this.getFirstLayerOfClass(p_layerClass);
 
     // Check if we have any such layers:
     if (instance != null) {
       // On finding one, perform the given task!
       if (p_onFoundTask != null)
-        p_onFoundTask.performTask(instance);
+        p_onFoundTask.accept(instance);
     } else {
       // On finding none, perform the other task!
       if (p_notFoundTask != null)
@@ -189,14 +187,14 @@ public class NerdScene implements InputEventHandling {
   // region `onLayersOfClass()` and similar.
   // region `onInactiveLayersOfClass()` overloads.
   public <T extends NerdLayer> void onInactiveLayersOfClass(
-      Class<T> p_layerClass, LayerTask<T> p_task) {
+      Class<T> p_layerClass, Consumer<T> p_task) {
     this.onInactiveLayersOfClass(p_layerClass, p_task, null);
   }
 
   // Actual implementation!:
   @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onInactiveLayersOfClass(
-      Class<T> p_layerClass, LayerTask<T> p_task, Runnable p_notFoundTask) {
+      Class<T> p_layerClass, Consumer<T> p_task, Runnable p_notFoundTask) {
 
     int i = 0;
     final int LAYERS_SIZE = this.LAYERS.size();
@@ -208,7 +206,7 @@ public class NerdScene implements InputEventHandling {
       if (l != null)
         if (l.getClass().equals(p_layerClass))
           if (!l.isActive()) // ...if it's from the same class,
-            p_task.performTask((T) l); // ...perform the given task!
+            p_task.accept((T) l); // ...perform the given task!
     }
 
     // If no `NerdLayer`s were found, perform the other task!:
@@ -219,13 +217,13 @@ public class NerdScene implements InputEventHandling {
 
   // region `onActiveLayersOfClass()` overloads.
   public <T extends NerdLayer> void onActiveLayersOfClass(
-      Class<T> p_layerClass, LayerTask<T> p_task) {
+      Class<T> p_layerClass, Consumer<T> p_task) {
     this.onActiveLayersOfClass(p_layerClass, p_task, null);
   }
 
   @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onActiveLayersOfClass(
-      Class<T> p_layerClass, LayerTask<T> p_task, Runnable p_notFoundTask) {
+      Class<T> p_layerClass, Consumer<T> p_task, Runnable p_notFoundTask) {
 
     int i = 0;
     final int LAYERS_SIZE = this.LAYERS.size();
@@ -237,7 +235,7 @@ public class NerdScene implements InputEventHandling {
       if (l != null)
         if (l.getClass().equals(p_layerClass))
           if (l.isActive()) // ...if it's from the same class,
-            p_task.performTask((T) l); // ...perform the given task!
+            p_task.accept((T) l); // ...perform the given task!
     }
 
     // If no `NerdLayer`s were found, perform the other task!:
@@ -252,7 +250,7 @@ public class NerdScene implements InputEventHandling {
    * class being used by this {@link NerdScene}.
    */
   public <T extends NerdLayer> void onLayersOfClass(
-      Class<T> p_layerClass, LayerTask<T> p_task) {
+      Class<T> p_layerClass, Consumer<T> p_task) {
     this.onLayersOfClass(p_layerClass, p_task, null);
   }
 
@@ -264,7 +262,7 @@ public class NerdScene implements InputEventHandling {
   // Actual implementation!:
   @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onLayersOfClass(
-      Class<T> p_layerClass, LayerTask<T> p_task, Runnable p_notFoundTask) {
+      Class<T> p_layerClass, Consumer<T> p_task, Runnable p_notFoundTask) {
 
     int i = 0;
     final int LAYERS_SIZE = this.LAYERS.size();
@@ -274,7 +272,7 @@ public class NerdScene implements InputEventHandling {
       NerdLayer l = this.LAYERS.get(i);
 
       if (l.getClass().equals(p_layerClass)) // ...if it's from the same class,
-        p_task.performTask((T) l); // ...perform the given task!
+        p_task.accept((T) l); // ...perform the given task!
     }
 
     // If no `NerdLayer`s were found, perform the other task!:

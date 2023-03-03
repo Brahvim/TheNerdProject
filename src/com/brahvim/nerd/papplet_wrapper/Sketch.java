@@ -57,7 +57,7 @@ import processing.opengl.PJOGL;
 public class Sketch extends PApplet {
 
 	// region Event listener interfaces and abstract (inner) classes.
-	@FunctionalInterface
+	@FunctionalInterface // TODO: Could use a `java.util.Consumer` instead?
 	public /* static */ interface SketchInsideListener {
 		// ^^^ It behaves like it is `static` anyway...
 		public void listen(Sketch p_sketch);
@@ -358,10 +358,10 @@ public class Sketch extends PApplet {
 		this.INITIALLY_RESIZABLE = p_key.canResize;
 		this.CAN_FULLSCREEN = !p_key.cannotFullscreen;
 		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
-		this.AL = p_key.useOpenal ? new NerdAl(this) : null;
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
+		this.AL = p_key.useOpenal ? new NerdAl(this, p_key.alContextSettings) : null;
 		// endregion
 
 		// region Non-key settings.

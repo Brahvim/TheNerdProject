@@ -3,6 +3,7 @@ package com.brahvim.nerd_tests;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
@@ -54,6 +55,13 @@ public class App {
                     // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
                     // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
                 })
+
+                .setSceneManagerSettings(() -> {
+                    var toRet = new SceneManagerSettings();
+                    toRet.onScenePreload.onlyFirstPreload = false;
+                    return toRet;
+                })
+
                 .build(p_args);
         // endregion
 
