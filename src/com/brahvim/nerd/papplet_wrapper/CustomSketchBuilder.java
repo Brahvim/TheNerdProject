@@ -3,7 +3,7 @@ package com.brahvim.nerd.papplet_wrapper;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.brahvim.nerd.openal.AlContext.AlContextSettings;
+import com.brahvim.nerd.openal.AlContext;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 
@@ -136,13 +136,13 @@ public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
         return this;
     }
 
-    public CustomSketchBuilder setAlContextSettings(Supplier<AlContextSettings> p_settingsBuilder) {
+    public CustomSketchBuilder setAlContextSettings(Supplier<AlContext.AlContextSettings> p_settingsBuilder) {
         if (p_settingsBuilder != null)
             this.SKETCH_KEY.alContextSettings = p_settingsBuilder.get();
         return this;
     }
 
-    public CustomSketchBuilder setAlContextSettings(AlContextSettings p_settings) {
+    public CustomSketchBuilder setAlContextSettings(AlContext.AlContextSettings p_settings) {
         if (p_settings != null)
             this.SKETCH_KEY.alContextSettings = p_settings;
         return this;

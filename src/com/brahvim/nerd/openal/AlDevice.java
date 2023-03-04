@@ -11,6 +11,7 @@ import org.lwjgl.openal.EXTDisconnect;
 import org.lwjgl.openal.SOFTReopenDevice;
 import org.lwjgl.system.MemoryStack;
 
+import com.brahvim.nerd.openal.al_exceptions.AlcException;
 import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 
 public class AlDevice extends AlNativeResource {
@@ -37,6 +38,11 @@ public class AlDevice extends AlNativeResource {
 		this.alMan = p_manager;
 		this.name = p_deviceName;
 		this.id = ALC11.alcOpenDevice(this.name);
+
+		// Check for errors:
+		int alcError = ALC11.alcGetError(this.id);
+		if (alcError != 0)
+			throw new AlcException(this.id, alcError);
 	}
 	// endregion
 

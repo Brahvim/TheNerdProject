@@ -28,31 +28,25 @@ public class AlContext extends AlNativeResource {
 	// region Fields.
 	protected final static ArrayList<AlContext> ALL_INSTANCES = new ArrayList<>();
 
-	private long id;
 	private NerdAl alMan;
-	private final long deviceId;
 	private final AlDevice device;
+	private final long id, deviceId;
 	private ArrayList<AlBuffer<?>> buffers;
 	// endregion
 
 	// region Constructors.
 	public AlContext(NerdAl p_manager) {
-		this(p_manager, new AlContextSettings());
+		this(p_manager, new AlContext.AlContextSettings());
 	}
 
-	public AlContext(NerdAl p_manager, AlContextSettings p_settings) {
+	public AlContext(NerdAl p_manager, AlContext.AlContextSettings p_settings) {
 		this.alMan = p_manager;
 		this.buffers = new ArrayList<>();
 		this.device = p_manager.getDevice();
 		this.deviceId = this.device.getId();
-		AlContext.ALL_INSTANCES.add(this);
+		this.id = this.createCtx(p_settings);
 
-		if (p_settings == null) {
-			System.err.println(
-					"`AlContext(NerdAl, AlContextSettings)` received a `null` settings object.");
-			this.createCtx(new AlContext.AlContextSettings().asAttribArray());
-		} else
-			this.createCtx(p_settings.asAttribArray());
+		AlContext.ALL_INSTANCES.add(this);
 	}
 	// endregion
 
@@ -85,27 +79,37 @@ public class AlContext extends AlNativeResource {
 	}
 	// endregion
 
-	private void createCtx(int[] p_attributes) {
-		this.id = ALC11.alcCreateContext(this.deviceId, p_attributes);
-
-		if (this.id == 0 || !ALC11.alcMakeContextCurrent(this.id)) {
-			this.disposeImpl();
-			this.alMan.checkAlcError();
+	private long createCtx(AlContext.AlContextSettings p_settings) {
+		if (p_settings == null) {
+			System.err.println(
+					"`AlContext(NerdAl, AlContextSettings)` received a `null` settings object.");
+			p_settings = new AlContextSettings();
 		}
+
+		final long toRet = ALC11.alcCreateContext(this.deviceId, p_settings.asAttribArray());
+		this.alMan.checkAlcError();
+
+		// Placing the check into a boolean to check for errors right away!
+		final boolean ctxVerifStatus = ALC11.alcMakeContextCurrent(toRet);
+		this.alMan.checkAlcError();
+
+		if (toRet == 0 || !ctxVerifStatus)
+			super.dispose();
+
+		return toRet;
 	}
 
 	@Override
 	protected void disposeImpl() {
 		// Unlink the current context object:
 		if (!ALC11.alcMakeContextCurrent(0))
-			throw new NerdAlException("Could not change the OpenAL context (whilst disposing)!");
+			throw new NerdAlException("Could not change the OpenAL context (whilst disposing one)!");
 
 		this.alMan.checkAlcError();
 
 		// *Actually* destroy the context object:
 		ALC11.alcDestroyContext(this.id);
 
-		this.id = 0;
 		this.alMan.checkAlcError();
 		AlContext.ALL_INSTANCES.remove(this);
 	}

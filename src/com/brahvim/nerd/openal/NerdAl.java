@@ -14,7 +14,6 @@ import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
-import com.brahvim.nerd.openal.AlContext.AlContextSettings;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
@@ -53,13 +52,13 @@ public class NerdAl {
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
 	}
 
-	public NerdAl(Sketch p_sketch, AlContextSettings p_settings) {
+	public NerdAl(Sketch p_sketch, AlContext.AlContextSettings p_settings) {
 		this.SKETCH = p_sketch;
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
 	}
 
-	public NerdAl(Sketch p_sketch, String p_deviceName, AlContextSettings p_settings) {
+	public NerdAl(Sketch p_sketch, String p_deviceName, AlContext.AlContextSettings p_settings) {
 		this.SKETCH = p_sketch;
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
@@ -532,15 +531,12 @@ public class NerdAl {
 		return this.createAl(p_deviceName, null);
 	}
 
-	protected AlContext createAl(String p_deviceName, AlContextSettings p_contextSettings) {
+	protected AlContext createAl(String p_deviceName, AlContext.AlContextSettings p_contextSettings) {
 		this.device = new AlDevice(this);
-		this.checkAlcError();
-
 		this.context = new AlContext(this, p_contextSettings);
-		this.checkAlcError();
 
 		// LWJGL objects:
-		this.alCtxCap = ALC.createCapabilities(this.device.getId());
+		this.alCtxCap = ALC.createCapabilities(this.getDeviceId());
 		this.alCap = AL.createCapabilities(this.alCtxCap);
 
 		this.checkAlError();
