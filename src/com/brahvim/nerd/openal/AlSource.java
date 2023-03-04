@@ -7,6 +7,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import org.lwjgl.openal.AL11;
+import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.EXTEfx;
 import org.lwjgl.system.MemoryStack;
 
@@ -37,13 +38,16 @@ public class AlSource extends AlNativeResource {
 
 	// region Constructors.
 	public AlSource(NerdAl p_alMan) {
-		AlSource.ALL_INSTANCES.add(this);
-
 		this.alMan = p_alMan;
-		this.id = AL11.alGenSources();
+		this.context = this.alMan.getContext();
 		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
 
+		ALC11.alcMakeContextCurrent(this.context.getId());
+		this.id = AL11.alGenSources();
+
 		this.alMan.checkAlError();
+
+		AlSource.ALL_INSTANCES.add(this);
 	}
 
 	/**
@@ -52,12 +56,12 @@ public class AlSource extends AlNativeResource {
 	 */
 	@Deprecated
 	public AlSource(AlSource p_source) {
-		AlSource.ALL_INSTANCES.add(this);
-
 		this.scene = p_source.scene;
 		this.alMan = p_source.alMan;
-		this.id = AL11.alGenSources();
 		this.context = p_source.context;
+
+		ALC11.alcMakeContextCurrent(this.context.getId());
+		this.id = AL11.alGenSources();
 
 		this.alMan.checkAlError();
 
@@ -88,6 +92,7 @@ public class AlSource extends AlNativeResource {
 		this.setAuxiliarySendFilterGainHfAuto(p_source.getAuxiliarySendFilterGainHfAuto());
 		// endregion
 
+		AlSource.ALL_INSTANCES.add(this);
 	}
 
 	@Deprecated
@@ -96,13 +101,11 @@ public class AlSource extends AlNativeResource {
 	 *             Forget keeping a {@code HashMap} for that stuff...
 	 */
 	public AlSource(NerdAl p_alMan, int p_id) {
+		this.id = p_id;
+		this.alMan = p_alMan;
+		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
 
 		AlSource.ALL_INSTANCES.add(this);
-
-		this.alMan = p_alMan;
-		this.id = p_id;
-
-		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
 	}
 
 	public AlSource(NerdAl p_alMan, AlBuffer<?> p_buffer) {
@@ -139,15 +142,18 @@ public class AlSource extends AlNativeResource {
 
 	// region C-style OpenAL getters.
 	public int getInt(int p_alEnum) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		return AL11.alGetSourcei(this.id, p_alEnum);
 	}
 
 	public float getFloat(int p_alEnum) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		return AL11.alGetSourcef(this.id, p_alEnum);
 	}
 
 	// Vectors in OpenAL are not large and can be allocated on the stack just fine.
 	public int[] getIntVector(int p_alEnum, int p_vecSize) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		MemoryStack.stackPush();
 		IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
 		AL11.alGetSourceiv(this.id, p_alEnum, intBuffer);
@@ -157,6 +163,7 @@ public class AlSource extends AlNativeResource {
 	}
 
 	public float[] getFloatVector(int p_alEnum, int p_vecSize) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		MemoryStack.stackPush();
 		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
 		AL11.alGetSourcefv(this.id, p_alEnum, floatBuffer);
@@ -166,6 +173,7 @@ public class AlSource extends AlNativeResource {
 	}
 
 	public int[] getIntTriplet(int p_alEnum) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		MemoryStack.stackPush();
 		IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
 		AL11.alGetSourceiv(this.id, p_alEnum, intBuffer);
@@ -175,6 +183,7 @@ public class AlSource extends AlNativeResource {
 	}
 
 	public /* `float[]` */ float[] getFloatTriplet(int p_alEnum) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		MemoryStack.stackPush();
 		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
 		AL11.alGetSourcefv(this.id, p_alEnum, floatBuffer);
@@ -187,21 +196,25 @@ public class AlSource extends AlNativeResource {
 
 	// region C-style OpenAL setters.
 	public void setInt(int p_alEnum, int p_value) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourcei(this.id, p_alEnum, p_value);
 		this.alMan.checkAlError();
 	}
 
 	public void setFloat(int p_alEnum, float p_value) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourcef(this.id, p_alEnum, p_value);
 		this.alMan.checkAlError();
 	}
 
 	public void setIntVector(int p_alEnum, int... p_values) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourceiv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlError();
 	}
 
 	public void setFloatVector(int p_alEnum, float... p_values) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourcefv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlError();
 	}
@@ -211,11 +224,13 @@ public class AlSource extends AlNativeResource {
 			throw new IllegalArgumentException(
 					"`AlSource::setIntTriplet()` cannot take an array of size other than `3`!");
 
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSource3i(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
 		this.alMan.checkAlError();
 	}
 
 	public void setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSource3i(this.id, p_alEnum, p_i1, p_i2, p_i3);
 		this.alMan.checkAlError();
 	}
@@ -225,16 +240,19 @@ public class AlSource extends AlNativeResource {
 			throw new IllegalArgumentException(
 					"`AlSource::setFloatTriplet()` cannot take an array of size other than `3`!");
 
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSource3f(this.id, p_alEnum, p_value[0], p_value[1], p_value[2]);
 		this.alMan.checkAlError();
 	}
 
 	public void setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSource3f(this.id, p_alEnum, p_f1, p_f2, p_f3);
 		this.alMan.checkAlError();
 	}
 
 	public void setFloatTriplet(int p_alEnum, PVector p_value) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSource3f(this.id, p_alEnum, p_value.x, p_value.y, p_value.z);
 		this.alMan.checkAlError();
 	}
@@ -336,7 +354,7 @@ public class AlSource extends AlNativeResource {
 
 	// endregion
 
-	// region [DEPRECATED: Faulty!] State (`boolean`) getters.
+	// region State (`boolean`) getters.
 	// ..could be made faster with some `boolean`s in this class, y'know?
 	// ...just sayin'...
 	public boolean isLooping() {
@@ -593,11 +611,8 @@ public class AlSource extends AlNativeResource {
 
 	// region Actual state management!
 	public void play() {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourcePlay(this.id);
-	}
-
-	public void loop() {
-		this.loop(true);
 	}
 
 	public void loop(boolean p_value) {
@@ -605,37 +620,45 @@ public class AlSource extends AlNativeResource {
 	}
 
 	public void stop() {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourceStop(this.id);
 	}
 
 	public void pause() {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourcePause(this.id);
 	}
 
 	public void rewind() {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourceRewind(this.id);
 	}
 
 	public void queueBuffers(AlBuffer<?> p_buffer) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourceQueueBuffers(this.id, p_buffer.getId());
 	}
 
 	public void queueBuffers(AlBuffer<?>... p_buffers) {
 		int[] buffers = new int[p_buffers.length];
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourceQueueBuffers(this.id, buffers);
 	}
 
 	public void unqueueBuffers(AlBuffer<?>... p_buffers) {
 		int[] buffers = new int[p_buffers.length];
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourceUnqueueBuffers(this.id, buffers);
 	}
 
 	public void unqueueProcessedBuffers(AlBuffer<?> p_buffer) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourceUnqueueBuffers(this.id);
 	}
 
 	@Override
 	protected void disposeImpl() {
+		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alDeleteSources(this.id);
 		this.alMan.checkAlError();
 		AlSource.ALL_INSTANCES.remove(this);
