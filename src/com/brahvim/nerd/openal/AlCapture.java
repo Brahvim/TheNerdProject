@@ -11,6 +11,8 @@ import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
 
 public class AlCapture extends AlNativeResource {
+	// Y'know what?
+	// Using different OpenAL contexts probably doesn't matter here.
 
 	// region Fields.
 	// This is here literally just for naming threads!:
@@ -39,11 +41,11 @@ public class AlCapture extends AlNativeResource {
 	}
 	// endregion
 
+	// region Capture queries.
 	public static String getDefaultDeviceName() {
 		return ALC11.alcGetString(0, ALC11.ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER);
 	}
 
-	// region Capture queries.
 	// region `startCapturing()` overloads.
 	public void startCapturing() {
 		this.startCapturing(44100, AL11.AL_FORMAT_MONO8, 1024);

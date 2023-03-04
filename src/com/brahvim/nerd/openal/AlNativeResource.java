@@ -22,14 +22,14 @@ public abstract class AlNativeResource {
 		if (!this.willDispose)
 			return;
 
-		if (this.hasDisposed)
-			return;
-
 		// They're the same, so-uhh,
 		this.disposeForcibly();
 	}
 
 	public final void disposeForcibly() {
+		if (this.hasDisposed)
+			return;
+
 		this.hasDisposed = true;
 		this.disposeImpl();
 	}

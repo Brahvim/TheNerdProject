@@ -29,6 +29,7 @@ public class AlSource extends AlNativeResource {
 	private int id;
 	private NerdAl alMan;
 	private NerdScene scene;
+	private AlContext context;
 	private AlBuffer<?> buffer;
 	private AlAuxiliaryEffectSlot effectSlot;
 	private AlFilter directFilter, auxiliarySendFilter;
@@ -56,6 +57,7 @@ public class AlSource extends AlNativeResource {
 		this.scene = p_source.scene;
 		this.alMan = p_source.alMan;
 		this.id = AL11.alGenSources();
+		this.context = p_source.context;
 
 		this.alMan.checkAlError();
 
@@ -88,7 +90,13 @@ public class AlSource extends AlNativeResource {
 
 	}
 
+	@Deprecated
+	/**
+	 * @deprecated This cannot be used to determine the context of a source!
+	 *             Forget keeping a {@code HashMap} for that stuff...
+	 */
 	public AlSource(NerdAl p_alMan, int p_id) {
+
 		AlSource.ALL_INSTANCES.add(this);
 
 		this.alMan = p_alMan;
