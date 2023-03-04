@@ -28,9 +28,11 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PVector;
 
-public class NerdAl extends AlNativeResource {
+public class NerdAl {
 
 	// region Fields.
+	public final AlContext DEFAULT_CONTEXT;
+
 	private final Sketch SKETCH;
 
 	private ALCapabilities alCap;
@@ -46,17 +48,17 @@ public class NerdAl extends AlNativeResource {
 
 	public NerdAl(Sketch p_sketch, String p_deviceName) {
 		this.SKETCH = p_sketch;
-		this.createAl(p_deviceName);
+		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName());
 	}
 
 	public NerdAl(Sketch p_sketch, AlContextSettings p_settings) {
 		this.SKETCH = p_sketch;
-		this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
+		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 	}
 
 	public NerdAl(Sketch p_sketch, String p_deviceName, AlContextSettings p_settings) {
 		this.SKETCH = p_sketch;
-		this.createAl(p_deviceName, p_settings);
+		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 	}
 	// endregion
 
@@ -399,24 +401,18 @@ public class NerdAl extends AlNativeResource {
 		this.device.disconnectionCheck();
 	}
 
-	public void scenelyDispose() {
+	public void scenelyDisposal() {
 		ArrayList<? extends AlNativeResource> list = null;
 
-		for (int listId = 0; listId < 6; listId++) {
-
+		for (int listId = 0; listId != 6; listId++) {
 			switch (listId) {
-				case 0 ->
-					list = AlCapture.ALL_INSTANCES;
-				case 1 ->
-					list = AlFilter.ALL_INSTANCES;
-				case 2 ->
-					list = AlEffect.ALL_INSTANCES;
-				case 3 ->
-					list = AlAuxiliaryEffectSlot.ALL_INSTANCES;
-				case 4 ->
-					list = AlSource.ALL_INSTANCES;
-				case 5 ->
-					list = AlBuffer.ALL_INSTANCES;
+				// Yes, I know some of these can reference the `protected` `ArrayList` directly.
+				case 0 -> list = AlCapture.getAllInstances();
+				case 1 -> list = AlFilter.getAllInstances();
+				case 2 -> list = AlEffect.getAllInstances();
+				case 3 -> list = AlAuxiliaryEffectSlot.getAllInstances(); // Always after the other two!
+				case 4 -> list = AlSource.getAllInstances(); // Before the buffers!
+				case 5 -> list = AlBuffer.getAllInstances(); // ...After the sources.
 			}
 
 			if (list == null)
@@ -425,32 +421,23 @@ public class NerdAl extends AlNativeResource {
 			for (int i = list.size() - 1; i > -1; i--)
 				list.get(i).dispose();
 		}
-
 	}
 
-	@Override
-	protected void disposeImpl() {
+	public void completeDisposal() {
 		ArrayList<? extends AlNativeResource> list = null;
 
 		for (int listId = 0; listId < 8; listId++) {
-
 			switch (listId) {
-				case 0 ->
-					list = AlCapture.ALL_INSTANCES;
-				case 1 ->
-					list = AlFilter.ALL_INSTANCES;
-				case 2 ->
-					list = AlEffect.ALL_INSTANCES;
-				case 3 ->
-					list = AlAuxiliaryEffectSlot.ALL_INSTANCES;
-				case 4 ->
-					list = AlSource.ALL_INSTANCES;
-				case 5 ->
-					list = AlBuffer.ALL_INSTANCES;
-				case 6 ->
-					list = AlContext.ALL_INSTANCES;
-				case 7 ->
-					list = AlDevice.ALL_INSTANCES;
+				// Yes, I know some of these can reference the `protected` `ArrayList` directly.
+				// Is this an extremely heavy resource?:
+				case 0 -> list = AlCapture.getAllInstances();
+				case 1 -> list = AlFilter.getAllInstances();
+				case 2 -> list = AlEffect.getAllInstances();
+				case 3 -> list = AlAuxiliaryEffectSlot.getAllInstances(); // Always after the other two!
+				case 4 -> list = AlSource.getAllInstances(); // Before the buffers!
+				case 5 -> list = AlBuffer.getAllInstances(); // ...After the sources.
+				case 6 -> list = AlContext.getAllInstances();
+				case 7 -> list = AlDevice.getAllInstances();
 			}
 
 			if (list == null)
@@ -461,11 +448,11 @@ public class NerdAl extends AlNativeResource {
 		}
 	}
 
-	protected void createAl(String p_deviceName) {
-		this.createAl(p_deviceName, null);
+	protected AlContext createAl(String p_deviceName) {
+		return this.createAl(p_deviceName, null);
 	}
 
-	protected void createAl(String p_deviceName, AlContextSettings p_contextSettings) {
+	protected AlContext createAl(String p_deviceName, AlContextSettings p_contextSettings) {
 		this.device = new AlDevice(this);
 		this.checkAlcError();
 
@@ -478,6 +465,8 @@ public class NerdAl extends AlNativeResource {
 
 		this.checkAlError();
 		this.checkAlcError();
+
+		return this.context;
 	}
 	// endregion
 

@@ -25,7 +25,7 @@ import processing.core.PVector;
 public class AlSource extends AlNativeResource {
 
 	// region Fields.
-	public final static ArrayList<AlSource> ALL_INSTANCES = new ArrayList<>();
+	protected final static ArrayList<AlSource> ALL_INSTANCES = new ArrayList<>();
 
 	private int id;
 	private NerdAl alMan;
@@ -50,11 +50,6 @@ public class AlSource extends AlNativeResource {
 		AlSource.ALL_INSTANCES.add(this);
 	}
 
-	/**
-	 * @deprecated Use `AlSource::AlSource(NerdAl, int)` where `int` is the source's
-	 *             `id` instead. It is way faster!
-	 */
-	@Deprecated
 	public AlSource(AlSource p_source) {
 		this.scene = p_source.scene;
 		this.alMan = p_source.alMan;
@@ -95,22 +90,34 @@ public class AlSource extends AlNativeResource {
 		AlSource.ALL_INSTANCES.add(this);
 	}
 
-	@Deprecated
-	/**
-	 * @deprecated This cannot be used to determine the context of a source!
-	 *             Forget keeping a {@code HashMap} for that stuff...
-	 */
-	public AlSource(NerdAl p_alMan, int p_id) {
-		this.id = p_id;
-		this.alMan = p_alMan;
-		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
+	// region Copying given the source ID.
+	// @Deprecated
+	// /**
+	// * @deprecated This cannot be used to determine the context of a source!
+	// * Forget keeping a {@code HashMap} for that stuff...
+	// */
+	// public AlSource(NerdAl p_alMan, int p_id) {
+	// this.id = p_id;
+	// this.alMan = p_alMan;
+	// this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
 
-		AlSource.ALL_INSTANCES.add(this);
-	}
+	// AlSource.trackSource(this, this.context);
+	// }
+	// endregion
 
 	public AlSource(NerdAl p_alMan, AlBuffer<?> p_buffer) {
 		this(p_alMan);
 		this.setBuffer(p_buffer);
+	}
+	// endregion
+
+	// region Instance collection queries.
+	public static int getNumInstances() {
+		return AlSource.ALL_INSTANCES.size();
+	}
+
+	public static ArrayList<AlSource> getAllInstances() {
+		return new ArrayList<>(AlSource.ALL_INSTANCES);
 	}
 	// endregion
 

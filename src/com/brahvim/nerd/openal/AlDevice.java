@@ -16,12 +16,11 @@ import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 public class AlDevice extends AlNativeResource {
 
 	// region Fields.
-	public final static ArrayList<AlDevice> ALL_INSTANCES = new ArrayList<>();
+	protected final static ArrayList<AlDevice> ALL_INSTANCES = new ArrayList<>();
 
 	private long id;
 	private String name;
 	private NerdAl alMan;
-	private boolean isDefaultDevice = true;
 	private Supplier<String> disconnectionCallback = () -> {
 		return AlDevice.getDefaultDeviceName();
 	};
@@ -37,13 +36,21 @@ public class AlDevice extends AlNativeResource {
 
 		this.alMan = p_manager;
 		this.name = p_deviceName;
-		this.isDefaultDevice = p_deviceName.equals(AlDevice.getDefaultDeviceName());
-
 		this.id = ALC11.alcOpenDevice(this.name);
 	}
 	// endregion
 
 	// region `static` methods.
+	// region Instance collection queries.
+	public static int getNumInstances() {
+		return AlDevice.ALL_INSTANCES.size();
+	}
+
+	public static ArrayList<AlDevice> getAllInstances() {
+		return new ArrayList<>(AlDevice.ALL_INSTANCES);
+	}
+	// endregion
+
 	public static String getDefaultDeviceName() {
 		return ALC11.alcGetString(0, ALC11.ALC_DEFAULT_DEVICE_SPECIFIER);
 	}
@@ -62,11 +69,13 @@ public class AlDevice extends AlNativeResource {
 		boolean connected = this.isConnected();
 
 		if (!connected) {
+			final String nameOfNewDv;
 			if (!SOFTReopenDevice.alcReopenDeviceSOFT(
 					this.id,
-					this.disconnectionCallback.get(),
+					nameOfNewDv = this.disconnectionCallback.get(),
 					new int[] { 0 }))
 				throw new NerdAlException("`SOFTReopenDevice` failed.");
+			this.name = nameOfNewDv;
 		}
 
 		return connected;
@@ -84,7 +93,7 @@ public class AlDevice extends AlNativeResource {
 	}
 	// endregion
 
-	// region Getters.
+	// region Getters (and the `isDefault()` query).
 	public long getId() {
 		return this.id;
 	}
@@ -96,6 +105,11 @@ public class AlDevice extends AlNativeResource {
 	public NerdAl getAlMan() {
 		return this.alMan;
 	}
+
+	// I don't want to hold a `boolean` for this...
+	public boolean isDefault() {
+		return this.name.equals(AlDevice.getDefaultDeviceName());
+	}
 	// endregion
 
 	@Override
@@ -106,10 +120,6 @@ public class AlDevice extends AlNativeResource {
 		this.id = 0;
 		// this.alMan.checkAlcErrors();
 		AlDevice.ALL_INSTANCES.remove(this);
-	}
-
-	public boolean isDefault() {
-		return this.isDefaultDevice;
 	}
 
 }

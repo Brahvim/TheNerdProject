@@ -816,7 +816,7 @@ public class SceneManager {
 
         // Delete all OpenAL native data:
         if (this.SKETCH.AL != null && prevSceneClassNotNull)
-            this.SKETCH.AL.scenelyDispose();
+            this.SKETCH.AL.scenelyDisposal();
 
         this.currScene.runSetup(p_state);
     }

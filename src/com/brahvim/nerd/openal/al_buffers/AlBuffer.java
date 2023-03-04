@@ -67,6 +67,16 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	}
 	// endregion
 
+	// region Instance collection queries.
+	public static int getNumInstances() {
+		return AlBuffer.ALL_INSTANCES.size();
+	}
+
+	public static ArrayList<AlBuffer<?>> getAllInstances() {
+		return new ArrayList<>(AlBuffer.ALL_INSTANCES);
+	}
+	// endregion
+
 	// region `abstract` methods (and overloads, and implementations).
 	public AlBuffer<?> loadFrom(String p_path) {
 		this.loadFrom(new File(p_path)); // Also invoke `AlNativeResource::shouldDispose()`.

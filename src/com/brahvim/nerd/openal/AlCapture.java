@@ -15,9 +15,12 @@ public class AlCapture extends AlNativeResource {
 	// Using different OpenAL contexts probably doesn't matter here.
 
 	// region Fields.
+	protected final static ArrayList<AlCapture> ALL_INSTANCES = new ArrayList<>();
+
+	private static int numInstances;
+
 	// This is here literally just for naming threads!:
-	public final static ArrayList<AlCapture> ALL_INSTANCES = new ArrayList<>();
-	private volatile static int numActiveCaptures;
+	private volatile static int numActiveInstances;
 
 	private long id;
 	private NerdAl alMan;
@@ -38,6 +41,20 @@ public class AlCapture extends AlNativeResource {
 	public AlCapture(NerdAl p_alMan, String p_deviceName) {
 		this.alMan = p_alMan;
 		AlCapture.ALL_INSTANCES.add(this);
+	}
+	// endregion
+
+	// region Instance management.
+	public static ArrayList<AlCapture> getAllInstances() {
+		return new ArrayList<>(AlCapture.ALL_INSTANCES);
+	}
+
+	public static int getNumInstances() {
+		return AlCapture.numInstances;
+	}
+
+	public static int getNumInstancesCurrentlyCapturing() {
+		return AlCapture.numActiveInstances;
 	}
 	// endregion
 
@@ -65,7 +82,7 @@ public class AlCapture extends AlNativeResource {
 			return;
 		}
 
-		AlCapture.numActiveCaptures++;
+		AlCapture.numActiveInstances++;
 
 		// region Preparing to capture.
 		// Store the last ones.
@@ -119,7 +136,7 @@ public class AlCapture extends AlNativeResource {
 			}
 		});
 
-		this.captureThread.setName("OpenAL capture thread #" + AlCapture.numActiveCaptures);
+		this.captureThread.setName("OpenAL capture thread #" + AlCapture.numActiveInstances);
 		this.captureThread.start();
 	}
 	// endregion
@@ -149,7 +166,7 @@ public class AlCapture extends AlNativeResource {
 		ALC11.alcCaptureCloseDevice(this.id);
 		this.alMan.checkAlcError();
 
-		AlCapture.numActiveCaptures--;
+		AlCapture.numActiveInstances--;
 		return this.capturedData;
 	}
 	// endregion

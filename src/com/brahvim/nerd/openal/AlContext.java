@@ -26,7 +26,7 @@ public class AlContext extends AlNativeResource {
 	}
 
 	// region Fields.
-	public final static ArrayList<AlContext> ALL_INSTANCES = new ArrayList<>();
+	protected final static ArrayList<AlContext> ALL_INSTANCES = new ArrayList<>();
 
 	private long id;
 	private NerdAl alMan;
@@ -53,6 +53,16 @@ public class AlContext extends AlNativeResource {
 			this.createCtx(new AlContext.AlContextSettings().asAttribArray());
 		} else
 			this.createCtx(p_settings.asAttribArray());
+	}
+	// endregion
+
+	// region Instance collection queries.
+	public static int getNumInstances() {
+		return AlContext.ALL_INSTANCES.size();
+	}
+
+	public static ArrayList<AlContext> getAllInstances() {
+		return new ArrayList<>(AlContext.ALL_INSTANCES);
 	}
 	// endregion
 

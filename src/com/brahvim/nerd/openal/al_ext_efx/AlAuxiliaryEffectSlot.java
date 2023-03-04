@@ -81,7 +81,7 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 	 */
 
 	// region Fields.
-	public final static ArrayList<AlAuxiliaryEffectSlot> ALL_INSTANCES = new ArrayList<>();
+	protected final static ArrayList<AlAuxiliaryEffectSlot> ALL_INSTANCES = new ArrayList<>();
 
 	private NerdAl alMan;
 	private AlEffect effect;
@@ -104,6 +104,16 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 
 		this.setEffect(p_effect);
 		AlAuxiliaryEffectSlot.ALL_INSTANCES.add(this);
+	}
+	// endregion
+
+	// region Instance collection queries.
+	public static int getNumInstances() {
+		return AlAuxiliaryEffectSlot.ALL_INSTANCES.size();
+	}
+
+	public static ArrayList<AlAuxiliaryEffectSlot> getAllInstances() {
+		return new ArrayList<>(AlAuxiliaryEffectSlot.ALL_INSTANCES);
 	}
 	// endregion
 

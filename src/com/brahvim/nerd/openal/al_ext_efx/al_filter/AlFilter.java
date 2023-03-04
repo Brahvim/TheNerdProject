@@ -14,7 +14,7 @@ import com.brahvim.nerd.openal.NerdAl;
 public abstract class AlFilter extends AlNativeResource {
 
 	// region Fields.
-	public final static ArrayList<AlFilter> ALL_INSTANCES = new ArrayList<>();
+	protected final static ArrayList<AlFilter> ALL_INSTANCES = new ArrayList<>();
 
 	private int id;
 	private NerdAl alMan;
@@ -30,6 +30,16 @@ public abstract class AlFilter extends AlNativeResource {
 		this.setInt(EXTEfx.AL_FILTER_TYPE, this.getName());
 		this.alMan.checkAlError();
 	}
+
+	// region Instance collection queries.
+	public static int getNumInstances() {
+		return AlFilter.ALL_INSTANCES.size();
+	}
+
+	public static ArrayList<AlFilter> getAllInstances() {
+		return new ArrayList<>(AlFilter.ALL_INSTANCES);
+	}
+	// endregion
 
 	// region C-style OpenAL getters.
 	public int getInt(int p_alEnum) {

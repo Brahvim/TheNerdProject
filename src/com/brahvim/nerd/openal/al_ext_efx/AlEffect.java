@@ -13,7 +13,7 @@ import com.brahvim.nerd.openal.NerdAl;
 public abstract class AlEffect extends AlNativeResource {
 
 	// region Fields.
-	public final static ArrayList<AlEffect> ALL_INSTANCES = new ArrayList<>();
+	protected final static ArrayList<AlEffect> ALL_INSTANCES = new ArrayList<>();
 
 	protected int id;
 	protected NerdAl alMan;
@@ -28,6 +28,16 @@ public abstract class AlEffect extends AlNativeResource {
 		this.setInt(EXTEfx.AL_EFFECT_TYPE, this.getEffectType());
 		this.alMan.checkAlError();
 	}
+
+	// region Instance collection queries.
+	public static int getNumInstances() {
+		return AlEffect.ALL_INSTANCES.size();
+	}
+
+	public static ArrayList<AlEffect> getAllInstances() {
+		return new ArrayList<>(AlEffect.ALL_INSTANCES);
+	}
+	// endregion
 
 	// region Getters!
 	protected abstract int getEffectType();

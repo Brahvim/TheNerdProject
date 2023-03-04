@@ -615,7 +615,7 @@ public class Sketch extends PApplet {
 			this.DISPOSAL_LISTENER.accept(this);
 
 		if (this.AL != null)
-			this.AL.dispose();
+			this.AL.completeDisposal();
 
 		super.dispose();
 	}
