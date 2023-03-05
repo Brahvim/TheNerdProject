@@ -22,9 +22,7 @@ public class AlDevice extends AlNativeResource {
 	private long id;
 	private String name;
 	private NerdAl alMan;
-	private Supplier<String> disconnectionCallback = () -> {
-		return AlDevice.getDefaultDeviceName();
-	};
+	private Supplier<String> disconnectionCallback = () -> AlDevice.getDefaultDeviceName();
 	// endregion
 
 	// region Constructors.
@@ -71,20 +69,17 @@ public class AlDevice extends AlNativeResource {
 		this.disconnectionCallback = p_callback;
 	}
 
-	public boolean disconnectionCheck() {
-		boolean connected = this.isConnected();
+	// It's fine, let this be here:
+	public void disconnectionCheck() {
+		if (!this.isConnected())
+			this.changeEndpoint(this.disconnectionCallback.get());
+	}
 
-		if (!connected) {
-			final String nameOfNewDv;
-			if (!SOFTReopenDevice.alcReopenDeviceSOFT(
-					this.id,
-					nameOfNewDv = this.disconnectionCallback.get(),
-					new int[] { 0 }))
-				throw new NerdAlException("`SOFTReopenDevice` failed.");
-			this.name = nameOfNewDv;
-		}
-
-		return connected;
+	public void changeEndpoint(String p_dvName) {
+		if (!SOFTReopenDevice.alcReopenDeviceSOFT(
+				this.id, p_dvName, new int[] { 0 }))
+			throw new NerdAlException("`SOFTReopenDevice` failed.");
+		this.name = p_dvName;
 	}
 
 	// This uses device handles and not device names. Thus, no `static` version.

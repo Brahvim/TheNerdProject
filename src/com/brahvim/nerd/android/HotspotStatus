@@ -6,6 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 // Brought to you, *from* my other (currently supa'-duper secret, ";P!) project, "AGC"!:
+// I must mention that this is from stackoverflow.
+
 public class HotspotStatus {
     // region Query results constants (not using an `enum`, yes...).
     public final static int AP_STATE_DISABLING = 10;
@@ -96,4 +98,5 @@ public class HotspotStatus {
         return HotspotStatus.INSTANCE.query() == HotspotStatus.AP_STATE_DISABLING;
     }
     // endregion
+    
 }
