@@ -68,6 +68,7 @@ public class TestScene4 extends NerdScene {
                     0.01f * (SKETCH.mouseX - SKETCH.cx),
                     0,
                     0.01f * (SKETCH.mouseY - SKETCH.cy));
+
             if (!this.rubberDuck.isPlaying())
                 this.rubberDuck.play();
         }
