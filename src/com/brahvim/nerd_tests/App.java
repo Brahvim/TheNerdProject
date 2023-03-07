@@ -10,11 +10,14 @@ public class App {
 
     // TODOs!:
     /*
+     * // TODO: `AssetLoaderOptions`!
      * // TODO: Box2D and Bullet? :D?
      * // TODO: Multiple monitor support!!!
-     * // TODO: Collision Algorithms for 3D space?!
+     * // TODO: NETWORKING. GOOD NETWORKING.
+     * // TODO: ANDROID OpenAL. Get it done!~
+     * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: Don't forget - OpenAL can stream audio!
-     * // TODO: Learn to use LWLJGL on Android for OpenAL.
+     * // TODO: Better asset-loader exception handling API,
      * // TODO: SHADERS. Remake the "PostFX" Processing library?
      */
 
