@@ -32,7 +32,7 @@ package com.brahvim.nerd.scene_api;
  */
 
 // ...remember - not `public`. `package`!
-/* `sealed` */ interface InputEventHandling /* permits Scene, Layer */ { // "Ceiling bab iDiya?", "Yaaaa!"!
+/* `sealed` */ interface InputEventHandler /* permits Scene, Layer */ { // "Ceiling bab iDiya?", "Yaaaa!"!
 
     // region Mouse events.
     public default void mousePressed() {

@@ -16,7 +16,7 @@ import com.brahvim.nerd.processing_wrappers.NerdCamera;
  * <i>Always extend!</i>
  */
 
-public class NerdScene implements InputEventHandling {
+public class NerdScene implements InputEventHandler {
 
   // region Inner classes.
   /*
