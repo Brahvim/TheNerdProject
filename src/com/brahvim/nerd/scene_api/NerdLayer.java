@@ -14,7 +14,7 @@ import com.brahvim.nerd.processing_wrappers.NerdCamera;
  *
  * @author Brahvim Bhaktvatsal
  */
-public class NerdLayer implements InputEventHandler {
+public class NerdLayer implements HardwareEventsHandler {
 
     // region `public` fields.
     // Seriously, why did I set these to be `protected`?
