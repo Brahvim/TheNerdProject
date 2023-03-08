@@ -1,59 +1,55 @@
 package com.brahvim.nerd.io.asset_loader;
 
 import java.io.File;
+
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-public class NerdAsset<AssetT> {
+public class NerdAsset {
 
     // region Fields!
-    public static boolean CACHE_SOUNDFILES = false;
     public final String NAME;
-
-    private AssetT data;
-    private Runnable onLoad;
-    private int frame;
-    private long millis = -1;
-    private boolean loaded, ploaded, failure;
 
     private final String PATH;
     private final Sketch SKETCH;
-    private final AssetType<AssetT> LOADER;
-    // private final AssetManager.AssetKey KEY;
+    private final AssetType<?> LOADER;
 
-    private Object[] loaderArgs;
+    private int frame;
+    private Object data;
+    private Runnable onLoad;
+    private long millis = -1;
+    private AssetLoaderOptions[] options;
+    private boolean loaded, ploaded, failure;
     // endregion
 
     // region Constructors!
-    public NerdAsset(Sketch p_sketch, AssetType<AssetT> p_type, String p_path) {
+    public NerdAsset(Sketch p_sketch, AssetType<?> p_type, String p_path) {
         // this.verifyKey(p_key);
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
 
         // this.KEY = p_key;
+        this.PATH = p_path;
         this.LOADER = p_type;
         this.SKETCH = p_sketch;
-        this.loaderArgs = null;
-
-        this.PATH = p_path;
         this.NAME = this.findName();
         this.startLoading();
     }
 
-    public NerdAsset(Sketch p_sketch, AssetType<AssetT> p_type, String p_path, Runnable p_onLoad) {
+    public NerdAsset(Sketch p_sketch, AssetType<?> p_type, String p_path, Runnable p_onLoad) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
     }
 
-    public NerdAsset(Sketch p_sketch, AssetType<AssetT> p_type, String p_path, Object... p_loaderArgs) {
+    public NerdAsset(Sketch p_sketch, AssetType<?> p_type, String p_path, AssetLoaderOptions... p_options) {
         this(p_sketch, p_type, p_path);
-        this.loaderArgs = p_loaderArgs;
+        this.options = p_options;
     }
 
-    public NerdAsset(Sketch p_sketch, AssetType<AssetT> p_type, String p_path,
-            Runnable p_onLoad, Object... p_loaderArgs) {
+    public NerdAsset(Sketch p_sketch, AssetType<?> p_type, String p_path, Runnable p_onLoad,
+            AssetLoaderOptions... p_options) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
-        this.loaderArgs = p_loaderArgs;
+        this.options = p_options;
     }
     // endregion
 
@@ -71,15 +67,14 @@ public class NerdAsset<AssetT> {
     }
 
     // region Load status requests.
-    public NerdAsset<AssetT> setLoadCallback(Runnable p_onLoad) {
+    public NerdAsset setLoadCallback(Runnable p_onLoad) {
         this.onLoad = p_onLoad;
         return this;
     }
 
-    public NerdAsset<AssetT> completeLoad() {
+    public NerdAsset completeLoad() {
         while (!this.loaded)
             System.out.println("Waiting for `" + this.NAME + "` to load...");
-
         return this;
     }
 
@@ -87,9 +82,8 @@ public class NerdAsset<AssetT> {
         this.fetchData();
         this.loaded = true;
 
-        if (this.onLoad != null) {
+        if (this.onLoad != null)
             this.onLoad.run();
-        }
     }
 
     // region "Yes/No" questions.
@@ -139,7 +133,7 @@ public class NerdAsset<AssetT> {
 
     private void fetchData() {
         try {
-            this.data = this.LOADER.fetchData(this.SKETCH, this.PATH, this.loaderArgs);
+            this.data = this.LOADER.fetchData(this.SKETCH, this.PATH, this.options);
         } catch (AssetLoaderFailedException e) {
             this.data = null;
             this.failure = true;

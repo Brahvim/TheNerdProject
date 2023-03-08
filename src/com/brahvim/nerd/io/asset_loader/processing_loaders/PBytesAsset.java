@@ -1,6 +1,7 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
+import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -15,9 +16,9 @@ public class PBytesAsset extends AssetType<byte[]> {
 	// endregion
 
 	@Override
-	public byte[] fetchData(Sketch SKETCH, String p_path, Object... p_options)
+	public byte[] fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
-		byte[] bytes = SKETCH.loadBytes(p_path);
+		byte[] bytes = p_sketch.loadBytes(p_path);
 
 		if (bytes == null)
 			throw new AssetLoaderFailedException();

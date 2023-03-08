@@ -15,8 +15,8 @@ public class App {
      * // TODO: Multiple monitor support!!!
      * // TODO: NETWORKING. GOOD NETWORKING.
      * // TODO: ANDROID OpenAL. Get it done!~
-     * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: Don't forget - OpenAL can stream audio!
+     * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: Better asset-loader exception handling API,
      * // TODO: SHADERS. Remake the "PostFX" Processing library?
      */

@@ -2,6 +2,7 @@ package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.ByteSerial;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
+import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -16,7 +17,7 @@ public class SerializedAsset extends AssetType<Object> {
 	// endregion
 
 	@Override
-	public Object fetchData(Sketch SKETCH, String p_path, Object... p_options)
+	public Object fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			return ByteSerial.fromFile(p_path);

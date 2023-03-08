@@ -1,6 +1,7 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
+import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -17,7 +18,7 @@ public class PImageAsset extends AssetType<PImage> {
 	// endregion
 
 	@Override
-	public PImage fetchData(Sketch p_sketch, String p_path, Object... p_options)
+	public PImage fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		PImage img = p_sketch.loadImage(p_path);
 

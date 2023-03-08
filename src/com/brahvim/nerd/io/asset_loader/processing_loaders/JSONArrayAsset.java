@@ -1,6 +1,7 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
+import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -17,10 +18,10 @@ public class JSONArrayAsset extends AssetType<JSONArray> {
 	// endregion
 
 	@Override
-	public JSONArray fetchData(Sketch SKETCH, String p_path, Object... p_options)
+	public JSONArray fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
-			return SKETCH.loadJSONArray(p_path);
+			return p_sketch.loadJSONArray(p_path);
 		} catch (NullPointerException e) {
 			throw new AssetLoaderFailedException();
 		}

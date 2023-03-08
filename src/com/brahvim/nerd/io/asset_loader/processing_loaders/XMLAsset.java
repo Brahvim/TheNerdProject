@@ -1,6 +1,7 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
+import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
 import com.brahvim.nerd.io.asset_loader.AssetType;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -17,7 +18,7 @@ public class XMLAsset extends AssetType<XML> {
 	// endregion
 
 	@Override
-	public XML fetchData(Sketch p_sketch, String p_path, Object... p_options)
+	public XML fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException {
 		XML markup = p_sketch.loadXML(p_path);
 		if (markup == null)

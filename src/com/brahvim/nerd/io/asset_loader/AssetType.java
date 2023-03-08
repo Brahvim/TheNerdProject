@@ -14,7 +14,7 @@ public abstract class AssetType<T> {
         return null; // `return YourAssetType.LOADER;`
     }
 
-    public abstract T fetchData(Sketch p_sketch, String p_path, Object... p_options)
+    public abstract T fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
             throws AssetLoaderFailedException, IllegalArgumentException;
 
 }
