@@ -175,20 +175,20 @@ public class Sketch extends PApplet {
 	};
 
 	// region `java.awt` constants.
-	public final static GraphicsDevice[] JAVA_SCREENS = GraphicsEnvironment
-			.getLocalGraphicsEnvironment().getScreenDevices();
-
-	public final static GraphicsDevice DEFAULT_JAVA_SCREEN = GraphicsEnvironment
-			.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-
-	public final static DisplayMode DEFAULT_JAVA_SCREEN_MODE = GraphicsEnvironment
-			.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-
 	public final static GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment
 			.getLocalGraphicsEnvironment();
 
-	public final static int DEFAULT_REFRESH_RATE = GraphicsEnvironment.getLocalGraphicsEnvironment()
-			.getDefaultScreenDevice().getDisplayMode().getRefreshRate();
+	public static GraphicsDevice[] JAVA_SCREENS = Sketch.LOCAL_GRAPHICS_ENVIRONMENT
+			.getScreenDevices();
+
+	public static GraphicsDevice DEFAULT_JAVA_SCREEN = Sketch.LOCAL_GRAPHICS_ENVIRONMENT
+			.getDefaultScreenDevice();
+
+	public static DisplayMode DEFAULT_JAVA_SCREEN_MODE = Sketch.DEFAULT_JAVA_SCREEN
+			.getDisplayMode();
+
+	public static int DEFAULT_REFRESH_RATE = Sketch.DEFAULT_JAVA_SCREEN_MODE
+			.getRefreshRate();
 	// endregion
 	// endregion
 
@@ -513,7 +513,7 @@ public class Sketch extends PApplet {
 		this.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
 		this.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
 
-		// region "`GLOBAL_MOUSE`""
+		// region "`GLOBAL_MOUSE`".
 		this.PREV_GLOBAL_MOUSE_POINT.setLocation(this.GLOBAL_MOUSE_POINT);
 		this.PREV_GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_VECTOR);
 
@@ -523,6 +523,13 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Current and previous frame monitor settings.
+		final GraphicsDevice[] updatedList = Sketch.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
+		if (Sketch.JAVA_SCREENS != updatedList) {
+			Sketch.DEFAULT_JAVA_SCREEN = Sketch.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
+			Sketch.DEFAULT_JAVA_SCREEN_MODE = Sketch.DEFAULT_JAVA_SCREEN.getDisplayMode();
+			Sketch.DEFAULT_REFRESH_RATE = Sketch.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
+		}
+
 		this.previousMonitor = this.currentMonitor;
 
 		if (super.focused)
