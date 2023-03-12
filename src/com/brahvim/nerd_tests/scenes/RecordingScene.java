@@ -10,6 +10,7 @@ import com.brahvim.nerd.scene_api.SceneState;
 
 import processing.core.PConstants;
 
+@Deprecated
 public class RecordingScene extends NerdScene {
 	// region Fields.
 	private AlCapture capture;

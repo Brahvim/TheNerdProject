@@ -431,7 +431,7 @@ public class NerdAl {
 	}
 
 	public static int errorStringToCode(NerdAbstractOpenAlException p_exception) {
-		return AL11.alGetEnumValue(p_exception.getAlErrorString());
+		return AL11.alGetEnumValue(p_exception.getAlcErrorString());
 	}
 
 	public int checkAlError() throws AlException {
@@ -480,6 +480,7 @@ public class NerdAl {
 		this.device.disconnectionCheck();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void scenelyDisposal() {
 		ArrayList<? extends AlNativeResource> list = null;
 
@@ -502,6 +503,7 @@ public class NerdAl {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void completeDisposal() {
 		ArrayList<? extends AlNativeResource> list = null;
 

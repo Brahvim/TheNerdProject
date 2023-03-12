@@ -10,6 +10,10 @@ import org.lwjgl.openal.ALC11;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.openal.al_exceptions.AlcException;
 
+/**
+ * @deprecated I really can't see how one records audio with OpenAL.
+ */
+@Deprecated
 public class AlCapture extends AlNativeResource {
 	// Y'know what?
 	// Using different OpenAL contexts probably doesn't matter here.
@@ -106,8 +110,14 @@ public class AlCapture extends AlNativeResource {
 			while (!Thread.interrupted()) {
 				this.alMan.checkAlcError();
 
-				final ByteBuffer SAMPLES = ByteBuffer.allocate(p_samplesPerBuffer);
-				ALC11.alcCaptureSamples(this.id, SAMPLES, p_samplesPerBuffer);
+				final ByteBuffer SAMPLES_BUFFER = ByteBuffer.allocate(p_samplesPerBuffer);
+
+				for (int i = 0; i < p_samplesPerBuffer; i = ALC11.alcGetInteger(
+						this.id, ALC11.ALC_CAPTURE_SAMPLES)) {
+					System.out.printf("Captured `%d` samples.\n", i);
+				}
+
+				ALC11.alcCaptureSamples(this.id, SAMPLES_BUFFER, p_samplesPerBuffer);
 
 				// region Check if the device gets disconnected (cause of `ALC_INVALID_DEVICE`):
 				try {
@@ -125,12 +135,12 @@ public class AlCapture extends AlNativeResource {
 				byte[] oldData = dataCaptured.array();
 				dataCaptured = ByteBuffer.allocate(oldData.length + p_samplesPerBuffer);
 				dataCaptured.put(oldData);
-				dataCaptured.put(SAMPLES);
+				dataCaptured.put(SAMPLES_BUFFER);
 			}
 
 			// When interrupted, stop capturing:
 			synchronized (this) {
-				if (!deviceGotRemoved)
+				if (deviceGotRemoved)
 					ALC11.alcCaptureStop(this.id);
 				this.capturedData = dataCaptured;
 			}

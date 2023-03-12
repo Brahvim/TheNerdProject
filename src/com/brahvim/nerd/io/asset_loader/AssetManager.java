@@ -118,8 +118,9 @@ public class AssetManager {
     /**
      * Wait till all assets are done loading!
      */
+    // This increases CPU usage, right?!
     public void forceLoading() {
-        while (this.hasCompleted())
+        while (!this.hasCompleted())
             ;
     }
     // endregion

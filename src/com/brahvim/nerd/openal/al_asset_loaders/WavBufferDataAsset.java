@@ -8,6 +8,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 @Deprecated
 public class WavBufferDataAsset extends AssetType<AlWavBuffer> {
+
 	// region SINGLETON STUFF.
 	private final static WavBufferDataAsset LOADER = new WavBufferDataAsset();
 

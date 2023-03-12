@@ -7,6 +7,7 @@ import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class OggBufferDataAsset extends AssetType<AlOggBuffer> {
+
 	// region SINGLETION STUFF.
 	private final static OggBufferDataAsset LOADER = new OggBufferDataAsset();
 

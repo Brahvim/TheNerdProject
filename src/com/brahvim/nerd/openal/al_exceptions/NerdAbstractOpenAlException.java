@@ -16,11 +16,11 @@ public abstract class NerdAbstractOpenAlException extends RuntimeException {
 	}
 
 	// region Methods.
-	public int getAlErrorCode() {
+	public int getAlcErrorCode() {
 		return this.ERROR_CODE;
 	}
 
-	public String getAlErrorString() {
+	public String getAlcErrorString() {
 		return this.ERROR_STRING;
 	}
 	// endregion

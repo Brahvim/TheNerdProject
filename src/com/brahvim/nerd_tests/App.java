@@ -11,13 +11,13 @@ public class App {
     // TODOs!:
     /*
      * // TODO: `AssetLoaderOptions`!
-     * // TODO: Box2D and Bullet? :D?
+     * // TODO: JBox2D and LibBulletJME? :D?
      * // TODO: Multiple monitor support!!!
      * // TODO: NETWORKING. GOOD NETWORKING.
-     * // TODO: ANDROID OpenAL. Get it done!~
      * // TODO: Don't forget - OpenAL can stream audio!
      * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: Better asset-loader exception handling API,
+     * // TODO: ANDROID OpenAL. Get it done!~ (SWIG wrapper!)
      * // TODO: SHADERS. Remake the "PostFX" Processing library?
      */
 
