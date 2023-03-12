@@ -1,0 +1,73 @@
+package com.brahvim.nerd.openal.al_effects;
+
+import org.lwjgl.openal.EXTEfx;
+
+import com.brahvim.nerd.openal.NerdAl;
+import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
+
+public class AlVocalMorpher extends AlEffect {
+
+	// LWJGL does not provide constants for this class. It had to be removed.
+
+	public AlVocalMorpher(NerdAl p_NerdAl) {
+		super(p_NerdAl);
+	}
+
+	@Override
+	protected int getEffectType() {
+		return EXTEfx.AL_EFFECT_VOCAL_MORPHER;
+	}
+
+	// region Getters.
+	public float getVocalMorpherPhonemea() {
+		return super.getFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEA);
+	}
+
+	public float getVocalMorpherPhonemeb() {
+		return super.getFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEB);
+	}
+
+	public float getVocalMorpherPhonemeaCoarseTuning() {
+		return super.getFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEA_COARSE_TUNING);
+	}
+
+	public float getVocalMorpherPhonemebCoarseTuning() {
+		return super.getFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEB_COARSE_TUNING);
+	}
+
+	public float getVocalMorpherWaveform() {
+		return super.getFloat(EXTEfx.AL_VOCAL_MORPHER_WAVEFORM);
+	}
+
+	public float getVocalMorpherRate() {
+		return super.getFloat(EXTEfx.AL_VOCAL_MORPHER_RATE);
+	}
+	// endregion
+
+	// region Setters.
+	public void setVocalMorpherPhonemea(float p_value) {
+		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEA, p_value);
+	}
+
+	public void setVocalMorpherPhonemeb(float p_value) {
+		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEB, p_value);
+	}
+
+	public void setVocalMorpherPhonemeaCoarseTuning(float p_value) {
+		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEA_COARSE_TUNING, p_value);
+	}
+
+	public void setVocalMorpherPhonemebCoarseTuning(float p_value) {
+		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEB_COARSE_TUNING, p_value);
+	}
+
+	public void setVocalMorpherWaveform(float p_value) {
+		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_WAVEFORM, p_value);
+	}
+
+	public void setVocalMorpherRate(float p_value) {
+		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_RATE, p_value);
+	}
+	// endregion
+
+}
