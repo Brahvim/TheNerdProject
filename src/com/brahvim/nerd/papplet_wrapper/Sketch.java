@@ -58,7 +58,7 @@ import processing.opengl.PJOGL;
 public class Sketch extends PApplet {
 
 	// region Abstract inner classes.
-	// Used classes instead of interfaces for these (two) reasons:
+	// Used abstract classes instead of interfaces for these (two) reasons:
 	/*
 	 * - No security for `ALL_REFERENCES` from the user! It'll be `public`!
 	 * - For registering the reference into the `ALL_REFERENCES` collection,
@@ -67,6 +67,9 @@ public class Sketch extends PApplet {
 	 * accidentally change what they weren't supposed to!
 	 */
 
+	// Detailed workflow callbacks.
+
+	// region Input listeners.
 	public abstract class SketchMouseListener {
 
 		public SketchMouseListener() {
@@ -152,6 +155,7 @@ public class Sketch extends PApplet {
 		// endregion
 
 	}
+	// endregion
 	// endregion
 
 	// region `public` fields.
@@ -300,7 +304,7 @@ public class Sketch extends PApplet {
 	protected NerdScene currentScene;
 	protected SceneManager sceneMan; // Don't use static initialization for this..?
 
-	// region Listeners!
+	// region Callback listeners!
 	protected final Consumer<Sketch> EXIT_LISTENER, DISPOSAL_LISTENER, SETUP_LISTENER;
 	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
@@ -789,6 +793,9 @@ public class Sketch extends PApplet {
 			}
 	}
 	// endregion
+	// endregion
+
+	// region Callback management.
 	// endregion
 
 	// region Utilities!~
