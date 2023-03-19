@@ -4,7 +4,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
-import com.brahvim.nerd_tests.scenes.TestScene4;
+import com.brahvim.nerd_tests.scenes.TestScene6;
 
 public class App {
 
@@ -23,7 +23,7 @@ public class App {
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
-            TestScene4.class;
+            TestScene6.class;
     // LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();
 
     // region `App`'s *other* fields.
@@ -52,7 +52,7 @@ public class App {
                 // calling! They're much faster, actually! That `0` millisecond time included
                 // starting and stopping a `MillisTimer`!
                 // ..they should be faster than a v-table thingy anyway, amirite?
-                .onSketchConstructed((s) -> System.out.println(s.STRINGS.get("Meta.onConstruct"))
+                .addSketchConstructionListener((s) -> System.out.println(s.STRINGS.get("Meta.onConstruct"))
 
                 // These work too - commenting them out so they don't clog-the-log!:
                 // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));

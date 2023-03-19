@@ -92,7 +92,6 @@ public class Sketch extends PApplet {
 		public void mouseDragged() {
 		}
 
-		// @SuppressWarnings("unused")
 		public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
 		}
 		// endregion
@@ -161,8 +160,6 @@ public class Sketch extends PApplet {
 	// region `public` fields.
 	// region Constants.
 	// region `static` constants.
-	public final static float FLOAT_HALF = Float.MAX_VALUE * 0.5f;
-
 	public final static File EXEC_DIR = new File("");
 	public final static String EXEC_DIR_PATH = Sketch.EXEC_DIR.getAbsolutePath().concat(File.separator);
 
@@ -203,7 +200,6 @@ public class Sketch extends PApplet {
 	public final String RENDERER;
 	public final String ICON_PATH;
 	public final StringTable STRINGS;
-	public final Sketch SKETCH = this;
 	public final int INIT_WIDTH, INIT_HEIGHT;
 	public final boolean USES_OPENGL, USES_OPENAL;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
@@ -215,6 +211,8 @@ public class Sketch extends PApplet {
 
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
 			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN, DO_FAKE_2D_CAMERA = false;
+
+	private final Sketch SKETCH = this;
 	// endregion
 	// endregion
 
@@ -293,7 +291,7 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
-	// region `protected` ~~/ `protected`~~ fields.
+	// region `protected` fields.
 	protected final int ANTI_ALIASING;
 	protected final Unprojector UNPROJECTOR;
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
@@ -305,16 +303,26 @@ public class Sketch extends PApplet {
 	protected SceneManager sceneMan; // Don't use static initialization for this..?
 
 	// region Callback listeners!
-	protected final Consumer<Sketch> EXIT_LISTENER, DISPOSAL_LISTENER, SETUP_LISTENER;
 	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
+
+	protected final LinkedHashSet<Consumer<Sketch>> EXIT_LISTENERS, SETUP_LISTENERS, DISPOSAL_LISTENERS;
+	protected final LinkedHashSet<Consumer<Sketch>> SETTINGS_LISTENERS = new LinkedHashSet<>(1);
+
+	protected final LinkedHashSet<Consumer<Sketch>> DRAW_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<Consumer<Sketch>> PRE_DRAW_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<Consumer<Sketch>> POST_DRAW_LISTENERS = new LinkedHashSet<>(1);
+
+	protected final LinkedHashSet<Consumer<Sketch>> POST_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<Consumer<Sketch>> PRE_LISTENERS = new LinkedHashSet<>(1);
 	// endregion
 	// endregion
 
 	// region Construction, `settings()`...
 	public Sketch(SketchKey p_key) {
+
 		// region Verify and 'use' key.
 		if (p_key == null) {
 			throw new IllegalArgumentException("""
@@ -342,9 +350,9 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Assigning listeners.
-		this.EXIT_LISTENER = p_key.exitListener;
-		this.SETUP_LISTENER = p_key.setupListener;
-		this.DISPOSAL_LISTENER = p_key.disposalListener;
+		this.EXIT_LISTENERS = p_key.exitListeners;
+		this.SETUP_LISTENERS = p_key.setupListeners;
+		this.DISPOSAL_LISTENERS = p_key.disposalListeners;
 		// endregion
 
 		this.NAME = p_key.name;
@@ -358,7 +366,7 @@ public class Sketch extends PApplet {
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
-		this.AL = p_key.useOpenal ? new NerdAl(this, p_key.alContextSettings) : null;
+		this.AL = p_key.useOpenAl ? new NerdAl(this, p_key.alContextSettings) : null;
 		// endregion
 
 		// region Non-key settings.
@@ -416,7 +424,9 @@ public class Sketch extends PApplet {
 		this.ROBOT = toAssign;
 		// endregion
 
-		p_key.sketchConstructedListener.accept(this);
+		for (Consumer<Sketch> c : p_key.sketchConstructedListeners)
+			if (c != null)
+				c.accept(this);
 	}
 
 	@Override
@@ -428,6 +438,10 @@ public class Sketch extends PApplet {
 
 		super.smooth(this.ANTI_ALIASING);
 		super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER);
+
+		for (Consumer<Sketch> c : this.SETTINGS_LISTENERS)
+			if (c != null)
+				c.accept(this);
 	}
 	// endregion
 
@@ -481,8 +495,9 @@ public class Sketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		if (this.SETUP_LISTENER != null)
-			this.SETUP_LISTENER.accept(this);
+		for (Consumer<Sketch> c : this.SETUP_LISTENERS)
+			if (c != null)
+				c.accept(this);
 	}
 
 	public void pre() {
@@ -502,8 +517,6 @@ public class Sketch extends PApplet {
 		this.mouse.set(super.mouseX, super.mouseY);
 		if (this.RENDERER == PConstants.P3D)
 			this.unprojectMouse();
-
-		this.sceneMan.pre();
 	}
 
 	@Override
@@ -511,6 +524,12 @@ public class Sketch extends PApplet {
 		this.frameStartTime = super.millis(); // Timestamp.
 		this.frameTime = this.frameStartTime - this.pframeTime;
 		this.pframeTime = this.frameStartTime;
+
+		// region Call all pre-render listeners.
+		for (Consumer<Sketch> c : this.PRE_DRAW_LISTENERS)
+			if (c != null)
+				c.accept(this);
+		// endregion
 
 		// region Update frame-ly mouse settings.
 		this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
@@ -557,6 +576,12 @@ public class Sketch extends PApplet {
 					\bConsider adding one...?""", this.NAME);
 		// endregion
 
+		// region Call all draw listeners.
+		for (Consumer<Sketch> c : this.DRAW_LISTENERS)
+			if (c != null)
+				c.accept(this);
+		// endregion
+
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.currentScene == null) {
 			if (this.FIRST_SCENE_CLASS == null)
@@ -566,7 +591,12 @@ public class Sketch extends PApplet {
 		}
 		// endregion
 
-		this.sceneMan.draw();
+		// region Call all post-render listeners.
+		for (Consumer<Sketch> c : this.POST_DRAW_LISTENERS)
+			if (c != null)
+				c.accept(this);
+		// endregion
+
 	}
 
 	public void post() {
@@ -606,24 +636,22 @@ public class Sketch extends PApplet {
 		this.pcursorConfined = this.cursorConfined;
 		this.pmouseScrollDelta = this.mouseScrollDelta;
 		// endregion
-
-		this.sceneMan.post();
 	}
 
 	@Override
 	public void exit() {
-		this.sceneMan.exit();
-
-		if (this.EXIT_LISTENER != null)
-			this.EXIT_LISTENER.accept(this);
+		for (Consumer<Sketch> c : this.EXIT_LISTENERS)
+			if (c != null)
+				c.accept(this);
 
 		super.exit();
 	}
 
 	@Override
 	public void dispose() {
-		if (this.DISPOSAL_LISTENER != null)
-			this.DISPOSAL_LISTENER.accept(this);
+		for (Consumer<Sketch> c : this.DISPOSAL_LISTENERS)
+			if (c != null)
+				c.accept(this);
 
 		if (this.AL != null)
 			this.AL.completeDisposal();
@@ -796,6 +824,65 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Callback management.
+	// region Adding listeners.
+	public void addPreListener(Consumer<Sketch> p_preListener) {
+		this.PRE_LISTENERS.add(p_preListener);
+	}
+
+	public void addPostListener(Consumer<Sketch> p_postListener) {
+		this.POST_LISTENERS.add(p_postListener);
+	}
+
+	public void addPreDrawListener(Consumer<Sketch> p_preDrawListener) {
+		this.PRE_DRAW_LISTENERS.add(p_preDrawListener);
+	}
+
+	public void addDrawListener(Consumer<Sketch> p_drawListener) {
+		this.DRAW_LISTENERS.add(p_drawListener);
+	}
+
+	public void addPostDrawListener(Consumer<Sketch> p_postDrawListener) {
+		this.POST_DRAW_LISTENERS.add(p_postDrawListener);
+	}
+
+	public void addSketchExitListener(Consumer<Sketch> p_exitListener) {
+		this.EXIT_LISTENERS.add(p_exitListener);
+	}
+
+	public void addSketchDisposalListener(Consumer<Sketch> p_disposalListener) {
+		this.DISPOSAL_LISTENERS.add(p_disposalListener);
+	}
+	// endregion
+
+	// region Removing listeners.
+	public void removePreListener(Consumer<Sketch> p_preListener) {
+		this.PRE_LISTENERS.remove(p_preListener);
+	}
+
+	public void removePostListener(Consumer<Sketch> p_postListener) {
+		this.POST_LISTENERS.remove(p_postListener);
+	}
+
+	public void removePreDrawListener(Consumer<Sketch> p_preDrawListener) {
+		this.PRE_DRAW_LISTENERS.remove(p_preDrawListener);
+	}
+
+	public void removeDrawListener(Consumer<Sketch> p_drawListener) {
+		this.DRAW_LISTENERS.remove(p_drawListener);
+	}
+
+	public void removePostDrawListener(Consumer<Sketch> p_postDrawListener) {
+		this.POST_DRAW_LISTENERS.remove(p_postDrawListener);
+	}
+
+	public void removeSketchExitListener(Consumer<Sketch> p_exitListener) {
+		this.EXIT_LISTENERS.remove(p_exitListener);
+	}
+
+	public void removeSketchDisposalListener(Consumer<Sketch> p_disposalListener) {
+		this.DISPOSAL_LISTENERS.remove(p_disposalListener);
+	}
+	// endregion
 	// endregion
 
 	// region Utilities!~

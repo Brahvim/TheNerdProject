@@ -397,6 +397,34 @@ public class SceneManager {
                             l.keyReleased();
             }
         };
+
+        // region Workflow callbacks.
+        this.SKETCH.addPreListener((s) -> {
+            if (SCENE_MAN.currScene != null)
+                SCENE_MAN.currScene.runPre();
+        });
+
+        this.SKETCH.addPostListener((s) -> {
+            if (SCENE_MAN.PERSISTENT_ASSETS != null)
+                SCENE_MAN.PERSISTENT_ASSETS.updatePreviousLoadState();
+
+            if (SCENE_MAN.currScene != null)
+                SCENE_MAN.currScene.runPost();
+
+            SCENE_MAN.changedSceneThisFrame = false;
+        });
+
+        this.SKETCH.addDrawListener((s) -> {
+            if (SCENE_MAN.currScene != null)
+                SCENE_MAN.currScene.runDraw();
+        });
+
+        this.SKETCH.addSketchExitListener((s) -> {
+            if (SCENE_MAN.currScene != null)
+                SCENE_MAN.currScene.runExit();
+        });
+        // endregion
+
     }
     // endregion
 
@@ -457,33 +485,6 @@ public class SceneManager {
      * return (Class<? extends Scene>[]) this.SCENE_CLASSES.toArray();
      * }
      */
-    // endregion
-
-    // region App workflow callbacks. Please don't use these outside any `PApplet`!
-    public void pre() {
-        if (this.currScene != null)
-            this.currScene.runPre();
-    }
-
-    public void draw() {
-        if (this.currScene != null)
-            this.currScene.runDraw();
-    }
-
-    public void post() {
-        if (this.PERSISTENT_ASSETS != null)
-            this.PERSISTENT_ASSETS.updatePreviousLoadState();
-
-        if (this.currScene != null)
-            this.currScene.runPost();
-
-        this.changedSceneThisFrame = false;
-    }
-
-    public void exit() {
-        if (this.currScene != null)
-            this.currScene.runExit();
-    }
     // endregion
 
     // region `Scene`-operations.

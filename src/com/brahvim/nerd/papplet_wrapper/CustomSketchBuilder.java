@@ -23,7 +23,7 @@ import processing.core.PConstants;
 
 public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
 
-    // region Fields, constructor, building...
+    // region Field*(s)*, constructor, building...
     protected final SketchKey SKETCH_KEY;
 
     public CustomSketchBuilder() {
@@ -78,28 +78,53 @@ public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
     // endregion
 
     public CustomSketchBuilder usesOpenAl() {
-        this.SKETCH_KEY.useOpenal = true;
+        this.SKETCH_KEY.useOpenAl = true;
         return this;
     }
 
-    // region `onSketchEvent()`.
-    public CustomSketchBuilder onSketchConstructed(Consumer<Sketch> p_constructionListener) {
-        this.SKETCH_KEY.sketchConstructedListener = p_constructionListener;
+    // region Adding listeners.
+    public CustomSketchBuilder addSketchConstructionListener(Consumer<Sketch> p_constructionListener) {
+        this.SKETCH_KEY.sketchConstructedListeners.add(p_constructionListener);
         return this;
     }
 
-    public CustomSketchBuilder onSketchDispose(Consumer<Sketch> p_disposaListener) {
-        this.SKETCH_KEY.disposalListener = p_disposaListener;
+    public CustomSketchBuilder addSketchDisposalListener(Consumer<Sketch> p_disposaListener) {
+        this.SKETCH_KEY.disposalListeners.add(p_disposaListener);
         return this;
     }
 
-    public CustomSketchBuilder onSketchSetup(Consumer<Sketch> p_setupListener) {
-        this.SKETCH_KEY.setupListener = p_setupListener;
+    public CustomSketchBuilder addSketchSetupListener(Consumer<Sketch> p_setupListener) {
+        this.SKETCH_KEY.setupListeners.add(p_setupListener);
         return this;
     }
 
-    public CustomSketchBuilder onSketchExit(Consumer<Sketch> p_setupListener) {
-        this.SKETCH_KEY.exitListener = p_setupListener;
+    public CustomSketchBuilder addPreListener(Consumer<Sketch> p_preListener) {
+        this.SKETCH_KEY.preListeners.add(p_preListener);
+        return this;
+    }
+
+    public CustomSketchBuilder addPostListener(Consumer<Sketch> p_postListener) {
+        this.SKETCH_KEY.postListeners.add(p_postListener);
+        return this;
+    }
+
+    public CustomSketchBuilder addPreDrawListener(Consumer<Sketch> p_preDrawListener) {
+        this.SKETCH_KEY.preDrawListeners.add(p_preDrawListener);
+        return this;
+    }
+
+    public CustomSketchBuilder addDrawListener(Consumer<Sketch> p_drawListener) {
+        this.SKETCH_KEY.drawListeners.add(p_drawListener);
+        return this;
+    }
+
+    public CustomSketchBuilder addPostDrawListener(Consumer<Sketch> p_postDrawListener) {
+        this.SKETCH_KEY.postDrawListeners.add(p_postDrawListener);
+        return this;
+    }
+
+    public CustomSketchBuilder addSketchExitListener(Consumer<Sketch> p_exitListener) {
+        this.SKETCH_KEY.exitListeners.add(p_exitListener);
         return this;
     }
     // endregion
