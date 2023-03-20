@@ -1,4 +1,4 @@
-package com.brahvim.nerd.io.img_manip;
+package com.brahvim.nerd.io;
 
 import java.util.ArrayList;
 
@@ -27,6 +27,10 @@ public class NerdSpSheet implements Cloneable {
 		this.SKETCH = p_sketch;
 	}
 
+	/**
+	 * You can also choose to simply call this method, without using its return
+	 * value, to cache the sprite, and have to worry less about performance!
+	 */
 	public PImage getSprite(int p_x, int p_y, int p_width, int p_height) {
 		for (int i = poses.size() - 1; i != -1; i--) {
 			final SpPos p = poses.get(i);
@@ -34,11 +38,6 @@ public class NerdSpSheet implements Cloneable {
 				return this.sprites.get(i);
 		}
 
-		this.cacheSprite(p_x, p_y, p_width, p_height);
-		return this.sprites.get(this.sprites.size() - 1);
-	}
-
-	public void cacheSprite(int p_x, int p_y, int p_width, int p_height) {
 		final PImage toCache = this.SKETCH.createImage(p_width, p_height, this.sheet.format);
 
 		this.sheet.copy(toCache,
@@ -48,6 +47,8 @@ public class NerdSpSheet implements Cloneable {
 				p_width, p_height);
 
 		this.sprites.add(toCache);
+
+		return toCache;
 	}
 
 	@Override
