@@ -19,7 +19,7 @@ public class XMLAsset extends AssetType<XML> {
 
 	@Override
 	public XML fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
-			throws AssetLoaderFailedException {
+			throws AssetLoaderFailedException, IllegalArgumentException {
 		XML markup = p_sketch.loadXML(p_path);
 		if (markup == null)
 			throw new AssetLoaderFailedException();

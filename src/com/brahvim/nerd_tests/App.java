@@ -19,6 +19,7 @@ public class App {
      * // TODO: Better asset-loader exception handling API,
      * // TODO: ANDROID OpenAL. Get it done!~ (SWIG wrapper!)
      * // TODO: SHADERS. Remake the "PostFX" Processing library?
+     * // TODO: Spritesheets and animations for models and... rigging?!
      */
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
