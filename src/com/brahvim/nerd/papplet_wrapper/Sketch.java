@@ -328,15 +328,11 @@ public class Sketch extends PApplet {
 	protected final LinkedHashSet<SketchDisplayListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
 
-	protected final LinkedHashSet<Consumer<Sketch>> EXIT_LISTENERS, SETUP_LISTENERS, DISPOSAL_LISTENERS;
-	protected final LinkedHashSet<Consumer<Sketch>> SETTINGS_LISTENERS = new LinkedHashSet<>(1);
+	protected LinkedHashSet<Consumer<Sketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
+	protected LinkedHashSet<Consumer<Sketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
 
-	protected final LinkedHashSet<Consumer<Sketch>> DRAW_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<Consumer<Sketch>> PRE_DRAW_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<Consumer<Sketch>> POST_DRAW_LISTENERS = new LinkedHashSet<>(1);
-
-	protected final LinkedHashSet<Consumer<Sketch>> POST_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<Consumer<Sketch>> PRE_LISTENERS = new LinkedHashSet<>(1);
+	protected LinkedHashSet<Consumer<Sketch>> PRE_LISTENERS, POST_LISTENERS;
+	protected LinkedHashSet<Consumer<Sketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
 	// endregion
 	// endregion
 
@@ -369,12 +365,6 @@ public class Sketch extends PApplet {
 			this.POST_FIRST_CALLER = p_key.postCallOrder;
 		// endregion
 
-		// region Assigning listeners.
-		this.EXIT_LISTENERS = p_key.exitListeners;
-		this.SETUP_LISTENERS = p_key.setupListeners;
-		this.DISPOSAL_LISTENERS = p_key.disposalListeners;
-		// endregion
-
 		this.NAME = p_key.name;
 		this.RENDERER = p_key.renderer;
 		this.ICON_PATH = p_key.iconPath;
@@ -387,6 +377,22 @@ public class Sketch extends PApplet {
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
 		this.AL = p_key.useOpenAl ? new NerdAl(this, p_key.alContextSettings) : null;
+
+		// region Listeners!...
+		this.SETTINGS_LISTENERS = p_key.settingsListeners;
+		this.SETUP_LISTENERS = p_key.setupListeners;
+
+		this.PRE_LISTENERS = p_key.preListeners;
+
+		this.PRE_DRAW_LISTENERS = p_key.preDrawListeners;
+		this.DRAW_LISTENERS = p_key.drawListeners;
+		this.POST_DRAW_LISTENERS = p_key.postDrawListeners;
+
+		this.POST_LISTENERS = p_key.postListeners;
+
+		this.EXIT_LISTENERS = p_key.exitListeners;
+		this.DISPOSAL_LISTENERS = p_key.disposalListeners;
+		// endregion
 		// endregion
 
 		// region Non-key settings.
@@ -563,6 +569,10 @@ public class Sketch extends PApplet {
 		this.mouse.set(super.mouseX, super.mouseY);
 		if (this.RENDERER == PConstants.P3D)
 			this.unprojectMouse();
+
+		for (Consumer<Sketch> c : this.PRE_LISTENERS)
+			if (c != null)
+				c.accept(this);
 	}
 
 	@Override

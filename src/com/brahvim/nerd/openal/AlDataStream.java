@@ -52,7 +52,6 @@ public class AlDataStream {
 		this.alMan.checkAlError();
 
 		// Should I actually be doing this...?
-		this.source.setSourceType(AL11.AL_STATIC);
 		this.alMan.checkAlError();
 	}
 

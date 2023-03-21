@@ -47,8 +47,6 @@ public class AlSource extends AlNativeResource {
 		this.id = AL11.alGenSources();
 		this.alMan.checkAlError();
 
-		this.setSourceType(AL11.AL_STATIC);
-
 		AlSource.ALL_INSTANCES.add(this);
 	}
 
@@ -69,7 +67,7 @@ public class AlSource extends AlNativeResource {
 		this.setRolloff(p_source.getRolloff());
 		this.setPosition(p_source.getPosition());
 		this.setVelocity(p_source.getVelocity());
-		this.setSourceType(p_source.getSourceType());
+		// this.setSourceType(p_source.getSourceType());
 		this.attachDirectFilter(p_source.getDirectFilter());
 		this.setOrientation(p_source.getOrientation());
 		this.setMaxDistance(p_source.getMaxDistance());
@@ -370,10 +368,6 @@ public class AlSource extends AlNativeResource {
 
 	// region Source setters.
 	// region `int` setters.
-	protected void setSourceType(int p_value) {
-		this.setInt(AL11.AL_SOURCE_TYPE, p_value);
-	}
-
 	public void setSecOffset(int p_value) {
 		this.setInt(AL11.AL_SEC_OFFSET, p_value);
 	}
@@ -636,7 +630,8 @@ public class AlSource extends AlNativeResource {
 	}
 
 	/* `package` */ void framelyCallback() {
-		this.stream.framelyCallback();
+		if (this.stream != null)
+			this.stream.framelyCallback();
 	}
 
 	public void queueBuffers(AlBuffer<?> p_buffer) {

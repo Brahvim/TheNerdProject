@@ -77,6 +77,16 @@ public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
     }
     // endregion
 
+    /**
+     * @deprecated Not calling this method causes {@link Sketch::AL} to remain
+     *             {@code null} and could cause confusion to an API user about what
+     *             went wrong. Plus, it is not all that bad of an idea for a sketch
+     *             to keep using OpenAL by default. I have tried decoupling it, but
+     *             the asset loaders break on doing so, since they require the
+     *             sketch to give a {@link NerdAl} instance, which decoupling would
+     *             not allow.
+     */
+    @Deprecated
     public CustomSketchBuilder usesOpenAl() {
         this.SKETCH_KEY.useOpenAl = true;
         return this;

@@ -22,13 +22,14 @@ import processing.core.PConstants;
     public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
 
     // region Listeners.
-    public LinkedHashSet<Consumer<Sketch>> exitListeners,
-            setupListeners, disposalListeners, sketchConstructedListeners;
+    public LinkedHashSet<Consumer<Sketch>> exitListeners, setupListeners,
+            settingsListeners, disposalListeners, sketchConstructedListeners;
 
     // Initializing the listeners:
     {
         this.exitListeners = new LinkedHashSet<>();
         this.setupListeners = new LinkedHashSet<>();
+        this.settingsListeners = new LinkedHashSet<>();
         this.disposalListeners = new LinkedHashSet<>();
         this.sketchConstructedListeners = new LinkedHashSet<>();
     }

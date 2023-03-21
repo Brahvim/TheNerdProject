@@ -58,7 +58,7 @@ public class NerdAl {
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
 	}
 
-	public NerdAl(Sketch p_sketch, String p_deviceName, AlContext.AlContextSettings p_settings) {
+	public NerdAl(Sketch p_sketch, AlContext.AlContextSettings p_settings, String p_deviceName) {
 		this.SKETCH = p_sketch;
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();

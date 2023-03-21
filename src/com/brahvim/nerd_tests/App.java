@@ -11,11 +11,10 @@ public class App {
     // TODOs!:
     /*
      * // TODO: NETWORKING. GOOD, EASY NETWORKING.
-     * // TODO: Don't forget - OpenAL can stream audio!
      * // TODO: Just make it easier to animate, somehow!
      * // TODO: Collision Algorithms (also for 3D space)?!
-     * // TODO: Make OpenAL optional by making it a library.
      * // TODO: ANDROID OpenAL. Get it done!~ (SWIG wrapper!)
+     * // TODO: Make OpenAL optional by making it a library...?
      * // TODO: SHADERS. Remake the "PostFX" Processing library?
      */
 
@@ -33,15 +32,17 @@ public class App {
     private static boolean tick;
     // endregion
 
+    @Deprecated
     public static void main(String[] p_args) {
         // region Building the `Sketch`!
-        App.sketchInstance = new NerdSketchBuilder()
-                .setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))
+        NerdSketchBuilder builder = new NerdSketchBuilder();
+        builder.setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
                 .setAntiAliasing(4)
-                .usesJavaRenderer()
+                // .usesJavaRenderer()
+
                 // .preventCloseOnEscape()
                 // .startFullscreen()
                 .usesOpenAl()
@@ -51,7 +52,8 @@ public class App {
                 // calling! They're much faster, actually! That `0` millisecond time included
                 // starting and stopping a `MillisTimer`!
                 // ..they should be faster than a v-table thingy anyway, amirite?
-                .addSketchConstructionListener((s) -> System.out.println(s.STRINGS.get("Meta.onConstruct"))
+                .addSketchConstructionListener((s) -> System.out.println(
+                        s.STRINGS.get("Meta.onConstruct"))
 
                 // These work too - commenting them out so they don't clog-the-log!:
                 // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
@@ -62,9 +64,9 @@ public class App {
                     var toRet = new SceneManagerSettings();
                     toRet.onScenePreload.onlyFirstPreload = false;
                     return toRet;
-                })
+                });
 
-                .build(p_args);
+        builder.build(p_args);
         // endregion
 
         App.startTickThread();
