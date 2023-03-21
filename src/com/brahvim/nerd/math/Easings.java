@@ -11,16 +11,12 @@ public class Easings {
         return x == 0 ? 0 : (float) Math.pow(2, 10 * x - 10);
     }
 
-    public static float leminiscate(float x, float theta) {
-        return (float) Math.sqrt(x * x * Math.cos(2 * theta));
-    }
-
-    // Mine!:
+    // Mine! [https://www.desmos.com/calculator/88fimxy2ox]:
     public static float exponentialSine(float x, float theta) {
         return (float) Math.pow(x, Math.sin(theta));
     }
 
-    // Mine!:
+    // Mine! [https://www.desmos.com/calculator/hgs8iom7sk]:
     public static float exponentialSine(float x) {
         return (float) Math.pow(x, Math.sin(x));
     }

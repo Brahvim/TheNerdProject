@@ -14,6 +14,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
  */
 @Deprecated
 public class EasingFunction {
+
     // region Fields.
     public float parameter, parameterOffset;
     public float endTime = Float.MAX_VALUE - 1, aliveTime;
@@ -78,19 +79,19 @@ public class EasingFunction {
         this.aliveTime = 0;
     }
 
-    public void start(float p_parameteroffset) {
+    public void start(float p_offsetParam) {
         this.aliveTime = 0;
-        this.parameterOffset = p_parameteroffset;
+        this.parameterOffset = p_offsetParam;
     }
 
     public void start(Runnable p_onEnd) {
         this.onEnd = p_onEnd;
     }
 
-    public void start(float p_parameterOffset, Runnable p_onEnd) {
+    public void start(float p_offsetParam, Runnable p_onEnd) {
         this.aliveTime = 0;
         this.onEnd = p_onEnd;
-        this.parameter = p_parameterOffset;
+        this.parameter = p_offsetParam;
     }
     // endregion
 
@@ -156,4 +157,5 @@ public class EasingFunction {
         return this.function.apply(this.parameter + this.parameterOffset);
     }
     // endregion
+
 }
