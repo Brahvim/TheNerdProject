@@ -1,129 +1,119 @@
 package com.brahvim.nerd.math;
 
-import java.util.function.Function;
-
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-/**
- * Might even be removed later :|<br>
- * <br>
- * Brought to you, *from* my other (currently supa'-duper secret!) project,
- * "AGC"!:
- *
- * @deprecated ...for now.
- */
-@Deprecated
-public class EasingFunction {
+public abstract class EasingFunction {
 
     // region Fields.
     public float parameter, parameterOffset;
     public float endTime = Float.MAX_VALUE - 1, aliveTime;
 
     /**
-     * Determines if an `EasingFunction` object is doing calculations or not.
-     * `public` so that you can change it!
+     * Returned by {@code SineFunction::get()} if
+     * {@code SineFunction::useInactValue} is
+     * {@code true}.
+     */
+    public float inactValue = 0;
+
+    /**
+     * Makes {@code SineFunction::get()} output {@code SineFunction::inactValue}
+     * when the
+     * wave has ended - AKA, when {@code SineFunction::active} turns {@code false}.
+     *
+     * @apiNote {@code true} by default. <br>
+     *          <br>
+     *          {@code SineFunction::inactValue} is {@code 0}
+     *          by default.
+     */
+    public boolean useInactValue = false;
+
+    /**
+     * Determines if an {@link EasingFunction} object is doing calculations or not.
+     * {@code public} so you can change it!
      * (...and stop calculations if they're unnecessary.)
      *
-     * @apiNote `false` by default. Call `.start()` to make the function's
-     *          processing active!
+     * @apiNote {@code false} by default. Call {@link EasingFunction#start()} to
+     *          make the function actively processing again.
      */
     public boolean active = true;
-    private boolean pactive = false;
 
-    /**
-     * Makes `get()` output `0` when processing time
-     * has ended - AKA, when `active` turns `false`.
-     *
-     * @apiNote `false` by default.
-     */
-    public boolean zeroWhenInactive;
-
-    /**
-     * Takes in how many more milliseconds the {@link EasingFunction}
-     * will run for, then sets it to inactive.
-     */
-    private Function<Float, Float> extensionFunction;
-
-    /**
-     * Takes in the parameter of the {@link EasingFunction}
-     * (which many then be processed using {@link EasingFunction#apply(Float[]
-     * p_parameters)},
-     * to determine if the function can end. <b>The first parameter is the amount of
-     * time the
-     * {@link EasingFunction} has been executing for.</b>
-     */
-    private Function<Float, Boolean> endCheck;
-
-    private Function<Float, Float> function;
-
-    private Sketch parentSketch;
-    private Runnable onEnd;
+    protected final Sketch SKETCH;
+    protected boolean pactive = false;
+    protected float lastValue;
+    protected Runnable onEnd;
     // endregion
 
-    // region Constructors.
-    public EasingFunction(Sketch p_parentSketch) {
-        this.parentSketch = p_parentSketch;
+    protected EasingFunction(Sketch p_parentSketch) {
+        this.SKETCH = p_parentSketch;
     }
-
-    public EasingFunction(Sketch p_parentSketch, Function<Float, Float> p_function) {
-        this.function = p_function;
-        this.parentSketch = p_parentSketch;
-    }
-
-    // No matter what order you put them in, the API Note comes after the Author
-    // name. Oof.
-    // endregion
 
     // region `start()` overloads and `setParameterOffset()`.
-    public void start() {
+    public EasingFunction start() {
         this.aliveTime = 0;
+        return this;
     }
 
-    public void start(float p_offsetParam) {
-        this.aliveTime = 0;
-        this.parameterOffset = p_offsetParam;
-    }
-
-    public void start(Runnable p_onEnd) {
+    public EasingFunction start(Runnable p_onEnd) {
         this.onEnd = p_onEnd;
+        this.aliveTime = 0;
+        return this;
     }
 
-    public void start(float p_offsetParam, Runnable p_onEnd) {
+    public EasingFunction start(float p_paramOffset) {
+        this.parameterOffset = p_paramOffset;
         this.aliveTime = 0;
+        return this;
+    }
+
+    public EasingFunction start(float p_paramOffset, Runnable p_onEnd) {
+        this.parameterOffset = p_paramOffset;
         this.onEnd = p_onEnd;
-        this.parameter = p_offsetParam;
+        this.aliveTime = 0;
+        return this;
     }
     // endregion
 
     // region End and extend!
-    public void end() {
+    public EasingFunction stop() {
         this.endTime = 0;
+        return this;
     }
 
-    public void endIn(float p_millis) {
+    public EasingFunction endIn(int p_millis) {
         this.endTime = this.aliveTime + p_millis;
+        return this;
     }
 
-    public void setEndCheck(Function<Float, Boolean> p_endCheckFunction) {
-        this.endCheck = p_endCheckFunction;
-    }
-
-    public void extendUsing(Function<Float, Float> p_extensionFunction) {
-        this.extensionFunction = p_extensionFunction;
-    }
-
-    public void extendEndBy(float p_millis) {
-        this.endTime += this.extensionFunction.apply(p_millis);
+    public EasingFunction extendEndBy(int p_millis) {
+        this.endTime += p_millis;
+        return this;
     }
     // endregion
 
+    public EasingFunction setOffset(float p_paramOffset) {
+        this.parameterOffset = p_paramOffset;
+        return this;
+    }
+
+    public EasingFunction addOffset(float p_paramOffset) {
+        this.parameterOffset += p_paramOffset;
+        return this;
+    }
+
+    // *Abstractness!:tm:*
+    protected abstract float apply();
+
     // region Getters.
     public float getStartTime() {
-        return this.parentSketch.millis() - this.aliveTime;
+        return this.SKETCH.millis() - this.aliveTime;
     }
 
     public float getTimeSinceStart() {
         return this.aliveTime;
+    }
+
+    public float getLastValue() {
+        return this.lastValue;
     }
 
     public float getEndTime() {
@@ -134,27 +124,23 @@ public class EasingFunction {
         return this.pactive;
     }
 
-    public float apply(/* float p_paramters */) {
-        return this.function.apply(this.parameter);
-    }
-
     public float get() {
         this.pactive = this.active;
-        this.active = this.endCheck.apply(this.parameter);
+        this.active = this.aliveTime <= this.endTime;
 
         if (this.active)
-            this.aliveTime += this.parentSketch.frameTime;
+            this.aliveTime += this.SKETCH.frameTime;
         // ^^^ `frameTime` comes from "the Engine" by the way. (Hey - that's "Nerd"!)
         else { // If no longer active,
             if (this.pactive)
                 if (this.onEnd != null)
                     this.onEnd.run();
 
-            if (this.zeroWhenInactive)
-                return 0;
+            return this.useInactValue ? this.inactValue : this.lastValue;
         }
 
-        return this.function.apply(this.parameter + this.parameterOffset);
+        this.lastValue = this.apply();
+        return this.lastValue;
     }
     // endregion
 
