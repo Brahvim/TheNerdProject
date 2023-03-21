@@ -2,6 +2,8 @@ package com.brahvim.nerd.math;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
+// It is better to extend this class than to have `java.util.Function`s in it.
+// How else would we have `SineFunction::freqMult`, then?!
 public abstract class EasingFunction {
 
     // region Fields.

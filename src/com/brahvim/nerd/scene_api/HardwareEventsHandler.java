@@ -89,6 +89,9 @@ package com.brahvim.nerd.scene_api;
 
     public default void focusGained() {
     }
+
+    public default void monitorChanged() {
+    }
     // endregion
 
 }

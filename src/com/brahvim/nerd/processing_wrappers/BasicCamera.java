@@ -10,6 +10,7 @@ import processing.core.PVector;
  *          {@link BasicCamera}.
  */
 public class BasicCamera extends NerdCamera {
+
     // region Fields.
     public PVector center;
     public PVector defaultCamUp, defaultCamPos, defaultCamCenter;

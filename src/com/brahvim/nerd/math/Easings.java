@@ -3,8 +3,13 @@ package com.brahvim.nerd.math;
 // Thanks to `easings.net`!
 
 public class Easings {
+
     public static float cubic(float x) {
         return 1.0f - (float) Math.pow(1 - x, 3);
+    }
+
+    public static float quadratic(float x) {
+        return x * x + x;
     }
 
     public static float exponential(float x) {

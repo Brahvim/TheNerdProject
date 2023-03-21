@@ -8,6 +8,7 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 public class BasicCameraBuilder {
+
     private BasicCamera build;
     private final Sketch SKETCH;
 

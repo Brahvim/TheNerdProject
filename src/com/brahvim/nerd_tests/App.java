@@ -10,16 +10,13 @@ public class App {
 
     // TODOs!:
     /*
-     * // TODO: `AssetLoaderOptions`!
-     * // TODO: JBox2D and LibBulletJME? :D?
-     * // TODO: Multiple monitor support!!!
-     * // TODO: NETWORKING. GOOD NETWORKING.
+     * // TODO: NETWORKING. GOOD, EASY NETWORKING.
      * // TODO: Don't forget - OpenAL can stream audio!
+     * // TODO: Just make it easier to animate, somehow!
      * // TODO: Collision Algorithms (also for 3D space)?!
-     * // TODO: Better asset-loader exception handling API,
+     * // TODO: Make OpenAL optional by making it a library.
      * // TODO: ANDROID OpenAL. Get it done!~ (SWIG wrapper!)
      * // TODO: SHADERS. Remake the "PostFX" Processing library?
-     * // TODO: Spritesheets and animations for models and... rigging?!
      */
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =

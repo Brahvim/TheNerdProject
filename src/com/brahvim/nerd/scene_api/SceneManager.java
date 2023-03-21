@@ -183,7 +183,7 @@ public class SceneManager {
     private Sketch.SketchTouchListener touchListener;
 
     @SuppressWarnings("unused")
-    private Sketch.SketchWindowListener windowListener;
+    private Sketch.SketchDisplayListener windowListener;
 
     @SuppressWarnings("unused")
     private Sketch.SketchKeyboardListener keyboardListener;
@@ -322,7 +322,7 @@ public class SceneManager {
             }
         };
 
-        this.windowListener = this.SKETCH.new SketchWindowListener() {
+        this.windowListener = this.SKETCH.new SketchDisplayListener() {
             @Override
             public void focusLost() {
                 if (SCENE_MAN.currScene == null)

@@ -9,12 +9,13 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 public abstract class NerdCamera {
+
     // region Fields.
     public final static float DEFAULT_CAM_FOV = PApplet.radians(60),
             DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10000, DEFAULT_CAM_MOUSE_Z = 25;
 
     public final Sketch SKETCH;
-    public Consumer<NerdCamera> script;
+    public Consumer<NerdCamera> script; // Smart users will write complete classes for these.
 
     // ...yeah, for some reason `PApplet::color()` fails.
     public float red, green, blue, alpha;

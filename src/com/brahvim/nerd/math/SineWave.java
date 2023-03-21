@@ -2,6 +2,8 @@ package com.brahvim.nerd.math;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
+import processing.core.PConstants;
+
 public class SineWave {
 
     // region Fields.
@@ -131,17 +133,23 @@ public class SineWave {
     }
 
     public SineWave endWhenAngleIs(float p_angle) {
+        float time = ((p_angle / (PConstants.TAU * this.freqMult)) / this.freq);
+        this.endTime = this.aliveTime + time;
+        return this;
+
         // Of course this magic-number stuff won't work everytime! REPLACE THIS?!
         // ~~(Also because... any multiple of `0.25` less than `1` works...)~~
         // Oh hey! That looks perfect!:
-        this.endTime = 0.9f * // <--- The magic number!.
-                Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) / this.freqMult);
-        return this;
+        // this.endTime = 0.9f * // <--- The magic number!.
+        // Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) /
+        // this.freqMult);
+        // return this;
 
         // Was an idea to avoid I don't get negative values and the frequency doesn't
         // double - but I didn't use it.. don't ask me why :joy::
-        // this.endTime = ((float) Math.toRadians(p_angle) - this.angleOffset)
-        // / this.freqMult; // PS This was what I calculated on paper.
+        // this.endTime = ((float) Math.toRadians(p_angle) - this.angleOffset) /
+        // this.freqMult;
+        // PS This was what I calculated on paper.
         // this.endTime = Math.abs((this.endTime - this.aliveTime) * 0.5f);
 
         // The calculation I used in the frametime version of this class, as seen in

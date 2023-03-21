@@ -67,10 +67,8 @@ public class Sketch extends PApplet {
 	 * accidentally change what they weren't supposed to!
 	 */
 
-	// Detailed workflow callbacks.
-
 	// region Input listeners.
-	public abstract class SketchMouseListener {
+	public /* `abstract` */ class SketchMouseListener {
 
 		public SketchMouseListener() {
 			SKETCH.MOUSE_LISTENERS.add(this);
@@ -98,7 +96,7 @@ public class Sketch extends PApplet {
 
 	}
 
-	public abstract class SketchTouchListener {
+	public /* `abstract` */ class SketchTouchListener {
 
 		public SketchTouchListener() {
 			SKETCH.TOUCH_LISTENERS.add(this);
@@ -117,9 +115,9 @@ public class Sketch extends PApplet {
 
 	}
 
-	public abstract class SketchWindowListener {
+	public /* `abstract` */ class SketchDisplayListener {
 
-		public SketchWindowListener() {
+		public SketchDisplayListener() {
 			SKETCH.WINDOW_LISTENERS.add(this);
 		}
 
@@ -134,9 +132,12 @@ public class Sketch extends PApplet {
 		}
 		// endregion
 
+		public void monitorChanged() {
+		}
+
 	}
 
-	public abstract class SketchKeyboardListener {
+	public /* `abstract` */ class SketchKeyboardListener {
 
 		public SketchKeyboardListener() {
 			SKETCH.KEYBOARD_LISTENERS.add(this);
@@ -284,8 +285,27 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region "Dimensions".
+	// Time (`millis()` returns `int`!):
 	public int frameStartTime, pframeTime, frameTime;
+
+	// Display dimensions:
 	public int displayWidthHalf, displayHeightHalf;
+	public int displayWidthQuart, displayHeightQuart;
+	public int displayWidthThirdQuart, displayHeightThirdQuart;
+	public int displayRefreshRate;
+	public float displayScr;
+
+	// Previous frame display dimensions:
+	public float pdisplayScr;
+	public int pdisplayRefreshRate;
+	public int pdisplayWidth, pdisplayHeight; // <-- Not included with Processing!
+	public int pdisplayWidthHalf, pdisplayHeightHalf;
+	public int pdisplayWidthQuart, pdisplayHeightQuart;
+	public int ppixelDensity, ppixelWidth, ppixelHeight; // <-- Also not included with Processing!
+	public int pdisplayWidthThirdQuart, pdisplayHeightThirdQuart;
+
+	// Windows dimensions for the current and previous frames:
+	public float pcx, pcy, pqx, pqy, pq3x, pq3y, pscr;
 	public float cx, cy, qx, qy, q3x, q3y, scr;
 	public int pwidth, pheight;
 	// endregion
@@ -305,7 +325,7 @@ public class Sketch extends PApplet {
 	// region Callback listeners!
 	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<SketchDisplayListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
 
 	protected final LinkedHashSet<Consumer<Sketch>> EXIT_LISTENERS, SETUP_LISTENERS, DISPOSAL_LISTENERS;
@@ -453,7 +473,7 @@ public class Sketch extends PApplet {
 		// this.dispose();
 		// }));
 
-		this.updateRatios();
+		this.updateWindowRatios();
 		super.surface.setTitle(this.NAME);
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
@@ -508,10 +528,36 @@ public class Sketch extends PApplet {
 
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == super.width || this.pheight == super.height)) {
-			this.updateRatios();
-			for (SketchWindowListener l : this.WINDOW_LISTENERS)
+			this.updateWindowRatios();
+			for (SketchDisplayListener l : this.WINDOW_LISTENERS)
 				l.resized();
 		}
+
+		// region Current and previous frame monitor settings, plus callback!.
+		final GraphicsDevice[] updatedList = Sketch.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
+		if (Sketch.JAVA_SCREENS != updatedList) {
+			Sketch.DEFAULT_JAVA_SCREEN = Sketch.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
+			Sketch.DEFAULT_JAVA_SCREEN_MODE = Sketch.DEFAULT_JAVA_SCREEN.getDisplayMode();
+			Sketch.DEFAULT_REFRESH_RATE = Sketch.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
+		}
+
+		if (this.previousMonitor != this.currentMonitor) {
+			this.previousMonitor = this.currentMonitor;
+			this.updateDisplayRatios();
+			for (SketchDisplayListener l : this.WINDOW_LISTENERS)
+				l.monitorChanged();
+		}
+
+		if (super.focused)
+			this.currentMonitor = Sketch.getGraphicsDeviceAt(this.GLOBAL_MOUSE_POINT);
+
+		// Update `super.displayWidth` and `super.displayHeight`:
+		if (this.currentMonitor != null) {
+			final DisplayMode CURRENT_MON_MODE = this.currentMonitor.getDisplayMode();
+			super.displayWidth = CURRENT_MON_MODE.getWidth();
+			super.displayHeight = CURRENT_MON_MODE.getHeight();
+		}
+		// endregion
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
 		this.mouse.set(super.mouseX, super.mouseY);
@@ -543,27 +589,6 @@ public class Sketch extends PApplet {
 		this.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
 		this.GLOBAL_MOUSE_VECTOR.set(GLOBAL_MOUSE_POINT.x, GLOBAL_MOUSE_POINT.y);
 		// endregion
-		// endregion
-
-		// region Current and previous frame monitor settings.
-		final GraphicsDevice[] updatedList = Sketch.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
-		if (Sketch.JAVA_SCREENS != updatedList) {
-			Sketch.DEFAULT_JAVA_SCREEN = Sketch.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
-			Sketch.DEFAULT_JAVA_SCREEN_MODE = Sketch.DEFAULT_JAVA_SCREEN.getDisplayMode();
-			Sketch.DEFAULT_REFRESH_RATE = Sketch.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
-		}
-
-		this.previousMonitor = this.currentMonitor;
-
-		if (super.focused)
-			this.currentMonitor = Sketch.getGraphicsDeviceAt(this.GLOBAL_MOUSE_POINT);
-
-		// Update `super.displayWidth` and `super.displayHeight`.
-		if (this.currentMonitor != null) {
-			final DisplayMode CURRENT_MON_MODE = this.currentMonitor.getDisplayMode();
-			super.displayWidth = CURRENT_MON_MODE.getWidth();
-			super.displayHeight = CURRENT_MON_MODE.getHeight();
-		}
 		// endregion
 
 		// region Apply the camera!:
@@ -801,7 +826,7 @@ public class Sketch extends PApplet {
 		// `handleDraw()`,
 		// which is probably when events are handled:
 		if (!super.isLooping())
-			for (SketchWindowListener l : this.WINDOW_LISTENERS) {
+			for (SketchDisplayListener l : this.WINDOW_LISTENERS) {
 				l.focusGained();
 			}
 	}
@@ -816,7 +841,7 @@ public class Sketch extends PApplet {
 		// `handleDraw()`,
 		// which is probably when events are handled:
 		if (!super.isLooping())
-			for (SketchWindowListener l : this.WINDOW_LISTENERS) {
+			for (SketchDisplayListener l : this.WINDOW_LISTENERS) {
 				l.focusLost();
 			}
 	}
@@ -900,7 +925,7 @@ public class Sketch extends PApplet {
 
 	// region Window queries.
 	public void centerWindow() {
-		this.updateRatios(); // You called this function when the window changed its size or position, right?
+		this.updateWindowRatios(); // You called this function when the window changed its size or position, right?
 		// Remember: computers with multiple displays exist! We shouldn't cache this:
 
 		final DisplayMode CURRENT_DISPLAY_MODE = this.currentMonitor == null
@@ -1039,7 +1064,7 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Rendering utilities!
-	public void updateRatios() {
+	public void updateWindowRatios() {
 		this.cx = super.width * 0.5f;
 		this.cy = super.height * 0.5f;
 
@@ -1050,9 +1075,54 @@ public class Sketch extends PApplet {
 		this.q3y = this.cy + this.qy;
 
 		this.scr = (float) super.width / (float) super.height;
+	}
+
+	public void updateDisplayRatios() {
+		this.displayScr = (float) super.displayWidth / (float) super.displayHeight;
+		this.displayRefreshRate = this.currentMonitor.getDisplayMode().getRefreshRate();
 
 		this.displayWidthHalf = super.displayWidth / 2;
 		this.displayHeightHalf = super.displayHeight / 2;
+
+		// Dividing directly by `4` for more precision...?
+		this.displayWidthQuart = super.displayWidth / 4;
+		this.displayHeightQuart = super.displayHeight / 4;
+
+		this.displayWidthThirdQuart = this.displayWidthHalf + this.displayWidthQuart;
+		this.displayHeightThirdQuart = this.displayWidthHalf + this.displayWidthQuart;
+	}
+
+	public void recordCurrentWindowRatios() {
+		this.pcx = this.cx;
+		this.pcy = this.cy;
+
+		this.pqx = this.qx;
+		this.pqy = this.qy;
+
+		this.pq3x = this.q3x;
+		this.pq3y = this.q3y;
+
+		this.pscr = this.scr;
+	}
+
+	public void recordCurrentDisplayRatios() {
+		this.pdisplayScr = this.displayScr;
+		this.ppixelWidth = super.pixelWidth;
+		this.ppixelHeight = super.pixelHeight;
+		this.ppixelDensity = super.pixelDensity;
+		this.pdisplayRefreshRate = this.displayRefreshRate;
+
+		this.pdisplayWidth = super.displayWidth;
+		this.pdisplayHeight = super.displayHeight;
+
+		this.pdisplayWidthHalf = this.displayWidthHalf;
+		this.pdisplayHeightHalf = this.displayHeightHalf;
+
+		this.pdisplayWidthQuart = this.displayWidthQuart;
+		this.pdisplayHeightQuart = this.displayHeightQuart;
+
+		this.pdisplayWidthThirdQuart = this.displayWidthThirdQuart;
+		this.pdisplayHeightThirdQuart = this.displayHeightThirdQuart;
 	}
 
 	// region From `PGraphics`.
