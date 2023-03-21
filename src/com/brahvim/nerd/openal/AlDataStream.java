@@ -36,6 +36,8 @@ public class AlDataStream {
 		this.buffers.add(toQueue);
 	}
 
+	// Yo! Did this break?
+	// ...you might wanna check out that loop in this method!:
 	/* `package` */ void framelyCallback() {
 		for (int i = this.source.getBuffersProcessed() - 1; i != 0; i--) {
 			AlWavBuffer b = this.buffers.get(i);

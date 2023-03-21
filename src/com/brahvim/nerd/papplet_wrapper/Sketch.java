@@ -200,9 +200,9 @@ public class Sketch extends PApplet {
 	public final Robot ROBOT;
 	public final String RENDERER;
 	public final String ICON_PATH;
+	public final boolean USES_OPENGL;
 	public final StringTable STRINGS;
 	public final int INIT_WIDTH, INIT_HEIGHT;
-	public final boolean USES_OPENGL, USES_OPENAL;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
 	public final Point GLOBAL_MOUSE_POINT = new Point();
@@ -365,19 +365,6 @@ public class Sketch extends PApplet {
 			this.POST_FIRST_CALLER = p_key.postCallOrder;
 		// endregion
 
-		this.NAME = p_key.name;
-		this.RENDERER = p_key.renderer;
-		this.ICON_PATH = p_key.iconPath;
-		this.ANTI_ALIASING = p_key.antiAliasing;
-		this.FIRST_SCENE_CLASS = p_key.firstScene;
-		this.INITIALLY_RESIZABLE = p_key.canResize;
-		this.CAN_FULLSCREEN = !p_key.cannotFullscreen;
-		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
-		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
-		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
-		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
-		this.AL = p_key.useOpenAl ? new NerdAl(this, p_key.alContextSettings) : null;
-
 		// region Listeners!...
 		this.SETTINGS_LISTENERS = p_key.settingsListeners;
 		this.SETUP_LISTENERS = p_key.setupListeners;
@@ -393,12 +380,25 @@ public class Sketch extends PApplet {
 		this.EXIT_LISTENERS = p_key.exitListeners;
 		this.DISPOSAL_LISTENERS = p_key.disposalListeners;
 		// endregion
+
+		this.sceneMan = new SceneManager(this, p_key.sceneChangeListeners); // Before `Sketch::AL`!
+
+		this.NAME = p_key.name;
+		this.RENDERER = p_key.renderer;
+		this.ICON_PATH = p_key.iconPath;
+		this.ANTI_ALIASING = p_key.antiAliasing;
+		this.FIRST_SCENE_CLASS = p_key.firstScene;
+		this.INITIALLY_RESIZABLE = p_key.canResize;
+		this.CAN_FULLSCREEN = !p_key.cannotFullscreen;
+		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
+		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
+		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
+		this.AL = new NerdAl(this, p_key.alContextSettings);
+		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
 		// endregion
 
 		// region Non-key settings.
-		this.USES_OPENAL = this.AL != null;
 		this.UNPROJECTOR = new Unprojector();
-		this.sceneMan = new SceneManager(this);
 		this.fullscreen = this.STARTED_FULLSCREEN;
 		this.currentCamera = new BasicCameraBuilder(this).build();
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
@@ -635,11 +635,12 @@ public class Sketch extends PApplet {
 	}
 
 	public void post() {
+		for (Consumer<Sketch> c : this.POST_LISTENERS)
+			if (c != null)
+				c.accept(this);
+
 		if (this.USES_OPENGL)
 			super.endPGL();
-
-		if (this.AL != null)
-			this.AL.framelyCallback();
 
 		this.framelyWindowSetup();
 
@@ -671,6 +672,7 @@ public class Sketch extends PApplet {
 		this.pcursorConfined = this.cursorConfined;
 		this.pmouseScrollDelta = this.mouseScrollDelta;
 		// endregion
+
 	}
 
 	@Override
@@ -687,9 +689,6 @@ public class Sketch extends PApplet {
 		for (Consumer<Sketch> c : this.DISPOSAL_LISTENERS)
 			if (c != null)
 				c.accept(this);
-
-		if (this.AL != null)
-			this.AL.completeDisposal();
 
 		super.dispose();
 	}

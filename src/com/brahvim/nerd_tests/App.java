@@ -32,7 +32,6 @@ public class App {
     private static boolean tick;
     // endregion
 
-    @Deprecated
     public static void main(String[] p_args) {
         // region Building the `Sketch`!
         NerdSketchBuilder builder = new NerdSketchBuilder();
@@ -45,7 +44,6 @@ public class App {
 
                 // .preventCloseOnEscape()
                 // .startFullscreen()
-                .usesOpenAl()
                 .canResize()
 
                 // ...apparently these listeners take literally `0` millseconds to finish

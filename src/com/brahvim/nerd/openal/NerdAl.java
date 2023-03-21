@@ -41,27 +41,48 @@ public class NerdAl {
 	private /* `volatile` */ AlContext context;
 	// endregion
 
-	// region Constructors.
+	// region Construction.
 	public NerdAl(Sketch p_sketch) {
 		this(p_sketch, AlDevice.getDefaultDeviceName());
 	}
 
 	public NerdAl(Sketch p_sketch, String p_deviceName) {
 		this.SKETCH = p_sketch;
+		this.initListeners();
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName());
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
 	}
 
 	public NerdAl(Sketch p_sketch, AlContext.AlContextSettings p_settings) {
 		this.SKETCH = p_sketch;
+		this.initListeners();
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
 	}
 
 	public NerdAl(Sketch p_sketch, AlContext.AlContextSettings p_settings, String p_deviceName) {
 		this.SKETCH = p_sketch;
+		this.initListeners();
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
+	}
+
+	private void initListeners() {
+		// When the scene is changed, delete unnecessary OpenAL data:
+		this.SKETCH.getSceneManager().addSceneChangedListener((s, p, c) -> {
+			if (p != null)
+				this.scenelyDisposal();
+		});
+
+		// Process everything, every frame!:
+		this.SKETCH.addDrawListener((s) -> {
+			this.framelyCallback();
+		});
+
+		// When the sketch is exiting, delete all OpenAL native data:
+		this.SKETCH.addSketchDisposalListener((s) -> {
+			this.completeDisposal();
+		});
 	}
 	// endregion
 

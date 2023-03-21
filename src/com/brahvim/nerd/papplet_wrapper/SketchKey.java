@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.openal.AlContext;
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 
 import processing.core.PConstants;
@@ -22,8 +23,8 @@ import processing.core.PConstants;
     public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
 
     // region Listeners.
-    public LinkedHashSet<Consumer<Sketch>> exitListeners, setupListeners,
-            settingsListeners, disposalListeners, sketchConstructedListeners;
+    public LinkedHashSet<Consumer<Sketch>> sketchConstructedListeners,
+            settingsListeners, setupListeners, exitListeners, disposalListeners;
 
     // Initializing the listeners:
     {
@@ -31,8 +32,11 @@ import processing.core.PConstants;
         this.setupListeners = new LinkedHashSet<>();
         this.settingsListeners = new LinkedHashSet<>();
         this.disposalListeners = new LinkedHashSet<>();
+        this.sceneChangeListeners = new LinkedHashSet<>();
         this.sketchConstructedListeners = new LinkedHashSet<>();
     }
+
+    public LinkedHashSet<SceneManager.SceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
 
     public LinkedHashSet<Consumer<Sketch>> preListeners, postListeners,
             drawListeners, preDrawListeners, postDrawListeners;
@@ -47,7 +51,7 @@ import processing.core.PConstants;
     }
     // endregion
 
-    public boolean useOpenAl, dontCloseOnEscape, startedFullscreen, canResize,
+    public boolean dontCloseOnEscape, startedFullscreen, canResize,
             cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 
     // region Stuff that isn't a field.

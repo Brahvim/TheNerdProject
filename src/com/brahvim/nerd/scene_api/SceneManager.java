@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
@@ -59,7 +60,13 @@ public class SceneManager {
     // endregion
 
     // My code style: If it is an inner class, also write the name of the outer
-    // class. I do this to prevent namespace pollution.
+    // class. I do this to aid reading and to prevent namespace pollution.
+
+    public interface SceneChangeListener {
+        public void sceneChanged(Sketch sketch,
+                Class<? extends NerdScene> previous,
+                Class<? extends NerdScene> current);
+    }
 
     /**
      * Stores scene data while a scene is not active.
@@ -176,6 +183,8 @@ public class SceneManager {
      */
 
     // region Sketch Event Listeners.
+    private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS;
+
     @SuppressWarnings("unused")
     private Sketch.SketchMouseListener mouseListener;
 
@@ -195,13 +204,30 @@ public class SceneManager {
     // endregion
 
     // region Construction.
-    public SceneManager(Sketch p_sketch) {
-        this(p_sketch, new SceneManager.SceneManagerSettings());
+    public SceneManager(Sketch p_sketch, LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
+        this.SKETCH = p_sketch;
+        this.SCENE_CHANGE_LISTENERS = p_listeners;
+        this.settings = new SceneManager.SceneManagerSettings();
+        this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
+
+        this.initSceneListeners();
     }
 
     public SceneManager(Sketch p_sketch, SceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
+        this.SCENE_CHANGE_LISTENERS = new LinkedHashSet<>(0);
+        this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
+
+        this.initSceneListeners();
+    }
+
+    public SceneManager(Sketch p_sketch,
+            SceneManager.SceneManagerSettings p_settings,
+            LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
+        this.SKETCH = p_sketch;
+        this.settings = p_settings;
+        this.SCENE_CHANGE_LISTENERS = p_listeners;
         this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
 
         this.initSceneListeners();
@@ -455,6 +481,14 @@ public class SceneManager {
     // endregion
 
     // region [`public`] Queries.
+    public void addSceneChangedListener(SceneManager.SceneChangeListener p_listener) {
+        this.SCENE_CHANGE_LISTENERS.add(p_listener);
+    }
+
+    public void removeSceneChangedListener(SceneManager.SceneChangeListener p_listener) {
+        this.SCENE_CHANGE_LISTENERS.remove(p_listener);
+    }
+
     /**
      * Returns a {@link HashSet} of {@link NerdScene} classes including only classes
      * instances of which this {@link SceneManager} has ran.
@@ -815,9 +849,9 @@ public class SceneManager {
 
         this.SKETCH.push();
 
-        // Delete all OpenAL native data:
-        if (this.SKETCH.AL != null && prevSceneClassNotNull)
-            this.SKETCH.AL.scenelyDisposal();
+        for (SceneChangeListener l : this.SCENE_CHANGE_LISTENERS)
+            if (l != null)
+                l.sceneChanged(this.SKETCH, this.prevSceneClass, this.currSceneClass);
 
         this.currScene.runSetup(p_state);
     }
