@@ -24,7 +24,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	// Storing it here!
 	protected BufferT data;
 	protected NerdAl alMan;
-	protected int id, dataType;
+	protected int id, alFormat;
 	// endregion
 
 	// region Constructors.
@@ -42,11 +42,11 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 
 		this.alMan = p_buffer.alMan;
 		this.id = AL11.alGenBuffers();
-		this.dataType = p_buffer.dataType;
+		this.alFormat = p_buffer.alFormat;
 
 		this.setBits(p_buffer.getBits());
 		this.setChannels(p_buffer.getChannels());
-		this.setDataImpl(p_buffer.dataType, (BufferT) p_buffer.getData(), p_buffer.getSampleRate());
+		this.setDataImpl(p_buffer.alFormat, (BufferT) p_buffer.getData(), p_buffer.getSampleRate());
 
 		this.alMan.checkAlError();
 	}
@@ -77,7 +77,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	}
 	// endregion
 
-	// region `abstract` methods (and overloads, and implementations).
+	// region `abstract` methods (and overloads, with their implementations).
 	public AlBuffer<?> loadFrom(String p_path) {
 		this.loadFrom(new File(p_path)); // Also invoke `AlNativeResource::shouldDispose()`.
 		return this;
@@ -93,7 +93,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 
 	public void setData(int p_format, BufferT p_buffer, int p_sampleRate) {
 		this.data = p_buffer;
-		this.dataType = p_format;
+		this.alFormat = p_format;
 		this.setDataImpl(p_format, p_buffer, p_sampleRate);
 		this.alMan.checkAlError();
 	}
@@ -210,36 +210,15 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	}
 
 	public int getSize() {
-		// Not using `MemoryStack` to allocate here! This stuff is being returned!
-		// ...but WAIT, it works..?!
-		MemoryStack.stackPush();
-		IntBuffer retVal = MemoryStack.stackMallocInt(1);
-		AL11.alGetBufferiv(this.id, AL11.AL_SIZE, retVal);
-		MemoryStack.stackPop();
-
-		return retVal.get();
+		return this.getInt(AL11.AL_SIZE);
 	}
 
 	public int getBits() {
-		// Not using `MemoryStack` to allocate here! This stuff is being returned!
-		// ...but WAIT, it works..?!
-		MemoryStack.stackPush();
-		IntBuffer retVal = MemoryStack.stackMallocInt(1);
-		AL11.alGetBufferiv(this.id, AL11.AL_BITS, retVal);
-		MemoryStack.stackPop();
-
-		return retVal.get();
+		return this.getInt(AL11.AL_BITS);
 	}
 
 	public int getChannels() {
-		// Not using `MemoryStack` to allocate here! This stuff is being returned!
-		// ...but WAIT, it works..?!
-		MemoryStack.stackPush();
-		IntBuffer retVal = MemoryStack.stackMallocInt(1);
-		AL11.alGetBufferiv(this.id, AL11.AL_CHANNELS, retVal);
-		MemoryStack.stackPop();
-
-		return retVal.get();
+		return this.getInt(AL11.AL_CHANNELS);
 	}
 
 	public BufferT getData() {
@@ -247,12 +226,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	}
 
 	public int getSampleRate() {
-		MemoryStack.stackPush();
-		IntBuffer sampleRateBuffer = MemoryStack.stackMallocInt(1);
-		AL11.alBufferiv(this.id, ALC11.ALC_FREQUENCY, sampleRateBuffer);
-		MemoryStack.stackPop();
-
-		return sampleRateBuffer.get();
+		return this.getInt(ALC11.ALC_FREQUENCY);
 	}
 	// endregion
 

@@ -87,7 +87,7 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 			// Give the OpenAL buffer the data:
 
 			AL11.alBufferData(this.id,
-					super.dataType = channelsBuffer.get() == 1
+					super.alFormat = channelsBuffer.get() == 1
 							? AL11.AL_FORMAT_MONO16
 							: AL11.AL_FORMAT_STEREO16,
 					rawAudioBuffer, sampleRateBuffer.get());

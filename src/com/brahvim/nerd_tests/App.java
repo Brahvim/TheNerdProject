@@ -4,7 +4,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
-import com.brahvim.nerd_tests.scenes.SineWaveVsFxn;
+import com.brahvim.nerd_tests.scenes.TestScene4;
 
 public class App {
 
@@ -21,7 +21,7 @@ public class App {
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
-            SineWaveVsFxn.class;
+            TestScene4.class;
     // LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();
 
     // region `App`'s *other* fields.

@@ -32,6 +32,7 @@ public class AlSource extends AlNativeResource {
 	private NerdScene scene;
 	private AlContext context;
 	private AlBuffer<?> buffer;
+	private AlDataStream stream;
 	private AlAuxiliaryEffectSlot effectSlot;
 	private AlFilter directFilter, auxiliarySendFilter;
 	// endregion
@@ -44,8 +45,9 @@ public class AlSource extends AlNativeResource {
 
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.id = AL11.alGenSources();
-
 		this.alMan.checkAlError();
+
+		this.setSourceType(AL11.AL_STATIC);
 
 		AlSource.ALL_INSTANCES.add(this);
 	}
@@ -57,7 +59,6 @@ public class AlSource extends AlNativeResource {
 
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.id = AL11.alGenSources();
-
 		this.alMan.checkAlError();
 
 		// region Transfer properties over (hopefully, the JIT inlines!):
@@ -89,21 +90,6 @@ public class AlSource extends AlNativeResource {
 
 		AlSource.ALL_INSTANCES.add(this);
 	}
-
-	// region Copying given the source ID.
-	// @Deprecated
-	// /**
-	// * @deprecated This cannot be used to determine the context of a source!
-	// * Forget keeping a {@code HashMap} for that stuff...
-	// */
-	// public AlSource(NerdAl p_alMan, int p_id) {
-	// this.id = p_id;
-	// this.alMan = p_alMan;
-	// this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
-
-	// AlSource.trackSource(this, this.context);
-	// }
-	// endregion
 
 	public AlSource(NerdAl p_alMan, AlBuffer<?> p_buffer) {
 		this(p_alMan);
@@ -384,7 +370,7 @@ public class AlSource extends AlNativeResource {
 
 	// region Source setters.
 	// region `int` setters.
-	public void setSourceType(int p_value) {
+	protected void setSourceType(int p_value) {
 		this.setInt(AL11.AL_SOURCE_TYPE, p_value);
 	}
 
@@ -641,6 +627,18 @@ public class AlSource extends AlNativeResource {
 		AL11.alSourceRewind(this.id);
 	}
 
+	public AlDataStream getStream() {
+		return this.stream;
+	}
+
+	public void setStream(AlDataStream p_alDataStream) {
+		this.stream = p_alDataStream;
+	}
+
+	/* `package` */ void framelyCallback() {
+		this.stream.framelyCallback();
+	}
+
 	public void queueBuffers(AlBuffer<?> p_buffer) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourceQueueBuffers(this.id, p_buffer.getId());
@@ -652,15 +650,15 @@ public class AlSource extends AlNativeResource {
 		AL11.alSourceQueueBuffers(this.id, buffers);
 	}
 
+	public void unqueueBuffers(AlBuffer<?> p_buffer) {
+		ALC11.alcMakeContextCurrent(this.context.getId());
+		AL11.alSourceUnqueueBuffers(this.id);
+	}
+
 	public void unqueueBuffers(AlBuffer<?>... p_buffers) {
 		int[] buffers = new int[p_buffers.length];
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		AL11.alSourceUnqueueBuffers(this.id, buffers);
-	}
-
-	public void unqueueProcessedBuffers(AlBuffer<?> p_buffer) {
-		ALC11.alcMakeContextCurrent(this.context.getId());
-		AL11.alSourceUnqueueBuffers(this.id);
 	}
 
 	@Override

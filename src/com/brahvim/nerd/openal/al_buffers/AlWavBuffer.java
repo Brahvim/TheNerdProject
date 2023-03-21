@@ -56,7 +56,7 @@ public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 
 			// Give the OpenAL buffer the data:
 			AL11.alBufferData(this.id,
-					super.dataType = ais.getFormat().getChannels() == 1
+					super.alFormat = ais.getFormat().getChannels() == 1
 							? AL11.AL_FORMAT_MONO16
 							: AL11.AL_FORMAT_STEREO16,
 					AlBufferLoader.loadWav(p_file),

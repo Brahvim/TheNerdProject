@@ -10,10 +10,10 @@ import java.util.ArrayList;
 public class LoadeableClass<ClassT> {
 
 	// region Fields.
-	private final static ArrayList<LoadeableClass<?>> ALL_LOADEABLE_CLASSES = new ArrayList<>();
-
 	public URL url;
 	public String qualifiedName;
+
+	private final static ArrayList<LoadeableClass<?>> ALL_LOADEABLE_CLASSES = new ArrayList<>();
 
 	private Class<? extends ClassT> loadedClass;
 	// endregion

@@ -478,6 +478,9 @@ public class NerdAl {
 	// region State management.
 	public void framelyCallback() {
 		this.device.disconnectionCheck();
+
+		for (AlSource s : AlSource.ALL_INSTANCES)
+			s.framelyCallback();
 	}
 
 	@SuppressWarnings("deprecation")
