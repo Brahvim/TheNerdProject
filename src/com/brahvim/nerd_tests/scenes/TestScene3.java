@@ -69,6 +69,9 @@ public class TestScene3 extends NerdScene {
          */
         // endregion
 
+        // ...Does nothing!:
+        // CAMERA.pos.x += (SKETCH.mouse.x - SKETCH.pmouse.x) * 0.1f;
+
         for (Bubble c : this.cubes)
             if (c != null)
                 c.draw(this.boxShape);

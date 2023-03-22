@@ -132,6 +132,8 @@ public class Bubble extends SimpleEulerBody
             if (this.popSrc.isStopped())
                 this.popSrc.dispose();
 
+        super.rotVel.add(0, 0,
+                (SKETCH.mouse.x - SKETCH.pmouse.x) * 0.001f);
         super.integrate();
 
         SKETCH.pushMatrix();

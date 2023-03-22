@@ -1166,6 +1166,12 @@ public class Sketch extends PApplet {
 		super.rotateZ(p_rotVec.z);
 	}
 
+	public void rotate(float p_x, float p_y, float p_z) {
+		super.rotateX(p_x);
+		super.rotateY(p_y);
+		super.rotateZ(p_z);
+	}
+
 	// region `modelVec()` and `screenVec()`.
 	public PVector modelVec() {
 		return new PVector(
