@@ -1,49 +1,49 @@
-package com.brahvim.nerd.math;
+package com.brahvim.nerd.math.easings;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 // It is better to extend this class than to have `java.util.Function`s in it.
-// How else would we have stuff like `SineFunction::freqMult`, then?!
+// How else would we have stuff like `SineEase::freqMult`, then?!
 
-public abstract class EasingFunction {
+public abstract class NerdEasingFunction {
 
     // region Fields.
     public float endTime = -1, aliveTime;
     public float parameter, parameterOffset;
 
     /**
-     * Returned by {@link EasingFunction#get()} if
-     * {@link EasingFunction#useInactValue} is
+     * Returned by {@link NerdEasingFunction#get()} if
+     * {@link NerdEasingFunction#useInactValue} is
      * {@code true}.
      */
     public float inactValue = 0;
 
     /**
-     * Determines if an {@link EasingFunction} object is doing calculations or not.
+     * Determines if an {@link NerdEasingFunction} object is doing calculations or not.
      * 
-     * @apiNote {@code false} by default. Call {@link EasingFunction#start()} to
+     * @apiNote {@code false} by default. Call {@link NerdEasingFunction#start()} to
      *          make the function actively processing again.
      */
     public boolean active = false;
 
     /**
-     * Makes {@link EasingFunction#get()} output {@link EasingFunction#inactValue}
+     * Makes {@link NerdEasingFunction#get()} output {@link NerdEasingFunction#inactValue}
      * when the
-     * wave has ended - AKA, when {@link EasingFunction#active} turns {@code false}.
+     * wave has ended - AKA, when {@link NerdEasingFunction#active} turns {@code false}.
      *
      * @apiNote {@code true} by default. <br>
      *          <br>
-     *          {@link EasingFunction#inactValue} is {@code 0}
+     *          {@link NerdEasingFunction#inactValue} is {@code 0}
      *          by default.
      */
     public boolean useInactValue = false;
 
     /**
-     * Makes {@link EasingFunction#get()} output its absolute value. This may make
+     * Makes {@link NerdEasingFunction#get()} output its absolute value. This may make
      * the
      * wave behave as if it has doubled in frequency. Toggling this {@code boolean}
      * while the wave is active may show unwantedly large, sudden changes in the
-     * value returned by {@link EasingFunction#get()}.
+     * value returned by {@link NerdEasingFunction#get()}.
      *
      * @apiNote {@code false} by default.
      */
@@ -56,12 +56,12 @@ public abstract class EasingFunction {
     protected Runnable onEnd;
     // endregion
 
-    protected EasingFunction(Sketch p_parentSketch) {
+    protected NerdEasingFunction(Sketch p_parentSketch) {
         this.SKETCH = p_parentSketch;
     }
 
     // region `start()` overloads and `setParameterOffset()`.
-    public EasingFunction resetValues() {
+    public NerdEasingFunction resetValues() {
         this.endTime = -1;
         this.aliveTime = 0;
         this.parameter = 0;
@@ -69,7 +69,7 @@ public abstract class EasingFunction {
         return this;
     }
 
-    public EasingFunction resetSettings() {
+    public NerdEasingFunction resetSettings() {
         this.inactValue = 0;
         this.active = false;
         this.useInactValue = false;
@@ -79,35 +79,35 @@ public abstract class EasingFunction {
         return this;
     }
 
-    public EasingFunction removeOnEndCallback() {
+    public NerdEasingFunction removeOnEndCallback() {
         this.onEnd = null;
         return this;
     }
 
-    public EasingFunction completeReset() {
+    public NerdEasingFunction completeReset() {
         this.resetValues();
         this.resetSettings();
         return this;
     }
 
-    public EasingFunction start() {
+    public NerdEasingFunction start() {
         this.aliveTime = 0;
         return this;
     }
 
-    public EasingFunction start(Runnable p_onEnd) {
+    public NerdEasingFunction start(Runnable p_onEnd) {
         this.onEnd = p_onEnd;
         this.aliveTime = 0;
         return this;
     }
 
-    public EasingFunction start(float p_paramOffset) {
+    public NerdEasingFunction start(float p_paramOffset) {
         this.parameterOffset = p_paramOffset;
         this.aliveTime = 0;
         return this;
     }
 
-    public EasingFunction start(float p_paramOffset, Runnable p_onEnd) {
+    public NerdEasingFunction start(float p_paramOffset, Runnable p_onEnd) {
         this.parameterOffset = p_paramOffset;
         this.onEnd = p_onEnd;
         this.aliveTime = 0;
@@ -116,17 +116,17 @@ public abstract class EasingFunction {
     // endregion
 
     // region End and extend!
-    public EasingFunction stop() {
+    public NerdEasingFunction stop() {
         this.endTime = 0;
         return this;
     }
 
-    public EasingFunction endIn(int p_millis) {
+    public NerdEasingFunction endAfterMillis(int p_millis) {
         this.endTime = this.aliveTime + p_millis;
         return this;
     }
 
-    public EasingFunction extendEndByMillis(int p_millis) {
+    public NerdEasingFunction extendEndByMillis(int p_millis) {
         this.endTime += p_millis;
         return this;
     }

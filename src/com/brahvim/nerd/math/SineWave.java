@@ -5,6 +5,13 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import processing.core.PApplet;
 import processing.core.PConstants;
 
+/**
+ * @deprecated
+ *             <h1>Use {@link SineEase} now!</h1>
+ *             I though, will perhaps, forever, remember
+ *             {@code SineWave}'s beautiful, beautiful legacy...
+ */
+@Deprecated
 public class SineWave {
 
     // region Fields.

@@ -1,16 +1,16 @@
 package com.brahvim.nerd_tests.scenes;
 
-import com.brahvim.nerd.math.SineFunction;
+import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
 public class EasingFunctionDemo extends NerdScene {
-	private SineFunction sineEase;
+	private SineEase sineEase;
 
 	@Override
 	protected void setup(SceneState p_state) {
 		SKETCH.getCurrentCamera().pos.z = 350;
-		this.sineEase = new SineFunction(SKETCH);
+		this.sineEase = new SineEase(SKETCH);
 		SKETCH.setSize(SKETCH.INIT_WIDTH, SKETCH.INIT_HEIGHT);
 	}
 

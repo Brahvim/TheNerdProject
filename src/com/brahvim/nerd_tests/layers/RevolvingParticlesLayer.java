@@ -1,6 +1,6 @@
 package com.brahvim.nerd_tests.layers;
 
-import com.brahvim.nerd.math.Easings;
+import com.brahvim.nerd.math.easings.Easings;
 import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd_tests.App;
 

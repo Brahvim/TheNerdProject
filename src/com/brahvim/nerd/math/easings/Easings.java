@@ -1,4 +1,4 @@
-package com.brahvim.nerd.math;
+package com.brahvim.nerd.math.easings;
 
 // Thanks to `easings.net`!
 
@@ -9,11 +9,11 @@ public class Easings {
     }
 
     public static float quadratic(float x) {
-        return x * x + x;
+        return x * x;
     }
 
     public static float exponential(float x) {
-        return x == 0 ? 0 : (float) Math.pow(2, 10 * x - 10);
+        return x == 0 ? 0 : (float) Math.pow(2, 10 * x);
     }
 
     // Mine! [https://www.desmos.com/calculator/88fimxy2ox]:
