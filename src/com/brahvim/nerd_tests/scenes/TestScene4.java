@@ -135,7 +135,7 @@ public class TestScene4 extends NerdScene {
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
             case PConstants.LEFT -> MANAGER.restartScene();
-            case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
+            case PConstants.RIGHT -> MANAGER.startScene(TestScene3.class);
         }
     }
 
