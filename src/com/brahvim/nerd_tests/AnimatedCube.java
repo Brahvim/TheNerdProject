@@ -7,6 +7,7 @@ import com.brahvim.nerd.scene_api.NerdScene;
 import processing.core.PVector;
 
 public class AnimatedCube /* implements NerdScene.AutoDrawableInstance */ {
+
     // region Fields.
     public float size = 45;
     public PVector pos, vel, acc, rot;
@@ -63,23 +64,23 @@ public class AnimatedCube /* implements NerdScene.AutoDrawableInstance */ {
 
     public void plopIn() {
         this.isVisible = true;
-        this.plopWave.endWhenAngleIsDivisibleBy(90).start();
+        this.plopWave.endWhenAngleIncrementsBy(90).start();
     }
 
     public void plopOut() {
-        this.plopWave.endWhenAngleIsDivisibleBy(180).start(90, () -> {
+        this.plopWave.endWhenAngleIncrementsBy(180).start(90, () -> {
             this.isVisible = false;
         });
     }
 
     public void fadeIn() {
         this.isVisible = true;
-        this.fadeWave.endWhenAngleIsDivisibleBy(90).start();
+        this.fadeWave.endWhenAngleIncrementsBy(90).start();
     }
 
     public void fadeOut() {
         this.isVisible = false;
-        this.fadeWave.endWhenAngleIsDivisibleBy(180).start(90);
+        this.fadeWave.endWhenAngleIncrementsBy(180).start(90);
     }
     // endregion
 

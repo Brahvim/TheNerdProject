@@ -202,8 +202,13 @@ public class Sketch extends PApplet {
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
 	public final StringTable STRINGS;
-	public final int INIT_WIDTH, INIT_HEIGHT;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
+
+	// Dimensions of the inital size of the window:
+	public final float INIT_SCR;
+	public final int INIT_WIDTH, INIT_HEIGHT;
+	public final int INIT_WIDTH_HALF, INIT_HEIGHT_HALF;
+	public final int INIT_WIDTH_QUART, INIT_HEIGHT_QUART;
 
 	public final Point GLOBAL_MOUSE_POINT = new Point();
 	public final Point PREV_GLOBAL_MOUSE_POINT = new Point();
@@ -435,6 +440,15 @@ public class Sketch extends PApplet {
 			this.INIT_WIDTH = p_key.width;
 			this.INIT_HEIGHT = p_key.height;
 		}
+
+		// `INIT_WIDTH` ratios:
+		this.INIT_WIDTH_HALF = this.INIT_WIDTH / 2;
+		this.INIT_WIDTH_QUART = this.INIT_WIDTH / 2;
+
+		this.INIT_HEIGHT_QUART = this.INIT_WIDTH / 4;
+		this.INIT_HEIGHT_HALF = this.INIT_WIDTH / 4;
+
+		this.INIT_SCR = (float) this.INIT_WIDTH / (float) this.INIT_HEIGHT;
 		// endregion
 
 		// region Setting up `this.ROBOT`.
@@ -566,6 +580,8 @@ public class Sketch extends PApplet {
 		// endregion
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
+
+		// Needed by `this.unprojectMouse()`:
 		this.mouse.set(super.mouseX, super.mouseY);
 		if (this.RENDERER == PConstants.P3D)
 			this.unprojectMouse();

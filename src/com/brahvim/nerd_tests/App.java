@@ -39,7 +39,6 @@ public class App {
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
-                .usesJavaRenderer()
                 .setAntiAliasing(4)
 
                 // .preventCloseOnEscape()

@@ -17,22 +17,22 @@ public class SineWaveVsFxn extends NerdScene {
 		this.fxn.start();
 		this.wave.start();
 
-		SKETCH.setSize(400, 400);
+		SKETCH.getCurrentCamera().pos.z = 350;
+		SKETCH.setSize(SKETCH.INIT_WIDTH, SKETCH.INIT_HEIGHT);
 	}
 
 	@Override
 	protected void draw() {
 		SKETCH.background(0, 125, 0);
 
-		// SKETCH.translate(SKETCH.cx, SKETCH.cy);
-
 		if (SKETCH.mousePressed)
-			SKETCH.circle(SKETCH.mouseX, SKETCH.mouseY, 50);
+			SKETCH.circle(SKETCH.mouse.x, SKETCH.mouse.y, 50);
 
+		SKETCH.translate(0, -SKETCH.INIT_WIDTH_HALF);
 		SKETCH.translate(0, 50);
 
 		SKETCH.push();
-		SKETCH.translate(SKETCH.cx + this.fxn.get() * SKETCH.cx, 0);
+		SKETCH.translate(this.fxn.get() * 50, 0);
 		SKETCH.fill(255, 0, 0);
 		SKETCH.circle(0, 0, 50);
 		SKETCH.pop();
@@ -40,7 +40,7 @@ public class SineWaveVsFxn extends NerdScene {
 		SKETCH.translate(0, 250);
 
 		SKETCH.push();
-		SKETCH.translate(SKETCH.cx + this.wave.get() * SKETCH.cx, 0);
+		SKETCH.translate(this.wave.get() * 50, 0);
 		SKETCH.fill(0, 0, 255);
 		SKETCH.circle(0, 0, 50);
 		SKETCH.pop();
@@ -51,7 +51,7 @@ public class SineWaveVsFxn extends NerdScene {
 		System.out.println("SineWaveVsFxn.mouseClicked()");
 
 		this.fxn.endWhenAngleIs(90);
-		this.wave.endWhenAngleIsDivisibleBy(90);
+		this.wave.endWhenAngleIncrementsBy(90);
 	}
 
 }

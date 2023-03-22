@@ -124,84 +124,46 @@ public class SineWave {
         return this;
     }
 
-    public SineWave endWhenAngleIsDivisibleBy(float p_angle) {
+    public SineWave endWhenAngleIncrementsBy(float p_angle) {
+        // Don't ask me why it took me `10` months to get this to work, even with the
+        // right formula in my head, since day `1`!
+        // ...totally didn't forget to convert to radians or something!
+
         p_angle = PApplet.radians(PApplet.abs(p_angle));
         this.endTime = this.aliveTime + (p_angle - this.angleOffset) / this.freqMult;
 
-        System.out.printf("Alive-time: `%f`, end-time: `%f`, angle: `%f`.\n",
-                this.aliveTime, this.endTime, PApplet.degrees(this.freq % PConstants.TAU));
+        // "Debug Laag":
+        // System.out.printf("Alive-time: `%f`, end-time: `%f`, angle: `%f`.\n",
+        // this.aliveTime, this.endTime, PApplet.degrees(this.freq % PConstants.TAU));
 
         return this;
-
-        // this.angleMultToStopAt = PApplet.radians(p_angle);
-        // this.angleMultToStopAtAssigned = true; // Set to `false` in `get()`.
-
-        // this.freq = this.aliveTime * this.freqMult + this.angleOffset;
-        // That looked like a matrix calculation LOL.
-        // System.out.println(PApplet.degrees(this.freq % PConstants.TAU));
-        // this.lastValue = (float) Math.sin(this.freq);
-
-        // float waveAngle = this.freq % PConstants.TAU;
-        // float endTimeInc = (this.aliveTime * this.freqMult + (p_angle - waveAngle)) *
-        // 1000;
-
-        // this.endTime = this.aliveTime + endTimeInc;
-
-        // return this;
-
-        // Of course this magic-number stuff won't work everytime! REPLACE THIS?!
-        // ~~(Also because... any multiple of `0.25` less than `1` works...)~~
-        // Oh hey! That looks perfect!:
-        // this.endTime = 0.9f * // <--- The magic number!.
-        // Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) /
-        // this.freqMult);
-        // return this;
-
-        // Was an idea to avoid I don't get negative values and the frequency doesn't
-        // double - but I didn't use it.. don't ask me why :joy::
-        // this.endTime = ((float) Math.toRadians(p_angle) - this.angleOffset)
-        // / this.freqMult; // PS This was what I calculated on paper.
-        // this.endTime = Math.abs((this.endTime - this.aliveTime) * 0.5f);
-
-        // The calculation I used in the frametime version of this class, as seen in
-        // the Nerd Game Engine:
-        // this.endTime = this.aliveTime + ((float) (p_angle) * ((float)
-        // Math.toRadians(p_angle) *
-        // this.freqMult)) - this.angleOffset;
-
-        // From the early days - the framecount calculation!:
-        // this.endTime = this.aliveTime + (int) (p_angle * (p_angle * this.freqMult)
-        // - this.angleOffset);
-
-        // System.out.println(this.aliveTime);
-        // System.out.println(this.endTime);
     }
 
     /**
-     * Method to put the wave at given angle in given time.
+     * Method to put the wave at a given angle within given time.
      */
-    public SineWave endWhenAngleIs(float p_angle, float p_before) {
-        this.endWhenAngleIsDivisibleBy(p_angle);
-
-        if (this.endTime < this.aliveTime + p_before) {
-            this.endTime -= p_before;
-            return this;
-        } else // If they're equal, this still takes place!
-            return this.end();
-    }
-
-    public SineWave extendEndBy(float p_millis) {
-        this.endTime += p_millis;
+    public SineWave endWhenAngleIncrementsToWithin(float p_angle, float p_before) {
+        p_angle = PApplet.radians(PApplet.abs(p_angle));
+        this.freqMult = (p_angle - this.angleOffset) / p_before;
         return this;
+
+        // if (this.endTime < this.aliveTime + p_before) {
+        // this.endTime -= p_before;
+        // return this;
+        // } else // If they're equal, this still takes place!
+        // return this.end();
     }
 
     public SineWave extendEndByAngle(float p_angle) {
-        this.endTime += 0.9f *
-                Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) / this.freqMult)
-                - this.endTime;
+        float endTime = this.endTime; // Benefits of using `this.`!~
+        this.endWhenAngleIncrementsBy(p_angle);
+        this.endTime += endTime;
         return this;
+    }
 
-        // this.endTime += (p_angle * (p_angle * this.freqMult) - this.angleOffset);
+    public SineWave extendEndByMillis(float p_millis) {
+        this.endTime += p_millis;
+        return this;
     }
     // endregion
 
