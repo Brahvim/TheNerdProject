@@ -105,6 +105,7 @@ public class SceneManager {
     public static class SceneManagerSettings {
 
         public class OnScenePreload {
+
             private OnScenePreload() {
             }
 
@@ -120,6 +121,7 @@ public class SceneManager {
         }
 
         public class OnSceneSwitch {
+
             private OnSceneSwitch() {
             }
 
@@ -142,6 +144,12 @@ public class SceneManager {
              * {@code true} by default!
              */
             public volatile boolean completelyResetCam = true;
+
+            /**
+             * Resets {@link Sketch#PRE_FIRST_CALLER}, {@link Sketch#DRAW_FIRST_CALLER}, and
+             * {@link Sketch#POST_FIRST_CALLER} to their default values!
+             */
+            public volatile boolean resetSceneLayerCallbackOrder = true;
 
         }
 
@@ -805,6 +813,12 @@ public class SceneManager {
 
         if (this.settings.onSceneSwitch.completelyResetCam)
             this.SKETCH.getCurrentCamera().completeReset();
+
+        if (this.settings.onSceneSwitch.resetSceneLayerCallbackOrder) {
+            this.SKETCH.PRE_FIRST_CALLER = Sketch.CallbackOrder.SCENE;
+            this.SKETCH.DRAW_FIRST_CALLER = Sketch.CallbackOrder.LAYER;
+            this.SKETCH.POST_FIRST_CALLER = Sketch.CallbackOrder.LAYER;
+        }
         // endregion
 
         this.prevSceneClass = this.currSceneClass;

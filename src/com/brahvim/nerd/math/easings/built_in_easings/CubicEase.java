@@ -16,6 +16,12 @@ public class CubicEase extends NerdEasingFunction {
 	}
 
 	@Override
+	public CubicEase start() {
+		super.start();
+		return this;
+	}
+
+	@Override
 	protected float apply() {
 		return Easings.cubic(super.aliveTime);
 	}

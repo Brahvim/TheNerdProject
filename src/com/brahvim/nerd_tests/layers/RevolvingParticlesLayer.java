@@ -10,7 +10,7 @@ import processing.core.PGraphics;
 
 public class RevolvingParticlesLayer extends NerdLayer {
     private PGraphics particleGraphics;
-    private final int PARTICLE_SIZE = 60, PARTICLE_CONC = 200,
+    private final int PARTICLE_SIZE = 40, PARTICLE_CONC = 200,
             PARTICLE_SIZE_HALF = this.PARTICLE_SIZE / 2;
 
     @Override
@@ -48,7 +48,6 @@ public class RevolvingParticlesLayer extends NerdLayer {
         // -(SKETCH.currentCamera.pos.z + SKETCH.currentCamera.center.z));
         SKETCH.noStroke();
 
-        SKETCH.translate(SKETCH.cx, SKETCH.cy);
         for (int i = 0; i < 20; i++) {
             // float angle = PConstants.TAU / i;
             SKETCH.rotate(App.getTickCount());

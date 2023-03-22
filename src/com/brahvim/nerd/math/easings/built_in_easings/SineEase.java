@@ -46,6 +46,12 @@ public class SineEase extends NerdEasingFunction {
 	}
 	// endregion
 
+	@Override
+	public SineEase start() {
+		super.start();
+		return this;
+	}
+
 	// region End and extend!
 	@Override
 	public SineEase endAfterMillis(int p_millis) {

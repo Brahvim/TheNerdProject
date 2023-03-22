@@ -1,15 +1,15 @@
 package com.brahvim.nerd_tests.layers;
 
-import com.brahvim.nerd.math.SineWave;
+import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.scene_api.NerdLayer;
 
 public class BackgroundLayer extends NerdLayer {
 
-    private SineWave fadeWave;
+    private SineEase fadeWave;
 
     @Override
     protected void setup() {
-        this.fadeWave = new SineWave(SKETCH, 0.001f);
+        this.fadeWave = new SineEase(SKETCH, 0.001f);
         this.fadeWave.absoluteValue = true;
         this.fadeWave.start();
     }

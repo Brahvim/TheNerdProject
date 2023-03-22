@@ -11,6 +11,12 @@ public class QuadraticEase extends NerdEasingFunction {
 	}
 
 	@Override
+	public QuadraticEase start() {
+		super.start();
+		return this;
+	}
+
+	@Override
 	protected float apply() {
 		return Easings.quadratic(super.aliveTime);
 	}

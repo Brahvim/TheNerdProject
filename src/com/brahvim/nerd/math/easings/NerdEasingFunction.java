@@ -19,7 +19,8 @@ public abstract class NerdEasingFunction {
     public float inactValue = 0;
 
     /**
-     * Determines if an {@link NerdEasingFunction} object is doing calculations or not.
+     * Determines if an {@link NerdEasingFunction} object is doing calculations or
+     * not.
      * 
      * @apiNote {@code false} by default. Call {@link NerdEasingFunction#start()} to
      *          make the function actively processing again.
@@ -27,9 +28,11 @@ public abstract class NerdEasingFunction {
     public boolean active = false;
 
     /**
-     * Makes {@link NerdEasingFunction#get()} output {@link NerdEasingFunction#inactValue}
+     * Makes {@link NerdEasingFunction#get()} output
+     * {@link NerdEasingFunction#inactValue}
      * when the
-     * wave has ended - AKA, when {@link NerdEasingFunction#active} turns {@code false}.
+     * wave has ended - AKA, when {@link NerdEasingFunction#active} turns
+     * {@code false}.
      *
      * @apiNote {@code true} by default. <br>
      *          <br>
@@ -39,7 +42,8 @@ public abstract class NerdEasingFunction {
     public boolean useInactValue = false;
 
     /**
-     * Makes {@link NerdEasingFunction#get()} output its absolute value. This may make
+     * Makes {@link NerdEasingFunction#get()} output its absolute value. This may
+     * make
      * the
      * wave behave as if it has doubled in frequency. Toggling this {@code boolean}
      * while the wave is active may show unwantedly large, sudden changes in the
@@ -92,18 +96,21 @@ public abstract class NerdEasingFunction {
 
     public NerdEasingFunction start() {
         this.aliveTime = 0;
+        this.active = true;
         return this;
     }
 
     public NerdEasingFunction start(Runnable p_onEnd) {
         this.onEnd = p_onEnd;
         this.aliveTime = 0;
+        this.active = true;
         return this;
     }
 
     public NerdEasingFunction start(float p_paramOffset) {
         this.parameterOffset = p_paramOffset;
         this.aliveTime = 0;
+        this.active = true;
         return this;
     }
 
@@ -111,6 +118,7 @@ public abstract class NerdEasingFunction {
         this.parameterOffset = p_paramOffset;
         this.onEnd = p_onEnd;
         this.aliveTime = 0;
+        this.active = true;
         return this;
     }
     // endregion

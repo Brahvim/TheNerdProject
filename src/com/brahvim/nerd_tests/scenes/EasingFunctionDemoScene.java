@@ -4,7 +4,7 @@ import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
-public class EasingFunctionDemo extends NerdScene {
+public class EasingFunctionDemoScene extends NerdScene {
 	private SineEase sineEase;
 
 	@Override

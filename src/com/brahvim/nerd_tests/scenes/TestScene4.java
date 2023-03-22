@@ -3,11 +3,9 @@ package com.brahvim.nerd_tests.scenes;
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
-import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlEcho;
-import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlLowpassFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
+import com.brahvim.nerd_tests.App;
 
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -41,25 +39,28 @@ public class TestScene4 extends NerdScene {
                 SCENE.getTimesLoaded());
 
         // region OpenAL Test.
-        AlAuxiliaryEffectSlot slot = new AlAuxiliaryEffectSlot(SKETCH.AL);
-        AlEcho effect = new AlEcho(SKETCH.AL);
-        slot.setEffect(effect);
-        effect.setEchoDelay(0.01f);
-        effect.setEchoDamping(0.8f);
-        effect.setEchoFeedback(0.001f);
+        // ..so the effects and filters wrk perfectly, but I just didn't want them in
+        // this example. Feel free to uncomment!~
 
-        AlLowpassFilter filter = new AlLowpassFilter(SKETCH.AL);
-        filter.setLowpassGain(1);
-        filter.setLowpassGainHf(0.1f);
+        // AlAuxiliaryEffectSlot slot = new AlAuxiliaryEffectSlot(SKETCH.AL);
+        // AlEcho effect = new AlEcho(SKETCH.AL);
+        // slot.setEffect(effect);
+        // effect.setEchoDelay(0.01f);
+        // effect.setEchoDamping(0.8f);
+        // effect.setEchoFeedback(0.001f);
+
+        // AlLowpassFilter filter = new AlLowpassFilter(SKETCH.AL);
+        // filter.setLowpassGain(1);
+        // filter.setLowpassGainHf(0.1f);
 
         this.rubberDuck = new AlSource(SKETCH.AL, ASSETS.get("RUBBER DUCK").getData());
-        this.rubberDuck.attachDirectFilter(filter);
+        // this.rubberDuck.attachDirectFilter(filter);
         this.rubberDuck.setGain(0.1f);
-        this.rubberDuck.setEffectSlot(slot);
+        // this.rubberDuck.setEffectSlot(slot);
         // endregion
 
         // Loaded this scene for the first time? Do this!:
-        if (SCENE.getTimesLoaded() == 0) {
+        if (App.FIRST_SCENE_CLASS == TestScene4.class && SCENE.getTimesLoaded() == 0) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();
@@ -132,7 +133,10 @@ public class TestScene4 extends NerdScene {
     // region Events.
     @Override
     public void mouseClicked() {
-        MANAGER.restartScene();
+        switch (SKETCH.mouseButton) {
+            case PConstants.LEFT -> MANAGER.restartScene();
+            case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
+        }
     }
 
     @Override

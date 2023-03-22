@@ -1,6 +1,6 @@
 package com.brahvim.nerd_tests.layers;
 
-import com.brahvim.nerd.math.SineWave;
+import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.scene_api.NerdLayer;
 
 import processing.core.PApplet;
@@ -8,15 +8,15 @@ import processing.core.PConstants;
 
 public class BoxAnimationLayer extends NerdLayer {
 
-    private SineWave squareAmpWave, camRotWave;
+    private SineEase squareAmpWave, camRotWave;
 
     @Override
     protected void setup() {
-        this.squareAmpWave = new SineWave(SKETCH, 100 / 60_000.0f);
+        this.squareAmpWave = new SineEase(SKETCH, 100 / 60_000.0f);
         this.squareAmpWave.absoluteValue = true;
         this.squareAmpWave.start();
 
-        this.camRotWave = new SineWave(SKETCH, 50 / 60_000.0f);
+        this.camRotWave = new SineEase(SKETCH, 50 / 60_000.0f);
         // this.camRotWave.absoluteValue = true;
         this.camRotWave.start();
     }
@@ -31,8 +31,8 @@ public class BoxAnimationLayer extends NerdLayer {
         CAMERA.up.x = this.camRotWave.get() * PConstants.TAU;
 
         SKETCH.translate(
-                SKETCH.cx + PApplet.cos(SKETCH.millis() * 0.001f) * squareAmp,
-                SKETCH.cy + PApplet.sin(SKETCH.millis() * 0.001f) * squareAmp);
+                PApplet.cos(SKETCH.millis() * 0.001f) * squareAmp,
+                PApplet.sin(SKETCH.millis() * 0.001f) * squareAmp);
         SKETCH.rotateX(SKETCH.millis() * 0.001f);
         SKETCH.rotateY(SKETCH.millis() * 0.001f);
         SKETCH.box(45);

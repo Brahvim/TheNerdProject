@@ -1411,7 +1411,7 @@ public class Sketch extends PApplet {
 	}
 
 	public void image(PGraphics p_graphics, float p_x, float p_y, float p_z) {
-		this.image(p_graphics, p_x, p_y, p_z);
+		this.image((PImage) p_graphics, p_x, p_y, p_z);
 	}
 
 	public void image(PGraphics p_graphics, PVector p_pos, float p_width, float p_height) {

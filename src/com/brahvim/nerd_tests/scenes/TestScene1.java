@@ -1,5 +1,9 @@
 package com.brahvim.nerd_tests.scenes;
 
+import com.brahvim.nerd.io.asset_loader.processing_loaders.PFontAsset;
+import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
+import com.brahvim.nerd.openal.AlSource;
+import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.layers.BackgroundLayer;
@@ -8,28 +12,53 @@ import com.brahvim.nerd_tests.layers.RevolvingParticlesLayer;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PFont;
 
 public class TestScene1 extends NerdScene {
+
+    private PFont font;
+    private SineEase ease;
+    private AlSource sceneOneAnnounce;
+
+    @Override
+    protected synchronized void preload() {
+        MANAGER.PERSISTENT_ASSETS.add(PFontAsset.getLoader(), "data/Arial-Black-48.vlw");
+        ASSETS.add(OggBufferDataAsset.getLoader(), "data/SceneOne.ogg");
+    }
+
     @Override
     protected void setup(SceneState p_state) {
+        SKETCH.fullscreen = true;
         if (SCENE.getTimesLoaded() == 0)
             SKETCH.centerWindow();
 
+        this.font = MANAGER.PERSISTENT_ASSETS.get("Arial-Black-48").getData();
+        this.ease = new SineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
+        this.sceneOneAnnounce = new AlSource(SKETCH.AL, ASSETS.get("SceneOne").getData());
         SCENE.addLayers(
                 // Yes, these are started in order:
                 BackgroundLayer.class,
                 BoxAnimationLayer.class,
                 RevolvingParticlesLayer.class);
+
+        this.sceneOneAnnounce.play();
     }
 
     @Override
     protected void draw() {
-        SKETCH.text("Scene `1`!",
-                SKETCH.cx, SKETCH.cy + PApplet.sin(SCENE.getMillisSinceStart() * 0.005f) * 25);
-        // SKETCH.cx, SKETCH.cy + PApplet.sin(MANAGER.sinceSceneStarted() * 0.0125f) *
-        // 25);
-        CAMERA.pos.z = PApplet.abs(PApplet.sin(SCENE.getMillisSinceStart() *
-                0.001f)) * 500;
+        if (this.ease.active) {
+            SKETCH.textFont(this.font);
+            float easeVal = this.ease.get();
+            SKETCH.colorMode(PConstants.HSB);
+            SKETCH.fill(easeVal * 255, 255, 255, 255 * (1 - easeVal));
+            SKETCH.text("Scene `1`!", 0, PApplet.sin(SCENE.getMillisSinceStart() * 0.005f) * 25, 50);
+            // 0, PApplet.sin(MANAGER.sinceSceneStarted() * 0.0125f) * 25);
+        }
+
+        if (this.ease.wasActive() && !this.ease.active)
+            this.sceneOneAnnounce.dispose();
+
+        CAMERA.pos.z = PApplet.abs(PApplet.sin(SCENE.getMillisSinceStart() * 0.001f)) * 500;
 
         /*
          * if (SKETCH.frameCount % 5 == 0) {
@@ -47,7 +76,7 @@ public class TestScene1 extends NerdScene {
     @Override
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
-            case PConstants.RIGHT -> MANAGER.startScene(TestScene2.class);
+            case PConstants.RIGHT -> MANAGER.startScene(TestScene4.class);
         }
     }
 

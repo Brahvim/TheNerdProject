@@ -1,6 +1,6 @@
 package com.brahvim.nerd_tests;
 
-import com.brahvim.nerd.math.SineWave;
+import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 
@@ -16,7 +16,7 @@ public class AnimatedCube /* implements NerdScene.AutoDrawableInstance */ {
     private final Sketch SKETCH;
     private final NerdScene SCENE;
     private boolean isVisible = true;
-    private SineWave plopWave, fadeWave;
+    private SineEase plopWave, fadeWave;
     // private final NerdScene.AutoDrawable CALLBACK_FOR_RENDERER;
     // endregion
 
@@ -41,8 +41,8 @@ public class AnimatedCube /* implements NerdScene.AutoDrawableInstance */ {
          * };
          */
 
-        this.plopWave = new SineWave(SKETCH);
-        this.fadeWave = new SineWave(SKETCH);
+        this.plopWave = new SineEase(SKETCH);
+        this.fadeWave = new SineEase(SKETCH);
 
         this.plopWave.inactValue = 1;
         this.fadeWave.inactValue = 1;

@@ -1,21 +1,21 @@
 package com.brahvim.nerd_tests.scenes;
 
-import com.brahvim.nerd.math.SineWave;
+import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
 public class TestScene2 extends NerdScene {
-    private SineWave boxHorizWave, boxVertWave;
+    private SineEase boxHorizWave, boxVertWave;
 
     @Override
     protected void setup(SceneState p_state) {
         CAMERA.resetParams();
         CAMERA.resetSettings();
 
-        this.boxHorizWave = new SineWave(SKETCH, 100 / 60_000.0f);
+        this.boxHorizWave = new SineEase(SKETCH, 100 / 60_000.0f);
         this.boxHorizWave.start();
 
-        this.boxVertWave = new SineWave(SKETCH, 200 / 60_000.0f);
+        this.boxVertWave = new SineEase(SKETCH, 200 / 60_000.0f);
         this.boxVertWave.start();
     }
 
