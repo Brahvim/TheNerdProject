@@ -3,9 +3,5 @@
 /README.md
 /lib
 
-# Uhhh, this would also remove future libraries!:
-#./*.jar
+*.jar
 *.zip
-
-# Ahh, this is better:
-TheNerdProject.jar
