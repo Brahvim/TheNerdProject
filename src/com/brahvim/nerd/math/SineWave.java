@@ -2,6 +2,7 @@ package com.brahvim.nerd.math;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
+import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class SineWave {
@@ -53,18 +54,9 @@ public class SineWave {
     public boolean absoluteValue = false;
 
     private Runnable onEnd;
-    private boolean pactive = false;
-
-    /**
-     * Value last returned by {@link SineWave#get()}.
-     */
-    private float lastValue = 0;
-
     private final Sketch SKETCH;
-
-    public final static float INITAL_END_TIME = Float.MAX_VALUE - 1;
-
-    private float endTime = SineWave.INITAL_END_TIME, aliveTime;
+    private boolean pactive = false;
+    private float endTime = -1, aliveTime, lastValue;
     // endregion
 
     // region Constructors.
@@ -132,10 +124,30 @@ public class SineWave {
         return this;
     }
 
-    public SineWave endWhenAngleIs(float p_angle) {
-        float time = ((p_angle / (PConstants.TAU * this.freqMult)) / this.freq);
-        this.endTime = this.aliveTime + time;
+    public SineWave endWhenAngleIsDivisibleBy(float p_angle) {
+        p_angle = PApplet.radians(PApplet.abs(p_angle));
+        this.endTime = this.aliveTime + (p_angle - this.angleOffset) / this.freqMult;
+
+        System.out.printf("Alive-time: `%f`, end-time: `%f`, angle: `%f`.\n",
+                this.aliveTime, this.endTime, PApplet.degrees(this.freq % PConstants.TAU));
+
         return this;
+
+        // this.angleMultToStopAt = PApplet.radians(p_angle);
+        // this.angleMultToStopAtAssigned = true; // Set to `false` in `get()`.
+
+        // this.freq = this.aliveTime * this.freqMult + this.angleOffset;
+        // That looked like a matrix calculation LOL.
+        // System.out.println(PApplet.degrees(this.freq % PConstants.TAU));
+        // this.lastValue = (float) Math.sin(this.freq);
+
+        // float waveAngle = this.freq % PConstants.TAU;
+        // float endTimeInc = (this.aliveTime * this.freqMult + (p_angle - waveAngle)) *
+        // 1000;
+
+        // this.endTime = this.aliveTime + endTimeInc;
+
+        // return this;
 
         // Of course this magic-number stuff won't work everytime! REPLACE THIS?!
         // ~~(Also because... any multiple of `0.25` less than `1` works...)~~
@@ -147,9 +159,8 @@ public class SineWave {
 
         // Was an idea to avoid I don't get negative values and the frequency doesn't
         // double - but I didn't use it.. don't ask me why :joy::
-        // this.endTime = ((float) Math.toRadians(p_angle) - this.angleOffset) /
-        // this.freqMult;
-        // PS This was what I calculated on paper.
+        // this.endTime = ((float) Math.toRadians(p_angle) - this.angleOffset)
+        // / this.freqMult; // PS This was what I calculated on paper.
         // this.endTime = Math.abs((this.endTime - this.aliveTime) * 0.5f);
 
         // The calculation I used in the frametime version of this class, as seen in
@@ -166,15 +177,17 @@ public class SineWave {
         // System.out.println(this.endTime);
     }
 
+    /**
+     * Method to put the wave at given angle in given time.
+     */
     public SineWave endWhenAngleIs(float p_angle, float p_before) {
-        this.endWhenAngleIs(p_angle);
+        this.endWhenAngleIsDivisibleBy(p_angle);
 
         if (this.endTime < this.aliveTime + p_before) {
             this.endTime -= p_before;
             return this;
         } else // If they're equal, this still takes place!
             return this.end();
-
     }
 
     public SineWave extendEndBy(float p_millis) {
@@ -182,24 +195,13 @@ public class SineWave {
         return this;
     }
 
-    /**
-     * @deprecated {@link SineWave#aliveTime} is the "angle" - we don't need this
-     *             either way!
-     */
-    @Deprecated
     public SineWave extendEndByAngle(float p_angle) {
-        // ..here from, ChatGPT (modified!).
-        // this.endTime = ((p_angle / (2 * PConstants.PI * this.freqMult)) / this.freq)
-        // / 1000;
-
-        this.endTime = 0.9f *
-                Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) /
-                        this.freqMult)
-                // - this.endTime
-                + this.aliveTime;
-
-        // this.endTime = (p_angle * (p_angle * this.freqMult) - this.angleOffset);
+        this.endTime += 0.9f *
+                Math.abs(((float) Math.toRadians(p_angle) - this.angleOffset) / this.freqMult)
+                - this.endTime;
         return this;
+
+        // this.endTime += (p_angle * (p_angle * this.freqMult) - this.angleOffset);
     }
     // endregion
 
@@ -218,23 +220,29 @@ public class SineWave {
 
     public float get() {
         this.pactive = this.active;
-        this.active = this.aliveTime <= this.endTime;
+
+        if (this.endTime != -1)
+            this.active = this.aliveTime <= this.endTime;
 
         if (this.active)
             this.aliveTime += this.SKETCH.frameTime;
         // ^^^ `frameTime` comes from "the Engine" by the way. (Hey - that's "Nerd"!)
         else { // If no longer active,
-            if (this.pactive)
+            if (this.pactive) {
+                System.out.printf("Ended at angle: `%f`.\n",
+                        PApplet.degrees(this.freq % PConstants.TAU));
+
                 if (this.onEnd != null)
                     this.onEnd.run();
+            }
 
             return this.useInactValue ? this.inactValue : this.lastValue;
         }
 
         this.freq = this.aliveTime * this.freqMult + this.angleOffset;
         // That looked like a matrix calculation LOL.
-
         this.lastValue = (float) Math.sin(this.freq);
+
         return this.absoluteValue ? Math.abs(this.lastValue) : this.lastValue;
     }
     // endregion

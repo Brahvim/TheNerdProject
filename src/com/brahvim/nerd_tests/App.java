@@ -4,7 +4,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
-import com.brahvim.nerd_tests.scenes.TestScene4;
+import com.brahvim.nerd_tests.scenes.SineWaveVsFxn;
 
 public class App {
 
@@ -20,7 +20,7 @@ public class App {
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
-            TestScene4.class;
+            SineWaveVsFxn.class;
     // LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();
 
     // region `App`'s *other* fields.
@@ -39,8 +39,8 @@ public class App {
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
+                .usesJavaRenderer()
                 .setAntiAliasing(4)
-                // .usesJavaRenderer()
 
                 // .preventCloseOnEscape()
                 // .startFullscreen()

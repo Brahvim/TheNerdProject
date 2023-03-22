@@ -24,7 +24,7 @@ public class SineWaveVsFxn extends NerdScene {
 	protected void draw() {
 		SKETCH.background(0, 125, 0);
 
-		// SKETCH.translate(-SKETCH.cx, -SKETCH.cy);
+		// SKETCH.translate(SKETCH.cx, SKETCH.cy);
 
 		if (SKETCH.mousePressed)
 			SKETCH.circle(SKETCH.mouseX, SKETCH.mouseY, 50);
@@ -51,7 +51,7 @@ public class SineWaveVsFxn extends NerdScene {
 		System.out.println("SineWaveVsFxn.mouseClicked()");
 
 		this.fxn.endWhenAngleIs(90);
-		this.wave.endWhenAngleIs(90);
+		this.wave.endWhenAngleIsDivisibleBy(90);
 	}
 
 }

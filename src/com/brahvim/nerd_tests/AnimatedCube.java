@@ -63,23 +63,23 @@ public class AnimatedCube /* implements NerdScene.AutoDrawableInstance */ {
 
     public void plopIn() {
         this.isVisible = true;
-        this.plopWave.endWhenAngleIs(90).start();
+        this.plopWave.endWhenAngleIsDivisibleBy(90).start();
     }
 
     public void plopOut() {
-        this.plopWave.endWhenAngleIs(180).start(90, () -> {
+        this.plopWave.endWhenAngleIsDivisibleBy(180).start(90, () -> {
             this.isVisible = false;
         });
     }
 
     public void fadeIn() {
         this.isVisible = true;
-        this.fadeWave.endWhenAngleIs(90).start();
+        this.fadeWave.endWhenAngleIsDivisibleBy(90).start();
     }
 
     public void fadeOut() {
         this.isVisible = false;
-        this.fadeWave.endWhenAngleIs(180).start(90);
+        this.fadeWave.endWhenAngleIsDivisibleBy(180).start(90);
     }
     // endregion
 
