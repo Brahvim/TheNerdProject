@@ -5,6 +5,7 @@
 
 # Uhhh, this would also remove future libraries!:
 #./*.jar
+*.zip
 
 # Ahh, this is better:
 TheNerdProject.jar
