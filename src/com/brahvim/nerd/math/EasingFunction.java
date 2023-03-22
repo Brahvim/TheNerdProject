@@ -24,7 +24,7 @@ public abstract class EasingFunction {
      * @apiNote {@code false} by default. Call {@link EasingFunction#start()} to
      *          make the function actively processing again.
      */
-    public boolean active = true;
+    public boolean active = false;
 
     /**
      * Makes {@link EasingFunction#get()} output {@link EasingFunction#inactValue}
@@ -61,6 +61,35 @@ public abstract class EasingFunction {
     }
 
     // region `start()` overloads and `setParameterOffset()`.
+    public EasingFunction resetValues() {
+        this.endTime = -1;
+        this.aliveTime = 0;
+        this.parameter = 0;
+        this.parameterOffset = 0;
+        return this;
+    }
+
+    public EasingFunction resetSettings() {
+        this.inactValue = 0;
+        this.active = false;
+        this.useInactValue = false;
+        this.absoluteValue = false;
+        this.pactive = false;
+        this.onEnd = null;
+        return this;
+    }
+
+    public EasingFunction removeOnEndCallback() {
+        this.onEnd = null;
+        return this;
+    }
+
+    public EasingFunction completeReset() {
+        this.resetValues();
+        this.resetSettings();
+        return this;
+    }
+
     public EasingFunction start() {
         this.aliveTime = 0;
         return this;

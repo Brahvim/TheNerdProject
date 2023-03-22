@@ -46,18 +46,13 @@ public class SineFunction extends EasingFunction {
 	// endregion
 
 	// region End and extend!
-	public EasingFunction end() {
-		super.endTime = 0;
-		return this;
-	}
-
 	@Override
-	public EasingFunction endIn(int p_millis) {
+	public SineFunction endIn(int p_millis) {
 		super.endTime = super.aliveTime + p_millis;
 		return this;
 	}
 
-	public EasingFunction endWhenAngleIncrementsBy(float p_angle) {
+	public SineFunction endWhenAngleIncrementsBy(float p_angle) {
 		// Don't ask me why it took me `10` months to get this to work, even with the
 		// right formula in my head, since day `1`!
 		// ...totally didn't forget to convert to radians or something!
@@ -75,7 +70,7 @@ public class SineFunction extends EasingFunction {
 	/**
 	 * Method to put the wave at a given angle within given time.
 	 */
-	public EasingFunction endWhenAngleIncrementsToWithin(float p_angle, float p_before) {
+	public SineFunction endWhenAngleIncrementsToWithin(float p_angle, float p_before) {
 		p_angle = PApplet.radians(PApplet.abs(p_angle));
 		this.freqMult = (p_angle - super.parameterOffset) / p_before;
 		return this;
@@ -87,7 +82,7 @@ public class SineFunction extends EasingFunction {
 		// return this.end();
 	}
 
-	public EasingFunction extendEndByAngle(float p_angle) {
+	public SineFunction extendEndByAngle(float p_angle) {
 		float endTime = this.endTime; // Benefits of using `this.`!~
 		this.endWhenAngleIncrementsBy(p_angle);
 		this.endTime += endTime;
