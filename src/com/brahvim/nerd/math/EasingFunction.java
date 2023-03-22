@@ -3,43 +3,54 @@ package com.brahvim.nerd.math;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 // It is better to extend this class than to have `java.util.Function`s in it.
-// How else would we have `SineFunction::freqMult`, then?!
+// How else would we have stuff like `SineFunction::freqMult`, then?!
+
 public abstract class EasingFunction {
 
     // region Fields.
+    public float endTime = -1, aliveTime;
     public float parameter, parameterOffset;
-    public float endTime = Float.MAX_VALUE - 1, aliveTime;
 
     /**
-     * Returned by {@code SineFunction::get()} if
-     * {@code SineFunction::useInactValue} is
+     * Returned by {@link EasingFunction#get()} if
+     * {@link EasingFunction#useInactValue} is
      * {@code true}.
      */
     public float inactValue = 0;
 
     /**
-     * Makes {@code SineFunction::get()} output {@code SineFunction::inactValue}
-     * when the
-     * wave has ended - AKA, when {@code SineFunction::active} turns {@code false}.
-     *
-     * @apiNote {@code true} by default. <br>
-     *          <br>
-     *          {@code SineFunction::inactValue} is {@code 0}
-     *          by default.
-     */
-    public boolean useInactValue = false;
-
-    /**
      * Determines if an {@link EasingFunction} object is doing calculations or not.
-     * {@code public} so you can change it!
-     * (...and stop calculations if they're unnecessary.)
-     *
+     * 
      * @apiNote {@code false} by default. Call {@link EasingFunction#start()} to
      *          make the function actively processing again.
      */
     public boolean active = true;
 
+    /**
+     * Makes {@link EasingFunction#get()} output {@link EasingFunction#inactValue}
+     * when the
+     * wave has ended - AKA, when {@link EasingFunction#active} turns {@code false}.
+     *
+     * @apiNote {@code true} by default. <br>
+     *          <br>
+     *          {@link EasingFunction#inactValue} is {@code 0}
+     *          by default.
+     */
+    public boolean useInactValue = false;
+
+    /**
+     * Makes {@link EasingFunction#get()} output its absolute value. This may make
+     * the
+     * wave behave as if it has doubled in frequency. Toggling this {@code boolean}
+     * while the wave is active may show unwantedly large, sudden changes in the
+     * value returned by {@link EasingFunction#get()}.
+     *
+     * @apiNote {@code false} by default.
+     */
+    public boolean absoluteValue = false;
+
     protected final Sketch SKETCH;
+
     protected boolean pactive = false;
     protected float lastValue;
     protected Runnable onEnd;
@@ -86,21 +97,11 @@ public abstract class EasingFunction {
         return this;
     }
 
-    public EasingFunction extendEndBy(int p_millis) {
+    public EasingFunction extendEndByMillis(int p_millis) {
         this.endTime += p_millis;
         return this;
     }
     // endregion
-
-    public EasingFunction setOffset(float p_paramOffset) {
-        this.parameterOffset = p_paramOffset;
-        return this;
-    }
-
-    public EasingFunction addOffset(float p_paramOffset) {
-        this.parameterOffset += p_paramOffset;
-        return this;
-    }
 
     // *Abstractness!:tm:*
     protected abstract float apply();
@@ -128,7 +129,9 @@ public abstract class EasingFunction {
 
     public float get() {
         this.pactive = this.active;
-        this.active = this.aliveTime <= this.endTime;
+
+        if (this.endTime != -1)
+            this.active = this.aliveTime <= this.endTime;
 
         if (this.active)
             this.aliveTime += this.SKETCH.frameTime;
@@ -142,7 +145,7 @@ public abstract class EasingFunction {
         }
 
         this.lastValue = this.apply();
-        return this.lastValue;
+        return this.absoluteValue ? Math.abs(this.lastValue) : this.lastValue;
     }
     // endregion
 

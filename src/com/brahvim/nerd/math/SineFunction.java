@@ -3,7 +3,6 @@ package com.brahvim.nerd.math;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 
 public class SineFunction extends EasingFunction {
 
@@ -35,11 +34,8 @@ public class SineFunction extends EasingFunction {
 		this.freqMult = p_freqMult;
 	}
 
-	// No matter what order you put them in, the API Note comes after the Author
-	// name. Oof.
 	/**
-	 * @author Brahvim
-	 * @apiNote {@code p_angleOffset} must be in radians!
+	 * @apiNote {@code p_angleOffset} are treated as radians.
 	 */
 	public SineFunction(Sketch p_parentSketch, float p_freqMult, float p_angleOffset) {
 		super(p_parentSketch);
@@ -50,72 +46,52 @@ public class SineFunction extends EasingFunction {
 	// endregion
 
 	// region End and extend!
-	public SineFunction end() {
+	public EasingFunction end() {
 		super.endTime = 0;
 		return this;
 	}
 
-	public SineFunction endIn(float p_millis) {
+	@Override
+	public EasingFunction endIn(int p_millis) {
 		super.endTime = super.aliveTime + p_millis;
 		return this;
 	}
 
-	public SineFunction endWhenAngleIs(float p_angle) {
-		// Of course this magic-number stuff won't work everytime! REPLACE THIS?!
-		// ~~(Also because... any multiple of `0.25` less than `1` works...)~~
-		// Oh hey! That looks perfect!:
-		this.endTime = 0.9f * // <--- The magic number!.
-				Math.abs(((float) Math.toRadians(p_angle) - super.parameterOffset) / this.freqMult);
-		return this;
+	public EasingFunction endWhenAngleIncrementsBy(float p_angle) {
+		// Don't ask me why it took me `10` months to get this to work, even with the
+		// right formula in my head, since day `1`!
+		// ...totally didn't forget to convert to radians or something!
 
-		// Was an idea to avoid I don't get negative values and the frequency doesn't
-		// double - but I didn't use it.. don't ask me why :joy::
-		// super.endTime = ((float) Math.toRadians(p_angle) - super.parameterOffset)
-		// / this.freqMult; // PS This was what I calculated on paper.
-		// super.endTime = Math.abs((super.endTime - super.aliveTime) * 0.5f);
+		p_angle = PApplet.radians(PApplet.abs(p_angle));
+		super.endTime = super.aliveTime + (p_angle - super.parameterOffset) / this.freqMult;
 
-		// The calculation I used in the frametime version of this class, as seen in
-		// the Nerd Game Engine:
-		// super.endTime = super.aliveTime + ((float) (p_angle) * ((float)
-		// Math.toRadians(p_angle) *
-		// this.freqMult)) - super.parameterOffset;
+		// "Debug Laag":
+		// System.out.printf("Alive-time: `%f`, end-time: `%f`, angle: `%f`.\n",
+		// super.aliveTime, super.endTime, PApplet.degrees(this.freq % PConstants.TAU));
 
-		// From the early days - the framecount calculation!:
-		// super.endTime = super.aliveTime + (int) (p_angle * (p_angle * this.freqMult)
-		// - super.parameterOffset);
-
-		// System.out.println(super.aliveTime);
-		// System.out.println(super.endTime);
-	}
-
-	public SineFunction endWhenAngleIs(float p_angle, float p_before) {
-		this.endWhenAngleIs(p_angle);
-
-		if (super.endTime < super.aliveTime + p_before) {
-			super.endTime -= p_before;
-			return this;
-		} else // If they're equal, this still takes place!
-			return this.end();
-	}
-
-	public SineFunction extendEndBy(float p_millis) {
-		super.endTime += p_millis;
 		return this;
 	}
 
-	public SineFunction extendEndByAngle(float p_angle) {
-		// ..here from, ChatGPT...
-		float time = (p_angle / (2 * PConstants.PI * this.freqMult)) / super.parameter;
-		super.endTime += time * 1000;
-
-		// super.endTime += 0.9f *
-		// Math.abs(((float) Math.toRadians(p_angle) - super.parameterOffset) /
-		// this.freqMult)
-		// - super.endTime;
+	/**
+	 * Method to put the wave at a given angle within given time.
+	 */
+	public EasingFunction endWhenAngleIncrementsToWithin(float p_angle, float p_before) {
+		p_angle = PApplet.radians(PApplet.abs(p_angle));
+		this.freqMult = (p_angle - super.parameterOffset) / p_before;
 		return this;
 
-		// super.endTime += (p_angle * (p_angle * this.freqMult) -
-		// super.parameterOffset);
+		// if (super.endTime < super.aliveTime + p_before) {
+		// super.endTime -= p_before;
+		// return this;
+		// } else // If they're equal, this still takes place!
+		// return this.end();
+	}
+
+	public EasingFunction extendEndByAngle(float p_angle) {
+		float endTime = this.endTime; // Benefits of using `this.`!~
+		this.endWhenAngleIncrementsBy(p_angle);
+		this.endTime += endTime;
+		return this;
 	}
 	// endregion
 
