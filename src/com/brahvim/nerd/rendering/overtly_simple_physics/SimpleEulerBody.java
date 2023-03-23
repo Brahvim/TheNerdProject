@@ -1,8 +1,9 @@
-package com.brahvim.nerd_tests;
+package com.brahvim.nerd.rendering.overtly_simple_physics;
 
 import processing.core.PVector;
 
 public class SimpleEulerBody {
+
 	protected float frict = 1, rotFrict = 1;
 	protected PVector pos = new PVector(), vel = new PVector(), acc = new PVector();
 	protected PVector rot = new PVector(), rotVel = new PVector(), rotAcc = new PVector();

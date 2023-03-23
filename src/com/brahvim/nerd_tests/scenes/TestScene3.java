@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
+import com.brahvim.nerd.rendering.particles.Particle;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
-import com.brahvim.nerd_tests.Particle;
 
 import processing.core.PConstants;
 import processing.core.PShape;
@@ -28,7 +28,7 @@ public class TestScene3 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        SKETCH.getCurrentCamera().pos.z = 350;
+        CAMERA.pos.z = 350;
         this.boxShape = SKETCH.createShape(PConstants.BOX, 1);
         this.boxShape.setStrokeWeight(0.28f);
         this.ambiLight = new NerdAmbiLight(
@@ -61,7 +61,6 @@ public class TestScene3 extends NerdScene {
 
         // region Lighting!
         SKETCH.lights();
-        SKETCH.colorMode(PConstants.HSB);
         this.ambiLight.apply();
         // SKETCH.pointLight(255, 255, 0, 0, 0, 1);
 

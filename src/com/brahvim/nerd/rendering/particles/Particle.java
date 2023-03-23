@@ -1,9 +1,10 @@
-package com.brahvim.nerd_tests;
+package com.brahvim.nerd.rendering.particles;
 
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.rendering.overtly_simple_physics.SimpleEulerBody;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PConstants;
