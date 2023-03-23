@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.processing_wrappers.NerdCamera;
+import com.brahvim.nerd.processing_wrappers.cameras.NerdCamera;
 
 /**
  * <h2>Do not use as an anonymous class!</h2>

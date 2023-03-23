@@ -5,16 +5,20 @@ import java.util.ArrayList;
 
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd.processing_wrappers.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.Bubble;
 
 import processing.core.PConstants;
 import processing.core.PShape;
+import processing.core.PVector;
 
 public class TestScene3 extends NerdScene {
+
     private PShape boxShape;
     private ArrayList<Bubble> cubes;
+    private NerdAmbiLight ambiLight;
 
     @Override
     protected synchronized void preload() {
@@ -27,6 +31,14 @@ public class TestScene3 extends NerdScene {
         this.cubes = new ArrayList<>();
         SKETCH.getCurrentCamera().pos.z = 350;
         this.boxShape = SKETCH.createShape(PConstants.BOX, 1);
+        this.ambiLight = new NerdAmbiLight(
+                SKETCH,
+                new PVector(0, 0, 0),
+                // new PVector(255, 255, 0) // Yellow
+                // new PVector(224, 152, 27) // The orange at the top.
+                // new PVector(228, 117, 111) // The color in the middle
+                new PVector(232, 81, 194)// The pink at the bottom.
+        );
     }
 
     @Override
@@ -49,7 +61,8 @@ public class TestScene3 extends NerdScene {
 
         // region Lighting!
         SKETCH.lights();
-        SKETCH.pointLight(255, 255, 0, 0, 0, 1);
+        this.ambiLight.apply();
+        // SKETCH.pointLight(255, 255, 0, 0, 0, 1);
 
         // Spot light attempt:
         /*

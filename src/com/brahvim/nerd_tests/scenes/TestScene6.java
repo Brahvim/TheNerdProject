@@ -2,8 +2,8 @@ package com.brahvim.nerd_tests.scenes;
 
 import java.awt.event.KeyEvent;
 
-import com.brahvim.nerd.processing_wrappers.FlyCamera;
-import com.brahvim.nerd.processing_wrappers.FpsCamera;
+import com.brahvim.nerd.processing_wrappers.cameras.FlyCamera;
+import com.brahvim.nerd.processing_wrappers.cameras.FpsCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.layers.PauseMenuLayer;

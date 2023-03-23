@@ -3,7 +3,7 @@ package com.brahvim.nerd.math;
 import processing.core.PVector;
 
 // "pls no instance" ; ~ ;)
-public abstract class VecUtilsForPVector {
+public final class VecUtilsForPVector {
 
     private VecUtilsForPVector() {
     }

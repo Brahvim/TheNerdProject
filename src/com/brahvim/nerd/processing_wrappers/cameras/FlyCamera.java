@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrappers;
+package com.brahvim.nerd.processing_wrappers.cameras;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
