@@ -28,7 +28,7 @@ public class TestScene1 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        SKETCH.fullscreen = true;
+        // SKETCH.fullscreen = true;
         if (SCENE.getTimesLoaded() == 0)
             SKETCH.centerWindow();
 

@@ -17,8 +17,8 @@ import processing.core.PVector;
 public class TestScene3 extends NerdScene {
 
     private PShape boxShape;
-    private ArrayList<Bubble> cubes;
     private NerdAmbiLight ambiLight;
+    private ArrayList<Bubble> cubes = new ArrayList<>();
 
     @Override
     protected synchronized void preload() {
@@ -28,17 +28,16 @@ public class TestScene3 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        this.cubes = new ArrayList<>();
         SKETCH.getCurrentCamera().pos.z = 350;
         this.boxShape = SKETCH.createShape(PConstants.BOX, 1);
-        this.boxShape.setStrokeWeight(0.1f);
+        this.boxShape.setStrokeWeight(0.28f);
         this.ambiLight = new NerdAmbiLight(
                 SKETCH,
                 new PVector(0, 0, 0),
                 // new PVector(255, 255, 0) // Yellow
                 // new PVector(224, 152, 27) // The orange at the top.
                 // new PVector(228, 117, 111) // The color in the middle
-                new PVector(232, 81, 194)// The pink at the bottom.
+                new PVector(232, 81, 194) // The pink at the bottom.
         );
     }
 
@@ -62,6 +61,7 @@ public class TestScene3 extends NerdScene {
 
         // region Lighting!
         SKETCH.lights();
+        SKETCH.colorMode(PConstants.HSB);
         this.ambiLight.apply();
         // SKETCH.pointLight(255, 255, 0, 0, 0, 1);
 

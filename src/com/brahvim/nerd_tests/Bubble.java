@@ -136,20 +136,15 @@ public class Bubble extends SimpleEulerBody
                 (SKETCH.mouse.x - SKETCH.pmouse.x) * 0.001f);
         super.integrate();
 
-        SKETCH.pushMatrix();
-        SKETCH.pushStyle();
-
+        SKETCH.push();
         SKETCH.translate(super.pos);
         SKETCH.rotate(super.rot);
-
+        SKETCH.fill(255);
         // SKETCH.stroke(this.strokeColor, 255 * this.fadeWave.get());
         // SKETCH.fill(this.fillColor, 255 * this.fadeWave.get());
-        SKETCH.fill(255);
         SKETCH.scale(this.size * this.plopWave.get());
         SKETCH.shape(p_shape);
-
-        SKETCH.popStyle();
-        SKETCH.popMatrix();
+        SKETCH.pop();
 
         this.pvisible = this.visible;
     }
