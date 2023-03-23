@@ -31,6 +31,7 @@ public class TestScene3 extends NerdScene {
         this.cubes = new ArrayList<>();
         SKETCH.getCurrentCamera().pos.z = 350;
         this.boxShape = SKETCH.createShape(PConstants.BOX, 1);
+        this.boxShape.setStrokeWeight(0.1f);
         this.ambiLight = new NerdAmbiLight(
                 SKETCH,
                 new PVector(0, 0, 0),
