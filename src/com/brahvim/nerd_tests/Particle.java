@@ -10,8 +10,7 @@ import processing.core.PConstants;
 import processing.core.PShape;
 import processing.core.PVector;
 
-public class Bubble extends SimpleEulerBody
-/* implements NerdScene.AutoDrawableInstance */ {
+public class Particle extends SimpleEulerBody {
 
     // region Fields.
     public float size = 40;
@@ -28,7 +27,7 @@ public class Bubble extends SimpleEulerBody
     private AlSource popSrc;
     // endregion
 
-    public Bubble(NerdScene p_scene) {
+    public Particle(NerdScene p_scene) {
         this.SCENE = p_scene;
         this.SKETCH = this.SCENE.SKETCH;
 
@@ -71,49 +70,49 @@ public class Bubble extends SimpleEulerBody
     }
 
     // region Transitions.
-    public Bubble cutIn() {
+    public Particle cutIn() {
         this.visible = true;
         return this;
     }
 
-    public Bubble cutOut() {
+    public Particle cutOut() {
         this.visible = false;
         return this;
     }
 
-    public Bubble plopIn() {
+    public Particle plopIn() {
         this.plopInImpl();
         return this;
     }
 
-    public Bubble plopIn(AlBuffer<?> p_popAudioBuffer) {
+    public Particle plopIn(AlBuffer<?> p_popAudioBuffer) {
         this.popSrc = new AlSource(SKETCH.AL, p_popAudioBuffer);
         this.popSrc.play();
         this.plopInImpl();
         return this;
     }
 
-    private Bubble plopInImpl() {
+    private Particle plopInImpl() {
         this.visible = true;
         this.plopWave.freqMult = 0.015f;
         this.plopWave.endWhenAngleIncrementsBy(90).start();
         return this;
     }
 
-    public Bubble plopOut() {
+    public Particle plopOut() {
         this.plopWave.endWhenAngleIncrementsBy(180).start(90, () -> {
             this.visible = false;
         });
         return this;
     }
 
-    public Bubble fadeIn() {
+    public Particle fadeIn() {
         this.visible = true;
         this.fadeWave.endWhenAngleIncrementsBy(90).start();
         return this;
     }
 
-    public Bubble fadeOut() {
+    public Particle fadeOut() {
         this.visible = false;
         this.fadeWave.endWhenAngleIncrementsBy(180).start(90);
         return this;

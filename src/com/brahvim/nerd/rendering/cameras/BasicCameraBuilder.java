@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrappers.cameras;
+package com.brahvim.nerd.rendering.cameras;
 
 import java.util.function.Consumer;
 

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
-import com.brahvim.nerd.processing_wrappers.lights.NerdAmbiLight;
+import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
-import com.brahvim.nerd_tests.Bubble;
+import com.brahvim.nerd_tests.Particle;
 
 import processing.core.PConstants;
 import processing.core.PShape;
@@ -18,7 +18,7 @@ public class TestScene3 extends NerdScene {
 
     private PShape boxShape;
     private NerdAmbiLight ambiLight;
-    private ArrayList<Bubble> cubes = new ArrayList<>();
+    private ArrayList<Particle> cubes = new ArrayList<>();
 
     @Override
     protected synchronized void preload() {
@@ -86,7 +86,7 @@ public class TestScene3 extends NerdScene {
         // ...Does nothing!:
         // CAMERA.pos.x += (SKETCH.mouse.x - SKETCH.pmouse.x) * 0.1f;
 
-        for (Bubble c : this.cubes)
+        for (Particle c : this.cubes)
             if (c != null)
                 c.draw(this.boxShape);
     }
@@ -98,7 +98,7 @@ public class TestScene3 extends NerdScene {
 
             case PConstants.LEFT -> {
                 AlBuffer<?> randomPop = ASSETS.get("Pop" + (int) SKETCH.random(1, 4)).getData();
-                this.cubes.add(new Bubble(SCENE).plopIn(randomPop));
+                this.cubes.add(new Particle(SCENE).plopIn(randomPop));
             }
         }
     }

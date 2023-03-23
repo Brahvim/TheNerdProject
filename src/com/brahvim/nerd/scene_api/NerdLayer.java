@@ -1,7 +1,7 @@
 package com.brahvim.nerd.scene_api;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.processing_wrappers.cameras.NerdCamera;
+import com.brahvim.nerd.rendering.cameras.NerdCamera;
 
 /**
  * Just like {@code Scene}s, {@code Layer}s
