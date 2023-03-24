@@ -9,10 +9,140 @@ import processing.opengl.PGraphics3D;
 // [http://andrewmarsh.com/blog/2011/12/04/gluunproject-p3d-and-opengl-sketches/]
 // Note: `6:14` AM, `18/December/2022`: I removed the `bValid` field entirely.
 
+// Original code from Nerd:
+/*
+ * // Dr. Andrew Marsh's `gluUnProject()` code! ":D!~
+// [http://andrewmarsh.com/blog/2011/12/04/gluunproject-p3d-and-opengl-sketches/]
+
+//public class Selection_in_P3D_OPENGL_A3D {
+public static class Unprojector {
+  // True if near and far points calculated. Use `.isValid()` to access!
+  private static boolean bValid = false;
+
+  // Maintain own projection matrix.
+  private static PMatrix3D pMatrix = new PMatrix3D();
+
+  private static int[] aiViewport = new int[4];
+  // ^^^ `ai` stands for "Array of Integers", apparently.
+
+  // Store the near and far ray positions.
+  public static PVector ptStartPos = new PVector();
+  public static PVector ptEndPos = new PVector();
+
+  public boolean isValid() {
+    return bValid;
+  }
+
+  public static PMatrix3D getMatrix() {
+    return pMatrix;
+  }
+
+  // Maintain own viewport data.
+  public static int[] getViewport() {
+    return aiViewport;
+  }
+
+  public static void captureViewMatrix(PGraphics3D p_g3d) {
+    // Call this to capture the selection matrix after
+    // you have called `perspective()` or `ortho()` and applied your
+    // pan, zoom and camera angles - but before you start drawing
+    // or playing with the matrices any further.
+
+    // Check for a valid 3D canvas.
+
+    // Capture current projection matrix.
+    //pMatrix.set(p_g3d.projection);
+
+    // Multiply by current modelview matrix.
+    //pMatrix.apply(p_g3d.modelview);
+
+    // Invert the resultant matrix.
+    //pMatrix.invert();
+
+    // "Couldn't we do this in today's modern world?:"
+    // - Brahvim
+    //
+    pMatrix.set(p_g3d.projmodelview);
+    pMatrix.invert();
+
+    // Store the viewport.
+    aiViewport[0] = 0;
+    aiViewport[1] = 0;
+    aiViewport[2] = p_g3d.width;
+    aiViewport[3] = p_g3d.height;
+  }
+
+  public static boolean gluUnProject(float p_winx, float p_winy, float p_winz, PVector p_result) {
+    // "A `memset()` is definitely better. Put these into the class?" - Brahvim.
+    float[] in = new float[4];
+    float[] out = new float[4];
+
+    // Transform to NDCs (`-1` to `1`):
+    in[0] = ((p_winx - (float)aiViewport[0]) / (float)aiViewport[2]) * 2.0f - 1.0f;
+    in[1] = ((p_winy - (float)aiViewport[1]) / (float)aiViewport[3]) * 2.0f - 1.0f;
+    in[2] = constrain(p_winz, 0, 1) * 2.0f - 1.0f;
+    in[3] = 1.0f;
+
+    // Calculate homogeneous coordinates:
+    out[0] = pMatrix.m00 * in[0]
+      + pMatrix.m01 * in[1]
+      + pMatrix.m02 * in[2]
+      + pMatrix.m03 * in[3];
+    out[1] = pMatrix.m10 * in[0]
+      + pMatrix.m11 * in[1]
+      + pMatrix.m12 * in[2]
+      + pMatrix.m13 * in[3];
+    out[2] = pMatrix.m20 * in[0]
+      + pMatrix.m21 * in[1]
+      + pMatrix.m22 * in[2]
+      + pMatrix.m23 * in[3];
+    out[3] = pMatrix.m30 * in[0]
+      + pMatrix.m31 * in[1]
+      + pMatrix.m32 * in[2]
+      + pMatrix.m33 * in[3];
+
+    // Check for an invalid result:
+    if (out[3] == 0.0f) { 
+      p_result.x = 0.0f;
+      p_result.y = 0.0f;
+      p_result.z = 0.0f;
+      return false;
+    }
+
+    // Scale to world coordinates:
+    out[3] = 1.0f / out[3];
+    p_result.x = out[0] * out[3];
+    p_result.y = out[1] * out[3];
+    p_result.z = out[2] * out[3];
+    return true;
+  }
+
+  // Calculate positions on the near and far 3D frustum planes.
+  public static boolean calculatePickPoints(float p_x, float p_y) {
+    bValid = true; // Have to do both in order to reset the `PVector` in case of an error.
+    // Brahvim: "Can't we optimize this?"...
+
+    bValid = gluUnProject(p_x, p_y, 0, ptStartPos);
+    bValid = gluUnProject(p_x, p_y, 1, ptEndPos);
+    return bValid;
+
+    // Original version:
+    //if (!gluUnProject(p_x, p_y, 0, ptStartPos))
+    //bValid = false;
+    //if (!gluUnProject(p_x, p_y, 1, ptEndPos))
+    //bValid = false;
+    //return bValid;
+  }
+}
+ */
+
 //public class Selection_in_P3D_OPENGL_A3D {
 public class Unprojector {
 
         // region Fields.
+        // True if near and far points calculated. Use `.isValid()` to access!
+        private boolean bValid = false;
+
         // Maintain own projection matrix.
         private PMatrix3D pMatrix = new PMatrix3D();
 
@@ -33,6 +163,10 @@ public class Unprojector {
                 return this.aiViewport;
         }
 
+        public boolean isValid() {
+                return this.bValid;
+        }
+
         public void captureViewMatrix(PGraphics3D p_g3d) {
                 // Call this to capture the selection matrix after
                 // you have called `perspective()` or `ortho()` and applied your
@@ -50,7 +184,7 @@ public class Unprojector {
                 // Invert the resultant matrix.
                 // this.pMatrix.invert();
 
-                // Brahvim: "Couldn't we do this in today's modern world?:"
+                // Brahvim: "Couldn't we do just this in today's modern world?:"
                 this.pMatrix.set(p_g3d.projmodelview);
                 this.pMatrix.invert();
 
@@ -69,9 +203,9 @@ public class Unprojector {
          * Ti's NOT pointers or references!
          */
         public boolean gluUnProject(float p_winx, float p_winy, float p_winz, PVector p_result) {
-                // "A `memset()` is definitely better. Put these into the class?" - Brahvim.
-                // Note: One day, I actually benchmarked it - allocating a new array is TWO
-                // orders of magnitude faster!
+                // [WRONG!] "A `memset()` is definitely better. Put these into the class?"
+                // Note: One day, I actually benchmarked this - allocating a new array is
+                // TWO orders of magnitude faster!
                 float[] in = new float[4];
                 float[] out = new float[4];
 
@@ -120,17 +254,14 @@ public class Unprojector {
         // Calculate positions on the near and far 3D frustum planes.
         public boolean calculatePickPoints(float p_x, float p_y) {
                 // Have to do both in order to reset the `PVector` in case of an error.
-                // this.bValid = true;
+                this.bValid = true;
 
-                return this.gluUnProject(p_x, p_y, 1, this.ptEndPos)
-                                && this.gluUnProject(p_x, p_y, 0, this.ptStartPos);
+                // return this.gluUnProject(p_x, p_y, 1, this.ptEndPos)
+                // && this.gluUnProject(p_x, p_y, 0, this.ptStartPos);
 
                 // This was "optimized" code to return stuff:
-                /*
-                 * return //(this.bValid =
-                 * this.gluUnProject(p_x, p_y, 0, this.ptStartPos) &&
-                 * this.gluUnProject(p_x, p_y, 1, this.ptEndPos);//);
-                 */
+                return (this.bValid = this.gluUnProject(p_x, p_y, 0, this.ptStartPos) &&
+                                this.gluUnProject(p_x, p_y, 1, this.ptEndPos));
 
                 // ...original versions of it:
                 /*

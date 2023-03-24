@@ -3,6 +3,7 @@ package com.brahvim.nerd_tests.scenes;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import com.brahvim.nerd.math.collision.CollisionAlgorithms;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
@@ -16,9 +17,15 @@ import processing.core.PVector;
 
 public class TestScene3 extends NerdScene {
 
+    // region Fields.
+    private final int CUBES_PER_CLICK = 5;
+    private final int CUBES_ADDED_EVERY_FRAME = 2;
+
+    private int cubesToAdd;
     private PShape boxShape;
     private NerdAmbiLight ambiLight;
     private ArrayList<Particle> cubes = new ArrayList<>();
+    // endregion Fields.
 
     @Override
     protected synchronized void preload() {
@@ -85,27 +92,63 @@ public class TestScene3 extends NerdScene {
         // ...Does nothing!:
         // CAMERA.pos.x += (SKETCH.mouse.x - SKETCH.pmouse.x) * 0.1f;
 
-        for (Particle c : this.cubes)
-            if (c != null)
-                c.draw(this.boxShape);
+        // for (int i = 0; i != this.CUBES_ADDED_EVERY_FRAME; i++)
+        // if (this.cubesToAdd < 0)
+        // break;
+        // else
+        // this.cubesToAdd--;
+
+        if (this.cubesToAdd != 0) // Optimization
+            for (int i = 0; i != this.CUBES_ADDED_EVERY_FRAME; i++) {
+                if (this.cubesToAdd == 0)
+                    break;
+                this.cubesToAdd--;
+                AlBuffer<?> randomPop = ASSETS.get("Pop" + (int) SKETCH.random(1, 4)).getData();
+                this.cubes.add(new Particle(SCENE).plopIn(randomPop));
+            }
+
+        for (int i = this.cubes.size() - 1; i != -1; i--) {
+            final Particle p = this.cubes.get(i);
+            final PVector screenPos = SKETCH.screenVec(p.getPos());
+            final float twiceTheSize = p.size * 2;
+
+            if (!CollisionAlgorithms.ptRect(
+                    screenPos.x, screenPos.y,
+                    -twiceTheSize * 2, -twiceTheSize * 2,
+
+                    SKETCH.width + twiceTheSize * 2,
+                    SKETCH.height + twiceTheSize * 2)) {
+                p.getAudioSource().dispose();
+                this.cubes.remove(i);
+            }
+        }
+
+        for (Particle p : this.cubes)
+            if (p != null)
+                p.draw(this.boxShape);
+
+        SKETCH.in2d(() -> {
+            SKETCH.circle(SKETCH.mouse.x, SKETCH.mouse.y, 5);
+        });
     }
 
     @Override
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
             case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
-
-            case PConstants.LEFT -> {
-                AlBuffer<?> randomPop = ASSETS.get("Pop" + (int) SKETCH.random(1, 4)).getData();
-                this.cubes.add(new Particle(SCENE).plopIn(randomPop));
-            }
+            case PConstants.LEFT -> this.cubesToAdd += this.CUBES_PER_CLICK;
         }
     }
 
     @Override
     public void keyPressed() {
-        if (SKETCH.onlyKeyPressedIs(KeyEvent.VK_SPACE))
-            MANAGER.restartScene();
+        if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
+            for (int i = this.cubes.size() - 1; i != -1; i--) {
+                final Particle p = this.cubes.get(i);
+                p.getAudioSource().dispose();
+                p.plopOut();
+                this.cubes.remove(i);
+            }
     }
 
 }

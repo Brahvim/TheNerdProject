@@ -11,8 +11,9 @@ public class AlContext extends AlNativeResource {
 
 	public static class AlContextSettings {
 
+		// OpenAL default values:
 		public int frequency = 44100, monoSources = 32, stereoSources = 8, refresh = 40;
-		public boolean sync;
+		public boolean sync; // `false` by default for OpenAL.
 
 		public int[] asAttribArray() {
 			return new int[] {

@@ -1,5 +1,6 @@
 package com.brahvim.nerd_tests;
 
+import com.brahvim.nerd.openal.AlContext;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -40,6 +41,13 @@ public class App {
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
                 .setAntiAliasing(4)
+                .setAlContextSettings(() -> {
+                    var toRet = new AlContext.AlContextSettings();
+                    // ...for `TestScene3`!!!:
+                    toRet.monoSources = Integer.MAX_VALUE;
+                    toRet.stereoSources = Integer.MAX_VALUE;
+                    return toRet;
+                })
 
                 // .preventCloseOnEscape()
                 // .startFullscreen()

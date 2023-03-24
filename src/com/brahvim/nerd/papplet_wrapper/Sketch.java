@@ -1624,23 +1624,43 @@ public class Sketch extends PApplet {
 	// endregion
 
 	public void unprojectMouse() {
-		if (this.currentCamera == null)
-			return;
-
-		float originalNear = this.currentCamera.near;
-		this.currentCamera.near = this.currentCamera.mouseZ;
-		this.currentCamera.applyMatrix();
+		float originalNear = 0;
+		if (this.currentCamera != null) {
+			originalNear = this.currentCamera.near;
+			this.currentCamera.near = this.currentCamera.mouseZ;
+			this.currentCamera.applyMatrix();
+		}
 
 		// Unproject:
 		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) g);
 		// `0.9f`: at the near clipping plane.
 		// `0.9999f`: at the far clipping plane.
-		this.UNPROJECTOR.gluUnProject(
-				super.mouseX, super.height - super.mouseY,
+		this.UNPROJECTOR.gluUnProject(mouseX, height - mouseY,
 				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
-				0, this.mouse);
+				0, mouse);
 
-		this.currentCamera.near = originalNear;
+		if (this.currentCamera != null)
+			this.currentCamera.near = originalNear;
+
+		/*
+		 * if (this.currentCamera == null)
+		 * return;
+		 * 
+		 * float originalNear = this.currentCamera.near;
+		 * this.currentCamera.near = this.currentCamera.mouseZ;
+		 * this.currentCamera.applyMatrix();
+		 * 
+		 * // Unproject:
+		 * this.UNPROJECTOR.captureViewMatrix((PGraphics3D) g);
+		 * // `0.9f`: at the near clipping plane.
+		 * // `0.9999f`: at the far clipping plane.
+		 * this.UNPROJECTOR.gluUnProject(
+		 * super.mouseX, super.height - super.mouseY,
+		 * // 0.9f + map(mouseY, height, 0, 0, 0.1f),
+		 * 0, this.mouse);
+		 * 
+		 * this.currentCamera.near = originalNear;
+		 */
 	}
 
 	public void unprojectTouches() {

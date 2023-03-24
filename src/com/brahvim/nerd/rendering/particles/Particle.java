@@ -3,7 +3,6 @@ package com.brahvim.nerd.rendering.particles;
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
-import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.rendering.overtly_simple_physics.SimpleEulerBody;
 import com.brahvim.nerd.scene_api.NerdScene;
 
@@ -15,11 +14,8 @@ public class Particle extends SimpleEulerBody {
 
     // region Fields.
     public float size = 40;
-    public PVector pos, vel, acc, rot;
     public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
-    private final Sketch SKETCH;
-    private final NerdScene SCENE;
     // private final NerdScene.AutoDrawable CALLBACK_FOR_RENDERER;
 
     @SuppressWarnings("unused")
@@ -29,27 +25,26 @@ public class Particle extends SimpleEulerBody {
     // endregion
 
     public Particle(NerdScene p_scene) {
-        this.SCENE = p_scene;
-        this.SKETCH = this.SCENE.SKETCH;
+        super(p_scene.SKETCH);
 
         super.pos.set(
-                SKETCH.random(-SKETCH.qx, SKETCH.qx),
-                SKETCH.random(-SKETCH.qy, SKETCH.qy),
-                SKETCH.random(-250, 100));
+                super.SKETCH.random(-super.SKETCH.qx, super.SKETCH.qx),
+                super.SKETCH.random(-super.SKETCH.qy, super.SKETCH.qy),
+                super.SKETCH.random(-250, 100));
 
         super.acc.set(
-                SKETCH.random(-0.01f, 0.01f),
-                SKETCH.random(-0.01f, 0.01f));
+                super.SKETCH.random(-0.01f, 0.01f),
+                super.SKETCH.random(-0.01f, 0.01f));
 
         super.rot.set(
-                SKETCH.random(PConstants.TAU),
-                SKETCH.random(PConstants.TAU),
-                SKETCH.random(PConstants.TAU));
+                super.SKETCH.random(PConstants.TAU),
+                super.SKETCH.random(PConstants.TAU),
+                super.SKETCH.random(PConstants.TAU));
 
         super.rotAcc.set(
-                SKETCH.random(-0.0001f, 0.0001f),
-                SKETCH.random(-0.0001f, 0.0001f),
-                SKETCH.random(-0.0001f, 0.0001f));
+                super.SKETCH.random(-0.0001f, 0.0001f),
+                super.SKETCH.random(-0.0001f, 0.0001f),
+                super.SKETCH.random(-0.0001f, 0.0001f));
 
         // final AnimatedCube CUBE = this;
         // this.SCENE.createAutoDrawable(this);
@@ -63,12 +58,62 @@ public class Particle extends SimpleEulerBody {
          * };
          */
 
-        this.plopWave = new SineEase(SKETCH);
-        this.fadeWave = new SineEase(SKETCH);
+        this.plopWave = new SineEase(super.SKETCH);
+        this.fadeWave = new SineEase(super.SKETCH);
 
         this.plopWave.inactValue = 1;
         this.fadeWave.inactValue = 1;
     }
+
+    // region Getters and setters for superclass stuff!:
+    public float getFrict() {
+        return super.frict;
+    }
+
+    public void setFrict(float p_frict) {
+        super.frict = p_frict;
+    }
+
+    public float getRotFrict() {
+        return super.rotFrict;
+    }
+
+    public void setRotFrict(float p_rotFrict) {
+        super.rotFrict = p_rotFrict;
+    }
+
+    public float getDtMult() {
+        return super.dtMult;
+    }
+
+    public void setDtMult(float p_dtMult) {
+        super.dtMult = p_dtMult;
+    }
+
+    public PVector getPos() {
+        return super.pos;
+    }
+
+    public PVector getVel() {
+        return super.vel;
+    }
+
+    public PVector getAcc() {
+        return super.acc;
+    }
+
+    public PVector getRot() {
+        return super.rot;
+    }
+
+    public PVector getRotVel() {
+        return super.rotVel;
+    }
+
+    public PVector getRotAcc() {
+        return super.rotAcc;
+    }
+    // endregion
 
     // region Transitions.
     public Particle cutIn() {
@@ -87,7 +132,8 @@ public class Particle extends SimpleEulerBody {
     }
 
     public Particle plopIn(AlBuffer<?> p_popAudioBuffer) {
-        this.popSrc = new AlSource(SKETCH.AL, p_popAudioBuffer);
+        this.popSrc = new AlSource(super.SKETCH.AL, p_popAudioBuffer);
+        this.popSrc.setPosition(PVector.mult(super.pos, 0.001f));
         this.popSrc.play();
         this.plopInImpl();
         return this;
@@ -101,7 +147,7 @@ public class Particle extends SimpleEulerBody {
     }
 
     public Particle plopOut() {
-        this.plopWave.endWhenAngleIncrementsBy(180).start(90, () -> {
+        this.plopWave.endWhenAngleIncrementsBy(90).start(270, () -> {
             this.visible = false;
         });
         return this;
@@ -120,6 +166,10 @@ public class Particle extends SimpleEulerBody {
     }
     // endregion
 
+    public AlSource getAudioSource() {
+        return this.popSrc;
+    }
+
     public boolean isVisible() {
         return this.visible;
     }
@@ -132,19 +182,19 @@ public class Particle extends SimpleEulerBody {
             if (this.popSrc.isStopped())
                 this.popSrc.dispose();
 
-        super.rotVel.add(0, 0,
-                (SKETCH.mouse.x - SKETCH.pmouse.x) * 0.001f);
+        super.rot.add(0, 0,
+                (super.SKETCH.mouse.x - super.SKETCH.pmouse.x) * 0.001f);
         super.integrate();
 
-        SKETCH.push();
-        SKETCH.translate(super.pos);
-        SKETCH.rotate(super.rot);
-        SKETCH.fill(255);
-        // SKETCH.stroke(this.strokeColor, 255 * this.fadeWave.get());
-        // SKETCH.fill(this.fillColor, 255 * this.fadeWave.get());
-        SKETCH.scale(this.size * this.plopWave.get());
-        SKETCH.shape(p_shape);
-        SKETCH.pop();
+        super.SKETCH.push();
+        super.SKETCH.translate(super.pos);
+        super.SKETCH.rotate(super.rot);
+        super.SKETCH.fill(255);
+        // super.SKETCH.stroke(this.strokeColor, 255 * this.fadeWave.get());
+        // super.SKETCH.fill(this.fillColor, 255 * this.fadeWave.get());
+        super.SKETCH.scale(this.size * this.plopWave.get());
+        super.SKETCH.shape(p_shape);
+        super.SKETCH.pop();
 
         this.pvisible = this.visible;
     }

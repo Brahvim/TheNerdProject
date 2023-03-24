@@ -250,7 +250,6 @@ public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
     }
 
     @SuppressWarnings("all")
-    // @SafeVarargs
     public CustomSketchBuilder preLoadAssets(Class<? extends NerdScene>... p_sceneClasses) {
         if (p_sceneClasses == null)
             return this;
