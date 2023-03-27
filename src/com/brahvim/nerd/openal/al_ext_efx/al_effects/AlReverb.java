@@ -72,56 +72,69 @@ public class AlReverb extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setReverbDensity(float p_value) {
+	public AlReverb setReverbDensity(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_DENSITY, p_value);
+		return this;
 	}
 
-	public void setReverbDiffusion(float p_value) {
+	public AlReverb setReverbDiffusion(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_DIFFUSION, p_value);
+		return this;
 	}
 
-	public void setReverbGain(float p_value) {
+	public AlReverb setReverbGain(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_GAIN, p_value);
+		return this;
 	}
 
-	public void setReverbGainHf(float p_value) {
+	public AlReverb setReverbGainHf(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_GAINHF, p_value);
+		return this;
 	}
 
-	public void setReverbDecayTime(float p_value) {
+	public AlReverb setReverbDecayTime(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_DECAY_TIME, p_value);
+		return this;
 	}
 
-	public void setReverbDecayHfRatio(float p_value) {
+	public AlReverb setReverbDecayHfRatio(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_DECAY_HFRATIO, p_value);
+		return this;
 	}
 
-	public void setReverbReflectionsGain(float p_value) {
+	public AlReverb setReverbReflectionsGain(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_REFLECTIONS_GAIN, p_value);
+		return this;
 	}
 
-	public void setReverbReflectionsDelay(float p_value) {
+	public AlReverb setReverbReflectionsDelay(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_REFLECTIONS_DELAY, p_value);
+		return this;
 	}
 
-	public void setReverbLateReverbGain(float p_value) {
+	public AlReverb setReverbLateReverbGain(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_LATE_REVERB_GAIN, p_value);
+		return this;
 	}
 
-	public void setReverbLateReverbDelay(float p_value) {
+	public AlReverb setReverbLateReverbDelay(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_LATE_REVERB_DELAY, p_value);
+		return this;
 	}
 
-	public void setReverbAirAbsorptionGainHf(float p_value) {
+	public AlReverb setReverbAirAbsorptionGainHf(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_AIR_ABSORPTION_GAINHF, p_value);
+		return this;
 	}
 
-	public void setReverbRoomRolloffFactor(float p_value) {
+	public AlReverb setReverbRoomRolloffFactor(float p_value) {
 		super.setFloat(EXTEfx.AL_REVERB_ROOM_ROLLOFF_FACTOR, p_value);
+		return this;
 	}
 
-	public void setReverbDecayHfLimit(boolean p_value) {
+	public AlReverb setReverbDecayHfLimit(boolean p_value) {
 		super.setInt(EXTEfx.AL_REVERB_DECAY_HFLIMIT, p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
+		return this;
 	}
 	// endregion
 

@@ -39,24 +39,29 @@ public class AlDistortion extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setDistortionEdge(float p_value) {
+	public AlDistortion setDistortionEdge(float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_EDGE, p_value);
+		return this;
 	}
 
-	public void setDistortionGain(float p_value) {
+	public AlDistortion setDistortionGain(float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_GAIN, p_value);
+		return this;
 	}
 
-	public void setDistortionLowpassCutoff(float p_value) {
+	public AlDistortion setDistortionLowpassCutoff(float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_LOWPASS_CUTOFF, p_value);
+		return this;
 	}
 
-	public void setDistortionEqCenter(float p_value) {
+	public AlDistortion setDistortionEqCenter(float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_EQCENTER, p_value);
+		return this;
 	}
 
-	public void setDistortionEqBandwidth(float p_value) {
+	public AlDistortion setDistortionEqBandwidth(float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_EQBANDWIDTH, p_value);
+		return this;
 	}
 	// endregion
 

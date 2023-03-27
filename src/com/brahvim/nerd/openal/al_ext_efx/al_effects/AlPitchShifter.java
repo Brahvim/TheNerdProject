@@ -27,12 +27,14 @@ public class AlPitchShifter extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setPitchShifterFineTune(int p_value) {
+	public AlPitchShifter setPitchShifterFineTune(int p_value) {
 		super.setInt(EXTEfx.AL_PITCH_SHIFTER_FINE_TUNE, p_value);
+		return this;
 	}
 
-	public void setPitchShifterCoarseTune(int p_value) {
+	public AlPitchShifter setPitchShifterCoarseTune(int p_value) {
 		super.setInt(EXTEfx.AL_PITCH_SHIFTER_COARSE_TUNE, p_value);
+		return this;
 	}
 	// endregion
 

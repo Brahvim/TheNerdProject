@@ -7,7 +7,7 @@ import com.brahvim.nerd.math.collision.CollisionAlgorithms;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
-import com.brahvim.nerd.rendering.particles.Particle;
+import com.brahvim.nerd.rendering.particles.NerdParticle;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -24,8 +24,8 @@ public class TestScene3 extends NerdScene {
     private int cubesToAdd;
     private PShape boxShape;
     private NerdAmbiLight ambiLight;
-    private ArrayList<Particle> cubes = new ArrayList<>();
-    // endregion Fields.
+    private ArrayList<NerdParticle> cubes = new ArrayList<>();
+    // endregion
 
     @Override
     protected synchronized void preload() {
@@ -98,17 +98,17 @@ public class TestScene3 extends NerdScene {
         // else
         // this.cubesToAdd--;
 
-        if (this.cubesToAdd != 0) // Optimization
+        if (this.cubesToAdd != 0)
             for (int i = 0; i != this.CUBES_ADDED_EVERY_FRAME; i++) {
                 if (this.cubesToAdd == 0)
                     break;
                 this.cubesToAdd--;
                 AlBuffer<?> randomPop = ASSETS.get("Pop" + (int) SKETCH.random(1, 4)).getData();
-                this.cubes.add(new Particle(SCENE).plopIn(randomPop));
+                this.cubes.add(new NerdParticle(SCENE).plopIn(randomPop));
             }
 
         for (int i = this.cubes.size() - 1; i != -1; i--) {
-            final Particle p = this.cubes.get(i);
+            final NerdParticle p = this.cubes.get(i);
             final PVector screenPos = SKETCH.screenVec(p.getPos());
             final float twiceTheSize = p.size * 2;
 
@@ -118,12 +118,14 @@ public class TestScene3 extends NerdScene {
 
                     SKETCH.width + twiceTheSize * 2,
                     SKETCH.height + twiceTheSize * 2)) {
+                // Don't deallocate manually! Get `ParticleMan` (`ParticleManager`)!
+                // ...and add stuff to da particles ._.
                 p.getAudioSource().dispose();
                 this.cubes.remove(i);
             }
         }
 
-        for (Particle p : this.cubes)
+        for (NerdParticle p : this.cubes)
             if (p != null)
                 p.draw(this.boxShape);
 
@@ -144,7 +146,7 @@ public class TestScene3 extends NerdScene {
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
             for (int i = this.cubes.size() - 1; i != -1; i--) {
-                final Particle p = this.cubes.get(i);
+                final NerdParticle p = this.cubes.get(i);
                 p.getAudioSource().dispose();
                 p.plopOut();
                 this.cubes.remove(i);

@@ -107,92 +107,114 @@ public class AlEaxReverb extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setEaxReverbDensity(float p_value) {
+	public AlEaxReverb setEaxReverbDensity(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_DENSITY, p_value);
+		return this;
 	}
 
-	public void setEaxReverbDiffusion(float p_value) {
+	public AlEaxReverb setEaxReverbDiffusion(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_DIFFUSION, p_value);
+		return this;
 	}
 
-	public void setEaxReverbGain(float p_value) {
+	public AlEaxReverb setEaxReverbGain(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_GAIN, p_value);
+		return this;
 	}
 
-	public void setEaxReverbGainHf(float p_value) {
+	public AlEaxReverb setEaxReverbGainHf(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_GAINHF, p_value);
+		return this;
 	}
 
-	public void setEaxReverbGainLf(float p_value) {
+	public AlEaxReverb setEaxReverbGainLf(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_GAINLF, p_value);
+		return this;
 	}
 
-	public void setEaxReverbDecayTime(float p_value) {
+	public AlEaxReverb setEaxReverbDecayTime(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_DECAY_TIME, p_value);
+		return this;
 	}
 
-	public void setEaxReverbDecayHfRatio(float p_value) {
+	public AlEaxReverb setEaxReverbDecayHfRatio(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_DECAY_HFRATIO, p_value);
+		return this;
 	}
 
-	public void setEaxReverbDecayLfRatio(float p_value) {
+	public AlEaxReverb setEaxReverbDecayLfRatio(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_DECAY_LFRATIO, p_value);
+		return this;
 	}
 
-	public void setEaxReverbReflectionsGain(float p_value) {
+	public AlEaxReverb setEaxReverbReflectionsGain(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_REFLECTIONS_GAIN, p_value);
+		return this;
 	}
 
-	public void setEaxReverbReflectionsDelay(float p_value) {
+	public AlEaxReverb setEaxReverbReflectionsDelay(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_REFLECTIONS_DELAY, p_value);
+		return this;
 	}
 
-	public void setEaxReverbReflectionsPan(float p_value) {
+	public AlEaxReverb setEaxReverbReflectionsPan(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_REFLECTIONS_PAN, p_value);
+		return this;
 	}
 
-	public void setEaxReverbLateReverbGain(float p_value) {
+	public AlEaxReverb setEaxReverbLateReverbGain(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_LATE_REVERB_GAIN, p_value);
+		return this;
 	}
 
-	public void setEaxReverbLateReverbDelay(float p_value) {
+	public AlEaxReverb setEaxReverbLateReverbDelay(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_LATE_REVERB_DELAY, p_value);
+		return this;
 	}
 
-	public void setEaxReverbLateReverbPan(float p_value) {
+	public AlEaxReverb setEaxReverbLateReverbPan(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_LATE_REVERB_PAN, p_value);
+		return this;
 	}
 
-	public void setEaxReverbEchoTime(float p_value) {
+	public AlEaxReverb setEaxReverbEchoTime(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_ECHO_TIME, p_value);
+		return this;
 	}
 
-	public void setEaxReverbEchoDepth(float p_value) {
+	public AlEaxReverb setEaxReverbEchoDepth(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_ECHO_DEPTH, p_value);
+		return this;
 	}
 
-	public void setEaxReverbModulationTime(float p_value) {
+	public AlEaxReverb setEaxReverbModulationTime(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_MODULATION_TIME, p_value);
+		return this;
 	}
 
-	public void setEaxReverbModulationDepth(float p_value) {
+	public AlEaxReverb setEaxReverbModulationDepth(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_MODULATION_DEPTH, p_value);
+		return this;
 	}
 
-	public void setEaxReverbAirAbsorptionGainHf(float p_value) {
+	public AlEaxReverb setEaxReverbAirAbsorptionGainHf(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_AIR_ABSORPTION_GAINHF, p_value);
+		return this;
 	}
 
-	public void setEaxReverbHfReference(float p_value) {
+	public AlEaxReverb setEaxReverbHfReference(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_HFREFERENCE, p_value);
+		return this;
 	}
 
-	public void setEaxReverbRoomRolloffFactor(float p_value) {
+	public AlEaxReverb setEaxReverbRoomRolloffFactor(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_ROOM_ROLLOFF_FACTOR, p_value);
+		return this;
 	}
 
-	public void setEaxReverbDecayHfLimit(float p_value) {
+	public AlEaxReverb setEaxReverbDecayHfLimit(float p_value) {
 		super.setFloat(EXTEfx.AL_EAXREVERB_DECAY_HFLIMIT, p_value);
+		return this;
 	}
 	// endregion
 

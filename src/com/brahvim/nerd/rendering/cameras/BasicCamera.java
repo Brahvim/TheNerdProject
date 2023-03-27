@@ -25,6 +25,7 @@ public class BasicCamera extends NerdCamera {
         // Default camera values in Processing.
         // From [https://processing.org/reference/camera_.html].
         final float WIDTH_HALF = this.SKETCH.cx, HEIGHT_HALF = this.SKETCH.cy;
+
         this.defaultCamUp = new PVector(0, 1, 0);
         this.defaultCamPos = new PVector(
                 WIDTH_HALF, HEIGHT_HALF,
@@ -35,32 +36,25 @@ public class BasicCamera extends NerdCamera {
     // region Camera runtime.
     @Override
     public void applyMatrix() {
-        switch (this.SKETCH.RENDERER) {
-            case PConstants.JAVA2D:
-                this.apply2dMatrix();
-                return;
-            // case PConstants.P3D, PConstants.P2D -> this.applyMatrix();
-        }
+        if (this.SKETCH.RENDERER != PConstants.P3D)
+            return;
 
         // Apply projection:
         switch (this.projection) {
-            case PConstants.PERSPECTIVE:
-                this.SKETCH.perspective(this.fov,
-                        (float) this.SKETCH.width / (float) this.SKETCH.height,
-                        this.near, this.far);
-                break;
-            case PConstants.ORTHOGRAPHIC:
-                this.SKETCH.ortho(
-                        -this.SKETCH.cx, this.SKETCH.cx,
-                        -this.SKETCH.cy, this.SKETCH.cy,
-                        this.near, this.far);
+            case PConstants.PERSPECTIVE -> this.SKETCH.perspective(this.fov,
+                    (float) this.SKETCH.width / (float) this.SKETCH.height, this.near, this.far);
+
+            case PConstants.ORTHOGRAPHIC -> this.SKETCH.ortho(-this.SKETCH.cx, this.SKETCH.cx, -this.SKETCH.cy,
+                    this.SKETCH.cy, this.near, this.far);
+
+            default -> throw new UnsupportedOperationException("""
+                    `NerdCamera::projection` can only be either `PConstants.PERSPECTIVE` or `PConstants.ORTHOGRAPHIC`.
+                    """);
         }
 
         // region Apply the camera matrix:
-        this.SKETCH.camera(
-                this.pos.x, this.pos.y, this.pos.z,
-                this.center.x, this.center.y, this.center.z,
-                this.up.x, this.up.y, this.up.z);
+        this.SKETCH.camera(this.pos.x, this.pos.y, this.pos.z, this.center.x, this.center.y, this.center.z, this.up.x,
+                this.up.y, this.up.z);
         // endregion
 
         // Translate! People probably still prefer things on the top left corner `P3D`
@@ -69,12 +63,6 @@ public class BasicCamera extends NerdCamera {
         // ...nope! I'll remove this! It causes the camera position to seem to change
         // when you resize the window!
         // Lesson learnt: **use this only if your camera never moves!**
-    }
-
-    @Deprecated
-    public void apply2dMatrix() {
-        this.SKETCH.translate(this.center);
-        this.SKETCH.translate(0, PVector.dot(this.center, this.up), 0); // :woozy_face:
     }
     // endregion
 

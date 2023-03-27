@@ -26,12 +26,14 @@ public class AlLowpassFilter extends AlFilter {
 	// endregion
 
 	// region Setters.
-	public void setLowpassGain(float p_value) {
+	public AlLowpassFilter setLowpassGain(float p_value) {
 		super.setFloat(EXTEfx.AL_LOWPASS_GAIN, p_value);
+		return this;
 	}
 
-	public void setLowpassGainHf(float p_value) {
+	public AlLowpassFilter setLowpassGainHf(float p_value) {
 		super.setFloat(EXTEfx.AL_LOWPASS_GAINHF, p_value);
+		return this;
 	}
 	// endregion
 

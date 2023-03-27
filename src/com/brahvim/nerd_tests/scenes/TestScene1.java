@@ -4,6 +4,9 @@ import com.brahvim.nerd.io.asset_loader.processing_loaders.PFontAsset;
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
+import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
+import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
+import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlBandpassFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.layers.BackgroundLayer;
@@ -34,7 +37,16 @@ public class TestScene1 extends NerdScene {
 
         this.font = MANAGER.PERSISTENT_ASSETS.get("Arial-Black-48").getData();
         this.ease = new SineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
+
         this.sceneOneAnnounce = new AlSource(SKETCH.AL, ASSETS.get("SceneOne").getData());
+        this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(SKETCH.AL)
+                .setBandpassGainHf(0.01f)
+                .setBandpassGainLf(0.18f));
+        this.sceneOneAnnounce.setEffectSlot(
+                new AlAuxiliaryEffectSlot(SKETCH.AL,
+                        new AlDistortion(SKETCH.AL).setDistortionGain(1)));
+        this.sceneOneAnnounce.setGain(0.25f);
+
         SCENE.addLayers(
                 // Yes, these are started in order:
                 BackgroundLayer.class,

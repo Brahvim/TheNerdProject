@@ -1,16 +1,15 @@
 package com.brahvim.nerd.rendering.particles;
 
-import com.brahvim.nerd.openal.AlDataStream;
+import java.util.ArrayList;
+
 import com.brahvim.nerd.openal.AlSource;
 
 public class ParticleManager {
 
 	private AlSource source;
-	private AlDataStream alDataStream;
+	private ArrayList<NerdParticle> particles;
 
 	public ParticleManager() {
 	}
-
-	
 
 }

@@ -24,6 +24,7 @@ public class AlContext extends AlNativeResource {
 					ALC11.ALC_SYNC, this.sync ? ALC11.ALC_TRUE : ALC11.ALC_FALSE
 			};
 		}
+
 	}
 
 	// region Fields.
@@ -104,7 +105,8 @@ public class AlContext extends AlNativeResource {
 	protected void disposeImpl() {
 		// Unlink the current context object:
 		if (!ALC11.alcMakeContextCurrent(0))
-			throw new NerdAlException("Could not change the OpenAL context (whilst disposing one)!");
+			throw new NerdAlException(
+					"Could not change the OpenAL context (whilst disposing one)!");
 
 		this.alMan.checkAlcError();
 

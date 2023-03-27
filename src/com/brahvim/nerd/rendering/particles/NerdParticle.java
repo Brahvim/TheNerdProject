@@ -3,14 +3,14 @@ package com.brahvim.nerd.rendering.particles;
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
-import com.brahvim.nerd.rendering.overtly_simple_physics.SimpleEulerBody;
+import com.brahvim.nerd.rendering.overtly_simple_physics.NerdEulerBody;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PConstants;
 import processing.core.PShape;
 import processing.core.PVector;
 
-public class Particle extends SimpleEulerBody {
+public class NerdParticle extends NerdEulerBody {
 
     // region Fields.
     public float size = 40;
@@ -24,7 +24,7 @@ public class Particle extends SimpleEulerBody {
     private AlSource popSrc;
     // endregion
 
-    public Particle(NerdScene p_scene) {
+    public NerdParticle(NerdScene p_scene) {
         super(p_scene.SKETCH);
 
         super.pos.set(
@@ -116,22 +116,22 @@ public class Particle extends SimpleEulerBody {
     // endregion
 
     // region Transitions.
-    public Particle cutIn() {
+    public NerdParticle cutIn() {
         this.visible = true;
         return this;
     }
 
-    public Particle cutOut() {
+    public NerdParticle cutOut() {
         this.visible = false;
         return this;
     }
 
-    public Particle plopIn() {
+    public NerdParticle plopIn() {
         this.plopInImpl();
         return this;
     }
 
-    public Particle plopIn(AlBuffer<?> p_popAudioBuffer) {
+    public NerdParticle plopIn(AlBuffer<?> p_popAudioBuffer) {
         this.popSrc = new AlSource(super.SKETCH.AL, p_popAudioBuffer);
         this.popSrc.setPosition(PVector.mult(super.pos, 0.001f));
         this.popSrc.play();
@@ -139,27 +139,27 @@ public class Particle extends SimpleEulerBody {
         return this;
     }
 
-    private Particle plopInImpl() {
+    private NerdParticle plopInImpl() {
         this.visible = true;
         this.plopWave.freqMult = 0.015f;
         this.plopWave.endWhenAngleIncrementsBy(90).start();
         return this;
     }
 
-    public Particle plopOut() {
+    public NerdParticle plopOut() {
         this.plopWave.endWhenAngleIncrementsBy(90).start(270, () -> {
             this.visible = false;
         });
         return this;
     }
 
-    public Particle fadeIn() {
+    public NerdParticle fadeIn() {
         this.visible = true;
         this.fadeWave.endWhenAngleIncrementsBy(90).start();
         return this;
     }
 
-    public Particle fadeOut() {
+    public NerdParticle fadeOut() {
         this.visible = false;
         this.fadeWave.endWhenAngleIncrementsBy(180).start(90);
         return this;

@@ -21,8 +21,9 @@ public class AlCompressor extends AlEffect {
 		return super.getInt(EXTEfx.AL_COMPRESSOR_ONOFF) == AL11.AL_TRUE;
 	}
 
-	public void setStatus(boolean p_value) {
+	public AlCompressor setStatus(boolean p_value) {
 		super.setInt(EXTEfx.AL_COMPRESSOR_ONOFF, p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
+		return this;
 	}
 
 }

@@ -582,7 +582,7 @@ public class Sketch extends PApplet {
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
 
 		// Needed by `this.unprojectMouse()`:
-		this.mouse.set(super.mouseX, super.mouseY);
+		this.mouse.set(super.mouseX, super.height);
 		if (this.RENDERER == PConstants.P3D)
 			this.unprojectMouse();
 
@@ -622,9 +622,8 @@ public class Sketch extends PApplet {
 			this.currentCamera.apply(); // Do all three tasks!
 		// If `this.currentCamera` is `null`, but wasn't,
 		else if (this.currentCamera != this.previousCamera)
-			System.out.printf("""
-					Sketch `%s` no longer has a camera!
-					\bConsider adding one...?""", this.NAME);
+			System.out.printf(
+					"Sketch \"%s\" has no camera! Consider adding one...?", this.NAME);
 		// endregion
 
 		// region Call all draw listeners.
@@ -1634,10 +1633,10 @@ public class Sketch extends PApplet {
 		// Unproject:
 		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) g);
 		// `0.9f`: at the near clipping plane.
-		// `0.9999f`: at the far clipping plane.
-		this.UNPROJECTOR.gluUnProject(mouseX, height - mouseY,
+		// `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
+		this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
 				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
-				0, mouse);
+				0, this.mouse);
 
 		if (this.currentCamera != null)
 			this.currentCamera.near = originalNear;
@@ -1716,10 +1715,10 @@ public class Sketch extends PApplet {
 		 * // (((I do not guarantee complete correctness in the copying of that
 		 * quote.)))
 		 * <asterisk>/
-		 * // ^^^ (...that basically, this `u.z` modfication will go unchanged,
+		 * // ^^^ be accessed in some other way, but
+		 * whatever... (...that basically, this `u.z` modfication will go unchanged,
 		 * // no matter what un-projection method you use!:)
-		 * u.z = touches[i].pressure; // Should be accessed in some other way, but
-		 * whatever...
+		 * u.z = touches[i].pressure; // Should
 		 * 
 		 * this.UNPROJ_TOUCHES.add(u);
 		 * }

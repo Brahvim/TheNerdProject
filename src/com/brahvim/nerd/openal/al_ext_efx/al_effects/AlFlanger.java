@@ -43,28 +43,34 @@ public class AlFlanger extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setFlangerWaveform(float p_value) {
+	public AlFlanger setFlangerWaveform(float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_WAVEFORM, p_value);
+		return this;
 	}
 
-	public void setFlangerPhase(float p_value) {
+	public AlFlanger setFlangerPhase(float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_PHASE, p_value);
+		return this;
 	}
 
-	public void setFlangerRate(float p_value) {
+	public AlFlanger setFlangerRate(float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_RATE, p_value);
+		return this;
 	}
 
-	public void setFlangerDepth(float p_value) {
+	public AlFlanger setFlangerDepth(float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_DEPTH, p_value);
+		return this;
 	}
 
-	public void setFlangerFeedback(float p_value) {
+	public AlFlanger setFlangerFeedback(float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_FEEDBACK, p_value);
+		return this;
 	}
 
-	public void setFlangerDelay(float p_value) {
+	public AlFlanger setFlangerDelay(float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_DELAY, p_value);
+		return this;
 	}
 	// endregion
 

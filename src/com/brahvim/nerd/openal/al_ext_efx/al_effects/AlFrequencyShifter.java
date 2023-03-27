@@ -31,16 +31,19 @@ public class AlFrequencyShifter extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setFrequencyShifterFrequency(float p_value) {
+	public AlFrequencyShifter setFrequencyShifterFrequency(float p_value) {
 		super.setFloat(EXTEfx.AL_FREQUENCY_SHIFTER_FREQUENCY, p_value);
+		return this;
 	}
 
-	public void setFrequencyShifterLeftDirection(float p_value) {
+	public AlFrequencyShifter setFrequencyShifterLeftDirection(float p_value) {
 		super.setFloat(EXTEfx.AL_FREQUENCY_SHIFTER_LEFT_DIRECTION, p_value);
+		return this;
 	}
 
-	public void setFrequencyShifterRightDirection(float p_value) {
+	public AlFrequencyShifter setFrequencyShifterRightDirection(float p_value) {
 		super.setFloat(EXTEfx.AL_FREQUENCY_SHIFTER_RIGHT_DIRECTION, p_value);
+		return this;
 	}
 	// endregion
 

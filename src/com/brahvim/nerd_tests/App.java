@@ -5,7 +5,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
-import com.brahvim.nerd_tests.scenes.TestScene3;
+import com.brahvim.nerd_tests.scenes.TestScene1;
 
 public class App {
 
@@ -17,11 +17,12 @@ public class App {
      * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: ANDROID OpenAL. Get it done!~ (SWIG wrapper!)
      * // TODO: SHADERS. Remake the "PostFX" Processing library?
+     * // TODO: "External library object loader" to finally separate libraries!
      */
 
     public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
-            TestScene3.class;
+            TestScene1.class;
     // LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();
 
     // region `App`'s *other* fields.

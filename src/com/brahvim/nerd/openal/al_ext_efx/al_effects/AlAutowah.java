@@ -35,20 +35,24 @@ public class AlAutowah extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setAutowahAttackTime(float p_value) {
+	public AlAutowah setAutowahAttackTime(float p_value) {
 		super.setFloat(EXTEfx.AL_AUTOWAH_ATTACK_TIME, p_value);
+		return this;
 	}
 
-	public void setAutowahReleaseTime(float p_value) {
+	public AlAutowah setAutowahReleaseTime(float p_value) {
 		super.setFloat(EXTEfx.AL_AUTOWAH_RELEASE_TIME, p_value);
+		return this;
 	}
 
-	public void setAutowahResonance(float p_value) {
+	public AlAutowah setAutowahResonance(float p_value) {
 		super.setFloat(EXTEfx.AL_AUTOWAH_RESONANCE, p_value);
+		return this;
 	}
 
-	public void setAutowahPeakGain(float p_value) {
+	public AlAutowah setAutowahPeakGain(float p_value) {
 		super.setFloat(EXTEfx.AL_AUTOWAH_PEAK_GAIN, p_value);
+		return this;
 	}
 	// endregion
 

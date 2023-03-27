@@ -231,16 +231,19 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	// endregion
 
 	// region Setters.
-	public void setBits(int p_bits) {
+	public AlBuffer<BufferT> setBits(int p_bits) {
 		AL11.alBufferi(this.id, AL11.AL_BITS, p_bits);
+		return this;
 	}
 
-	public void setSampleRate(int p_sampleRate) {
+	public AlBuffer<BufferT> setSampleRate(int p_sampleRate) {
 		AL11.alBufferi(this.id, AL11.AL_FREQUENCY, p_sampleRate);
+		return this;
 	}
 
-	public void setChannels(int p_channels) {
+	public AlBuffer<BufferT> setChannels(int p_channels) {
 		AL11.alBufferi(this.id, AL11.AL_CHANNELS, p_channels);
+		return this;
 	}
 	// endregion
 

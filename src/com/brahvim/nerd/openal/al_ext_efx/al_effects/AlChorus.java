@@ -47,32 +47,39 @@ public class AlChorus extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setChorusWaveform(float p_value) {
+	public AlChorus setChorusWaveform(float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_WAVEFORM, p_value);
+		return this;
 	}
 
-	public void setChorusWaveformTriangle(float p_value) {
+	public AlChorus setChorusWaveformTriangle(float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_WAVEFORM_TRIANGLE, p_value);
+		return this;
 	}
 
-	public void setChorusPhase(float p_value) {
+	public AlChorus setChorusPhase(float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_PHASE, p_value);
+		return this;
 	}
 
-	public void setChorusRate(float p_value) {
+	public AlChorus setChorusRate(float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_RATE, p_value);
+		return this;
 	}
 
-	public void setChorusDepth(float p_value) {
+	public AlChorus setChorusDepth(float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_DEPTH, p_value);
+		return this;
 	}
 
-	public void setChorusFeedback(float p_value) {
+	public AlChorus setChorusFeedback(float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_FEEDBACK, p_value);
+		return this;
 	}
 
-	public void setChorusDelay(float p_value) {
+	public AlChorus setChorusDelay(float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_DELAY, p_value);
+		return this;
 	}
 	// endregion
 

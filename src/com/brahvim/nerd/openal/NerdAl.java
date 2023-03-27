@@ -90,11 +90,13 @@ public class NerdAl {
 	// region C-style OpenAL listener getters.
 	public int getListenerInt(long p_ctxId, int p_alEnum) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		return AL11.alGetListeneri(p_alEnum);
 	}
 
 	public float getListenerFloat(long p_ctxId, int p_alEnum) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		return AL11.alGetListenerf(p_alEnum);
 	}
 
@@ -103,6 +105,7 @@ public class NerdAl {
 		MemoryStack.stackPush();
 		IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alGetListeneriv(p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
@@ -113,6 +116,7 @@ public class NerdAl {
 		MemoryStack.stackPush();
 		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alGetListenerfv(p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
@@ -123,6 +127,7 @@ public class NerdAl {
 		MemoryStack.stackPush();
 		IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alGetListeneriv(p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
@@ -133,6 +138,7 @@ public class NerdAl {
 		MemoryStack.stackPush();
 		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alGetListenerfv(p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
@@ -144,24 +150,28 @@ public class NerdAl {
 	// region C-style OpenAL listener setters.
 	public void setListenerInt(long p_ctxId, int p_alEnum, int p_value) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alListeneri(p_alEnum, p_value);
 		this.checkAlError();
 	}
 
 	public void setListenerFloat(long p_ctxId, int p_alEnum, float p_value) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alListenerf(p_alEnum, p_value);
 		this.checkAlError();
 	}
 
 	public void setListenerIntVector(long p_ctxId, int p_alEnum, int... p_value) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alListeneriv(p_alEnum, p_value);
 		this.checkAlError();
 	}
 
 	public void setListenerFloatVector(long p_ctxId, int p_alEnum, float... p_values) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alListenerfv(p_alEnum, p_values);
 		this.checkAlError();
 	}
@@ -172,12 +182,14 @@ public class NerdAl {
 					"`AlSource::setIntTriplet(AlContext p_ctx, )` cannot take an array of size other than `3`!");
 
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alListener3i(p_alEnum, p_value[0], p_value[1], p_value[2]);
 		this.checkAlError();
 	}
 
 	public void setListenerIntTriplet(long p_ctxId, int p_alEnum, int p_i1, int p_i2, int p_i3) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alListener3i(p_alEnum, p_i1, p_i2, p_i3);
 		this.checkAlError();
 	}
@@ -188,18 +200,21 @@ public class NerdAl {
 					"`AlSource::setFloatTriplet(AlContext p_ctx, )` cannot take an array of size other than `3`!");
 
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alListener3f(p_alEnum, p_value[0], p_value[1], p_value[2]);
 		this.checkAlError();
 	}
 
 	public void setListenerFloatTriplet(long p_ctxId, int p_alEnum, float p_f1, float p_f2, float p_f3) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alListener3f(p_alEnum, p_f1, p_f2, p_f3);
 		this.checkAlError();
 	}
 
 	public void setListenerFloatTriplet(long p_ctxId, int p_alEnum, PVector p_value) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
+		this.checkAlcError();
 		AL11.alListener3f(p_alEnum, p_value.x, p_value.y, p_value.z);
 		this.checkAlError();
 	}
@@ -324,7 +339,6 @@ public class NerdAl {
 	}
 	// endregion
 	// endregion
-
 	// endregion
 
 	// region Getters and setters!...
@@ -456,7 +470,7 @@ public class NerdAl {
 	}
 
 	public int checkAlError() throws AlException {
-		int alError = AL11.alGetError();
+		final int alError = AL11.alGetError();
 
 		// `40964` is THE MOST annoying error.
 		// Its error string is literally "No Error"!
@@ -467,7 +481,7 @@ public class NerdAl {
 	}
 
 	public int checkAlcError() throws AlcException {
-		int alcError = ALC11.alcGetError(this.device.getId());
+		final int alcError = ALC11.alcGetError(this.device.getId());
 
 		if (alcError != 0)
 			throw new AlcException(this.getDeviceId(), alcError);

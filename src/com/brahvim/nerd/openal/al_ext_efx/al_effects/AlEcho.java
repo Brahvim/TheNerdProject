@@ -39,24 +39,29 @@ public class AlEcho extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setEchoDelay(float p_value) {
+	public AlEcho setEchoDelay(float p_value) {
 		super.setFloat(EXTEfx.AL_ECHO_DELAY, p_value);
+		return this;
 	}
 
-	public void setEchoLrDelay(float p_value) {
+	public AlEcho setEchoLrDelay(float p_value) {
 		super.setFloat(EXTEfx.AL_ECHO_LRDELAY, p_value);
+		return this;
 	}
 
-	public void setEchoDamping(float p_value) {
+	public AlEcho setEchoDamping(float p_value) {
 		super.setFloat(EXTEfx.AL_ECHO_DAMPING, p_value);
+		return this;
 	}
 
-	public void setEchoFeedback(float p_value) {
+	public AlEcho setEchoFeedback(float p_value) {
 		super.setFloat(EXTEfx.AL_ECHO_FEEDBACK, p_value);
+		return this;
 	}
 
-	public void setEchoSpread(float p_value) {
+	public AlEcho setEchoSpread(float p_value) {
 		super.setFloat(EXTEfx.AL_ECHO_SPREAD, p_value);
+		return this;
 	}
 	// endregion
 

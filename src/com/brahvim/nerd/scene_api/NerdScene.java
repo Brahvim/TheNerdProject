@@ -348,7 +348,7 @@ public class NerdScene implements HardwareEventsHandler {
   // endregion
 
   // region `NerdLayer` state-management.
-  @SuppressWarnings("all") // I *actually* am not using `@SafeVarargs`, yes...
+  @SafeVarargs // I *actually* am not using `@SafeVarargs`, yes...
   public final void addLayers(Class<? extends NerdLayer>... p_layerClasses) {
     for (Class<? extends NerdLayer> c : p_layerClasses)
       this.addLayers(c);
@@ -372,7 +372,7 @@ public class NerdScene implements HardwareEventsHandler {
     return toStart;
   }
 
-  @SuppressWarnings("all") // I *actually* am not using `@SafeVarargs`, yes...
+  @SafeVarargs // I *actually* am not using `@SafeVarargs`, yes...
   public final void restartLayers(Class<? extends NerdLayer>... p_layerClasses) {
     for (Class<? extends NerdLayer> c : p_layerClasses)
       this.restartLayers(c);

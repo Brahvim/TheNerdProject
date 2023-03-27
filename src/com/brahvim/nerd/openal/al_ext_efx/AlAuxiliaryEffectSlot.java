@@ -272,29 +272,35 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 	// endregion
 
 	// region Setters.
-	public void setGain(float p_value) {
+	public AlAuxiliaryEffectSlot setGain(float p_value) {
 		this.setFloat(EXTEfx.AL_EFFECTSLOT_GAIN, p_value);
+		return this;
 	}
 
-	public void setSource(AlSource p_source) {
+	public AlAuxiliaryEffectSlot setSource(AlSource p_source) {
 		this.source = p_source;
+		return this;
 	}
 
-	public void setEffect(AlEffect p_effect) {
+	public AlEffect setEffect(AlEffect p_effect) {
+		final AlEffect toRet = this.effect;
+
 		if (p_effect == null) {
 			this.effect = null;
 			EXTEfx.alAuxiliaryEffectSloti(this.id, EXTEfx.AL_EFFECTSLOT_EFFECT, EXTEfx.AL_EFFECT_NULL);
-			return;
+			return toRet;
 		}
 
 		this.effect = p_effect;
 		this.effect.slot = this;
 		EXTEfx.alAuxiliaryEffectSloti(this.id, EXTEfx.AL_EFFECTSLOT_EFFECT, p_effect.id);
+		return toRet;
 	}
 
-	public void setAutoSend(boolean p_value) {
+	public AlAuxiliaryEffectSlot setAutoSend(boolean p_value) {
 		EXTEfx.alAuxiliaryEffectSloti(this.id, EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO,
 				p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
+		return this;
 	}
 	// endregion
 

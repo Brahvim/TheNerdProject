@@ -31,16 +31,19 @@ public class AlRingModulator extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setRingModulatorFrequency(float p_value) {
+	public AlRingModulator setRingModulatorFrequency(float p_value) {
 		super.setFloat(EXTEfx.AL_RING_MODULATOR_FREQUENCY, p_value);
+		return this;
 	}
 
-	public void setRingModulatorWaveform(float p_value) {
+	public AlRingModulator setRingModulatorWaveform(float p_value) {
 		super.setFloat(EXTEfx.AL_RING_MODULATOR_WAVEFORM, p_value);
+		return this;
 	}
 
-	public void setRingModulatorHighpassCutoff(float p_value) {
+	public AlRingModulator setRingModulatorHighpassCutoff(float p_value) {
 		super.setFloat(EXTEfx.AL_RING_MODULATOR_HIGHPASS_CUTOFF, p_value);
+		return this;
 	}
 	// endregion
 

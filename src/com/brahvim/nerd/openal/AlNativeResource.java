@@ -24,7 +24,7 @@ public abstract class AlNativeResource {
 	}
 	// endregion
 
-	// Yes, there is no `getId()` method here...
+	// Yes, there's no `getId()` method here - IDs can be either `long`s or `int`s!
 
 	public final boolean shouldDispose(boolean p_value) {
 		boolean toRet = this.willDispose;

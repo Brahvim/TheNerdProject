@@ -1,4 +1,4 @@
-package com.brahvim.nerd.openal.al_effects;
+package com.brahvim.nerd.openal.al_ext_efx.al_effects;
 
 import org.lwjgl.openal.EXTEfx;
 
@@ -45,28 +45,34 @@ public class AlVocalMorpher extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public void setVocalMorpherPhonemea(float p_value) {
+	public AlVocalMorpher setVocalMorpherPhonemea(float p_value) {
 		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEA, p_value);
+		return this;
 	}
 
-	public void setVocalMorpherPhonemeb(float p_value) {
+	public AlVocalMorpher setVocalMorpherPhonemeb(float p_value) {
 		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEB, p_value);
+		return this;
 	}
 
-	public void setVocalMorpherPhonemeaCoarseTuning(float p_value) {
+	public AlVocalMorpher setVocalMorpherPhonemeaCoarseTuning(float p_value) {
 		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEA_COARSE_TUNING, p_value);
+		return this;
 	}
 
-	public void setVocalMorpherPhonemebCoarseTuning(float p_value) {
+	public AlVocalMorpher setVocalMorpherPhonemebCoarseTuning(float p_value) {
 		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_PHONEMEB_COARSE_TUNING, p_value);
+		return this;
 	}
 
-	public void setVocalMorpherWaveform(float p_value) {
+	public AlVocalMorpher setVocalMorpherWaveform(float p_value) {
 		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_WAVEFORM, p_value);
+		return this;
 	}
 
-	public void setVocalMorpherRate(float p_value) {
+	public AlVocalMorpher setVocalMorpherRate(float p_value) {
 		super.setFloat(EXTEfx.AL_VOCAL_MORPHER_RATE, p_value);
+		return this;
 	}
 	// endregion
 
