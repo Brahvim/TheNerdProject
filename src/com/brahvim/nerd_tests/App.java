@@ -79,6 +79,8 @@ public class App {
     }
 
     public Sketch getSketchInstance() {
+        while (App.sketchInstance != null)
+            ;
         return App.sketchInstance;
     }
 

@@ -23,6 +23,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -203,6 +204,7 @@ public class Sketch extends PApplet {
 	public final boolean USES_OPENGL;
 	public final StringTable STRINGS;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
+	public final HashMap<String, Object> EXT_OBJECTS = new HashMap<>();
 
 	// Dimensions of the inital size of the window:
 	public final float INIT_SCR;
