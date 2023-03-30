@@ -296,11 +296,12 @@ public class Sketch extends PApplet {
 	public int frameStartTime, pframeTime, frameTime;
 
 	// Display dimensions:
+	public float displayScr;
+	public int displayRefreshRate;
 	public int displayWidthHalf, displayHeightHalf;
 	public int displayWidthQuart, displayHeightQuart;
+	public int displayWidthTwice, displayHeightTwice; // <-- Twice!
 	public int displayWidthThirdQuart, displayHeightThirdQuart;
-	public int displayRefreshRate;
-	public float displayScr;
 
 	// Previous frame display dimensions:
 	public float pdisplayScr;
@@ -308,12 +309,13 @@ public class Sketch extends PApplet {
 	public int pdisplayWidth, pdisplayHeight; // <-- Not included with Processing!
 	public int pdisplayWidthHalf, pdisplayHeightHalf;
 	public int pdisplayWidthQuart, pdisplayHeightQuart;
+	public int pdisplayWidthTwice, pdisplayHeightTwice; // <-- Twice!
 	public int ppixelDensity, ppixelWidth, ppixelHeight; // <-- Also not included with Processing!
 	public int pdisplayWidthThirdQuart, pdisplayHeightThirdQuart;
 
 	// Windows dimensions for the current and previous frames:
-	public float pcx, pcy, pqx, pqy, pq3x, pq3y, pscr;
-	public float cx, cy, qx, qy, q3x, q3y, scr;
+	public float pdbx, pdby, pcx, pcy, pqx, pqy, pq3x, pq3y, pscr;
+	public float dbx, dby, cx, cy, qx, qy, q3x, q3y, scr;
 	public int pwidth, pheight;
 	// endregion
 	// endregion
@@ -583,11 +585,6 @@ public class Sketch extends PApplet {
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
 
-		// Needed by `this.unprojectMouse()`:
-		this.mouse.set(super.mouseX, super.height);
-		if (this.RENDERER == PConstants.P3D)
-			this.unprojectMouse();
-
 		for (Consumer<Sketch> c : this.PRE_LISTENERS)
 			if (c != null)
 				c.accept(this);
@@ -618,6 +615,11 @@ public class Sketch extends PApplet {
 		this.GLOBAL_MOUSE_VECTOR.set(GLOBAL_MOUSE_POINT.x, GLOBAL_MOUSE_POINT.y);
 		// endregion
 		// endregion
+
+		// Needed by `this.unprojectMouse()`:
+		this.mouse.set(super.mouseX, super.height);
+		if (this.RENDERER == PConstants.P3D)
+			this.unprojectMouse();
 
 		// region Apply the camera!:
 		if (this.currentCamera != null)
@@ -1091,6 +1093,9 @@ public class Sketch extends PApplet {
 
 	// region Rendering utilities!
 	public void updateWindowRatios() {
+		this.dbx = super.width * 2;
+		this.dby = super.height * 2;
+
 		this.cx = super.width * 0.5f;
 		this.cy = super.height * 0.5f;
 
@@ -1104,6 +1109,8 @@ public class Sketch extends PApplet {
 	}
 
 	public void updateDisplayRatios() {
+		this.displayWidthTwice = super.displayWidth * 2;
+		this.displayHeightTwice = super.displayHeight * 2;
 		this.displayScr = (float) super.displayWidth / (float) super.displayHeight;
 		this.displayRefreshRate = this.currentMonitor.getDisplayMode().getRefreshRate();
 
@@ -1119,6 +1126,9 @@ public class Sketch extends PApplet {
 	}
 
 	public void recordCurrentWindowRatios() {
+		this.pdbx = this.dbx;
+		this.pdby = this.dby;
+
 		this.pcx = this.cx;
 		this.pcy = this.cy;
 
@@ -1137,6 +1147,9 @@ public class Sketch extends PApplet {
 		this.ppixelHeight = super.pixelHeight;
 		this.ppixelDensity = super.pixelDensity;
 		this.pdisplayRefreshRate = this.displayRefreshRate;
+
+		this.pdisplayWidthTwice = this.displayWidthTwice;
+		this.pdisplayHeightTwice = this.displayHeightTwice;
 
 		this.pdisplayWidth = super.displayWidth;
 		this.pdisplayHeight = super.displayHeight;
@@ -1529,15 +1542,27 @@ public class Sketch extends PApplet {
 		this.alphaBgImplRect();
 	}
 
+	public void alphaBg(int p_color, float p_alpha) {
+		this.begin2d();
+		super.fill(p_color, p_alpha);
+		this.alphaBgImplRect();
+	}
+
 	public void alphaBg(float p_grey, float p_alpha) {
 		this.begin2d();
 		super.fill(p_grey, p_alpha);
 		this.alphaBgImplRect();
 	}
 
-	public void alphaBg(float p_red, float p_green, float p_blue, float p_alpha) {
+	public void alphaBg(float p_v1, float p_v2, float p_v3) {
 		this.begin2d();
-		super.fill(p_red, p_green, p_blue, p_alpha);
+		super.fill(p_v1, p_v2, p_v3);
+		this.alphaBgImplRect();
+	}
+
+	public void alphaBg(float p_v1, float p_v2, float p_v3, float p_alpha) {
+		this.begin2d();
+		super.fill(p_v1, p_v2, p_v3, p_alpha);
 		this.alphaBgImplRect();
 	}
 
@@ -1545,6 +1570,7 @@ public class Sketch extends PApplet {
 		// Removing this will not display the previous camera's view,
 		// but still show clipping:
 		super.camera();
+		super.noStroke();
 		super.rectMode(PConstants.CORNER);
 		super.rect(0, 0, super.width, super.height);
 		this.end2d();
@@ -1625,18 +1651,22 @@ public class Sketch extends PApplet {
 	// endregion
 
 	public void unprojectMouse() {
-		float originalNear = 0;
+		final float originalNear;
+
 		if (this.currentCamera != null) {
 			originalNear = this.currentCamera.near;
 			this.currentCamera.near = this.currentCamera.mouseZ;
 			this.currentCamera.applyMatrix();
-		}
+		} else
+			originalNear = 0;
 
 		// Unproject:
 		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) g);
-		// `0.9f`: at the near clipping plane.
-		// `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
+		// this.mouse.set(0, 0, 0); // Does not help!
+
 		this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
+				// `0.9f`: at the near clipping plane.
+				// `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
 				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
 				0, this.mouse);
 
@@ -1662,6 +1692,7 @@ public class Sketch extends PApplet {
 		 * 
 		 * this.currentCamera.near = originalNear;
 		 */
+
 	}
 
 	public void unprojectTouches() {

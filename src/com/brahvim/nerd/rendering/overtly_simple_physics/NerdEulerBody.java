@@ -18,7 +18,7 @@ public class NerdEulerBody {
 	}
 
 	public void integrate() {
-		float deltaTime = this.SKETCH.frameTime * this.dtMult;
+		final float deltaTime = this.SKETCH.frameTime * this.dtMult;
 
 		this.vel.add(this.acc);
 		this.pos.add(PVector.mult(this.vel, this.frict + deltaTime));

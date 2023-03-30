@@ -39,34 +39,34 @@ public class FlyCamera extends NerdCamera {
 
     @Override
     public void applyMatrix() {
-        this.mouseUpdate();
+        this.mouseTransform();
 
         // Apply projection:
         switch (this.projection) {
             case PConstants.PERSPECTIVE:
-                super.SKETCH.perspective(this.fov,
+                super.SKETCH.perspective(super.fov,
                         (float) super.SKETCH.width / (float) super.SKETCH.height,
-                        this.near, this.far);
+                        super.near, super.far);
                 break;
             case PConstants.ORTHOGRAPHIC:
                 super.SKETCH.ortho(
                         -super.SKETCH.cx, super.SKETCH.cx,
                         -super.SKETCH.cy, super.SKETCH.cy,
-                        this.near, this.far);
+                        super.near, super.far);
         }
 
         // Apply the camera matrix:
         super.SKETCH.camera(
-                this.pos.x, this.pos.y, this.pos.z,
-                this.front.x + this.pos.x, this.front.y + this.pos.y, this.front.z + this.pos.z,
-                this.up.x, this.up.y, this.up.z);
+                super.pos.x, super.pos.y, super.pos.z,
+                this.front.x + super.pos.x, this.front.y + super.pos.y, this.front.z + super.pos.z,
+                super.up.x, super.up.y, super.up.z);
 
         // Translate! People probably still prefer things on the top left corner `P3D`
         // ...even if it could mean translating twice in some cases, it's alright!
         // this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
         // ...nope! I'll remove this! It causes the camera position to seem to change
         // when you resize the window!
-        // Lesson learnt: **use this only if your camera never moves!**
+        // Lesson learnt: **use this only if your camera never translates!**
     }
 
     @Override
@@ -74,13 +74,13 @@ public class FlyCamera extends NerdCamera {
         FlyCamera toRet = new FlyCamera(super.SKETCH);
 
         // region Copying settings over to `toRet`.
-        toRet.up = new PVector(this.up.x, this.up.x, this.up.z);
-        toRet.pos = new PVector(this.pos.x, this.pos.x, this.pos.z);
+        toRet.up = new PVector(super.up.x, super.up.x, super.up.z);
+        toRet.pos = new PVector(super.pos.x, super.pos.x, super.pos.z);
         toRet.front = new PVector(this.front.x, this.front.x, this.front.z);
 
-        toRet.far = this.far;
-        toRet.fov = this.fov;
-        toRet.near = this.near;
+        toRet.far = super.far;
+        toRet.fov = super.fov;
+        toRet.near = super.near;
 
         toRet.script = this.script;
 
@@ -136,7 +136,7 @@ public class FlyCamera extends NerdCamera {
     }
     // endregion
 
-    protected void mouseUpdate() {
+    protected void mouseTransform() {
         // region Update `yaw` and `pitch`:
         if (FlyCamera.holdCursor) {
             this.yaw += this.mouseSensitivity
