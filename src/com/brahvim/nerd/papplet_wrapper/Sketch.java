@@ -38,7 +38,7 @@ import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
-import com.brahvim.nerd.rendering.cameras.NerdCamera;
+import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
@@ -327,7 +327,7 @@ public class Sketch extends PApplet {
 	protected final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
 
 	protected GraphicsDevice previousMonitor, currentMonitor;
-	protected NerdCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
+	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	protected NerdScene currentScene;
 	protected SceneManager sceneMan; // Don't use static initialization for this..?
 
@@ -667,7 +667,7 @@ public class Sketch extends PApplet {
 		for (PVector v : this.UNPROJ_TOUCHES)
 			this.PREV_UNPROJ_TOUCHES.add(v);
 
-		FlyCamera.pholdPointer = FlyCamera.holdCursor;
+		FlyCamera.pholdMouse = FlyCamera.holdMouse;
 
 		if (this.currentScene != null)
 			this.currentScene.ASSETS.updatePreviousLoadState();
@@ -1343,7 +1343,7 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Projection functions.
-	public void perspective(NerdCamera p_cam) {
+	public void perspective(NerdAbstractCamera p_cam) {
 		super.perspective(p_cam.fov, p_cam.aspect, p_cam.near, p_cam.far);
 	}
 
@@ -1351,7 +1351,7 @@ public class Sketch extends PApplet {
 		super.perspective(p_fov, this.scr, p_near, p_far);
 	}
 
-	public void ortho(NerdCamera p_cam) {
+	public void ortho(NerdAbstractCamera p_cam) {
 		super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_cam.near, p_cam.far);
 	}
 
@@ -1631,19 +1631,19 @@ public class Sketch extends PApplet {
 
 	// region Camera and unprojection.
 	// region Camera!
-	public NerdCamera getCurrentCamera() {
+	public NerdAbstractCamera getCurrentCamera() {
 		return this.currentCamera;
 	}
 
-	public NerdCamera getPreviousCamera() {
+	public NerdAbstractCamera getPreviousCamera() {
 		return this.previousCamera;
 	}
 
 	/**
 	 * @return The previous camera the {@link Sketch} had access to.
 	 */
-	public NerdCamera setCamera(NerdCamera p_camera) {
-		NerdCamera toRet = this.previousCamera;
+	public NerdAbstractCamera setCamera(NerdAbstractCamera p_camera) {
+		NerdAbstractCamera toRet = this.previousCamera;
 		this.previousCamera = this.currentCamera;
 		this.currentCamera = p_camera;
 		return toRet;

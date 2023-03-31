@@ -11,7 +11,10 @@ import com.brahvim.nerd.rendering.particles.NerdParticle;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
+import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
+import processing.core.PImage;
 import processing.core.PShape;
 import processing.core.PVector;
 
@@ -19,10 +22,14 @@ public class TestScene3 extends NerdScene {
 
     // region Fields.
     private final int CUBES_PER_CLICK = 5;
+    private final float REVOLVE_RADIUS = 45;
     private final int CUBES_ADDED_EVERY_FRAME = 2;
 
+    private PImage bgGrad;
     private int cubesToAdd;
     private PShape boxShape;
+    // private FlyCamera CAMERA;
+    private float REVOLVE_ANGLE;
     private NerdAmbiLight ambiLight;
     private ArrayList<NerdParticle> cubes = new ArrayList<>();
     // endregion
@@ -35,7 +42,8 @@ public class TestScene3 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        CAMERA.pos.z = 350;
+        // CAMERA = new FlyCamera(SKETCH);
+        CAMERA.pos.set(0, 0, 350);
         this.boxShape = SKETCH.createShape(PConstants.BOX, 1);
         this.boxShape.setStrokeWeight(0.28f);
         this.ambiLight = new NerdAmbiLight(
@@ -50,21 +58,50 @@ public class TestScene3 extends NerdScene {
 
     @Override
     protected void draw() {
-        // Background:
-        SKETCH.in2d(() -> {
-            SKETCH.beginShape(PConstants.QUAD);
+        // SLOWEST!:
+        /*
+         * for (int x = 0; x < SKETCH.width; x++) {
+         * for (int y = 0; y < SKETCH.height; y++) {
+         * SKETCH.set(x, y, this.SKETCH.lerpColor(
+         * SKETCH.color(224, 152, 27),
+         * SKETCH.color(232, 81, 194),
+         * PApplet.map(y, 0, SKETCH.height, 0, 1)));
+         * }
+         * }
+         */
 
-            SKETCH.fill(224, 152, 27);
-            SKETCH.vertex(-SKETCH.cx, -SKETCH.cy);
+        // Somewhat fast (`bgGrad` is an `int[]`):
+        /*
+         * if (this.bgGrad == null)
+         * this.calculateBgGrad();
+         * 
+         * SKETCH.loadPixels();
+         * System.arraycopy(this.bgGrad, 0, SKETCH.pixels, 0, this.bgGrad.length);
+         * SKETCH.updatePixels();
+         */
 
-            SKETCH.vertex(SKETCH.cx, -SKETCH.cy);
+        // Fastest custom background method using geometry - affected by the camera!..:
+        /*
+         * SKETCH.in2d(() -> {
+         * SKETCH.beginShape(PConstants.QUAD);
+         * 
+         * SKETCH.fill(224, 152, 27);
+         * SKETCH.vertex(-SKETCH.cx, -SKETCH.cy);
+         * 
+         * SKETCH.vertex(SKETCH.cx, -SKETCH.cy);
+         * 
+         * SKETCH.fill(232, 81, 194);
+         * SKETCH.vertex(SKETCH.cx, SKETCH.cy);
+         * 
+         * SKETCH.vertex(-SKETCH.cx, SKETCH.cy);
+         * SKETCH.endShape();
+         * });
+         */
 
-            SKETCH.fill(232, 81, 194);
-            SKETCH.vertex(SKETCH.cx, SKETCH.cy);
-
-            SKETCH.vertex(-SKETCH.cx, SKETCH.cy);
-            SKETCH.endShape();
-        });
+        // **Fastest!:** (Remember, images are hardware accelerated!):
+        if (this.bgGrad == null)
+            this.calculateBgGrad();
+        SKETCH.background(this.bgGrad);
 
         // region Lighting!
         SKETCH.lights();
@@ -89,14 +126,10 @@ public class TestScene3 extends NerdScene {
          */
         // endregion
 
-        // ...Does nothing!:
-        // CAMERA.pos.x += (SKETCH.mouse.x - SKETCH.pmouse.x) * 0.1f;
-
-        // for (int i = 0; i != this.CUBES_ADDED_EVERY_FRAME; i++)
-        // if (this.cubesToAdd < 0)
-        // break;
-        // else
-        // this.cubesToAdd--;
+        this.REVOLVE_ANGLE += (super.SKETCH.mouseX - super.SKETCH.pmouseX) * 0.001f;
+        CAMERA.pos.set(
+                PApplet.sin(this.REVOLVE_ANGLE) * this.REVOLVE_RADIUS, 0,
+                PApplet.cos(this.REVOLVE_ANGLE) * this.REVOLVE_RADIUS);
 
         if (this.cubesToAdd != 0)
             for (int i = 0; i != this.CUBES_ADDED_EVERY_FRAME; i++) {
@@ -109,15 +142,18 @@ public class TestScene3 extends NerdScene {
 
         for (int i = this.cubes.size() - 1; i != -1; i--) {
             final NerdParticle p = this.cubes.get(i);
-            final PVector screenPos = SKETCH.screenVec(p.getPos());
-            final float twiceTheSize = p.size * 2;
+            // final float twiceTheSize = p.size * 2;
+            // final PVector screenPos = SKETCH.screenVec(p.getPos());
 
             if (!CollisionAlgorithms.ptRect(
-                    screenPos.x, screenPos.y,
-                    -twiceTheSize * 2, -twiceTheSize * 2,
+                    // screenPos.x, screenPos.y,
+                    p.getPos().x, p.getPos().y,
 
-                    SKETCH.width + twiceTheSize * 2,
-                    SKETCH.height + twiceTheSize * 2)) {
+                    // -twiceTheSize * 2, -twiceTheSize * 2,
+                    // SKETCH.width + twiceTheSize * 2,
+                    // SKETCH.height + twiceTheSize * 2
+
+                    -5000, -5000, 5000, 5000)) {
                 // Don't deallocate manually! Get `ParticleMan` (`ParticleManager`)!
                 // ...and add stuff to da particles ._.
                 p.getAudioSource().dispose();
@@ -129,9 +165,24 @@ public class TestScene3 extends NerdScene {
             if (p != null)
                 p.draw(this.boxShape);
 
-        SKETCH.in2d(() -> {
-            SKETCH.circle(SKETCH.mouse.x, SKETCH.mouse.y, 5);
-        });
+        // SKETCH.in2d(() -> {
+        // SKETCH.circle(SKETCH.mouse.x, SKETCH.mouse.y, 5);
+        // });
+    }
+
+    @Override
+    public void resized() {
+        this.calculateBgGrad();
+    }
+
+    private void calculateBgGrad() {
+        final int color1 = SKETCH.color(224, 152, 27), color2 = SKETCH.color(232, 81, 194);
+        this.bgGrad = SKETCH.createImage(SKETCH.width, SKETCH.height, PConstants.RGB);
+
+        for (int y = 0; y < this.bgGrad.height; y++)
+            for (int x = 0; x < this.bgGrad.width; x++)
+                this.bgGrad.pixels[x + y * this.bgGrad.width] = SKETCH.lerpColor(
+                        color1, color2, PApplet.map(y, 0, this.bgGrad.height, 0, 1));
     }
 
     @Override

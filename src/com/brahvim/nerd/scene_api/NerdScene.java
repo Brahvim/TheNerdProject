@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.rendering.cameras.NerdCamera;
+import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 /**
  * <h2>Do not use as an anonymous class!</h2>
@@ -86,7 +86,7 @@ public class NerdScene implements HardwareEventsHandler {
   // Forgive me for breaking naming conventions. Forgive me. Please!
   public /* final */ Sketch SKETCH;
   public /* final */ SceneState STATE;
-  public /* final */ NerdCamera CAMERA; // ...why keep this `protected`?
+  public /* final */ NerdAbstractCamera CAMERA; // ...why keep this `protected`?
   public /* final */ StringTable STRINGS;
   public /* final */ AssetManager ASSETS;
   public /* final */ SceneManager MANAGER;

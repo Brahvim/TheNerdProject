@@ -3,18 +3,17 @@ package com.brahvim.nerd.rendering.cameras;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PVector;
 
-public class FlyCamera extends NerdCamera {
+public class FlyCamera extends NerdAbstractCamera {
     // Mathematics, thanks to [https://learnopengl.com/Getting-started/Camera]!
 
     // region Fields.
     public final static float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
-    public volatile static boolean pholdPointer, holdCursor = true;
+    public volatile static boolean pholdMouse, holdMouse = true;
 
-    public PVector front;
     public float yaw, zoom, pitch;
+    public PVector front, defaultCamFront;
     public boolean shouldConstrainPitch = true;
     public float mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
     // endregion
@@ -23,6 +22,13 @@ public class FlyCamera extends NerdCamera {
     public FlyCamera(Sketch p_sketch) {
         super(p_sketch);
         this.front = new PVector(super.SKETCH.cx, super.SKETCH.cy, 0);
+        this.defaultCamFront = this.front.copy();
+    }
+
+    public FlyCamera(Sketch p_sketch, PVector p_defaultFront) {
+        super(p_sketch);
+        this.front = p_defaultFront.copy();
+        this.defaultCamFront = this.front.copy();
     }
     // endregion
 
@@ -31,7 +37,7 @@ public class FlyCamera extends NerdCamera {
     public void apply() {
         super.apply();
 
-        if (FlyCamera.holdCursor && super.SKETCH.focused)
+        if (FlyCamera.holdMouse && super.SKETCH.focused)
             super.SKETCH.ROBOT.mouseMove(
                     super.SKETCH.displayWidthHalf,
                     super.SKETCH.displayHeightHalf);
@@ -39,34 +45,19 @@ public class FlyCamera extends NerdCamera {
 
     @Override
     public void applyMatrix() {
+        super.applyProjection();
         this.mouseTransform();
-
-        // Apply projection:
-        switch (this.projection) {
-            case PConstants.PERSPECTIVE:
-                super.SKETCH.perspective(super.fov,
-                        (float) super.SKETCH.width / (float) super.SKETCH.height,
-                        super.near, super.far);
-                break;
-            case PConstants.ORTHOGRAPHIC:
-                super.SKETCH.ortho(
-                        -super.SKETCH.cx, super.SKETCH.cx,
-                        -super.SKETCH.cy, super.SKETCH.cy,
-                        super.near, super.far);
-        }
 
         // Apply the camera matrix:
         super.SKETCH.camera(
                 super.pos.x, super.pos.y, super.pos.z,
-                this.front.x + super.pos.x, this.front.y + super.pos.y, this.front.z + super.pos.z,
-                super.up.x, super.up.y, super.up.z);
 
-        // Translate! People probably still prefer things on the top left corner `P3D`
-        // ...even if it could mean translating twice in some cases, it's alright!
-        // this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
-        // ...nope! I'll remove this! It causes the camera position to seem to change
-        // when you resize the window!
-        // Lesson learnt: **use this only if your camera never translates!**
+                // Camera center point:
+                this.front.x + super.pos.x,
+                this.front.y + super.pos.y,
+                this.front.z + super.pos.z,
+
+                super.up.x, super.up.y, super.up.z);
     }
 
     @Override
@@ -98,16 +89,20 @@ public class FlyCamera extends NerdCamera {
     @Override
     public void resetParams() {
         super.resetParams();
-        this.yaw = 0;
-        this.pitch = 0;
-        this.front.set(0, 0, 0);
-        this.mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
+
+        if (this.defaultCamFront == null)
+            this.front.set(super.pos);
+        else
+            this.front.set(this.defaultCamFront);
+
+        this.yaw = this.pitch = 0;
     }
 
     @Override
     public void resetSettings() {
         super.resetSettings();
         this.shouldConstrainPitch = true;
+        this.mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
     }
     // endregion
 
@@ -138,7 +133,7 @@ public class FlyCamera extends NerdCamera {
 
     protected void mouseTransform() {
         // region Update `yaw` and `pitch`:
-        if (FlyCamera.holdCursor) {
+        if (FlyCamera.holdMouse) {
             this.yaw += this.mouseSensitivity
                     * (super.SKETCH.GLOBAL_MOUSE_POINT.x - super.SKETCH.displayWidthHalf);
             this.pitch += this.mouseSensitivity

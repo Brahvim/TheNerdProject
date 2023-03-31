@@ -9,12 +9,9 @@ import processing.core.PVector;
  * @apiNote Please use a {@link BasicCameraBuilder} to get instances of
  *          {@link BasicCamera}.
  */
-public class BasicCamera extends NerdCamera {
+public class BasicCamera extends NerdAbstractCamera {
 
-    // region Fields.
-    public PVector center;
-    public PVector defaultCamUp, defaultCamPos, defaultCamCenter;
-    // endregion
+    public PVector center, defaultCamCenter;
 
     protected BasicCamera(Sketch p_sketch) {
         super(p_sketch);
@@ -33,29 +30,14 @@ public class BasicCamera extends NerdCamera {
         this.defaultCamCenter = new PVector(WIDTH_HALF, HEIGHT_HALF);
     }
 
-    // region Camera runtime.
     @Override
     public void applyMatrix() {
-        if (this.SKETCH.RENDERER != PConstants.P3D)
-            return;
+        super.applyProjection();
 
-        // Apply projection:
-        switch (this.projection) {
-            case PConstants.PERSPECTIVE -> this.SKETCH.perspective(this.fov,
-                    (float) this.SKETCH.width / (float) this.SKETCH.height, this.near, this.far);
-
-            case PConstants.ORTHOGRAPHIC -> this.SKETCH.ortho(-this.SKETCH.cx, this.SKETCH.cx, -this.SKETCH.cy,
-                    this.SKETCH.cy, this.near, this.far);
-
-            default -> throw new UnsupportedOperationException("""
-                    `NerdCamera::projection` can only be either `PConstants.PERSPECTIVE` or `PConstants.ORTHOGRAPHIC`.
-                    """);
-        }
-
-        // region Apply the camera matrix:
-        this.SKETCH.camera(this.pos.x, this.pos.y, this.pos.z, this.center.x, this.center.y, this.center.z, this.up.x,
-                this.up.y, this.up.z);
-        // endregion
+        this.SKETCH.camera(
+                this.pos.x, this.pos.y, this.pos.z,
+                this.center.x, this.center.y, this.center.z,
+                this.up.x, this.up.y, this.up.z);
 
         // Translate! People probably still prefer things on the top left corner `P3D`
         // ...even if it could mean translating twice in some cases, it's alright!
@@ -64,22 +46,10 @@ public class BasicCamera extends NerdCamera {
         // when you resize the window!
         // Lesson learnt: **use this only if your camera never moves!**
     }
-    // endregion
 
-    // region Copy and reset!
     @Override
     public void resetParams() {
         super.resetParams();
-
-        if (this.defaultCamUp == null)
-            this.up.set(0, 0, 0);
-        else
-            this.up.set(this.defaultCamUp);
-
-        if (this.defaultCamPos == null)
-            this.pos.set(0, 0, 0);
-        else
-            this.pos.set(this.defaultCamPos);
 
         if (this.defaultCamCenter == null)
             this.center.set(0, 0, 0);
@@ -121,6 +91,5 @@ public class BasicCamera extends NerdCamera {
 
         return toRet;
     }
-    // endregion
 
 }

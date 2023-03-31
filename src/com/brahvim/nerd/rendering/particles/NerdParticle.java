@@ -182,8 +182,8 @@ public class NerdParticle extends NerdEulerBody {
             if (this.popSrc.isStopped())
                 this.popSrc.dispose();
 
-        super.rot.add(0, 0,
-                (super.SKETCH.mouse.x - super.SKETCH.pmouse.x) * 0.001f);
+        // super.rot.add(0, 0,
+        // (super.SKETCH.mouseX - super.SKETCH.pmouseX) * 0.001f);
         super.integrate();
 
         super.SKETCH.push();

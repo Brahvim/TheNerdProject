@@ -49,11 +49,6 @@ public class TestScene6 extends NerdScene {
 
     @Override
     protected void draw() {
-        if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
-            STATE.set("Camera", CAMERA);
-            MANAGER.restartScene(STATE);
-        }
-
         CAMERA.fov = PConstants.PI / 3 + 0.01f * SKETCH.mouseScroll;
         CAMERA.pos.y = PApplet.sin(SKETCH.millis() * 0.001f) * 25;
         this.controlCamera();
@@ -81,7 +76,13 @@ public class TestScene6 extends NerdScene {
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_F)) {
             SKETCH.cursorVisible = !SKETCH.cursorVisible;
-            FlyCamera.holdCursor = !FlyCamera.holdCursor;
+            FlyCamera.holdMouse = !FlyCamera.holdMouse;
+        }
+
+        if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
+            CAMERA.resetParams();
+            STATE.set("Camera", CAMERA);
+            MANAGER.restartScene(STATE);
         }
     }
     // endregion
@@ -104,10 +105,10 @@ public class TestScene6 extends NerdScene {
 
         // region Roll.
         if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
-            CAMERA.up.x += (velMultiplier * 0.01f);
+            CAMERA.up.x += velMultiplier * 0.01f;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_C))
-            CAMERA.up.x += (-velMultiplier * 0.01f);
+            CAMERA.up.x += -velMultiplier * 0.01f;
         // endregion
 
         // region Elevation.

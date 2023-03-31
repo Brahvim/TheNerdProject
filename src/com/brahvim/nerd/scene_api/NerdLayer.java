@@ -1,7 +1,7 @@
 package com.brahvim.nerd.scene_api;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.rendering.cameras.NerdCamera;
+import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 /**
  * Just like {@code Scene}s, {@code Layer}s
@@ -21,7 +21,7 @@ public class NerdLayer implements HardwareEventsHandler {
     public final NerdLayer LAYER = this;
     public /* final */ Sketch SKETCH;
     public /* final */ NerdScene SCENE;
-    public /* final */ NerdCamera CAMERA;
+    public /* final */ NerdAbstractCamera CAMERA;
     public /* final */ SceneManager MANAGER;
     // endregion
 

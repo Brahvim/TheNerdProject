@@ -6,6 +6,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 import com.brahvim.nerd_tests.scenes.TestScene1;
+import com.brahvim.nerd_tests.scenes.TestScene6;
 
 public class App {
 
