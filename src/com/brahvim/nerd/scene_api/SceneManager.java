@@ -8,6 +8,8 @@ import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
+import com.brahvim.nerd.rendering.cameras.FlyCamera;
 
 public class SceneManager {
 
@@ -141,9 +143,9 @@ public class SceneManager {
 
             /**
              * Resets {@link Sketch#currentCamera} if {@code true}.
-             * {@code true} by default!
+             * {@code false} by default!
              */
-            public volatile boolean completelyResetCam = true;
+            public volatile boolean completelyResetCam = false;
 
             /**
              * Resets {@link Sketch#PRE_FIRST_CALLER}, {@link Sketch#DRAW_FIRST_CALLER}, and
@@ -770,7 +772,7 @@ public class SceneManager {
         // Initialize fields as if this was a part of the construction.
         toRet.MANAGER = this;
         toRet.SKETCH = this.SKETCH;
-        toRet.CAMERA = this.SKETCH.getCurrentCamera();
+        toRet.CAMERA = this.SKETCH.getCamera();
         toRet.ASSETS = new AssetManager(this.SKETCH); // Is this actually a good idea?
 
         // If this is the first time we're constructing this scene, ensure it has a
@@ -803,6 +805,10 @@ public class SceneManager {
 
     // The scene-deleter!!!
     private void setScene(NerdScene p_currentScene, SceneState p_state) {
+        FlyCamera.holdMouse = false;
+        this.SKETCH.cursorVisible = true;
+        this.SKETCH.cursorConfined = false;
+
         // region `this.SETTINGS.onSceneSwitch` tasks.
         if (this.settings.onSceneSwitch.doClear) {
             if (this.settings.onSceneSwitch.clearColor == -1)
@@ -811,8 +817,10 @@ public class SceneManager {
                 this.SKETCH.background(this.settings.onSceneSwitch.clearColor);
         }
 
-        if (this.settings.onSceneSwitch.completelyResetCam)
-            this.SKETCH.getCurrentCamera().completeReset();
+        // if (this.settings.onSceneSwitch.completelyResetCam)
+        // this.SKETCH.getCamera().completeReset();
+        // else
+        this.SKETCH.setCamera(new BasicCameraBuilder(this.SKETCH).build());
 
         if (this.settings.onSceneSwitch.resetSceneLayerCallbackOrder) {
             this.SKETCH.PRE_FIRST_CALLER = Sketch.CallbackOrder.SCENE;

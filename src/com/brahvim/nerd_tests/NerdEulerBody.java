@@ -1,4 +1,4 @@
-package com.brahvim.nerd.rendering.overtly_simple_physics;
+package com.brahvim.nerd_tests;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 

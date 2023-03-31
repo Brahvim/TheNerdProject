@@ -9,7 +9,7 @@ public class EasingFunctionDemoScene extends NerdScene {
 
 	@Override
 	protected void setup(SceneState p_state) {
-		SKETCH.getCurrentCamera().pos.z = 350;
+		SKETCH.getCamera().pos.z = 350;
 		this.sineEase = new SineEase(SKETCH);
 		SKETCH.setSize(SKETCH.INIT_WIDTH, SKETCH.INIT_HEIGHT);
 	}

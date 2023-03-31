@@ -79,7 +79,7 @@ public class TestScene4 extends NerdScene {
 
         SKETCH.noStroke();
         SKETCH.textureWrap(PConstants.REPEAT);
-        SKETCH.getCurrentCamera().pos.z = 500;
+        SKETCH.getCamera().pos.z = 500;
 
         this.ncx = this.nerd.width * 0.5f;
         this.ncy = this.nerd.height * 0.5f;

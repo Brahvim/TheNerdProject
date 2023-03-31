@@ -3,6 +3,7 @@ package com.brahvim.nerd.rendering.cameras;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 
 public class FlyCamera extends NerdAbstractCamera {
@@ -13,7 +14,7 @@ public class FlyCamera extends NerdAbstractCamera {
     public volatile static boolean pholdMouse, holdMouse = true;
 
     public float yaw, zoom, pitch;
-    public PVector front, defaultCamFront;
+    public PVector front = new PVector(), defaultCamFront = new PVector();
     public boolean shouldConstrainPitch = true;
     public float mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
     // endregion
@@ -21,14 +22,14 @@ public class FlyCamera extends NerdAbstractCamera {
     // region Construction.
     public FlyCamera(Sketch p_sketch) {
         super(p_sketch);
-        this.front = new PVector(super.SKETCH.cx, super.SKETCH.cy, 0);
+        this.front = super.pos.copy();
         this.defaultCamFront = this.front.copy();
     }
 
     public FlyCamera(Sketch p_sketch, PVector p_defaultFront) {
         super(p_sketch);
-        this.front = p_defaultFront.copy();
-        this.defaultCamFront = this.front.copy();
+        this.front.set(p_defaultFront);
+        this.defaultCamFront.set(p_defaultFront);
     }
     // endregion
 
@@ -105,6 +106,18 @@ public class FlyCamera extends NerdAbstractCamera {
         this.mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
     }
     // endregion
+
+    public void useProcessingDefaults() {
+        // Default camera values in Processing.
+        // From [https://processing.org/reference/camera_.html].
+        final float WIDTH_HALF = super.SKETCH.cx, HEIGHT_HALF = super.SKETCH.cy;
+
+        super.defaultCamUp = new PVector(0, 1, 0);
+        super.defaultCamPos = new PVector(
+                WIDTH_HALF, HEIGHT_HALF,
+                HEIGHT_HALF / (float) Math.tan(PConstants.PI * 30 / 180));
+        this.defaultCamFront = new PVector(WIDTH_HALF, HEIGHT_HALF);
+    }
 
     // region Methods specific to `FlyCamera`.
     // region Movement.

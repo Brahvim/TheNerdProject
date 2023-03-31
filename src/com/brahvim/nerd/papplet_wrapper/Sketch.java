@@ -218,7 +218,7 @@ public class Sketch extends PApplet {
 	public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
 
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
-			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN, DO_FAKE_2D_CAMERA = false;
+			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
 
 	private final Sketch SKETCH = this;
 	// endregion
@@ -347,7 +347,6 @@ public class Sketch extends PApplet {
 
 	// region Construction, `settings()`...
 	public Sketch(SketchKey p_key) {
-
 		// region Verify and 'use' key.
 		if (p_key == null) {
 			throw new IllegalArgumentException("""
@@ -1631,7 +1630,7 @@ public class Sketch extends PApplet {
 
 	// region Camera and unprojection.
 	// region Camera!
-	public NerdAbstractCamera getCurrentCamera() {
+	public NerdAbstractCamera getCamera() {
 		return this.currentCamera;
 	}
 

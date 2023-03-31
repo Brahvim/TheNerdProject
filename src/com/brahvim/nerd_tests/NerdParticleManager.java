@@ -1,4 +1,4 @@
-package com.brahvim.nerd.rendering.particles;
+package com.brahvim.nerd_tests;
 
 import java.util.function.Consumer;
 
