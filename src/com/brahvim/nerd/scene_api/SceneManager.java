@@ -188,7 +188,7 @@ public class SceneManager {
     // Notes on some strange (useless? Useful?!) idea.
     /*
      * Keep track of what `Sketch`es a manager exists for.
-     * `private final static HashSet<? extends Sketch> SKETCHES = new HashSet<>(1);
+     * `private static final HashSet<? extends Sketch> SKETCHES = new HashSet<>(1);
      * "Don't let anybody build another!" <-- ...idea I've stopped.
      */
 

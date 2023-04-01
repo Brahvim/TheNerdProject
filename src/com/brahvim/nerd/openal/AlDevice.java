@@ -17,7 +17,7 @@ import com.brahvim.nerd.openal.al_exceptions.NerdAlException;
 public class AlDevice extends AlNativeResource {
 
 	// region Fields.
-	protected final static ArrayList<AlDevice> ALL_INSTANCES = new ArrayList<>();
+	protected static final ArrayList<AlDevice> ALL_INSTANCES = new ArrayList<>();
 
 	private long id;
 	private String name;

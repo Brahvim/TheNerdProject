@@ -12,7 +12,7 @@ import processing.core.PVector;
 public abstract class NerdAbstractCamera {
 
     // region Fields.
-    public final static float DEFAULT_CAM_FOV = PApplet.radians(60),
+    public static final float DEFAULT_CAM_FOV = PApplet.radians(60),
             DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10_000, DEFAULT_CAM_MOUSE_Z = 25;
 
     public final Sketch SKETCH;

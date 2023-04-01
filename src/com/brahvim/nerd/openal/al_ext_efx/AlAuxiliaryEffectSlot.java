@@ -81,7 +81,7 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 	 */
 
 	// region Fields.
-	protected final static ArrayList<AlAuxiliaryEffectSlot> ALL_INSTANCES = new ArrayList<>();
+	protected static final ArrayList<AlAuxiliaryEffectSlot> ALL_INSTANCES = new ArrayList<>();
 
 	private NerdAl alMan;
 	private AlEffect effect;

@@ -13,7 +13,7 @@ public class LoadeableClass<ClassT> {
 	public URL url;
 	public String qualifiedName;
 
-	private final static ArrayList<LoadeableClass<?>> ALL_LOADEABLE_CLASSES = new ArrayList<>();
+	private static final ArrayList<LoadeableClass<?>> ALL_LOADEABLE_CLASSES = new ArrayList<>();
 
 	private Class<? extends ClassT> loadedClass;
 	// endregion

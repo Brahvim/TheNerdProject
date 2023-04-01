@@ -3,8 +3,6 @@ package com.brahvim.nerd_tests.scenes;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-import javax.swing.plaf.basic.BasicTreeUI.SelectionModelPropertyChangeHandler;
-
 import com.brahvim.nerd.math.collision.CollisionAlgorithms;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
@@ -45,6 +43,7 @@ public class TestScene3 extends NerdScene {
     protected void setup(SceneState p_state) {
         FlyCamera.holdMouse = true;
         SKETCH.cursorVisible = false;
+        this.calculateBgGrad();
 
         CAMERA = new FlyCamera(SKETCH);
         SKETCH.setCamera(CAMERA);
@@ -66,10 +65,10 @@ public class TestScene3 extends NerdScene {
     @Override
     protected void draw() {
         // **Fastest!:** (Remember, images are hardware accelerated!):
-        if (this.bgGrad == null ||
-                !(SKETCH.pwidth == SKETCH.width
-                        || SKETCH.pheight == SKETCH.height))
-            this.calculateBgGrad();
+        // if (this.bgGrad == null ||
+        // !(SKETCH.pwidth == SKETCH.width
+        // || SKETCH.pheight == SKETCH.height))
+        // this.calculateBgGrad();
         SKETCH.background(this.bgGrad);
 
         // region Lighting!
@@ -138,11 +137,6 @@ public class TestScene3 extends NerdScene {
             for (int x = 0; x < this.bgGrad.width; x++)
                 this.bgGrad.pixels[x + y * this.bgGrad.width] = SKETCH.lerpColor(
                         color1, color2, PApplet.map(y, 0, this.bgGrad.height, 0, 1));
-    }
-
-    @Override
-    public void resized() {
-        this.calculateBgGrad();
     }
 
     @Override

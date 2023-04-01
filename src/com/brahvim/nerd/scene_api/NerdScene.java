@@ -38,7 +38,7 @@ public class NerdScene implements HardwareEventsHandler {
    * }
    * 
    * public abstract class AutoDrawable {
-   * private final static ArrayList<AutoDrawable> ALL_AUTO_DRAWABLES = new
+   * private static final ArrayList<AutoDrawable> ALL_AUTO_DRAWABLES = new
    * ArrayList<>(5);
    * 
    * public AutoDrawable() {

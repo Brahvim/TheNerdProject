@@ -18,8 +18,8 @@ public class RevolvingParticlesLayer extends NerdLayer {
         final PGraphics g = SKETCH.createGraphics(this.PARTICLE_SIZE);
 
         SKETCH.colorMode(PConstants.ARGB);
-        final int particleColor = SKETCH.color(235, 174, 52),
-                noColor = SKETCH.color(0, 0);
+        final int noColor = SKETCH.color(0, 0),
+                particleColor = SKETCH.color(235, 174, 52);
 
         g.beginDraw();
         g.noStroke();

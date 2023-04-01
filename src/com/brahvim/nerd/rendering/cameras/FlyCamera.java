@@ -10,8 +10,8 @@ public class FlyCamera extends NerdAbstractCamera {
     // Mathematics, thanks to [https://learnopengl.com/Getting-started/Camera]!
 
     // region Fields.
-    public final static float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
-    public volatile static boolean pholdMouse, holdMouse = true;
+    public static final float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
+    public static volatile boolean pholdMouse, holdMouse = true;
 
     public float yaw, zoom, pitch;
     public PVector front = new PVector(), defaultCamFront = new PVector();
@@ -36,18 +36,19 @@ public class FlyCamera extends NerdAbstractCamera {
     // region From `NerdCamera`.
     @Override
     public void apply() {
-        super.apply();
-
-        if (FlyCamera.holdMouse && super.SKETCH.focused)
+        if (FlyCamera.holdMouse && super.SKETCH.focused) {
+            this.mouseTransform();
             super.SKETCH.ROBOT.mouseMove(
                     super.SKETCH.displayWidthHalf,
                     super.SKETCH.displayHeightHalf);
+        }
+
+        super.apply();
     }
 
     @Override
     public void applyMatrix() {
         super.applyProjection();
-        this.mouseTransform();
 
         // Apply the camera matrix:
         super.SKETCH.camera(

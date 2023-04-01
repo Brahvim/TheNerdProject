@@ -14,7 +14,7 @@ import com.brahvim.nerd.openal.NerdAl;
 public abstract class AlFilter extends AlNativeResource {
 
 	// region Fields.
-	protected final static ArrayList<AlFilter> ALL_INSTANCES = new ArrayList<>();
+	protected static final ArrayList<AlFilter> ALL_INSTANCES = new ArrayList<>();
 
 	private int id;
 	private NerdAl alMan;

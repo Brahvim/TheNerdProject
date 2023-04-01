@@ -6,7 +6,6 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 import com.brahvim.nerd_tests.scenes.TestScene1;
-import com.brahvim.nerd_tests.scenes.TestScene6;
 
 public class App {
 
@@ -21,13 +20,13 @@ public class App {
      * // TODO: "External library object loader" to finally separate libraries!
      */
 
-    public final static Class<? extends NerdScene> FIRST_SCENE_CLASS =
+    public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
             TestScene1.class;
     // LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();
 
     // region `App`'s *other* fields.
-    public final static int BPM = 100,
+    public static final int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 
     private static Sketch sketchInstance;

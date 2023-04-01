@@ -18,7 +18,7 @@ import processing.core.PVector;
 public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource {
 
 	// region Fields.
-	public final static ArrayList<AlBuffer<?>> ALL_INSTANCES = new ArrayList<>();
+	public static final ArrayList<AlBuffer<?>> ALL_INSTANCES = new ArrayList<>();
 
 	// No OpenAL implementation provides `AL_DATA`.
 	// Storing it here!

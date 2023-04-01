@@ -10,7 +10,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 public class WavBufferDataAsset extends AssetType<AlWavBuffer> {
 
 	// region SINGLETON STUFF.
-	private final static WavBufferDataAsset LOADER = new WavBufferDataAsset();
+	private static final WavBufferDataAsset LOADER = new WavBufferDataAsset();
 
 	public static AssetType<?> getLoader() {
 		return WavBufferDataAsset.LOADER;

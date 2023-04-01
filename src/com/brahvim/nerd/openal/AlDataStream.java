@@ -10,7 +10,7 @@ import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 public class AlDataStream {
 
 	// region Fields.
-	protected final static ArrayList<AlDataStream> ALL_INSTANCES = new ArrayList<>();
+	protected static final ArrayList<AlDataStream> ALL_INSTANCES = new ArrayList<>();
 
 	private NerdAl alMan;
 	private AlSource source;

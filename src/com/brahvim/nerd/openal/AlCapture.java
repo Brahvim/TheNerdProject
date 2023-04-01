@@ -19,12 +19,12 @@ public class AlCapture extends AlNativeResource {
 	// Using different OpenAL contexts probably doesn't matter here.
 
 	// region Fields.
-	protected final static ArrayList<AlCapture> ALL_INSTANCES = new ArrayList<>();
+	protected static final ArrayList<AlCapture> ALL_INSTANCES = new ArrayList<>();
 
 	private static int numInstances;
 
 	// This is here literally just for naming threads!:
-	private volatile static int numActiveInstances;
+	private static volatile int numActiveInstances;
 
 	private long id;
 	private NerdAl alMan;

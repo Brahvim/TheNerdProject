@@ -162,15 +162,15 @@ public class Sketch extends PApplet {
 	// region `public` fields.
 	// region Constants.
 	// region `static` constants.
-	public final static File EXEC_DIR = new File("");
-	public final static String EXEC_DIR_PATH = Sketch.EXEC_DIR.getAbsolutePath().concat(File.separator);
+	public static final File EXEC_DIR = new File("");
+	public static final String EXEC_DIR_PATH = Sketch.EXEC_DIR.getAbsolutePath().concat(File.separator);
 
-	public final static File DATA_DIR = new File("data");
-	public final static String DATA_DIR_PATH = Sketch.DATA_DIR.getAbsolutePath().concat(File.separator);
-	// public final static String DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX =
+	public static final File DATA_DIR = new File("data");
+	public static final String DATA_DIR_PATH = Sketch.DATA_DIR.getAbsolutePath().concat(File.separator);
+	// public static final String DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX =
 	// Sketch.getPathToRootFrom(Sketch.DATA_DIR_PATH);
 
-	public final static char[] STANDARD_KEYBOARD_SYMBOLS = {
+	public static final char[] STANDARD_KEYBOARD_SYMBOLS = {
 			'\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
 			'%', '^', '&', '*', '(', ')', '{', '}', '[',
 			']', ';', ',', '.', '/', '\\', ':', '|', '<',
@@ -178,7 +178,7 @@ public class Sketch extends PApplet {
 	};
 
 	// region `java.awt` constants.
-	public final static GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment
+	public static final GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment
 			.getLocalGraphicsEnvironment();
 
 	public static GraphicsDevice[] JAVA_SCREENS = Sketch.LOCAL_GRAPHICS_ENVIRONMENT
@@ -1164,6 +1164,21 @@ public class Sketch extends PApplet {
 	}
 
 	// region From `PGraphics`.
+	@Override
+	public void background(PImage p_image) {
+		try {
+			super.background(p_image);
+		} catch (Exception e) {
+			// Do nothing with the exception. Don't even READ it.
+			p_image.resize(super.width, super.height);
+			super.background(p_image);
+
+			// super.clear(); // ...apparently `PImage::resize()` is fast enough!
+			// System.out.println("`PApplet::background(PImage)` encountered the size
+			// issue!");
+		}
+	}
+
 	// "Hah! Gott'em with the name alignment!"
 	public void translate(PVector p_vec) {
 		super.translate(p_vec.x, p_vec.y, p_vec.z);

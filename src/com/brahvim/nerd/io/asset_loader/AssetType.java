@@ -4,7 +4,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 // Keeping this outside saves typing!:
 public abstract class AssetType<AssetT> {
-    // `private final static YourAssetType LOADER = new YourAssetType();`
+    // `private static final YourAssetType LOADER = new YourAssetType();`
 
     protected AssetType() {
     }

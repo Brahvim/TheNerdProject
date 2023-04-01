@@ -13,7 +13,7 @@ import com.brahvim.nerd.openal.NerdAl;
 public abstract class AlEffect extends AlNativeResource {
 
 	// region Fields.
-	protected final static ArrayList<AlEffect> ALL_INSTANCES = new ArrayList<>();
+	protected static final ArrayList<AlEffect> ALL_INSTANCES = new ArrayList<>();
 
 	protected int id;
 	protected NerdAl alMan;

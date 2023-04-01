@@ -21,7 +21,7 @@ public class BasicCamera extends NerdAbstractCamera {
     public void useProcessingDefaults() {
         // Default camera values in Processing.
         // From [https://processing.org/reference/camera_.html].
-        final float WIDTH_HALF = 0,
+        final float WIDTH_HALF = this.SKETCH.cx,
                 HEIGHT_HALF = this.SKETCH.cy;
 
         this.defaultCamUp = new PVector(0, 1, 0);
@@ -29,10 +29,7 @@ public class BasicCamera extends NerdAbstractCamera {
 
         this.defaultCamPos = new PVector(
                 WIDTH_HALF, HEIGHT_HALF,
-                HEIGHT_HALF / (float) Math.tan(
-                        PConstants.PI * 30 / 180)
-
-        );
+                HEIGHT_HALF / (float) Math.tan(PConstants.PI * 30 / 180));
         this.pos.set(this.defaultCamPos);
 
         this.defaultCamCenter = new PVector(WIDTH_HALF, HEIGHT_HALF);
@@ -66,6 +63,7 @@ public class BasicCamera extends NerdAbstractCamera {
             this.center.set(this.defaultCamCenter);
     }
 
+    @Override
     public BasicCamera clone() {
         BasicCamera toRet = new BasicCamera(this.SKETCH);
 

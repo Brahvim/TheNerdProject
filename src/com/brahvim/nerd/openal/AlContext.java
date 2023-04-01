@@ -28,7 +28,7 @@ public class AlContext extends AlNativeResource {
 	}
 
 	// region Fields.
-	protected final static ArrayList<AlContext> ALL_INSTANCES = new ArrayList<>();
+	protected static final ArrayList<AlContext> ALL_INSTANCES = new ArrayList<>();
 
 	private NerdAl alMan;
 	private final AlDevice device;

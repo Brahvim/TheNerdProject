@@ -30,7 +30,7 @@ public class UdpSocket {
      *
      * @implSpec Should be {@code 32}.
      */
-    public final static int DEFAULT_TIMEOUT = 32;
+    public static final int DEFAULT_TIMEOUT = 32;
 
     /**
      * The internal {@link DatagramSocket} that takes care of
@@ -78,9 +78,9 @@ public class UdpSocket {
         private static int NUMBER_OF_THREADS = 0;
 
         // Standard array sizes:
-        public final static int PACKET_LEAST_SIZE = 543;
-        public final static int PACKET_MAX_SIZE = 65535;
-        public final static int PACKET_RECOMMENDED_SIZE = 576;
+        public static final int PACKET_LEAST_SIZE = 543;
+        public static final int PACKET_MAX_SIZE = 65535;
+        public static final int PACKET_RECOMMENDED_SIZE = 576;
 
         /**
          * The {@code Thread} that handles the network's receive calls.

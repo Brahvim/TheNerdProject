@@ -14,7 +14,7 @@ import org.lwjgl.system.libc.LibCStdlib;
 import com.brahvim.nerd.openal.NerdAl;
 
 public class AlOggBuffer extends AlBuffer<ShortBuffer> {
-	public final static ArrayList<AlOggBuffer> ALL_INSTANCES = new ArrayList<>();
+	public static final ArrayList<AlOggBuffer> ALL_INSTANCES = new ArrayList<>();
 
 	// region Constructors.
 	public AlOggBuffer(NerdAl p_alMan) {

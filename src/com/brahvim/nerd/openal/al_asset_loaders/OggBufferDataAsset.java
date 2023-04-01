@@ -9,7 +9,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 public class OggBufferDataAsset extends AssetType<AlOggBuffer> {
 
 	// region SINGLETION STUFF.
-	private final static OggBufferDataAsset LOADER = new OggBufferDataAsset();
+	private static final OggBufferDataAsset LOADER = new OggBufferDataAsset();
 
 	public static AssetType<?> getLoader() {
 		return OggBufferDataAsset.LOADER;
