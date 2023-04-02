@@ -1,5 +1,7 @@
 package com.brahvim.nerd.rendering.cameras;
 
+import java.awt.Point;
+
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
@@ -11,7 +13,8 @@ public class FlyCamera extends NerdAbstractCamera {
 
     // region Fields.
     public static final float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
-    public static volatile boolean pholdMouse, holdMouse = true;
+
+    public static volatile boolean holdMouse = true;
 
     public float yaw, zoom, pitch;
     public PVector front = new PVector(), defaultCamFront = new PVector();
@@ -36,30 +39,19 @@ public class FlyCamera extends NerdAbstractCamera {
     // region From `NerdCamera`.
     @Override
     public void apply() {
+        super.apply();
+
         if (FlyCamera.holdMouse && super.SKETCH.focused) {
             this.mouseTransform();
-            super.SKETCH.ROBOT.mouseMove(
-                    super.SKETCH.displayWidthHalf,
-                    super.SKETCH.displayHeightHalf);
+            final Point point = this.calculateMouseLockPos();
+            super.SKETCH.ROBOT.mouseMove(point.x, point.y);
         }
-
-        super.apply();
     }
 
-    @Override
-    public void applyMatrix() {
-        super.applyProjection();
-
-        // Apply the camera matrix:
-        super.SKETCH.camera(
-                super.pos.x, super.pos.y, super.pos.z,
-
-                // Camera center point:
-                this.front.x + super.pos.x,
-                this.front.y + super.pos.y,
-                this.front.z + super.pos.z,
-
-                super.up.x, super.up.y, super.up.z);
+    private Point calculateMouseLockPos() {
+        return new Point(
+                (int) (super.SKETCH.cx + super.SKETCH.WINDOW_POSITION.x * 0.65f),
+                (int) (super.SKETCH.cy + super.SKETCH.WINDOW_POSITION.y * 0.5f));
     }
 
     @Override
@@ -89,8 +81,24 @@ public class FlyCamera extends NerdAbstractCamera {
     }
 
     @Override
-    public void resetParams() {
-        super.resetParams();
+    public void applyMatrix() {
+        super.applyProjection();
+
+        // Apply the camera matrix:
+        super.SKETCH.camera(
+                super.pos.x, super.pos.y, super.pos.z,
+
+                // Camera center point:
+                this.front.x + super.pos.x,
+                this.front.y + super.pos.y,
+                this.front.z + super.pos.z,
+
+                super.up.x, super.up.y, super.up.z);
+    }
+
+    @Override
+    public void completeReset() {
+        super.completeReset();
 
         if (this.defaultCamFront == null)
             this.front.set(super.pos);
@@ -99,15 +107,9 @@ public class FlyCamera extends NerdAbstractCamera {
 
         this.yaw = this.pitch = 0;
     }
-
-    @Override
-    public void resetSettings() {
-        super.resetSettings();
-        this.shouldConstrainPitch = true;
-        this.mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
-    }
     // endregion
 
+    @Override
     public void useProcessingDefaults() {
         // Default camera values in Processing.
         // From [https://processing.org/reference/camera_.html].
@@ -121,7 +123,6 @@ public class FlyCamera extends NerdAbstractCamera {
     }
 
     // region Methods specific to `FlyCamera`.
-    // region Movement.
     public void moveX(float p_velX) {
         super.pos.add(
                 PVector.mult(
@@ -137,21 +138,22 @@ public class FlyCamera extends NerdAbstractCamera {
     public void moveZ(float p_velZ) {
         super.pos.sub(PVector.mult(this.front, p_velZ));
     }
-    // endregion
 
-    // region Rolling.
     public void roll(float p_roll) {
         super.up.x += p_roll;
     }
-    // endregion
 
     protected void mouseTransform() {
         // region Update `yaw` and `pitch`:
+        // System.out.println(super.SKETCH.GLOBAL_MOUSE_POINT);
+        // System.out.println(super.SKETCH.displayWidthHalf);
+
         if (FlyCamera.holdMouse) {
+            final Point mouseLockPos = this.calculateMouseLockPos();
             this.yaw += this.mouseSensitivity
-                    * (super.SKETCH.GLOBAL_MOUSE_POINT.x - super.SKETCH.displayWidthHalf);
+                    * (super.SKETCH.GLOBAL_MOUSE_POINT.x - mouseLockPos.x); // super.SKETCH.displayWidthHalf);
             this.pitch += this.mouseSensitivity
-                    * (super.SKETCH.GLOBAL_MOUSE_POINT.y - super.SKETCH.displayHeightHalf);
+                    * (super.SKETCH.GLOBAL_MOUSE_POINT.y - mouseLockPos.y); // super.SKETCH.displayHeightHalf);
         } else {
             this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
             this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY); // Remember! Opposite!
@@ -165,16 +167,18 @@ public class FlyCamera extends NerdAbstractCamera {
                 pitch = -89.0f;
         }
 
+        // region Find `this.front` (point camera looks at; related to position).
         final float YAW_COS = PApplet.cos(PApplet.radians(this.yaw)),
                 YAW_SIN = PApplet.sin(PApplet.radians(this.yaw)),
                 PITCH_COS = PApplet.cos(PApplet.radians(this.pitch)),
                 PITCH_SIN = PApplet.sin(PApplet.radians(this.pitch));
 
-        // Calculate actual direction:
         this.front.set(
                 YAW_COS * PITCH_COS,
                 PITCH_SIN,
-                YAW_SIN * PITCH_COS).normalize();
+                YAW_SIN * PITCH_COS);
+        this.front.normalize();
+        // endregion
     }
     // endregion
 

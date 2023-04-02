@@ -29,7 +29,6 @@ public class TestScene3 extends NerdScene {
     private PShape boxShape;
     private FlyCamera CAMERA;
     private NerdAmbiLight ambiLight;
-    private float REVOLVE_ANGLE, REVOLVE_RADIUS = 45;
     private ArrayList<NerdParticle> cubes = new ArrayList<>();
     // endregion
 
@@ -47,8 +46,7 @@ public class TestScene3 extends NerdScene {
 
         CAMERA = new FlyCamera(SKETCH);
         SKETCH.setCamera(CAMERA);
-        CAMERA.pos.z = -200;
-        CAMERA.fov = PApplet.radians(90);
+        CAMERA.pos.set(SKETCH.cx, SKETCH.cy);
 
         this.boxShape = SKETCH.createShape(PConstants.BOX, 1);
         this.boxShape.setStrokeWeight(0.28f);
@@ -64,35 +62,9 @@ public class TestScene3 extends NerdScene {
 
     @Override
     protected void draw() {
-        // **Fastest!:** (Remember, images are hardware accelerated!):
-        // if (this.bgGrad == null ||
-        // !(SKETCH.pwidth == SKETCH.width
-        // || SKETCH.pheight == SKETCH.height))
-        // this.calculateBgGrad();
-        SKETCH.background(this.bgGrad);
-
-        // region Lighting!
         SKETCH.lights();
         this.ambiLight.apply();
-        // SKETCH.pointLight(255, 255, 0, 0, 0, 1);
-
-        // Spot light attempt:
-        /*
-         * SKETCH.spotLight(
-         * // Color:
-         * 224, 152, 27, // (The orange at the top!)
-         * // 255, 255, 0, // A 'pure' Yellow!
-         * 
-         * // Position:
-         * 0, 0, -500, // (We're in the center already! Back off a little..)
-         * 
-         * // Unit direction vector:
-         * 0, 0, 1, // (Towards the viewer!)
-         * 
-         * // Angle and concentration!:
-         * 0, 10_000);
-         */
-        // endregion
+        SKETCH.background(this.bgGrad);
 
         if (this.cubesToAdd != 0)
             for (int i = 0; i != this.CUBES_ADDED_EVERY_FRAME; i++) {

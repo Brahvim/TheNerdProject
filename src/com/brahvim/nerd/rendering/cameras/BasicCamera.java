@@ -18,11 +18,12 @@ public class BasicCamera extends NerdAbstractCamera {
         this.center = new PVector(super.SKETCH.cx, super.SKETCH.cy, 0);
     }
 
+    @Override
     public void useProcessingDefaults() {
         // Default camera values in Processing.
         // From [https://processing.org/reference/camera_.html].
         final float WIDTH_HALF = this.SKETCH.cx,
-                HEIGHT_HALF = this.SKETCH.cy;
+                HEIGHT_HALF = this.SKETCH.qy;
 
         this.defaultCamUp = new PVector(0, 1, 0);
         this.up.set(this.defaultCamPos);
@@ -34,6 +35,16 @@ public class BasicCamera extends NerdAbstractCamera {
 
         this.defaultCamCenter = new PVector(WIDTH_HALF, HEIGHT_HALF);
         this.center.set(this.defaultCamCenter);
+    }
+
+    @Override
+    public void completeReset() {
+        super.completeReset();
+
+        if (this.defaultCamCenter == null)
+            this.center.set(0, 0, 0);
+        else
+            this.center.set(this.defaultCamCenter);
     }
 
     @Override
@@ -54,35 +65,8 @@ public class BasicCamera extends NerdAbstractCamera {
     }
 
     @Override
-    public void resetParams() {
-        super.resetParams();
-
-        if (this.defaultCamCenter == null)
-            this.center.set(0, 0, 0);
-        else
-            this.center.set(this.defaultCamCenter);
-    }
-
-    @Override
     public BasicCamera clone() {
         BasicCamera toRet = new BasicCamera(this.SKETCH);
-
-        // region Copying default vectors.
-        toRet.defaultCamUp = new PVector(
-                this.defaultCamUp.x,
-                this.defaultCamUp.y,
-                this.defaultCamUp.z);
-
-        toRet.defaultCamPos = new PVector(
-                this.defaultCamPos.x,
-                this.defaultCamPos.y,
-                this.defaultCamPos.z);
-
-        toRet.defaultCamCenter = new PVector(
-                this.defaultCamCenter.x,
-                this.defaultCamCenter.y,
-                this.defaultCamCenter.z);
-        // endregion
 
         // region Copying camera parameters.
         toRet.up.set(this.up);

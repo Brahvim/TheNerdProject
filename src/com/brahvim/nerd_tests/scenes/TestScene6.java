@@ -80,7 +80,7 @@ public class TestScene6 extends NerdScene {
         }
 
         if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
-            CAMERA.resetParams();
+            CAMERA.completeReset();
             STATE.set("Camera", CAMERA);
             MANAGER.restartScene(STATE);
         }

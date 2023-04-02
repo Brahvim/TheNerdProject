@@ -23,7 +23,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -204,7 +203,7 @@ public class Sketch extends PApplet {
 	public final boolean USES_OPENGL;
 	public final StringTable STRINGS;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
-	public final HashMap<String, Object> EXT_OBJECTS = new HashMap<>();
+	// public final HashMap<String, Object> EXT_OBJECTS = new HashMap<>();
 
 	// Dimensions of the inital size of the window:
 	public final float INIT_SCR;
@@ -212,11 +211,19 @@ public class Sketch extends PApplet {
 	public final int INIT_WIDTH_HALF, INIT_HEIGHT_HALF;
 	public final int INIT_WIDTH_QUART, INIT_HEIGHT_QUART;
 
-	public final Point GLOBAL_MOUSE_POINT = new Point();
-	public final Point PREV_GLOBAL_MOUSE_POINT = new Point();
+	/** Position of the mouse relative to the monitor. */
+	public final Point GLOBAL_MOUSE_POINT = new Point(),
+			PREV_GLOBAL_MOUSE_POINT = new Point();
+
+	/** Position of the mouse relative to the monitor. */
 	public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
 	public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
 
+	/** Position of the window relative to the monitor. */
+	public final PVector WINDOW_POSITION = new PVector(),
+			PREV_WINDOW_POSITION = new PVector();
+
+	/** Certain setting for the sketch. */
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
 			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
 
@@ -328,6 +335,7 @@ public class Sketch extends PApplet {
 
 	protected GraphicsDevice previousMonitor, currentMonitor;
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
+	protected BasicCamera defaultCamera;
 	protected NerdScene currentScene;
 	protected SceneManager sceneMan; // Don't use static initialization for this..?
 
@@ -347,19 +355,7 @@ public class Sketch extends PApplet {
 
 	// region Construction, `settings()`...
 	public Sketch(SketchKey p_key) {
-		// region Verify and 'use' key.
-		if (p_key == null) {
-			throw new IllegalArgumentException("""
-					Please use a `SketchBuilder` instance to make a `Sketch`!""");
-		} else if (p_key.isUsed()) {
-			throw new IllegalArgumentException("""
-					Please use a `SketchBuilder` instance to make a `Sketch`! That is a used key!""");
-		} else if (!p_key.isFor(this.getClass()))
-			throw new IllegalArgumentException("""
-					Please use a `SketchBuilder` instance to make a `Sketch`! That key is not for me!""");
-
-		p_key.use();
-		// endregion
+		Objects.requireNonNull(p_key, "Please use a `SketchKey` instance to make a `Sketch`!");
 
 		// region Key settings.
 		// region Setting `Sketch.CallbackOrder`s.
@@ -408,7 +404,6 @@ public class Sketch extends PApplet {
 		// region Non-key settings.
 		this.UNPROJECTOR = new Unprojector();
 		this.fullscreen = this.STARTED_FULLSCREEN;
-		this.currentCamera = new BasicCameraBuilder(this).build();
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
 		// endregion
 
@@ -459,7 +454,7 @@ public class Sketch extends PApplet {
 
 		try {
 			toAssign = new Robot();
-			toAssign.setAutoWaitForIdle(true);
+			toAssign.setAutoWaitForIdle(false);
 		} catch (AWTException e) {
 			e.printStackTrace();
 		}
@@ -488,7 +483,7 @@ public class Sketch extends PApplet {
 	}
 	// endregion
 
-	// region Processing sketch workflow.
+	// region Processing sketch workflow.s
 	@Override
 	public void setup() {
 		// Causes a NPE in LWJGL. Yes, 'a':
@@ -511,6 +506,9 @@ public class Sketch extends PApplet {
 			case PConstants.P2D, PConstants.P3D:
 				this.glGraphics = (PGraphicsOpenGL) super.g;
 				this.glWindow = (GLWindow) super.surface.getNative();
+
+				this.defaultCamera = new BasicCameraBuilder(this).build();
+				this.currentCamera = this.defaultCamera;
 
 				if (this.INITIALLY_RESIZABLE)
 					this.glWindow.setResizable(true);
@@ -546,8 +544,12 @@ public class Sketch extends PApplet {
 	public void pre() {
 		this.currentScene = this.sceneMan.getCurrentScene();
 
-		if (this.USES_OPENGL)
+		this.PREV_WINDOW_POSITION.set(this.WINDOW_POSITION);
+		if (this.USES_OPENGL) {
 			this.pgl = super.beginPGL();
+			this.WINDOW_POSITION.set(this.glWindow.getX(), this.glWindow.getY());
+		} else
+			this.WINDOW_POSITION.set(this.sketchFrame.getX(), this.sketchFrame.getY());
 
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == super.width || this.pheight == super.height)) {
@@ -615,18 +617,20 @@ public class Sketch extends PApplet {
 		// endregion
 		// endregion
 
+		// region Apply the camera and unprojection when using OpenGL:
 		// Needed by `this.unprojectMouse()`:
-		this.mouse.set(super.mouseX, super.height);
-		if (this.RENDERER == PConstants.P3D)
+		this.mouse.set(super.mouseX, super.mouseY);
+		if (this.RENDERER == PConstants.P3D) {
 			this.unprojectMouse();
 
-		// region Apply the camera!:
-		if (this.currentCamera != null)
-			this.currentCamera.apply(); // Do all three tasks!
-		// If `this.currentCamera` is `null`, but wasn't,
-		else if (this.currentCamera != this.previousCamera)
-			System.out.printf(
-					"Sketch \"%s\" has no camera! Consider adding one...?", this.NAME);
+			if (this.currentCamera != null)
+				this.currentCamera.apply(); // Do all three tasks!
+			// If `this.currentCamera` is `null`, but wasn't,
+			else if (this.currentCamera != this.previousCamera)
+				// System.out.printf(
+				// "Sketch \"%s\" has no camera! Consider adding one...?", this.NAME)
+				;
+		}
 		// endregion
 
 		// region Call all draw listeners.
@@ -665,8 +669,6 @@ public class Sketch extends PApplet {
 		// region Previous state updates!!!
 		for (PVector v : this.UNPROJ_TOUCHES)
 			this.PREV_UNPROJ_TOUCHES.add(v);
-
-		FlyCamera.pholdMouse = FlyCamera.holdMouse;
 
 		if (this.currentScene != null)
 			this.currentScene.ASSETS.updatePreviousLoadState();
@@ -952,8 +954,9 @@ public class Sketch extends PApplet {
 
 	// region Window queries.
 	public void centerWindow() {
-		this.updateWindowRatios(); // You called this function when the window changed its size or position, right?
-		// Remember: computers with multiple displays exist! We shouldn't cache this:
+		// You called this function when the window changed its size or position, right?
+		// Remember: Computers with multiple displays exist! We shouldn't cache this:
+		this.updateWindowRatios();
 
 		final DisplayMode CURRENT_DISPLAY_MODE = this.currentMonitor == null
 				? Sketch.DEFAULT_JAVA_SCREEN_MODE
@@ -1169,7 +1172,7 @@ public class Sketch extends PApplet {
 		try {
 			super.background(p_image);
 		} catch (Exception e) {
-			// Do nothing with the exception. Don't even READ it.
+			//// Do nothing with the exception. Don't even READ it.
 			p_image.resize(super.width, super.height);
 			super.background(p_image);
 
@@ -1653,6 +1656,12 @@ public class Sketch extends PApplet {
 		return this.previousCamera;
 	}
 
+	public BasicCamera getDefaultCameraClone() {
+		this.defaultCamera.useProcessingDefaults();
+		this.defaultCamera.completeReset();
+		return this.defaultCamera.clone();
+	}
+
 	/**
 	 * @return The previous camera the {@link Sketch} had access to.
 	 */
@@ -1917,10 +1926,9 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Start a `JAVA2D` sketch with an undecorated window.
-	public JFrame createSketchPanel(
-			Runnable p_exitTask, Sketch p_sketch,
-			PGraphics p_sketchGraphics) {
-		// This is what the dummy variable from Processing used to contain.
+	public JFrame createSketchPanel(Runnable p_exitTask, Sketch p_sketch, PGraphics p_sketchGraphics) {
+		// This is what `PApplet::frame` used to contain:
+		super.frame = null;
 		JFrame toRet = (JFrame) ((PSurfaceAWT.SmoothCanvas) p_sketch
 				.getSurface().getNative()).getFrame();
 
@@ -1985,12 +1993,12 @@ public class Sketch extends PApplet {
 
 			@Override
 			public void mouseEntered(MouseEvent p_mouseEvent) {
-				// p_sketch.focused = true;
+				p_sketch.focused = true;
 			}
 
 			@Override
 			public void mouseExited(MouseEvent p_mouseEvent) {
-				// p_sketch.focused = false;
+				p_sketch.focused = false;
 			}
 		});
 

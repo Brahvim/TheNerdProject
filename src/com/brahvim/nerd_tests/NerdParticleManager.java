@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 public abstract class NerdParticleManager {
 
 	// region Fields.
+	@SuppressWarnings("unused")
 	private int count;
 	private Consumer<NerdParticleManager> enterCallback, drawCallback, endCallback;
 

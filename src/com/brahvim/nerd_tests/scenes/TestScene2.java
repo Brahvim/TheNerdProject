@@ -9,8 +9,7 @@ public class TestScene2 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
-        CAMERA.resetParams();
-        CAMERA.resetSettings();
+        CAMERA.completeReset();
 
         this.boxHorizWave = new SineEase(SKETCH, 100 / 60_000.0f);
         this.boxHorizWave.start();

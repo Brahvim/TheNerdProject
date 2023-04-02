@@ -8,7 +8,6 @@ import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
 
 public class SceneManager {
@@ -143,9 +142,9 @@ public class SceneManager {
 
             /**
              * Resets {@link Sketch#currentCamera} if {@code true}.
-             * {@code false} by default!
+             * {@code true} by default!
              */
-            public volatile boolean completelyResetCam = false;
+            public volatile boolean completelyResetCam = true;
 
             /**
              * Resets {@link Sketch#PRE_FIRST_CALLER}, {@link Sketch#DRAW_FIRST_CALLER}, and
@@ -820,7 +819,7 @@ public class SceneManager {
         // if (this.settings.onSceneSwitch.completelyResetCam)
         // this.SKETCH.getCamera().completeReset();
         // else
-        this.SKETCH.setCamera(new BasicCameraBuilder(this.SKETCH).build());
+        this.SKETCH.setCamera(this.SKETCH.getDefaultCameraClone());
 
         if (this.settings.onSceneSwitch.resetSceneLayerCallbackOrder) {
             this.SKETCH.PRE_FIRST_CALLER = Sketch.CallbackOrder.SCENE;

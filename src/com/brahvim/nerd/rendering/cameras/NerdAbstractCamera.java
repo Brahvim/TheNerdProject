@@ -46,6 +46,8 @@ public abstract class NerdAbstractCamera {
 
     public abstract void applyMatrix();
 
+    public abstract void useProcessingDefaults();
+
     public void applyProjection() {
         if (this.SKETCH.RENDERER != PConstants.P3D)
             return;
@@ -85,21 +87,14 @@ public abstract class NerdAbstractCamera {
     }
 
     public void completeReset() {
-        this.resetParams();
-        this.resetSettings();
-    }
-
-    public void resetParams() {
-        // this.script = null;
-
+        // region Parameters and `NerdAbstractCamera`-only vectors.
         this.clearColorParam1 = 0;
         this.clearColorParam2 = 0;
         this.clearColorParam3 = 0;
         this.clearColorParamAlpha = 255;
-        this.projection = PConstants.PERSPECTIVE;
 
         if (this.defaultCamUp == null)
-            this.up.set(0, 0, 0);
+            this.up.set(0, 1, 0);
         else
             this.up.set(this.defaultCamUp);
 
@@ -107,15 +102,17 @@ public abstract class NerdAbstractCamera {
             this.pos.set(0, 0, 0);
         else
             this.pos.set(this.defaultCamPos);
-    }
+        // endregion
 
-    public void resetSettings() {
+        // region Settings.
+        this.projection = PConstants.PERSPECTIVE;
         this.doScript = true;
         this.doAutoClear = true;
         this.far = BasicCamera.DEFAULT_CAM_FAR;
         this.fov = BasicCamera.DEFAULT_CAM_FOV;
         this.near = BasicCamera.DEFAULT_CAM_NEAR;
         this.mouseZ = BasicCamera.DEFAULT_CAM_MOUSE_Z;
+        // endregion
     }
 
     public void runScript() {

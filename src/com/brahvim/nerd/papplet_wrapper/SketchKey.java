@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.misc.NerdKey;
 import com.brahvim.nerd.openal.AlContext;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
@@ -13,14 +12,14 @@ import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 import processing.core.PConstants;
 
 // Hmmm... "`SketchSettings`" instead..?
-/* package */ class SketchKey extends NerdKey {
+/* package */ class SketchKey {
     public Class<? extends NerdScene> firstScene;
     public SceneManagerSettings sceneManagerSettings;
     public int width = 400, height = 400, antiAliasing;
     public AlContext.AlContextSettings alContextSettings;
-    public HashSet<Class<? extends NerdScene>> scenesToPreload;
     public Sketch.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
     public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
+    public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
 
     // region Listeners.
     public LinkedHashSet<Consumer<Sketch>> sketchConstructedListeners,
@@ -53,17 +52,4 @@ import processing.core.PConstants;
 
     public boolean dontCloseOnEscape, startedFullscreen, canResize,
             cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
-
-    // region Stuff that isn't a field.
-    public SketchKey() {
-        this.scenesToPreload = new HashSet<>(0);
-    }
-
-    @Override
-    public boolean isFor(Class<?> p_class) {
-        // Putting `p_class` in the argument eliminates the need for a `null` check.
-        return Sketch.class.isAssignableFrom(p_class);
-    }
-    // endregion
-
 }
