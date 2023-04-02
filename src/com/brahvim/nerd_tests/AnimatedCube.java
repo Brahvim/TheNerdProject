@@ -9,7 +9,7 @@ import processing.core.PConstants;
 import processing.core.PShape;
 import processing.core.PVector;
 
-public class NerdParticle extends NerdEulerBody {
+public class AnimatedCube extends TestEulerBody {
 
     // region Fields.
     public float size = 40;
@@ -23,15 +23,16 @@ public class NerdParticle extends NerdEulerBody {
     private AlSource popSrc;
     // endregion
 
-    public NerdParticle(NerdScene p_scene) {
+    public AnimatedCube(NerdScene p_scene) {
         super(p_scene.SKETCH);
 
         super.pos.set(
                 super.SKETCH.random(-super.SKETCH.qx, super.SKETCH.qx),
                 super.SKETCH.random(-super.SKETCH.qy, super.SKETCH.qy),
-                super.SKETCH.random(-250, 100));
+                super.SKETCH.random(-300, 300));
 
         super.acc.set(
+                super.SKETCH.random(-0.01f, 0.01f),
                 super.SKETCH.random(-0.01f, 0.01f),
                 super.SKETCH.random(-0.01f, 0.01f));
 
@@ -44,18 +45,6 @@ public class NerdParticle extends NerdEulerBody {
                 super.SKETCH.random(-0.0001f, 0.0001f),
                 super.SKETCH.random(-0.0001f, 0.0001f),
                 super.SKETCH.random(-0.0001f, 0.0001f));
-
-        // final AnimatedCube CUBE = this;
-        // this.SCENE.createAutoDrawable(this);
-        /*
-         * this.CALLBACK_FOR_RENDERER = this.SCENE.new AutoDrawable() {
-         *
-         * @Override
-         * public void draw() {
-         * CUBE.draw();
-         * }
-         * };
-         */
 
         this.plopWave = new SineEase(super.SKETCH);
         this.fadeWave = new SineEase(super.SKETCH);
@@ -115,22 +104,22 @@ public class NerdParticle extends NerdEulerBody {
     // endregion
 
     // region Transitions.
-    public NerdParticle cutIn() {
+    public AnimatedCube cutIn() {
         this.visible = true;
         return this;
     }
 
-    public NerdParticle cutOut() {
+    public AnimatedCube cutOut() {
         this.visible = false;
         return this;
     }
 
-    public NerdParticle plopIn() {
+    public AnimatedCube plopIn() {
         this.plopInImpl();
         return this;
     }
 
-    public NerdParticle plopIn(AlBuffer<?> p_popAudioBuffer) {
+    public AnimatedCube plopIn(AlBuffer<?> p_popAudioBuffer) {
         this.popSrc = new AlSource(super.SKETCH.AL, p_popAudioBuffer);
         this.popSrc.setPosition(PVector.mult(super.pos, 0.001f));
         this.popSrc.play();
@@ -138,27 +127,27 @@ public class NerdParticle extends NerdEulerBody {
         return this;
     }
 
-    private NerdParticle plopInImpl() {
+    private AnimatedCube plopInImpl() {
         this.visible = true;
         this.plopWave.freqMult = 0.015f;
         this.plopWave.endWhenAngleIncrementsBy(90).start();
         return this;
     }
 
-    public NerdParticle plopOut() {
+    public AnimatedCube plopOut() {
         this.plopWave.endWhenAngleIncrementsBy(90).start(270, () -> {
             this.visible = false;
         });
         return this;
     }
 
-    public NerdParticle fadeIn() {
+    public AnimatedCube fadeIn() {
         this.visible = true;
         this.fadeWave.endWhenAngleIncrementsBy(90).start();
         return this;
     }
 
-    public NerdParticle fadeOut() {
+    public AnimatedCube fadeOut() {
         this.visible = false;
         this.fadeWave.endWhenAngleIncrementsBy(180).start(90);
         return this;

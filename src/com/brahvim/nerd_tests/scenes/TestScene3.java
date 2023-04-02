@@ -10,7 +10,7 @@ import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
-import com.brahvim.nerd_tests.NerdParticle;
+import com.brahvim.nerd_tests.AnimatedCube;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -21,7 +21,7 @@ import processing.core.PVector;
 public class TestScene3 extends NerdScene {
 
     // region Fields.
-    private final int CUBES_PER_CLICK = 5;
+    private final int CUBES_PER_CLICK = 15;
     private final int CUBES_ADDED_EVERY_FRAME = 2;
 
     private PImage bgGrad;
@@ -29,7 +29,7 @@ public class TestScene3 extends NerdScene {
     private PShape boxShape;
     private FlyCamera CAMERA;
     private NerdAmbiLight ambiLight;
-    private ArrayList<NerdParticle> cubes = new ArrayList<>();
+    private ArrayList<AnimatedCube> cubes = new ArrayList<>();
     // endregion
 
     @Override
@@ -42,11 +42,9 @@ public class TestScene3 extends NerdScene {
     protected void setup(SceneState p_state) {
         FlyCamera.holdMouse = true;
         SKETCH.cursorVisible = false;
-        this.calculateBgGrad();
-
         CAMERA = new FlyCamera(SKETCH);
         SKETCH.setCamera(CAMERA);
-        CAMERA.pos.set(SKETCH.cx, SKETCH.cy);
+        this.calculateBgGrad();
 
         this.boxShape = SKETCH.createShape(PConstants.BOX, 1);
         this.boxShape.setStrokeWeight(0.28f);
@@ -70,24 +68,17 @@ public class TestScene3 extends NerdScene {
             for (int i = 0; i != this.CUBES_ADDED_EVERY_FRAME; i++) {
                 if (this.cubesToAdd == 0)
                     break;
+
                 this.cubesToAdd--;
                 AlBuffer<?> randomPop = ASSETS.get("Pop" + (int) SKETCH.random(1, 4)).getData();
-                this.cubes.add(new NerdParticle(SCENE).plopIn(randomPop));
+                this.cubes.add(new AnimatedCube(SCENE).plopIn(randomPop));
             }
 
         for (int i = this.cubes.size() - 1; i != -1; i--) {
-            final NerdParticle p = this.cubes.get(i);
-            // final float twiceTheSize = p.size * 2;
-            // final PVector screenPos = SKETCH.screenVec(p.getPos());
+            final AnimatedCube p = this.cubes.get(i);
 
             if (!CollisionAlgorithms.ptRect(
-                    // screenPos.x, screenPos.y,
                     p.getPos().x, p.getPos().y,
-
-                    // -twiceTheSize * 2, -twiceTheSize * 2,
-                    // SKETCH.width + twiceTheSize * 2,
-                    // SKETCH.height + twiceTheSize * 2
-
                     -5000, -5000, 5000, 5000)) {
                 // Don't deallocate manually! Get `ParticleMan` (`ParticleManager`)!
                 // ...and add stuff to da particles ._.
@@ -96,7 +87,7 @@ public class TestScene3 extends NerdScene {
             }
         }
 
-        for (NerdParticle p : this.cubes)
+        for (AnimatedCube p : this.cubes)
             if (p != null)
                 p.draw(this.boxShape);
     }
@@ -123,7 +114,7 @@ public class TestScene3 extends NerdScene {
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
             for (int i = this.cubes.size() - 1; i != -1; i--) {
-                final NerdParticle p = this.cubes.get(i);
+                final AnimatedCube p = this.cubes.get(i);
                 p.getAudioSource().dispose();
                 p.plopOut();
                 this.cubes.remove(i);

@@ -2,7 +2,6 @@ package com.brahvim.nerd.rendering.cameras;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-import processing.core.PConstants;
 import processing.core.PVector;
 
 /**
@@ -16,25 +15,6 @@ public class BasicCamera extends NerdAbstractCamera {
     protected BasicCamera(Sketch p_sketch) {
         super(p_sketch);
         this.center = new PVector(super.SKETCH.cx, super.SKETCH.cy, 0);
-    }
-
-    @Override
-    public void useProcessingDefaults() {
-        // Default camera values in Processing.
-        // From [https://processing.org/reference/camera_.html].
-        final float WIDTH_HALF = this.SKETCH.cx,
-                HEIGHT_HALF = this.SKETCH.qy;
-
-        this.defaultCamUp = new PVector(0, 1, 0);
-        this.up.set(this.defaultCamPos);
-
-        this.defaultCamPos = new PVector(
-                WIDTH_HALF, HEIGHT_HALF,
-                HEIGHT_HALF / (float) Math.tan(PConstants.PI * 30 / 180));
-        this.pos.set(this.defaultCamPos);
-
-        this.defaultCamCenter = new PVector(WIDTH_HALF, HEIGHT_HALF);
-        this.center.set(this.defaultCamCenter);
     }
 
     @Override

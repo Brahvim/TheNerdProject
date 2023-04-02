@@ -4,7 +4,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PVector;
 
-public class NerdEulerBody {
+public class TestEulerBody {
 
 	// region Fields.
 	protected final Sketch SKETCH;
@@ -13,7 +13,7 @@ public class NerdEulerBody {
 	protected PVector rot = new PVector(), rotVel = new PVector(), rotAcc = new PVector();
 	// endregion
 
-	public NerdEulerBody(Sketch p_sketch) {
+	public TestEulerBody(Sketch p_sketch) {
 		this.SKETCH = p_sketch;
 	}
 

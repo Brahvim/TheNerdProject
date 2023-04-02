@@ -5,7 +5,6 @@ import java.awt.Point;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PVector;
 
 public class FlyCamera extends NerdAbstractCamera {
@@ -108,19 +107,6 @@ public class FlyCamera extends NerdAbstractCamera {
         this.yaw = this.pitch = 0;
     }
     // endregion
-
-    @Override
-    public void useProcessingDefaults() {
-        // Default camera values in Processing.
-        // From [https://processing.org/reference/camera_.html].
-        final float WIDTH_HALF = super.SKETCH.cx, HEIGHT_HALF = super.SKETCH.cy;
-
-        super.defaultCamUp = new PVector(0, 1, 0);
-        super.defaultCamPos = new PVector(
-                WIDTH_HALF, HEIGHT_HALF,
-                HEIGHT_HALF / (float) Math.tan(PConstants.PI * 30 / 180));
-        this.defaultCamFront = new PVector(WIDTH_HALF, HEIGHT_HALF);
-    }
 
     // region Methods specific to `FlyCamera`.
     public void moveX(float p_velX) {

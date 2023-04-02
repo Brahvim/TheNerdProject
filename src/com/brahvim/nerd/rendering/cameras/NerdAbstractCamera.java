@@ -26,7 +26,7 @@ public abstract class NerdAbstractCamera {
             mouseZ = NerdAbstractCamera.DEFAULT_CAM_MOUSE_Z,
             aspect /* `= 1`? */;
 
-    public PVector up, pos;
+    public PVector pos = new PVector(), up = new PVector(0, 1, 0);
     public PVector defaultCamUp, defaultCamPos;
     public int projection = PConstants.PERSPECTIVE;
     public boolean doScript = true, doAutoClear = true, doAutoAspect = true;
@@ -34,28 +34,28 @@ public abstract class NerdAbstractCamera {
 
     public NerdAbstractCamera(Sketch p_sketch) {
         this.SKETCH = p_sketch;
-        this.up = new PVector(0, 1, 0);
-        this.defaultCamUp = this.up.copy();
+        // this.up = new PVector(0, 1, 0);
+        // this.defaultCamUp = this.up.copy();
 
-        this.pos = new PVector(this.SKETCH.cx, this.SKETCH.cy,
-                this.SKETCH.cy / PApplet.tan(PConstants.PI * 30 / 180));
-        this.defaultCamPos = this.pos.copy();
+        // this.pos = new PVector(this.SKETCH.cx, this.SKETCH.cy,
+        // this.SKETCH.cy / PApplet.tan(PConstants.PI * 30 / 180));
+        // this.defaultCamPos = this.pos.copy();
 
-        this.aspect = (float) this.SKETCH.width / (float) this.SKETCH.height;
+        // this.useDefaultsFromProcessing();
     }
 
     public abstract void applyMatrix();
-
-    public abstract void useProcessingDefaults();
 
     public void applyProjection() {
         if (this.SKETCH.RENDERER != PConstants.P3D)
             return;
 
         if (this.doAutoAspect)
-            if (!(this.SKETCH.pwidth == this.SKETCH.width
-                    || this.SKETCH.pheight == this.SKETCH.height))
-                this.aspect = (float) this.SKETCH.width / (float) this.SKETCH.height;
+            // It probably is faster not to perform this check.
+            // if (!(this.SKETCH.pwidth == this.SKETCH.width
+            // || this.SKETCH.pheight == this.SKETCH.height))
+            // A simple divide instruction is enough!
+            this.aspect = (float) this.SKETCH.width / (float) this.SKETCH.height;
 
         // Apply projection:
         switch (this.projection) {
