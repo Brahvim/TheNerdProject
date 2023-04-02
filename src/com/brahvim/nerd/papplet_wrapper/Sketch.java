@@ -1657,7 +1657,6 @@ public class Sketch extends PApplet {
 	}
 
 	public BasicCamera getDefaultCameraClone() {
-		this.defaultCamera.completeReset();
 		return this.defaultCamera.clone();
 	}
 

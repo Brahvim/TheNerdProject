@@ -150,57 +150,66 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	// endregion
 
 	// region C-style OpenAL setters.
-	public void setInt(int p_alEnum, int p_value) {
+	public AlBuffer<BufferT> setInt(int p_alEnum, int p_value) {
 		AL11.alBufferi(this.id, p_alEnum, p_value);
 		this.alMan.checkAlError();
+		return this;
 	}
 
-	public void setFloat(int p_alEnum, float p_value) {
+	public AlBuffer<BufferT> setFloat(int p_alEnum, float p_value) {
 		AL11.alBufferf(this.id, p_alEnum, p_value);
 		this.alMan.checkAlError();
+		return this;
 	}
 
-	public void setIntVector(int p_alEnum, int... p_values) {
+	public AlBuffer<BufferT> setIntVector(int p_alEnum, int... p_values) {
 		AL11.alBufferiv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlError();
+		return this;
 	}
 
-	public void setFloatVector(int p_alEnum, float... p_values) {
+	public AlBuffer<BufferT> setFloatVector(int p_alEnum, float... p_values) {
 		AL11.alBufferfv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlError();
+		return this;
 	}
 
-	public void setIntTriplet(int p_alEnum, int... p_values) {
+	public AlBuffer<BufferT> setIntTriplet(int p_alEnum, int... p_values) {
 		if (p_values.length != 3)
 			throw new IllegalArgumentException(
 					"`alBuffer::setIntTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alBuffer3i(this.id, p_alEnum, p_values[0], p_values[1], p_values[2]);
 		this.alMan.checkAlError();
+		return this;
 	}
 
-	public void setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
+	public AlBuffer<BufferT> setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
 		AL11.alBuffer3i(this.id, p_alEnum, p_i1, p_i2, p_i3);
 		this.alMan.checkAlError();
+		return this;
 	}
 
-	public void setFloatTriplet(int p_alEnum, float... p_values) {
+	public AlBuffer<BufferT> setFloatTriplet(int p_alEnum, float... p_values) {
 		if (p_values.length != 3)
 			throw new IllegalArgumentException(
 					"`alBuffer::setFloatTriplet()` cannot take an array of size other than `3`!");
 
 		AL11.alBuffer3f(this.id, p_alEnum, p_values[0], p_values[1], p_values[2]);
 		this.alMan.checkAlError();
+		return this;
 	}
 
-	public void setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
+	public AlBuffer<BufferT> setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
 		AL11.alBuffer3f(this.id, p_alEnum, p_f1, p_f2, p_f3);
 		this.alMan.checkAlError();
+		return this;
 	}
 
-	public void setFloatTriplet(int p_alEnum, PVector p_values) {
+	public AlBuffer<BufferT> setFloatTriplet(int p_alEnum, PVector p_values) {
 		AL11.alBuffer3f(this.id, p_alEnum, p_values.x, p_values.y, p_values.z);
 		this.alMan.checkAlError();
+		return this;
 	}
 	// endregion
 
@@ -236,13 +245,13 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 		return this;
 	}
 
-	public AlBuffer<BufferT> setSampleRate(int p_sampleRate) {
-		AL11.alBufferi(this.id, AL11.AL_FREQUENCY, p_sampleRate);
+	public AlBuffer<BufferT> setChannels(int p_channels) {
+		AL11.alBufferi(this.id, AL11.AL_CHANNELS, p_channels);
 		return this;
 	}
 
-	public AlBuffer<BufferT> setChannels(int p_channels) {
-		AL11.alBufferi(this.id, AL11.AL_CHANNELS, p_channels);
+	public AlBuffer<BufferT> setSampleRate(int p_sampleRate) {
+		AL11.alBufferi(this.id, AL11.AL_FREQUENCY, p_sampleRate);
 		return this;
 	}
 	// endregion

@@ -141,12 +141,6 @@ public class SceneManager {
             public volatile boolean doClear = false;
 
             /**
-             * Resets {@link Sketch#currentCamera} if {@code true}.
-             * {@code true} by default!
-             */
-            public volatile boolean completelyResetCam = true;
-
-            /**
              * Resets {@link Sketch#PRE_FIRST_CALLER}, {@link Sketch#DRAW_FIRST_CALLER}, and
              * {@link Sketch#POST_FIRST_CALLER} to their default values!
              */
@@ -816,9 +810,6 @@ public class SceneManager {
                 this.SKETCH.background(this.settings.onSceneSwitch.clearColor);
         }
 
-        // if (this.settings.onSceneSwitch.completelyResetCam)
-        // this.SKETCH.getCamera().completeReset();
-        // else
         this.SKETCH.setCamera(this.SKETCH.getDefaultCameraClone());
 
         if (this.settings.onSceneSwitch.resetSceneLayerCallbackOrder) {

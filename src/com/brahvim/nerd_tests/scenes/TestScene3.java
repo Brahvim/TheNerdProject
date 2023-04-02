@@ -1,21 +1,19 @@
 package com.brahvim.nerd_tests.scenes;
 
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
-import com.brahvim.nerd.math.collision.CollisionAlgorithms;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
-import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.AnimatedCube;
+import com.brahvim.nerd_tests.CubeManager;
+import com.brahvim.nerd_tests.CubeManager.Transition;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
-import processing.core.PShape;
 import processing.core.PVector;
 
 public class TestScene3 extends NerdScene {
@@ -25,11 +23,9 @@ public class TestScene3 extends NerdScene {
     private final int CUBES_ADDED_EVERY_FRAME = 2;
 
     private PImage bgGrad;
-    private int cubesToAdd;
-    private PShape boxShape;
     private FlyCamera CAMERA;
+    private CubeManager cubeMan;
     private NerdAmbiLight ambiLight;
-    private ArrayList<AnimatedCube> cubes = new ArrayList<>();
     // endregion
 
     @Override
@@ -46,8 +42,7 @@ public class TestScene3 extends NerdScene {
         SKETCH.setCamera(CAMERA);
         this.calculateBgGrad();
 
-        this.boxShape = SKETCH.createShape(PConstants.BOX, 1);
-        this.boxShape.setStrokeWeight(0.28f);
+        this.cubeMan = new CubeManager(this);
         this.ambiLight = new NerdAmbiLight(
                 SKETCH,
                 new PVector(0, 0, 0),
@@ -60,36 +55,10 @@ public class TestScene3 extends NerdScene {
 
     @Override
     protected void draw() {
+        SKETCH.background(this.bgGrad);
         SKETCH.lights();
         this.ambiLight.apply();
-        SKETCH.background(this.bgGrad);
-
-        if (this.cubesToAdd != 0)
-            for (int i = 0; i != this.CUBES_ADDED_EVERY_FRAME; i++) {
-                if (this.cubesToAdd == 0)
-                    break;
-
-                this.cubesToAdd--;
-                AlBuffer<?> randomPop = ASSETS.get("Pop" + (int) SKETCH.random(1, 4)).getData();
-                this.cubes.add(new AnimatedCube(SCENE).plopIn(randomPop));
-            }
-
-        for (int i = this.cubes.size() - 1; i != -1; i--) {
-            final AnimatedCube p = this.cubes.get(i);
-
-            if (!CollisionAlgorithms.ptRect(
-                    p.getPos().x, p.getPos().y,
-                    -5000, -5000, 5000, 5000)) {
-                // Don't deallocate manually! Get `ParticleMan` (`ParticleManager`)!
-                // ...and add stuff to da particles ._.
-                p.getAudioSource().dispose();
-                this.cubes.remove(i);
-            }
-        }
-
-        for (AnimatedCube p : this.cubes)
-            if (p != null)
-                p.draw(this.boxShape);
+        this.cubeMan.draw();
     }
 
     private void calculateBgGrad() {
@@ -106,19 +75,21 @@ public class TestScene3 extends NerdScene {
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
             case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
-            case PConstants.LEFT -> this.cubesToAdd += this.CUBES_PER_CLICK;
+            case PConstants.LEFT -> this.emitCubes(this.cubeMan.CUBES_PER_CLICK);
         }
     }
 
     @Override
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
-            for (int i = this.cubes.size() - 1; i != -1; i--) {
-                final AnimatedCube p = this.cubes.get(i);
-                p.getAudioSource().dispose();
-                p.plopOut();
-                this.cubes.remove(i);
-            }
+            this.cubeMan.removeAll(CubeManager.Transition.PLOP);
+
+        // for (int i = this.cubes.size() - 1; i != -1; i--) {
+        // final AnimatedCube p = this.cubes.get(i);
+        // p.getAudioSource().dispose();
+        // p.plopOut();
+        // this.cubes.remove(i);
+        // }
     }
 
 }

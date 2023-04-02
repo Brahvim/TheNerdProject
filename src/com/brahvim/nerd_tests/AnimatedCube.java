@@ -17,9 +17,8 @@ public class AnimatedCube extends TestEulerBody {
 
     // private final NerdScene.AutoDrawable CALLBACK_FOR_RENDERER;
 
-    @SuppressWarnings("unused")
-    private boolean visible = true, pvisible = true;
-    private SineEase plopWave, fadeWave;
+    private boolean visible = true;
+    private SineEase plopWave;
     private AlSource popSrc;
     // endregion
 
@@ -47,10 +46,7 @@ public class AnimatedCube extends TestEulerBody {
                 super.SKETCH.random(-0.0001f, 0.0001f));
 
         this.plopWave = new SineEase(super.SKETCH);
-        this.fadeWave = new SineEase(super.SKETCH);
-
         this.plopWave.inactValue = 1;
-        this.fadeWave.inactValue = 1;
     }
 
     // region Getters and setters for superclass stuff!:
@@ -103,32 +99,14 @@ public class AnimatedCube extends TestEulerBody {
     }
     // endregion
 
-    // region Transitions.
-    public AnimatedCube cutIn() {
-        this.visible = true;
-        return this;
-    }
+    public AnimatedCube plopIn(final AlBuffer<?> p_popAudioBuffer) {
+        if (p_popAudioBuffer != null)
+            this.popSrc = new AlSource(super.SKETCH.AL, p_popAudioBuffer);
 
-    public AnimatedCube cutOut() {
-        this.visible = false;
-        return this;
-    }
-
-    public AnimatedCube plopIn() {
-        this.plopInImpl();
-        return this;
-    }
-
-    public AnimatedCube plopIn(AlBuffer<?> p_popAudioBuffer) {
-        this.popSrc = new AlSource(super.SKETCH.AL, p_popAudioBuffer);
         this.popSrc.setPosition(PVector.mult(super.pos, 0.001f));
-        this.popSrc.play();
-        this.plopInImpl();
-        return this;
-    }
-
-    private AnimatedCube plopInImpl() {
         this.visible = true;
+        this.popSrc.play();
+
         this.plopWave.freqMult = 0.015f;
         this.plopWave.endWhenAngleIncrementsBy(90).start();
         return this;
@@ -140,19 +118,6 @@ public class AnimatedCube extends TestEulerBody {
         });
         return this;
     }
-
-    public AnimatedCube fadeIn() {
-        this.visible = true;
-        this.fadeWave.endWhenAngleIncrementsBy(90).start();
-        return this;
-    }
-
-    public AnimatedCube fadeOut() {
-        this.visible = false;
-        this.fadeWave.endWhenAngleIncrementsBy(180).start(90);
-        return this;
-    }
-    // endregion
 
     public AlSource getAudioSource() {
         return this.popSrc;
@@ -167,24 +132,19 @@ public class AnimatedCube extends TestEulerBody {
             return;
 
         if (this.plopWave.active)
-            if (this.popSrc.isStopped())
-                this.popSrc.dispose();
+            if (this.popSrc != null)
+                if (this.popSrc.isStopped())
+                    this.popSrc.dispose();
 
-        // super.rot.add(0, 0,
-        // (super.SKETCH.mouseX - super.SKETCH.pmouseX) * 0.001f);
         super.integrate();
-
         super.SKETCH.push();
+        super.SKETCH.fill(255);
+
         super.SKETCH.translate(super.pos);
         super.SKETCH.rotate(super.rot);
-        super.SKETCH.fill(255);
-        // super.SKETCH.stroke(this.strokeColor, 255 * this.fadeWave.get());
-        // super.SKETCH.fill(this.fillColor, 255 * this.fadeWave.get());
         super.SKETCH.scale(this.size * this.plopWave.get());
         super.SKETCH.shape(p_shape);
         super.SKETCH.pop();
-
-        this.pvisible = this.visible;
     }
 
 }
