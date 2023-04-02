@@ -82,7 +82,7 @@ public class TestScene3 extends NerdScene {
     @Override
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
-            this.cubeMan.removeAll(CubeManager.Transition.PLOP);
+            this.cubeMan.removeAll();
 
         // for (int i = this.cubes.size() - 1; i != -1; i--) {
         // final AnimatedCube p = this.cubes.get(i);

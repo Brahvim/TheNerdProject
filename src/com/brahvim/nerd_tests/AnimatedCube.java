@@ -66,14 +66,6 @@ public class AnimatedCube extends TestEulerBody {
         super.rotFrict = p_rotFrict;
     }
 
-    public float getDtMult() {
-        return super.dtMult;
-    }
-
-    public void setDtMult(float p_dtMult) {
-        super.dtMult = p_dtMult;
-    }
-
     public PVector getPos() {
         return super.pos;
     }
