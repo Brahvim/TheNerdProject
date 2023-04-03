@@ -7,7 +7,6 @@ import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlBandpassFilter;
-import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.layers.BackgroundLayer;
@@ -71,10 +70,10 @@ public class TestScene1 extends NerdScene {
             // 0, PApplet.sin(MANAGER.sinceSceneStarted() * 0.0125f) * 25);
         }
 
-        // if (this.ease.wasActive() && !this.ease.active)
-        // this.sceneOneAnnounce.dispose();
+        // ..could be lazy about this, haha:
+        if (this.ease.wasActive() && !this.ease.active)
+            this.sceneOneAnnounce.dispose();
 
-        System.out.println(((BasicCamera) CAMERA).center);
         CAMERA.pos.z = PApplet.abs(PApplet.sin(SCENE.getMillisSinceStart() * 0.001f)) * 500;
 
         /*

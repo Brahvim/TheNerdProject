@@ -3,6 +3,7 @@ package com.brahvim.nerd_tests.scenes;
 import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
+import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -17,11 +18,11 @@ import processing.core.PVector;
 public class TestScene3 extends NerdScene {
 
     // region Fields.
-    private final int CUBES_PER_CLICK = 15;
-    private final int CUBES_ADDED_EVERY_FRAME = 2;
-
     private PImage bgGrad;
+
+    @SuppressWarnings("unused")
     private FlyCamera CAMERA;
+
     private CubeManager cubeMan;
     private NerdAmbiLight ambiLight;
     // endregion
@@ -34,13 +35,16 @@ public class TestScene3 extends NerdScene {
 
     @Override
     protected void setup(SceneState p_state) {
+        this.calculateBgGrad();
         FlyCamera.holdMouse = true;
         SKETCH.cursorVisible = false;
-        CAMERA = new FlyCamera(SKETCH);
-        SKETCH.setCamera(CAMERA);
-        this.calculateBgGrad();
+        SKETCH.setCamera(CAMERA = new FlyCamera(SKETCH));
 
-        this.cubeMan = new CubeManager(this);
+        final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
+        for (int i = 1; i != 5; i++)
+            alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
+
+        this.cubeMan = new CubeManager(this, alBuffers);
         this.ambiLight = new NerdAmbiLight(
                 SKETCH,
                 new PVector(0, 0, 0),
@@ -56,8 +60,7 @@ public class TestScene3 extends NerdScene {
         SKETCH.background(this.bgGrad);
         SKETCH.lights();
         this.ambiLight.apply();
-        SKETCH.box(45);
-        // this.cubeMan.draw();
+        this.cubeMan.draw();
     }
 
     private void calculateBgGrad() {
@@ -74,7 +77,7 @@ public class TestScene3 extends NerdScene {
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
             case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
-            // case PConstants.LEFT -> this.emitCubes(this.cubeMan.CUBES_PER_CLICK);
+            case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
         }
     }
 
@@ -82,13 +85,6 @@ public class TestScene3 extends NerdScene {
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
             this.cubeMan.removeAll();
-
-        // for (int i = this.cubes.size() - 1; i != -1; i--) {
-        // final AnimatedCube p = this.cubes.get(i);
-        // p.getAudioSource().dispose();
-        // p.plopOut();
-        // this.cubes.remove(i);
-        // }
     }
 
 }

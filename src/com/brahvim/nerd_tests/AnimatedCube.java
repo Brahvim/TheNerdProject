@@ -22,7 +22,7 @@ public class AnimatedCube extends TestEulerBody {
     private AlSource popSrc;
     // endregion
 
-    public AnimatedCube(NerdScene p_scene) {
+    public AnimatedCube(final NerdScene p_scene) {
         super(p_scene.SKETCH);
 
         super.pos.set(
@@ -104,10 +104,13 @@ public class AnimatedCube extends TestEulerBody {
         return this;
     }
 
-    public AnimatedCube plopOut() {
-        this.plopWave.endWhenAngleIncrementsBy(90).start(270, () -> {
-            this.visible = false;
-        });
+    public AnimatedCube plopOut(final Runnable p_runnable) {
+        this.plopWave.endWhenAngleIncrementsBy(90)
+                .start(270, () -> {
+                    p_runnable.run();
+                    this.visible = false;
+                    this.popSrc.dispose();
+                });
         return this;
     }
 
