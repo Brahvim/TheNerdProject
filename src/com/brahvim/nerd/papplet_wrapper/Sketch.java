@@ -1663,8 +1663,8 @@ public class Sketch extends PApplet {
 	/**
 	 * @return The previous camera the {@link Sketch} had access to.
 	 */
-	public NerdAbstractCamera setCamera(NerdAbstractCamera p_camera) {
-		NerdAbstractCamera toRet = this.previousCamera;
+	public NerdAbstractCamera setCamera(final NerdAbstractCamera p_camera) {
+		final NerdAbstractCamera toRet = this.previousCamera;
 		this.previousCamera = this.currentCamera;
 		this.currentCamera = p_camera;
 		return toRet;

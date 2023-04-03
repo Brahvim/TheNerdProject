@@ -765,6 +765,7 @@ public class SceneManager {
         // Initialize fields as if this was a part of the construction.
         toRet.MANAGER = this;
         toRet.SKETCH = this.SKETCH;
+        this.SKETCH.setCamera(this.SKETCH.getDefaultCameraClone());
         toRet.CAMERA = this.SKETCH.getCamera();
         toRet.ASSETS = new AssetManager(this.SKETCH); // Is this actually a good idea?
 
@@ -809,8 +810,6 @@ public class SceneManager {
             else
                 this.SKETCH.background(this.settings.onSceneSwitch.clearColor);
         }
-
-        this.SKETCH.setCamera(this.SKETCH.getDefaultCameraClone());
 
         if (this.settings.onSceneSwitch.resetSceneLayerCallbackOrder) {
             this.SKETCH.PRE_FIRST_CALLER = Sketch.CallbackOrder.SCENE;

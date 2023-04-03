@@ -15,6 +15,7 @@ public class BasicCameraBuilder {
     public BasicCameraBuilder(Sketch p_sketch) {
         this.SKETCH = p_sketch; // Used by `setClearColor()`.
         this.build = new BasicCamera(p_sketch);
+        this.build.useProcessingDefaults();
 
         // region My defaults:
         // this.defaultCamUp = new PVector(0, 1, 0);

@@ -7,9 +7,7 @@ import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
-import com.brahvim.nerd_tests.AnimatedCube;
 import com.brahvim.nerd_tests.CubeManager;
-import com.brahvim.nerd_tests.CubeManager.Transition;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -58,7 +56,8 @@ public class TestScene3 extends NerdScene {
         SKETCH.background(this.bgGrad);
         SKETCH.lights();
         this.ambiLight.apply();
-        this.cubeMan.draw();
+        SKETCH.box(45);
+        // this.cubeMan.draw();
     }
 
     private void calculateBgGrad() {
@@ -75,7 +74,7 @@ public class TestScene3 extends NerdScene {
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
             case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
-            case PConstants.LEFT -> this.emitCubes(this.cubeMan.CUBES_PER_CLICK);
+            // case PConstants.LEFT -> this.emitCubes(this.cubeMan.CUBES_PER_CLICK);
         }
     }
 
