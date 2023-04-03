@@ -22,6 +22,7 @@ public class CubeManager {
 	private final NerdScene SCENE;
 	private final Sketch SKETCH;
 
+	@SuppressWarnings("unused")
 	private int cubesToAdd, cubesToRemove;
 	private AlBuffer<?>[] popAudios;
 	private PShape CUBE_SHAPE;
