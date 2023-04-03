@@ -74,6 +74,7 @@ public class TestScene3 extends NerdScene {
                         color1, color2, PApplet.map(y, 0, this.bgGrad.height, 0, 1));
     }
 
+    // region Input event callbacks.
     @Override
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
@@ -93,5 +94,6 @@ public class TestScene3 extends NerdScene {
         if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
             this.cubeMan.removeAll();
     }
+    // endregion
 
 }
