@@ -14,6 +14,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PVector;
+import processing.event.MouseEvent;
 
 public class TestScene3 extends NerdScene {
 
@@ -39,7 +40,6 @@ public class TestScene3 extends NerdScene {
         FlyCamera.holdMouse = true;
         SKETCH.cursorVisible = false;
         SKETCH.setCamera(CAMERA = new FlyCamera(SKETCH));
-        CAMERA.fov = PApplet.radians(90);
 
         final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
         for (int i = 1; i != 5; i++)
@@ -80,6 +80,12 @@ public class TestScene3 extends NerdScene {
             case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
             case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
         }
+    }
+
+    @Override
+    public void mouseWheel(final MouseEvent p_mouseEvent) {
+        CAMERA.fov -= p_mouseEvent.getCount() * 0.1f;
+        CAMERA.fov = PApplet.constrain(CAMERA.fov, 0, 130);
     }
 
     @Override
