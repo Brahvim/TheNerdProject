@@ -39,6 +39,7 @@ public class TestScene3 extends NerdScene {
         FlyCamera.holdMouse = true;
         SKETCH.cursorVisible = false;
         SKETCH.setCamera(CAMERA = new FlyCamera(SKETCH));
+        CAMERA.fov = PApplet.radians(90);
 
         final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
         for (int i = 1; i != 5; i++)
