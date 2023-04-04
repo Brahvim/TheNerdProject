@@ -17,6 +17,24 @@ package com.brahvim.nerd_tests;
 // - Most LWJGL-OpenAL import statements because ChatGPT lives in the past with LWJGL 2 or something.
 // It took 2 HOURS of instructing that guy to get this thing written!
 
+// PS He also dropped the following explanation:
+
+/*
+// Based on the contents of `benchmark.log`, we can see that the test ran for 100 iterations and took a 
+// total of 2241 milliseconds (2.241 seconds) to complete.
+
+// The average initialization time for each iteration was 14,432 microseconds (0.014 seconds),
+// while the average reset time for each iteration was 23 microseconds.
+
+// This means that creating a new OpenAL context is significantly slower than resetting the properties 
+// of an existing context. The average initialization time of 14.4 milliseconds compared to an average 
+// reset time of 23 microseconds indicates that it's about 620 times slower to create a new
+// context than to reset an existing one.
+
+// Overall, this benchmark shows that it's more efficient to reuse a context object and reset its 
+// properties rather than creating a new context object every time.
+*/
+
 import java.io.FileWriter;
 import java.io.IOException;
 
