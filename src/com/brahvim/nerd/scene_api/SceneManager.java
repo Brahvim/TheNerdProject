@@ -799,7 +799,6 @@ public class SceneManager {
 
     // The scene-deleter!!!
     private void setScene(NerdScene p_currentScene, SceneState p_state) {
-        FlyCamera.holdMouse = false;
         this.SKETCH.cursorVisible = true;
         this.SKETCH.cursorConfined = false;
 

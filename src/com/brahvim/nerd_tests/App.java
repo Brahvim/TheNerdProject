@@ -11,6 +11,7 @@ public class App {
 
     // TODOs!:
     /*
+     * // TODO: External library object loading.
      * // TODO: NETWORKING. GOOD, EASY NETWORKING.
      * // TODO: Just make it easier to animate, somehow!
      * // TODO: Collision Algorithms (also for 3D space)?!

@@ -13,8 +13,7 @@ public class FlyCamera extends NerdAbstractCamera {
     // region Fields.
     public static final float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
 
-    public static volatile boolean holdMouse = true;
-
+    public boolean holdMouse = true;
     public float yaw, zoom, pitch;
     public PVector front = new PVector(), defaultCamFront = new PVector();
     public boolean shouldConstrainPitch = true;
@@ -25,12 +24,14 @@ public class FlyCamera extends NerdAbstractCamera {
     public FlyCamera(Sketch p_sketch) {
         super(p_sketch);
         this.front = super.pos.copy();
+        super.SKETCH.cursorVisible = false;
         this.defaultCamFront = this.front.copy();
     }
 
     public FlyCamera(Sketch p_sketch, PVector p_defaultFront) {
         super(p_sketch);
         this.front.set(p_defaultFront);
+        super.SKETCH.cursorVisible = false;
         this.defaultCamFront.set(p_defaultFront);
     }
     // endregion
@@ -40,17 +41,21 @@ public class FlyCamera extends NerdAbstractCamera {
     public void apply() {
         super.apply();
 
-        if (FlyCamera.holdMouse && super.SKETCH.focused) {
+        if (this.holdMouse && super.SKETCH.focused) {
             this.mouseTransform();
+
             final Point point = this.calculateMouseLockPos();
             super.SKETCH.ROBOT.mouseMove(point.x, point.y);
         }
     }
 
     private Point calculateMouseLockPos() {
-        return new Point(
-                (int) (super.SKETCH.cx + super.SKETCH.WINDOW_POSITION.x * 0.65f),
-                (int) (super.SKETCH.cy + super.SKETCH.WINDOW_POSITION.y * 0.5f));
+        if (this.SKETCH.fullscreen)
+            return new Point(this.SKETCH.displayWidthHalf, this.SKETCH.displayHeightHalf);
+        else
+            return new Point(
+                    (int) (super.SKETCH.WINDOW_POSITION.x),
+                    (int) (super.SKETCH.WINDOW_POSITION.y));
     }
 
     @Override
@@ -134,15 +139,20 @@ public class FlyCamera extends NerdAbstractCamera {
         // System.out.println(super.SKETCH.GLOBAL_MOUSE_POINT);
         // System.out.println(super.SKETCH.displayWidthHalf);
 
-        if (FlyCamera.holdMouse) {
-            final Point mouseLockPos = this.calculateMouseLockPos();
+        final Point mouseLockPos = this.calculateMouseLockPos();
+
+        if (this.holdMouse) {
             this.yaw += this.mouseSensitivity
                     * (super.SKETCH.GLOBAL_MOUSE_POINT.x - mouseLockPos.x); // super.SKETCH.displayWidthHalf);
             this.pitch += this.mouseSensitivity
                     * (super.SKETCH.GLOBAL_MOUSE_POINT.y - mouseLockPos.y); // super.SKETCH.displayHeightHalf);
         } else {
-            this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
-            this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY); // Remember! Opposite!
+            this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - mouseLockPos.x);
+            this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - mouseLockPos.y);
+            // this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX -
+            // super.SKETCH.pmouseX);
+            // this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY -
+            // super.SKETCH.pmouseY); // Remember! Opposite!
         }
         // endregion
 

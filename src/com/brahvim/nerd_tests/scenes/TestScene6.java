@@ -2,7 +2,6 @@ package com.brahvim.nerd_tests.scenes;
 
 import java.awt.event.KeyEvent;
 
-import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.cameras.FpsCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
@@ -16,7 +15,7 @@ public class TestScene6 extends NerdScene {
 
     // region Fields.
     private FpsCamera CAMERA;
-    private PVector playerVel = new PVector(3, 2, 3);
+    private PVector playerVel = new PVector(10, 7, 10);
 
     private final float GRAVITY = 2;
     private final float PLAYER_START_Y = -1500;
@@ -71,12 +70,11 @@ public class TestScene6 extends NerdScene {
 
     }
 
-    // region Events.
     @Override
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_F)) {
             SKETCH.cursorVisible = !SKETCH.cursorVisible;
-            FlyCamera.holdMouse = !FlyCamera.holdMouse;
+            CAMERA.holdMouse = !CAMERA.holdMouse;
         }
 
         if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
@@ -85,7 +83,6 @@ public class TestScene6 extends NerdScene {
             MANAGER.restartScene(STATE);
         }
     }
-    // endregion
 
     private void controlCamera() {
         // region Gravity:
@@ -98,10 +95,10 @@ public class TestScene6 extends NerdScene {
 
         // region Key-press handling.
         // Increase speed when holding `Ctrl`:
-        float velMultiplier = 1;
+        /* final */ float velMultiplier = 1;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
-            velMultiplier = 5;
+            velMultiplier = 2;
 
         // region Roll.
         if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
@@ -112,25 +109,25 @@ public class TestScene6 extends NerdScene {
         // endregion
 
         // region Elevation.
-        if (SKETCH.keyIsPressed(KeyEvent.VK_Q))
-            CAMERA.moveY(this.GRAVITY * velMultiplier * -playerVel.y);
+        if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
+            CAMERA.moveY(this.GRAVITY * velMultiplier * -this.playerVel.y);
 
-        if (SKETCH.keyIsPressed(KeyEvent.VK_E))
-            CAMERA.moveY(velMultiplier * playerVel.y);
+        if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
+            CAMERA.moveY(velMultiplier * this.playerVel.y);
         // endregion
 
         // region `W`-`A`-`S`-`D` controls.
         if (SKETCH.keyIsPressed(KeyEvent.VK_W))
-            CAMERA.moveZ(velMultiplier * -playerVel.z);
+            CAMERA.moveZ(velMultiplier * -this.playerVel.z);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_A))
-            CAMERA.moveX(velMultiplier * -playerVel.x);
+            CAMERA.moveX(velMultiplier * -this.playerVel.x);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_S))
-            CAMERA.moveZ(velMultiplier * playerVel.z);
+            CAMERA.moveZ(velMultiplier * this.playerVel.z);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_D))
-            CAMERA.moveX(velMultiplier * playerVel.x);
+            CAMERA.moveX(velMultiplier * this.playerVel.x);
         // endregion
         // endregion
     }

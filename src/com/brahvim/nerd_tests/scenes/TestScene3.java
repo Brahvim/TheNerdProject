@@ -9,6 +9,8 @@ import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.CubeManager;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.glu.GLU;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -23,6 +25,9 @@ public class TestScene3 extends NerdScene {
     private FlyCamera CAMERA;
     private CubeManager cubeMan;
     private NerdAmbiLight ambiLight;
+
+    private final float GRAVITY = 2;
+    private PVector playerVel = new PVector(10, 7, 10);
     // endregion
 
     @Override
@@ -34,8 +39,6 @@ public class TestScene3 extends NerdScene {
     @Override
     protected void setup(SceneState p_state) {
         this.calculateBgGrad();
-        FlyCamera.holdMouse = true;
-        SKETCH.cursorVisible = false;
         CAMERA = new FlyCamera(SKETCH);
         CAMERA.fov = PApplet.radians(75);
         SKETCH.setCamera(CAMERA);
@@ -57,9 +60,13 @@ public class TestScene3 extends NerdScene {
 
     @Override
     protected void draw() {
-        SKETCH.background(this.bgGrad);
+        if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
+            MANAGER.restartScene(STATE);
+
         SKETCH.lights();
+        SKETCH.background(this.bgGrad);
         this.ambiLight.apply();
+        this.controlCamera();
         this.cubeMan.draw();
     }
 
@@ -78,6 +85,7 @@ public class TestScene3 extends NerdScene {
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
             case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
+            case PConstants.CENTER -> this.cubeMan.removeAll();
             case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
         }
     }
@@ -87,12 +95,44 @@ public class TestScene3 extends NerdScene {
         CAMERA.fov -= p_mouseEvent.getCount() * 0.1f;
         CAMERA.fov = PApplet.constrain(CAMERA.fov, 0, 130);
     }
-
-    @Override
-    public void keyPressed() {
-        if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
-            this.cubeMan.removeAll();
-    }
     // endregion
+
+    private void controlCamera() {
+        // Increase speed when holding `Ctrl`:
+        /* final */ float velMultiplier = 1;
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
+            velMultiplier = 2;
+
+        // region Roll.
+        if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
+            CAMERA.up.x += velMultiplier * 0.01f;
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_C))
+            CAMERA.up.x += -velMultiplier * 0.01f;
+        // endregion
+
+        // region Elevation.
+        if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
+            CAMERA.moveY(this.GRAVITY * velMultiplier * -this.playerVel.y);
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
+            CAMERA.moveY(velMultiplier * this.playerVel.y);
+        // endregion
+
+        // region `W`-`A`-`S`-`D` controls.
+        if (SKETCH.keyIsPressed(KeyEvent.VK_W))
+            CAMERA.moveZ(velMultiplier * -this.playerVel.z);
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_A))
+            CAMERA.moveX(velMultiplier * -this.playerVel.x);
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_S))
+            CAMERA.moveZ(velMultiplier * this.playerVel.z);
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_D))
+            CAMERA.moveX(velMultiplier * this.playerVel.x);
+        // endregion
+    }
 
 }
