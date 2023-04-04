@@ -81,7 +81,6 @@ public class AlSource extends AlNativeResource {
 		this.setConeInnerAngle(p_source.getConeInnerAngle());
 		this.setConeOuterGainHf(p_source.getConeOuterGainHf());
 		this.setPitchMultiplier(p_source.getPitchMultiplier());
-		this.setReferenceDistance(p_source.getReferenceDistance());
 		this.setRoomRolloffFactor(p_source.getRoomRolloffFactor());
 		this.setAirAbsorptionFactor(p_source.getAirAbsorptionFactor());
 		this.setDirectFilterGainHfAuto(p_source.getDirectFilterGainHfAuto());
@@ -333,10 +332,6 @@ public class AlSource extends AlNativeResource {
 		return this.getFloat(AL11.AL_ROLLOFF_FACTOR);
 	}
 
-	public float getReferenceDistance() {
-		return this.getFloat(AL11.AL_REFERENCE_DISTANCE);
-	}
-
 	public float getMinGain() {
 		return this.getFloat(AL11.AL_MIN_GAIN);
 	}
@@ -430,11 +425,6 @@ public class AlSource extends AlNativeResource {
 
 	public AlSource setRolloff(float p_value) {
 		this.setFloat(AL11.AL_ROLLOFF_FACTOR, p_value);
-		return this;
-	}
-
-	public AlSource setReferenceDistance(float p_value) {
-		this.setFloat(AL11.AL_REFERENCE_DISTANCE, p_value);
 		return this;
 	}
 

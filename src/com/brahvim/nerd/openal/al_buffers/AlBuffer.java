@@ -15,6 +15,9 @@ import com.brahvim.nerd.openal.NerdAl;
 
 import processing.core.PVector;
 
+// If "`BufferT`" sounds weird to you, check out: 
+// [https://stackoverflow.com/a/30146204/]
+
 public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource {
 
 	// region Fields.

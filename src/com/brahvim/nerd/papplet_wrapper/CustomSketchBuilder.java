@@ -17,11 +17,7 @@ import processing.core.PConstants;
  * Override/Implement this class's `build()` method and return an instance of
  * that `Sketch` subclass!
  */
-
-// If "`SketchT`" sounds weird to you, check out:
-// [https://stackoverflow.com/a/30146204/]
-
-public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
+public abstract class CustomSketchBuilder {
 
     // region Field*(s)*, constructor, building...
     protected final SketchKey SKETCH_KEY;
@@ -30,9 +26,9 @@ public abstract class CustomSketchBuilder /* <SketchT extends Sketch> */ {
         this.SKETCH_KEY = new SketchKey();
     }
 
-    public final Sketch build(String[] p_javaMainArgs) {
-        Sketch constructedSketch = this.buildImpl(p_javaMainArgs);
-        String[] args = new String[] { constructedSketch.getClass().getName() };
+    public final Sketch build(final String[] p_javaMainArgs) {
+        final Sketch constructedSketch = this.buildImpl(p_javaMainArgs);
+        final String[] args = new String[] { constructedSketch.getClass().getName() };
 
         if (p_javaMainArgs == null || p_javaMainArgs.length == 0)
             PApplet.runSketch(args, constructedSketch);

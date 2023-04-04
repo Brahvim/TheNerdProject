@@ -240,9 +240,18 @@ public class NerdAl {
 	public float[] getListenerOrientation(AlContext p_ctx) {
 		return this.getListenerFloatTriplet(p_ctx.getId(), AL11.AL_ORIENTATION);
 	}
+
+	public float getReferenceDistance() {
+		return this.getListenerFloat(this.getContextId(), AL11.AL_REFERENCE_DISTANCE);
+	}
 	// endregion
 
 	// region Listener setters.
+	public NerdAl setReferenceDistance(float p_value) {
+		this.setListenerFloat(this.getContextId(), AL11.AL_REFERENCE_DISTANCE, p_value);
+		return this;
+	}
+
 	public void setListenerGain(AlContext p_ctx, float p_value) {
 		this.setListenerFloat(p_ctx.getId(), AL11.AL_GAIN, p_value);
 	}
