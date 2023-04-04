@@ -43,6 +43,8 @@ import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.glu.GLU;
 
 import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
@@ -273,6 +275,8 @@ public class Sketch extends PApplet {
 	public JFrame sketchFrame;
 
 	// OpenGL context:
+	public GL4 gl;
+	public GLU glu;
 	public PGL pgl;
 	public GLWindow glWindow;
 	public PGraphicsOpenGL glGraphics;

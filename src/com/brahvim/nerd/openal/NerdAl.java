@@ -24,14 +24,21 @@ import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
 import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlFilter;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 import processing.core.PVector;
 
 public class NerdAl {
 
 	// region Fields.
+	public static final float UNIT_SIZE_3D_PARK_SCENE = 100.0f;
+	public static final float UNIT_SIZE_MOUSE_RELATIVE = 1.0f;
+	public static final float UNIT_SIZE_2D_SCENE = 25.0f;
+
 	public final long DEFAULT_CONTEXT_ID;
 	public final AlContext DEFAULT_CONTEXT;
+
+	public float unitSize = NerdAl.UNIT_SIZE_3D_PARK_SCENE;
 
 	private final Sketch SKETCH;
 
@@ -42,29 +49,34 @@ public class NerdAl {
 	// endregion
 
 	// region Construction.
-	public NerdAl(Sketch p_sketch) {
+	public NerdAl(final Sketch p_sketch) {
 		this(p_sketch, AlDevice.getDefaultDeviceName());
 	}
 
-	public NerdAl(Sketch p_sketch, String p_deviceName) {
+	public NerdAl(final Sketch p_sketch, final String p_deviceName) {
 		this.SKETCH = p_sketch;
-		this.initListeners();
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName());
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
+		this.delegatedConstruction();
 	}
 
-	public NerdAl(Sketch p_sketch, AlContext.AlContextSettings p_settings) {
+	public NerdAl(final Sketch p_sketch, final AlContext.AlContextSettings p_settings) {
 		this.SKETCH = p_sketch;
-		this.initListeners();
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
+		this.delegatedConstruction();
 	}
 
-	public NerdAl(Sketch p_sketch, AlContext.AlContextSettings p_settings, String p_deviceName) {
+	public NerdAl(final Sketch p_sketch, final AlContext.AlContextSettings p_settings, final String p_deviceName) {
 		this.SKETCH = p_sketch;
-		this.initListeners();
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
+		this.delegatedConstruction();
+	}
+
+	private void delegatedConstruction() {
+		this.initListeners();
+		// this.setMetersPerUnit(0.0001f); // (float) Math.pow(10.0d, -150.0d));
 	}
 
 	private void initListeners() {
@@ -72,11 +84,26 @@ public class NerdAl {
 		this.SKETCH.getSceneManager().addSceneChangedListener((s, p, c) -> {
 			if (p != null)
 				this.scenelyDisposal();
+			this.unitSize = NerdAl.UNIT_SIZE_3D_PARK_SCENE;
 		});
 
-		// Process everything, every frame!:
+		// I wanted to declare this lambda as an anon class instead, but I wanted to
+		// watch this trick where I have a variable from outside the lambda work there.
+		// ...It does!:
+		final PVector lastCameraPos = new PVector();
+
 		this.SKETCH.addDrawListener((s) -> {
+			// Process everything, every frame!:
 			this.framelyCallback();
+
+			final NerdAbstractCamera camera = this.SKETCH.getCamera();
+
+			this.setListenerOrientation(camera.up);
+			this.setListenerPosition(PVector.div(camera.pos, this.unitSize));
+			this.setListenerVelocity(PVector.sub(camera.pos, lastCameraPos));
+			// PVector.div((PVector.sub(camera.pos, lastCameraPos)), this.unitSize));
+
+			lastCameraPos.set(camera.pos);
 		});
 
 		// When the sketch is exiting, delete all OpenAL native data:
@@ -240,18 +267,9 @@ public class NerdAl {
 	public float[] getListenerOrientation(AlContext p_ctx) {
 		return this.getListenerFloatTriplet(p_ctx.getId(), AL11.AL_ORIENTATION);
 	}
-
-	public float getReferenceDistance() {
-		return this.getListenerFloat(this.getContextId(), AL11.AL_REFERENCE_DISTANCE);
-	}
 	// endregion
 
 	// region Listener setters.
-	public NerdAl setReferenceDistance(float p_value) {
-		this.setListenerFloat(this.getContextId(), AL11.AL_REFERENCE_DISTANCE, p_value);
-		return this;
-	}
-
 	public void setListenerGain(AlContext p_ctx, float p_value) {
 		this.setListenerFloat(p_ctx.getId(), AL11.AL_GAIN, p_value);
 	}
@@ -344,7 +362,24 @@ public class NerdAl {
 	}
 
 	public void setListenerOrientation(PVector p_value) {
-		this.setListenerFloatTriplet(this.DEFAULT_CONTEXT_ID, AL11.AL_ORIENTATION, p_value.x, p_value.y, p_value.z);
+		// this.setListenerFloatTriplet(this.DEFAULT_CONTEXT_ID, AL11.AL_ORIENTATION,
+		// p_value.x, p_value.y, p_value.z); // Broken ¯\_(ツ)_/¯
+
+		final float[] values = p_value.array();
+
+		// The usual case is for `y` to be `1`, and the rest to be `0`.
+		// This should keep that logic significantly fast:
+		values[0] = values[0] == 0.0f ? 0.0f : values[0] > 0.0f ? 1.0f : -1.0f;
+		values[1] = values[1] == 0.0f ? 0.0f : values[1] > 0.0f ? 1.0f : -1.0f;
+		values[2] = values[2] == 0.0f ? 0.0f : values[2] > 0.0f ? 1.0f : -1.0f;
+
+		try { // Need to put this in a try-catch block...
+			this.setListenerFloatVector(this.DEFAULT_CONTEXT_ID, AL11.AL_ORIENTATION, values);
+		} catch (AlException e) { // TOO MANY FALSE POSITIVES!
+			// System.out.printf("""
+			// Setting the listener's orientation to `%s` failed!
+			// Values: `[%.7f, %.7f, %.7f]`.""", p_value, values[0], values[1], values[2]);
+		}
 	}
 	// endregion
 	// endregion

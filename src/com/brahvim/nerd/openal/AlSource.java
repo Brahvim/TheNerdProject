@@ -67,22 +67,23 @@ public class AlSource extends AlNativeResource {
 		this.setGain(p_source.getGain());
 		this.setMinGain(p_source.getMinGain());
 		this.setMaxGain(p_source.getMaxGain());
-		this.setRolloff(p_source.getRolloff());
 		this.setPosition(p_source.getPosition());
 		this.setVelocity(p_source.getVelocity());
 		// this.setSourceType(p_source.getSourceType());
-		this.attachDirectFilter(p_source.getDirectFilter());
-		this.setOrientation(p_source.getOrientation());
+		this.setDirection(p_source.getDirection());
 		this.setMaxDistance(p_source.getMaxDistance());
 		this.setSampleOffset(p_source.getSampleOffset());
 		this.setConeOuterGain(p_source.getConeOuterGain());
-		this.attachAuxiliarySendFilter(p_source.getAuxiliarySendFilter());
+		this.setRolloffFactor(p_source.getRolloffFactor());
+		this.attachDirectFilter(p_source.getDirectFilter());
 		this.setConeOuterAngle(p_source.getConeOuterAngle());
 		this.setConeInnerAngle(p_source.getConeInnerAngle());
 		this.setConeOuterGainHf(p_source.getConeOuterGainHf());
 		this.setPitchMultiplier(p_source.getPitchMultiplier());
+		this.setReferenceDistance(p_source.getReferenceDistance());
 		this.setRoomRolloffFactor(p_source.getRoomRolloffFactor());
 		this.setAirAbsorptionFactor(p_source.getAirAbsorptionFactor());
+		this.attachAuxiliarySendFilter(p_source.getAuxiliarySendFilter());
 		this.setDirectFilterGainHfAuto(p_source.getDirectFilterGainHfAuto());
 		this.setAuxiliarySendFilterGainAuto(p_source.getAuxiliarySendFilterGainAuto());
 		this.setAuxiliarySendFilterGainHfAuto(p_source.getAuxiliarySendFilterGainHfAuto());
@@ -181,16 +182,17 @@ public class AlSource extends AlNativeResource {
 		return intBuffer.array();
 	}
 
-	public /* `float[]` */ float[] getFloatTriplet(int p_alEnum) {
+	public PVector getFloatTriplet(int p_alEnum) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		MemoryStack.stackPush();
-		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
-		AL11.alGetSourcefv(this.id, p_alEnum, floatBuffer);
+		final FloatBuffer f1 = MemoryStack.stackMallocFloat(1),
+				f2 = MemoryStack.stackMallocFloat(1),
+				f3 = MemoryStack.stackMallocFloat(1);
+		AL11.alGetSource3f(this.id, p_alEnum, f1, f2, f3);
 		MemoryStack.stackPop();
 
-		return floatBuffer.array();
-		// return new PVector(floatBuffer.get(), floatBuffer.get(), floatBuffer.get());
+		return new PVector(f1.get(), f2.get(), f3.get());
 	}
 	// endregion
 
@@ -328,8 +330,12 @@ public class AlSource extends AlNativeResource {
 		return this.getFloat(AL11.AL_MAX_DISTANCE);
 	}
 
-	public float getRolloff() {
+	public float getRolloffFactor() {
 		return this.getFloat(AL11.AL_ROLLOFF_FACTOR);
+	}
+
+	public float getReferenceDistance() {
+		return this.getFloat(AL11.AL_REFERENCE_DISTANCE);
 	}
 
 	public float getMinGain() {
@@ -354,18 +360,17 @@ public class AlSource extends AlNativeResource {
 	// endregion
 
 	// region Triplet getters (`float[]`s only).
-	public float[] getPosition() {
+	public PVector getPosition() {
 		return this.getFloatTriplet(AL11.AL_POSITION);
 	}
 
-	public float[] getVelocity() {
+	public PVector getVelocity() {
 		return this.getFloatTriplet(AL11.AL_VELOCITY);
 	}
 
-	public float[] getOrientation() {
-		return this.getFloatTriplet(AL11.AL_ORIENTATION);
+	public PVector getDirection() {
+		return this.getFloatTriplet(AL11.AL_DIRECTION);
 	}
-
 	// endregion
 
 	// region State (`boolean`) getters.
@@ -423,8 +428,13 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setRolloff(float p_value) {
+	public AlSource setRolloffFactor(float p_value) {
 		this.setFloat(AL11.AL_ROLLOFF_FACTOR, p_value);
+		return this;
+	}
+
+	public AlSource setReferenceDistance(float p_value) {
+		this.setFloat(AL11.AL_REFERENCE_DISTANCE, p_value);
 		return this;
 	}
 
@@ -475,12 +485,12 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setOrientation(float[] p_value) {
+	public AlSource setDirection(float[] p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 		return this;
 	}
 
-	public AlSource setOrientation(float p_x, float p_y, float p_z) {
+	public AlSource setDirection(float p_x, float p_y, float p_z) {
 		this.setFloatTriplet(AL11.AL_POSITION, new float[] { p_x, p_y, p_z });
 		return this;
 	}
@@ -496,7 +506,7 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setOrientation(PVector p_value) {
+	public AlSource setDirection(PVector p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 		return this;
 	}

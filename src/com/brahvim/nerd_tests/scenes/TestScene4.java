@@ -67,8 +67,11 @@ public class TestScene4 extends NerdScene {
         } else { // Do not play `this.rubberDuck` if this is the first start!
             this.rubberDuck.setPosition(
                     0.01f * (SKETCH.mouseX - SKETCH.cx),
-                    0,
-                    0.01f * (SKETCH.mouseY - SKETCH.cy));
+                    0, 0.01f * (SKETCH.mouseY - SKETCH.cy));
+
+            SKETCH.AL.unitSize = 1;
+            System.out.println(CAMERA.pos);
+            System.out.println(this.rubberDuck.getPosition());
 
             if (!this.rubberDuck.isPlaying())
                 this.rubberDuck.play();
@@ -87,7 +90,7 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void draw() {
-        SKETCH.background(0);
+        SKETCH.clear();
         SKETCH.translate(-SKETCH.cx, -SKETCH.cy);
 
         this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);

@@ -8,17 +8,33 @@ public final class VecUtilsForPVector {
     private VecUtilsForPVector() {
     }
 
-    public static PVector normalize(PVector p_vec) {
+    // region Conversions.
+    // We.. We don't care about the length of the array.
+    // We just take out data and do what we would!:
+    public static PVector fromArray(final int[] p_intArray) {
+        return new PVector(p_intArray[0], p_intArray[1], p_intArray[2]);
+    }
+
+    public static PVector fromArray(final float[] p_floatArray) {
+        return new PVector(p_floatArray[0], p_floatArray[1], p_floatArray[2]);
+    }
+
+    public static PVector fromArray(final double[] p_doubleArray) {
+        return new PVector((float) p_doubleArray[0], (float) p_doubleArray[1], (float) p_doubleArray[2]);
+    }
+    // endregion
+
+    public static PVector normalize(final PVector p_vec) {
         return new PVector(p_vec.x, p_vec.y, p_vec.z).normalize();
     }
 
-    public static PVector rotate(PVector p_vec, float p_angleRad) {
+    public static PVector rotate(final PVector p_vec, final float p_angleRad) {
         PVector toRet = new PVector(p_vec.x, p_vec.y, p_vec.z);
         toRet.rotate(p_angleRad);
         return toRet;
     }
 
-    public static PVector cross(PVector p_a, PVector p_b) {
+    public static PVector cross(final PVector p_a, final PVector p_b) {
         // PVector toRet = new PVector(p_a.x, p_a.y, p_a.z);
         // toRet.cross(p_b);
         // return toRet;

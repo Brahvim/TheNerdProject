@@ -9,8 +9,6 @@ import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_tests.CubeManager;
-import com.jogamp.opengl.GLContext;
-import com.jogamp.opengl.glu.GLU;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -41,6 +39,7 @@ public class TestScene3 extends NerdScene {
         this.calculateBgGrad();
         CAMERA = new FlyCamera(SKETCH);
         CAMERA.fov = PApplet.radians(75);
+        SKETCH.AL.unitSize = 250.0f;
         SKETCH.setCamera(CAMERA);
 
         final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
