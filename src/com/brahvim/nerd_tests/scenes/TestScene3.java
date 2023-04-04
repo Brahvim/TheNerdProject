@@ -36,7 +36,9 @@ public class TestScene3 extends NerdScene {
         this.calculateBgGrad();
         FlyCamera.holdMouse = true;
         SKETCH.cursorVisible = false;
-        SKETCH.setCamera(CAMERA = new FlyCamera(SKETCH));
+        CAMERA = new FlyCamera(SKETCH);
+        CAMERA.fov = PApplet.radians(75);
+        SKETCH.setCamera(CAMERA);
 
         final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
         for (int i = 1; i != 5; i++)
