@@ -20,10 +20,7 @@ public class TestScene3 extends NerdScene {
 
     // region Fields.
     private PImage bgGrad;
-
-    @SuppressWarnings("unused")
     private FlyCamera CAMERA;
-
     private CubeManager cubeMan;
     private NerdAmbiLight ambiLight;
     // endregion

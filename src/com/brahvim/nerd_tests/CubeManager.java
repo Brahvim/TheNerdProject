@@ -15,8 +15,8 @@ import processing.core.PVector;
 public class CubeManager {
 
 	// region Fields.
-	public int CUBES_PER_CLICK = 15;
-	public int CUBES_ADDED_EVERY_FRAME = 3;
+	public int CUBES_PER_CLICK = 7;
+	public int CUBES_ADDED_EVERY_FRAME = 2;
 
 	private final ArrayList<AnimatedCube> CUBES = new ArrayList<>();
 	private final NerdScene SCENE;
