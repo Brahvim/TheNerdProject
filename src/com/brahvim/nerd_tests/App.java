@@ -11,13 +11,10 @@ public class App {
 
     // TODOs!:
     /*
-     * // TODO: Particle system.
      * // TODO: NETWORKING. GOOD, EASY NETWORKING.
      * // TODO: Just make it easier to animate, somehow!
      * // TODO: Collision Algorithms (also for 3D space)?!
-     * // TODO: ANDROID OpenAL. Get it done!~ (SWIG wrapper!)
-     * // TODO: SHADERS. Remake the "PostFX" Processing library?
-     * // TODO: "External library object loader" to finally separate libraries!
+     * // TODO: ANDROID Port with OpenAL. Get that done! (SWIG wrapper!)
      */
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
