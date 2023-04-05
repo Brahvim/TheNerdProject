@@ -3,73 +3,37 @@ package com.brahvim.nerd.openal;
 import java.util.function.Supplier;
 
 import com.brahvim.nerd.papplet_wrapper.CustomSketchBuilder;
-import com.brahvim.nerd.papplet_wrapper.ext.NerdExt;
+import com.brahvim.nerd.papplet_wrapper.NerdExt;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 import processing.core.PVector;
 
-/**
- * A singleton providing a `Sketch` from Nerd, access to OpenAL.
- * Use `getInstance()` to get one!
- */
 public class NerdAlExt extends NerdExt {
 
-	private NerdAl alInst;
 	private AlContext.AlContextSettings settings;
 
-	// region Constructors
-	private NerdAlExt(final CustomSketchBuilder p_builder) {
-		this(p_builder, null);
-	}
-
-	private NerdAlExt(final CustomSketchBuilder p_builder,
-			final AlContext.AlContextSettings p_settings) {
-		super(p_builder);
+	// region Constructors.
+	public NerdAlExt(final AlContext.AlContextSettings p_settings) {
 		this.settings = p_settings;
 	}
-	// endregion
 
-	// region Singleton `create()` overloads!
-	public static NerdAlExt create(final CustomSketchBuilder p_builder) {
-		return new NerdAlExt(p_builder);
-	}
-
-	public static NerdAlExt create(final CustomSketchBuilder p_builder,
-			final AlContext.AlContextSettings p_settings) {
-		return new NerdAlExt(p_builder, p_settings);
-	}
-	// endregion
-
-	// region Setting settings!
-	public NerdAlExt setAlContextSettings(final Supplier<AlContext.AlContextSettings> p_settingsBuilder) {
+	public NerdAlExt(final Supplier<AlContext.AlContextSettings> p_settingsBuilder) {
 		if (p_settingsBuilder != null)
 			this.settings = p_settingsBuilder.get();
-		return this;
-	}
-
-	public NerdAlExt setAlContextSettings(final AlContext.AlContextSettings p_settings) {
-		if (p_settings != null)
-			this.settings = p_settings;
-		return this;
+		// `get()` resulting in `null`, won't matter! `AlContext` handles that!~
 	}
 	// endregion
 
-	// region Overrides.
 	@Override
-	@SuppressWarnings("unchecked")
-	public <RetT> RetT getLibraryObject() {
-		this.alInst = new NerdAl(this.settings);
-		return (RetT) this.alInst;
-	}
+	public Object init(final CustomSketchBuilder p_builder) {
+		final NerdAl toRet = new NerdAl(this.settings);
 
-	@Override
-	protected void addLibrary() {
 		// When the scene is changed, delete unnecessary OpenAL data:
-		super.BUILDER.addSketchConstructionListener((s) -> s
+		p_builder.addSketchConstructionListener((s) -> s
 				.getSceneManager().addSceneChangedListener((a, p, c) -> {
 					if (p != null)
-						this.alInst.scenelyDisposal();
-					this.alInst.unitSize = NerdAl.UNIT_SIZE_3D_PARK_SCENE;
+						toRet.scenelyDisposal();
+					toRet.unitSize = NerdAl.UNIT_SIZE_3D_PARK_SCENE;
 				}));
 
 		// I wanted to declare this lambda as an anon class instead, but I wanted to
@@ -77,28 +41,29 @@ public class NerdAlExt extends NerdExt {
 		// ...It does!:
 		final PVector lastCameraPos = new PVector();
 
-		super.BUILDER.addDrawListener((s) -> {
+		p_builder.addDrawListener((s) -> {
 			// Process everything, every frame!:
-			this.alInst.framelyCallback();
+			toRet.framelyCallback();
 
 			final NerdAbstractCamera camera = s.getCamera();
 
-			this.alInst.setListenerOrientation(camera.up);
-			this.alInst.setListenerVelocity(PVector.sub(camera.pos, lastCameraPos));
+			toRet.setListenerOrientation(camera.up);
+			toRet.setListenerVelocity(PVector.sub(camera.pos, lastCameraPos));
 			// PVector.div((PVector.sub(camera.pos, lastCameraPos)), this.unitSize));
-			this.alInst.setListenerPosition(PVector.div(camera.pos, this.alInst.unitSize));
+			toRet.setListenerPosition(PVector.div(camera.pos, toRet.unitSize));
 
 			lastCameraPos.set(camera.pos);
 		});
 
 		// When the sketch is exiting, delete all OpenAL native data:
-		super.BUILDER.addSketchDisposalListener((s) -> this.alInst.completeDisposal());
+		p_builder.addSketchDisposalListener((s) -> toRet.completeDisposal());
+
+		return toRet;
 	}
 
 	@Override
 	public String getExtName() {
 		return "OpenAL";
 	}
-	// endregion
 
 }

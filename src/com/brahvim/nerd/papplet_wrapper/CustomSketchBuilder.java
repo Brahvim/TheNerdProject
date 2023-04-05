@@ -3,7 +3,6 @@ package com.brahvim.nerd.papplet_wrapper;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.brahvim.nerd.papplet_wrapper.ext.NerdExt;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 
@@ -11,11 +10,12 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 /**
- * Want to hack into the `Sketch` class and control its inner workings?
- * Why not extend it!
+ * Want to hack into the {@link Sketch} class and control its inner workings
+ * beyond just... using callbacks? Why not extend it!?<br>
+ * <br>
  *
- * Override/Implement this class's `build()` method and return an instance of
- * that `Sketch` subclass!
+ * Override/Implement {@link CustomSketchBuilder#build()}, and return an
+ * instance of your own {@link Sketch} subclass!
  */
 public abstract class CustomSketchBuilder {
 
@@ -120,12 +120,13 @@ public abstract class CustomSketchBuilder {
     }
     // endregion
 
-    // region Adding libraries.
     public CustomSketchBuilder addNerdExt(final NerdExt p_extObj) {
-        this.SKETCH_KEY.nerdExtensions.put(p_extObj.getExtName(), p_extObj.getLibraryObject());
+        this.SKETCH_KEY.nerdExtensions.put(
+                p_extObj.getExtName(),
+                p_extObj.init(this));
+
         return this;
     }
-    // endregion
 
     // region `set()`.
     // region Window settings!

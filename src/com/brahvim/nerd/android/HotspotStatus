@@ -10,11 +10,11 @@ import java.lang.reflect.Method;
 
 public class HotspotStatus {
     // region Query results constants (not using an `enum`, yes...).
-    public final static int AP_STATE_DISABLING = 10;
-    public final static int AP_STATE_DISABLED = 11;
-    public final static int AP_STATE_ENABLING = 12;
-    public final static int AP_STATE_ENABLED = 13;
-    public final static int AP_STATE_FAILED = 14;
+    public static final int AP_STATE_DISABLING = 10;
+    public static final int AP_STATE_DISABLED = 11;
+    public static final int AP_STATE_ENABLING = 12;
+    public static final int AP_STATE_ENABLED = 13;
+    public static final int AP_STATE_FAILED = 14;
     // endregion
 
     // Singleton instance:

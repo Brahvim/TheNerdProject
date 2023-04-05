@@ -203,7 +203,7 @@ public class Sketch extends PApplet {
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
 	public final StringTable STRINGS;
-	public final HashMap<String, ?> EXTENSIONS;
+	public final HashMap<String, Object> EXTENSIONS;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
 	// Dimensions of the inital size of the window:
@@ -879,7 +879,7 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
-	// region Callback management.
+	// region Callback and extension management.
 	// region Adding listeners.
 	public void addPreListener(Consumer<Sketch> p_preListener) {
 		this.PRE_LISTENERS.add(p_preListener);
@@ -938,10 +938,9 @@ public class Sketch extends PApplet {
 	public void removeSketchDisposalListener(Consumer<Sketch> p_disposalListener) {
 		this.DISPOSAL_LISTENERS.remove(p_disposalListener);
 	}
-	// endregion
+
 	// endregion
 
-	// region Nerd Extensions!
 	@SuppressWarnings("unchecked")
 	public <RetT> RetT getNerdExt(final String p_extName) {
 		return (RetT) this.EXTENSIONS.get(p_extName);

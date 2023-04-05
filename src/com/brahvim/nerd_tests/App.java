@@ -13,7 +13,6 @@ public class App {
 
     // TODOs!:
     /*
-     * // TODO: External library object loading.
      * // TODO: NETWORKING. GOOD, EASY NETWORKING.
      * // TODO: Just make it easier to animate, somehow!
      * // TODO: Collision Algorithms (also for 3D space)?!
@@ -22,18 +21,16 @@ public class App {
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
-            TestScene1.class;
-    // LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();
+            TestScene1.class; // `LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();`
 
     // region `App`'s *other* fields.
     public static final int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 
-    public static NerdAl AL;
+    public static volatile NerdAl AL;
 
-    private static Sketch sketchInstance;
-    private static int tickCount;
-    private static boolean tick;
+    private static volatile int tickCount;
+    private static volatile boolean tick;
     // endregion
 
     public static void main(String[] p_args) {
@@ -44,14 +41,13 @@ public class App {
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
                 .setAntiAliasing(4)
-                .addNerdExt(NerdAlExt.create(builder)
-                        .setAlContextSettings(() -> {
-                            var toRet = new AlContext.AlContextSettings();
-                            // ...for `TestScene3`!!!:
-                            toRet.monoSources = Integer.MAX_VALUE;
-                            toRet.stereoSources = Integer.MAX_VALUE;
-                            return toRet;
-                        }))
+                .addNerdExt(new NerdAlExt(() -> {
+                    var toRet = new AlContext.AlContextSettings();
+                    // ...for `TestScene3`!!!:
+                    toRet.monoSources = Integer.MAX_VALUE;
+                    toRet.stereoSources = Integer.MAX_VALUE;
+                    return toRet;
+                }))
                 // .preventCloseOnEscape()
                 // .startFullscreen()
                 .canResize()
@@ -82,12 +78,6 @@ public class App {
         // endregion
 
         App.startTickThread();
-    }
-
-    public Sketch getSketchInstance() {
-        while (App.sketchInstance != null)
-            ;
-        return App.sketchInstance;
     }
 
     // region Ticking.
