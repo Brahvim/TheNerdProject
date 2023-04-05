@@ -11,8 +11,10 @@ public abstract class NerdExt {
 		this.addLibrary();
 	}
 
-	public abstract NerdExt getLibraryObject();
+	public abstract <RetT> RetT getLibraryObject();
 
 	protected abstract void addLibrary();
+
+	public abstract String getExtName();
 
 }

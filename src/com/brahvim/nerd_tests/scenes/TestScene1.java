@@ -9,6 +9,7 @@ import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlBandpassFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
+import com.brahvim.nerd_tests.App;
 import com.brahvim.nerd_tests.layers.BackgroundLayer;
 import com.brahvim.nerd_tests.layers.BoxAnimationLayer;
 import com.brahvim.nerd_tests.layers.RevolvingParticlesLayer;
@@ -38,14 +39,14 @@ public class TestScene1 extends NerdScene {
         this.font = MANAGER.PERSISTENT_ASSETS.get("Arial-Black-48").getData();
         this.ease = new SineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
 
-        this.sceneOneAnnounce = new AlSource(SKETCH.AL, ASSETS.get("SceneOne").getData());
-        this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(SKETCH.AL)
+        this.sceneOneAnnounce = new AlSource(App.AL, ASSETS.get("SceneOne").getData());
+        this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(App.AL)
                 .setBandpassGainHf(0.01f)
                 .setBandpassGainLf(0.18f));
 
         this.sceneOneAnnounce.setEffectSlot(
-                new AlAuxiliaryEffectSlot(SKETCH.AL,
-                        new AlDistortion(SKETCH.AL)
+                new AlAuxiliaryEffectSlot(App.AL,
+                        new AlDistortion(App.AL)
                                 .setDistortionGain(1)));
 
         this.sceneOneAnnounce.setGain(0.25f);

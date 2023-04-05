@@ -21,7 +21,7 @@ public class TestScene2 extends NerdScene {
     @Override
     protected void draw() {
         SKETCH.background(0x006699);
-        // SKETCH.in2d(() -> SKETCH.ALphaBg(0, 102, 153, 0));
+        // SKETCH.in2d(() -> SKETCH.alphaBg(0, 102, 153, 0));
 
         // if (SKETCH.frameCount % 150 == 0)
         // System.out.println(SKETCH.frameRate);

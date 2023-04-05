@@ -32,8 +32,8 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 
 	// region Constructors.
 	public AlBuffer(NerdAl p_alMan) {
-		AlBuffer.ALL_INSTANCES.add(this);
 		this.alMan = p_alMan;
+		AlBuffer.ALL_INSTANCES.add(this);
 
 		this.id = AL11.alGenBuffers();
 		this.alMan.checkAlError();

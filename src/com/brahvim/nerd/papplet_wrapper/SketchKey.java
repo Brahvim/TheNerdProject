@@ -1,5 +1,6 @@
 package com.brahvim.nerd.papplet_wrapper;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.function.Consumer;
@@ -17,6 +18,7 @@ import processing.core.PConstants;
     public SceneManagerSettings sceneManagerSettings;
     public int width = 400, height = 400, antiAliasing;
     public AlContext.AlContextSettings alContextSettings;
+    public HashMap<String, ?> nerdExtensions = new HashMap<>();
     public Sketch.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
     public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
     public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);

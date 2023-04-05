@@ -42,18 +42,18 @@ public class TestScene4 extends NerdScene {
         // ..so the effects and filters wrk perfectly, but I just didn't want them in
         // this example. Feel free to uncomment!~
 
-        // AlAuxiliaryEffectSlot slot = new AlAuxiliaryEffectSlot(SKETCH.AL);
-        // AlEcho effect = new AlEcho(SKETCH.AL);
+        // AlAuxiliaryEffectSlot slot = new AlAuxiliaryEffectSlot(App.AL);
+        // AlEcho effect = new AlEcho(App.AL);
         // slot.setEffect(effect);
         // effect.setEchoDelay(0.01f);
         // effect.setEchoDamping(0.8f);
         // effect.setEchoFeedback(0.001f);
 
-        // AlLowpassFilter filter = new AlLowpassFilter(SKETCH.AL);
+        // AlLowpassFilter filter = new AlLowpassFilter(App.AL);
         // filter.setLowpassGain(1);
         // filter.setLowpassGainHf(0.1f);
 
-        this.rubberDuck = new AlSource(SKETCH.AL, ASSETS.get("RUBBER DUCK").getData());
+        this.rubberDuck = new AlSource(App.AL, ASSETS.get("RUBBER DUCK").getData());
         // this.rubberDuck.attachDirectFilter(filter);
         this.rubberDuck.setGain(0.1f);
         // this.rubberDuck.setEffectSlot(slot);
@@ -69,7 +69,7 @@ public class TestScene4 extends NerdScene {
                     0.01f * (SKETCH.mouseX - SKETCH.cx),
                     0, 0.01f * (SKETCH.mouseY - SKETCH.cy));
 
-            SKETCH.AL.unitSize = 1;
+            App.AL.unitSize = 1;
             System.out.println(CAMERA.pos);
             System.out.println(this.rubberDuck.getPosition());
 

@@ -8,7 +8,6 @@ import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.rendering.cameras.FlyCamera;
 
 public class SceneManager {
 

@@ -203,8 +203,8 @@ public class Sketch extends PApplet {
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
 	public final StringTable STRINGS;
+	public final HashMap<String, ?> EXTENSIONS;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
-	public final HashMap<String, ?> EXTENSIONS = new HashMap<>();
 
 	// Dimensions of the inital size of the window:
 	public final float INIT_SCR;
@@ -393,6 +393,7 @@ public class Sketch extends PApplet {
 		this.NAME = p_key.name;
 		this.RENDERER = p_key.renderer;
 		this.ICON_PATH = p_key.iconPath;
+		this.EXTENSIONS = p_key.nerdExtensions;
 		this.ANTI_ALIASING = p_key.antiAliasing;
 		this.FIRST_SCENE_CLASS = p_key.firstScene;
 		this.INITIALLY_RESIZABLE = p_key.canResize;

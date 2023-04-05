@@ -18,7 +18,6 @@ import com.brahvim.nerd.openal.al_buffers.AlOggBuffer;
 import com.brahvim.nerd.openal.al_buffers.AlWavBuffer;
 import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlFilter;
-import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PVector;
 

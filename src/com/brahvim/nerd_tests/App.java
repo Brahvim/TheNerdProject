@@ -1,6 +1,8 @@
 package com.brahvim.nerd_tests;
 
 import com.brahvim.nerd.openal.AlContext;
+import com.brahvim.nerd.openal.NerdAl;
+import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -27,6 +29,8 @@ public class App {
     public static final int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 
+    public static NerdAl AL;
+
     private static Sketch sketchInstance;
     private static int tickCount;
     private static boolean tick;
@@ -34,20 +38,20 @@ public class App {
 
     public static void main(String[] p_args) {
         // region Building the `Sketch`!
-        NerdSketchBuilder builder = new NerdSketchBuilder();
+        final NerdSketchBuilder builder = new NerdSketchBuilder();
         builder.setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
                 .setAntiAliasing(4)
-                .setAlContextSettings(() -> {
-                    var toRet = new AlContext.AlContextSettings();
-                    // ...for `TestScene3`!!!:
-                    toRet.monoSources = Integer.MAX_VALUE;
-                    toRet.stereoSources = Integer.MAX_VALUE;
-                    return toRet;
-                })
-
+                .addNerdExt(NerdAlExt.create(builder)
+                        .setAlContextSettings(() -> {
+                            var toRet = new AlContext.AlContextSettings();
+                            // ...for `TestScene3`!!!:
+                            toRet.monoSources = Integer.MAX_VALUE;
+                            toRet.stereoSources = Integer.MAX_VALUE;
+                            return toRet;
+                        }))
                 // .preventCloseOnEscape()
                 // .startFullscreen()
                 .canResize()
@@ -56,17 +60,21 @@ public class App {
                 // calling! They're much faster, actually! That `0` millisecond time included
                 // starting and stopping a `MillisTimer`!
                 // ..they should be faster than a v-table thingy anyway, amirite?
-                .addSketchConstructionListener((s) -> System.out.println(
-                        s.STRINGS.get("Meta.onConstruct"))
+                .addSketchConstructionListener((s) -> {
+                    System.out.println(s.STRINGS.get("Meta.onConstruct"));
 
-                // These work too - commenting them out so they don't clog-the-log!:
-                // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
-                // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
-                )
+                    // ...Also do some actual work!:
+                    App.AL = s.getNerdExt("OpenAL");
+
+                    // These work too - commenting them out so they don't clog-the-log!:
+                    // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
+                    // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
+                })
 
                 .setSceneManagerSettings(() -> {
                     var toRet = new SceneManagerSettings();
-                    toRet.onScenePreload.onlyFirstPreload = false;
+                    // TODO Review this!
+                    // toRet.onScenePreload.onlyFirstPreload = false;
                     return toRet;
                 });
 

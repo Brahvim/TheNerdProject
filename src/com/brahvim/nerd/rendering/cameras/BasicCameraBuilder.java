@@ -193,7 +193,7 @@ public class BasicCameraBuilder {
         this.build.clearColorParam2 = this.SKETCH.green(p_color);
         this.build.clearColorParam3 = this.SKETCH.blue(p_color);
         this.build.clearColorParamAlpha = 255; // I have to do this!
-        // this.alpha = this.SKETCH.ALpha(p_color);
+        // this.alpha = this.SKETCH.alpha(p_color);
         return this;
     }
 

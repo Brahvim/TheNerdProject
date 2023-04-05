@@ -3,7 +3,7 @@ package com.brahvim.nerd.papplet_wrapper;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.brahvim.nerd.openal.AlContext;
+import com.brahvim.nerd.papplet_wrapper.ext.NerdExt;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 
@@ -120,6 +120,13 @@ public abstract class CustomSketchBuilder {
     }
     // endregion
 
+    // region Adding libraries.
+    public CustomSketchBuilder addNerdExt(final NerdExt p_extObj) {
+        this.SKETCH_KEY.nerdExtensions.put(p_extObj.getExtName(), p_extObj.getLibraryObject());
+        return this;
+    }
+    // endregion
+
     // region `set()`.
     // region Window settings!
     // region Dimensions.
@@ -149,18 +156,6 @@ public abstract class CustomSketchBuilder {
     public CustomSketchBuilder setSceneManagerSettings(SceneManagerSettings p_settings) {
         if (p_settings != null)
             this.SKETCH_KEY.sceneManagerSettings = p_settings;
-        return this;
-    }
-
-    public CustomSketchBuilder setAlContextSettings(Supplier<AlContext.AlContextSettings> p_settingsBuilder) {
-        if (p_settingsBuilder != null)
-            this.SKETCH_KEY.alContextSettings = p_settingsBuilder.get();
-        return this;
-    }
-
-    public CustomSketchBuilder setAlContextSettings(AlContext.AlContextSettings p_settings) {
-        if (p_settings != null)
-            this.SKETCH_KEY.alContextSettings = p_settings;
         return this;
     }
 
