@@ -82,8 +82,9 @@ public abstract class NerdAbstractCamera {
     }
 
     public void clear() {
-        this.SKETCH.alphaBg(this.clearColorParam1, this.clearColorParam2, this.clearColorParam3,
-                this.clearColorParamAlpha);
+        this.SKETCH.alphaBg(
+                this.clearColorParam1, this.clearColorParam2,
+                this.clearColorParam3, this.clearColorParamAlpha);
     }
 
     public void completeReset() {
@@ -126,7 +127,7 @@ public abstract class NerdAbstractCamera {
         this.clearColorParam2 = this.SKETCH.green(p_color);
         this.clearColorParam3 = this.SKETCH.blue(p_color);
         this.clearColorParamAlpha = 255; // I have to do this!
-        // this.alpha = this.SKETCH.alpha(p_color);
+        // this.alpha = this.SKETCH.ALpha(p_color);
     }
 
     public void setClearColor(float p_grey, float p_alpha) {

@@ -34,7 +34,6 @@ import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.math.Unprojector;
-import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
@@ -198,7 +197,6 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Instance constants.
-	public final NerdAl AL;
 	public final String NAME;
 	public final Robot ROBOT;
 	public final String RENDERER;
@@ -206,7 +204,7 @@ public class Sketch extends PApplet {
 	public final boolean USES_OPENGL;
 	public final StringTable STRINGS;
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
-	public final HashMap<String, Object> EXT_OBJECTS = new HashMap<>();
+	public final HashMap<String, ?> EXTENSIONS = new HashMap<>();
 
 	// Dimensions of the inital size of the window:
 	public final float INIT_SCR;
@@ -402,7 +400,6 @@ public class Sketch extends PApplet {
 		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
-		this.AL = new NerdAl(this, p_key.alContextSettings);
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
 		// endregion
 
@@ -941,6 +938,13 @@ public class Sketch extends PApplet {
 		this.DISPOSAL_LISTENERS.remove(p_disposalListener);
 	}
 	// endregion
+	// endregion
+
+	// region Nerd Extensions!
+	@SuppressWarnings("unchecked")
+	public <RetT> RetT getNerdExt(final String p_extName) {
+		return (RetT) this.EXTENSIONS.get(p_extName);
+	}
 	// endregion
 
 	// region Utilities!~

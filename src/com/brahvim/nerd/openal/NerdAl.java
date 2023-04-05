@@ -23,8 +23,6 @@ import com.brahvim.nerd.openal.al_exceptions.NerdAbstractOpenAlException;
 import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
 import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlFilter;
-import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 import processing.core.PVector;
 
@@ -40,8 +38,6 @@ public class NerdAl {
 
 	public float unitSize = NerdAl.UNIT_SIZE_3D_PARK_SCENE;
 
-	private final Sketch SKETCH;
-
 	private ALCapabilities alCap;
 	private ALCCapabilities alCtxCap;
 	private /* `volatile` */ AlDevice device;
@@ -49,67 +45,23 @@ public class NerdAl {
 	// endregion
 
 	// region Construction.
-	public NerdAl(final Sketch p_sketch) {
-		this(p_sketch, AlDevice.getDefaultDeviceName());
+	public NerdAl() {
+		this(AlDevice.getDefaultDeviceName());
 	}
 
-	public NerdAl(final Sketch p_sketch, final String p_deviceName) {
-		this.SKETCH = p_sketch;
+	public NerdAl(final String p_deviceName) {
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName());
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
-		this.delegatedConstruction();
 	}
 
-	public NerdAl(final Sketch p_sketch, final AlContext.AlContextSettings p_settings) {
-		this.SKETCH = p_sketch;
+	public NerdAl(final AlContext.AlContextSettings p_settings) {
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
-		this.delegatedConstruction();
 	}
 
-	public NerdAl(final Sketch p_sketch, final AlContext.AlContextSettings p_settings, final String p_deviceName) {
-		this.SKETCH = p_sketch;
+	public NerdAl(final AlContext.AlContextSettings p_settings, final String p_deviceName) {
 		this.DEFAULT_CONTEXT = this.createAl(AlDevice.getDefaultDeviceName(), p_settings);
 		this.DEFAULT_CONTEXT_ID = this.DEFAULT_CONTEXT.getId();
-		this.delegatedConstruction();
-	}
-
-	private void delegatedConstruction() {
-		this.initListeners();
-		// this.setMetersPerUnit(0.0001f); // (float) Math.pow(10.0d, -150.0d));
-	}
-
-	private void initListeners() {
-		// When the scene is changed, delete unnecessary OpenAL data:
-		this.SKETCH.getSceneManager().addSceneChangedListener((s, p, c) -> {
-			if (p != null)
-				this.scenelyDisposal();
-			this.unitSize = NerdAl.UNIT_SIZE_3D_PARK_SCENE;
-		});
-
-		// I wanted to declare this lambda as an anon class instead, but I wanted to
-		// watch this trick where I have a variable from outside the lambda work there.
-		// ...It does!:
-		final PVector lastCameraPos = new PVector();
-
-		this.SKETCH.addDrawListener((s) -> {
-			// Process everything, every frame!:
-			this.framelyCallback();
-
-			final NerdAbstractCamera camera = this.SKETCH.getCamera();
-
-			this.setListenerOrientation(camera.up);
-			this.setListenerPosition(PVector.div(camera.pos, this.unitSize));
-			this.setListenerVelocity(PVector.sub(camera.pos, lastCameraPos));
-			// PVector.div((PVector.sub(camera.pos, lastCameraPos)), this.unitSize));
-
-			lastCameraPos.set(camera.pos);
-		});
-
-		// When the sketch is exiting, delete all OpenAL native data:
-		this.SKETCH.addSketchDisposalListener((s) -> {
-			this.completeDisposal();
-		});
 	}
 	// endregion
 
@@ -434,10 +386,6 @@ public class NerdAl {
 		return this.getAlFloat(AL11.AL_SPEED_OF_SOUND);
 	}
 	// endregion
-
-	public Sketch getSketch() {
-		return this.SKETCH;
-	}
 
 	public AlDevice getDevice() {
 		return this.device;

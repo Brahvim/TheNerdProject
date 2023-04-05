@@ -15,8 +15,6 @@ public class AnimatedCube extends TestEulerBody {
     public float size = 40;
     public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
-    // private final NerdScene.AutoDrawable CALLBACK_FOR_RENDERER;
-
     private boolean visible = true;
     private SineEase plopWave;
     private AlSource popSrc;
@@ -26,9 +24,9 @@ public class AnimatedCube extends TestEulerBody {
         super(p_scene.SKETCH);
 
         super.pos.set(
-                super.SKETCH.random(-super.SKETCH.qx, super.SKETCH.qx),
-                super.SKETCH.random(-super.SKETCH.qy, super.SKETCH.qy),
-                super.SKETCH.random(-300, 300));
+                super.SKETCH.random(-super.SKETCH.cx, super.SKETCH.cx),
+                super.SKETCH.random(-super.SKETCH.cy, super.SKETCH.cy),
+                super.SKETCH.random(-600, 600));
 
         super.acc.set(
                 super.SKETCH.random(-0.01f, 0.01f),

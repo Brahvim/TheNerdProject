@@ -29,7 +29,6 @@ public class AlSource extends AlNativeResource {
 
 	private int id;
 	private NerdAl alMan;
-	private NerdScene scene;
 	private AlContext context;
 	private AlBuffer<?> buffer;
 	private AlDataStream stream;
@@ -41,9 +40,8 @@ public class AlSource extends AlNativeResource {
 	public AlSource(NerdAl p_alMan) {
 		this.alMan = p_alMan;
 		this.context = this.alMan.getContext();
-		this.scene = this.alMan.getSketch().getSceneManager().getCurrentScene();
-
 		ALC11.alcMakeContextCurrent(this.context.getId());
+
 		this.alMan.checkAlcError();
 		this.alMan.checkAlcError();
 		this.id = AL11.alGenSources();
@@ -53,7 +51,6 @@ public class AlSource extends AlNativeResource {
 	}
 
 	public AlSource(AlSource p_source) {
-		this.scene = p_source.scene;
 		this.alMan = p_source.alMan;
 		this.context = p_source.context;
 
@@ -279,10 +276,6 @@ public class AlSource extends AlNativeResource {
 	// endregion
 
 	// region Source getters.
-	public NerdScene getScene() {
-		return this.scene;
-	}
-
 	public int getId() {
 		return this.id;
 	}

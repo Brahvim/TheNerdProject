@@ -83,8 +83,8 @@ public class AlContext extends AlNativeResource {
 
 	private long createCtx(AlContext.AlContextSettings p_settings) {
 		if (p_settings == null) {
-			System.err.println(
-					"`AlContext(NerdAl, AlContextSettings)` received a `null` settings object.");
+			// System.err.println(
+			// "`AlContext(NerdAl, AlContextSettings)` received a `null` settings object.");
 			p_settings = new AlContextSettings();
 		}
 
