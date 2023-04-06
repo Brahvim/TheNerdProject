@@ -11,7 +11,7 @@ public class TcpServer {
 	// region Fields.
 	private ServerSocket socket;
 	private Thread connsThread, commsThread;
-	private ArrayList<Socket> clients = new ArrayList<>();
+	private ArrayList<TcpClient> clients = new ArrayList<>();
 	// endregion
 
 	// region Construction.
@@ -48,13 +48,17 @@ public class TcpServer {
 	private void delegatedConstruction() {
 		this.connsThread = new Thread(() -> {
 			try {
-				this.clients.add(this.socket.accept());
+				this.clients.add(new TcpClient(this.socket.accept()));
 			} catch (IOException e) {
 				// e.printStackTrace();
 			}
 		});
 
-		// this.commsThread = new Thread(() -> { });
+		this.commsThread = new Thread(() -> {
+			for (final TcpClient c : this.clients) {
+				// TODO: Decide how TCP clients recieve :P
+			}
+		});
 	}
 	// endregion
 
@@ -70,6 +74,10 @@ public class TcpServer {
 			e.printStackTrace();
 		}
 		return this;
+	}
+
+	public ServerSocket getSocket() {
+		return this.socket;
 	}
 
 }

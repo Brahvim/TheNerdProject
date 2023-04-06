@@ -18,4 +18,22 @@ public class TcpClient {
 		}
 	}
 
+	public TcpClient(final Socket p_socket) {
+		this.socket = p_socket;
+	}
+
+	public TcpClient disconnect() {
+		try {
+			this.socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return this;
+	}
+
+	public Socket getSocket() {
+		return this.socket;
+	}
+
 }
