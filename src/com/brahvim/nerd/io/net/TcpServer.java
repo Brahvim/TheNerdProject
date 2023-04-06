@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class TcpServer {
+public abstract class TcpServer {
 
 	// region Fields.
 	private ServerSocket socket;
@@ -79,5 +79,15 @@ public class TcpServer {
 	public ServerSocket getSocket() {
 		return this.socket;
 	}
+
+	// region Callbacks.
+	protected abstract void onClientConnect(TcpClient p_client);
+
+	protected abstract void onClientMessage(TcpClient p_client);
+
+	protected abstract void onClientDisconnect(TcpClient p_client);
+
+	protected abstract void onServerShutdown();
+	// endregion
 
 }
