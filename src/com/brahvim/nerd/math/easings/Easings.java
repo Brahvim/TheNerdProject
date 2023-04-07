@@ -16,12 +16,12 @@ public class Easings {
         return x == 0 ? 0 : (float) Math.pow(2, 10 * x);
     }
 
-    // Mine! [https://www.desmos.com/calculator/88fimxy2ox]:
+    // Mine! https://www.desmos.com/calculator/88fimxy2ox:
     public static float exponentialSine(float x, float theta) {
         return (float) Math.pow(x, Math.sin(theta));
     }
 
-    // Mine! [https://www.desmos.com/calculator/hgs8iom7sk]:
+    // Mine! https://www.desmos.com/calculator/hgs8iom7sk:
     public static float exponentialSine(float x) {
         return (float) Math.pow(x, Math.sin(x));
     }

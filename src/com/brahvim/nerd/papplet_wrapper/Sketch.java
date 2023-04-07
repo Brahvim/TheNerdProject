@@ -1059,7 +1059,7 @@ public class Sketch extends PApplet {
 				}
 
 				// I knew this already, but you may want to check out:
-				// [http://twicetwo.com/blog/processing/2016/03/01/processing-locking-the-mouse.html]
+				// http://twicetwo.com/blog/processing/2016/03/01/processing-locking-the-mouse.html
 
 				if (this.cursorConfined != this.pcursorConfined)
 					this.glWindow.confinePointer(this.cursorConfined);
@@ -1077,8 +1077,8 @@ public class Sketch extends PApplet {
 	}
 
 	// I tried the 3rd-to-last method in
-	// [https://stackoverflow.com/a/21592711/],
-	// but [https://stackoverflow.com/a/1248865/] was what worked.
+	// https://stackoverflow.com/a/21592711/,
+	// but https://stackoverflow.com/a/1248865/ was what worked.
 	// And yes, I modified it.
 	public static GraphicsDevice getGraphicsDeviceAt(Point p_pos) {
 		for (GraphicsDevice d : Sketch.JAVA_SCREENS)
@@ -1309,10 +1309,12 @@ public class Sketch extends PApplet {
 	// region `p_vec`!
 	// The following two were going to disclude the `z` if it was `0`.
 	// And later, I felt this was risky.
-	// This two-`float` overload ain't in the docs, scares me!
-	// ....ACTUALLY,
-	// [https://github.com/processing/processing/blob/459853d0dcdf1e1648b1049d3fdbb4bf233fded8/core/src/processing/opengl/PGraphicsOpenGL.java#L4611]
-	// ...they rely on the JIT too! :joy:
+	// This two-`float` overload ain't in the docs, that scares me!
+
+	// ...ACTUALLY,
+	// https://github.com/processing/processing/blob/459853d0dcdf1e1648b1049d3fdbb4bf233fded8/core/src/processing/opengl/PGraphicsOpenGL.java#L4611
+	// ..."they rely on the JIT too!" (no, they don't optimize this at all. They
+	// just put the `0` themselves, LOL.) :joy:
 
 	public float screenX(PVector p_vec) {
 		return super.screenX(p_vec.x, p_vec.y, p_vec.z);
@@ -1395,7 +1397,7 @@ public class Sketch extends PApplet {
 	// region The billion `image()` overloads. Help me make "standards"?
 	// region For `PImage`s.
 	public void image(PImage p_image) {
-		// `https://processing.org/reference/set_.html`.
+		// https://processing.org/reference/set_.html.
 		// Faster than `image()`!:
 		// `super.set(0, 0, p_image);`
 		// However, we also need to remember that it doesn't render the image on to a

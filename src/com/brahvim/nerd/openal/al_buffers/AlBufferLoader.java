@@ -46,7 +46,7 @@ public class AlBufferLoader {
 		}
 	}
 
-	// [https://stackoverflow.com/a/70050617/]
+	// https://stackoverflow.com/a/70050617/
 	@Deprecated
 	public static ByteBuffer loadWav(File p_file) {
 		// If the size is more than an `int` can handle, wrap!

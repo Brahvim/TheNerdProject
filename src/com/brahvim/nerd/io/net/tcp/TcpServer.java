@@ -14,22 +14,29 @@ public abstract class TcpServer {
 	// region Inner classes.
 	public class TcpServerClient extends AbstractTcpClient {
 
-		// Standard receive buffer sizes:
+		// region Standard receive buffer sizes.
+		// (From: https://www.baeldung.com/cs/tcp-max-packet-size)
 		public static final int TCP_PACKET_LEAST_SIZE = 543;
-		public static final int TCP_PACKET_MAX_SIZE = 65_535;
+		public static final int TCP_PACKET_MAX_SIZE = 65_507;
+		// You also need to fit the HEADER! The max is NOT `65535`!
+
+		public static final int TCP_PACKET_DIAL_UP_SIZE = 576;
 		public static final int TCP_PACKET_RECOMMENDED_SIZE = 576;
+
+		public static final int TCP_PACKET_ROUTER_MAX_SIZE = 1500;
+		public static final int TCP_PACKET_ROUTER_SAFEST_SIZE = 1000;
+		// endregion
 
 		/**
 		 * Sets the size of the buffer (in bytes) data is received into. The maximum
-		 * possible size is {@code 65535} ({@link TcpServerClient#PACKET_MAX_SIZE})
+		 * possible size is {@link TcpServerClient#PACKET_MAX_SIZE} ({@code 65_507})
 		 * bytes.
 		 *
-		 * @apiNote Is {@code 65535} ({@link TcpServerClient#PACKET_MAX_SIZE}) by
+		 * @apiNote Is {@link TcpServerClient#PACKET_MAX_SIZE} ({@code 65_507}) by
 		 *          default.
 		 * @implNote This <i>should</i> instead, be {@code 576} by default.
 		 *           To know why, please see {@link<a href=
 		 *           "https://stackoverflow.com/a/9235558/">this</a>}.
-		 *
 		 *           <br>
 		 *           </br>
 		 *           This field should not be something you need to worry about. Modern
@@ -38,13 +45,7 @@ public abstract class TcpServer {
 		 *           {@code 200}MB in RAM, GC'ing away much of it every second,
 		 *           and still sailing well.
 		 */
-		// PS The reason mentioned for deprecation is *probably* one of
-		// ***the worst*** decisions of my life! :joy:
-		@Deprecated
-		public Integer packetMaxSize = ReceiverThread.PACKET_MAX_SIZE;
-		// ^^^ PS a more precise number is `543` bytes.
-		// Update (as of `21 December, 2022`): It. Doesn't. MATTER.
-		// Just come up with a fixed the packet size! The rest is fine!
+		public Integer receivedPacketMaxSize = TcpServer.TcpServerClient.TCP_PACKET_MAX_SIZE;
 
 		private Thread serverCommThread;
 		private Consumer<TcpServer.TcpPacket> messageCallback;
@@ -81,24 +82,29 @@ public abstract class TcpServer {
 
 		private void delegatedConstruction() {
 			this.serverCommThread = new Thread(() -> {
-				InputStream stream = null;
 
-				// ...Get that stream:
-				try {
-					stream = this.socket.getInputStream();
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-
-				// ..Now read it:
 				while (true) {
 					try {
+						// ...Get that stream!!!:
+						final InputStream stream = this.socket.getInputStream();
 						stream.available();
 						// ^^^ This is literally gunna return `0`!
 						// ..I guess we use fixed sizes around here...
+
+						// ..Now read it:
+						for (int read, packetSize, bytesRead = 0; (read = stream.read()) != -1; bytesRead++) {
+							if (bytesRead == 0) {
+								packetSize = read;
+							}
+
+							
+
+						}
+
 					} catch (final IOException e) {
 						e.printStackTrace();
 					}
+
 				}
 			});
 		}

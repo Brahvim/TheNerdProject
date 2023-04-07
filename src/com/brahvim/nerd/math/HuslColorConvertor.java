@@ -1,5 +1,5 @@
 package com.brahvim.nerd.math;
-// [https://github.com/hsluv/hsluv-java/blob/master/src/main/java/org/hsluv/HUSLColorConverter.java]
+// https://github.com/hsluv/hsluv-java/blob/master/src/main/java/org/hsluv/HUSLColorConverter.java
 
 import java.util.ArrayList;
 import java.util.List;

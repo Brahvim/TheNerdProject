@@ -8,7 +8,7 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 public class FlyCamera extends NerdAbstractCamera {
-    // Mathematics, thanks to [https://learnopengl.com/Getting-started/Camera]!
+    // Mathematics, thanks to https://learnopengl.com/Getting-started/Camera!
 
     // region Fields.
     public static final float DEFAULT_MOUSE_SENSITIVITY = 0.2f;

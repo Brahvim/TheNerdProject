@@ -39,15 +39,17 @@ public class UdpSocket {
         // region Fields.
         // Standard receive buffer sizes:
         public static final int UDP_PACKET_LEAST_SIZE = 543;
-        public static final int UDP_PACKET_MAX_SIZE = 65_535;
+        public static final int UDP_PACKET_MAX_SIZE = 65_507;
         public static final int UDP_PACKET_RECOMMENDED_SIZE = 576;
+
+        // You also need to fit the HEADER! The max is NOT `65535`!
 
         /**
          * Sets the size of the buffer (in bytes) data is received into. The maximum
-         * possible size is {@code 65535} ({@link ReceiverThread#UDP_PACKET_MAX_SIZE})
+         * possible size is {@link ReceiverThread#UDP_PACKET_MAX_SIZE} ({@code 65_507})
          * bytes.
          *
-         * @apiNote Is {@code 65535} ({@link ReceiverThread#UDP_PACKET_MAX_SIZE}) by
+         * @apiNote Is {@link ReceiverThread#UDP_PACKET_MAX_SIZE} ({@code 65_507}) by
          *          default.
          * @implNote This <i>should</i> instead, be {@code 576} by default.
          *           To know why, please see {@link<a href=

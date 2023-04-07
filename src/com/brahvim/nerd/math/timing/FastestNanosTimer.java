@@ -17,15 +17,15 @@ public final class FastestNanosTimer { // `final` means no v-tables, right?!
 
     // ...***I say*** that `synchronized` methods are faster.
     // This stackoverflow post might help clarify:
-    // [https://stackoverflow.com/questions/7371089/synchronized-code-performs-faster-than-unsynchronized-one]
+    // https://stackoverflow.com/questions/7371089/synchronized-code-performs-faster-than-unsynchronized-one
 
-    public static synchronized void start() {
+    public final static synchronized void start() {
         // Today, I learned:
         // Instant.now(); // <-- exists for system times, :O!
         FastestNanosTimer.startTime = System.nanoTime();
     }
 
-    public static synchronized long stop() {
+    public final static synchronized long stop() {
         return System.nanoTime() - FastestNanosTimer.startTime;
     }
 }

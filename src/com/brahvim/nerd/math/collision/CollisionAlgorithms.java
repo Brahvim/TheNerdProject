@@ -3,7 +3,7 @@ package com.brahvim.nerd.math.collision;
 import processing.core.PVector;
 
 // Brought to you, *from* my other (currently supa'-duper secret, ";P!) project, "AGC"!:
-// Courtesy of [https://github.com/bmoren/p5.collide2D]
+// Courtesy of https://github.com/bmoren/p5.collide2D
 public class CollisionAlgorithms {
     public static boolean ptPoly(float p_x, float p_y, PVector[] p_poly) {
         // As seen on Sir Ben's GitHub!:
@@ -65,7 +65,7 @@ public class CollisionAlgorithms {
 
     // Anybody who needs to copy these? LOL:
     // (...well I did! Because I already wrote them LOL.
-    // Take a look at `https://editor.p5js.org/Brahvim/sketches/hyoou0Gkb` :D)
+    // Take a look at https://editor.p5js.org/Brahvim/sketches/hyoou0Gkb :D)
 
     public static boolean ptCircle(PVector p_point, PVector p_circlePos, float p_radius) {
         return Math.pow(p_circlePos.x - p_point.x, 2)
