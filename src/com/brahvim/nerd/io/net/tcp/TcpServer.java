@@ -14,41 +14,8 @@ public abstract class TcpServer {
 	// region Inner classes.
 	public class TcpServerClient extends AbstractTcpClient {
 
-		// region Standard receive buffer sizes.
-		// (From: https://www.baeldung.com/cs/tcp-max-packet-size)
-		public static final int TCP_PACKET_LEAST_SIZE = 543;
-		public static final int TCP_PACKET_MAX_SIZE = 65_507;
-		// You also need to fit the HEADER! The max is NOT `65535`!
-
-		public static final int TCP_PACKET_DIAL_UP_SIZE = 576;
-		public static final int TCP_PACKET_RECOMMENDED_SIZE = 576;
-
-		public static final int TCP_PACKET_ROUTER_MAX_SIZE = 1500;
-		public static final int TCP_PACKET_ROUTER_SAFEST_SIZE = 1000;
-		// endregion
-
-		/**
-		 * Sets the size of the buffer (in bytes) data is received into. The maximum
-		 * possible size is {@link TcpServerClient#PACKET_MAX_SIZE} ({@code 65_507})
-		 * bytes.
-		 *
-		 * @apiNote Is {@link TcpServerClient#PACKET_MAX_SIZE} ({@code 65_507}) by
-		 *          default.
-		 * @implNote This <i>should</i> instead, be {@code 576} by default.
-		 *           To know why, please see {@link<a href=
-		 *           "https://stackoverflow.com/a/9235558/">this</a>}.
-		 *           <br>
-		 *           </br>
-		 *           This field should not be something you need to worry about. Modern
-		 *           computers are fast enough already. A {@code 65}KB allocation
-		 *           cannot be a problem when your application already takes
-		 *           {@code 200}MB in RAM, GC'ing away much of it every second,
-		 *           and still sailing well.
-		 */
-		public Integer receivedPacketMaxSize = TcpServer.TcpServerClient.TCP_PACKET_MAX_SIZE;
-
 		private Thread serverCommThread;
-		private Consumer<TcpServer.TcpPacket> messageCallback;
+		private Consumer<ReceivableTcpPacket> messageCallback;
 
 		public TcpServerClient(final Socket p_socket) {
 			super(p_socket);
@@ -76,7 +43,7 @@ public abstract class TcpServer {
 			return this;
 		}
 
-		public void setMessageCallback(final Consumer<TcpServer.TcpPacket> p_callback) {
+		public void setMessageCallback(final Consumer<ReceivableTcpPacket> p_callback) {
 			this.messageCallback = Objects.requireNonNull(p_callback);
 		}
 
@@ -92,14 +59,17 @@ public abstract class TcpServer {
 						// ..I guess we use fixed sizes around here...
 
 						// ..Now read it:
-						for (int read, packetSize, bytesRead = 0; (read = stream.read()) != -1; bytesRead++) {
-							if (bytesRead == 0) {
-								packetSize = read;
-							}
 
-							
+						final ReceivableTcpPacket packet;
+						final int packetSize = stream.read();
+						final byte[] packetData = new byte[packetSize];
 
+						for (int read, bytesRead = 0; bytesRead != packetSize
+								// ...Useless check?
+								&& (read = stream.read()) != -1; bytesRead++) {
 						}
+
+						packet = new ReceivableTcpPacket(this, packetData);
 
 					} catch (final IOException e) {
 						e.printStackTrace();
@@ -115,25 +85,6 @@ public abstract class TcpServer {
 
 	}
 
-	public class TcpPacket {
-
-		private final TcpServer.TcpServerClient client;
-		private final byte[] data;
-
-		private TcpPacket(final TcpServer.TcpServerClient p_client, final byte[] p_data) {
-			this.data = p_data;
-			this.client = p_client;
-		}
-
-		public TcpServer.TcpServerClient getClient() {
-			return this.client;
-		}
-
-		public byte[] getData() {
-			return this.data;
-		}
-
-	}
 	// endregion
 
 	// region Fields.
