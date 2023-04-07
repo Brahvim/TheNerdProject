@@ -16,9 +16,9 @@ import java.net.UnknownHostException;
 	public AbstractTcpClient(final String p_serverIp, final int p_myPort) {
 		try {
 			this.socket = new Socket(p_serverIp, p_myPort);
-		} catch (UnknownHostException e) {
+		} catch (final UnknownHostException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -30,7 +30,7 @@ import java.net.UnknownHostException;
 	public AbstractTcpClient disconnect() {
 		try {
 			this.socket.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 
@@ -41,11 +41,13 @@ import java.net.UnknownHostException;
 	// For `TcpServer.TcpServerClient`s, these should send the data to the client.
 
 	// The parameter is declared `final` because I want to be the only one extending
-	// this class.
+	// this class, and that's a style I follow.
+
+	// Unimplemented so that the subclass may return itself rather than an
+	// `AbstractTcpClient`. Yes, overloads can return subclasses and still keep
+	// `@Override` happy! Java is awesome.
 
 	public abstract AbstractTcpClient send(final String p_data);
-	// ^^^ Unimplemented so that the subclass may return itself rather than an
-	// `AbstractTcpClient`.
 
 	public abstract AbstractTcpClient send(final byte[] p_data);
 

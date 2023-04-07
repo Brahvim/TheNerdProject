@@ -24,7 +24,7 @@ public class FileInputStreamAsset extends AssetType<FileInputStream> {
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			return new FileInputStream(new File(p_path));
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 			throw new AssetLoaderFailedException();
 		}

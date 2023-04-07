@@ -61,9 +61,9 @@ public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 							: AL11.AL_FORMAT_STEREO16,
 					AlBufferLoader.loadWav(p_file),
 					(int) ais.getFormat().getSampleRate());
-		} catch (UnsupportedAudioFileException e) {
+		} catch (final UnsupportedAudioFileException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 

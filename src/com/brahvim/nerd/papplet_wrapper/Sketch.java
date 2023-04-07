@@ -420,7 +420,7 @@ public class Sketch extends PApplet {
 
 		try {
 			loadedTable = new StringTable(p_key.stringTablePath);
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
 			this.STRINGS = loadedTable;
@@ -458,7 +458,7 @@ public class Sketch extends PApplet {
 		try {
 			toAssign = new Robot();
 			toAssign.setAutoWaitForIdle(false);
-		} catch (AWTException e) {
+		} catch (final AWTException e) {
 			e.printStackTrace();
 		}
 
@@ -761,7 +761,7 @@ public class Sketch extends PApplet {
 	public void keyTyped() {
 		for (SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
 			// ...could call that callback here directly, but I decided this!:
-			// "Filter these keys using the utility method(s)?"
+			// "Filter these keys using the utility method[s]?"
 
 			// ...and thus-this check was born!:
 			if (Sketch.isTypeable(super.key))
@@ -817,7 +817,7 @@ public class Sketch extends PApplet {
 			synchronized (this.keysHeld) {
 				this.keysHeld.remove(super.keyCode);
 			}
-		} catch (IndexOutOfBoundsException e) {
+		} catch (final IndexOutOfBoundsException e) {
 		}
 
 		for (SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
@@ -1179,7 +1179,7 @@ public class Sketch extends PApplet {
 	public void background(PImage p_image) {
 		try {
 			super.background(p_image);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			//// Do nothing with the exception. Don't even READ it.
 			p_image.resize(super.width, super.height);
 			super.background(p_image);

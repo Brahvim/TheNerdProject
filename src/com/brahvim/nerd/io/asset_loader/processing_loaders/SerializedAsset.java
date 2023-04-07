@@ -21,7 +21,7 @@ public class SerializedAsset extends AssetType<Object> {
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			return ByteSerial.fromFile(p_path);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new AssetLoaderFailedException();
 		}
 	}

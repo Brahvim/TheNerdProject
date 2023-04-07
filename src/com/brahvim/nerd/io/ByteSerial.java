@@ -48,7 +48,7 @@ public class ByteSerial {
                 bos.close();
                 return bos.toByteArray();
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
 
@@ -59,9 +59,9 @@ public class ByteSerial {
     public static Object fromBytes(byte[] p_data) {
         try {
             return ByteSerial.fromBytesImpl(p_data);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -71,12 +71,12 @@ public class ByteSerial {
     public static Object fromBytes(byte[] p_data, Consumer<IOException> p_onIo) {
         try {
             return ByteSerial.fromBytesImpl(p_data);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
                 p_onIo.accept(e);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -87,12 +87,12 @@ public class ByteSerial {
             Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return ByteSerial.fromBytesImpl(p_data);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
                 p_onIo.accept(e);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             if (p_onClassNotFound == null)
                 e.printStackTrace();
             else
@@ -107,11 +107,11 @@ public class ByteSerial {
     public static <T> T fromBytesCasted(byte[] p_data) {
         try {
             return (T) ByteSerial.fromBytesImpl(p_data);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
 
@@ -125,17 +125,17 @@ public class ByteSerial {
             Consumer<ClassCastException> p_onClassCast) {
         try {
             return (T) ByteSerial.fromBytesImpl(p_data);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
                 p_onIo.accept(e);
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             if (p_onClassCast == null)
                 e.printStackTrace();
             else
                 p_onClassCast.accept(e);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
@@ -149,17 +149,17 @@ public class ByteSerial {
             Consumer<IOException> p_onIo) {
         try {
             return (T) ByteSerial.fromBytesImpl(p_data);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
                 p_onIo.accept(e);
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             if (p_onClassCast == null)
                 e.printStackTrace();
             else
                 p_onClassCast.accept(e);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             if (p_onClassNotFound == null)
                 e.printStackTrace();
             else
@@ -190,11 +190,11 @@ public class ByteSerial {
     public static <T> T fromFileCasted(String p_filePath, Consumer<IOException> p_onIo) {
         try {
             return (T) ByteSerial.fromFileImpl(new File(p_filePath));
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
@@ -209,12 +209,12 @@ public class ByteSerial {
             Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return (T) ByteSerial.fromFileImpl(new File(p_filePath));
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             if (p_onClassNotFound == null)
                 e.printStackTrace();
             else
                 p_onClassNotFound.accept(e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
@@ -232,17 +232,17 @@ public class ByteSerial {
             Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return (T) ByteSerial.fromFileImpl(new File(p_filePath));
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             if (p_onClassNotFound == null)
                 e.printStackTrace();
             else
                 p_onClassNotFound.accept(e);
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             if (p_onClassCast == null)
                 e.printStackTrace();
             else
                 p_onClassCast.accept(e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
@@ -264,11 +264,11 @@ public class ByteSerial {
     public static <T> T fromFileCasted(File p_file, Consumer<IOException> p_onIo) {
         try {
             return (T) ByteSerial.fromFileImpl(p_file);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
@@ -283,12 +283,12 @@ public class ByteSerial {
             Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return (T) ByteSerial.fromFileImpl(p_file);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             if (p_onClassNotFound == null)
                 e.printStackTrace();
             else
                 p_onClassNotFound.accept(e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
@@ -306,17 +306,17 @@ public class ByteSerial {
             Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return (T) ByteSerial.fromFileImpl(p_file);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             if (p_onClassNotFound == null)
                 e.printStackTrace();
             else
                 p_onClassNotFound.accept(e);
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             if (p_onClassCast == null)
                 e.printStackTrace();
             else
                 p_onClassCast.accept(e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
@@ -331,9 +331,9 @@ public class ByteSerial {
     public static Object fromFile(String p_filePath) {
         try {
             return ByteSerial.fromFileImpl(new File(p_filePath));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -343,12 +343,12 @@ public class ByteSerial {
     public static Object fromFile(String p_filePath, Consumer<IOException> p_onIo) {
         try {
             return ByteSerial.fromFileImpl(new File(p_filePath));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
                 p_onIo.accept(e);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -359,12 +359,12 @@ public class ByteSerial {
             Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return ByteSerial.fromFileImpl(new File(p_filePath));
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             if (p_onClassNotFound == null)
                 e.printStackTrace();
             else
                 p_onClassNotFound.accept(e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
@@ -377,9 +377,9 @@ public class ByteSerial {
     public static Object fromFile(File p_file) {
         try {
             return ByteSerial.fromFileImpl(p_file);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -389,12 +389,12 @@ public class ByteSerial {
     public static Object fromFile(File p_file, Consumer<IOException> p_onIo) {
         try {
             return ByteSerial.fromFileImpl(p_file);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
                 p_onIo.accept(e);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -405,12 +405,12 @@ public class ByteSerial {
             Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return ByteSerial.fromFileImpl(p_file);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             if (p_onClassNotFound == null)
                 e.printStackTrace();
             else
                 p_onClassNotFound.accept(e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else
@@ -449,7 +449,7 @@ public class ByteSerial {
         try (FileOutputStream fos = new FileOutputStream(p_file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(p_object);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             if (p_onIo == null)
                 e.printStackTrace();
             else

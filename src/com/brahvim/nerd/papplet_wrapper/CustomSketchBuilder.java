@@ -19,7 +19,7 @@ import processing.core.PConstants;
  */
 public abstract class CustomSketchBuilder {
 
-    // region Field*(s)*, constructor, building...
+    // region Field*[s]*, constructor, building...
     protected final SketchKey SKETCH_KEY;
 
     public CustomSketchBuilder() {

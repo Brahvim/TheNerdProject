@@ -730,7 +730,7 @@ public class SceneManager {
 
         try {
             toRet = p_sceneClass.getConstructor();
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             System.err.println("""
                     Every subclass of `NerdScene` must be `public` with a `public` \"null-constructor\"
                         (constructor with no arguments), or no overriden constructors at all.""");
@@ -746,13 +746,13 @@ public class SceneManager {
         // region Get an instance.
         try {
             toRet = (NerdScene) p_sceneConstructor.newInstance();
-        } catch (InstantiationException e) {
+        } catch (final InstantiationException e) {
             e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             e.printStackTrace();
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             e.printStackTrace();
         }
         // endregion

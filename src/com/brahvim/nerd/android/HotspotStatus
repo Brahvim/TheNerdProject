@@ -51,7 +51,7 @@ public class HotspotStatus {
     public static boolean init(WifiManager p_man) {
         try {
             HotspotStatus.INSTANCE = new HotspotStatus(p_man);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             return false;
         }
         return true;
@@ -68,9 +68,9 @@ public class HotspotStatus {
         int ret = -1;
         try {
             ret = (Integer)this.method_getWifiApState.invoke(this.man, (Object[])null);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             e.printStackTrace();
         }
 

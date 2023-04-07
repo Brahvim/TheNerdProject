@@ -96,7 +96,7 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 			MemoryStack.stackPop();
 			MemoryStack.stackPop();
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 

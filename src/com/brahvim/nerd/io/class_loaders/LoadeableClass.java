@@ -26,7 +26,7 @@ public class LoadeableClass<ClassT> {
 	public LoadeableClass(File p_jarOrClassFolder, String p_fullyQualifiedName) {
 		try {
 			this.loadClass(new URL(p_jarOrClassFolder.getAbsolutePath()), p_fullyQualifiedName);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -34,7 +34,7 @@ public class LoadeableClass<ClassT> {
 	public LoadeableClass(String p_jarOrClassFolder, String p_fullyQualifiedName) {
 		try {
 			this.loadClass(new URL(p_jarOrClassFolder), p_fullyQualifiedName);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -52,9 +52,9 @@ public class LoadeableClass<ClassT> {
 
 		try (LOADER) {
 			this.loadedClass = (Class<? extends ClassT>) LOADER.loadClass(this.qualifiedName);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 

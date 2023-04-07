@@ -22,7 +22,7 @@ public class JSONObjectAsset extends AssetType<JSONObject> {
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			return p_sketch.loadJSONObject(p_path);
-		} catch (NullPointerException e) {
+		} catch (final NullPointerException e) {
 			throw new AssetLoaderFailedException();
 		}
 	}

@@ -26,7 +26,7 @@ public class WavBufferDataAsset extends AssetType<AlWavBuffer> {
 			wavBuffer.shouldDispose(false);
 			wavBuffer.loadFrom(p_path);
 			return wavBuffer;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			throw new AssetLoaderFailedException();
 			// return ByteBuffer.allocate(0);

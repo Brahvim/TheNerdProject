@@ -122,7 +122,7 @@ public class AlCapture extends AlNativeResource {
 				// region Check if the device gets disconnected (cause of `ALC_INVALID_DEVICE`):
 				try {
 					this.alMan.checkAlcError();
-				} catch (AlcException e) {
+				} catch (final AlcException e) {
 					deviceGotRemoved = true;
 					System.err.printf("""
 							Audio capture device on thread \"%s\" has been disconnected amidst a session.

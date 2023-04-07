@@ -411,11 +411,11 @@ public class NerdScene implements HardwareEventsHandler {
 
     try {
       toRet = p_layerClass.getConstructor();
-    } catch (NoSuchMethodException e) {
+    } catch (final NoSuchMethodException e) {
       System.err.println("""
           Every subclass of `NerdLayer` must be `public` with a `public` \"null-constructor\"
           (constructor with no arguments), or no overriden constructors at all.""");
-    } catch (SecurityException e) {
+    } catch (final SecurityException e) {
       e.printStackTrace();
     }
 
@@ -431,13 +431,13 @@ public class NerdScene implements HardwareEventsHandler {
       toRet = (NerdLayer) p_layerConstructor.newInstance(
       // new NerdScene.LayerKey(this, this.SKETCH, p_layerClass)
       );
-    } catch (InstantiationException e) {
+    } catch (final InstantiationException e) {
       e.printStackTrace();
-    } catch (IllegalAccessException e) {
+    } catch (final IllegalAccessException e) {
       e.printStackTrace();
-    } catch (IllegalArgumentException e) {
+    } catch (final IllegalArgumentException e) {
       e.printStackTrace();
-    } catch (InvocationTargetException e) {
+    } catch (final InvocationTargetException e) {
       e.printStackTrace();
     }
     // endregion

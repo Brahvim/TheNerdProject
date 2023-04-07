@@ -167,7 +167,7 @@ public class StringTable {
         try {
             stringArray = lastObject.getJSONArray(this.langauge);
             // ...get the string-array of the specified langauge!
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.err.printf("""
                     There is no array called `%s` in the `StringTable` file!
                     \tGiving default value, `%s`.""",
@@ -182,7 +182,7 @@ public class StringTable {
         // region Get the element if it is available.
         try {
             toRet = stringArray.getString(p_id);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             System.err.printf("""
                     `JSONArray` `%s` does not have any element at index `%d`!
                     \tGiving default value, `%s`.""",
@@ -224,7 +224,7 @@ public class StringTable {
         try {
             stringArray = lastObject.getJSONArray(this.langauge);
             // ...get the string-array of the specified langauge!
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.err.printf("""
                     There is no array called `%s` in the `StringTable` file!
                     \tGiving default value, `%s`.""",

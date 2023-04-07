@@ -85,7 +85,7 @@ public class App {
         new Thread(() -> {
             try {
                 Thread.sleep(App.BPM_INT);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 e.printStackTrace();
             }
 

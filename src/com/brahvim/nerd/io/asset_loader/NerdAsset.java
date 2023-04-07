@@ -134,7 +134,7 @@ public class NerdAsset {
     private void fetchData() {
         try {
             this.data = this.LOADER.fetchData(this.SKETCH, this.PATH, this.options);
-        } catch (AssetLoaderFailedException e) {
+        } catch (final AssetLoaderFailedException e) {
             this.data = null;
             this.failure = true;
             e.printStackTrace();
@@ -152,7 +152,7 @@ public class NerdAsset {
          * 
          * try {
          * file.channels();
-         * } catch (NullPointerException e) {
+         * } catch (final NullPointerException e) {
          * file.removeFromCache();
          * this.failure = true;
          * this.data = null; // `file` should be GC'ed by the end of this method.

@@ -22,8 +22,8 @@ public class TcpClient extends AbstractTcpClient {
 	@Override
 	public TcpClient send(final byte[] p_data) {
 		try {
-			this.socket.getOutputStream().write(p_data);
-		} catch (IOException e) {
+			super.socket.getOutputStream().write(p_data);
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 

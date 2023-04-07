@@ -40,7 +40,7 @@ public class AlBufferLoader {
 			MemoryStack.stackPop();
 
 			return toRet;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -58,11 +58,11 @@ public class AlBufferLoader {
 				bytes.write(b);
 			return ByteBuffer.wrap(bytes.toByteArray());
 
-		} catch (UnsupportedAudioFileException e) {
+		} catch (final UnsupportedAudioFileException e) {
 			e.printStackTrace();
 			return null;
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			return null;
 		}

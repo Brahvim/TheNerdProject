@@ -22,7 +22,7 @@ public class JSONArrayAsset extends AssetType<JSONArray> {
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			return p_sketch.loadJSONArray(p_path);
-		} catch (NullPointerException e) {
+		} catch (final NullPointerException e) {
 			throw new AssetLoaderFailedException();
 		}
 	}

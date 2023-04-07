@@ -37,17 +37,17 @@ public class UdpSocket {
     public class ReceiverThread {
 
         // region Fields.
-        // Standard array sizes:
-        public static final int PACKET_LEAST_SIZE = 543;
-        public static final int PACKET_MAX_SIZE = 65_535;
-        public static final int PACKET_RECOMMENDED_SIZE = 576;
+        // Standard receive buffer sizes:
+        public static final int UDP_PACKET_LEAST_SIZE = 543;
+        public static final int UDP_PACKET_MAX_SIZE = 65_535;
+        public static final int UDP_PACKET_RECOMMENDED_SIZE = 576;
 
         /**
          * Sets the size of the buffer (in bytes) data is received into. The maximum
-         * possible size is {@code 65535} ({@link ReceiverThread#PACKET_MAX_SIZE})
+         * possible size is {@code 65535} ({@link ReceiverThread#UDP_PACKET_MAX_SIZE})
          * bytes.
          *
-         * @apiNote Is {@code 65535} ({@link ReceiverThread#PACKET_MAX_SIZE}) by
+         * @apiNote Is {@code 65535} ({@link ReceiverThread#UDP_PACKET_MAX_SIZE}) by
          *          default.
          * @implNote This <i>should</i> instead, be {@code 576} by default.
          *           To know why, please see {@link<a href=
@@ -64,7 +64,7 @@ public class UdpSocket {
         // PS The reason mentioned for deprecation is *probably* one of
         // ***the worst*** decisions of my life! :joy:
         @Deprecated
-        public Integer packetMaxSize = ReceiverThread.PACKET_MAX_SIZE;
+        public Integer packetMaxSize = ReceiverThread.UDP_PACKET_MAX_SIZE;
         // ^^^ PS a more precise number is `543` bytes.
         // Update (as of `21 December, 2022`): It. Doesn't. MATTER.
         // Just come up with a fixed the packet size! The rest is fine!
@@ -136,6 +136,11 @@ public class UdpSocket {
                 private byte[] byteData = new byte[REC.packetMaxSize /* 65535 */];
                 // ^^^ B I G ___ A L L O C A T I O N !
 
+                // ^^^ This could've been outside, declared `final` or "effectively `final`",
+                // but I re-allocate it anyway (`memset()`s using loops are SLOW!), so I can't
+                // do that...
+                // Yes, I enjoy using `this` in lambdas, too. Can't here. It's alright.
+
                 @Override
                 public void run() {
                     // We got some work?
@@ -144,7 +149,7 @@ public class UdpSocket {
                             PARENT.in = new DatagramPacket(byteData, byteData.length);
                             if (PARENT.sock != null)
                                 PARENT.sock.receive(PARENT.in); // Fetch it well!
-                        } catch (IOException e) {
+                        } catch (final IOException e) {
                             if (e instanceof SocketTimeoutException) {
                                 // ¯\_(ツ)_/¯
                                 // System.out.println("Timeout ended! Continuing...");
@@ -164,9 +169,14 @@ public class UdpSocket {
 
                             // System.out.println("Calling `onReceive()`!");
 
-                            // The user's code can throw exceptions that pause our thread :)
+                            // The user's code can throw exceptions and ERRORS(!) that could pause our
+                            // thread.
+                            // :)
+
+                            // ..Gotta handle those!:
+
                             try {
-                                byte[] copy = new byte[byteData.length];
+                                final byte[] copy = new byte[byteData.length];
 
                                 System.arraycopy(byteData, 0, copy, 0, byteData.length);
 
@@ -185,7 +195,9 @@ public class UdpSocket {
                                 PARENT.onReceive(copy,
                                         addr.toString().substring(1),
                                         PARENT.in.getPort());
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                            } catch (final Error e) {
                                 e.printStackTrace();
                             }
                         } // End of `if (PARENT.in != null)`.
@@ -223,7 +235,7 @@ public class UdpSocket {
             this.doRun = false;
             try {
                 this.thread.join();
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -314,7 +326,7 @@ public class UdpSocket {
         try {
             this.sock = new DatagramSocket(p_port);
             this.sock.setSoTimeout(p_timeout);
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             e.printStackTrace();
         }
 
@@ -328,7 +340,7 @@ public class UdpSocket {
     }
     // endregion
 
-    // region `public` and `static` stuff!
+    // region `public` and `static` method[s]!
     /**
      * Tries to 'force' the OS into constructing a socket with the port specified
      * using {@code DatagramSocket.setReuseAddress(boolean)}.
@@ -345,7 +357,7 @@ public class UdpSocket {
             toRet.setReuseAddress(true);
             toRet.bind(new InetSocketAddress(p_port));
             toRet.setSoTimeout(p_timeout);
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             e.printStackTrace();
         }
 
@@ -394,7 +406,7 @@ public class UdpSocket {
     public int getTimeout() {
         try {
             return this.sock.getSoTimeout();
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             // Hope this never happens!:
             e.printStackTrace();
             return -1;
@@ -404,7 +416,7 @@ public class UdpSocket {
     public void setTimeout(final int p_timeout) {
         try {
             this.sock.setSoTimeout(p_timeout);
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             e.printStackTrace();
         }
     }
@@ -439,7 +451,7 @@ public class UdpSocket {
             this.receiver.start();
 
             System.out.printf("Successfully forced the port to: `%d`.\n", this.sock.getLocalPort());
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             System.out.printf("Setting the port to `%d` failed!\n", p_port);
             System.out.printf("Had to revert to port `%d`...\n", this.sock.getLocalPort());
             e.printStackTrace();
@@ -468,7 +480,7 @@ public class UdpSocket {
         try {
             this.sock.send(this.out = new DatagramPacket(
                     p_data, p_data.length, InetAddress.getByName(p_ip), p_port));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // if (e instanceof UnknownHostException) {
             e.printStackTrace();
             // } else {
@@ -502,7 +514,7 @@ public class UdpSocket {
         try {
             this.sock.setReuseAddress(false);
             this.sock.close();
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             // That's basically re-printing the exception! NO!
             // e.printStackTrace();
         }

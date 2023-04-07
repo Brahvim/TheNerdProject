@@ -327,7 +327,7 @@ public class NerdAl {
 
 		try { // Need to put this in a try-catch block...
 			this.setListenerFloatVector(this.DEFAULT_CONTEXT_ID, AL11.AL_ORIENTATION, values);
-		} catch (AlException e) { // TOO MANY FALSE POSITIVES!
+		} catch (final AlException e) { // TOO MANY FALSE POSITIVES!
 			// System.out.printf("""
 			// Setting the listener's orientation to `%s` failed!
 			// Values: `[%.7f, %.7f, %.7f]`.""", p_value, values[0], values[1], values[2]);

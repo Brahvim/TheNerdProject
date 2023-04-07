@@ -25,7 +25,7 @@ public class OggBufferDataAsset extends AssetType<AlOggBuffer> {
 			oggBuffer.shouldDispose(false);
 			oggBuffer.loadFrom(p_path);
 			return oggBuffer;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			throw new AssetLoaderFailedException();
 			// return ShortBuffer.allocate(0);
