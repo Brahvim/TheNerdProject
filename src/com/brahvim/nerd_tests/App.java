@@ -17,6 +17,7 @@ public class App {
      * // TODO: Just make it easier to animate, somehow!
      * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: ANDROID Port with OpenAL. Get that done! (SWIG wrapper!)
+     * // TODO: Make `SceneMANAGER` reload persistent assets as per user needs.
      */
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =

@@ -25,20 +25,24 @@ public class NerdTcpServer {
 		private final HashSet<Consumer<NerdReceivableTcpPacket>> MESSAGE_CALLBACKS = new HashSet<>();
 
 		private Thread serverCommThread;
+		private boolean inMessageLoop, hasDisconnected;
 		// endregion
 
 		// region Construction.
 		public NerdTcpServerClient(final Socket p_socket) {
 			super(p_socket);
-			this.delegatedConstruction();
 		}
 
 		public NerdTcpServerClient(final String p_serverIp, final int p_myPort) {
 			super(p_serverIp, p_myPort);
-			this.delegatedConstruction();
 		}
 
-		private void delegatedConstruction() {
+		private void startMessageThread() {
+			if (this.inMessageLoop)
+				return;
+
+			this.inMessageLoop = true;
+
 			this.serverCommThread = new Thread(() -> {
 				// No worries - the same stream is used till the socket shuts down.
 				DataInputStream stream = null;
@@ -170,6 +174,11 @@ public class NerdTcpServer {
 
 		@Override
 		public NerdTcpServer.NerdTcpServerClient disconnect() {
+			if (this.hasDisconnected)
+				return this;
+
+			this.hasDisconnected = true;
+
 			try {
 				this.serverCommThread.join();
 			} catch (final InterruptedException e) {
@@ -265,6 +274,7 @@ public class NerdTcpServer {
 
 					if (callback != null)
 						client.addMessageCallback(callback);
+					client.startMessageThread();
 				} catch (final IOException e) {
 					if (!(e instanceof SocketTimeoutException))
 						e.printStackTrace();
@@ -283,6 +293,9 @@ public class NerdTcpServer {
 	}
 
 	public void shutdown() {
+		if (this.startedShutdown)
+			return;
+
 		this.startedShutdown = true;
 
 		try {

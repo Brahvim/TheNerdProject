@@ -13,11 +13,8 @@ public class TcpTestScene extends NerdScene {
 	protected void setup(final SceneState p_state) {
 		final NerdTcpServer server = new NerdTcpServer(8080).onNewConnection((c) -> {
 			System.out.println("Ayy! A new client joined! Info: " + c.getSocket().toString());
-			return (p) -> {
-				System.out.print("Client messaged: ");
-				System.out.println(p.getDataLength());
-				System.out.println(new String(p.getData(), StandardCharsets.UTF_8));
-			};
+			return (p) -> System.out.printf("Client messaged: `%s`, using `%d` bytes.\n",
+					new String(p.getData(), StandardCharsets.UTF_8), p.getDataLength());
 		});
 
 		final NerdTcpClient client = new NerdTcpClient("127.0.0.1", 8080);
