@@ -78,7 +78,6 @@ public class NerdScene implements HardwareEventsHandler {
    * 
    * }
    */
-
   // endregion
 
   // region `public` fields.

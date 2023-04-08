@@ -26,20 +26,20 @@ public class TestScene1 extends NerdScene {
 
     @Override
     protected synchronized void preload() {
-        this.MANAGER.PERSISTENT_ASSETS.add(PFontAsset.getLoader(), "data/Arial-Black-48.vlw");
-        this.ASSETS.add(OggBufferDataAsset.getLoader(), "data/SceneOne.ogg");
+        MANAGER.PERSISTENT_ASSETS.add(PFontAsset.getLoader(), "data/Arial-Black-48.vlw");
+        ASSETS.add(OggBufferDataAsset.getLoader(), "data/SceneOne.ogg");
     }
 
     @Override
     protected void setup(final SceneState p_state) {
         // SKETCH.fullscreen = true;
         if (this.SCENE.getTimesLoaded() == 0)
-            this.SKETCH.centerWindow();
+            SKETCH.centerWindow();
 
-        this.font = this.MANAGER.PERSISTENT_ASSETS.get("Arial-Black-48").getData();
-        this.ease = new SineEase(this.SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
+        this.font = MANAGER.PERSISTENT_ASSETS.get("Arial-Black-48").getData();
+        this.ease = new SineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
 
-        this.sceneOneAnnounce = new AlSource(App.AL, this.ASSETS.get("SceneOne").getData());
+        this.sceneOneAnnounce = new AlSource(App.AL, ASSETS.get("SceneOne").getData());
         this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(App.AL)
                 .setBandpassGainHf(0.01f)
                 .setBandpassGainLf(0.18f));
@@ -63,11 +63,11 @@ public class TestScene1 extends NerdScene {
     @Override
     protected void draw() {
         if (this.ease.active) {
-            this.SKETCH.textFont(this.font);
+            SKETCH.textFont(this.font);
             final float easeVal = this.ease.get();
-            this.SKETCH.colorMode(PConstants.HSB);
-            this.SKETCH.fill(easeVal * 255, 255, 255, 255 * (1 - easeVal));
-            this.SKETCH.text("Scene `1`!", 0, PApplet.sin(this.SCENE.getMillisSinceStart() * 0.005f) * 25, 50);
+            SKETCH.colorMode(PConstants.HSB);
+            SKETCH.fill(easeVal * 255, 255, 255, 255 * (1 - easeVal));
+            SKETCH.text("Scene `1`!", 0, PApplet.sin(this.SCENE.getMillisSinceStart() * 0.005f) * 25, 50);
             // 0, PApplet.sin(MANAGER.sinceSceneStarted() * 0.0125f) * 25);
         }
 
@@ -75,7 +75,7 @@ public class TestScene1 extends NerdScene {
         if (this.ease.wasActive() && !this.ease.active)
             this.sceneOneAnnounce.dispose();
 
-        this.CAMERA.pos.z = PApplet.abs(PApplet.sin(this.SCENE.getMillisSinceStart() * 0.001f)) * 500;
+        CAMERA.pos.z = PApplet.abs(PApplet.sin(this.SCENE.getMillisSinceStart() * 0.001f)) * 500;
 
         /*
          * if (SKETCH.frameCount % 5 == 0) {
@@ -92,8 +92,8 @@ public class TestScene1 extends NerdScene {
 
     @Override
     public void mouseClicked() {
-        switch (this.SKETCH.mouseButton) {
-            case PConstants.RIGHT -> this.MANAGER.startScene(TestScene4.class);
+        switch (SKETCH.mouseButton) {
+            case PConstants.RIGHT -> MANAGER.startScene(TestScene4.class);
         }
     }
 

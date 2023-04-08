@@ -31,31 +31,31 @@ public class CubeManager {
 	// region Constructors.
 	public CubeManager(final NerdScene p_scene) {
 		this.SCENE = Objects.requireNonNull(p_scene);
-		this.SKETCH = this.SCENE.SKETCH;
+		SKETCH = this.SCENE.SKETCH;
 
-		this.CUBE_SHAPE = this.SKETCH.createShape(PConstants.BOX, 1);
+		this.CUBE_SHAPE = SKETCH.createShape(PConstants.BOX, 1);
 		this.CUBE_SHAPE.setStrokeWeight(0.28f);
 	}
 
 	public CubeManager(final NerdScene p_scene, final PShape p_cubeShape) {
 		this.SCENE = Objects.requireNonNull(p_scene);
-		this.SKETCH = this.SCENE.SKETCH;
+		SKETCH = this.SCENE.SKETCH;
 		this.CUBE_SHAPE = p_cubeShape;
 	}
 
 	public CubeManager(final NerdScene p_scene, final AlBuffer<?>[] p_buffers) {
 		this.SCENE = Objects.requireNonNull(p_scene);
-		this.SKETCH = this.SCENE.SKETCH;
+		SKETCH = this.SCENE.SKETCH;
 		this.popAudios = p_buffers;
 
-		this.CUBE_SHAPE = this.SKETCH.createShape(PConstants.BOX, 1);
+		this.CUBE_SHAPE = SKETCH.createShape(PConstants.BOX, 1);
 		this.CUBE_SHAPE.setStrokeWeight(0.28f);
 	}
 
 	public CubeManager(final NerdScene p_scene,
 			final PShape p_cubeShape, final AlBuffer<?>[] p_buffers) {
 		this.SCENE = Objects.requireNonNull(p_scene);
-		this.SKETCH = this.SCENE.SKETCH;
+		SKETCH = this.SCENE.SKETCH;
 		this.CUBE_SHAPE = p_cubeShape;
 		this.popAudios = p_buffers;
 	}
@@ -70,7 +70,7 @@ public class CubeManager {
 				if (this.popAudios == null)
 					this.CUBES.add(new AnimatedCube(this.SCENE).plopIn(null));
 				else {
-					final AlBuffer<?> randomPop = this.popAudios[(int) this.SKETCH.random(this.popAudios.length)];
+					final AlBuffer<?> randomPop = this.popAudios[(int) SKETCH.random(this.popAudios.length)];
 					this.CUBES.add(new AnimatedCube(this.SCENE).plopIn(randomPop));
 				}
 			}

@@ -23,12 +23,12 @@ public class TcpTestScene extends NerdScene {
 		final NerdTcpClient client = new NerdTcpClient("127.0.0.1", 8080);
 
 		client.send("Hey there - \":D!~");
-		this.SKETCH.delay(5000);
+		SKETCH.delay(5000);
 		client.disconnect();
 
 		System.out.println("Shutting server down...");
 		server.shutdown();
-		this.SKETCH.exit();
+		SKETCH.exit();
 	}
 
 }

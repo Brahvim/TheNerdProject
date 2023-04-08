@@ -12,11 +12,11 @@ public class BoxAnimationLayer extends NerdLayer {
 
     @Override
     protected void setup() {
-        this.squareAmpWave = new SineEase(this.SKETCH, 100 / 60_000.0f);
+        this.squareAmpWave = new SineEase(SKETCH, 100 / 60_000.0f);
         this.squareAmpWave.absoluteValue = true;
         this.squareAmpWave.start();
 
-        this.camRotWave = new SineEase(this.SKETCH, 50 / 60_000.0f);
+        this.camRotWave = new SineEase(SKETCH, 50 / 60_000.0f);
         // this.camRotWave.absoluteValue = true;
         this.camRotWave.start();
     }
@@ -28,14 +28,14 @@ public class BoxAnimationLayer extends NerdLayer {
 
         // CAMERA.center.x = squareAmp / 2.5f;
         // CAMERA.pos.y = squareAmp / 1.5f;
-        this.CAMERA.up.x = this.camRotWave.get() * PConstants.TAU;
+        CAMERA.up.x = this.camRotWave.get() * PConstants.TAU;
 
-        this.SKETCH.translate(
-                PApplet.cos(this.SKETCH.millis() * 0.001f) * squareAmp,
-                PApplet.sin(this.SKETCH.millis() * 0.001f) * squareAmp);
-        this.SKETCH.rotateX(this.SKETCH.millis() * 0.001f);
-        this.SKETCH.rotateY(this.SKETCH.millis() * 0.001f);
-        this.SKETCH.box(45);
+        SKETCH.translate(
+                PApplet.cos(SKETCH.millis() * 0.001f) * squareAmp,
+                PApplet.sin(SKETCH.millis() * 0.001f) * squareAmp);
+        SKETCH.rotateX(SKETCH.millis() * 0.001f);
+        SKETCH.rotateY(SKETCH.millis() * 0.001f);
+        SKETCH.box(45);
     }
 
 }

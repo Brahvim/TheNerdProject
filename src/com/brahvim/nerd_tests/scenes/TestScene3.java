@@ -32,24 +32,24 @@ public class TestScene3 extends NerdScene {
     @Override
     protected synchronized void preload() {
         for (int i = 1; i != 5; i++)
-            this.ASSETS.add(OggBufferDataAsset.getLoader(), "data/Pops/Pop" + i + ".ogg");
+            ASSETS.add(OggBufferDataAsset.getLoader(), "data/Pops/Pop" + i + ".ogg");
     }
 
     @Override
     protected void setup(final SceneState p_state) {
         this.calculateBgGrad();
-        this.CAMERA = new FlyCamera(this.SKETCH);
-        this.CAMERA.fov = PApplet.radians(75);
+        CAMERA = new FlyCamera(SKETCH);
+        CAMERA.fov = PApplet.radians(75);
         App.AL.unitSize = 250.0f;
-        this.SKETCH.setCamera(this.CAMERA);
+        SKETCH.setCamera(CAMERA);
 
         final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
         for (int i = 1; i != 5; i++)
-            alBuffers[i - 1] = this.ASSETS.get("Pop" + i).getData();
+            alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
 
         this.cubeMan = new CubeManager(this, alBuffers);
         this.ambiLight = new NerdAmbiLight(
-                this.SKETCH,
+                SKETCH,
                 new PVector(0, 0, 0),
                 // new PVector(255, 255, 0) // Yellow
                 // new PVector(224, 152, 27) // The orange at the top.
@@ -60,31 +60,31 @@ public class TestScene3 extends NerdScene {
 
     @Override
     protected void draw() {
-        if (this.SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
-            this.MANAGER.restartScene(this.STATE);
+        if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
+            MANAGER.restartScene(STATE);
 
-        this.SKETCH.lights();
-        this.SKETCH.background(this.bgGrad);
+        SKETCH.lights();
+        SKETCH.background(this.bgGrad);
         this.ambiLight.apply();
         this.controlCamera();
         this.cubeMan.draw();
     }
 
     private void calculateBgGrad() {
-        final int color1 = this.SKETCH.color(224, 152, 27), color2 = this.SKETCH.color(232, 81, 194);
-        this.bgGrad = this.SKETCH.createImage(this.SKETCH.width, this.SKETCH.height, PConstants.RGB);
+        final int color1 = SKETCH.color(224, 152, 27), color2 = SKETCH.color(232, 81, 194);
+        this.bgGrad = SKETCH.createImage(SKETCH.width, SKETCH.height, PConstants.RGB);
 
         for (int y = 0; y < this.bgGrad.height; y++)
             for (int x = 0; x < this.bgGrad.width; x++)
-                this.bgGrad.pixels[x + y * this.bgGrad.width] = this.SKETCH.lerpColor(
+                this.bgGrad.pixels[x + y * this.bgGrad.width] = SKETCH.lerpColor(
                         color1, color2, PApplet.map(y, 0, this.bgGrad.height, 0, 1));
     }
 
     // region Input event callbacks.
     @Override
     public void mouseClicked() {
-        switch (this.SKETCH.mouseButton) {
-            case PConstants.RIGHT -> this.MANAGER.startScene(TestScene1.class);
+        switch (SKETCH.mouseButton) {
+            case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
             case PConstants.CENTER -> this.cubeMan.removeAll();
             case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
         }
@@ -92,8 +92,8 @@ public class TestScene3 extends NerdScene {
 
     @Override
     public void mouseWheel(final MouseEvent p_mouseEvent) {
-        this.CAMERA.fov -= p_mouseEvent.getCount() * 0.1f;
-        this.CAMERA.fov = PApplet.constrain(this.CAMERA.fov, 0, 130);
+        CAMERA.fov -= p_mouseEvent.getCount() * 0.1f;
+        CAMERA.fov = PApplet.constrain(CAMERA.fov, 0, 130);
     }
     // endregion
 
@@ -101,37 +101,37 @@ public class TestScene3 extends NerdScene {
         // Increase speed when holding `Ctrl`:
         /* final */ float velMultiplier = 1;
 
-        if (this.SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
+        if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
             velMultiplier = 2;
 
         // region Roll.
-        if (this.SKETCH.keyIsPressed(KeyEvent.VK_Z))
-            this.CAMERA.up.x += velMultiplier * 0.01f;
+        if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
+            CAMERA.up.x += velMultiplier * 0.01f;
 
-        if (this.SKETCH.keyIsPressed(KeyEvent.VK_C))
-            this.CAMERA.up.x += -velMultiplier * 0.01f;
+        if (SKETCH.keyIsPressed(KeyEvent.VK_C))
+            CAMERA.up.x += -velMultiplier * 0.01f;
         // endregion
 
         // region Elevation.
-        if (this.SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
-            this.CAMERA.moveY(this.GRAVITY * velMultiplier * -this.playerVel.y);
+        if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
+            CAMERA.moveY(this.GRAVITY * velMultiplier * -this.playerVel.y);
 
-        if (this.SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
-            this.CAMERA.moveY(velMultiplier * this.playerVel.y);
+        if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
+            CAMERA.moveY(velMultiplier * this.playerVel.y);
         // endregion
 
         // region `W`-`A`-`S`-`D` controls.
-        if (this.SKETCH.keyIsPressed(KeyEvent.VK_W))
-            this.CAMERA.moveZ(velMultiplier * -this.playerVel.z);
+        if (SKETCH.keyIsPressed(KeyEvent.VK_W))
+            CAMERA.moveZ(velMultiplier * -this.playerVel.z);
 
-        if (this.SKETCH.keyIsPressed(KeyEvent.VK_A))
-            this.CAMERA.moveX(velMultiplier * -this.playerVel.x);
+        if (SKETCH.keyIsPressed(KeyEvent.VK_A))
+            CAMERA.moveX(velMultiplier * -this.playerVel.x);
 
-        if (this.SKETCH.keyIsPressed(KeyEvent.VK_S))
-            this.CAMERA.moveZ(velMultiplier * this.playerVel.z);
+        if (SKETCH.keyIsPressed(KeyEvent.VK_S))
+            CAMERA.moveZ(velMultiplier * this.playerVel.z);
 
-        if (this.SKETCH.keyIsPressed(KeyEvent.VK_D))
-            this.CAMERA.moveX(velMultiplier * this.playerVel.x);
+        if (SKETCH.keyIsPressed(KeyEvent.VK_D))
+            CAMERA.moveX(velMultiplier * this.playerVel.x);
         // endregion
     }
 

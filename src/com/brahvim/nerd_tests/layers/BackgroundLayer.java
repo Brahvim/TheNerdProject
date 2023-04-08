@@ -9,15 +9,15 @@ public class BackgroundLayer extends NerdLayer {
 
     @Override
     protected void setup() {
-        this.fadeWave = new SineEase(this.SKETCH, 0.001f);
+        this.fadeWave = new SineEase(SKETCH, 0.001f);
         this.fadeWave.absoluteValue = true;
         this.fadeWave.start();
     }
 
     @Override
     protected void draw() {
-        this.SKETCH.background(0x006699);
-        this.CAMERA.setClearColor(0x006699);
+        SKETCH.background(0x006699);
+        CAMERA.setClearColor(0x006699);
 
         // CAN USE `this` with lambdas!
         // ...kinda' like `with()` from Python mode in Processing?:
