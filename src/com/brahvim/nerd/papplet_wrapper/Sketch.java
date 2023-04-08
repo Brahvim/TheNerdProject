@@ -42,7 +42,7 @@ import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
 import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
 
 import processing.awt.PSurfaceAWT;
@@ -273,7 +273,7 @@ public class Sketch extends PApplet {
 	public JFrame sketchFrame;
 
 	// OpenGL context:
-	public GL4 gl;
+	public GL gl;
 	public GLU glu;
 	public PGL pgl;
 	public GLWindow glWindow;
@@ -507,8 +507,10 @@ public class Sketch extends PApplet {
 		// Renderer-specific object initialization and settings!:
 		switch (this.RENDERER) {
 			case PConstants.P2D, PConstants.P3D:
-				this.glGraphics = (PGraphicsOpenGL) super.g;
 				this.glWindow = (GLWindow) super.surface.getNative();
+				this.glGraphics = (PGraphicsOpenGL) super.g;
+				this.gl = this.glWindow.getGL();
+				this.glu = new GLU();
 
 				this.defaultCamera = new BasicCameraBuilder(this).build();
 				this.currentCamera = this.defaultCamera;
@@ -718,30 +720,35 @@ public class Sketch extends PApplet {
 
 	// region Processing's event callbacks! REMEMBER `this.sceneMan`! :joy:
 	// region Mouse events.
+	@Override
 	public void mousePressed() {
 		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mousePressed();
 		}
 	}
 
+	@Override
 	public void mouseReleased() {
 		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mouseReleased();
 		}
 	}
 
+	@Override
 	public void mouseMoved() {
 		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mouseMoved();
 		}
 	}
 
+	@Override
 	public void mouseClicked() {
 		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mouseClicked();
 		}
 	}
 
+	@Override
 	public void mouseDragged() {
 		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mouseDragged();
@@ -749,6 +756,7 @@ public class Sketch extends PApplet {
 	}
 
 	// @SuppressWarnings("unused")
+	@Override
 	public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
 		this.mouseScroll += p_mouseEvent.getCount();
 		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
@@ -758,6 +766,7 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Keyboard events.
+	@Override
 	public void keyTyped() {
 		for (SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
 			// ...could call that callback here directly, but I decided this!:
@@ -769,6 +778,7 @@ public class Sketch extends PApplet {
 		}
 	}
 
+	@Override
 	public void keyPressed() {
 		if (!this.CLOSE_ON_ESCAPE) {
 			if (super.keyCode == 27)
@@ -812,6 +822,7 @@ public class Sketch extends PApplet {
 		}
 	}
 
+	@Override
 	public void keyReleased() {
 		try {
 			synchronized (this.keysHeld) {
@@ -1389,6 +1400,7 @@ public class Sketch extends PApplet {
 	/**
 	 * Expands to {@code PApplet::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
 	 */
+	@Override
 	public void ortho(float p_cx, float p_cy, float p_near, float p_far) {
 		super.ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far);
 	}
@@ -2012,11 +2024,13 @@ public class Sketch extends PApplet {
 
 		// Listener for `PApplet::mouseDragged()` and `PApplet::mouseMoved()`:
 		panel.addMouseMotionListener(new MouseMotionListener() {
+			@Override
 			public void mouseDragged(MouseEvent p_mouseEvent) {
 				p_sketch.updateSketchMouse();
 				p_sketch.mouseDragged();
 			}
 
+			@Override
 			public void mouseMoved(MouseEvent p_mouseEvent) {
 				p_sketch.updateSketchMouse();
 				p_sketch.mouseMoved();

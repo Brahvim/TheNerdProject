@@ -15,6 +15,11 @@ public class TcpClient extends AbstractTcpClient {
 	}
 
 	@Override
+	public TcpClient send(final AbstractTcpPacket p_packet) {
+		return this.send(p_packet.getData());
+	}
+
+	@Override
 	public TcpClient send(final String p_data) {
 		return this.send(p_data.getBytes(StandardCharsets.UTF_8));
 	}

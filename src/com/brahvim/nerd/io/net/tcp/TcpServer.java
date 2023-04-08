@@ -1,22 +1,26 @@
 package com.brahvim.nerd.io.net.tcp;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import processing.core.PApplet;
 
 public abstract class TcpServer {
 
 	public class TcpServerClient extends AbstractTcpClient {
 
 		private Thread serverCommThread;
-		private Consumer<ReceivableTcpPacket> messageCallback;
+		private HashSet<Consumer<ReceivableTcpPacket>> messageCallbacks;
 
+		// region Construction.
 		public TcpServerClient(final Socket p_socket) {
 			super(p_socket);
 			this.delegatedConstruction();
@@ -27,66 +31,103 @@ public abstract class TcpServer {
 			this.delegatedConstruction();
 		}
 
-		@Override
-		public TcpServer.TcpServerClient send(final String p_data) {
-			return this.send(p_data.getBytes(StandardCharsets.UTF_8));
-		}
-
-		@Override
-		public TcpServer.TcpServerClient send(final byte[] p_data) {
-			try {
-				super.socket.getOutputStream().write(p_data);
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-
-			return this;
-		}
-
-		public TcpServer.TcpServerClient setMessageCallback(
-				final Consumer<ReceivableTcpPacket> p_callback) {
-			this.messageCallback = Objects.requireNonNull(p_callback);
-			return this;
-		}
-
-		public Consumer<ReceivableTcpPacket> getMessageCallback() {
-			return this.messageCallback;
-		}
-
 		private void delegatedConstruction() {
 			this.serverCommThread = new Thread(() -> {
-
 				while (true) {
 					try {
 						// ...Get that stream!!!:
-						final InputStream stream = this.socket.getInputStream();
+						final DataInputStream stream = new DataInputStream(this.socket.getInputStream());
 						stream.available();
 						// ^^^ This is literally gunna return `0`!
 						// ..I guess we use fixed sizes around here...
 
 						// ..Now read it:
 
-						final ReceivableTcpPacket packet;
-						final int packetSize = stream.read();
+						final int packetSize = stream.readInt();
 						final byte[] packetData = new byte[packetSize];
+						stream.read(packetData); // It needs to know the length of the array!
+						final ReceivableTcpPacket packet = new ReceivableTcpPacket(this, packetData);
 
-						for (int read, bytesRead = 0; bytesRead != packetSize
-								// ...Useless check?
-								&& (read = stream.read()) != -1; bytesRead++) {
-						}
+						// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
+						// have to reconstruct it every time, fearing that one of these callbacks might
+						// change the contents of the packet.
 
-						packet = new ReceivableTcpPacket(this, packetData);
+						for (final var c : this.messageCallbacks)
+							c.accept(packet);
 
 					} catch (final IOException e) {
 						e.printStackTrace();
 					}
-
 				}
 			});
+
+			this.serverCommThread.setName("NerdTcpClientOnPort" + this.socket.getLocalPort());
+		}
+		// endregion
+
+		// region ...Sending or something, I dunno.
+		@Override
+		public TcpServer.TcpServerClient send(final AbstractTcpPacket p_packet) {
+			try {
+				final byte[] packData = p_packet.getData();
+				final byte[] packDataLen = ByteBuffer
+						.allocate(Integer.BYTES).putInt(p_packet.getLength()).array();
+				super.socket.getOutputStream().write(PApplet.concat(packDataLen, packData));
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+			return this;
 		}
 
-		private Thread getCommsThread() {
+		@Override
+		public TcpServer.TcpServerClient send(final String p_data) {
+			return this.send(new SendableTcpPacket(p_data.getBytes(StandardCharsets.UTF_8)));
+		}
+
+		@Override
+		public TcpServer.TcpServerClient send(final byte[] p_data) {
+			return this.send(new SendableTcpPacket(p_data));
+		}
+		// endregion
+
+		// region Working with the message callbacks collection.
+		public TcpServer.TcpServerClient addMessageCallback(
+				final Consumer<ReceivableTcpPacket> p_callback) {
+			this.messageCallbacks.add(p_callback);
+			return this;
+		}
+
+		@SuppressWarnings("all")
+		public TcpServer.TcpServerClient removeMessageCallback(
+				final Consumer<ReceivableTcpPacket> p_callback) {
+			this.messageCallbacks.remove(p_callback);
+			return this;
+		}
+
+		/**
+		 * @return A copy of the {@link HashSet} containing all message callbacks.
+		 */
+		public HashSet<Consumer<ReceivableTcpPacket>> getAllMessageCallbacks() {
+			return new HashSet<>(this.messageCallbacks);
+		}
+
+		@SuppressWarnings("all")
+		public HashSet<Consumer<ReceivableTcpPacket>> removeAllMessageCallbacks() {
+			final HashSet<Consumer<ReceivableTcpPacket>> toRet = new HashSet<>(this.messageCallbacks);
+			this.messageCallbacks.clear();
+			return toRet;
+		}
+		// endregion
+
+		public Thread getReceiverThread() {
 			return this.serverCommThread;
+		}
+
+		@Override
+		public TcpServer.TcpServerClient disconnect() {
+			super.disconnect();
+			TcpServer.this.clients.remove(this);
+			return this;
 		}
 
 	}
@@ -133,8 +174,10 @@ public abstract class TcpServer {
 		this.connsThread = new Thread(() -> {
 			try {
 				final var client = new TcpServer.TcpServerClient(this.socket.accept());
-				client.setMessageCallback(this.clientConnectionCallback.apply(client));
+				final var callback = this.clientConnectionCallback.apply(client);
 				this.clients.add(client);
+				if (callback != null)
+					client.addMessageCallback(callback);
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}

@@ -48,6 +48,8 @@ import java.net.UnknownHostException;
 	// `AbstractTcpClient`. Yes, overloads can return subclasses and still keep
 	// `@Override` happy! Java is awesome.
 
+	public abstract AbstractTcpClient send(final AbstractTcpPacket p_data);
+
 	public abstract AbstractTcpClient send(final String p_data);
 
 	public abstract AbstractTcpClient send(final byte[] p_data);
