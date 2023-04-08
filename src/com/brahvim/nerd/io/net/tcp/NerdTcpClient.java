@@ -30,7 +30,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 			final byte[] packDataLen = ByteBuffer
 					.allocate(Integer.BYTES).putInt(p_packet.getDataLength()).array();
 
-			System.out.println("`NerdTcpClient::send()` was called.");
+			// System.out.println("`NerdTcpClient::send()` was called.");
 			super.socket.getOutputStream().write(PApplet.concat(packDataLen, packData));
 		} catch (final IOException e) {
 			e.printStackTrace();

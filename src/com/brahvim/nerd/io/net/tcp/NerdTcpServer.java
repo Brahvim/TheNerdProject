@@ -40,7 +40,7 @@ public class NerdTcpServer {
 
 		private void delegatedConstruction() {
 			this.serverCommThread = new Thread(() -> {
-				while (true) {
+				while (true)
 					try {
 						// ...Get that stream!!!:
 						final DataInputStream stream = new DataInputStream(this.socket.getInputStream());
@@ -49,43 +49,44 @@ public class NerdTcpServer {
 						// ..I guess we use fixed sizes around here...
 
 						// ..Now read it:
-
 						final int packetSize = stream.readInt();
 						final byte[] packetData = new byte[packetSize];
 						stream.read(packetData); // It needs to know the length of the array!
 						final NerdReceivableTcpPacket packet = new NerdReceivableTcpPacket(this, packetData);
 
-						System.out.println(
-								"`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` read the stream.");
+						// System.out.println(
+						// "`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` read the
+						// stream.");
 
 						// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
 						// have to reconstruct it every time, fearing that one of these callbacks might
 						// change the contents of the packet.
 
 						synchronized (this.MESSAGE_CALLBACKS) {
-							System.out.println(
-									"`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()`"
-											+ " entered the synced block.");
+							// System.out.println("""
+							// `NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` \
+							// entered the synced block.""");
 							for (final var c : this.MESSAGE_CALLBACKS)
 								try {
-									System.out.println(
-											"`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` called a message callback.");
+									// System.out.println(
+									// "`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` called a
+									// message callback.");
 									c.accept(packet);
 								} catch (final Exception e) {
 									e.printStackTrace();
 								}
 						}
 					} catch (final IOException e) {
-						// When the client disconnects, this exception is thrown by `read*()`:
+						// When the client disconnects, this exception is thrown by
+						// `*InpuStream::read*()`:
 						if (e instanceof EOFException)
 							this.disconnect();
 						else
 							e.printStackTrace();
 					}
-				}
 			});
 
-			this.serverCommThread.setName("NerdTcpClientOnPort" + this.socket.getLocalPort());
+			this.serverCommThread.setName("NerdTcpClientListenerOnPort" + this.socket.getLocalPort());
 			this.serverCommThread.setDaemon(true);
 			this.serverCommThread.start();
 		}
@@ -119,14 +120,18 @@ public class NerdTcpServer {
 		// region Working with the message callbacks collection.
 		public NerdTcpServer.NerdTcpServerClient addMessageCallback(
 				final Consumer<NerdReceivableTcpPacket> p_callback) {
-			this.MESSAGE_CALLBACKS.add(p_callback);
+			synchronized (this.MESSAGE_CALLBACKS) {
+				this.MESSAGE_CALLBACKS.add(p_callback);
+			}
 			return this;
 		}
 
 		@SuppressWarnings("all")
 		public NerdTcpServer.NerdTcpServerClient removeMessageCallback(
 				final Consumer<NerdReceivableTcpPacket> p_callback) {
-			this.MESSAGE_CALLBACKS.remove(p_callback);
+			synchronized (this.MESSAGE_CALLBACKS) {
+				this.MESSAGE_CALLBACKS.remove(p_callback);
+			}
 			return this;
 		}
 
@@ -134,13 +139,19 @@ public class NerdTcpServer {
 		 * @return A copy of the {@link HashSet} containing all message callbacks.
 		 */
 		public HashSet<Consumer<NerdReceivableTcpPacket>> getAllMessageCallbacks() {
-			return new HashSet<>(this.MESSAGE_CALLBACKS);
+			synchronized (this.MESSAGE_CALLBACKS) {
+				return new HashSet<>(this.MESSAGE_CALLBACKS);
+			}
 		}
 
 		@SuppressWarnings("all")
 		public HashSet<Consumer<NerdReceivableTcpPacket>> removeAllMessageCallbacks() {
-			final HashSet<Consumer<NerdReceivableTcpPacket>> toRet = new HashSet<>(this.MESSAGE_CALLBACKS);
-			this.MESSAGE_CALLBACKS.clear();
+			HashSet<Consumer<NerdReceivableTcpPacket>> toRet = null;
+			synchronized (this.MESSAGE_CALLBACKS) {
+				toRet = new HashSet<>(this.MESSAGE_CALLBACKS);
+				this.MESSAGE_CALLBACKS.clear();
+			}
+
 			return toRet;
 		}
 		// endregion
