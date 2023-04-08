@@ -94,8 +94,6 @@ public abstract class TcpServer {
 	// region Fields.
 	private Thread connsThread;
 	private ServerSocket socket;
-	private Consumer<TcpServer> serverShutdownCallback; // TODO: Is this actually a good idea? Code like:
-	// TODO: `tellAll("Bye!"); shutdown();` is better since it tells what happened.
 	private ArrayList<TcpServer.TcpServerClient> clients = new ArrayList<>();
 	private Function<AbstractTcpClient, Consumer<ReceivableTcpPacket>> clientConnectionCallback;
 	// endregion
@@ -151,8 +149,6 @@ public abstract class TcpServer {
 		} catch (final InterruptedException | IOException e) {
 			e.printStackTrace();
 		}
-
-		this.serverShutdownCallback.accept(this);
 	}
 
 	// region Sending stuff.
