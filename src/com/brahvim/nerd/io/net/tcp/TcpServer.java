@@ -8,10 +8,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public abstract class TcpServer {
 
-	// region Inner classes.
 	public class TcpServerClient extends AbstractTcpClient {
 
 		private Thread serverCommThread;
@@ -43,8 +43,14 @@ public abstract class TcpServer {
 			return this;
 		}
 
-		public void setMessageCallback(final Consumer<ReceivableTcpPacket> p_callback) {
+		public TcpServer.TcpServerClient setMessageCallback(
+				final Consumer<ReceivableTcpPacket> p_callback) {
 			this.messageCallback = Objects.requireNonNull(p_callback);
+			return this;
+		}
+
+		public Consumer<ReceivableTcpPacket> getMessageCallback() {
+			return this.messageCallback;
 		}
 
 		private void delegatedConstruction() {
@@ -85,12 +91,13 @@ public abstract class TcpServer {
 
 	}
 
-	// endregion
-
 	// region Fields.
-	private ServerSocket socket;
 	private Thread connsThread;
+	private ServerSocket socket;
+	private Consumer<TcpServer> serverShutdownCallback; // TODO: Is this actually a good idea? Code like:
+	// TODO: `tellAll("Bye!"); shutdown();` is better since it tells what happened.
 	private ArrayList<TcpServer.TcpServerClient> clients = new ArrayList<>();
+	private Function<AbstractTcpClient, Consumer<ReceivableTcpPacket>> clientConnectionCallback;
 	// endregion
 
 	// region Construction.
@@ -127,13 +134,49 @@ public abstract class TcpServer {
 	private void delegatedConstruction() {
 		this.connsThread = new Thread(() -> {
 			try {
-				this.clients.add(new TcpServer.TcpServerClient(this.socket.accept()));
+				final var client = new TcpServer.TcpServerClient(this.socket.accept());
+				client.setMessageCallback(this.clientConnectionCallback.apply(client));
+				this.clients.add(client);
 			} catch (final IOException e) {
-				// e.printStackTrace();
+				e.printStackTrace();
 			}
 		});
 	}
 	// endregion
+
+	public void shutdown() {
+		try {
+			this.socket.close();
+			this.connsThread.join();
+		} catch (final InterruptedException | IOException e) {
+			e.printStackTrace();
+		}
+
+		this.serverShutdownCallback.accept(this);
+	}
+
+	// region Sending stuff.
+	// Using an `AbstractTcpClient` subclass:
+	public TcpServer send(final AbstractTcpClient p_client, final AbstractTcpPacket p_packet) {
+		this.send(p_client.getSocket(), p_packet.getData());
+		return this;
+	}
+
+	public TcpServer send(final AbstractTcpClient p_client, final String p_data) {
+		this.send(p_client.getSocket(), p_data.getBytes(StandardCharsets.UTF_8));
+		return this;
+	}
+
+	public TcpServer send(final AbstractTcpClient p_client, final byte[] p_data) {
+		this.send(p_client.getSocket(), p_data);
+		return this;
+	}
+
+	// Using pure `Socket`s:
+	public TcpServer send(final Socket p_client, final AbstractTcpPacket p_packet) {
+		this.send(p_client, p_packet.getData());
+		return this;
+	}
 
 	public TcpServer send(final Socket p_client, final String p_data) {
 		this.send(p_client, p_data.getBytes(StandardCharsets.UTF_8));
@@ -149,6 +192,11 @@ public abstract class TcpServer {
 		return this;
 	}
 
+	// ...sending stuff to everyone connected!:
+	public TcpServer sendToAll(final AbstractTcpPacket p_packet) {
+		return this.sendToAll(p_packet.getData());
+	}
+
 	public TcpServer sendToAll(final String p_data) {
 		return this.sendToAll(p_data.getBytes(StandardCharsets.UTF_8));
 	}
@@ -159,29 +207,12 @@ public abstract class TcpServer {
 
 		return this;
 	}
+	// endregion
 
-	public void shutdown() {
-		try {
-			this.socket.close();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			this.connsThread.join();
-		} catch (final InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
+	// region Getters.
 	public ServerSocket getSocket() {
 		return this.socket;
 	}
-
-	// region Callbacks.
-	protected abstract void onClientConnect(AbstractTcpClient p_client);
-
-	protected abstract void onServerShutdown();
 	// endregion
 
 }

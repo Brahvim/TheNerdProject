@@ -6,12 +6,12 @@ import java.nio.charset.StandardCharsets;
 
 public class TcpClient extends AbstractTcpClient {
 
-	public TcpClient(final String p_serverIp, final int p_myPort) {
-		super(p_serverIp, p_myPort);
-	}
-
 	public TcpClient(final Socket p_socket) {
 		super(p_socket);
+	}
+
+	public TcpClient(final String p_serverIp, final int p_myPort) {
+		super(p_serverIp, p_myPort);
 	}
 
 	@Override

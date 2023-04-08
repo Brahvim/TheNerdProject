@@ -37,6 +37,7 @@ import java.net.UnknownHostException;
 		return this;
 	}
 
+	// region Abstraction
 	// For `TcpClient`s, these should send the data to the server.
 	// For `TcpServer.TcpServerClient`s, these should send the data to the client.
 
@@ -50,6 +51,7 @@ import java.net.UnknownHostException;
 	public abstract AbstractTcpClient send(final String p_data);
 
 	public abstract AbstractTcpClient send(final byte[] p_data);
+	// endregion
 
 	// region Getters.
 	public int getPort() {
