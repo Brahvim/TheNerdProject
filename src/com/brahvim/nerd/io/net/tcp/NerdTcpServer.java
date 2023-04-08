@@ -40,10 +40,18 @@ public class NerdTcpServer {
 
 		private void delegatedConstruction() {
 			this.serverCommThread = new Thread(() -> {
+				// No worries - the same stream is used till the socket shuts down.
+				DataInputStream stream = null;
+
+				// ...Get that stream!:
+				try {
+					stream = new DataInputStream(this.socket.getInputStream());
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+
 				while (true)
 					try {
-						// ...Get that stream!!!:
-						final DataInputStream stream = new DataInputStream(this.socket.getInputStream());
 						stream.available();
 						// ^^^ This is literally gunna return `0`!
 						// ..I guess we use fixed sizes around here...
