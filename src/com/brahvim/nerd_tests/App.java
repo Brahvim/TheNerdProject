@@ -7,7 +7,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
-import com.brahvim.nerd_tests.scenes.TestScene1;
+import com.brahvim.nerd_tests.scenes.TcpTestScene;
 
 public class App {
 
@@ -21,7 +21,7 @@ public class App {
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
-            TestScene1.class; // `LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();`
+            TcpTestScene.class; // `LoadedSceneClass.TEST_SCENE_5.getSceneClassLoader();`
 
     // region `App`'s *other* fields.
     public static final int BPM = 100,

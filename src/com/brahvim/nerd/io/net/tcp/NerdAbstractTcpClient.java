@@ -9,11 +9,11 @@ import java.net.UnknownHostException;
  * ...Only I (Brahvim) want to be using this class. It's written in the hopes to
  * make the API I want to in Nerd.
  */
-public abstract class AbstractTcpClient {
+public abstract class NerdAbstractTcpClient {
 
 	protected Socket socket;
 
-	public AbstractTcpClient(final String p_serverIp, final int p_myPort) {
+	public NerdAbstractTcpClient(final String p_serverIp, final int p_myPort) {
 		try {
 			this.socket = new Socket(p_serverIp, p_myPort);
 		} catch (final UnknownHostException e) {
@@ -23,11 +23,21 @@ public abstract class AbstractTcpClient {
 		}
 	}
 
-	public AbstractTcpClient(final Socket p_socket) {
+	public NerdAbstractTcpClient(final int p_myPort) {
+		try {
+			this.socket = new Socket((String) null, p_myPort);
+		} catch (final UnknownHostException e) {
+			e.printStackTrace();
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public NerdAbstractTcpClient(final Socket p_socket) {
 		this.socket = p_socket;
 	}
 
-	public AbstractTcpClient disconnect() {
+	public NerdAbstractTcpClient disconnect() {
 		try {
 			this.socket.close();
 		} catch (final IOException e) {
@@ -48,11 +58,11 @@ public abstract class AbstractTcpClient {
 	// `AbstractTcpClient`. Yes, overloads can return subclasses and still keep
 	// `@Override` happy! Java is awesome.
 
-	public abstract AbstractTcpClient send(final AbstractTcpPacket p_data);
+	public abstract NerdAbstractTcpClient send(final NerdAbstractTcpPacket p_data);
 
-	public abstract AbstractTcpClient send(final String p_data);
+	public abstract NerdAbstractTcpClient send(final String p_data);
 
-	public abstract AbstractTcpClient send(final byte[] p_data);
+	public abstract NerdAbstractTcpClient send(final byte[] p_data);
 	// endregion
 
 	// region Getters.

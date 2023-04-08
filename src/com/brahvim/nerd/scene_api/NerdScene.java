@@ -83,13 +83,14 @@ public class NerdScene implements HardwareEventsHandler {
 
   // region `public` fields.
   public final NerdScene SCENE = this;
-  // Forgive me for breaking naming conventions. Forgive me. Please!
+  // Forgive me for breaking naming conventions here.
+  // Forgive me. Please!
   public /* final */ Sketch SKETCH;
   public /* final */ SceneState STATE;
-  public /* final */ NerdAbstractCamera CAMERA; // ...why keep this `protected`?
   public /* final */ StringTable STRINGS;
   public /* final */ AssetManager ASSETS;
   public /* final */ SceneManager MANAGER;
+  public /* final */ NerdAbstractCamera CAMERA; // ...why keep this `protected`?
   // endregion
 
   // region `private` fields.
