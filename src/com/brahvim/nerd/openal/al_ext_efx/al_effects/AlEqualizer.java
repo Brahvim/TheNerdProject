@@ -7,7 +7,7 @@ import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 
 public class AlEqualizer extends AlEffect {
 
-	public AlEqualizer(NerdAl p_NerdAl) {
+	public AlEqualizer(final NerdAl p_NerdAl) {
 		super(p_NerdAl);
 	}
 
@@ -59,52 +59,52 @@ public class AlEqualizer extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public AlEqualizer setEqualizerLowGain(float p_value) {
+	public AlEqualizer setEqualizerLowGain(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_LOW_GAIN, p_value);
 		return this;
 	}
 
-	public AlEqualizer setEqualizerLowCutoff(float p_value) {
+	public AlEqualizer setEqualizerLowCutoff(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_LOW_CUTOFF, p_value);
 		return this;
 	}
 
-	public AlEqualizer setEqualizerMid1Gain(float p_value) {
+	public AlEqualizer setEqualizerMid1Gain(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_MID1_GAIN, p_value);
 		return this;
 	}
 
-	public AlEqualizer setEqualizerMid1Center(float p_value) {
+	public AlEqualizer setEqualizerMid1Center(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_MID1_CENTER, p_value);
 		return this;
 	}
 
-	public AlEqualizer setEqualizerMid1Width(float p_value) {
+	public AlEqualizer setEqualizerMid1Width(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_MID1_WIDTH, p_value);
 		return this;
 	}
 
-	public AlEqualizer setEqualizerMid2Gain(float p_value) {
+	public AlEqualizer setEqualizerMid2Gain(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_MID2_GAIN, p_value);
 		return this;
 	}
 
-	public AlEqualizer setEqualizerMid2Center(float p_value) {
+	public AlEqualizer setEqualizerMid2Center(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_MID2_CENTER, p_value);
 		return this;
 	}
 
-	public AlEqualizer setEqualizerMid2Width(float p_value) {
+	public AlEqualizer setEqualizerMid2Width(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_MID2_WIDTH, p_value);
 		return this;
 	}
 
-	public AlEqualizer setEqualizerHighGain(float p_value) {
+	public AlEqualizer setEqualizerHighGain(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_HIGH_GAIN, p_value);
 		return this;
 	}
 
-	public AlEqualizer setEqualizerHighCutoff(float p_value) {
+	public AlEqualizer setEqualizerHighCutoff(final float p_value) {
 		super.setFloat(EXTEfx.AL_EQUALIZER_HIGH_CUTOFF, p_value);
 		return this;
 	}

@@ -55,16 +55,26 @@ public class NerdTcpServer {
 						stream.read(packetData); // It needs to know the length of the array!
 						final NerdReceivableTcpPacket packet = new NerdReceivableTcpPacket(this, packetData);
 
+						System.out.println(
+								"`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` read the stream.");
+
 						// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
 						// have to reconstruct it every time, fearing that one of these callbacks might
 						// change the contents of the packet.
 
-						for (final var c : this.MESSAGE_CALLBACKS)
-							try {
-								c.accept(packet);
-							} catch (final Exception e) {
-								e.printStackTrace();
-							}
+						synchronized (this.MESSAGE_CALLBACKS) {
+							System.out.println(
+									"`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()`"
+											+ " entered the synced block.");
+							for (final var c : this.MESSAGE_CALLBACKS)
+								try {
+									System.out.println(
+											"`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` called a message callback.");
+									c.accept(packet);
+								} catch (final Exception e) {
+									e.printStackTrace();
+								}
+						}
 					} catch (final IOException e) {
 						// When the client disconnects, this exception is thrown by `read*()`:
 						if (e instanceof EOFException)

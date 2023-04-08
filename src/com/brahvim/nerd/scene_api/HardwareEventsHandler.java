@@ -51,7 +51,7 @@ package com.brahvim.nerd.scene_api;
     }
 
     // @SuppressWarnings("unused")
-    public default void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
+    public default void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
     }
     // endregion
 

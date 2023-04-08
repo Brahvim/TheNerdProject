@@ -18,9 +18,9 @@ public class PFontAsset extends AssetType<PFont> {
 	// endregion
 
 	@Override
-	public PFont fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public PFont fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
-		PFont font = p_sketch.loadFont(p_path);
+		final PFont font = p_sketch.loadFont(p_path);
 
 		if (font == null)
 			throw new AssetLoaderFailedException();

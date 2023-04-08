@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 // ...Throw-away, all exceptions!~
 public class ByteSerial {
 
-    public static byte[] toBytes(Serializable p_object) {
+    public static byte[] toBytes(final Serializable p_object) {
         if (p_object == null)
             return null;
 
@@ -56,7 +56,7 @@ public class ByteSerial {
     }
 
     // region From bytes!
-    public static Object fromBytes(byte[] p_data) {
+    public static Object fromBytes(final byte[] p_data) {
         try {
             return ByteSerial.fromBytesImpl(p_data);
         } catch (final IOException e) {
@@ -68,7 +68,7 @@ public class ByteSerial {
         return null;
     }
 
-    public static Object fromBytes(byte[] p_data, Consumer<IOException> p_onIo) {
+    public static Object fromBytes(final byte[] p_data, final Consumer<IOException> p_onIo) {
         try {
             return ByteSerial.fromBytesImpl(p_data);
         } catch (final IOException e) {
@@ -83,8 +83,8 @@ public class ByteSerial {
         return null;
     }
 
-    public static Object fromBytes(byte[] p_data, Consumer<IOException> p_onIo,
-            Consumer<ClassNotFoundException> p_onClassNotFound) {
+    public static Object fromBytes(final byte[] p_data, final Consumer<IOException> p_onIo,
+            final Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return ByteSerial.fromBytesImpl(p_data);
         } catch (final IOException e) {
@@ -104,7 +104,7 @@ public class ByteSerial {
 
     // region ...using generics and casting!
     @SuppressWarnings("unchecked")
-    public static <T> T fromBytesCasted(byte[] p_data) {
+    public static <T> T fromBytesCasted(final byte[] p_data) {
         try {
             return (T) ByteSerial.fromBytesImpl(p_data);
         } catch (final ClassNotFoundException e) {
@@ -120,9 +120,9 @@ public class ByteSerial {
 
     @SuppressWarnings("unchecked")
     public static <T> T fromBytesCasted(
-            byte[] p_data,
-            Consumer<IOException> p_onIo,
-            Consumer<ClassCastException> p_onClassCast) {
+            final byte[] p_data,
+            final Consumer<IOException> p_onIo,
+            final Consumer<ClassCastException> p_onClassCast) {
         try {
             return (T) ByteSerial.fromBytesImpl(p_data);
         } catch (final IOException e) {
@@ -143,10 +143,10 @@ public class ByteSerial {
 
     @SuppressWarnings("unchecked")
     public static <T> T fromBytesCasted(
-            byte[] p_data,
-            Consumer<ClassNotFoundException> p_onClassNotFound,
-            Consumer<ClassCastException> p_onClassCast,
-            Consumer<IOException> p_onIo) {
+            final byte[] p_data,
+            final Consumer<ClassNotFoundException> p_onClassNotFound,
+            final Consumer<ClassCastException> p_onClassCast,
+            final Consumer<IOException> p_onIo) {
         try {
             return (T) ByteSerial.fromBytesImpl(p_data);
         } catch (final IOException e) {
@@ -169,7 +169,7 @@ public class ByteSerial {
     }
     // endregion
 
-    private static Object fromBytesImpl(byte[] p_data) throws IOException, ClassNotFoundException {
+    private static Object fromBytesImpl(final byte[] p_data) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(p_data);
                 ObjectInputStream ois = new ObjectInputStream(bis)) {
             return ois.readObject();
@@ -181,13 +181,13 @@ public class ByteSerial {
     // region ...using generics and casting!
     // region Using the file's path.
     @SuppressWarnings("unchecked")
-    public static <T> T fromFileCasted(String p_filePath)
+    public static <T> T fromFileCasted(final String p_filePath)
             throws IOException, ClassNotFoundException, ClassCastException {
         return (T) ByteSerial.fromFileImpl(new File(p_filePath));
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T fromFileCasted(String p_filePath, Consumer<IOException> p_onIo) {
+    public static <T> T fromFileCasted(final String p_filePath, final Consumer<IOException> p_onIo) {
         try {
             return (T) ByteSerial.fromFileImpl(new File(p_filePath));
         } catch (final ClassNotFoundException e) {
@@ -205,8 +205,8 @@ public class ByteSerial {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T fromFileCasted(String p_filePath, Consumer<IOException> p_onIo,
-            Consumer<ClassNotFoundException> p_onClassNotFound) {
+    public static <T> T fromFileCasted(final String p_filePath, final Consumer<IOException> p_onIo,
+            final Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return (T) ByteSerial.fromFileImpl(new File(p_filePath));
         } catch (final ClassNotFoundException e) {
@@ -226,10 +226,10 @@ public class ByteSerial {
 
     @SuppressWarnings("unchecked")
     public static <T> T fromFileCasted(
-            String p_filePath,
-            Consumer<IOException> p_onIo,
-            Consumer<ClassCastException> p_onClassCast,
-            Consumer<ClassNotFoundException> p_onClassNotFound) {
+            final String p_filePath,
+            final Consumer<IOException> p_onIo,
+            final Consumer<ClassCastException> p_onClassCast,
+            final Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return (T) ByteSerial.fromFileImpl(new File(p_filePath));
         } catch (final ClassNotFoundException e) {
@@ -255,13 +255,13 @@ public class ByteSerial {
 
     // region Using a `File` object.
     @SuppressWarnings("unchecked")
-    public static <T> T fromFileCasted(File p_file)
+    public static <T> T fromFileCasted(final File p_file)
             throws IOException, ClassNotFoundException, ClassCastException {
         return (T) ByteSerial.fromFileImpl(p_file);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T fromFileCasted(File p_file, Consumer<IOException> p_onIo) {
+    public static <T> T fromFileCasted(final File p_file, final Consumer<IOException> p_onIo) {
         try {
             return (T) ByteSerial.fromFileImpl(p_file);
         } catch (final ClassNotFoundException e) {
@@ -279,8 +279,8 @@ public class ByteSerial {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T fromFileCasted(File p_file, Consumer<IOException> p_onIo,
-            Consumer<ClassNotFoundException> p_onClassNotFound) {
+    public static <T> T fromFileCasted(final File p_file, final Consumer<IOException> p_onIo,
+            final Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return (T) ByteSerial.fromFileImpl(p_file);
         } catch (final ClassNotFoundException e) {
@@ -300,10 +300,10 @@ public class ByteSerial {
 
     @SuppressWarnings("unchecked")
     public static <T> T fromFileCasted(
-            File p_file,
-            Consumer<IOException> p_onIo,
-            Consumer<ClassCastException> p_onClassCast,
-            Consumer<ClassNotFoundException> p_onClassNotFound) {
+            final File p_file,
+            final Consumer<IOException> p_onIo,
+            final Consumer<ClassCastException> p_onClassCast,
+            final Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return (T) ByteSerial.fromFileImpl(p_file);
         } catch (final ClassNotFoundException e) {
@@ -328,7 +328,7 @@ public class ByteSerial {
     // endregion
     // endregion
 
-    public static Object fromFile(String p_filePath) {
+    public static Object fromFile(final String p_filePath) {
         try {
             return ByteSerial.fromFileImpl(new File(p_filePath));
         } catch (final IOException e) {
@@ -340,7 +340,7 @@ public class ByteSerial {
         return null;
     }
 
-    public static Object fromFile(String p_filePath, Consumer<IOException> p_onIo) {
+    public static Object fromFile(final String p_filePath, final Consumer<IOException> p_onIo) {
         try {
             return ByteSerial.fromFileImpl(new File(p_filePath));
         } catch (final IOException e) {
@@ -355,8 +355,8 @@ public class ByteSerial {
         return null;
     }
 
-    public static Object fromFile(String p_filePath, Consumer<IOException> p_onIo,
-            Consumer<ClassNotFoundException> p_onClassNotFound) {
+    public static Object fromFile(final String p_filePath, final Consumer<IOException> p_onIo,
+            final Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return ByteSerial.fromFileImpl(new File(p_filePath));
         } catch (final ClassNotFoundException e) {
@@ -374,7 +374,7 @@ public class ByteSerial {
         return null;
     }
 
-    public static Object fromFile(File p_file) {
+    public static Object fromFile(final File p_file) {
         try {
             return ByteSerial.fromFileImpl(p_file);
         } catch (final IOException e) {
@@ -386,7 +386,7 @@ public class ByteSerial {
         return null;
     }
 
-    public static Object fromFile(File p_file, Consumer<IOException> p_onIo) {
+    public static Object fromFile(final File p_file, final Consumer<IOException> p_onIo) {
         try {
             return ByteSerial.fromFileImpl(p_file);
         } catch (final IOException e) {
@@ -401,8 +401,8 @@ public class ByteSerial {
         return null;
     }
 
-    public static Object fromFile(File p_file, Consumer<IOException> p_onIo,
-            Consumer<ClassNotFoundException> p_onClassNotFound) {
+    public static Object fromFile(final File p_file, final Consumer<IOException> p_onIo,
+            final Consumer<ClassNotFoundException> p_onClassNotFound) {
         try {
             return ByteSerial.fromFileImpl(p_file);
         } catch (final ClassNotFoundException e) {
@@ -420,7 +420,7 @@ public class ByteSerial {
         return null;
     }
 
-    private static Object fromFileImpl(File p_file) throws IOException, ClassNotFoundException {
+    private static Object fromFileImpl(final File p_file) throws IOException, ClassNotFoundException {
         try (FileInputStream fis = new FileInputStream(p_file);
                 ObjectInputStream ois = new ObjectInputStream(fis);) {
             return ois.readObject();
@@ -429,20 +429,20 @@ public class ByteSerial {
     // endregion
 
     // region ...TO files!
-    public static void toFile(Serializable p_object, String p_fileName) {
+    public static void toFile(final Serializable p_object, final String p_fileName) {
         ByteSerial.toFile(p_object, new File(p_fileName));
     }
 
-    public static void toFile(Serializable p_object, String p_fileName, Consumer<IOException> p_onIo) {
+    public static void toFile(final Serializable p_object, final String p_fileName, final Consumer<IOException> p_onIo) {
         ByteSerial.toFile(p_object, new File(p_fileName), p_onIo);
     }
 
-    public static void toFile(Serializable p_object, File p_file) {
+    public static void toFile(final Serializable p_object, final File p_file) {
         ByteSerial.toFile(p_object, p_file, null);
     }
 
     // The actual implementation:
-    public static void toFile(Serializable p_object, File p_file, Consumer<IOException> p_onIo) {
+    public static void toFile(final Serializable p_object, final File p_file, final Consumer<IOException> p_onIo) {
         if (p_object == null)
             return;
 

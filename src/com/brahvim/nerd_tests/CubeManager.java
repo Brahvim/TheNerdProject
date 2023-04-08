@@ -70,7 +70,7 @@ public class CubeManager {
 				if (this.popAudios == null)
 					this.CUBES.add(new AnimatedCube(this.SCENE).plopIn(null));
 				else {
-					final AlBuffer<?> randomPop = this.popAudios[(int) SKETCH.random(this.popAudios.length)];
+					final AlBuffer<?> randomPop = this.popAudios[(int) this.SKETCH.random(this.popAudios.length)];
 					this.CUBES.add(new AnimatedCube(this.SCENE).plopIn(randomPop));
 				}
 			}
@@ -92,7 +92,7 @@ public class CubeManager {
 		// cube.plopOut(() -> this.CUBES.remove(cube));
 		// }
 
-		for (AnimatedCube c : this.CUBES)
+		for (final AnimatedCube c : this.CUBES)
 			c.draw(this.CUBE_SHAPE);
 	}
 

@@ -135,7 +135,7 @@ public abstract class TcpServer {
 	// region Fields.
 	private Thread connsThread;
 	private ServerSocket socket;
-	private ArrayList<TcpServer.TcpServerClient> clients = new ArrayList<>();
+	private final ArrayList<TcpServer.TcpServerClient> clients = new ArrayList<>();
 	private Function<AbstractTcpClient, Consumer<ReceivableTcpPacket>> clientConnectionCallback;
 	// endregion
 

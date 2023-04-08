@@ -7,7 +7,7 @@ import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 
 public class AlFrequencyShifter extends AlEffect {
 
-	public AlFrequencyShifter(NerdAl p_alMan) {
+	public AlFrequencyShifter(final NerdAl p_alMan) {
 		super(p_alMan);
 	}
 
@@ -31,17 +31,17 @@ public class AlFrequencyShifter extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public AlFrequencyShifter setFrequencyShifterFrequency(float p_value) {
+	public AlFrequencyShifter setFrequencyShifterFrequency(final float p_value) {
 		super.setFloat(EXTEfx.AL_FREQUENCY_SHIFTER_FREQUENCY, p_value);
 		return this;
 	}
 
-	public AlFrequencyShifter setFrequencyShifterLeftDirection(float p_value) {
+	public AlFrequencyShifter setFrequencyShifterLeftDirection(final float p_value) {
 		super.setFloat(EXTEfx.AL_FREQUENCY_SHIFTER_LEFT_DIRECTION, p_value);
 		return this;
 	}
 
-	public AlFrequencyShifter setFrequencyShifterRightDirection(float p_value) {
+	public AlFrequencyShifter setFrequencyShifterRightDirection(final float p_value) {
 		super.setFloat(EXTEfx.AL_FREQUENCY_SHIFTER_RIGHT_DIRECTION, p_value);
 		return this;
 	}

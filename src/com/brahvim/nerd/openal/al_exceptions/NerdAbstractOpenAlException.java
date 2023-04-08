@@ -5,7 +5,7 @@ public abstract class NerdAbstractOpenAlException extends RuntimeException {
 	protected final int ERROR_CODE;
 	protected final String ERROR_STRING;
 
-	public NerdAbstractOpenAlException(String p_message, int p_alErrorCode) {
+	public NerdAbstractOpenAlException(final String p_message, final int p_alErrorCode) {
 		super("\"" + p_message + "\""
 				+ " - Error Code: `"
 				+ p_alErrorCode

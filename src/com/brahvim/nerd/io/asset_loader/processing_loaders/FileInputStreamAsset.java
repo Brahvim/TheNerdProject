@@ -20,7 +20,7 @@ public class FileInputStreamAsset extends AssetType<FileInputStream> {
 	// endregion
 
 	@Override
-	public FileInputStream fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public FileInputStream fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			return new FileInputStream(new File(p_path));

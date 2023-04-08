@@ -16,9 +16,9 @@ public class PBytesAsset extends AssetType<byte[]> {
 	// endregion
 
 	@Override
-	public byte[] fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public byte[] fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
-		byte[] bytes = p_sketch.loadBytes(p_path);
+		final byte[] bytes = p_sketch.loadBytes(p_path);
 
 		if (bytes == null)
 			throw new AssetLoaderFailedException();

@@ -157,7 +157,7 @@ public class NerdScene implements HardwareEventsHandler {
    * Given a {@link NerdLayer} class, performs a task on the instance of that
    * class, which was added <i>first</i> to this {@link NerdScene}.
    */
-  public <T extends NerdLayer> void onFirstLayerOfClass(Class<T> p_layerClass, Consumer<T> p_task) {
+  public <T extends NerdLayer> void onFirstLayerOfClass(final Class<T> p_layerClass, final Consumer<T> p_task) {
     this.onFirstLayerOfClass(p_layerClass, p_task, null);
   }
 
@@ -169,8 +169,8 @@ public class NerdScene implements HardwareEventsHandler {
   // Actual implementation!:
   @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onFirstLayerOfClass(
-      Class<T> p_layerClass, Consumer<T> p_onFoundTask, Runnable p_notFoundTask) {
-    T instance = (T) this.getFirstLayerOfClass(p_layerClass);
+      final Class<T> p_layerClass, final Consumer<T> p_onFoundTask, final Runnable p_notFoundTask) {
+    final T instance = (T) this.getFirstLayerOfClass(p_layerClass);
 
     // Check if we have any such layers:
     if (instance != null) {
@@ -188,21 +188,21 @@ public class NerdScene implements HardwareEventsHandler {
   // region `onLayersOfClass()` and similar.
   // region `onInactiveLayersOfClass()` overloads.
   public <T extends NerdLayer> void onInactiveLayersOfClass(
-      Class<T> p_layerClass, Consumer<T> p_task) {
+      final Class<T> p_layerClass, final Consumer<T> p_task) {
     this.onInactiveLayersOfClass(p_layerClass, p_task, null);
   }
 
   // Actual implementation!:
   @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onInactiveLayersOfClass(
-      Class<T> p_layerClass, Consumer<T> p_task, Runnable p_notFoundTask) {
+      final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_notFoundTask) {
 
     int i = 0;
     final int LAYERS_SIZE = this.LAYERS.size();
 
     // For every `NerdLayer`,
     for (; i != LAYERS_SIZE; i++) {
-      NerdLayer l = this.LAYERS.get(i);
+      final NerdLayer l = this.LAYERS.get(i);
 
       if (l != null)
         if (l.getClass().equals(p_layerClass))
@@ -218,20 +218,20 @@ public class NerdScene implements HardwareEventsHandler {
 
   // region `onActiveLayersOfClass()` overloads.
   public <T extends NerdLayer> void onActiveLayersOfClass(
-      Class<T> p_layerClass, Consumer<T> p_task) {
+      final Class<T> p_layerClass, final Consumer<T> p_task) {
     this.onActiveLayersOfClass(p_layerClass, p_task, null);
   }
 
   @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onActiveLayersOfClass(
-      Class<T> p_layerClass, Consumer<T> p_task, Runnable p_notFoundTask) {
+      final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_notFoundTask) {
 
     int i = 0;
     final int LAYERS_SIZE = this.LAYERS.size();
 
     // For every `NerdLayer`,
     for (; i != LAYERS_SIZE; i++) {
-      NerdLayer l = this.LAYERS.get(i);
+      final NerdLayer l = this.LAYERS.get(i);
 
       if (l != null)
         if (l.getClass().equals(p_layerClass))
@@ -251,7 +251,7 @@ public class NerdScene implements HardwareEventsHandler {
    * class being used by this {@link NerdScene}.
    */
   public <T extends NerdLayer> void onLayersOfClass(
-      Class<T> p_layerClass, Consumer<T> p_task) {
+      final Class<T> p_layerClass, final Consumer<T> p_task) {
     this.onLayersOfClass(p_layerClass, p_task, null);
   }
 
@@ -263,14 +263,14 @@ public class NerdScene implements HardwareEventsHandler {
   // Actual implementation!:
   @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onLayersOfClass(
-      Class<T> p_layerClass, Consumer<T> p_task, Runnable p_notFoundTask) {
+      final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_notFoundTask) {
 
     int i = 0;
     final int LAYERS_SIZE = this.LAYERS.size();
 
     // For every `NerdLayer`,
     for (; i != LAYERS_SIZE; i++) {
-      NerdLayer l = this.LAYERS.get(i);
+      final NerdLayer l = this.LAYERS.get(i);
 
       if (l.getClass().equals(p_layerClass)) // ...if it's from the same class,
         p_task.accept((T) l); // ...perform the given task!
@@ -285,8 +285,8 @@ public class NerdScene implements HardwareEventsHandler {
 
   // region `getLayers()` and similar.
   // They get a running `Layer`'s reference from its (given) class.
-  public NerdLayer getFirstLayerOfClass(Class<? extends NerdLayer> p_layerClass) {
-    for (NerdLayer l : this.LAYERS)
+  public NerdLayer getFirstLayerOfClass(final Class<? extends NerdLayer> p_layerClass) {
+    for (final NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass))
         return l;
     return null;
@@ -296,10 +296,10 @@ public class NerdScene implements HardwareEventsHandler {
    * Gives an {@link ArrayList} of {@link NerdLayer} instances of the given
    * subclass this {@link NerdScene} contains, which are <b>not</b> active.
    */
-  public ArrayList<NerdLayer> getInactiveLayers(Class<? extends NerdLayer> p_layerClass) {
-    ArrayList<NerdLayer> toRet = new ArrayList<>();
+  public ArrayList<NerdLayer> getInactiveLayers(final Class<? extends NerdLayer> p_layerClass) {
+    final ArrayList<NerdLayer> toRet = new ArrayList<>();
 
-    for (NerdLayer l : this.LAYERS)
+    for (final NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.getClass().equals(p_layerClass) && !l.isActive())
           toRet.add(l);
@@ -311,10 +311,10 @@ public class NerdScene implements HardwareEventsHandler {
    * Gives an {@link ArrayList} of {@link NerdLayer} instances of the given
    * subclass this {@link NerdScene} contains, which are also active.
    */
-  public ArrayList<NerdLayer> getActiveLayers(Class<? extends NerdLayer> p_layerClass) {
-    ArrayList<NerdLayer> toRet = new ArrayList<>();
+  public ArrayList<NerdLayer> getActiveLayers(final Class<? extends NerdLayer> p_layerClass) {
+    final ArrayList<NerdLayer> toRet = new ArrayList<>();
 
-    for (NerdLayer l : this.LAYERS)
+    for (final NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.getClass().equals(p_layerClass) && l.isActive())
           toRet.add(l);
@@ -326,10 +326,10 @@ public class NerdScene implements HardwareEventsHandler {
    * Gives an {@link ArrayList} of {@link NerdLayer} instances of the given
    * subclass this {@link NerdScene} contains.
    */
-  public ArrayList<NerdLayer> getLayers(Class<? extends NerdLayer> p_layerClass) {
-    ArrayList<NerdLayer> toRet = new ArrayList<>();
+  public ArrayList<NerdLayer> getLayers(final Class<? extends NerdLayer> p_layerClass) {
+    final ArrayList<NerdLayer> toRet = new ArrayList<>();
 
-    for (NerdLayer l : this.LAYERS)
+    for (final NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.getClass().equals(p_layerClass)) {
           toRet.add(l);
@@ -350,20 +350,20 @@ public class NerdScene implements HardwareEventsHandler {
 
   // region `NerdLayer` state-management.
   @SafeVarargs // I *actually* am not using `@SafeVarargs`, yes...
-  public final void addLayers(Class<? extends NerdLayer>... p_layerClasses) {
-    for (Class<? extends NerdLayer> c : p_layerClasses)
+  public final void addLayers(final Class<? extends NerdLayer>... p_layerClasses) {
+    for (final Class<? extends NerdLayer> c : p_layerClasses)
       this.addLayers(c);
   }
 
-  public NerdLayer addLayers(Class<? extends NerdLayer> p_layerClass) {
+  public NerdLayer addLayers(final Class<? extends NerdLayer> p_layerClass) {
     if (p_layerClass == null)
       throw new NullPointerException(
           "You weren't supposed to pass `null` into `NerdScene::startLayer()`.");
 
     // We allow multiple layer instances, by the way.
 
-    Constructor<? extends NerdLayer> layerConstructor = this.getLayerConstructor(p_layerClass);
-    NerdLayer toStart = this.constructLayer(layerConstructor);
+    final Constructor<? extends NerdLayer> layerConstructor = this.getLayerConstructor(p_layerClass);
+    final NerdLayer toStart = this.constructLayer(layerConstructor);
 
     synchronized (this.LAYERS) {
       this.LAYERS.add(toStart);
@@ -374,12 +374,12 @@ public class NerdScene implements HardwareEventsHandler {
   }
 
   @SafeVarargs // I *actually* am not using `@SafeVarargs`, yes...
-  public final void restartLayers(Class<? extends NerdLayer>... p_layerClasses) {
-    for (Class<? extends NerdLayer> c : p_layerClasses)
+  public final void restartLayers(final Class<? extends NerdLayer>... p_layerClasses) {
+    for (final Class<? extends NerdLayer> c : p_layerClasses)
       this.restartLayers(c);
   }
 
-  public void restartLayer(NerdLayer p_layer) {
+  public void restartLayer(final NerdLayer p_layer) {
     if (p_layer == null)
       return;
 
@@ -395,7 +395,7 @@ public class NerdScene implements HardwareEventsHandler {
       return;
     }
 
-    NerdLayer toStart = this.constructLayer(this.getLayerConstructor(LAYER_CLASS));
+    final NerdLayer toStart = this.constructLayer(this.getLayerConstructor(LAYER_CLASS));
     this.LAYERS.set(this.LAYERS.indexOf(p_layer), toStart);
 
     p_layer.setActive(false);
@@ -404,7 +404,7 @@ public class NerdScene implements HardwareEventsHandler {
   // endregion
 
   // region `NerdLayer` construction.
-  private Constructor<? extends NerdLayer> getLayerConstructor(Class<? extends NerdLayer> p_layerClass) {
+  private Constructor<? extends NerdLayer> getLayerConstructor(final Class<? extends NerdLayer> p_layerClass) {
     Constructor<? extends NerdLayer> toRet = this.LAYER_CONSTRUCTORS.get(p_layerClass);
 
     if (toRet != null)
@@ -424,7 +424,7 @@ public class NerdScene implements HardwareEventsHandler {
     return toRet;
   }
 
-  private NerdLayer constructLayer(Constructor<? extends NerdLayer> p_layerConstructor) {
+  private NerdLayer constructLayer(final Constructor<? extends NerdLayer> p_layerConstructor) {
     NerdLayer toRet = null;
 
     // region Construct `toRet`.
@@ -472,7 +472,7 @@ public class NerdScene implements HardwareEventsHandler {
    * }
    */
 
-  /* `package` */ void runSetup(SceneState p_state) {
+  /* `package` */ void runSetup(final SceneState p_state) {
     // this.verifyKey(p_sceneKey);
     this.startMillis = this.SKETCH.millis();
     this.setup(p_state);
@@ -508,7 +508,7 @@ public class NerdScene implements HardwareEventsHandler {
         this.SKETCH.popStyle();
         this.SKETCH.popMatrix();
 
-        for (NerdLayer l : this.LAYERS)
+        for (final NerdLayer l : this.LAYERS)
           if (l != null)
             if (l.isActive()) {
               this.SKETCH.pushMatrix();
@@ -520,7 +520,7 @@ public class NerdScene implements HardwareEventsHandler {
       }
 
       case LAYER -> {
-        for (NerdLayer l : this.LAYERS)
+        for (final NerdLayer l : this.LAYERS)
           if (l != null)
             if (l.isActive()) {
               this.SKETCH.pushMatrix();
@@ -552,13 +552,13 @@ public class NerdScene implements HardwareEventsHandler {
       case SCENE -> {
         this.post();
 
-        for (NerdLayer l : this.LAYERS)
+        for (final NerdLayer l : this.LAYERS)
           if (l != null)
             if (l.isActive())
               l.post();
       }
       case LAYER -> {
-        for (NerdLayer l : this.LAYERS)
+        for (final NerdLayer l : this.LAYERS)
           if (l != null)
             if (l.isActive())
               l.post();
@@ -570,7 +570,7 @@ public class NerdScene implements HardwareEventsHandler {
   }
 
   /* `package` */ void runExit() {
-    for (NerdLayer l : this.LAYERS)
+    for (final NerdLayer l : this.LAYERS)
       if (l != null)
         if (l.isActive())
           l.exit();
@@ -590,13 +590,13 @@ public class NerdScene implements HardwareEventsHandler {
       case SCENE -> {
         this.pre();
 
-        for (NerdLayer l : this.LAYERS)
+        for (final NerdLayer l : this.LAYERS)
           if (l != null)
             if (l.isActive())
               l.pre();
       }
       case LAYER -> {
-        for (NerdLayer l : this.LAYERS)
+        for (final NerdLayer l : this.LAYERS)
           if (l != null)
             if (l.isActive())
               l.pre();
@@ -640,7 +640,7 @@ public class NerdScene implements HardwareEventsHandler {
    * {@link NerdLayer#setup()} is called <i>when a {@link NerdLayer} is set
    * active</i> using {@link NerdLayer#setActive(boolean)}.
    */
-  protected void setup(SceneState p_state) {
+  protected void setup(final SceneState p_state) {
   }
 
   protected void pre() {

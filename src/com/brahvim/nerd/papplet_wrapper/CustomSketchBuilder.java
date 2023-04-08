@@ -74,47 +74,47 @@ public abstract class CustomSketchBuilder {
     // endregion
 
     // region Adding listeners.
-    public CustomSketchBuilder addSketchConstructionListener(Consumer<Sketch> p_constructionListener) {
+    public CustomSketchBuilder addSketchConstructionListener(final Consumer<Sketch> p_constructionListener) {
         this.SKETCH_KEY.sketchConstructedListeners.add(p_constructionListener);
         return this;
     }
 
-    public CustomSketchBuilder addSketchDisposalListener(Consumer<Sketch> p_disposaListener) {
+    public CustomSketchBuilder addSketchDisposalListener(final Consumer<Sketch> p_disposaListener) {
         this.SKETCH_KEY.disposalListeners.add(p_disposaListener);
         return this;
     }
 
-    public CustomSketchBuilder addSketchSetupListener(Consumer<Sketch> p_setupListener) {
+    public CustomSketchBuilder addSketchSetupListener(final Consumer<Sketch> p_setupListener) {
         this.SKETCH_KEY.setupListeners.add(p_setupListener);
         return this;
     }
 
-    public CustomSketchBuilder addPreListener(Consumer<Sketch> p_preListener) {
+    public CustomSketchBuilder addPreListener(final Consumer<Sketch> p_preListener) {
         this.SKETCH_KEY.preListeners.add(p_preListener);
         return this;
     }
 
-    public CustomSketchBuilder addPostListener(Consumer<Sketch> p_postListener) {
+    public CustomSketchBuilder addPostListener(final Consumer<Sketch> p_postListener) {
         this.SKETCH_KEY.postListeners.add(p_postListener);
         return this;
     }
 
-    public CustomSketchBuilder addPreDrawListener(Consumer<Sketch> p_preDrawListener) {
+    public CustomSketchBuilder addPreDrawListener(final Consumer<Sketch> p_preDrawListener) {
         this.SKETCH_KEY.preDrawListeners.add(p_preDrawListener);
         return this;
     }
 
-    public CustomSketchBuilder addDrawListener(Consumer<Sketch> p_drawListener) {
+    public CustomSketchBuilder addDrawListener(final Consumer<Sketch> p_drawListener) {
         this.SKETCH_KEY.drawListeners.add(p_drawListener);
         return this;
     }
 
-    public CustomSketchBuilder addPostDrawListener(Consumer<Sketch> p_postDrawListener) {
+    public CustomSketchBuilder addPostDrawListener(final Consumer<Sketch> p_postDrawListener) {
         this.SKETCH_KEY.postDrawListeners.add(p_postDrawListener);
         return this;
     }
 
-    public CustomSketchBuilder addSketchExitListener(Consumer<Sketch> p_exitListener) {
+    public CustomSketchBuilder addSketchExitListener(final Consumer<Sketch> p_exitListener) {
         this.SKETCH_KEY.exitListeners.add(p_exitListener);
         return this;
     }
@@ -131,64 +131,64 @@ public abstract class CustomSketchBuilder {
     // region `set()`.
     // region Window settings!
     // region Dimensions.
-    public CustomSketchBuilder setWidth(int p_width) {
+    public CustomSketchBuilder setWidth(final int p_width) {
         this.SKETCH_KEY.width = p_width;
         return this;
     }
 
-    public CustomSketchBuilder setHeight(int p_height) {
+    public CustomSketchBuilder setHeight(final int p_height) {
         this.SKETCH_KEY.height = p_height;
         return this;
     }
     // endregion
 
-    public CustomSketchBuilder setTitle(String p_name) {
+    public CustomSketchBuilder setTitle(final String p_name) {
         this.SKETCH_KEY.name = p_name;
         return this;
     }
     // endregion
 
-    public CustomSketchBuilder setSceneManagerSettings(Supplier<SceneManagerSettings> p_settingsBuilder) {
+    public CustomSketchBuilder setSceneManagerSettings(final Supplier<SceneManagerSettings> p_settingsBuilder) {
         if (p_settingsBuilder != null)
             this.SKETCH_KEY.sceneManagerSettings = p_settingsBuilder.get();
         return this;
     }
 
-    public CustomSketchBuilder setSceneManagerSettings(SceneManagerSettings p_settings) {
+    public CustomSketchBuilder setSceneManagerSettings(final SceneManagerSettings p_settings) {
         if (p_settings != null)
             this.SKETCH_KEY.sceneManagerSettings = p_settings;
         return this;
     }
 
-    public CustomSketchBuilder setStringTablePath(String p_path) {
+    public CustomSketchBuilder setStringTablePath(final String p_path) {
         this.SKETCH_KEY.stringTablePath = p_path;
         return this;
     }
 
-    public CustomSketchBuilder setFirstScene(Class<? extends NerdScene> p_firstScene) {
+    public CustomSketchBuilder setFirstScene(final Class<? extends NerdScene> p_firstScene) {
         // Objects.requireNonNull(p_firstScene, "The first scene needs to be set, and
         // cannot be `null`!");
         this.SKETCH_KEY.firstScene = p_firstScene;
         return this;
     }
 
-    public CustomSketchBuilder setAntiAliasing(int p_value) {
+    public CustomSketchBuilder setAntiAliasing(final int p_value) {
         this.SKETCH_KEY.antiAliasing = p_value;
         return this;
     }
 
     // region `Sketch.CallbackOrder`.
-    public CustomSketchBuilder setPreCallOrder(Sketch.CallbackOrder p_order) {
+    public CustomSketchBuilder setPreCallOrder(final Sketch.CallbackOrder p_order) {
         this.SKETCH_KEY.preCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder setDrawCallOrder(Sketch.CallbackOrder p_order) {
+    public CustomSketchBuilder setDrawCallOrder(final Sketch.CallbackOrder p_order) {
         this.SKETCH_KEY.drawCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder setPostCallOrder(Sketch.CallbackOrder p_order) {
+    public CustomSketchBuilder setPostCallOrder(final Sketch.CallbackOrder p_order) {
         this.SKETCH_KEY.postCallOrder = p_order;
         return this;
     }
@@ -196,7 +196,7 @@ public abstract class CustomSketchBuilder {
     // endregion
 
     // region Window behaviors and properties.
-    public CustomSketchBuilder setIconPath(String p_pathString) {
+    public CustomSketchBuilder setIconPath(final String p_pathString) {
         this.SKETCH_KEY.iconPath = p_pathString;
         return this;
     }
@@ -233,7 +233,7 @@ public abstract class CustomSketchBuilder {
     // endregion
 
     // region Any kind of pre-loading.
-    public CustomSketchBuilder preLoadAssets(Class<? extends NerdScene> p_sceneClass) {
+    public CustomSketchBuilder preLoadAssets(final Class<? extends NerdScene> p_sceneClass) {
         if (p_sceneClass == null)
             return this;
 
@@ -242,11 +242,11 @@ public abstract class CustomSketchBuilder {
     }
 
     @SuppressWarnings("all")
-    public CustomSketchBuilder preLoadAssets(Class<? extends NerdScene>... p_sceneClasses) {
+    public CustomSketchBuilder preLoadAssets(final Class<? extends NerdScene>... p_sceneClasses) {
         if (p_sceneClasses == null)
             return this;
 
-        for (Class<? extends NerdScene> c : p_sceneClasses) {
+        for (final Class<? extends NerdScene> c : p_sceneClasses) {
             if (c == null)
                 continue;
             this.SKETCH_KEY.scenesToPreload.add(c);

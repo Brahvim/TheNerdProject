@@ -7,7 +7,7 @@ import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 
 public class AlRingModulator extends AlEffect {
 
-	public AlRingModulator(NerdAl p_NerdAl) {
+	public AlRingModulator(final NerdAl p_NerdAl) {
 		super(p_NerdAl);
 	}
 
@@ -31,17 +31,17 @@ public class AlRingModulator extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public AlRingModulator setRingModulatorFrequency(float p_value) {
+	public AlRingModulator setRingModulatorFrequency(final float p_value) {
 		super.setFloat(EXTEfx.AL_RING_MODULATOR_FREQUENCY, p_value);
 		return this;
 	}
 
-	public AlRingModulator setRingModulatorWaveform(float p_value) {
+	public AlRingModulator setRingModulatorWaveform(final float p_value) {
 		super.setFloat(EXTEfx.AL_RING_MODULATOR_WAVEFORM, p_value);
 		return this;
 	}
 
-	public AlRingModulator setRingModulatorHighpassCutoff(float p_value) {
+	public AlRingModulator setRingModulatorHighpassCutoff(final float p_value) {
 		super.setFloat(EXTEfx.AL_RING_MODULATOR_HIGHPASS_CUTOFF, p_value);
 		return this;
 	}

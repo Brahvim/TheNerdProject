@@ -18,9 +18,9 @@ public class PShapeAsset extends AssetType<PShape> {
 	// endregion
 
 	@Override
-	public PShape fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public PShape fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
-		PShape shape = p_sketch.loadShape(p_path);
+		final PShape shape = p_sketch.loadShape(p_path);
 
 		if (shape == null)
 			throw new AssetLoaderFailedException();

@@ -148,7 +148,7 @@ public class UdpSocket {
                     // We got some work?
                     while (REC.doRun) {
                         try {
-                            PARENT.in = new DatagramPacket(byteData, byteData.length);
+                            PARENT.in = new DatagramPacket(this.byteData, this.byteData.length);
                             if (PARENT.sock != null)
                                 PARENT.sock.receive(PARENT.in); // Fetch it well!
                         } catch (final IOException e) {
@@ -178,9 +178,9 @@ public class UdpSocket {
                             // ..Gotta handle those!:
 
                             try {
-                                final byte[] copy = new byte[byteData.length];
+                                final byte[] copy = new byte[this.byteData.length];
 
-                                System.arraycopy(byteData, 0, copy, 0, byteData.length);
+                                System.arraycopy(this.byteData, 0, copy, 0, this.byteData.length);
 
                                 // Super slow `memset()`...
                                 // for (int i = 0; i < byteData.length; i++)
@@ -381,7 +381,7 @@ public class UdpSocket {
      *               the first character of the string.
      * @apiNote {@code public} so you can generate fake events ;)
      */
-    public void onReceive(byte[] p_data, String p_ip, int p_port) {
+    public void onReceive(final byte[] p_data, final String p_ip, final int p_port) {
     }
 
     /**
@@ -396,7 +396,7 @@ public class UdpSocket {
         return this.sock;
     }
 
-    public void setSocket(DatagramSocket p_sock) {
+    public void setSocket(final DatagramSocket p_sock) {
         this.receiver.stop();
         this.sock = p_sock;
         this.receiver.start();
@@ -436,7 +436,7 @@ public class UdpSocket {
     public void setPort(final int p_port) {
         try {
             final InetAddress previous = this.sock.getLocalAddress();
-            final boolean receiverWasNull = receiver == null;
+            final boolean receiverWasNull = this.receiver == null;
             // ^^^ Used when the function is called from constructors.
 
             if (!receiverWasNull)

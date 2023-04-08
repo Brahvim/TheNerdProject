@@ -7,7 +7,7 @@ import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 
 public class AlFlanger extends AlEffect {
 
-	public AlFlanger(NerdAl p_NerdAl) {
+	public AlFlanger(final NerdAl p_NerdAl) {
 		super(p_NerdAl);
 	}
 
@@ -43,32 +43,32 @@ public class AlFlanger extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public AlFlanger setFlangerWaveform(float p_value) {
+	public AlFlanger setFlangerWaveform(final float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_WAVEFORM, p_value);
 		return this;
 	}
 
-	public AlFlanger setFlangerPhase(float p_value) {
+	public AlFlanger setFlangerPhase(final float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_PHASE, p_value);
 		return this;
 	}
 
-	public AlFlanger setFlangerRate(float p_value) {
+	public AlFlanger setFlangerRate(final float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_RATE, p_value);
 		return this;
 	}
 
-	public AlFlanger setFlangerDepth(float p_value) {
+	public AlFlanger setFlangerDepth(final float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_DEPTH, p_value);
 		return this;
 	}
 
-	public AlFlanger setFlangerFeedback(float p_value) {
+	public AlFlanger setFlangerFeedback(final float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_FEEDBACK, p_value);
 		return this;
 	}
 
-	public AlFlanger setFlangerDelay(float p_value) {
+	public AlFlanger setFlangerDelay(final float p_value) {
 		super.setFloat(EXTEfx.AL_FLANGER_DELAY, p_value);
 		return this;
 	}

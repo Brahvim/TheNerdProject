@@ -22,13 +22,13 @@ public class PShaderAsset extends AssetType<PShader> {
 	 * To load two shaders, separate the paths passed to {@code p_path} with a `\0`.
 	 */
 	@Override
-	public PShader fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public PShader fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		final int questId = p_path.indexOf('\0');
 		PShader shader = null;
 
 		if (questId != -1) {
-			String[] paths = PApplet.split(p_path, '\0');
+			final String[] paths = PApplet.split(p_path, '\0');
 			shader = p_sketch.loadShader(paths[0], paths[1]);
 		} else
 			shader = p_sketch.loadShader(p_path);

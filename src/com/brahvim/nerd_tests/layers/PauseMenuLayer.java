@@ -6,9 +6,9 @@ public class PauseMenuLayer extends NerdLayer {
 
     @Override
     protected void draw() {
-        SKETCH.begin2d();
+        this.SKETCH.begin2d();
 
-        SKETCH.end2d();
+        this.SKETCH.end2d();
     }
 
 }

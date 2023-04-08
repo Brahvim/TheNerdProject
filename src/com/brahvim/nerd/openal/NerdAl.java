@@ -67,22 +67,22 @@ public class NerdAl {
 
 	// region Listener functions.
 	// region C-style OpenAL listener getters.
-	public int getListenerInt(long p_ctxId, int p_alEnum) {
+	public int getListenerInt(final long p_ctxId, final int p_alEnum) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		return AL11.alGetListeneri(p_alEnum);
 	}
 
-	public float getListenerFloat(long p_ctxId, int p_alEnum) {
+	public float getListenerFloat(final long p_ctxId, final int p_alEnum) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		return AL11.alGetListenerf(p_alEnum);
 	}
 
 	// Vectors in OpenAL are not large and can be allocated on the stack just fine.
-	public int[] getListenerIntVector(long p_ctxId, int p_alEnum, int p_vecSize) {
+	public int[] getListenerIntVector(final long p_ctxId, final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
+		final IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alGetListeneriv(p_alEnum, intBuffer);
@@ -91,9 +91,9 @@ public class NerdAl {
 		return intBuffer.array();
 	}
 
-	public float[] getListenerFloatVector(long p_ctxId, int p_alEnum, int p_vecSize) {
+	public float[] getListenerFloatVector(final long p_ctxId, final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
+		final FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alGetListenerfv(p_alEnum, floatBuffer);
@@ -102,9 +102,9 @@ public class NerdAl {
 		return floatBuffer.array();
 	}
 
-	public int[] getListenerIntTriplet(long p_ctxId, int p_alEnum) {
+	public int[] getListenerIntTriplet(final long p_ctxId, final int p_alEnum) {
 		MemoryStack.stackPush();
-		IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
+		final IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alGetListeneriv(p_alEnum, intBuffer);
@@ -113,9 +113,9 @@ public class NerdAl {
 		return intBuffer.array();
 	}
 
-	public /* `float[]` */ float[] getListenerFloatTriplet(long p_ctxId, int p_alEnum) {
+	public /* `float[]` */ float[] getListenerFloatTriplet(final long p_ctxId, final int p_alEnum) {
 		MemoryStack.stackPush();
-		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
+		final FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alGetListenerfv(p_alEnum, floatBuffer);
@@ -127,35 +127,35 @@ public class NerdAl {
 	// endregion
 
 	// region C-style OpenAL listener setters.
-	public void setListenerInt(long p_ctxId, int p_alEnum, int p_value) {
+	public void setListenerInt(final long p_ctxId, final int p_alEnum, final int p_value) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alListeneri(p_alEnum, p_value);
 		this.checkAlError();
 	}
 
-	public void setListenerFloat(long p_ctxId, int p_alEnum, float p_value) {
+	public void setListenerFloat(final long p_ctxId, final int p_alEnum, final float p_value) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alListenerf(p_alEnum, p_value);
 		this.checkAlError();
 	}
 
-	public void setListenerIntVector(long p_ctxId, int p_alEnum, int... p_value) {
+	public void setListenerIntVector(final long p_ctxId, final int p_alEnum, final int... p_value) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alListeneriv(p_alEnum, p_value);
 		this.checkAlError();
 	}
 
-	public void setListenerFloatVector(long p_ctxId, int p_alEnum, float... p_values) {
+	public void setListenerFloatVector(final long p_ctxId, final int p_alEnum, final float... p_values) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alListenerfv(p_alEnum, p_values);
 		this.checkAlError();
 	}
 
-	public void setListenerIntTriplet(long p_ctxId, int p_alEnum, int... p_value) {
+	public void setListenerIntTriplet(final long p_ctxId, final int p_alEnum, final int... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`AlSource::setIntTriplet(AlContext p_ctx, )` cannot take an array of size other than `3`!");
@@ -166,14 +166,14 @@ public class NerdAl {
 		this.checkAlError();
 	}
 
-	public void setListenerIntTriplet(long p_ctxId, int p_alEnum, int p_i1, int p_i2, int p_i3) {
+	public void setListenerIntTriplet(final long p_ctxId, final int p_alEnum, final int p_i1, final int p_i2, final int p_i3) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alListener3i(p_alEnum, p_i1, p_i2, p_i3);
 		this.checkAlError();
 	}
 
-	public void setListenerFloatTriplet(long p_ctxId, int p_alEnum, float... p_value) {
+	public void setListenerFloatTriplet(final long p_ctxId, final int p_alEnum, final float... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`AlSource::setFloatTriplet(AlContext p_ctx, )` cannot take an array of size other than `3`!");
@@ -184,14 +184,14 @@ public class NerdAl {
 		this.checkAlError();
 	}
 
-	public void setListenerFloatTriplet(long p_ctxId, int p_alEnum, float p_f1, float p_f2, float p_f3) {
+	public void setListenerFloatTriplet(final long p_ctxId, final int p_alEnum, final float p_f1, final float p_f2, final float p_f3) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alListener3f(p_alEnum, p_f1, p_f2, p_f3);
 		this.checkAlError();
 	}
 
-	public void setListenerFloatTriplet(long p_ctxId, int p_alEnum, PVector p_value) {
+	public void setListenerFloatTriplet(final long p_ctxId, final int p_alEnum, final PVector p_value) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alListener3f(p_alEnum, p_value.x, p_value.y, p_value.z);
@@ -200,60 +200,60 @@ public class NerdAl {
 	// endregion
 
 	// region Listener getters.
-	public float getListenerMetersPerUnit(AlContext p_ctx) {
+	public float getListenerMetersPerUnit(final AlContext p_ctx) {
 		return this.getListenerFloat(p_ctx.getId(), EXTEfx.AL_METERS_PER_UNIT);
 	}
 
-	public float getListenerGain(AlContext p_ctx) {
+	public float getListenerGain(final AlContext p_ctx) {
 		return this.getListenerFloat(p_ctx.getId(), AL11.AL_GAIN);
 	}
 
-	public float[] getListenerPosition(AlContext p_ctx) {
+	public float[] getListenerPosition(final AlContext p_ctx) {
 		return this.getListenerFloatTriplet(p_ctx.getId(), AL11.AL_POSITION);
 	}
 
-	public float[] getListenerVelocity(AlContext p_ctx) {
+	public float[] getListenerVelocity(final AlContext p_ctx) {
 		return this.getListenerFloatTriplet(p_ctx.getId(), AL11.AL_VELOCITY);
 	}
 
-	public float[] getListenerOrientation(AlContext p_ctx) {
+	public float[] getListenerOrientation(final AlContext p_ctx) {
 		return this.getListenerFloatTriplet(p_ctx.getId(), AL11.AL_ORIENTATION);
 	}
 	// endregion
 
 	// region Listener setters.
-	public void setListenerGain(AlContext p_ctx, float p_value) {
+	public void setListenerGain(final AlContext p_ctx, final float p_value) {
 		this.setListenerFloat(p_ctx.getId(), AL11.AL_GAIN, p_value);
 	}
 
-	public void setMetersPerUnit(AlContext p_ctx, float p_value) {
+	public void setMetersPerUnit(final AlContext p_ctx, final float p_value) {
 		this.setListenerFloat(p_ctx.getId(), EXTEfx.AL_METERS_PER_UNIT, p_value);
 	}
 
 	// region `float...` overloads for listener vectors.
-	public void setListenerPosition(AlContext p_ctx, float... p_values) {
+	public void setListenerPosition(final AlContext p_ctx, final float... p_values) {
 		this.setListenerFloatTriplet(p_ctx.getId(), AL11.AL_POSITION, p_values);
 	}
 
-	public void setListenerVelocity(AlContext p_ctx, float... p_values) {
+	public void setListenerVelocity(final AlContext p_ctx, final float... p_values) {
 		this.setListenerFloatTriplet(p_ctx.getId(), AL11.AL_VELOCITY, p_values);
 	}
 
-	public void setListenerOrientation(AlContext p_ctx, float... p_values) {
+	public void setListenerOrientation(final AlContext p_ctx, final float... p_values) {
 		this.setListenerFloatTriplet(p_ctx.getId(), AL11.AL_ORIENTATION, p_values);
 	}
 	// endregion
 
 	// region `PVector` overloads for listener vectors.
-	public void setListenerPosition(AlContext p_ctx, PVector p_value) {
+	public void setListenerPosition(final AlContext p_ctx, final PVector p_value) {
 		this.setListenerFloatTriplet(p_ctx.getId(), AL11.AL_POSITION, p_value.x, p_value.y, p_value.z);
 	}
 
-	public void setListenerVelocity(AlContext p_ctx, PVector p_value) {
+	public void setListenerVelocity(final AlContext p_ctx, final PVector p_value) {
 		this.setListenerFloatTriplet(p_ctx.getId(), AL11.AL_VELOCITY, p_value.x, p_value.y, p_value.z);
 	}
 
-	public void setListenerOrientation(AlContext p_ctx, PVector p_value) {
+	public void setListenerOrientation(final AlContext p_ctx, final PVector p_value) {
 		this.setListenerFloatTriplet(p_ctx.getId(), AL11.AL_ORIENTATION, p_value.x, p_value.y, p_value.z);
 	}
 	// endregion
@@ -282,38 +282,38 @@ public class NerdAl {
 	// endregion
 
 	// region Default listener setters.
-	public void setListenerGain(float p_value) {
+	public void setListenerGain(final float p_value) {
 		this.setListenerFloat(this.DEFAULT_CONTEXT_ID, AL11.AL_GAIN, p_value);
 	}
 
-	public void setMetersPerUnit(float p_value) {
+	public void setMetersPerUnit(final float p_value) {
 		this.setListenerFloat(this.DEFAULT_CONTEXT_ID, EXTEfx.AL_METERS_PER_UNIT, p_value);
 	}
 
 	// region `float...` overloads for listener vectors.
-	public void setListenerPosition(float... p_values) {
+	public void setListenerPosition(final float... p_values) {
 		this.setListenerFloatTriplet(this.DEFAULT_CONTEXT_ID, AL11.AL_POSITION, p_values);
 	}
 
-	public void setListenerVelocity(float... p_values) {
+	public void setListenerVelocity(final float... p_values) {
 		this.setListenerFloatTriplet(this.DEFAULT_CONTEXT_ID, AL11.AL_VELOCITY, p_values);
 	}
 
-	public void setListenerOrientation(float... p_values) {
+	public void setListenerOrientation(final float... p_values) {
 		this.setListenerFloatTriplet(this.DEFAULT_CONTEXT_ID, AL11.AL_ORIENTATION, p_values);
 	}
 	// endregion
 
 	// region `PVector` overloads for listener vectors.
-	public void setListenerPosition(PVector p_value) {
+	public void setListenerPosition(final PVector p_value) {
 		this.setListenerFloatTriplet(this.DEFAULT_CONTEXT_ID, AL11.AL_POSITION, p_value.x, p_value.y, p_value.z);
 	}
 
-	public void setListenerVelocity(PVector p_value) {
+	public void setListenerVelocity(final PVector p_value) {
 		this.setListenerFloatTriplet(this.DEFAULT_CONTEXT_ID, AL11.AL_VELOCITY, p_value.x, p_value.y, p_value.z);
 	}
 
-	public void setListenerOrientation(PVector p_value) {
+	public void setListenerOrientation(final PVector p_value) {
 		// this.setListenerFloatTriplet(this.DEFAULT_CONTEXT_ID, AL11.AL_ORIENTATION,
 		// p_value.x, p_value.y, p_value.z); // Broken ¯\_(ツ)_/¯
 
@@ -339,21 +339,21 @@ public class NerdAl {
 
 	// region Getters and setters!...
 	// region C-style OpenAL getters.
-	public int getAlInt(int p_alEnum) {
-		int toRet = AL11.alGetInteger(p_alEnum);
+	public int getAlInt(final int p_alEnum) {
+		final int toRet = AL11.alGetInteger(p_alEnum);
 		this.checkAlError();
 		return toRet;
 	}
 
-	public float getAlFloat(int p_alEnum) {
-		float toRet = AL11.alGetFloat(p_alEnum);
+	public float getAlFloat(final int p_alEnum) {
+		final float toRet = AL11.alGetFloat(p_alEnum);
 		this.checkAlError();
 		return toRet;
 	}
 
-	public int[] getAlIntVector(int p_alEnum, int p_vecSize) {
+	public int[] getAlIntVector(final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		IntBuffer buffer = MemoryStack.stackMallocInt(p_vecSize);
+		final IntBuffer buffer = MemoryStack.stackMallocInt(p_vecSize);
 		AL11.alGetIntegerv(p_alEnum, buffer);
 		MemoryStack.stackPop();
 
@@ -361,9 +361,9 @@ public class NerdAl {
 		return buffer.array();
 	}
 
-	public float[] getAlFloatVector(int p_alEnum, int p_vecSize) {
+	public float[] getAlFloatVector(final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vecSize);
+		final FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vecSize);
 		AL11.alGetFloatv(p_alEnum, buffer);
 		MemoryStack.stackPop();
 
@@ -418,46 +418,46 @@ public class NerdAl {
 
 	// Only these three setters.
 	// region OpenAL API setters.
-	public void setDistanceModel(int p_value) {
+	public void setDistanceModel(final int p_value) {
 		AL11.alDistanceModel(p_value);
 	}
 
-	public void setDopplerFactor(float p_value) {
+	public void setDopplerFactor(final float p_value) {
 		AL11.alDopplerFactor(p_value);
 	}
 
-	public void setSpeedOfSound(float p_value) {
+	public void setSpeedOfSound(final float p_value) {
 		AL11.alSpeedOfSound(p_value);
 	}
 	// endregion
 	// endregion
 
 	// region Error, and other checks.
-	public static boolean isSource(int p_id) {
+	public static boolean isSource(final int p_id) {
 		return AL11.alIsSource(p_id);
 	}
 
-	public static boolean isBuffer(int p_id) {
+	public static boolean isBuffer(final int p_id) {
 		return AL11.alIsBuffer(p_id);
 	}
 
-	public static boolean isEffect(int p_id) {
+	public static boolean isEffect(final int p_id) {
 		return EXTEfx.alIsEffect(p_id);
 	}
 
-	public static boolean isFilter(int p_id) {
+	public static boolean isFilter(final int p_id) {
 		return EXTEfx.alIsFilter(p_id);
 	}
 
-	public static boolean isEffectSlot(int p_id) {
+	public static boolean isEffectSlot(final int p_id) {
 		return EXTEfx.alIsAuxiliaryEffectSlot(p_id);
 	}
 
-	public static int errorStringToCode(String p_errorString) {
+	public static int errorStringToCode(final String p_errorString) {
 		return AL11.alGetEnumValue(p_errorString.split("\"")[1]);
 	}
 
-	public static int errorStringToCode(NerdAbstractOpenAlException p_exception) {
+	public static int errorStringToCode(final NerdAbstractOpenAlException p_exception) {
 		return AL11.alGetEnumValue(p_exception.getAlcErrorString());
 	}
 
@@ -483,21 +483,21 @@ public class NerdAl {
 	// endregion
 
 	// region Loading sources from disk.
-	public AlSource sourceFromOgg(File p_file) {
+	public AlSource sourceFromOgg(final File p_file) {
 		return new AlSource(this, new AlOggBuffer(this).loadFrom(p_file));
 	}
 
 	@Deprecated
-	public AlSource sourceFromWav(File p_file) {
+	public AlSource sourceFromWav(final File p_file) {
 		return new AlSource(this, new AlWavBuffer(this).loadFrom(p_file));
 	}
 
-	public AlSource sourceFromOgg(String p_filePath) {
+	public AlSource sourceFromOgg(final String p_filePath) {
 		return new AlSource(this, new AlOggBuffer(this).loadFrom(p_filePath));
 	}
 
 	@Deprecated
-	public AlSource sourceFromWav(String p_filePath) {
+	public AlSource sourceFromWav(final String p_filePath) {
 		return new AlSource(this, new AlWavBuffer(this).loadFrom(p_filePath));
 	}
 	// endregion
@@ -506,7 +506,7 @@ public class NerdAl {
 	public void framelyCallback() {
 		this.device.disconnectionCheck();
 
-		for (AlSource s : AlSource.ALL_INSTANCES)
+		for (final AlSource s : AlSource.ALL_INSTANCES)
 			s.framelyCallback();
 	}
 
@@ -559,11 +559,11 @@ public class NerdAl {
 		}
 	}
 
-	protected AlContext createAl(String p_deviceName) {
+	protected AlContext createAl(final String p_deviceName) {
 		return this.createAl(p_deviceName, null);
 	}
 
-	protected AlContext createAl(String p_deviceName, AlContext.AlContextSettings p_contextSettings) {
+	protected AlContext createAl(final String p_deviceName, final AlContext.AlContextSettings p_contextSettings) {
 		this.device = new AlDevice(this);
 		this.context = new AlContext(this, p_contextSettings);
 

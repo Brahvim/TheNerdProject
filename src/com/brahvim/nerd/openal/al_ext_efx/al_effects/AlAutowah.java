@@ -7,7 +7,7 @@ import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 
 public class AlAutowah extends AlEffect {
 
-	public AlAutowah(NerdAl p_NerdAl) {
+	public AlAutowah(final NerdAl p_NerdAl) {
 		super(p_NerdAl);
 	}
 
@@ -35,22 +35,22 @@ public class AlAutowah extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public AlAutowah setAutowahAttackTime(float p_value) {
+	public AlAutowah setAutowahAttackTime(final float p_value) {
 		super.setFloat(EXTEfx.AL_AUTOWAH_ATTACK_TIME, p_value);
 		return this;
 	}
 
-	public AlAutowah setAutowahReleaseTime(float p_value) {
+	public AlAutowah setAutowahReleaseTime(final float p_value) {
 		super.setFloat(EXTEfx.AL_AUTOWAH_RELEASE_TIME, p_value);
 		return this;
 	}
 
-	public AlAutowah setAutowahResonance(float p_value) {
+	public AlAutowah setAutowahResonance(final float p_value) {
 		super.setFloat(EXTEfx.AL_AUTOWAH_RESONANCE, p_value);
 		return this;
 	}
 
-	public AlAutowah setAutowahPeakGain(float p_value) {
+	public AlAutowah setAutowahPeakGain(final float p_value) {
 		super.setFloat(EXTEfx.AL_AUTOWAH_PEAK_GAIN, p_value);
 		return this;
 	}

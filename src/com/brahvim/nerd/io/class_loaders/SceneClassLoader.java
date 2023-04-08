@@ -4,7 +4,7 @@ import com.brahvim.nerd.scene_api.NerdScene;
 
 public class SceneClassLoader extends LoadeableClass<NerdScene> {
 
-	public SceneClassLoader(String p_urlString, String p_fullyQualifiedName) {
+	public SceneClassLoader(final String p_urlString, final String p_fullyQualifiedName) {
 		super(p_urlString, p_fullyQualifiedName);
 	}
 

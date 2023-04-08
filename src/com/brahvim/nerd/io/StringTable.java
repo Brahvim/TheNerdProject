@@ -26,7 +26,7 @@ public class StringTable {
     // endregion
 
     // region Constructors.
-    public StringTable(File p_file, String p_lang) throws FileNotFoundException {
+    public StringTable(final File p_file, final String p_lang) throws FileNotFoundException {
         this.file = p_file;
         this.langauge = p_lang;
 
@@ -40,11 +40,11 @@ public class StringTable {
         this.refresh();
     }
 
-    public StringTable(String p_filePath, String p_lang) throws FileNotFoundException {
+    public StringTable(final String p_filePath, final String p_lang) throws FileNotFoundException {
         this(new File(p_filePath), p_lang);
     }
 
-    public StringTable(File p_file) throws FileNotFoundException {
+    public StringTable(final File p_file) throws FileNotFoundException {
         this.file = p_file;
         this.langauge = "en";
 
@@ -54,23 +54,23 @@ public class StringTable {
         this.refresh();
     }
 
-    public StringTable(String p_filePath) throws FileNotFoundException {
+    public StringTable(final String p_filePath) throws FileNotFoundException {
         this(new File(p_filePath));
     }
     // endregion
 
     // region Language settings.
-    public void setLanguage(String p_lang) {
+    public void setLanguage(final String p_lang) {
         this.langauge = p_lang;
     }
 
-    public void getLanguage(String p_lang) {
+    public void getLanguage(final String p_lang) {
         this.langauge = p_lang;
     }
     // endregion
 
     // region `refresh()` overloads.
-    public void refresh(File p_file) throws FileNotFoundException {
+    public void refresh(final File p_file) throws FileNotFoundException {
         if (p_file == null)
             throw new NullPointerException(
                     "`StringTable::refresh(File)` cannot take a `null` `File`!");
@@ -97,11 +97,11 @@ public class StringTable {
     // endregion
 
     // region `getString()` overloads.
-    public String get(String p_key) {
+    public String get(final String p_key) {
         return this.get(p_key, "");
     }
 
-    public String get(String p_key, String p_default) {
+    public String get(final String p_key, final String p_default) {
         // Split all the keys!
         final String[] KEYS = PApplet.split(p_key, '.');
 
@@ -122,7 +122,7 @@ public class StringTable {
         // from outside the loop!
 
         // ...get the string of the specified langauge!
-        String toRet = lastObject.getString(this.langauge);
+        final String toRet = lastObject.getString(this.langauge);
         lastObject = null; // GC, do you wish to collect it? Please do it now!
 
         if (toRet == null) {
@@ -138,11 +138,11 @@ public class StringTable {
     // endregion
 
     // region `fromArray()` overloads.
-    public String fromArray(String p_key, int p_id) {
+    public String fromArray(final String p_key, final int p_id) {
         return this.fromArray(p_key, p_id, "");
     }
 
-    public String fromArray(String p_key, int p_id, String p_default) {
+    public String fromArray(final String p_key, final int p_id, final String p_default) {
         // Split all the keys!
         final String[] KEYS = PApplet.split(p_key, '.');
 
@@ -195,11 +195,11 @@ public class StringTable {
     // endregion
 
     // region `randomFromArray()` overloads.
-    public String randomFromArray(String p_key) {
+    public String randomFromArray(final String p_key) {
         return this.randomFromArray(p_key, "");
     }
 
-    public String randomFromArray(String p_key, String p_default) {
+    public String randomFromArray(final String p_key, final String p_default) {
         // Split all the keys!
         final String[] KEYS = PApplet.split(p_key, '.');
 

@@ -30,18 +30,18 @@ public class AlContext extends AlNativeResource {
 	// region Fields.
 	protected static final ArrayList<AlContext> ALL_INSTANCES = new ArrayList<>();
 
-	private NerdAl alMan;
+	private final NerdAl alMan;
 	private final AlDevice device;
 	private final long id, deviceId;
-	private ArrayList<AlBuffer<?>> buffers;
+	private final ArrayList<AlBuffer<?>> buffers;
 	// endregion
 
 	// region Constructors.
-	public AlContext(NerdAl p_manager) {
+	public AlContext(final NerdAl p_manager) {
 		this(p_manager, new AlContext.AlContextSettings());
 	}
 
-	public AlContext(NerdAl p_manager, AlContext.AlContextSettings p_settings) {
+	public AlContext(final NerdAl p_manager, final AlContext.AlContextSettings p_settings) {
 		this.alMan = p_manager;
 		this.buffers = new ArrayList<>();
 		this.device = p_manager.getDevice();
@@ -72,7 +72,7 @@ public class AlContext extends AlNativeResource {
 	}
 
 	public AlDevice getDevice() {
-		return device;
+		return this.device;
 	}
 
 	@SuppressWarnings("unchecked")

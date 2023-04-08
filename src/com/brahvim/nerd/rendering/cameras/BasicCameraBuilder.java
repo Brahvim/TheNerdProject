@@ -9,10 +9,10 @@ import processing.core.PVector;
 
 public class BasicCameraBuilder {
 
-    private BasicCamera build;
+    private final BasicCamera build;
     private final Sketch SKETCH;
 
-    public BasicCameraBuilder(Sketch p_sketch) {
+    public BasicCameraBuilder(final Sketch p_sketch) {
         this.SKETCH = p_sketch; // Used by `setClearColor()`.
         this.build = new BasicCamera(p_sketch);
 
@@ -37,17 +37,17 @@ public class BasicCameraBuilder {
     // region Vectors.
     // region Default ones.
     // region Default up vector.
-    public BasicCameraBuilder setDefaultUp(float p_x, float p_y) {
+    public BasicCameraBuilder setDefaultUp(final float p_x, final float p_y) {
         this.build.defaultCamUp.set(p_x, p_y);
         return this;
     }
 
-    public BasicCameraBuilder setDefaultUp(float p_x, float p_y, float p_z) {
+    public BasicCameraBuilder setDefaultUp(final float p_x, final float p_y, final float p_z) {
         this.build.defaultCamUp.set(p_x, p_y, p_z);
         return this;
     }
 
-    public BasicCameraBuilder setDefaultUp(PVector p_vec) {
+    public BasicCameraBuilder setDefaultUp(final PVector p_vec) {
         if (p_vec != null)
             this.build.defaultCamUp.set(p_vec);
         return this;
@@ -55,17 +55,17 @@ public class BasicCameraBuilder {
     // endregion
 
     // region Default position vector.
-    public BasicCameraBuilder setDefaultPos(float p_x, float p_y) {
+    public BasicCameraBuilder setDefaultPos(final float p_x, final float p_y) {
         this.build.defaultCamPos.set(p_x, p_y);
         return this;
     }
 
-    public BasicCameraBuilder setDefaultPos(float p_x, float p_y, float p_z) {
+    public BasicCameraBuilder setDefaultPos(final float p_x, final float p_y, final float p_z) {
         this.build.defaultCamPos.set(p_x, p_y, p_z);
         return this;
     }
 
-    public BasicCameraBuilder setDefaultPos(PVector p_vec) {
+    public BasicCameraBuilder setDefaultPos(final PVector p_vec) {
         if (p_vec != null)
             this.build.defaultCamPos.set(p_vec);
         return this;
@@ -73,17 +73,17 @@ public class BasicCameraBuilder {
     // endregion
 
     // region Default center vector.
-    public BasicCameraBuilder setDefaultCenter(float p_x, float p_y) {
+    public BasicCameraBuilder setDefaultCenter(final float p_x, final float p_y) {
         this.build.defaultCamCenter.set(p_x, p_y);
         return this;
     }
 
-    public BasicCameraBuilder setDefaultCenter(float p_x, float p_y, float p_z) {
+    public BasicCameraBuilder setDefaultCenter(final float p_x, final float p_y, final float p_z) {
         this.build.defaultCamCenter.set(p_x, p_y, p_z);
         return this;
     }
 
-    public BasicCameraBuilder setDefaultCenter(PVector p_vec) {
+    public BasicCameraBuilder setDefaultCenter(final PVector p_vec) {
         if (p_vec != null)
             this.build.defaultCamCenter.set(p_vec);
         return this;
@@ -93,17 +93,17 @@ public class BasicCameraBuilder {
 
     // region Dynamic ones.
     // region Dynamic up vector.
-    public BasicCameraBuilder setUp(float p_x, float p_y) {
+    public BasicCameraBuilder setUp(final float p_x, final float p_y) {
         this.build.up.set(p_x, p_y);
         return this;
     }
 
-    public BasicCameraBuilder setUp(float p_x, float p_y, float p_z) {
+    public BasicCameraBuilder setUp(final float p_x, final float p_y, final float p_z) {
         this.build.up.set(p_x, p_y, p_z);
         return this;
     }
 
-    public BasicCameraBuilder setUp(PVector p_vec) {
+    public BasicCameraBuilder setUp(final PVector p_vec) {
         if (p_vec != null)
             this.build.up.set(p_vec);
         return this;
@@ -111,17 +111,17 @@ public class BasicCameraBuilder {
     // endregion
 
     // region Dynamic position vector.
-    public BasicCameraBuilder setPos(float p_x, float p_y) {
+    public BasicCameraBuilder setPos(final float p_x, final float p_y) {
         this.build.pos.set(p_x, p_y);
         return this;
     }
 
-    public BasicCameraBuilder setPos(float p_x, float p_y, float p_z) {
+    public BasicCameraBuilder setPos(final float p_x, final float p_y, final float p_z) {
         this.build.pos.set(p_x, p_y, p_z);
         return this;
     }
 
-    public BasicCameraBuilder setPos(PVector p_vec) {
+    public BasicCameraBuilder setPos(final PVector p_vec) {
         if (p_vec != null)
             this.build.pos.set(p_vec);
         return this;
@@ -129,17 +129,17 @@ public class BasicCameraBuilder {
     // endregion
 
     // region Dynamic center vector.
-    public BasicCameraBuilder setCenter(float p_x, float p_y) {
+    public BasicCameraBuilder setCenter(final float p_x, final float p_y) {
         this.build.center.set(p_x, p_y);
         return this;
     }
 
-    public BasicCameraBuilder setCenter(float p_x, float p_y, float p_z) {
+    public BasicCameraBuilder setCenter(final float p_x, final float p_y, final float p_z) {
         this.build.center.set(p_x, p_y, p_z);
         return this;
     }
 
-    public BasicCameraBuilder setCenter(PVector p_vec) {
+    public BasicCameraBuilder setCenter(final PVector p_vec) {
         if (p_vec != null)
             this.build.center.set(p_vec);
         return this;
@@ -149,46 +149,46 @@ public class BasicCameraBuilder {
     // endregion
 
     // region `float` values.
-    public BasicCameraBuilder setFar(float p_far) {
+    public BasicCameraBuilder setFar(final float p_far) {
         this.build.far = p_far;
         return this;
     }
 
-    public BasicCameraBuilder setFov(float p_fov) {
+    public BasicCameraBuilder setFov(final float p_fov) {
         this.build.fov = p_fov;
         return this;
     }
 
-    public BasicCameraBuilder setNear(float p_fov) {
+    public BasicCameraBuilder setNear(final float p_fov) {
         this.build.near = p_fov;
         return this;
     }
 
-    public BasicCameraBuilder setMouseZ(float p_mouseZ) {
+    public BasicCameraBuilder setMouseZ(final float p_mouseZ) {
         this.build.mouseZ = p_mouseZ;
         return this;
     }
     // endregion
 
     // region `boolean`s.
-    public BasicCameraBuilder setAutoClear(boolean p_doAutoClear) {
+    public BasicCameraBuilder setAutoClear(final boolean p_doAutoClear) {
         this.build.doAutoClear = p_doAutoClear;
         return this;
     }
 
-    public BasicCameraBuilder setScript(boolean p_doScript) {
+    public BasicCameraBuilder setScript(final boolean p_doScript) {
         this.build.doScript = p_doScript;
         return this;
     }
     // endregion
 
-    public BasicCameraBuilder setScript(Consumer<NerdAbstractCamera> p_script) {
+    public BasicCameraBuilder setScript(final Consumer<NerdAbstractCamera> p_script) {
         this.build.script = p_script;
         return this;
     }
 
     // region `setClearColor()` overloads (they use `this.sketch`!).
-    public BasicCameraBuilder setClearColor(int p_color) {
+    public BasicCameraBuilder setClearColor(final int p_color) {
         this.build.clearColorParam1 = this.SKETCH.red(p_color);
         this.build.clearColorParam2 = this.SKETCH.green(p_color);
         this.build.clearColorParam3 = this.SKETCH.blue(p_color);
@@ -197,7 +197,7 @@ public class BasicCameraBuilder {
         return this;
     }
 
-    public BasicCameraBuilder setClearColor(float p_grey, float p_alpha) {
+    public BasicCameraBuilder setClearColor(final float p_grey, final float p_alpha) {
         this.build.clearColorParam1 = p_grey;
         this.build.clearColorParam2 = p_grey;
         this.build.clearColorParam3 = p_grey;
@@ -205,7 +205,7 @@ public class BasicCameraBuilder {
         return this;
     }
 
-    public BasicCameraBuilder setClearColor(float p_v1, float p_v2, float p_v3) {
+    public BasicCameraBuilder setClearColor(final float p_v1, final float p_v2, final float p_v3) {
         this.build.clearColorParam1 = p_v1;
         this.build.clearColorParam2 = p_v2;
         this.build.clearColorParam3 = p_v3;
@@ -213,7 +213,7 @@ public class BasicCameraBuilder {
         return this;
     }
 
-    public BasicCameraBuilder setClearColor(float p_v1, float p_v2, float p_v3, float p_alpha) {
+    public BasicCameraBuilder setClearColor(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
         this.build.clearColorParam1 = p_v1;
         this.build.clearColorParam2 = p_v2;
         this.build.clearColorParam3 = p_v3;

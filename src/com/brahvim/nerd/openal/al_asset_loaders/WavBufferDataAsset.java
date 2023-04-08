@@ -19,7 +19,7 @@ public class WavBufferDataAsset extends AssetType<AlWavBuffer> {
 	// endregion
 
 	@Override
-	public AlWavBuffer fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public AlWavBuffer fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			final AlWavBuffer wavBuffer = new AlWavBuffer((NerdAl) p_sketch.getNerdExt("OpenAL"));

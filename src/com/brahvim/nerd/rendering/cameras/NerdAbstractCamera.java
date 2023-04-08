@@ -32,7 +32,7 @@ public abstract class NerdAbstractCamera {
     public boolean doScript = true, doAutoClear = true, doAutoAspect = true;
     // endregion
 
-    public NerdAbstractCamera(Sketch p_sketch) {
+    public NerdAbstractCamera(final Sketch p_sketch) {
         this.SKETCH = p_sketch;
         // this.up = new PVector(0, 1, 0);
         // this.defaultCamUp = this.up.copy();
@@ -122,7 +122,7 @@ public abstract class NerdAbstractCamera {
     }
 
     // region `setClearColor()` overloads.
-    public void setClearColor(int p_color) {
+    public void setClearColor(final int p_color) {
         this.clearColorParam1 = this.SKETCH.red(p_color);
         this.clearColorParam2 = this.SKETCH.green(p_color);
         this.clearColorParam3 = this.SKETCH.blue(p_color);
@@ -130,21 +130,21 @@ public abstract class NerdAbstractCamera {
         // this.alpha = this.SKETCH.alpha(p_color);
     }
 
-    public void setClearColor(float p_grey, float p_alpha) {
+    public void setClearColor(final float p_grey, final float p_alpha) {
         this.clearColorParam1 = p_grey;
         this.clearColorParam2 = p_grey;
         this.clearColorParam3 = p_grey;
         this.clearColorParamAlpha = p_alpha;
     }
 
-    public void setClearColor(float p_v1, float p_v2, float p_v3) {
+    public void setClearColor(final float p_v1, final float p_v2, final float p_v3) {
         this.clearColorParam1 = p_v1;
         this.clearColorParam2 = p_v2;
         this.clearColorParam3 = p_v3;
         this.clearColorParamAlpha = 255;
     }
 
-    public void setClearColor(float p_v1, float p_v2, float p_v3, float p_alpha) {
+    public void setClearColor(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
         this.clearColorParam1 = p_v1;
         this.clearColorParam2 = p_v2;
         this.clearColorParam3 = p_v3;

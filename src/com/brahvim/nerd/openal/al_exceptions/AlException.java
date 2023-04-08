@@ -6,7 +6,7 @@ public class AlException extends NerdAbstractOpenAlException {
 
 	private static final long serialVersionUID = -565443463464L;
 
-	public AlException(int p_alErrorCode) {
+	public AlException(final int p_alErrorCode) {
 		super(AL11.alGetString(p_alErrorCode), p_alErrorCode);
 	}
 

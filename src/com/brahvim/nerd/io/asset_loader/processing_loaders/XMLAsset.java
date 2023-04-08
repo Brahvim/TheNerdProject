@@ -8,7 +8,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import processing.data.XML;
 
 public class XMLAsset extends AssetType<XML> {
-	
+
 	// region SINGLETON STUFF.
 	private static XMLAsset LOADER = new XMLAsset();
 
@@ -18,9 +18,9 @@ public class XMLAsset extends AssetType<XML> {
 	// endregion
 
 	@Override
-	public XML fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public XML fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
-		XML markup = p_sketch.loadXML(p_path);
+		final XML markup = p_sketch.loadXML(p_path);
 		if (markup == null)
 			throw new AssetLoaderFailedException();
 		return markup;

@@ -16,38 +16,38 @@ import com.brahvim.nerd.openal.NerdAl;
 public class AlWavBuffer extends AlBuffer<ByteBuffer> {
 
 	// region Constructors.
-	public AlWavBuffer(NerdAl p_alMan) {
+	public AlWavBuffer(final NerdAl p_alMan) {
 		super(p_alMan);
 	}
 
-	public AlWavBuffer(AlBuffer<?> p_buffer) {
+	public AlWavBuffer(final AlBuffer<?> p_buffer) {
 		super(p_buffer);
 	}
 
-	public AlWavBuffer(NerdAl p_alMan, int p_id) {
+	public AlWavBuffer(final NerdAl p_alMan, final int p_id) {
 		super(p_alMan, p_id);
 	}
 
-	public AlWavBuffer(NerdAl p_alInst, ByteBuffer p_data) {
+	public AlWavBuffer(final NerdAl p_alInst, final ByteBuffer p_data) {
 		super(p_alInst, p_data);
 	}
 	// endregion
 
 	@Override
-	protected void setDataImpl(int p_format, ByteBuffer p_buffer, int p_sampleRate) {
+	protected void setDataImpl(final int p_format, final ByteBuffer p_buffer, final int p_sampleRate) {
 		AL11.alBufferData(this.id, p_format, p_buffer, p_sampleRate);
 	}
 
 	@Override
 	@Deprecated
-	public AlBuffer<?> loadFrom(String p_path) {
+	public AlBuffer<?> loadFrom(final String p_path) {
 		return super.loadFrom(p_path);
 	}
 
 	@Override
 	@Deprecated
-	protected AlWavBuffer loadFromImpl(File p_file) {
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream(
+	protected AlWavBuffer loadFromImpl(final File p_file) {
+		final ByteArrayOutputStream bytes = new ByteArrayOutputStream(
 				(int) Math.min((long) Integer.MAX_VALUE, p_file.length()));
 
 		try (AudioInputStream ais = AudioSystem.getAudioInputStream(p_file)) {

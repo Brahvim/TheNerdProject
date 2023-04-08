@@ -33,7 +33,7 @@ public class App {
     private static volatile boolean tick;
     // endregion
 
-    public static void main(String[] p_args) {
+    public static void main(final String[] p_args) {
         // region Building the `Sketch`!
         final NerdSketchBuilder builder = new NerdSketchBuilder();
         builder.setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))
@@ -42,7 +42,7 @@ public class App {
                 .setTitle("The Nerd Project")
                 .setAntiAliasing(4)
                 .addNerdExt(new NerdAlExt(() -> {
-                    var toRet = new AlContext.AlContextSettings();
+                    final var toRet = new AlContext.AlContextSettings();
                     // ...for `TestScene3`!!!:
                     toRet.monoSources = Integer.MAX_VALUE;
                     toRet.stereoSources = Integer.MAX_VALUE;
@@ -68,7 +68,7 @@ public class App {
                 })
 
                 .setSceneManagerSettings(() -> {
-                    var toRet = new SceneManagerSettings();
+                    final var toRet = new SceneManagerSettings();
                     // TODO Review this!
                     // toRet.onScenePreload.onlyFirstPreload = false;
                     return toRet;

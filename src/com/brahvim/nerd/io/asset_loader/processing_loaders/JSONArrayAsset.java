@@ -18,7 +18,7 @@ public class JSONArrayAsset extends AssetType<JSONArray> {
 	// endregion
 
 	@Override
-	public JSONArray fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public JSONArray fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			return p_sketch.loadJSONArray(p_path);

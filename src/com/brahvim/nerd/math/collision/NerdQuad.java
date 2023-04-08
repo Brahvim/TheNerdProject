@@ -23,27 +23,27 @@ public class NerdQuad {
     // endregion
 
     // region Constructors.
-    public NerdQuad(NerdCircle p_circ) {
+    public NerdQuad(final NerdCircle p_circ) {
         this.center = p_circ.pos.copy();
 
-        float radius = p_circ.radius;
+        final float radius = p_circ.radius;
         this.end = new PVector(this.center.x + radius, this.center.y + radius);
         this.start = new PVector(this.center.x - radius, this.center.y - radius);
     }
 
-    public NerdQuad(PVector p_pos, float p_side) {
+    public NerdQuad(final PVector p_pos, final float p_side) {
         this.center = p_pos.copy();
         this.end = new PVector(this.center.x + p_side, this.center.y + p_side);
         this.start = new PVector(this.center.x - p_side, this.center.y - p_side);
     }
 
-    public NerdQuad(PVector p_start, PVector p_end) {
+    public NerdQuad(final PVector p_start, final PVector p_end) {
         this.end = p_end;
         this.start = p_start;
         this.center = PVector.add(this.start, this.end).mult(0.5f);
     }
 
-    public NerdQuad(float p_startX, float p_startY, float p_endX, float p_endY) {
+    public NerdQuad(final float p_startX, final float p_startY, final float p_endX, final float p_endY) {
         this.end = new PVector(p_endX, p_endY);
         this.start = new PVector(p_startX, p_startY);
         this.center = PVector.add(this.start, this.end).mult(0.5f);
@@ -61,14 +61,14 @@ public class NerdQuad {
      *         {@code -1} if the quadrilateral isn't a square!
      */
     public float getSideIfSquare() {
-        float assumedSide = PApplet.abs(this.end.x - this.start.x);
+        final float assumedSide = PApplet.abs(this.end.x - this.start.x);
         if (assumedSide == PApplet.abs(this.end.y - this.start.y)) // Same check as `NerdQuad::isSquare()`!
             return assumedSide;
         else
             return -1.0f;
     }
 
-    public boolean contains(PVector p_point) {
+    public boolean contains(final PVector p_point) {
         return CollisionAlgorithms.ptRect(p_point, this.start, this.end);
     }
 }

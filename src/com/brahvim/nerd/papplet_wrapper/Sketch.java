@@ -73,7 +73,7 @@ public class Sketch extends PApplet {
 	public /* `abstract` */ class SketchMouseListener {
 
 		public SketchMouseListener() {
-			SKETCH.MOUSE_LISTENERS.add(this);
+			Sketch.this.SKETCH.MOUSE_LISTENERS.add(this);
 		}
 
 		// region Mouse events.
@@ -92,7 +92,7 @@ public class Sketch extends PApplet {
 		public void mouseDragged() {
 		}
 
-		public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
+		public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 		}
 		// endregion
 
@@ -101,7 +101,7 @@ public class Sketch extends PApplet {
 	public /* `abstract` */ class SketchTouchListener {
 
 		public SketchTouchListener() {
-			SKETCH.TOUCH_LISTENERS.add(this);
+			Sketch.this.SKETCH.TOUCH_LISTENERS.add(this);
 		}
 
 		// region Touch events.
@@ -120,7 +120,7 @@ public class Sketch extends PApplet {
 	public /* `abstract` */ class SketchDisplayListener {
 
 		public SketchDisplayListener() {
-			SKETCH.WINDOW_LISTENERS.add(this);
+			Sketch.this.SKETCH.WINDOW_LISTENERS.add(this);
 		}
 
 		// region Window focus events.
@@ -142,7 +142,7 @@ public class Sketch extends PApplet {
 	public /* `abstract` */ class SketchKeyboardListener {
 
 		public SketchKeyboardListener() {
-			SKETCH.KEYBOARD_LISTENERS.add(this);
+			Sketch.this.SKETCH.KEYBOARD_LISTENERS.add(this);
 		}
 
 		// region Keyboard events.
@@ -357,7 +357,7 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Construction, `settings()`...
-	public Sketch(SketchKey p_key) {
+	public Sketch(final SketchKey p_key) {
 		Objects.requireNonNull(p_key, "Please use a `SketchKey` instance to make a `Sketch`!");
 
 		// region Key settings.
@@ -428,7 +428,7 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Preloading assets from scenes we want to!
-		for (Class<? extends NerdScene> c : p_key.scenesToPreload) {
+		for (final Class<? extends NerdScene> c : p_key.scenesToPreload) {
 			this.sceneMan.loadSceneAssetsAsync(c);
 		}
 		// endregion
@@ -465,7 +465,7 @@ public class Sketch extends PApplet {
 		this.ROBOT = toAssign;
 		// endregion
 
-		for (Consumer<Sketch> c : p_key.sketchConstructedListeners)
+		for (final Consumer<Sketch> c : p_key.sketchConstructedListeners)
 			if (c != null)
 				c.accept(this);
 	}
@@ -480,7 +480,7 @@ public class Sketch extends PApplet {
 		super.smooth(this.ANTI_ALIASING);
 		super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER);
 
-		for (Consumer<Sketch> c : this.SETTINGS_LISTENERS)
+		for (final Consumer<Sketch> c : this.SETTINGS_LISTENERS)
 			if (c != null)
 				c.accept(this);
 	}
@@ -523,7 +523,7 @@ public class Sketch extends PApplet {
 				break;
 
 			case PConstants.JAVA2D:
-				PSurfaceAWT.SmoothCanvas canvas = (PSurfaceAWT.SmoothCanvas) super.surface.getNative();
+				final PSurfaceAWT.SmoothCanvas canvas = (PSurfaceAWT.SmoothCanvas) super.surface.getNative();
 				this.sketchFrame = (JFrame) canvas.getFrame();
 
 				if (this.INITIALLY_RESIZABLE)
@@ -541,7 +541,7 @@ public class Sketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		for (Consumer<Sketch> c : this.SETUP_LISTENERS)
+		for (final Consumer<Sketch> c : this.SETUP_LISTENERS)
 			if (c != null)
 				c.accept(this);
 	}
@@ -558,7 +558,7 @@ public class Sketch extends PApplet {
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == super.width || this.pheight == super.height)) {
 			this.updateWindowRatios();
-			for (SketchDisplayListener l : this.WINDOW_LISTENERS)
+			for (final SketchDisplayListener l : this.WINDOW_LISTENERS)
 				l.resized();
 		}
 
@@ -573,7 +573,7 @@ public class Sketch extends PApplet {
 		if (this.previousMonitor != this.currentMonitor) {
 			this.previousMonitor = this.currentMonitor;
 			this.updateDisplayRatios();
-			for (SketchDisplayListener l : this.WINDOW_LISTENERS)
+			for (final SketchDisplayListener l : this.WINDOW_LISTENERS)
 				l.monitorChanged();
 		}
 
@@ -590,7 +590,7 @@ public class Sketch extends PApplet {
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
 
-		for (Consumer<Sketch> c : this.PRE_LISTENERS)
+		for (final Consumer<Sketch> c : this.PRE_LISTENERS)
 			if (c != null)
 				c.accept(this);
 	}
@@ -602,7 +602,7 @@ public class Sketch extends PApplet {
 		this.pframeTime = this.frameStartTime;
 
 		// region Call all pre-render listeners.
-		for (Consumer<Sketch> c : this.PRE_DRAW_LISTENERS)
+		for (final Consumer<Sketch> c : this.PRE_DRAW_LISTENERS)
 			if (c != null)
 				c.accept(this);
 		// endregion
@@ -617,7 +617,7 @@ public class Sketch extends PApplet {
 		this.PREV_GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_VECTOR);
 
 		this.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
-		this.GLOBAL_MOUSE_VECTOR.set(GLOBAL_MOUSE_POINT.x, GLOBAL_MOUSE_POINT.y);
+		this.GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_POINT.x, this.GLOBAL_MOUSE_POINT.y);
 		// endregion
 		// endregion
 
@@ -638,7 +638,7 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Call all draw listeners.
-		for (Consumer<Sketch> c : this.DRAW_LISTENERS)
+		for (final Consumer<Sketch> c : this.DRAW_LISTENERS)
 			if (c != null)
 				c.accept(this);
 		// endregion
@@ -653,7 +653,7 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Call all post-render listeners.
-		for (Consumer<Sketch> c : this.POST_DRAW_LISTENERS)
+		for (final Consumer<Sketch> c : this.POST_DRAW_LISTENERS)
 			if (c != null)
 				c.accept(this);
 		// endregion
@@ -661,7 +661,7 @@ public class Sketch extends PApplet {
 	}
 
 	public void post() {
-		for (Consumer<Sketch> c : this.POST_LISTENERS)
+		for (final Consumer<Sketch> c : this.POST_LISTENERS)
 			if (c != null)
 				c.accept(this);
 
@@ -671,7 +671,7 @@ public class Sketch extends PApplet {
 		this.framelyWindowSetup();
 
 		// region Previous state updates!!!
-		for (PVector v : this.UNPROJ_TOUCHES)
+		for (final PVector v : this.UNPROJ_TOUCHES)
 			this.PREV_UNPROJ_TOUCHES.add(v);
 
 		if (this.currentScene != null)
@@ -701,7 +701,7 @@ public class Sketch extends PApplet {
 
 	@Override
 	public void exit() {
-		for (Consumer<Sketch> c : this.EXIT_LISTENERS)
+		for (final Consumer<Sketch> c : this.EXIT_LISTENERS)
 			if (c != null)
 				c.accept(this);
 
@@ -710,7 +710,7 @@ public class Sketch extends PApplet {
 
 	@Override
 	public void dispose() {
-		for (Consumer<Sketch> c : this.DISPOSAL_LISTENERS)
+		for (final Consumer<Sketch> c : this.DISPOSAL_LISTENERS)
 			if (c != null)
 				c.accept(this);
 
@@ -722,44 +722,44 @@ public class Sketch extends PApplet {
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
-		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mousePressed();
 		}
 	}
 
 	@Override
 	public void mouseReleased() {
-		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mouseReleased();
 		}
 	}
 
 	@Override
 	public void mouseMoved() {
-		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mouseMoved();
 		}
 	}
 
 	@Override
 	public void mouseClicked() {
-		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mouseClicked();
 		}
 	}
 
 	@Override
 	public void mouseDragged() {
-		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mouseDragged();
 		}
 	}
 
 	// @SuppressWarnings("unused")
 	@Override
-	public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
+	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 		this.mouseScroll += p_mouseEvent.getCount();
-		for (SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
 			l.mouseWheel(p_mouseEvent);
 		}
 	}
@@ -768,7 +768,7 @@ public class Sketch extends PApplet {
 	// region Keyboard events.
 	@Override
 	public void keyTyped() {
-		for (SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
+		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
 			// ...could call that callback here directly, but I decided this!:
 			// "Filter these keys using the utility method[s]?"
 
@@ -817,7 +817,7 @@ public class Sketch extends PApplet {
 			this.keysHeld.add(super.keyCode);
 		}
 
-		for (SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
+		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
 			l.keyPressed();
 		}
 	}
@@ -831,7 +831,7 @@ public class Sketch extends PApplet {
 		} catch (final IndexOutOfBoundsException e) {
 		}
 
-		for (SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
+		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
 			l.keyReleased();
 		}
 	}
@@ -839,19 +839,19 @@ public class Sketch extends PApplet {
 
 	// region Touch events.
 	public void touchStarted() {
-		for (SketchTouchListener l : this.TOUCH_LISTENERS) {
+		for (final SketchTouchListener l : this.TOUCH_LISTENERS) {
 			l.touchStarted();
 		}
 	}
 
 	public void touchMoved() {
-		for (SketchTouchListener l : this.TOUCH_LISTENERS) {
+		for (final SketchTouchListener l : this.TOUCH_LISTENERS) {
 			l.touchMoved();
 		}
 	}
 
 	public void touchEnded() {
-		for (SketchTouchListener l : this.TOUCH_LISTENERS) {
+		for (final SketchTouchListener l : this.TOUCH_LISTENERS) {
 			l.touchEnded();
 		}
 	}
@@ -868,7 +868,7 @@ public class Sketch extends PApplet {
 		// `handleDraw()`,
 		// which is probably when events are handled:
 		if (!super.isLooping())
-			for (SketchDisplayListener l : this.WINDOW_LISTENERS) {
+			for (final SketchDisplayListener l : this.WINDOW_LISTENERS) {
 				l.focusGained();
 			}
 	}
@@ -883,7 +883,7 @@ public class Sketch extends PApplet {
 		// `handleDraw()`,
 		// which is probably when events are handled:
 		if (!super.isLooping())
-			for (SketchDisplayListener l : this.WINDOW_LISTENERS) {
+			for (final SketchDisplayListener l : this.WINDOW_LISTENERS) {
 				l.focusLost();
 			}
 	}
@@ -892,61 +892,61 @@ public class Sketch extends PApplet {
 
 	// region Callback and extension management.
 	// region Adding listeners.
-	public void addPreListener(Consumer<Sketch> p_preListener) {
+	public void addPreListener(final Consumer<Sketch> p_preListener) {
 		this.PRE_LISTENERS.add(p_preListener);
 	}
 
-	public void addPostListener(Consumer<Sketch> p_postListener) {
+	public void addPostListener(final Consumer<Sketch> p_postListener) {
 		this.POST_LISTENERS.add(p_postListener);
 	}
 
-	public void addPreDrawListener(Consumer<Sketch> p_preDrawListener) {
+	public void addPreDrawListener(final Consumer<Sketch> p_preDrawListener) {
 		this.PRE_DRAW_LISTENERS.add(p_preDrawListener);
 	}
 
-	public void addDrawListener(Consumer<Sketch> p_drawListener) {
+	public void addDrawListener(final Consumer<Sketch> p_drawListener) {
 		this.DRAW_LISTENERS.add(p_drawListener);
 	}
 
-	public void addPostDrawListener(Consumer<Sketch> p_postDrawListener) {
+	public void addPostDrawListener(final Consumer<Sketch> p_postDrawListener) {
 		this.POST_DRAW_LISTENERS.add(p_postDrawListener);
 	}
 
-	public void addSketchExitListener(Consumer<Sketch> p_exitListener) {
+	public void addSketchExitListener(final Consumer<Sketch> p_exitListener) {
 		this.EXIT_LISTENERS.add(p_exitListener);
 	}
 
-	public void addSketchDisposalListener(Consumer<Sketch> p_disposalListener) {
+	public void addSketchDisposalListener(final Consumer<Sketch> p_disposalListener) {
 		this.DISPOSAL_LISTENERS.add(p_disposalListener);
 	}
 	// endregion
 
 	// region Removing listeners.
-	public void removePreListener(Consumer<Sketch> p_preListener) {
+	public void removePreListener(final Consumer<Sketch> p_preListener) {
 		this.PRE_LISTENERS.remove(p_preListener);
 	}
 
-	public void removePostListener(Consumer<Sketch> p_postListener) {
+	public void removePostListener(final Consumer<Sketch> p_postListener) {
 		this.POST_LISTENERS.remove(p_postListener);
 	}
 
-	public void removePreDrawListener(Consumer<Sketch> p_preDrawListener) {
+	public void removePreDrawListener(final Consumer<Sketch> p_preDrawListener) {
 		this.PRE_DRAW_LISTENERS.remove(p_preDrawListener);
 	}
 
-	public void removeDrawListener(Consumer<Sketch> p_drawListener) {
+	public void removeDrawListener(final Consumer<Sketch> p_drawListener) {
 		this.DRAW_LISTENERS.remove(p_drawListener);
 	}
 
-	public void removePostDrawListener(Consumer<Sketch> p_postDrawListener) {
+	public void removePostDrawListener(final Consumer<Sketch> p_postDrawListener) {
 		this.POST_DRAW_LISTENERS.remove(p_postDrawListener);
 	}
 
-	public void removeSketchExitListener(Consumer<Sketch> p_exitListener) {
+	public void removeSketchExitListener(final Consumer<Sketch> p_exitListener) {
 		this.EXIT_LISTENERS.remove(p_exitListener);
 	}
 
-	public void removeSketchDisposalListener(Consumer<Sketch> p_disposalListener) {
+	public void removeSketchDisposalListener(final Consumer<Sketch> p_disposalListener) {
 		this.DISPOSAL_LISTENERS.remove(p_disposalListener);
 	}
 
@@ -964,7 +964,7 @@ public class Sketch extends PApplet {
 		return this.sceneMan;
 	}
 
-	public SceneManager setSceneManager(SceneManager p_sceneMan) {
+	public SceneManager setSceneManager(final SceneManager p_sceneMan) {
 		Objects.requireNonNull(p_sceneMan,
 				"`Sketch::setSceneManager()` cannot take in a `null`!");
 		return this.sceneMan = p_sceneMan;
@@ -1061,7 +1061,7 @@ public class Sketch extends PApplet {
 					// ;
 					// endregion
 
-					long fsStartMillis = System.currentTimeMillis();
+					final long fsStartMillis = System.currentTimeMillis();
 
 					while (this.fullscreen != this.glWindow.isFullscreen())
 						if (System.currentTimeMillis() - fsStartMillis > 5000)
@@ -1091,9 +1091,9 @@ public class Sketch extends PApplet {
 	// https://stackoverflow.com/a/21592711/,
 	// but https://stackoverflow.com/a/1248865/ was what worked.
 	// And yes, I modified it.
-	public static GraphicsDevice getGraphicsDeviceAt(Point p_pos) {
-		for (GraphicsDevice d : Sketch.JAVA_SCREENS)
-			for (GraphicsConfiguration c : d.getConfigurations())
+	public static GraphicsDevice getGraphicsDeviceAt(final Point p_pos) {
+		for (final GraphicsDevice d : Sketch.JAVA_SCREENS)
+			for (final GraphicsConfiguration c : d.getConfigurations())
 				if (c.getBounds().contains(p_pos))
 					return d;
 
@@ -1187,7 +1187,7 @@ public class Sketch extends PApplet {
 
 	// region From `PGraphics`.
 	@Override
-	public void background(PImage p_image) {
+	public void background(final PImage p_image) {
 		try {
 			super.background(p_image);
 		} catch (final Exception e) {
@@ -1202,21 +1202,21 @@ public class Sketch extends PApplet {
 	}
 
 	// "Hah! Gott'em with the name alignment!"
-	public void translate(PVector p_vec) {
+	public void translate(final PVector p_vec) {
 		super.translate(p_vec.x, p_vec.y, p_vec.z);
 	}
 
-	public void scale(PVector p_scaling) {
+	public void scale(final PVector p_scaling) {
 		super.scale(p_scaling.x, p_scaling.y, p_scaling.z);
 	}
 
-	public void rotate(PVector p_rotVec) {
+	public void rotate(final PVector p_rotVec) {
 		super.rotateX(p_rotVec.x);
 		super.rotateY(p_rotVec.y);
 		super.rotateZ(p_rotVec.z);
 	}
 
-	public void rotate(float p_x, float p_y, float p_z) {
+	public void rotate(final float p_x, final float p_y, final float p_z) {
 		super.rotateX(p_x);
 		super.rotateY(p_y);
 		super.rotateZ(p_z);
@@ -1232,14 +1232,14 @@ public class Sketch extends PApplet {
 				this.modelZ());
 	}
 
-	public PVector modelVec(PVector p_vec) {
+	public PVector modelVec(final PVector p_vec) {
 		return new PVector(
 				super.modelX(p_vec.x, p_vec.y, p_vec.z),
 				super.modelY(p_vec.x, p_vec.y, p_vec.z),
 				super.modelZ(p_vec.x, p_vec.y, p_vec.z));
 	}
 
-	public PVector modelVec(float p_x, float p_y, float p_z) {
+	public PVector modelVec(final float p_x, final float p_y, final float p_z) {
 		return new PVector(
 				super.modelX(p_x, p_y, p_z),
 				super.modelY(p_x, p_y, p_z),
@@ -1253,14 +1253,14 @@ public class Sketch extends PApplet {
 				this.screenZ());
 	}
 
-	public PVector screenVec(PVector p_vec) {
+	public PVector screenVec(final PVector p_vec) {
 		return new PVector(
 				this.screenX(p_vec.x, p_vec.y, p_vec.z),
 				this.screenY(p_vec.x, p_vec.y, p_vec.z),
 				this.screenZ(p_vec.x, p_vec.y, p_vec.z));
 	}
 
-	public PVector screenVec(float p_x, float p_y, float p_z) {
+	public PVector screenVec(final float p_x, final float p_y, final float p_z) {
 		return new PVector(
 				this.screenX(p_x, p_y, p_z),
 				this.screenY(p_x, p_y, p_z),
@@ -1285,15 +1285,15 @@ public class Sketch extends PApplet {
 
 	// region `p_vec`?
 	// ...how about `p_modelMatInvMulter`? :rofl:!
-	public float modelX(PVector p_vec) {
+	public float modelX(final PVector p_vec) {
 		return super.modelX(p_vec.x, p_vec.y, p_vec.z);
 	}
 
-	public float modelY(PVector p) {
+	public float modelY(final PVector p) {
 		return super.modelY(p.x, p.y, p.z);
 	}
 
-	public float modelZ(PVector p) {
+	public float modelZ(final PVector p) {
 		return super.modelZ(p.x, p.y, p.z);
 	}
 	// endregion
@@ -1327,7 +1327,7 @@ public class Sketch extends PApplet {
 	// ..."they rely on the JIT too!" (no, they don't optimize this at all. They
 	// just put the `0` themselves, LOL.) :joy:
 
-	public float screenX(PVector p_vec) {
+	public float screenX(final PVector p_vec) {
 		return super.screenX(p_vec.x, p_vec.y, p_vec.z);
 
 		// return p_vec.z == 0
@@ -1335,7 +1335,7 @@ public class Sketch extends PApplet {
 		// : super.screenX(p_vec.x, p_vec.y, p_vec.z);
 	}
 
-	public float screenY(PVector p_vec) {
+	public float screenY(final PVector p_vec) {
 		return super.screenY(p_vec.x, p_vec.y, p_vec.z);
 
 		// return p_vec.z == 0
@@ -1343,7 +1343,7 @@ public class Sketch extends PApplet {
 		// : super.screenY(p_vec.x, p_vec.y, p_vec.z);
 	}
 
-	public float screenZ(PVector p_vec) {
+	public float screenZ(final PVector p_vec) {
 		// Hmmm...
 		// ..so `z` cannot be `0` here.
 		// ..and `x` and `y` cannot be ignored!
@@ -1354,14 +1354,14 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Camera matrix configuration.
-	public void camera(BasicCamera p_cam) {
+	public void camera(final BasicCamera p_cam) {
 		super.camera(
 				p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
 				p_cam.center.x, p_cam.center.y, p_cam.center.z,
 				p_cam.up.x, p_cam.up.y, p_cam.up.z);
 	}
 
-	public void camera(FlyCamera p_cam) {
+	public void camera(final FlyCamera p_cam) {
 		super.camera(
 				p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
 
@@ -1372,7 +1372,7 @@ public class Sketch extends PApplet {
 				p_cam.up.x, p_cam.up.y, p_cam.up.z);
 	}
 
-	public void camera(PVector p_pos, PVector p_center, PVector p_up) {
+	public void camera(final PVector p_pos, final PVector p_center, final PVector p_up) {
 		super.camera(
 				p_pos.x, p_pos.y, p_pos.z,
 				p_center.x, p_center.y, p_center.z,
@@ -1381,19 +1381,19 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Projection functions.
-	public void perspective(NerdAbstractCamera p_cam) {
+	public void perspective(final NerdAbstractCamera p_cam) {
 		super.perspective(p_cam.fov, p_cam.aspect, p_cam.near, p_cam.far);
 	}
 
-	public void perspective(float p_fov, float p_near, float p_far) {
+	public void perspective(final float p_fov, final float p_near, final float p_far) {
 		super.perspective(p_fov, this.scr, p_near, p_far);
 	}
 
-	public void ortho(NerdAbstractCamera p_cam) {
+	public void ortho(final NerdAbstractCamera p_cam) {
 		super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_cam.near, p_cam.far);
 	}
 
-	public void ortho(float p_near, float p_far) {
+	public void ortho(final float p_near, final float p_far) {
 		super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_near, p_far);
 	}
 
@@ -1401,14 +1401,14 @@ public class Sketch extends PApplet {
 	 * Expands to {@code PApplet::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
 	 */
 	@Override
-	public void ortho(float p_cx, float p_cy, float p_near, float p_far) {
+	public void ortho(final float p_cx, final float p_cy, final float p_near, final float p_far) {
 		super.ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far);
 	}
 	// endregion
 
 	// region The billion `image()` overloads. Help me make "standards"?
 	// region For `PImage`s.
-	public void image(PImage p_image) {
+	public void image(final PImage p_image) {
 		// https://processing.org/reference/set_.html.
 		// Faster than `image()`!:
 		// `super.set(0, 0, p_image);`
@@ -1420,25 +1420,25 @@ public class Sketch extends PApplet {
 	/**
 	 * @param p_side The length of the side of the square.
 	 */
-	public void image(PImage p_image, float p_side) {
+	public void image(final PImage p_image, final float p_side) {
 		super.image(p_image, 0, 0, p_side, p_side);
 	}
 
-	public void image(PImage p_image, PVector p_pos) {
+	public void image(final PImage p_image, final PVector p_pos) {
 		super.pushMatrix();
 		super.translate(p_pos.x, p_pos.y, p_pos.z);
 		super.image(p_image, 0, 0);
 		super.popMatrix();
 	}
 
-	public void image(PImage p_image, PVector p_pos, float p_size) {
+	public void image(final PImage p_image, final PVector p_pos, final float p_size) {
 		super.pushMatrix();
 		super.translate(p_pos.x, p_pos.y, p_pos.z);
 		this.image(p_image, p_pos.x, p_pos.y, p_size, p_size);
 		super.popMatrix();
 	}
 
-	public void image(PImage p_image, float p_x, float p_y, float p_z) {
+	public void image(final PImage p_image, final float p_x, final float p_y, final float p_z) {
 		super.pushMatrix();
 		super.translate(p_x, p_y, p_z);
 		super.image(p_image, 0, 0);
@@ -1447,33 +1447,33 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region For `PGraphics`.
-	public void image(PGraphics p_graphics) {
+	public void image(final PGraphics p_graphics) {
 		super.image(p_graphics, 0, 0);
 	}
 
-	public void image(PGraphics p_graphics, PVector p_pos) {
+	public void image(final PGraphics p_graphics, final PVector p_pos) {
 		super.pushMatrix();
 		super.translate(p_pos.x, p_pos.y, p_pos.z);
 		super.image(p_graphics, 0, 0);
 		super.popMatrix();
 	}
 
-	public void image(PGraphics p_graphics, float p_scale) {
+	public void image(final PGraphics p_graphics, final float p_scale) {
 		super.image(p_graphics, 0, 0, p_scale, p_scale);
 	}
 
-	public void image(PGraphics p_graphics, PVector p_pos, float p_scale) {
+	public void image(final PGraphics p_graphics, final PVector p_pos, final float p_scale) {
 		super.pushMatrix();
 		super.translate(p_pos.x, p_pos.y, p_pos.z);
 		this.image(p_graphics, 0, 0, p_scale, p_scale);
 		super.popMatrix();
 	}
 
-	public void image(PGraphics p_graphics, float p_x, float p_y, float p_z) {
+	public void image(final PGraphics p_graphics, final float p_x, final float p_y, final float p_z) {
 		this.image((PImage) p_graphics, p_x, p_y, p_z);
 	}
 
-	public void image(PGraphics p_graphics, PVector p_pos, float p_width, float p_height) {
+	public void image(final PGraphics p_graphics, final PVector p_pos, final float p_width, final float p_height) {
 		super.pushMatrix();
 		super.translate(p_pos.x, p_pos.y, p_pos.z);
 		this.image(p_graphics, p_pos.x, p_pos.y, p_width, p_height);
@@ -1498,11 +1498,11 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
-	public PImage svgToImage(PShape p_shape, float p_width, float p_height) {
+	public PImage svgToImage(final PShape p_shape, final float p_width, final float p_height) {
 		if (p_shape == null)
 			throw new NullPointerException("`svgToImage(null , p_width, p_height)` won't work.");
 
-		PGraphics buffer = super.createGraphics(
+		final PGraphics buffer = super.createGraphics(
 				(int) PApplet.ceil(p_width),
 				(int) PApplet.ceil(p_height),
 				PConstants.P3D);
@@ -1520,32 +1520,32 @@ public class Sketch extends PApplet {
 	// region `createGraphics()` overrides and overloads.
 	// region Actual overrides.
 	@Override
-	public PGraphics createGraphics(int w, int h, String renderer, String path) {
+	public PGraphics createGraphics(final int w, final int h, final String renderer, final String path) {
 		return super.makeGraphics(w, h, renderer, path, false);
 	}
 
 	@Override
-	public PGraphics createGraphics(int w, int h, String renderer) {
+	public PGraphics createGraphics(final int w, final int h, final String renderer) {
 		return this.createGraphics(w, h, renderer, Sketch.EXEC_DIR_PATH);
 	}
 
 	@Override
-	public PGraphics createGraphics(int p_width, int p_height) {
+	public PGraphics createGraphics(final int p_width, final int p_height) {
 		return this.createGraphics(p_width, p_height, super.sketchRenderer());
 	}
 	// endregion
 
 	// region Utilitarian overloads.
-	public PGraphics createGraphics(float p_width, float p_height) {
+	public PGraphics createGraphics(final float p_width, final float p_height) {
 		return this.createGraphics((int) p_width, (int) p_height, super.sketchRenderer());
 	}
 
-	public PGraphics createGraphics(float p_size) {
-		int size = (int) p_size;
+	public PGraphics createGraphics(final float p_size) {
+		final int size = (int) p_size;
 		return this.createGraphics(size, size, super.sketchRenderer());
 	}
 
-	public PGraphics createGraphics(int p_size) {
+	public PGraphics createGraphics(final int p_size) {
 		return this.createGraphics(p_size, p_size, super.sketchRenderer());
 	}
 
@@ -1566,7 +1566,7 @@ public class Sketch extends PApplet {
 		this.pop(); // #JIT_FTW!
 	}
 
-	public void in2d(Runnable p_toDraw) {
+	public void in2d(final Runnable p_toDraw) {
 		// #JIT_FTW!
 		this.begin2d();
 		p_toDraw.run();
@@ -1575,31 +1575,31 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region `Sketch::alphaBg()` overloads.
-	public void alphaBg(int p_color) {
+	public void alphaBg(final int p_color) {
 		this.begin2d();
 		super.fill(p_color);
 		this.alphaBgImplRect();
 	}
 
-	public void alphaBg(int p_color, float p_alpha) {
+	public void alphaBg(final int p_color, final float p_alpha) {
 		this.begin2d();
 		super.fill(p_color, p_alpha);
 		this.alphaBgImplRect();
 	}
 
-	public void alphaBg(float p_grey, float p_alpha) {
+	public void alphaBg(final float p_grey, final float p_alpha) {
 		this.begin2d();
 		super.fill(p_grey, p_alpha);
 		this.alphaBgImplRect();
 	}
 
-	public void alphaBg(float p_v1, float p_v2, float p_v3) {
+	public void alphaBg(final float p_v1, final float p_v2, final float p_v3) {
 		this.begin2d();
 		super.fill(p_v1, p_v2, p_v3);
 		this.alphaBgImplRect();
 	}
 
-	public void alphaBg(float p_v1, float p_v2, float p_v3, float p_alpha) {
+	public void alphaBg(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
 		this.begin2d();
 		super.fill(p_v1, p_v2, p_v3, p_alpha);
 		this.alphaBgImplRect();
@@ -1618,11 +1618,11 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region File system utlities.
-	public static String fromExecDir(String p_path) {
+	public static String fromExecDir(final String p_path) {
 		return Sketch.EXEC_DIR_PATH + p_path;
 	}
 
-	public static String fromDataDir(String p_path) {
+	public static String fromDataDir(final String p_path) {
 		return Sketch.DATA_DIR_PATH + p_path;
 	}
 
@@ -1635,8 +1635,8 @@ public class Sketch extends PApplet {
 	 *             {@code static} methods</b>
 	 */
 	@Deprecated
-	public static String getPathToRootFrom(File p_path) {
-		return getPathToRootFrom(p_path.getAbsolutePath());
+	public static String getPathToRootFrom(final File p_path) {
+		return Sketch.getPathToRootFrom(p_path.getAbsolutePath());
 	}
 
 	/**
@@ -1647,9 +1647,9 @@ public class Sketch extends PApplet {
 	 *             {@code static} methods</b>
 	 */
 	@Deprecated
-	public static String getPathToRootFrom(String p_path) {
+	public static String getPathToRootFrom(final String p_path) {
 		final int PATH_LEN = p_path.length(), LAST_CHAR_ID = PATH_LEN - 1;
-		StringBuilder toRetBuilder = new StringBuilder();
+		final StringBuilder toRetBuilder = new StringBuilder();
 
 		if (p_path.charAt(LAST_CHAR_ID) != File.separatorChar)
 			toRetBuilder.append(File.separator);
@@ -1704,7 +1704,7 @@ public class Sketch extends PApplet {
 			originalNear = 0;
 
 		// Unproject:
-		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) g);
+		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.g);
 		// this.mouse.set(0, 0, 0); // Does not help!
 
 		this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
@@ -1803,26 +1803,26 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Key-press and key-type helper methods.
-	public boolean onlyKeyPressedIs(int p_keyCode) {
+	public boolean onlyKeyPressedIs(final int p_keyCode) {
 		return this.keysHeld.size() == 1 && this.keysHeld.contains(p_keyCode);
 	}
 
-	public boolean onlyKeysPressedAre(int... p_keyCodes) {
+	public boolean onlyKeysPressedAre(final int... p_keyCodes) {
 		boolean toRet = this.keysHeld.size() == p_keyCodes.length;
 
 		if (!toRet)
 			return false;
 
-		for (int i : p_keyCodes)
+		for (final int i : p_keyCodes)
 			toRet &= this.keysHeld.contains(i);
 
 		return toRet;
 	}
 
-	public boolean keysPressed(int... p_keyCodes) {
+	public boolean keysPressed(final int... p_keyCodes) {
 		// this.keysHeld.contains(p_keyCodes); // Causes a totally unique error :O
 
-		for (int i : p_keyCodes)
+		for (final int i : p_keyCodes)
 			if (!this.keysHeld.contains(i))
 				return false;
 		return true;
@@ -1837,20 +1837,20 @@ public class Sketch extends PApplet {
 		// An article once said: `boolean` flags are bad.
 	}
 
-	public boolean keyIsPressed(int p_keyCode) {
+	public boolean keyIsPressed(final int p_keyCode) {
 		return this.keysHeld.contains(p_keyCode);
 	}
 
-	public boolean anyGivenKeyIsPressed(int... p_keyCodes) {
-		for (int i : p_keyCodes)
+	public boolean anyGivenKeyIsPressed(final int... p_keyCodes) {
+		for (final int i : p_keyCodes)
 			if (this.keysHeld.contains(i))
 				return true;
 		return false;
 	}
 
-	public static boolean isStandardKeyboardSymbol(char p_char) {
+	public static boolean isStandardKeyboardSymbol(final char p_char) {
 		// boolean is = false;
-		for (char ch : Sketch.STANDARD_KEYBOARD_SYMBOLS)
+		for (final char ch : Sketch.STANDARD_KEYBOARD_SYMBOLS)
 			// Can't use this!:
 			// return ch == p_char;
 			// What if the array being examined is empty?!
@@ -1866,7 +1866,7 @@ public class Sketch extends PApplet {
 		return false;
 	}
 
-	public static boolean isTypeable(char p_char) {
+	public static boolean isTypeable(final char p_char) {
 		return Character.isDigit(p_char) ||
 				Character.isLetter(p_char) ||
 				Character.isWhitespace(p_char) ||
@@ -1874,12 +1874,12 @@ public class Sketch extends PApplet {
 	}
 
 	public char getTypedKey() {
-		if (Sketch.isTypeable(key))
-			return key;
+		if (Sketch.isTypeable(this.key))
+			return this.key;
 
 		// New way to do this in Java!:
 		// (...as seen in [`java.lang.`]`Long.class`, on line 217, in OpenJDK `17`!)
-		return switch (keyCode) {
+		return switch (this.keyCode) {
 			case PConstants.BACKSPACE -> '\b';
 			case PConstants.RETURN -> '\n';
 			case PConstants.ENTER -> '\n';
@@ -1899,9 +1899,9 @@ public class Sketch extends PApplet {
 
 	}
 
-	public void addTypedKeyTo(String p_str) {
-		char typedChar = this.getTypedKey();
-		int strLen = p_str.length();
+	public void addTypedKeyTo(final String p_str) {
+		final char typedChar = this.getTypedKey();
+		final int strLen = p_str.length();
 
 		if (typedChar == '\b' && strLen > 0)
 			p_str.substring(strLen - 1, strLen);
@@ -1909,9 +1909,9 @@ public class Sketch extends PApplet {
 			p_str.concat(Character.toString(typedChar));
 	}
 
-	public void addTypedKeyTo(StringBuilder p_str) {
-		char typedChar = this.getTypedKey();
-		int strLen = p_str.length();
+	public void addTypedKeyTo(final StringBuilder p_str) {
+		final char typedChar = this.getTypedKey();
+		final int strLen = p_str.length();
 
 		if (typedChar == '\b' && strLen > 0)
 			p_str.substring(strLen - 1, strLen);
@@ -1920,7 +1920,7 @@ public class Sketch extends PApplet {
 	}
 
 	// To be used for checking if a certain key can be typed:
-	public boolean isNotSpecialKey(int p_keyCode) {
+	public boolean isNotSpecialKey(final int p_keyCode) {
 		// I just didn't want to make an array :joy::
 		return !(
 		// For all function keys [regardless of whether `Shift` or `Ctrl` are pressed]:
@@ -1946,10 +1946,10 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Start a `JAVA2D` sketch with an undecorated window.
-	public JFrame createSketchPanel(Runnable p_exitTask, Sketch p_sketch, PGraphics p_sketchGraphics) {
+	public JFrame createSketchPanel(final Runnable p_exitTask, final Sketch p_sketch, final PGraphics p_sketchGraphics) {
 		// This is what `PApplet::frame` used to contain:
 		super.frame = null;
-		JFrame toRet = (JFrame) ((PSurfaceAWT.SmoothCanvas) p_sketch
+		final JFrame toRet = (JFrame) ((PSurfaceAWT.SmoothCanvas) p_sketch
 				.getSurface().getNative()).getFrame();
 
 		// region More stuff wth the `JFrame` (such as adding a `JPanel`!).
@@ -1960,16 +1960,16 @@ public class Sketch extends PApplet {
 
 		toRet.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent p_event) {
+			public void windowClosing(final WindowEvent p_event) {
 				System.out.println("Window closing...");
 				p_sketch.exit();
 			}
 		});
 
 		// region The `JPanel`, and input-event handling.
-		JPanel panel = new JPanel() {
+		final JPanel panel = new JPanel() {
 			@Override
-			protected void paintComponent(Graphics p_javaGaphics) {
+			protected void paintComponent(final Graphics p_javaGaphics) {
 				if (p_javaGaphics instanceof Graphics2D) {
 					((Graphics2D) p_javaGaphics).drawImage(
 							p_sketchGraphics.image, 0, 0, null);
@@ -1989,7 +1989,7 @@ public class Sketch extends PApplet {
 		// and `PApplet::mouseClicked()`:
 		panel.addMouseListener(new MouseListener() {
 			@Override
-			public void mousePressed(MouseEvent p_mouseEvent) {
+			public void mousePressed(final MouseEvent p_mouseEvent) {
 				p_sketch.updateSketchMouse();
 				p_sketch.mousePressed = true;
 				p_sketch.mouseButton = p_mouseEvent.getButton();
@@ -1997,7 +1997,7 @@ public class Sketch extends PApplet {
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent p_mouseEvent) {
+			public void mouseReleased(final MouseEvent p_mouseEvent) {
 				p_sketch.updateSketchMouse();
 				p_sketch.mousePressed = false;
 				p_sketch.mouseButton = p_mouseEvent.getButton();
@@ -2005,19 +2005,19 @@ public class Sketch extends PApplet {
 			}
 
 			@Override
-			public void mouseClicked(MouseEvent p_mouseEvent) {
+			public void mouseClicked(final MouseEvent p_mouseEvent) {
 				p_sketch.updateSketchMouse();
 				p_sketch.mouseButton = p_mouseEvent.getButton();
 				p_sketch.mouseClicked();
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent p_mouseEvent) {
+			public void mouseEntered(final MouseEvent p_mouseEvent) {
 				p_sketch.focused = true;
 			}
 
 			@Override
-			public void mouseExited(MouseEvent p_mouseEvent) {
+			public void mouseExited(final MouseEvent p_mouseEvent) {
 				p_sketch.focused = false;
 			}
 		});
@@ -2025,13 +2025,13 @@ public class Sketch extends PApplet {
 		// Listener for `PApplet::mouseDragged()` and `PApplet::mouseMoved()`:
 		panel.addMouseMotionListener(new MouseMotionListener() {
 			@Override
-			public void mouseDragged(MouseEvent p_mouseEvent) {
+			public void mouseDragged(final MouseEvent p_mouseEvent) {
 				p_sketch.updateSketchMouse();
 				p_sketch.mouseDragged();
 			}
 
 			@Override
-			public void mouseMoved(MouseEvent p_mouseEvent) {
+			public void mouseMoved(final MouseEvent p_mouseEvent) {
 				p_sketch.updateSketchMouse();
 				p_sketch.mouseMoved();
 			}
@@ -2041,7 +2041,7 @@ public class Sketch extends PApplet {
 		panel.addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			@SuppressWarnings("deprecation") // `deprecation` and not `deprecated`!
-			public void mouseWheelMoved(MouseWheelEvent p_mouseEvent) {
+			public void mouseWheelMoved(final MouseWheelEvent p_mouseEvent) {
 				p_sketch.mouseEvent = new processing.event.MouseEvent(
 						p_mouseEvent, System.currentTimeMillis(),
 						processing.event.MouseEvent.CLICK,
@@ -2060,14 +2060,14 @@ public class Sketch extends PApplet {
 			protected boolean sketchExited;
 
 			@Override
-			public void keyTyped(KeyEvent p_keyEvent) {
+			public void keyTyped(final KeyEvent p_keyEvent) {
 				p_sketch.key = p_keyEvent.getKeyChar();
 				p_sketch.keyCode = p_keyEvent.getKeyCode();
 				p_sketch.keyTyped();
 			}
 
 			@Override
-			public void keyPressed(KeyEvent p_keyEvent) {
+			public void keyPressed(final KeyEvent p_keyEvent) {
 				// Handle `Alt + F4` closes ourselves!:
 
 				if (!(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.ALT_DOWN_MASK) == null
@@ -2088,7 +2088,7 @@ public class Sketch extends PApplet {
 			}
 
 			@Override
-			public void keyReleased(KeyEvent p_keyEvent) {
+			public void keyReleased(final KeyEvent p_keyEvent) {
 				p_sketch.key = p_keyEvent.getKeyChar();
 				p_sketch.keyCode = p_keyEvent.getKeyCode();
 				p_sketch.keyReleased();
@@ -2104,7 +2104,7 @@ public class Sketch extends PApplet {
 	// Used by `Sketch::createSketchPanel()`:
 	// ~~Should've made a method-class for this.~~
 	protected void updateSketchMouse() {
-		Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+		final Point mousePoint = MouseInfo.getPointerInfo().getLocation();
 		super.mouseX = mousePoint.x - this.sketchFrame.getLocation().x;
 		super.mouseY = mousePoint.y - this.sketchFrame.getLocation().y;
 	}

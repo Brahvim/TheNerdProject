@@ -4,7 +4,7 @@ import com.brahvim.nerd.scene_api.NerdLayer;
 
 public class LayerClassLoader extends LoadeableClass<NerdLayer> {
 
-	public LayerClassLoader(String p_urlString, String p_fullyQualifiedName) {
+	public LayerClassLoader(final String p_urlString, final String p_fullyQualifiedName) {
 		super(p_urlString, p_fullyQualifiedName);
 	}
 

@@ -19,24 +19,24 @@ public class SceneState {
         this.DATA.clear();
     }
 
-    public Object compute(String key, BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
+    public Object compute(final String key, final BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
         return this.DATA.compute(key, remappingFunction);
     }
 
-    public Object computeIfAbsent(String key, Function<? super String, ? extends Object> mappingFunction) {
+    public Object computeIfAbsent(final String key, final Function<? super String, ? extends Object> mappingFunction) {
         return this.DATA.computeIfAbsent(key, mappingFunction);
     }
 
-    public Object computeIfPresent(String key,
-            BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
+    public Object computeIfPresent(final String key,
+            final BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
         return this.DATA.computeIfPresent(key, remappingFunction);
     }
 
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return this.DATA.containsKey(key);
     }
 
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         return this.DATA.containsValue(value);
     }
 
@@ -44,7 +44,7 @@ public class SceneState {
         return this.DATA.entrySet();
     }
 
-    public void forEach(BiConsumer<? super String, ? super Object> action) {
+    public void forEach(final BiConsumer<? super String, ? super Object> action) {
         this.DATA.forEach(action);
     }
 
@@ -56,8 +56,8 @@ public class SceneState {
         return this.DATA.keySet();
     }
 
-    public Object merge(String key, Object value,
-            BiFunction<? super Object, ? super Object, ? extends Object> remappingFunction) {
+    public Object merge(final String key, final Object value,
+            final BiFunction<? super Object, ? super Object, ? extends Object> remappingFunction) {
         return this.DATA.merge(key, value, remappingFunction);
     }
 
@@ -79,13 +79,13 @@ public class SceneState {
      * Returns {@code null} if the key is not contained.
      */
     @SuppressWarnings("unchecked")
-    public <T> T get(String p_key) {
+    public <T> T get(final String p_key) {
         return (T) this.DATA.get(p_key);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T get(String p_key, T p_default) {
-        T toRet = (T) this.get(p_key); // ...let's actually rely *too much* on the JIT.
+    public <T> T get(final String p_key, final T p_default) {
+        final T toRet = (T) this.get(p_key); // ...let's actually rely *too much* on the JIT.
         return toRet == null ? p_default : toRet;
     }
 
@@ -95,13 +95,13 @@ public class SceneState {
      * Else, a new key-value pair is created and saved.
      *
      */
-    public <T> SceneState set(String p_key, T p_value) {
+    public <T> SceneState set(final String p_key, final T p_value) {
         this.DATA.put(p_key, p_value);
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T remove(String p_key) {
+    public <T> T remove(final String p_key) {
         return (T) this.DATA.remove(p_key);
     }
 
@@ -121,11 +121,11 @@ public class SceneState {
         return ByteSerial.toBytes(this.DATA);
     }
 
-    public void toFile(File p_file) {
+    public void toFile(final File p_file) {
         ByteSerial.toFile(this.DATA, p_file);
     }
 
-    public void toFile(String p_fileName) {
+    public void toFile(final String p_fileName) {
         ByteSerial.toFile(this.DATA, p_fileName);
     }
     // endregion

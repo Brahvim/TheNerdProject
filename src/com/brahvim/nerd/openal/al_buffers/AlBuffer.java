@@ -31,7 +31,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	// endregion
 
 	// region Constructors.
-	public AlBuffer(NerdAl p_alMan) {
+	public AlBuffer(final NerdAl p_alMan) {
 		this.alMan = p_alMan;
 		AlBuffer.ALL_INSTANCES.add(this);
 
@@ -40,7 +40,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	}
 
 	@SuppressWarnings("unchecked")
-	public AlBuffer(AlBuffer<?> p_buffer) {
+	public AlBuffer(final AlBuffer<?> p_buffer) {
 		AlBuffer.ALL_INSTANCES.add(this);
 
 		this.alMan = p_buffer.alMan;
@@ -54,14 +54,14 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 		this.alMan.checkAlError();
 	}
 
-	public AlBuffer(NerdAl p_alMan, int p_id) {
+	public AlBuffer(final NerdAl p_alMan, final int p_id) {
 		AlBuffer.ALL_INSTANCES.add(this);
 
 		this.id = p_id;
 		this.alMan = p_alMan;
 	}
 
-	public AlBuffer(NerdAl p_alInst, BufferT p_data) {
+	public AlBuffer(final NerdAl p_alInst, final BufferT p_data) {
 		AlBuffer.ALL_INSTANCES.add(this);
 		this.alMan = p_alInst;
 
@@ -81,12 +81,12 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	// endregion
 
 	// region `abstract` methods (and overloads, with their implementations).
-	public AlBuffer<?> loadFrom(String p_path) {
+	public AlBuffer<?> loadFrom(final String p_path) {
 		this.loadFrom(new File(p_path)); // Also invoke `AlNativeResource::shouldDispose()`.
 		return this;
 	}
 
-	public AlBuffer<?> loadFrom(File p_file) {
+	public AlBuffer<?> loadFrom(final File p_file) {
 		super.shouldDispose(false);
 		this.loadFromImpl(p_file);
 		return this;
@@ -94,7 +94,7 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 
 	protected abstract AlBuffer<?> loadFromImpl(File p_file);
 
-	public void setData(int p_format, BufferT p_buffer, int p_sampleRate) {
+	public void setData(final int p_format, final BufferT p_buffer, final int p_sampleRate) {
 		this.data = p_buffer;
 		this.alFormat = p_format;
 		this.setDataImpl(p_format, p_buffer, p_sampleRate);
@@ -105,45 +105,45 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	// endregion
 
 	// region C-style OpenAL getters.
-	public int getInt(int p_alEnum) {
+	public int getInt(final int p_alEnum) {
 		return AL11.alGetBufferi(this.id, p_alEnum);
 	}
 
-	public float getFloat(int p_alEnum) {
+	public float getFloat(final int p_alEnum) {
 		return AL11.alGetBufferf(this.id, p_alEnum);
 	}
 
 	// Vectors in OpenAL are not large and can be allocated on the stack just fine.
-	public int[] getIntVector(int p_alEnum, int p_vecSize) {
+	public int[] getIntVector(final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
+		final IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
 		AL11.alGetBufferiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
 		return intBuffer.array();
 	}
 
-	public float[] getFloatVector(int p_alEnum, int p_vecSize) {
+	public float[] getFloatVector(final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
+		final FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
 		AL11.alGetBufferfv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
 		return floatBuffer.array();
 	}
 
-	public int[] getIntTriplet(int p_alEnum) {
+	public int[] getIntTriplet(final int p_alEnum) {
 		MemoryStack.stackPush();
-		IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
+		final IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
 		AL11.alGetBufferiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
 		return intBuffer.array();
 	}
 
-	public /* `float[]` */ float[] getFloatTriplet(int p_alEnum) {
+	public /* `float[]` */ float[] getFloatTriplet(final int p_alEnum) {
 		MemoryStack.stackPush();
-		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
+		final FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(3);
 		AL11.alGetBufferfv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
@@ -153,31 +153,31 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	// endregion
 
 	// region C-style OpenAL setters.
-	public AlBuffer<BufferT> setInt(int p_alEnum, int p_value) {
+	public AlBuffer<BufferT> setInt(final int p_alEnum, final int p_value) {
 		AL11.alBufferi(this.id, p_alEnum, p_value);
 		this.alMan.checkAlError();
 		return this;
 	}
 
-	public AlBuffer<BufferT> setFloat(int p_alEnum, float p_value) {
+	public AlBuffer<BufferT> setFloat(final int p_alEnum, final float p_value) {
 		AL11.alBufferf(this.id, p_alEnum, p_value);
 		this.alMan.checkAlError();
 		return this;
 	}
 
-	public AlBuffer<BufferT> setIntVector(int p_alEnum, int... p_values) {
+	public AlBuffer<BufferT> setIntVector(final int p_alEnum, final int... p_values) {
 		AL11.alBufferiv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlError();
 		return this;
 	}
 
-	public AlBuffer<BufferT> setFloatVector(int p_alEnum, float... p_values) {
+	public AlBuffer<BufferT> setFloatVector(final int p_alEnum, final float... p_values) {
 		AL11.alBufferfv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlError();
 		return this;
 	}
 
-	public AlBuffer<BufferT> setIntTriplet(int p_alEnum, int... p_values) {
+	public AlBuffer<BufferT> setIntTriplet(final int p_alEnum, final int... p_values) {
 		if (p_values.length != 3)
 			throw new IllegalArgumentException(
 					"`alBuffer::setIntTriplet()` cannot take an array of size other than `3`!");
@@ -187,13 +187,13 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 		return this;
 	}
 
-	public AlBuffer<BufferT> setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
+	public AlBuffer<BufferT> setIntTriplet(final int p_alEnum, final int p_i1, final int p_i2, final int p_i3) {
 		AL11.alBuffer3i(this.id, p_alEnum, p_i1, p_i2, p_i3);
 		this.alMan.checkAlError();
 		return this;
 	}
 
-	public AlBuffer<BufferT> setFloatTriplet(int p_alEnum, float... p_values) {
+	public AlBuffer<BufferT> setFloatTriplet(final int p_alEnum, final float... p_values) {
 		if (p_values.length != 3)
 			throw new IllegalArgumentException(
 					"`alBuffer::setFloatTriplet()` cannot take an array of size other than `3`!");
@@ -203,13 +203,13 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 		return this;
 	}
 
-	public AlBuffer<BufferT> setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
+	public AlBuffer<BufferT> setFloatTriplet(final int p_alEnum, final float p_f1, final float p_f2, final float p_f3) {
 		AL11.alBuffer3f(this.id, p_alEnum, p_f1, p_f2, p_f3);
 		this.alMan.checkAlError();
 		return this;
 	}
 
-	public AlBuffer<BufferT> setFloatTriplet(int p_alEnum, PVector p_values) {
+	public AlBuffer<BufferT> setFloatTriplet(final int p_alEnum, final PVector p_values) {
 		AL11.alBuffer3f(this.id, p_alEnum, p_values.x, p_values.y, p_values.z);
 		this.alMan.checkAlError();
 		return this;
@@ -243,17 +243,17 @@ public abstract class AlBuffer<BufferT extends Buffer> extends AlNativeResource 
 	// endregion
 
 	// region Setters.
-	public AlBuffer<BufferT> setBits(int p_bits) {
+	public AlBuffer<BufferT> setBits(final int p_bits) {
 		AL11.alBufferi(this.id, AL11.AL_BITS, p_bits);
 		return this;
 	}
 
-	public AlBuffer<BufferT> setChannels(int p_channels) {
+	public AlBuffer<BufferT> setChannels(final int p_channels) {
 		AL11.alBufferi(this.id, AL11.AL_CHANNELS, p_channels);
 		return this;
 	}
 
-	public AlBuffer<BufferT> setSampleRate(int p_sampleRate) {
+	public AlBuffer<BufferT> setSampleRate(final int p_sampleRate) {
 		AL11.alBufferi(this.id, AL11.AL_FREQUENCY, p_sampleRate);
 		return this;
 	}

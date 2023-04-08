@@ -60,7 +60,7 @@ public abstract class NerdEasingFunction {
     protected Runnable onEnd;
     // endregion
 
-    protected NerdEasingFunction(Sketch p_parentSketch) {
+    protected NerdEasingFunction(final Sketch p_parentSketch) {
         this.SKETCH = p_parentSketch;
     }
 
@@ -100,21 +100,21 @@ public abstract class NerdEasingFunction {
         return this;
     }
 
-    public NerdEasingFunction start(Runnable p_onEnd) {
+    public NerdEasingFunction start(final Runnable p_onEnd) {
         this.onEnd = p_onEnd;
         this.aliveTime = 0;
         this.active = true;
         return this;
     }
 
-    public NerdEasingFunction start(float p_paramOffset) {
+    public NerdEasingFunction start(final float p_paramOffset) {
         this.parameterOffset = p_paramOffset;
         this.aliveTime = 0;
         this.active = true;
         return this;
     }
 
-    public NerdEasingFunction start(float p_paramOffset, Runnable p_onEnd) {
+    public NerdEasingFunction start(final float p_paramOffset, final Runnable p_onEnd) {
         this.parameterOffset = p_paramOffset;
         this.onEnd = p_onEnd;
         this.aliveTime = 0;
@@ -129,12 +129,12 @@ public abstract class NerdEasingFunction {
         return this;
     }
 
-    public NerdEasingFunction endAfterMillis(int p_millis) {
+    public NerdEasingFunction endAfterMillis(final int p_millis) {
         this.endTime = this.aliveTime + p_millis;
         return this;
     }
 
-    public NerdEasingFunction extendEndByMillis(int p_millis) {
+    public NerdEasingFunction extendEndByMillis(final int p_millis) {
         this.endTime += p_millis;
         return this;
     }

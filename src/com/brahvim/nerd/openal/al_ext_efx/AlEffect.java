@@ -20,7 +20,7 @@ public abstract class AlEffect extends AlNativeResource {
 	protected AlAuxiliaryEffectSlot slot;
 	// endregion
 
-	public AlEffect(NerdAl p_nerdAl) {
+	public AlEffect(final NerdAl p_nerdAl) {
 		AlEffect.ALL_INSTANCES.add(this);
 
 		this.alMan = p_nerdAl;
@@ -52,9 +52,9 @@ public abstract class AlEffect extends AlNativeResource {
 	// endregion
 
 	// region C-style OpenAL getters.
-	public int getInt(int p_alEnum) {
+	public int getInt(final int p_alEnum) {
 		MemoryStack.stackPush();
-		IntBuffer buffer = MemoryStack.stackMallocInt(1);
+		final IntBuffer buffer = MemoryStack.stackMallocInt(1);
 
 		EXTEfx.alGetEffecti(this.id, p_alEnum, buffer);
 
@@ -64,9 +64,9 @@ public abstract class AlEffect extends AlNativeResource {
 		return buffer.get();
 	}
 
-	public int[] getIntVector(int p_alEnum, int p_vecSize) {
+	public int[] getIntVector(final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		IntBuffer buffer = MemoryStack.stackMallocInt(p_vecSize);
+		final IntBuffer buffer = MemoryStack.stackMallocInt(p_vecSize);
 
 		EXTEfx.alGetEffectiv(this.id, p_alEnum, buffer);
 
@@ -76,9 +76,9 @@ public abstract class AlEffect extends AlNativeResource {
 		return buffer.array();
 	}
 
-	public float getFloat(int p_alEnum) {
+	public float getFloat(final int p_alEnum) {
 		MemoryStack.stackPush();
-		FloatBuffer buffer = MemoryStack.stackMallocFloat(1);
+		final FloatBuffer buffer = MemoryStack.stackMallocFloat(1);
 
 		EXTEfx.alGetEffectf(this.id, p_alEnum, buffer);
 
@@ -88,9 +88,9 @@ public abstract class AlEffect extends AlNativeResource {
 		return buffer.get();
 	}
 
-	public float[] getFloatVector(int p_alEnum, int p_vecSize) {
+	public float[] getFloatVector(final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vecSize);
+		final FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vecSize);
 
 		EXTEfx.alGetEffectfv(this.id, p_alEnum, buffer);
 
@@ -102,28 +102,28 @@ public abstract class AlEffect extends AlNativeResource {
 	// endregion
 
 	// region C-style OpenAL setters.
-	public void setInt(int p_alEnum, int p_value) {
+	public void setInt(final int p_alEnum, final int p_value) {
 		EXTEfx.alEffecti(this.id, p_alEnum, p_value);
 		if (this.slot != null)
 			this.slot.setEffect(this);
 		this.alMan.checkAlError();
 	}
 
-	public void setIntVector(int p_alEnum, int... p_values) {
+	public void setIntVector(final int p_alEnum, final int... p_values) {
 		EXTEfx.alEffectiv(this.id, p_alEnum, p_values);
 		if (this.slot != null)
 			this.slot.setEffect(this);
 		this.alMan.checkAlError();
 	}
 
-	public void setFloat(int p_alEnum, float p_value) {
+	public void setFloat(final int p_alEnum, final float p_value) {
 		EXTEfx.alEffectf(this.id, p_alEnum, p_value);
 		if (this.slot != null)
 			this.slot.setEffect(this);
 		this.alMan.checkAlError();
 	}
 
-	public void setFloatVector(int p_alEnum, float... p_values) {
+	public void setFloatVector(final int p_alEnum, final float... p_values) {
 		EXTEfx.alEffectfv(this.id, p_alEnum, p_values);
 		if (this.slot != null)
 			this.slot.setEffect(this);

@@ -17,22 +17,22 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 	public static final ArrayList<AlOggBuffer> ALL_INSTANCES = new ArrayList<>();
 
 	// region Constructors.
-	public AlOggBuffer(NerdAl p_alMan) {
+	public AlOggBuffer(final NerdAl p_alMan) {
 		super(p_alMan);
 		AlOggBuffer.ALL_INSTANCES.add(this);
 	}
 
-	public AlOggBuffer(AlBuffer<?> p_buffer) {
+	public AlOggBuffer(final AlBuffer<?> p_buffer) {
 		super(p_buffer);
 		AlOggBuffer.ALL_INSTANCES.add(this);
 	}
 
-	public AlOggBuffer(NerdAl p_alMan, int p_id) {
+	public AlOggBuffer(final NerdAl p_alMan, final int p_id) {
 		super(p_alMan, p_id);
 		AlOggBuffer.ALL_INSTANCES.add(this);
 	}
 
-	public AlOggBuffer(NerdAl p_alInst, ShortBuffer p_data) {
+	public AlOggBuffer(final NerdAl p_alInst, final ShortBuffer p_data) {
 		super(p_alInst, p_data);
 		AlOggBuffer.ALL_INSTANCES.add(this);
 	}
@@ -47,12 +47,12 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 	}
 
 	@Override
-	protected void setDataImpl(int p_format, ShortBuffer p_buffer, int p_sampleRate) {
+	protected void setDataImpl(final int p_format, final ShortBuffer p_buffer, final int p_sampleRate) {
 		AL11.alBufferData(this.id, p_format, p_buffer, p_sampleRate);
 	}
 
 	@Override
-	protected AlOggBuffer loadFromImpl(File p_file) {
+	protected AlOggBuffer loadFromImpl(final File p_file) {
 		// A note about the use of `org.lwjgl.system.MemoryStack`:
 		/*
 		 * LWJGL's `MemoryStack` class allows for stack allocations.
@@ -68,14 +68,14 @@ public class AlOggBuffer extends AlBuffer<ShortBuffer> {
 
 		try {
 			MemoryStack.stackPush();
-			IntBuffer channelsBuffer = MemoryStack.stackMallocInt(1);
+			final IntBuffer channelsBuffer = MemoryStack.stackMallocInt(1);
 
 			MemoryStack.stackPush();
-			IntBuffer sampleRateBuffer = MemoryStack.stackMallocInt(1);
+			final IntBuffer sampleRateBuffer = MemoryStack.stackMallocInt(1);
 
 			// The bigger data (the audio) we're loading. Definitely goes on the heap!
 
-			ShortBuffer rawAudioBuffer = STBVorbis.stb_vorbis_decode_filename(
+			final ShortBuffer rawAudioBuffer = STBVorbis.stb_vorbis_decode_filename(
 					p_file.getCanonicalPath(), channelsBuffer, sampleRateBuffer);
 
 			if (rawAudioBuffer == null) {

@@ -10,22 +10,22 @@ public class NerdSpotLight extends NerdLight {
 	public PVector dir;
 
 	// region Constructors.
-	public NerdSpotLight(Sketch p_sketch) {
+	public NerdSpotLight(final Sketch p_sketch) {
 		super(p_sketch);
 		this.dir = new PVector();
 	}
 
-	public NerdSpotLight(Sketch p_sketch, PVector p_pos) {
+	public NerdSpotLight(final Sketch p_sketch, final PVector p_pos) {
 		super(p_sketch, p_pos);
 		this.dir = new PVector();
 	}
 
-	public NerdSpotLight(Sketch p_sketch, PVector p_pos, PVector p_color) {
+	public NerdSpotLight(final Sketch p_sketch, final PVector p_pos, final PVector p_color) {
 		super(p_sketch, p_pos, p_color);
 		this.dir = new PVector();
 	}
 
-	public NerdSpotLight(Sketch p_sketch, PVector p_pos, PVector p_color, PVector p_dir) {
+	public NerdSpotLight(final Sketch p_sketch, final PVector p_pos, final PVector p_color, final PVector p_dir) {
 		super(p_sketch, p_pos, p_color);
 		this.dir = p_dir.copy();
 	}

@@ -83,21 +83,21 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 	// region Fields.
 	protected static final ArrayList<AlAuxiliaryEffectSlot> ALL_INSTANCES = new ArrayList<>();
 
-	private NerdAl alMan;
+	private final NerdAl alMan;
 	private AlEffect effect;
 	private AlSource source;
 	private int id = EXTEfx.AL_EFFECT_NULL;
 	// endregion
 
 	// region Constructors.
-	public AlAuxiliaryEffectSlot(NerdAl p_alMan) {
+	public AlAuxiliaryEffectSlot(final NerdAl p_alMan) {
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
 		this.alMan.checkAlError();
 		AlAuxiliaryEffectSlot.ALL_INSTANCES.add(this);
 	}
 
-	public AlAuxiliaryEffectSlot(NerdAl p_alMan, AlEffect p_effect) {
+	public AlAuxiliaryEffectSlot(final NerdAl p_alMan, final AlEffect p_effect) {
 		this.alMan = p_alMan;
 		this.id = EXTEfx.alGenAuxiliaryEffectSlots();
 		this.alMan.checkAlError();
@@ -137,7 +137,7 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		if (ID == this.effect.id)
 			return (T) this.effect;
 		else
-			for (AlEffect e : AlEffect.ALL_INSTANCES) {
+			for (final AlEffect e : AlEffect.ALL_INSTANCES) {
 				if (e.id == ID)
 					return (T) e;
 			}
@@ -272,17 +272,17 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 	// endregion
 
 	// region Setters.
-	public AlAuxiliaryEffectSlot setGain(float p_value) {
+	public AlAuxiliaryEffectSlot setGain(final float p_value) {
 		this.setFloat(EXTEfx.AL_EFFECTSLOT_GAIN, p_value);
 		return this;
 	}
 
-	public AlAuxiliaryEffectSlot setSource(AlSource p_source) {
+	public AlAuxiliaryEffectSlot setSource(final AlSource p_source) {
 		this.source = p_source;
 		return this;
 	}
 
-	public AlEffect setEffect(AlEffect p_effect) {
+	public AlEffect setEffect(final AlEffect p_effect) {
 		final AlEffect toRet = this.effect;
 
 		if (p_effect == null) {
@@ -297,7 +297,7 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		return toRet;
 	}
 
-	public AlAuxiliaryEffectSlot setAutoSend(boolean p_value) {
+	public AlAuxiliaryEffectSlot setAutoSend(final boolean p_value) {
 		EXTEfx.alAuxiliaryEffectSloti(this.id, EXTEfx.AL_EFFECTSLOT_AUXILIARY_SEND_AUTO,
 				p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
 		return this;
@@ -305,9 +305,9 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 	// endregion
 
 	// region C-style OpenAL getters.
-	public int getInt(int p_alEnum) {
+	public int getInt(final int p_alEnum) {
 		MemoryStack.stackPush();
-		IntBuffer buffer = MemoryStack.stackMallocInt(1);
+		final IntBuffer buffer = MemoryStack.stackMallocInt(1);
 
 		EXTEfx.alGetAuxiliaryEffectSloti(this.id, p_alEnum, buffer);
 
@@ -317,9 +317,9 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		return buffer.get();
 	}
 
-	public int[] getIntVector(int p_alEnum, int p_vecSize) {
+	public int[] getIntVector(final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		IntBuffer buffer = MemoryStack.stackMallocInt(p_vecSize);
+		final IntBuffer buffer = MemoryStack.stackMallocInt(p_vecSize);
 
 		EXTEfx.alGetAuxiliaryEffectSlotiv(this.id, p_alEnum, buffer);
 
@@ -329,9 +329,9 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		return buffer.array();
 	}
 
-	public float getFloat(int p_alEnum) {
+	public float getFloat(final int p_alEnum) {
 		MemoryStack.stackPush();
-		FloatBuffer buffer = MemoryStack.stackMallocFloat(1);
+		final FloatBuffer buffer = MemoryStack.stackMallocFloat(1);
 
 		EXTEfx.alGetAuxiliaryEffectSlotf(this.id, p_alEnum, buffer);
 
@@ -341,9 +341,9 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 		return buffer.get();
 	}
 
-	public float[] getFloatVector(int p_alEnum, int p_vecSize) {
+	public float[] getFloatVector(final int p_alEnum, final int p_vecSize) {
 		MemoryStack.stackPush();
-		FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vecSize);
+		final FloatBuffer buffer = MemoryStack.stackMallocFloat(p_vecSize);
 
 		EXTEfx.alGetAuxiliaryEffectSlotfv(this.id, p_alEnum, buffer);
 
@@ -355,22 +355,22 @@ public class AlAuxiliaryEffectSlot extends AlNativeResource {
 	// endregion
 
 	// region C-style OpenAL setters.
-	public void setInt(int p_alEnum, int p_value) {
+	public void setInt(final int p_alEnum, final int p_value) {
 		EXTEfx.alAuxiliaryEffectSloti(this.id, p_alEnum, p_value);
 		this.alMan.checkAlError();
 	}
 
-	public void setIntVector(int p_alEnum, int... p_values) {
+	public void setIntVector(final int p_alEnum, final int... p_values) {
 		EXTEfx.alAuxiliaryEffectSlotiv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlError();
 	}
 
-	public void setFloat(int p_alEnum, float p_value) {
+	public void setFloat(final int p_alEnum, final float p_value) {
 		EXTEfx.alAuxiliaryEffectSlotf(this.id, p_alEnum, p_value);
 		this.alMan.checkAlError();
 	}
 
-	public void setFloatVector(int p_alEnum, float... p_values) {
+	public void setFloatVector(final int p_alEnum, final float... p_values) {
 		EXTEfx.alAuxiliaryEffectSlotfv(this.id, p_alEnum, p_values);
 		this.alMan.checkAlError();
 	}

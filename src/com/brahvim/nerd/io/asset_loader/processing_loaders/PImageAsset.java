@@ -18,9 +18,9 @@ public class PImageAsset extends AssetType<PImage> {
 	// endregion
 
 	@Override
-	public PImage fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public PImage fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
-		PImage img = p_sketch.loadImage(p_path);
+		final PImage img = p_sketch.loadImage(p_path);
 
 		// Oh, it failed?
 		boolean failure = img == null;

@@ -6,7 +6,7 @@ import com.brahvim.nerd.openal.NerdAl;
 
 public class AlHighpassFilter extends AlFilter {
 
-	public AlHighpassFilter(NerdAl p_alMan) {
+	public AlHighpassFilter(final NerdAl p_alMan) {
 		super(p_alMan);
 	}
 
@@ -26,12 +26,12 @@ public class AlHighpassFilter extends AlFilter {
 	// endregion
 
 	// region Setters.
-	public AlHighpassFilter setHighpassGain(float p_value) {
+	public AlHighpassFilter setHighpassGain(final float p_value) {
 		super.setFloat(EXTEfx.AL_HIGHPASS_GAIN, p_value);
 		return this;
 	}
 
-	public AlHighpassFilter setHighpassGainLf(float p_value) {
+	public AlHighpassFilter setHighpassGainLf(final float p_value) {
 		super.setFloat(EXTEfx.AL_HIGHPASS_GAINLF, p_value);
 		return this;
 	}

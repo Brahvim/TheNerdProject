@@ -21,16 +21,14 @@ public class TcpTestScene extends NerdScene {
 		});
 
 		final NerdTcpClient client = new NerdTcpClient("127.0.0.1", 8080);
-		// System.out.println(server.getSocket().getInetAddress());
-		// System.out.println(client.getSocket().getInetAddress());
 
 		client.send("Hey there - \":D!~");
-		SKETCH.delay(5000);
+		this.SKETCH.delay(5000);
 		client.disconnect();
 
 		System.out.println("Shutting server down...");
 		server.shutdown();
-		SKETCH.exit();
+		this.SKETCH.exit();
 	}
 
 }

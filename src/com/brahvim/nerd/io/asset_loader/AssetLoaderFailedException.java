@@ -5,7 +5,7 @@ public class AssetLoaderFailedException extends RuntimeException {
 		super();
 	}
 
-	public AssetLoaderFailedException(String p_message) {
+	public AssetLoaderFailedException(final String p_message) {
 		super(p_message);
 	}
 }

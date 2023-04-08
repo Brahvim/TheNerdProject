@@ -18,7 +18,7 @@ public class OggBufferDataAsset extends AssetType<AlOggBuffer> {
 	// endregion
 
 	@Override
-	public AlOggBuffer fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public AlOggBuffer fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			final AlOggBuffer oggBuffer = new AlOggBuffer((NerdAl) p_sketch.getNerdExt("OpenAL"));

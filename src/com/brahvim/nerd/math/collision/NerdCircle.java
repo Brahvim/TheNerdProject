@@ -17,20 +17,20 @@ public class NerdCircle {
     // endregion
 
     // region Constructors.
-    public NerdCircle(PVector p_center, float p_radius) {
+    public NerdCircle(final PVector p_center, final float p_radius) {
         this.radius = p_radius;
         this.pos = p_center.copy();
     }
 
-    public NerdCircle(float p_x, float p_y, float p_radius) {
+    public NerdCircle(final float p_x, final float p_y, final float p_radius) {
         this.radius = p_radius;
         this.pos = new PVector(p_x, p_y);
     }
 
-    public NerdCircle(PVector p_topLeft, PVector p_botRight) {
+    public NerdCircle(final PVector p_topLeft, final PVector p_botRight) {
         // Yes, yes, this is the same checking as `NerdQuad::isSquare()`!:
-        float sideX = PApplet.abs(p_botRight.x - p_topLeft.x);
-        float sideY = PApplet.abs(p_botRight.y - p_topLeft.y);
+        final float sideX = PApplet.abs(p_botRight.x - p_topLeft.x);
+        final float sideY = PApplet.abs(p_botRight.y - p_topLeft.y);
 
         if (sideX != sideY)
             throw new IllegalArgumentException(
@@ -39,11 +39,11 @@ public class NerdCircle {
         this.pos = new PVector(p_topLeft.x + sideX, p_topLeft.y + sideY);
     }
 
-    public NerdCircle(NerdQuad p_rect) {
+    public NerdCircle(final NerdQuad p_rect) {
         this(p_rect.start, p_rect.end);
     }
 
-    public NerdCircle(NerdCircle p_circle) {
+    public NerdCircle(final NerdCircle p_circle) {
         this.radius = p_circle.radius;
         this.pos = p_circle.pos.copy();
     }
@@ -59,7 +59,7 @@ public class NerdCircle {
         return new NerdQuad(this);
     }
 
-    public boolean contains(PVector p_point) {
+    public boolean contains(final PVector p_point) {
         return CollisionAlgorithms.ptCircle(p_point, this.pos, this.radius);
     }
 }

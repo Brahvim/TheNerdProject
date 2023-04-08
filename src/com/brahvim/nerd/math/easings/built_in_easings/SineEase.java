@@ -26,11 +26,11 @@ public class SineEase extends NerdEasingFunction {
 	// endregion
 
 	// region Constructors.
-	public SineEase(Sketch p_parentSketch) {
+	public SineEase(final Sketch p_parentSketch) {
 		super(p_parentSketch);
 	}
 
-	public SineEase(Sketch p_parentSketch, float p_freqMult) {
+	public SineEase(final Sketch p_parentSketch, final float p_freqMult) {
 		super(p_parentSketch);
 		this.freqMult = p_freqMult;
 	}
@@ -38,7 +38,7 @@ public class SineEase extends NerdEasingFunction {
 	/**
 	 * @apiNote {@code p_angleOffset} are treated as radians.
 	 */
-	public SineEase(Sketch p_parentSketch, float p_freqMult, float p_angleOffset) {
+	public SineEase(final Sketch p_parentSketch, final float p_freqMult, final float p_angleOffset) {
 		super(p_parentSketch);
 		this.freqMult = p_freqMult;
 		super.parameterOffset = p_angleOffset;
@@ -54,7 +54,7 @@ public class SineEase extends NerdEasingFunction {
 
 	// region End and extend!
 	@Override
-	public SineEase endAfterMillis(int p_millis) {
+	public SineEase endAfterMillis(final int p_millis) {
 		super.endTime = super.aliveTime + p_millis;
 		return this;
 	}
@@ -77,7 +77,7 @@ public class SineEase extends NerdEasingFunction {
 	/**
 	 * Method to put the wave at a given angle within given time.
 	 */
-	public SineEase endWhenAngleIncrementsToWithin(float p_angle, float p_before) {
+	public SineEase endWhenAngleIncrementsToWithin(float p_angle, final float p_before) {
 		p_angle = PApplet.radians(PApplet.abs(p_angle));
 		this.freqMult = (p_angle - super.parameterOffset) / p_before;
 		return this;
@@ -89,8 +89,8 @@ public class SineEase extends NerdEasingFunction {
 		// return this.end();
 	}
 
-	public SineEase extendEndByAngle(float p_angle) {
-		float endTime = this.endTime; // Benefits of using `this.`!~
+	public SineEase extendEndByAngle(final float p_angle) {
+		final float endTime = this.endTime; // Benefits of using `this.`!~
 		this.endWhenAngleIncrementsBy(p_angle);
 		this.endTime += endTime;
 		return this;

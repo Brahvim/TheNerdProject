@@ -5,7 +5,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 public class FpsCamera extends FlyCamera {
     private float height;
 
-    public FpsCamera(Sketch p_sketch) {
+    public FpsCamera(final Sketch p_sketch) {
         super(p_sketch);
     }
 
@@ -16,7 +16,7 @@ public class FpsCamera extends FlyCamera {
     }
 
     @Override
-    public void moveY(float p_velY) {
+    public void moveY(final float p_velY) {
         this.height += p_velY;
     }
 

@@ -82,7 +82,7 @@ public class SceneManager {
         private int timesLoaded = 0;
         // endregion
 
-        private SceneCache(Constructor<? extends NerdScene> p_constructor, NerdScene p_cachedReference) {
+        private SceneCache(final Constructor<? extends NerdScene> p_constructor, final NerdScene p_cachedReference) {
             this.CONSTRUCTOR = p_constructor;
             this.cachedReference = p_cachedReference;
             this.STATE = this.cachedReference.STATE;
@@ -206,7 +206,7 @@ public class SceneManager {
     // endregion
 
     // region Construction.
-    public SceneManager(Sketch p_sketch, LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
+    public SceneManager(final Sketch p_sketch, final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
         this.settings = new SceneManager.SceneManagerSettings();
@@ -215,7 +215,7 @@ public class SceneManager {
         this.initSceneListeners();
     }
 
-    public SceneManager(Sketch p_sketch, SceneManager.SceneManagerSettings p_settings) {
+    public SceneManager(final Sketch p_sketch, final SceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
         this.SCENE_CHANGE_LISTENERS = new LinkedHashSet<>(0);
@@ -224,9 +224,9 @@ public class SceneManager {
         this.initSceneListeners();
     }
 
-    public SceneManager(Sketch p_sketch,
-            SceneManager.SceneManagerSettings p_settings,
-            LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
+    public SceneManager(final Sketch p_sketch,
+            final SceneManager.SceneManagerSettings p_settings,
+            final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
@@ -245,7 +245,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.mousePressed();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mousePressed();
@@ -257,7 +257,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.mouseReleased();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseReleased();
@@ -269,7 +269,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.mouseMoved();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseMoved();
@@ -281,7 +281,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.mouseClicked();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseClicked();
@@ -293,19 +293,19 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.mouseDragged();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseDragged();
             }
 
             @Override
-            public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
+            public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
                 if (SCENE_MAN.currScene == null)
                     return;
 
                 SCENE_MAN.currScene.mouseWheel(p_mouseEvent);
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.mouseWheel(p_mouseEvent);
@@ -319,7 +319,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.touchStarted();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.touchStarted();
@@ -331,7 +331,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.touchMoved();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.touchMoved();
@@ -343,7 +343,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.touchEnded();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.touchEnded();
@@ -357,7 +357,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.focusLost();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.focusLost();
@@ -369,7 +369,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.resized();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.resized();
@@ -381,7 +381,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.focusGained();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.focusGained();
@@ -395,7 +395,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.keyTyped();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.keyTyped();
@@ -407,7 +407,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.keyPressed();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.keyPressed();
@@ -419,7 +419,7 @@ public class SceneManager {
                     return;
 
                 SCENE_MAN.currScene.keyReleased();
-                for (NerdLayer l : SCENE_MAN.currScene.getLayers())
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
                     if (l != null)
                         if (l.isActive())
                             l.keyReleased();
@@ -483,11 +483,11 @@ public class SceneManager {
     // endregion
 
     // region [`public`] Queries.
-    public void addSceneChangedListener(SceneManager.SceneChangeListener p_listener) {
+    public void addSceneChangedListener(final SceneManager.SceneChangeListener p_listener) {
         this.SCENE_CHANGE_LISTENERS.add(p_listener);
     }
 
-    public void removeSceneChangedListener(SceneManager.SceneChangeListener p_listener) {
+    public void removeSceneChangedListener(final SceneManager.SceneChangeListener p_listener) {
         this.SCENE_CHANGE_LISTENERS.remove(p_listener);
     }
 
@@ -524,25 +524,25 @@ public class SceneManager {
     // endregion
 
     // region `Scene`-operations.
-    public int timesGivenSceneWasLoaded(Class<? extends NerdScene> p_sceneClass) {
+    public int timesGivenSceneWasLoaded(final Class<? extends NerdScene> p_sceneClass) {
         return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).timesLoaded;
     }
 
     // To those who want vararg versions of these `loadSceneAssets` tasks:
     // "...no!". (I mean, should I just make a bean of some kind?)
 
-    public void loadSceneAssetsAsync(Class<? extends NerdScene> p_sceneClass) {
+    public void loadSceneAssetsAsync(final Class<? extends NerdScene> p_sceneClass) {
         this.loadSceneAssetsAsync(p_sceneClass, false);
     }
 
-    public void loadSceneAssetsAsync(Class<? extends NerdScene> p_sceneClass, boolean p_forcibly) {
+    public void loadSceneAssetsAsync(final Class<? extends NerdScene> p_sceneClass, final boolean p_forcibly) {
         if (!this.hasCached(p_sceneClass))
             this.cacheScene(p_sceneClass, true);
 
         if (this.givenSceneRanPreload(p_sceneClass))
             return;
 
-        Thread thread = new Thread(() -> {
+        final Thread thread = new Thread(() -> {
             // Lambdas allow for `this!:
             this.loadSceneAssets(p_sceneClass, p_forcibly);
         });
@@ -552,11 +552,11 @@ public class SceneManager {
     }
 
     // Non-async versions:
-    public void loadSceneAssets(Class<? extends NerdScene> p_sceneClass) {
+    public void loadSceneAssets(final Class<? extends NerdScene> p_sceneClass) {
         this.loadSceneAssets(p_sceneClass, false);
     }
 
-    public void loadSceneAssets(Class<? extends NerdScene> p_sceneClass, boolean p_forcibly) {
+    public void loadSceneAssets(final Class<? extends NerdScene> p_sceneClass, final boolean p_forcibly) {
         if (!this.hasCached(p_sceneClass))
             this.cacheScene(p_sceneClass, true);
 
@@ -578,7 +578,7 @@ public class SceneManager {
         this.restartScene(null);
     }
 
-    public void restartScene(SceneState p_setupState) {
+    public void restartScene(final SceneState p_setupState) {
         if (this.currSceneClass == null)
             return;
 
@@ -592,12 +592,12 @@ public class SceneManager {
         this.startPreviousScene(null);
     }
 
-    public void startPreviousScene(SceneState p_setupState) {
+    public void startPreviousScene(final SceneState p_setupState) {
         if (this.prevSceneClass == null)
             return;
 
-        SceneManager.SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.prevSceneClass);
-        NerdScene toUse = this.constructScene(cache.CONSTRUCTOR);
+        final SceneManager.SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.prevSceneClass);
+        final NerdScene toUse = this.constructScene(cache.CONSTRUCTOR);
 
         this.setScene(toUse, p_setupState);
     }
@@ -619,11 +619,11 @@ public class SceneManager {
      * Starts a {@code NerdScene}, and tells using the return value, whether it was
      * restored from cache or started again.
      */
-    public boolean startScene(Class<? extends NerdScene> p_sceneClass) {
+    public boolean startScene(final Class<? extends NerdScene> p_sceneClass) {
         return this.startScene(p_sceneClass, null);
     }
 
-    public boolean startScene(Class<? extends NerdScene> p_sceneClass, SceneState p_setupState) {
+    public boolean startScene(final Class<? extends NerdScene> p_sceneClass, final SceneState p_setupState) {
         if (p_sceneClass == null)
             throw new NullPointerException("`SceneManager::startScene()` received `null`.");
 
@@ -649,7 +649,7 @@ public class SceneManager {
     // endregion
 
     // region `private` `NerdScene` operations.
-    private boolean givenSceneRanPreload(Class<? extends NerdScene> p_sceneClass) {
+    private boolean givenSceneRanPreload(final Class<? extends NerdScene> p_sceneClass) {
         final NerdScene SCENE_CACHE = this.SCENE_CLASS_TO_CACHE
                 .get(p_sceneClass).cachedReference;
 
@@ -657,7 +657,7 @@ public class SceneManager {
 
     }
 
-    private void loadSceneAssets(NerdScene p_scene, boolean p_forcibly) {
+    private void loadSceneAssets(final NerdScene p_scene, final boolean p_forcibly) {
         if (p_scene == null)
             return;
 
@@ -693,12 +693,12 @@ public class SceneManager {
 
     // region (`private`) Caching operations.
     @SuppressWarnings("unused")
-    private void ensureCache(Class<? extends NerdScene> p_sceneClass) {
+    private void ensureCache(final Class<? extends NerdScene> p_sceneClass) {
         if (!this.hasCached(p_sceneClass))
             this.cacheScene(p_sceneClass, false);
     }
 
-    private boolean hasCached(Class<? extends NerdScene> p_sceneClass) {
+    private boolean hasCached(final Class<? extends NerdScene> p_sceneClass) {
         // If you haven't been asked to run the scene even once, you didn't cache it!
         // Say you haven't!:
         if (!this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass))
@@ -711,13 +711,13 @@ public class SceneManager {
         // return !this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference != null;
     }
 
-    private void cacheScene(Class<? extends NerdScene> p_sceneClass, boolean p_isDeletable) {
+    private void cacheScene(final Class<? extends NerdScene> p_sceneClass, final boolean p_isDeletable) {
         if (this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass))
             return;
 
-        Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
+        final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
 
-        NerdScene toCache = this.constructScene(sceneConstructor);
+        final NerdScene toCache = this.constructScene(sceneConstructor);
 
         if (toCache == null)
             throw new RuntimeException("The scene could not be constructed.");
@@ -725,7 +725,7 @@ public class SceneManager {
     // endregion
 
     // region `private` construction-and-setup operations!
-    private Constructor<? extends NerdScene> getSceneConstructor(Class<? extends NerdScene> p_sceneClass) {
+    private Constructor<? extends NerdScene> getSceneConstructor(final Class<? extends NerdScene> p_sceneClass) {
         Constructor<? extends NerdScene> toRet = null;
 
         try {
@@ -740,7 +740,7 @@ public class SceneManager {
         return toRet;
     }
 
-    private NerdScene constructScene(Constructor<? extends NerdScene> p_sceneConstructor) {
+    private NerdScene constructScene(final Constructor<? extends NerdScene> p_sceneConstructor) {
         NerdScene toRet = null;
 
         // region Get an instance.
@@ -785,10 +785,10 @@ public class SceneManager {
     }
 
     // Yes, this checks for errors.
-    private void startSceneImpl(Class<? extends NerdScene> p_sceneClass, SceneState p_state) {
-        Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
+    private void startSceneImpl(final Class<? extends NerdScene> p_sceneClass, final SceneState p_state) {
+        final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
 
-        NerdScene toStart = this.constructScene(sceneConstructor);
+        final NerdScene toStart = this.constructScene(sceneConstructor);
 
         if (toStart == null)
             throw new RuntimeException("The scene could not be constructed.");
@@ -797,7 +797,7 @@ public class SceneManager {
     }
 
     // The scene-deleter!!!
-    private void setScene(NerdScene p_currentScene, SceneState p_state) {
+    private void setScene(final NerdScene p_currentScene, final SceneState p_state) {
         this.SKETCH.cursorVisible = true;
         this.SKETCH.cursorConfined = false;
 
@@ -825,7 +825,7 @@ public class SceneManager {
             // if (!this.hasCached(this.currSceneClass))
             // this.currScene.ASSETS.clear();
 
-            SceneManager.SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
+            final SceneManager.SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
             cache.nullifyCache();
 
             // What `deleteCacheIfCan()` did, I guess (or used to do)!:
@@ -847,10 +847,10 @@ public class SceneManager {
     }
 
     // Set the time, *then* call `SceneManager::runSetup()`.
-    private void setupCurrentScene(SceneState p_state) {
+    private void setupCurrentScene(final SceneState p_state) {
         this.loadSceneAssets(this.currScene, false);
 
-        boolean prevSceneClassNotNull = this.prevSceneClass != null;
+        final boolean prevSceneClassNotNull = this.prevSceneClass != null;
 
         // Helps in resetting style and transformation info across scenes! YAY!:
         if (prevSceneClassNotNull)
@@ -858,7 +858,7 @@ public class SceneManager {
 
         this.SKETCH.push();
 
-        for (SceneChangeListener l : this.SCENE_CHANGE_LISTENERS)
+        for (final SceneChangeListener l : this.SCENE_CHANGE_LISTENERS)
             if (l != null)
                 l.sceneChanged(this.SKETCH, this.prevSceneClass, this.currSceneClass);
 

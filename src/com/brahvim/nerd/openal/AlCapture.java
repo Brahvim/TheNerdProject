@@ -27,7 +27,7 @@ public class AlCapture extends AlNativeResource {
 	private static volatile int numActiveInstances;
 
 	private long id;
-	private NerdAl alMan;
+	private final NerdAl alMan;
 	private String deviceName;
 	private Thread captureThread;
 	private ByteBuffer capturedData = ByteBuffer.allocate(0);
@@ -37,12 +37,12 @@ public class AlCapture extends AlNativeResource {
 	// endregion
 
 	// region Constructors.
-	public AlCapture(NerdAl p_alMan) {
+	public AlCapture(final NerdAl p_alMan) {
 		this(p_alMan, AlCapture.getDefaultDeviceName());
 		AlCapture.ALL_INSTANCES.add(this);
 	}
 
-	public AlCapture(NerdAl p_alMan, String p_deviceName) {
+	public AlCapture(final NerdAl p_alMan, final String p_deviceName) {
 		this.alMan = p_alMan;
 		AlCapture.ALL_INSTANCES.add(this);
 	}
@@ -72,15 +72,15 @@ public class AlCapture extends AlNativeResource {
 		this.startCapturing(44100, AL11.AL_FORMAT_MONO8, 1024);
 	}
 
-	public void startCapturing(int p_format) {
+	public void startCapturing(final int p_format) {
 		this.startCapturing(44100, p_format, 1024);
 	}
 
-	public void startCapturing(int p_sampleRate, int p_format) {
+	public void startCapturing(final int p_sampleRate, final int p_format) {
 		this.startCapturing(p_sampleRate, p_format, p_format);
 	}
 
-	public void startCapturing(int p_sampleRate, int p_format, int p_samplesPerBuffer) {
+	public void startCapturing(final int p_sampleRate, final int p_format, final int p_samplesPerBuffer) {
 		if (this.isCapturing()) {
 			System.err.println("OpenAL cannot start capturing whilst already doing it!");
 			return;
@@ -132,7 +132,7 @@ public class AlCapture extends AlNativeResource {
 				// endregion
 
 				// Store the old data away:
-				byte[] oldData = dataCaptured.array();
+				final byte[] oldData = dataCaptured.array();
 				dataCaptured = ByteBuffer.allocate(oldData.length + p_samplesPerBuffer);
 				dataCaptured.put(oldData);
 				dataCaptured.put(SAMPLES_BUFFER);
@@ -159,7 +159,7 @@ public class AlCapture extends AlNativeResource {
 		return this.captureThread == null ? false : this.captureThread.isAlive();
 	}
 
-	public AlWavBuffer stopCapturing(AlWavBuffer p_buffer) {
+	public AlWavBuffer stopCapturing(final AlWavBuffer p_buffer) {
 		this.stopCapturing();
 		this.storeIntoBuffer(p_buffer);
 		return p_buffer;
@@ -186,7 +186,7 @@ public class AlCapture extends AlNativeResource {
 		return this.capturedData;
 	}
 
-	public ByteBuffer storeIntoBuffer(AlWavBuffer p_buffer) {
+	public ByteBuffer storeIntoBuffer(final AlWavBuffer p_buffer) {
 		Objects.requireNonNull(p_buffer,
 				"`AlCapture::storeIntoBuffer(AlWavBuffer)` cannot use a `null` buffer.");
 
@@ -198,7 +198,7 @@ public class AlCapture extends AlNativeResource {
 	}
 
 	public AlWavBuffer storeIntoBuffer() {
-		AlWavBuffer toRet = new AlWavBuffer(this.alMan);
+		final AlWavBuffer toRet = new AlWavBuffer(this.alMan);
 		toRet.setData(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
 		return toRet;
 	}

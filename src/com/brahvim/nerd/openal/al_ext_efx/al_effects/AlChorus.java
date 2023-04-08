@@ -7,7 +7,7 @@ import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 
 public class AlChorus extends AlEffect {
 
-	public AlChorus(NerdAl p_NerdAl) {
+	public AlChorus(final NerdAl p_NerdAl) {
 		super(p_NerdAl);
 	}
 
@@ -47,37 +47,37 @@ public class AlChorus extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public AlChorus setChorusWaveform(float p_value) {
+	public AlChorus setChorusWaveform(final float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_WAVEFORM, p_value);
 		return this;
 	}
 
-	public AlChorus setChorusWaveformTriangle(float p_value) {
+	public AlChorus setChorusWaveformTriangle(final float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_WAVEFORM_TRIANGLE, p_value);
 		return this;
 	}
 
-	public AlChorus setChorusPhase(float p_value) {
+	public AlChorus setChorusPhase(final float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_PHASE, p_value);
 		return this;
 	}
 
-	public AlChorus setChorusRate(float p_value) {
+	public AlChorus setChorusRate(final float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_RATE, p_value);
 		return this;
 	}
 
-	public AlChorus setChorusDepth(float p_value) {
+	public AlChorus setChorusDepth(final float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_DEPTH, p_value);
 		return this;
 	}
 
-	public AlChorus setChorusFeedback(float p_value) {
+	public AlChorus setChorusFeedback(final float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_FEEDBACK, p_value);
 		return this;
 	}
 
-	public AlChorus setChorusDelay(float p_value) {
+	public AlChorus setChorusDelay(final float p_value) {
 		super.setFloat(EXTEfx.AL_CHORUS_DELAY, p_value);
 		return this;
 	}

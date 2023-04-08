@@ -6,7 +6,7 @@ import com.brahvim.nerd.openal.NerdAl;
 
 public class AlBandpassFilter extends AlFilter {
 
-	public AlBandpassFilter(NerdAl p_alMan) {
+	public AlBandpassFilter(final NerdAl p_alMan) {
 		super(p_alMan);
 	}
 
@@ -30,17 +30,17 @@ public class AlBandpassFilter extends AlFilter {
 	// endregion
 
 	// region Setters.
-	public AlBandpassFilter setBandpassGain(float p_value) {
+	public AlBandpassFilter setBandpassGain(final float p_value) {
 		super.setFloat(EXTEfx.AL_BANDPASS_GAIN, p_value);
 		return this;
 	}
 
-	public AlBandpassFilter setBandpassGainLf(float p_value) {
+	public AlBandpassFilter setBandpassGainLf(final float p_value) {
 		super.setFloat(EXTEfx.AL_BANDPASS_GAINLF, p_value);
 		return this;
 	}
 
-	public AlBandpassFilter setBandpassGainHf(float p_value) {
+	public AlBandpassFilter setBandpassGainHf(final float p_value) {
 		super.setFloat(EXTEfx.AL_BANDPASS_GAINHF, p_value);
 		return this;
 	}

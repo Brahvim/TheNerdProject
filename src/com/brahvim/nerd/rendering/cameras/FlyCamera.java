@@ -21,14 +21,14 @@ public class FlyCamera extends NerdAbstractCamera {
     // endregion
 
     // region Construction.
-    public FlyCamera(Sketch p_sketch) {
+    public FlyCamera(final Sketch p_sketch) {
         super(p_sketch);
         this.front = super.pos.copy();
         super.SKETCH.cursorVisible = false;
         this.defaultCamFront = this.front.copy();
     }
 
-    public FlyCamera(Sketch p_sketch, PVector p_defaultFront) {
+    public FlyCamera(final Sketch p_sketch, final PVector p_defaultFront) {
         super(p_sketch);
         this.front.set(p_defaultFront);
         super.SKETCH.cursorVisible = false;
@@ -60,7 +60,7 @@ public class FlyCamera extends NerdAbstractCamera {
 
     @Override
     public FlyCamera clone() {
-        FlyCamera toRet = new FlyCamera(super.SKETCH);
+        final FlyCamera toRet = new FlyCamera(super.SKETCH);
 
         // region Copying settings over to `toRet`.
         toRet.up = new PVector(super.up.x, super.up.x, super.up.z);
@@ -114,7 +114,7 @@ public class FlyCamera extends NerdAbstractCamera {
     // endregion
 
     // region Methods specific to `FlyCamera`.
-    public void moveX(float p_velX) {
+    public void moveX(final float p_velX) {
         super.pos.add(
                 PVector.mult(
                         PVector.cross(
@@ -122,15 +122,15 @@ public class FlyCamera extends NerdAbstractCamera {
                         p_velX));
     }
 
-    public void moveY(float p_velY) {
+    public void moveY(final float p_velY) {
         super.pos.y += p_velY;
     }
 
-    public void moveZ(float p_velZ) {
+    public void moveZ(final float p_velZ) {
         super.pos.sub(PVector.mult(this.front, p_velZ));
     }
 
-    public void roll(float p_roll) {
+    public void roll(final float p_roll) {
         super.up.x += p_roll;
     }
 
@@ -157,10 +157,10 @@ public class FlyCamera extends NerdAbstractCamera {
         // endregion
 
         if (this.shouldConstrainPitch) {
-            if (pitch > 89.0f)
-                pitch = 89.0f;
-            if (pitch < -89.0f)
-                pitch = -89.0f;
+            if (this.pitch > 89.0f)
+                this.pitch = 89.0f;
+            if (this.pitch < -89.0f)
+                this.pitch = -89.0f;
         }
 
         // region Find `this.front` (point camera looks at; related to position).

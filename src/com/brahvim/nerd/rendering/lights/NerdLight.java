@@ -13,19 +13,19 @@ public abstract class NerdLight {
 	protected boolean pactive;
 
 	// region Constructors.
-	public NerdLight(Sketch p_sketch) {
+	public NerdLight(final Sketch p_sketch) {
 		this.SKETCH = p_sketch;
 		this.pos = new PVector();
 		this.color = new PVector();
 	}
 
-	public NerdLight(Sketch p_sketch, PVector p_pos) {
+	public NerdLight(final Sketch p_sketch, final PVector p_pos) {
 		this.SKETCH = p_sketch;
 		this.pos = p_pos.copy();
 		this.color = new PVector();
 	}
 
-	public NerdLight(Sketch p_sketch, PVector p_pos, PVector p_color) {
+	public NerdLight(final Sketch p_sketch, final PVector p_pos, final PVector p_color) {
 		this.SKETCH = p_sketch;
 		this.pos = p_pos.copy();
 		this.color = p_color;

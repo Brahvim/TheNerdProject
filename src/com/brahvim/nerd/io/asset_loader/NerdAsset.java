@@ -22,7 +22,7 @@ public class NerdAsset {
     // endregion
 
     // region Constructors!
-    public NerdAsset(Sketch p_sketch, AssetType<?> p_type, String p_path) {
+    public NerdAsset(final Sketch p_sketch, final AssetType<?> p_type, final String p_path) {
         // this.verifyKey(p_key);
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
@@ -35,18 +35,18 @@ public class NerdAsset {
         this.startLoading();
     }
 
-    public NerdAsset(Sketch p_sketch, AssetType<?> p_type, String p_path, Runnable p_onLoad) {
+    public NerdAsset(final Sketch p_sketch, final AssetType<?> p_type, final String p_path, final Runnable p_onLoad) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
     }
 
-    public NerdAsset(Sketch p_sketch, AssetType<?> p_type, String p_path, AssetLoaderOptions... p_options) {
+    public NerdAsset(final Sketch p_sketch, final AssetType<?> p_type, final String p_path, final AssetLoaderOptions... p_options) {
         this(p_sketch, p_type, p_path);
         this.options = p_options;
     }
 
-    public NerdAsset(Sketch p_sketch, AssetType<?> p_type, String p_path, Runnable p_onLoad,
-            AssetLoaderOptions... p_options) {
+    public NerdAsset(final Sketch p_sketch, final AssetType<?> p_type, final String p_path, final Runnable p_onLoad,
+            final AssetLoaderOptions... p_options) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
         this.options = p_options;
@@ -67,7 +67,7 @@ public class NerdAsset {
     }
 
     // region Load status requests.
-    public NerdAsset setLoadCallback(Runnable p_onLoad) {
+    public NerdAsset setLoadCallback(final Runnable p_onLoad) {
         this.onLoad = p_onLoad;
         return this;
     }

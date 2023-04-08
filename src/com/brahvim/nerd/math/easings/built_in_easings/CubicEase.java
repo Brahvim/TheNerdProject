@@ -6,11 +6,11 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class CubicEase extends NerdEasingFunction {
 
-	public CubicEase(Sketch p_parentSketch) {
+	public CubicEase(final Sketch p_parentSketch) {
 		super(p_parentSketch);
 	}
 
-	public CubicEase endWhenParameterIs(float p_endParam) {
+	public CubicEase endWhenParameterIs(final float p_endParam) {
 		super.endAfterMillis(0);
 		return this;
 	}

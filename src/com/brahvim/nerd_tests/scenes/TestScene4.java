@@ -28,15 +28,15 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void preload() {
-        ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
-        ASSETS.add(OggBufferDataAsset.getLoader(), "data/RUBBER DUCK.ogg");
+        this.ASSETS.add(PImageAsset.getLoader(), this.SKETCH.ICON_PATH);
+        this.ASSETS.add(OggBufferDataAsset.getLoader(), "data/RUBBER DUCK.ogg");
         System.out.println("Test Scene 4 asset preload completed!");
     }
 
     @Override
-    protected void setup(SceneState p_state) {
+    protected void setup(final SceneState p_state) {
         System.out.printf("`TestScene4.setup()` here, I was called `%d` times!\n",
-                SCENE.getTimesLoaded());
+                this.SCENE.getTimesLoaded());
 
         // region OpenAL Test.
         // ..so the effects and filters wrk perfectly, but I just didn't want them in
@@ -53,24 +53,24 @@ public class TestScene4 extends NerdScene {
         // filter.setLowpassGain(1);
         // filter.setLowpassGainHf(0.1f);
 
-        this.rubberDuck = new AlSource(App.AL, ASSETS.get("RUBBER DUCK").getData());
+        this.rubberDuck = new AlSource(App.AL, this.ASSETS.get("RUBBER DUCK").getData());
         // this.rubberDuck.attachDirectFilter(filter);
         this.rubberDuck.setGain(0.1f);
         // this.rubberDuck.setEffectSlot(slot);
         // endregion
 
         // Loaded this scene for the first time? Do this!:
-        if (App.FIRST_SCENE_CLASS == TestScene4.class && SCENE.getTimesLoaded() == 0) {
-            SKETCH.fullscreen = false;
-            SKETCH.getSurface().setSize(1600, 900);
-            SKETCH.centerWindow();
+        if (App.FIRST_SCENE_CLASS == TestScene4.class && this.SCENE.getTimesLoaded() == 0) {
+            this.SKETCH.fullscreen = false;
+            this.SKETCH.getSurface().setSize(1600, 900);
+            this.SKETCH.centerWindow();
         } else { // Do not play `this.rubberDuck` if this is the first start!
             this.rubberDuck.setPosition(
-                    0.01f * (SKETCH.mouseX - SKETCH.cx),
-                    0, 0.01f * (SKETCH.mouseY - SKETCH.cy));
+                    0.01f * (this.SKETCH.mouseX - this.SKETCH.cx),
+                    0, 0.01f * (this.SKETCH.mouseY - this.SKETCH.cy));
 
             App.AL.unitSize = 1;
-            System.out.println(CAMERA.pos);
+            System.out.println(this.CAMERA.pos);
             System.out.println(this.rubberDuck.getPosition());
 
             if (!this.rubberDuck.isPlaying())
@@ -78,11 +78,11 @@ public class TestScene4 extends NerdScene {
         }
 
         this.nerd = this.ASSETS.get("sunglass_nerd").getData();
-        this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
+        this.nerdGraphics = this.SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
-        SKETCH.noStroke();
-        SKETCH.textureWrap(PConstants.REPEAT);
-        SKETCH.getCamera().pos.z = 500;
+        this.SKETCH.noStroke();
+        this.SKETCH.textureWrap(PConstants.REPEAT);
+        this.SKETCH.getCamera().pos.z = 500;
 
         this.ncx = this.nerd.width * 0.5f;
         this.ncy = this.nerd.height * 0.5f;
@@ -90,15 +90,15 @@ public class TestScene4 extends NerdScene {
 
     @Override
     protected void draw() {
-        SKETCH.clear();
-        SKETCH.translate(-SKETCH.cx, -SKETCH.cy);
+        this.SKETCH.clear();
+        this.SKETCH.translate(-this.SKETCH.cx, -this.SKETCH.cy);
 
         this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);
         this.magScroll += (this.magScrollVel *= this.MAG_SCROLL_DECAY_VEL);
-        CAMERA.pos.z += this.magScrollVel;
+        this.CAMERA.pos.z += this.magScrollVel;
 
         // region Draw the nerds!!!
-        SKETCH.beginShape();
+        this.SKETCH.beginShape();
 
         this.nerdGraphics.beginDraw();
         this.nerdGraphics.imageMode(PConstants.CENTER);
@@ -109,7 +109,7 @@ public class TestScene4 extends NerdScene {
                 this.nerd.height * this.magScroll);
         this.nerdGraphics.endDraw();
 
-        SKETCH.texture(this.nerdGraphics);
+        this.SKETCH.texture(this.nerdGraphics);
 
         // For just infinite tiles (no scrolling!):
 
@@ -118,32 +118,32 @@ public class TestScene4 extends NerdScene {
         // SKETCH.vertex(SKETCH.width, SKETCH.height, SKETCH.width, SKETCH.height);
         // SKETCH.vertex(0, SKETCH.height, 0, SKETCH.height);
 
-        SKETCH.vertex(0, 0, this.nerdRotTime(), this.nerdRotTime());
-        SKETCH.vertex(SKETCH.width, 0, this.nerdRotTime() + SKETCH.width, this.nerdRotTime());
-        SKETCH.vertex(SKETCH.width, SKETCH.height,
-                this.nerdRotTime() + SKETCH.width, this.nerdRotTime() + SKETCH.height);
-        SKETCH.vertex(0, SKETCH.height, this.nerdRotTime(), this.nerdRotTime() + SKETCH.height);
+        this.SKETCH.vertex(0, 0, this.nerdRotTime(), this.nerdRotTime());
+        this.SKETCH.vertex(this.SKETCH.width, 0, this.nerdRotTime() + this.SKETCH.width, this.nerdRotTime());
+        this.SKETCH.vertex(this.SKETCH.width, this.SKETCH.height,
+                this.nerdRotTime() + this.SKETCH.width, this.nerdRotTime() + this.SKETCH.height);
+        this.SKETCH.vertex(0, this.SKETCH.height, this.nerdRotTime(), this.nerdRotTime() + this.SKETCH.height);
 
-        SKETCH.endShape();
+        this.SKETCH.endShape();
         // endregion
 
     }
 
     private float nerdRotTime() {
-        return SCENE.getMillisSinceStart() * 0.1f;
+        return this.SCENE.getMillisSinceStart() * 0.1f;
     }
 
     // region Events.
     @Override
     public void mouseClicked() {
-        switch (SKETCH.mouseButton) {
-            case PConstants.LEFT -> MANAGER.restartScene();
-            case PConstants.RIGHT -> MANAGER.startScene(TestScene3.class);
+        switch (this.SKETCH.mouseButton) {
+            case PConstants.LEFT -> this.MANAGER.restartScene();
+            case PConstants.RIGHT -> this.MANAGER.startScene(TestScene3.class);
         }
     }
 
     @Override
-    public void mouseWheel(MouseEvent p_mouseEvent) {
+    public void mouseWheel(final MouseEvent p_mouseEvent) {
         this.magScrollAcc += p_mouseEvent.getCount() * this.MAG_SCROLL_ACC_MOD;
     }
 

@@ -18,7 +18,7 @@ public class JSONObjectAsset extends AssetType<JSONObject> {
 	// endregion
 
 	@Override
-	public JSONObject fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public JSONObject fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			return p_sketch.loadJSONObject(p_path);

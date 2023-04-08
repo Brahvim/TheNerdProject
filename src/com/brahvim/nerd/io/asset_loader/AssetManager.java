@@ -19,37 +19,37 @@ public class AssetManager {
     // Do we even *need* assets in any scene from the very beginning?
     // endregion
 
-    public AssetManager(Sketch p_key) {
+    public AssetManager(final Sketch p_key) {
         this.SKETCH = p_key;
     }
 
     // region `makeAsset()` overloads.
-    public <T> NerdAsset makeAsset(AssetType<T> p_type, String p_path, AssetLoaderOptions... p_options) {
+    public <T> NerdAsset makeAsset(final AssetType<T> p_type, final String p_path, final AssetLoaderOptions... p_options) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAssets` need data!");
         return new NerdAsset(this.SKETCH, p_type, p_path, p_options);
     }
 
-    public <T> NerdAsset makeAsset(AssetType<T> p_type, String p_path) {
+    public <T> NerdAsset makeAsset(final AssetType<T> p_type, final String p_path) {
         return this.makeAsset(p_type, p_path, (AssetLoaderOptions[]) null);
     }
     // endregion
 
     // region `add()` overloads.
-    public <T> AssetManager add(AssetType<T> p_type, String p_path, AssetLoaderOptions... p_options) {
+    public <T> AssetManager add(final AssetType<T> p_type, final String p_path, final AssetLoaderOptions... p_options) {
         this.ASSETS.add(this.makeAsset(p_type, p_path, p_options));
         return this;
     }
 
-    public <T> AssetManager add(AssetType<T> p_type, String p_path, Runnable p_onLoad) {
+    public <T> AssetManager add(final AssetType<T> p_type, final String p_path, final Runnable p_onLoad) {
         return this.add(p_type, p_path, p_onLoad);
     }
 
-    public <T> AssetManager add(AssetType<T> p_type, String p_path) {
+    public <T> AssetManager add(final AssetType<T> p_type, final String p_path) {
         return this.add(p_type, p_path, (AssetLoaderOptions[]) null);
     }
 
-    public <T> AssetManager add(NerdAsset p_asset) {
+    public <T> AssetManager add(final NerdAsset p_asset) {
         this.ASSETS.add(p_asset);
         return this;
     }
@@ -62,27 +62,27 @@ public class AssetManager {
      *             value is {@code null}.
      */
     @Deprecated
-    public boolean contains(String p_fileName) {
-        for (NerdAsset a : this.ASSETS)
+    public boolean contains(final String p_fileName) {
+        for (final NerdAsset a : this.ASSETS)
             if (a.NAME.equals(p_fileName))
                 return true;
         return false;
     }
 
-    public NerdAsset get(String p_fileName) {
-        for (NerdAsset a : this.ASSETS)
+    public NerdAsset get(final String p_fileName) {
+        for (final NerdAsset a : this.ASSETS)
             if (a.NAME.equals(p_fileName))
                 return (NerdAsset) a;
         return null;
     }
 
     // region `remove()` overloads.
-    public void remove(NerdAsset... p_assets) {
-        for (NerdAsset a : p_assets)
+    public void remove(final NerdAsset... p_assets) {
+        for (final NerdAsset a : p_assets)
             this.ASSETS.remove(a);
     }
 
-    public void remove(NerdAsset p_asset) {
+    public void remove(final NerdAsset p_asset) {
         this.ASSETS.remove(p_asset);
     }
     // endregion
@@ -92,7 +92,7 @@ public class AssetManager {
     }
 
     public void updatePreviousLoadState() {
-        for (NerdAsset a : this.ASSETS)
+        for (final NerdAsset a : this.ASSETS)
             a.updatePreviousLoadState();
     }
     // endregion
@@ -102,14 +102,14 @@ public class AssetManager {
      * Has every asset completed loading?
      */
     public boolean hadCompletedLastFrame() {
-        for (NerdAsset a : this.ASSETS)
+        for (final NerdAsset a : this.ASSETS)
             if (!a.wasLoaded())
                 return false;
         return true;
     }
 
     public boolean hasCompleted() {
-        for (NerdAsset a : this.ASSETS)
+        for (final NerdAsset a : this.ASSETS)
             if (!a.hasLoaded())
                 return false;
         return true;
@@ -147,7 +147,7 @@ public class AssetManager {
         return this.ASSETS.toArray();
     }
 
-    public <T> T[] toArray(T[] a) {
+    public <T> T[] toArray(final T[] a) {
         return this.ASSETS.toArray(a);
     }
 
@@ -155,7 +155,7 @@ public class AssetManager {
         return this.ASSETS.parallelStream();
     }
 
-    public boolean removeIf(Predicate<? super NerdAsset> p_filter) {
+    public boolean removeIf(final Predicate<? super NerdAsset> p_filter) {
         return this.ASSETS.removeIf(p_filter);
     }
 
@@ -163,11 +163,11 @@ public class AssetManager {
         return this.ASSETS.stream();
     }
 
-    public <T> T[] toArray(IntFunction<T[]> p_generator) {
+    public <T> T[] toArray(final IntFunction<T[]> p_generator) {
         return this.ASSETS.toArray(p_generator);
     }
 
-    public void forEach(Consumer<? super NerdAsset> p_action) {
+    public void forEach(final Consumer<? super NerdAsset> p_action) {
         this.ASSETS.forEach(p_action);
     }
     // endregion

@@ -31,7 +31,7 @@ public class Unprojector {
    * pan, zoom and camera angles - but before you start drawing
    * or playing with the matrices any further.
    */
-  public void captureViewMatrix(PGraphics3D p_graphicsBuffer) {
+  public void captureViewMatrix(final PGraphics3D p_graphicsBuffer) {
     // Brahvim: "Couldn't we do just this in today's modern world?:"
     this.matrix.set(p_graphicsBuffer.projmodelview);
     this.matrix.invert();
@@ -39,7 +39,7 @@ public class Unprojector {
     this.height = p_graphicsBuffer.height;
   }
 
-  public boolean gluUnProject(float p_winx, float p_winy, float p_winz, PVector p_result) {
+  public boolean gluUnProject(final float p_winx, final float p_winy, final float p_winz, final PVector p_result) {
     // region Transform to NDCs (`(-1, 1)`):
     this.in[0] = (p_winx / this.width) * 2.0f - 1.0f;
     this.in[1] = (p_winy / this.height) * 2.0f - 1.0f;
@@ -78,14 +78,14 @@ public class Unprojector {
     this.out[3] = 1.0f / this.out[3];
     p_result.x = this.out[0] * this.out[3];
     p_result.y = this.out[1] * this.out[3];
-    p_result.z = this.out[2] * out[3];
+    p_result.z = this.out[2] * this.out[3];
     // endregion
 
     return true;
   }
 
   // Calculate positions on the near and far 3D frustum planes.
-  public boolean calculatePickPoints(float p_x, float p_y) {
+  public boolean calculatePickPoints(final float p_x, final float p_y) {
     // Have to do both in order to reset the `PVector` in case of an error.
     return this.gluUnProject(p_x, p_y, 0, this.startPos)
         && this.gluUnProject(p_x, p_y, 1, this.endPos);

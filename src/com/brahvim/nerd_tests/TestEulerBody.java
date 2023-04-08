@@ -13,7 +13,7 @@ public class TestEulerBody {
 	protected PVector rot = new PVector(), rotVel = new PVector(), rotAcc = new PVector();
 	// endregion
 
-	public TestEulerBody(Sketch p_sketch) {
+	public TestEulerBody(final Sketch p_sketch) {
 		this.SKETCH = p_sketch;
 	}
 

@@ -16,7 +16,7 @@ public class AnimatedCube extends TestEulerBody {
     public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
     private boolean visible = true;
-    private SineEase plopWave;
+    private final SineEase plopWave;
     private AlSource popSrc;
     // endregion
 
@@ -52,7 +52,7 @@ public class AnimatedCube extends TestEulerBody {
         return super.frict;
     }
 
-    public void setFrict(float p_frict) {
+    public void setFrict(final float p_frict) {
         super.frict = p_frict;
     }
 
@@ -60,7 +60,7 @@ public class AnimatedCube extends TestEulerBody {
         return super.rotFrict;
     }
 
-    public void setRotFrict(float p_rotFrict) {
+    public void setRotFrict(final float p_rotFrict) {
         super.rotFrict = p_rotFrict;
     }
 
@@ -120,7 +120,7 @@ public class AnimatedCube extends TestEulerBody {
         return this.visible;
     }
 
-    public void draw(PShape p_shape) {
+    public void draw(final PShape p_shape) {
         if (!this.visible)
             return;
 

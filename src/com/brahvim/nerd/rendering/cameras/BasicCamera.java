@@ -12,7 +12,7 @@ public class BasicCamera extends NerdAbstractCamera {
 
     public PVector center, defaultCamCenter;
 
-    protected BasicCamera(Sketch p_sketch) {
+    protected BasicCamera(final Sketch p_sketch) {
         super(p_sketch);
         this.center = new PVector(); // super.SKETCH.cx, super.SKETCH.cy);
     }
@@ -55,7 +55,7 @@ public class BasicCamera extends NerdAbstractCamera {
 
     @Override
     public BasicCamera clone() {
-        BasicCamera toRet = new BasicCamera(this.SKETCH);
+        final BasicCamera toRet = new BasicCamera(this.SKETCH);
 
         // region Copying camera parameters.
         toRet.up.set(this.up);

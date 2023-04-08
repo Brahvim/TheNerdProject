@@ -26,8 +26,8 @@ public abstract class AlNativeResource {
 
 	// Yes, there's no `getId()` method here - IDs can be either `long`s or `int`s!
 
-	public final boolean shouldDispose(boolean p_value) {
-		boolean toRet = this.willDispose;
+	public final boolean shouldDispose(final boolean p_value) {
+		final boolean toRet = this.willDispose;
 		this.willDispose = p_value;
 		return toRet;
 	}

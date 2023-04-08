@@ -16,9 +16,9 @@ public class PStringsAsset extends AssetType<String[]> {
 	// endregion SINGLETON STUFF.
 
 	@Override
-	public String[] fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public String[] fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
-		String[] strings = p_sketch.loadStrings(p_path);
+		final String[] strings = p_sketch.loadStrings(p_path);
 
 		if (strings == null)
 			throw new AssetLoaderFailedException();

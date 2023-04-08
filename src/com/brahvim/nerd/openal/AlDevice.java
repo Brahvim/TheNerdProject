@@ -21,16 +21,16 @@ public class AlDevice extends AlNativeResource {
 
 	private long id;
 	private String name;
-	private NerdAl alMan;
+	private final NerdAl alMan;
 	private Supplier<String> disconnectionCallback = () -> AlDevice.getDefaultDeviceName();
 	// endregion
 
 	// region Constructors.
-	public AlDevice(NerdAl p_manager) {
+	public AlDevice(final NerdAl p_manager) {
 		this(p_manager, AlDevice.getDefaultDeviceName());
 	}
 
-	public AlDevice(NerdAl p_manager, String p_deviceName) {
+	public AlDevice(final NerdAl p_manager, final String p_deviceName) {
 		AlDevice.ALL_INSTANCES.add(this);
 
 		this.alMan = p_manager;
@@ -38,7 +38,7 @@ public class AlDevice extends AlNativeResource {
 		this.id = ALC11.alcOpenDevice(this.name);
 
 		// Check for errors:
-		int alcError = ALC11.alcGetError(this.id);
+		final int alcError = ALC11.alcGetError(this.id);
 		if (alcError != 0)
 			throw new AlcException(this.id, alcError);
 	}
@@ -65,7 +65,7 @@ public class AlDevice extends AlNativeResource {
 	// endregion
 
 	// region Connection status.
-	public void setDisconnectionCallback(Supplier<String> p_callback) {
+	public void setDisconnectionCallback(final Supplier<String> p_callback) {
 		this.disconnectionCallback = p_callback;
 	}
 
@@ -75,7 +75,7 @@ public class AlDevice extends AlNativeResource {
 			this.changeEndpoint(this.disconnectionCallback.get());
 	}
 
-	public void changeEndpoint(String p_dvName) {
+	public void changeEndpoint(final String p_dvName) {
 		if (!SOFTReopenDevice.alcReopenDeviceSOFT(
 				this.id, p_dvName, new int[] { 0 }))
 			throw new NerdAlException("`SOFTReopenDevice` failed.");
@@ -86,7 +86,7 @@ public class AlDevice extends AlNativeResource {
 	public boolean isConnected() {
 		// No idea why this bad stack read works.
 		MemoryStack.stackPush();
-		IntBuffer buffer = MemoryStack.stackMallocInt(1); // Stack allocation, "should" be "faster".
+		final IntBuffer buffer = MemoryStack.stackMallocInt(1); // Stack allocation, "should" be "faster".
 		ALC11.alcGetIntegerv(this.id, EXTDisconnect.ALC_CONNECTED, buffer);
 		MemoryStack.stackPop();
 

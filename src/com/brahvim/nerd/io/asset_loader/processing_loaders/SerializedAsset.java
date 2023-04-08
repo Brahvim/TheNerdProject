@@ -17,7 +17,7 @@ public class SerializedAsset extends AssetType<Object> {
 	// endregion
 
 	@Override
-	public Object fetchData(Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+	public Object fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		try {
 			return ByteSerial.fromFile(p_path);

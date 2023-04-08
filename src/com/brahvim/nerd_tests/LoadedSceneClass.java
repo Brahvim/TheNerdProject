@@ -16,7 +16,7 @@ public enum LoadedSceneClass {
 	// *this* was fine. Yes, I already knew about `System.out`:
 	private final SceneClassLoader sceneClassLoader;
 
-	private LoadedSceneClass(String p_urlString, String p_fullyQualifiedName) {
+	private LoadedSceneClass(final String p_urlString, final String p_fullyQualifiedName) {
 		this.sceneClassLoader = new SceneClassLoader(p_urlString, p_fullyQualifiedName);
 	}
 

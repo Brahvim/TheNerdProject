@@ -7,15 +7,15 @@ import processing.core.PVector;
 public class NerdDirLight extends NerdLight {
 
 	// region Constructors.
-	public NerdDirLight(Sketch p_sketch) {
+	public NerdDirLight(final Sketch p_sketch) {
 		super(p_sketch);
 	}
 
-	public NerdDirLight(Sketch p_sketch, PVector p_pos) {
+	public NerdDirLight(final Sketch p_sketch, final PVector p_pos) {
 		super(p_sketch, p_pos);
 	}
 
-	public NerdDirLight(Sketch p_sketch, PVector p_pos, PVector p_color) {
+	public NerdDirLight(final Sketch p_sketch, final PVector p_pos, final PVector p_color) {
 		super(p_sketch, p_pos, p_color);
 	}
 	// endregion

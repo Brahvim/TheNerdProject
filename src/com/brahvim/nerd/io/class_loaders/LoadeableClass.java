@@ -19,11 +19,11 @@ public class LoadeableClass<ClassT> {
 	// endregion
 
 	// region Constructors.
-	public LoadeableClass(URL p_url, String p_fullyQualifiedName) {
+	public LoadeableClass(final URL p_url, final String p_fullyQualifiedName) {
 		this.loadClass(p_url, p_fullyQualifiedName);
 	}
 
-	public LoadeableClass(File p_jarOrClassFolder, String p_fullyQualifiedName) {
+	public LoadeableClass(final File p_jarOrClassFolder, final String p_fullyQualifiedName) {
 		try {
 			this.loadClass(new URL(p_jarOrClassFolder.getAbsolutePath()), p_fullyQualifiedName);
 		} catch (final MalformedURLException e) {
@@ -31,7 +31,7 @@ public class LoadeableClass<ClassT> {
 		}
 	}
 
-	public LoadeableClass(String p_jarOrClassFolder, String p_fullyQualifiedName) {
+	public LoadeableClass(final String p_jarOrClassFolder, final String p_fullyQualifiedName) {
 		try {
 			this.loadClass(new URL(p_jarOrClassFolder), p_fullyQualifiedName);
 		} catch (final MalformedURLException e) {
@@ -42,7 +42,7 @@ public class LoadeableClass<ClassT> {
 
 	// region Methods.
 	@SuppressWarnings("unchecked")
-	public void loadClass(URL p_url, String p_fullyQualifiedName) {
+	public void loadClass(final URL p_url, final String p_fullyQualifiedName) {
 		this.url = p_url;
 		this.qualifiedName = p_fullyQualifiedName;
 

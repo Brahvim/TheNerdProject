@@ -29,7 +29,7 @@ public final class VecUtilsForPVector {
     }
 
     public static PVector rotate(final PVector p_vec, final float p_angleRad) {
-        PVector toRet = new PVector(p_vec.x, p_vec.y, p_vec.z);
+        final PVector toRet = new PVector(p_vec.x, p_vec.y, p_vec.z);
         toRet.rotate(p_angleRad);
         return toRet;
     }
@@ -42,13 +42,13 @@ public final class VecUtilsForPVector {
     }
 
     // region `vecLerp()` overloads.
-    public static PVector vecLerp(PVector p_from, PVector p_to, float p_lerpAmt) {
+    public static PVector vecLerp(final PVector p_from, final PVector p_to, final float p_lerpAmt) {
         return new PVector(p_from.x + (p_to.x - p_from.x) * p_lerpAmt,
                 p_from.y + (p_to.y - p_from.y) * p_lerpAmt,
                 p_from.z + (p_to.z - p_from.z) * p_lerpAmt);
     }
 
-    public static void vecLerp(PVector p_from, PVector p_to, float p_lerpAmt, PVector p_out) {
+    public static void vecLerp(final PVector p_from, final PVector p_to, final float p_lerpAmt, PVector p_out) {
         if (p_out == null)
             p_out = new PVector();
         // ...this method remains unused in the engine. It's for users! :sparkles:

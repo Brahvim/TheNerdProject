@@ -12,19 +12,19 @@ public class AlDataStream {
 	// region Fields.
 	protected static final ArrayList<AlDataStream> ALL_INSTANCES = new ArrayList<>();
 
-	private NerdAl alMan;
-	private AlSource source;
+	private final NerdAl alMan;
+	private final AlSource source;
 	private final ArrayList<AlWavBuffer> buffers = new ArrayList<>(3),
 			unusedBuffersPool = new ArrayList<>(5);
 	// endregion
 
-	public AlDataStream(NerdAl p_alMan, AlSource p_source) {
+	public AlDataStream(final NerdAl p_alMan, final AlSource p_source) {
 		this.alMan = p_alMan;
 		this.source = p_source;
 		AlDataStream.ALL_INSTANCES.add(this);
 	}
 
-	public synchronized void addBytes(int p_alFormat, byte[] p_bytes, int p_sampleRate) {
+	public synchronized void addBytes(final int p_alFormat, final byte[] p_bytes, final int p_sampleRate) {
 		// This is fine - `ArrayList`s don't decrease their size anyway.
 		if (this.unusedBuffersPool.isEmpty())
 			this.unusedBuffersPool.add(new AlWavBuffer(this.alMan));
@@ -40,7 +40,7 @@ public class AlDataStream {
 	// ...you might wanna check out that loop in this method!:
 	/* `package` */ void framelyCallback() {
 		for (int i = this.source.getBuffersProcessed() - 1; i != 0; i--) {
-			AlWavBuffer b = this.buffers.get(i);
+			final AlWavBuffer b = this.buffers.get(i);
 			this.source.unqueueBuffers(b);
 			this.alMan.checkAlError();
 			this.unusedBuffersPool.add(this.buffers.remove(i));

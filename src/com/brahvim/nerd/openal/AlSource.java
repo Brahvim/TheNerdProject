@@ -26,9 +26,9 @@ public class AlSource extends AlNativeResource {
 	// region Fields.
 	protected static final ArrayList<AlSource> ALL_INSTANCES = new ArrayList<>();
 
-	private int id;
-	private NerdAl alMan;
-	private AlContext context;
+	private final int id;
+	private final NerdAl alMan;
+	private final AlContext context;
 	private AlBuffer<?> buffer;
 	private AlDataStream stream;
 	private AlAuxiliaryEffectSlot effectSlot;
@@ -36,7 +36,7 @@ public class AlSource extends AlNativeResource {
 	// endregion
 
 	// region Constructors.
-	public AlSource(NerdAl p_alMan) {
+	public AlSource(final NerdAl p_alMan) {
 		this.alMan = p_alMan;
 		this.context = this.alMan.getContext();
 		ALC11.alcMakeContextCurrent(this.context.getId());
@@ -49,7 +49,7 @@ public class AlSource extends AlNativeResource {
 		AlSource.ALL_INSTANCES.add(this);
 	}
 
-	public AlSource(AlSource p_source) {
+	public AlSource(final AlSource p_source) {
 		this.alMan = p_source.alMan;
 		this.context = p_source.context;
 
@@ -88,7 +88,7 @@ public class AlSource extends AlNativeResource {
 		AlSource.ALL_INSTANCES.add(this);
 	}
 
-	public AlSource(NerdAl p_alMan, AlBuffer<?> p_buffer) {
+	public AlSource(final NerdAl p_alMan, final AlBuffer<?> p_buffer) {
 		this(p_alMan);
 		this.setBuffer(p_buffer);
 	}
@@ -119,66 +119,66 @@ public class AlSource extends AlNativeResource {
 			return (AlBuffer<T>) new AlNoTypeBuffer(this.alMan, BUFFER_ID);
 	}
 
-	public AlSource setBuffer(AlBuffer<?> p_buffer) {
+	public AlSource setBuffer(final AlBuffer<?> p_buffer) {
 		this.buffer = p_buffer;
 		this.setInt(AL11.AL_BUFFER, this.buffer.getId());
 		return this;
 	}
 
-	public void loadOggBuffer(File p_file) {
+	public void loadOggBuffer(final File p_file) {
 		if (this.buffer == null)
 			this.buffer = new AlOggBuffer(this.alMan, AlBufferLoader.loadOgg(p_file));
 	}
 	// endregion
 
 	// region C-style OpenAL getters.
-	public int getInt(int p_alEnum) {
+	public int getInt(final int p_alEnum) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		return AL11.alGetSourcei(this.id, p_alEnum);
 	}
 
-	public float getFloat(int p_alEnum) {
+	public float getFloat(final int p_alEnum) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		return AL11.alGetSourcef(this.id, p_alEnum);
 	}
 
 	// Vectors in OpenAL are not large and can be allocated on the stack just fine.
-	public int[] getIntVector(int p_alEnum, int p_vecSize) {
+	public int[] getIntVector(final int p_alEnum, final int p_vecSize) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		MemoryStack.stackPush();
-		IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
+		final IntBuffer intBuffer = MemoryStack.stackMallocInt(p_vecSize);
 		AL11.alGetSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
 		return intBuffer.array();
 	}
 
-	public float[] getFloatVector(int p_alEnum, int p_vecSize) {
+	public float[] getFloatVector(final int p_alEnum, final int p_vecSize) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		MemoryStack.stackPush();
-		FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
+		final FloatBuffer floatBuffer = MemoryStack.stackMallocFloat(p_vecSize);
 		AL11.alGetSourcefv(this.id, p_alEnum, floatBuffer);
 		MemoryStack.stackPop();
 
 		return floatBuffer.array();
 	}
 
-	public int[] getIntTriplet(int p_alEnum) {
+	public int[] getIntTriplet(final int p_alEnum) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		MemoryStack.stackPush();
-		IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
+		final IntBuffer intBuffer = MemoryStack.stackMallocInt(3);
 		AL11.alGetSourceiv(this.id, p_alEnum, intBuffer);
 		MemoryStack.stackPop();
 
 		return intBuffer.array();
 	}
 
-	public PVector getFloatTriplet(int p_alEnum) {
+	public PVector getFloatTriplet(final int p_alEnum) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		MemoryStack.stackPush();
@@ -193,7 +193,7 @@ public class AlSource extends AlNativeResource {
 	// endregion
 
 	// region C-style OpenAL setters.
-	public AlSource setInt(int p_alEnum, int p_value) {
+	public AlSource setInt(final int p_alEnum, final int p_value) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSourcei(this.id, p_alEnum, p_value);
@@ -201,7 +201,7 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setFloat(int p_alEnum, float p_value) {
+	public AlSource setFloat(final int p_alEnum, final float p_value) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSourcef(this.id, p_alEnum, p_value);
@@ -209,7 +209,7 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setIntVector(int p_alEnum, int... p_values) {
+	public AlSource setIntVector(final int p_alEnum, final int... p_values) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSourceiv(this.id, p_alEnum, p_values);
@@ -217,7 +217,7 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setFloatVector(int p_alEnum, float... p_values) {
+	public AlSource setFloatVector(final int p_alEnum, final float... p_values) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSourcefv(this.id, p_alEnum, p_values);
@@ -225,7 +225,7 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setIntTriplet(int p_alEnum, int... p_value) {
+	public AlSource setIntTriplet(final int p_alEnum, final int... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`AlSource::setIntTriplet()` cannot take an array of size other than `3`!");
@@ -237,7 +237,7 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setIntTriplet(int p_alEnum, int p_i1, int p_i2, int p_i3) {
+	public AlSource setIntTriplet(final int p_alEnum, final int p_i1, final int p_i2, final int p_i3) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSource3i(this.id, p_alEnum, p_i1, p_i2, p_i3);
@@ -245,7 +245,7 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setFloatTriplet(int p_alEnum, float... p_value) {
+	public AlSource setFloatTriplet(final int p_alEnum, final float... p_value) {
 		if (p_value.length != 3)
 			throw new IllegalArgumentException(
 					"`AlSource::setFloatTriplet()` cannot take an array of size other than `3`!");
@@ -257,7 +257,7 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setFloatTriplet(int p_alEnum, float p_f1, float p_f2, float p_f3) {
+	public AlSource setFloatTriplet(final int p_alEnum, final float p_f1, final float p_f2, final float p_f3) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSource3f(this.id, p_alEnum, p_f1, p_f2, p_f3);
@@ -265,7 +265,7 @@ public class AlSource extends AlNativeResource {
 		return this;
 	}
 
-	public AlSource setFloatTriplet(int p_alEnum, PVector p_value) {
+	public AlSource setFloatTriplet(final int p_alEnum, final PVector p_value) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSource3f(this.id, p_alEnum, p_value.x, p_value.y, p_value.z);
@@ -388,117 +388,117 @@ public class AlSource extends AlNativeResource {
 
 	// region Source setters.
 	// region `int` setters.
-	public AlSource setSecOffset(int p_value) {
+	public AlSource setSecOffset(final int p_value) {
 		this.setInt(AL11.AL_SEC_OFFSET, p_value);
 		return this;
 	}
 
-	public AlSource setSampleOffset(int p_value) {
+	public AlSource setSampleOffset(final int p_value) {
 		this.setInt(AL11.AL_SAMPLE_OFFSET, p_value);
 		return this;
 	}
 
-	public AlSource setByteOffset(int p_value) {
+	public AlSource setByteOffset(final int p_value) {
 		this.setInt(AL11.AL_BYTE_OFFSET, p_value);
 		return this;
 	}
 	// endregion
 
 	// region `float` setters.
-	public AlSource setGain(float p_value) {
+	public AlSource setGain(final float p_value) {
 		this.setFloat(AL11.AL_GAIN, p_value);
 		return this;
 	}
 
-	public AlSource setPitchMultiplier(float value) {
+	public AlSource setPitchMultiplier(final float value) {
 		AL11.alSourcef(this.id, AL11.AL_PITCH, value);
 		return this;
 	}
 
-	public AlSource setMaxDistance(float p_value) {
+	public AlSource setMaxDistance(final float p_value) {
 		this.setFloat(AL11.AL_MAX_DISTANCE, p_value);
 		return this;
 	}
 
-	public AlSource setRolloffFactor(float p_value) {
+	public AlSource setRolloffFactor(final float p_value) {
 		this.setFloat(AL11.AL_ROLLOFF_FACTOR, p_value);
 		return this;
 	}
 
-	public AlSource setReferenceDistance(float p_value) {
+	public AlSource setReferenceDistance(final float p_value) {
 		this.setFloat(AL11.AL_REFERENCE_DISTANCE, p_value);
 		return this;
 	}
 
-	public AlSource setMinGain(float p_value) {
+	public AlSource setMinGain(final float p_value) {
 		this.setFloat(AL11.AL_MIN_GAIN, p_value);
 		return this;
 	}
 
-	public AlSource setMaxGain(float p_value) {
+	public AlSource setMaxGain(final float p_value) {
 		this.setFloat(AL11.AL_MAX_GAIN, p_value);
 		return this;
 	}
 
-	public AlSource setConeOuterGain(float p_value) {
+	public AlSource setConeOuterGain(final float p_value) {
 		this.setFloat(AL11.AL_CONE_OUTER_GAIN, p_value);
 		return this;
 	}
 
-	public AlSource setConeInnerAngle(float p_value) {
+	public AlSource setConeInnerAngle(final float p_value) {
 		this.setFloat(AL11.AL_CONE_INNER_ANGLE, p_value);
 		return this;
 	}
 
-	public AlSource setConeOuterAngle(float p_value) {
+	public AlSource setConeOuterAngle(final float p_value) {
 		this.setFloat(AL11.AL_CONE_OUTER_ANGLE, p_value);
 		return this;
 	}
 	// endregion
 
 	// region Triplet setters.
-	public AlSource setPosition(float[] p_value) {
+	public AlSource setPosition(final float[] p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 		return this;
 	}
 
-	public AlSource setPosition(float p_x, float p_y, float p_z) {
+	public AlSource setPosition(final float p_x, final float p_y, final float p_z) {
 		this.setFloatTriplet(AL11.AL_POSITION, new float[] { p_x, p_y, p_z });
 		return this;
 	}
 
-	public AlSource setVelocity(float[] p_value) {
+	public AlSource setVelocity(final float[] p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 		return this;
 	}
 
-	public AlSource setVelocity(float p_x, float p_y, float p_z) {
+	public AlSource setVelocity(final float p_x, final float p_y, final float p_z) {
 		this.setFloatTriplet(AL11.AL_POSITION, new float[] { p_x, p_y, p_z });
 		return this;
 	}
 
-	public AlSource setDirection(float[] p_value) {
+	public AlSource setDirection(final float[] p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 		return this;
 	}
 
-	public AlSource setDirection(float p_x, float p_y, float p_z) {
+	public AlSource setDirection(final float p_x, final float p_y, final float p_z) {
 		this.setFloatTriplet(AL11.AL_POSITION, new float[] { p_x, p_y, p_z });
 		return this;
 	}
 
 	// region `PVector` overloads.
-	public AlSource setPosition(PVector p_value) {
+	public AlSource setPosition(final PVector p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 		return this;
 	}
 
-	public AlSource setVelocity(PVector p_value) {
+	public AlSource setVelocity(final PVector p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 		return this;
 	}
 
-	public AlSource setDirection(PVector p_value) {
+	public AlSource setDirection(final PVector p_value) {
 		this.setFloatTriplet(AL11.AL_POSITION, p_value);
 		return this;
 	}
@@ -514,7 +514,7 @@ public class AlSource extends AlNativeResource {
 	/**
 	 * @return The older effect slot object (may be {@code null}).
 	 */
-	public AlAuxiliaryEffectSlot setEffectSlot(AlAuxiliaryEffectSlot p_effectSlot) {
+	public AlAuxiliaryEffectSlot setEffectSlot(final AlAuxiliaryEffectSlot p_effectSlot) {
 		final AlAuxiliaryEffectSlot toRet = this.effectSlot;
 		this.effectSlot = p_effectSlot;
 		final int EFFECT_SLOT_ID;
@@ -542,7 +542,7 @@ public class AlSource extends AlNativeResource {
 	}
 
 	public AlFilter detachDirectFilter() {
-		AlFilter toRet = this.directFilter;
+		final AlFilter toRet = this.directFilter;
 		this.directFilter = null;
 		this.setInt(EXTEfx.AL_DIRECT_FILTER, EXTEfx.AL_FILTER_NULL);
 
@@ -552,8 +552,8 @@ public class AlSource extends AlNativeResource {
 	/**
 	 * @return The older filter object attached.
 	 */
-	public AlFilter attachDirectFilter(AlFilter p_filter) {
-		AlFilter toRet = this.directFilter;
+	public AlFilter attachDirectFilter(final AlFilter p_filter) {
+		final AlFilter toRet = this.directFilter;
 		this.directFilter = p_filter;
 		this.setInt(EXTEfx.AL_DIRECT_FILTER, this.directFilter == null
 				? EXTEfx.AL_FILTER_NULL
@@ -567,15 +567,15 @@ public class AlSource extends AlNativeResource {
 	}
 
 	public AlFilter detachAuxiliarySendFilter() {
-		AlFilter toRet = this.auxiliarySendFilter;
+		final AlFilter toRet = this.auxiliarySendFilter;
 		this.auxiliarySendFilter = null;
 		this.setInt(EXTEfx.AL_AUXILIARY_SEND_FILTER, EXTEfx.AL_FILTER_NULL);
 
 		return toRet;
 	}
 
-	public AlFilter attachAuxiliarySendFilter(AlFilter p_filter) {
-		AlFilter toRet = this.auxiliarySendFilter;
+	public AlFilter attachAuxiliarySendFilter(final AlFilter p_filter) {
+		final AlFilter toRet = this.auxiliarySendFilter;
 		this.auxiliarySendFilter = p_filter;
 		this.setIntTriplet(
 				EXTEfx.AL_AUXILIARY_SEND_FILTER,
@@ -615,32 +615,32 @@ public class AlSource extends AlNativeResource {
 	// endregion
 
 	// region `EXTEfx` property setters.
-	public AlSource setAirAbsorptionFactor(float p_value) {
+	public AlSource setAirAbsorptionFactor(final float p_value) {
 		this.setFloat(EXTEfx.AL_AIR_ABSORPTION_FACTOR, p_value);
 		return this;
 	}
 
-	public AlSource setRoomRolloffFactor(float p_value) {
+	public AlSource setRoomRolloffFactor(final float p_value) {
 		this.setFloat(EXTEfx.AL_ROOM_ROLLOFF_FACTOR, p_value);
 		return this;
 	}
 
-	public AlSource setConeOuterGainHf(float p_value) {
+	public AlSource setConeOuterGainHf(final float p_value) {
 		this.setFloat(EXTEfx.AL_CONE_OUTER_GAINHF, p_value);
 		return this;
 	}
 
-	public AlSource setDirectFilterGainHfAuto(float p_value) {
+	public AlSource setDirectFilterGainHfAuto(final float p_value) {
 		this.setFloat(EXTEfx.AL_DIRECT_FILTER_GAINHF_AUTO, p_value);
 		return this;
 	}
 
-	public AlSource setAuxiliarySendFilterGainAuto(float p_value) {
+	public AlSource setAuxiliarySendFilterGainAuto(final float p_value) {
 		this.setFloat(EXTEfx.AL_AUXILIARY_SEND_FILTER_GAIN_AUTO, p_value);
 		return this;
 	}
 
-	public AlSource setAuxiliarySendFilterGainHfAuto(float p_value) {
+	public AlSource setAuxiliarySendFilterGainHfAuto(final float p_value) {
 		this.setFloat(EXTEfx.AL_AUXILIARY_SEND_FILTER_GAINHF_AUTO, p_value);
 		return this;
 	}
@@ -654,7 +654,7 @@ public class AlSource extends AlNativeResource {
 		AL11.alSourcePlay(this.id);
 	}
 
-	public void loop(boolean p_value) {
+	public void loop(final boolean p_value) {
 		this.setInt(AL11.AL_LOOPING, p_value ? AL11.AL_TRUE : AL11.AL_FALSE);
 	}
 
@@ -680,7 +680,7 @@ public class AlSource extends AlNativeResource {
 		return this.stream;
 	}
 
-	public AlSource setStream(AlDataStream p_alDataStream) {
+	public AlSource setStream(final AlDataStream p_alDataStream) {
 		this.stream = p_alDataStream;
 		return this;
 	}
@@ -690,27 +690,27 @@ public class AlSource extends AlNativeResource {
 			this.stream.framelyCallback();
 	}
 
-	public void queueBuffers(AlBuffer<?> p_buffer) {
+	public void queueBuffers(final AlBuffer<?> p_buffer) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSourceQueueBuffers(this.id, p_buffer.getId());
 	}
 
-	public void queueBuffers(AlBuffer<?>... p_buffers) {
-		int[] buffers = new int[p_buffers.length];
+	public void queueBuffers(final AlBuffer<?>... p_buffers) {
+		final int[] buffers = new int[p_buffers.length];
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSourceQueueBuffers(this.id, buffers);
 	}
 
-	public void unqueueBuffers(AlBuffer<?> p_buffer) {
+	public void unqueueBuffers(final AlBuffer<?> p_buffer) {
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSourceUnqueueBuffers(this.id);
 	}
 
-	public void unqueueBuffers(AlBuffer<?>... p_buffers) {
-		int[] buffers = new int[p_buffers.length];
+	public void unqueueBuffers(final AlBuffer<?>... p_buffers) {
+		final int[] buffers = new int[p_buffers.length];
 		ALC11.alcMakeContextCurrent(this.context.getId());
 		this.alMan.checkAlcError();
 		AL11.alSourceUnqueueBuffers(this.id, buffers);

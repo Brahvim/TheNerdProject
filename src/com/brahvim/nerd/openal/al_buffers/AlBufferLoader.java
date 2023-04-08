@@ -16,17 +16,17 @@ import org.lwjgl.system.MemoryStack;
 
 public class AlBufferLoader {
 
-	public static ShortBuffer loadOgg(File p_file) {
+	public static ShortBuffer loadOgg(final File p_file) {
 		try {
 			MemoryStack.stackPush();
-			IntBuffer channelsBuffer = MemoryStack.stackMallocInt(1);
+			final IntBuffer channelsBuffer = MemoryStack.stackMallocInt(1);
 
 			MemoryStack.stackPush();
-			IntBuffer sampleRateBuffer = MemoryStack.stackMallocInt(1);
+			final IntBuffer sampleRateBuffer = MemoryStack.stackMallocInt(1);
 
 			// The bigger data (the audio) we're loading. Definitely goes on the heap!
 
-			ShortBuffer toRet = STBVorbis.stb_vorbis_decode_filename(
+			final ShortBuffer toRet = STBVorbis.stb_vorbis_decode_filename(
 					p_file.getCanonicalPath(), channelsBuffer, sampleRateBuffer);
 
 			if (toRet == null) {
@@ -48,9 +48,9 @@ public class AlBufferLoader {
 
 	// https://stackoverflow.com/a/70050617/
 	@Deprecated
-	public static ByteBuffer loadWav(File p_file) {
+	public static ByteBuffer loadWav(final File p_file) {
 		// If the size is more than an `int` can handle, wrap!
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream(
+		final ByteArrayOutputStream bytes = new ByteArrayOutputStream(
 				(int) Math.min((long) Integer.MAX_VALUE, p_file.length()));
 
 		try (AudioInputStream ais = AudioSystem.getAudioInputStream(p_file)) {

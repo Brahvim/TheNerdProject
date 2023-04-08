@@ -7,7 +7,7 @@ import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 
 public class AlPitchShifter extends AlEffect {
 
-	public AlPitchShifter(NerdAl p_NerdAl) {
+	public AlPitchShifter(final NerdAl p_NerdAl) {
 		super(p_NerdAl);
 	}
 
@@ -27,12 +27,12 @@ public class AlPitchShifter extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public AlPitchShifter setPitchShifterFineTune(int p_value) {
+	public AlPitchShifter setPitchShifterFineTune(final int p_value) {
 		super.setInt(EXTEfx.AL_PITCH_SHIFTER_FINE_TUNE, p_value);
 		return this;
 	}
 
-	public AlPitchShifter setPitchShifterCoarseTune(int p_value) {
+	public AlPitchShifter setPitchShifterCoarseTune(final int p_value) {
 		super.setInt(EXTEfx.AL_PITCH_SHIFTER_COARSE_TUNE, p_value);
 		return this;
 	}

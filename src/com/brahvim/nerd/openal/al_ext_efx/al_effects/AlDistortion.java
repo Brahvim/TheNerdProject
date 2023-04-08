@@ -7,7 +7,7 @@ import com.brahvim.nerd.openal.al_ext_efx.AlEffect;
 
 public class AlDistortion extends AlEffect {
 
-	public AlDistortion(NerdAl p_NerdAl) {
+	public AlDistortion(final NerdAl p_NerdAl) {
 		super(p_NerdAl);
 	}
 
@@ -39,27 +39,27 @@ public class AlDistortion extends AlEffect {
 	// endregion
 
 	// region Setters.
-	public AlDistortion setDistortionEdge(float p_value) {
+	public AlDistortion setDistortionEdge(final float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_EDGE, p_value);
 		return this;
 	}
 
-	public AlDistortion setDistortionGain(float p_value) {
+	public AlDistortion setDistortionGain(final float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_GAIN, p_value);
 		return this;
 	}
 
-	public AlDistortion setDistortionLowpassCutoff(float p_value) {
+	public AlDistortion setDistortionLowpassCutoff(final float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_LOWPASS_CUTOFF, p_value);
 		return this;
 	}
 
-	public AlDistortion setDistortionEqCenter(float p_value) {
+	public AlDistortion setDistortionEqCenter(final float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_EQCENTER, p_value);
 		return this;
 	}
 
-	public AlDistortion setDistortionEqBandwidth(float p_value) {
+	public AlDistortion setDistortionEqBandwidth(final float p_value) {
 		super.setFloat(EXTEfx.AL_DISTORTION_EQBANDWIDTH, p_value);
 		return this;
 	}

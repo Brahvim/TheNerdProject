@@ -14,7 +14,7 @@ public class RevolvingParticlesLayer extends NerdLayer {
 
     @Override
     protected void setup() {
-        final PGraphics g = SKETCH.createGraphics(this.PARTICLE_SIZE);
+        final PGraphics g = this.SKETCH.createGraphics(this.PARTICLE_SIZE);
         g.beginDraw();
         g.noStroke();
         g.fill(235, 174, 52, 255 / this.PARTICLE_CONC * 1.15f);
@@ -44,15 +44,15 @@ public class RevolvingParticlesLayer extends NerdLayer {
 
     @Override
     protected void draw() {
-        SKETCH.noStroke();
+        this.SKETCH.noStroke();
 
         for (int i = 0; i < 20; i++) {
             // float angle = PConstants.TAU / i;
-            SKETCH.rotate(App.getTickCount());
+            this.SKETCH.rotate(App.getTickCount());
 
-            SKETCH.image(this.particleGraphics,
-                    PApplet.cos(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * App.BPM) * i * 12,
-                    PApplet.tan(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * App.BPM) * i * 12,
+            this.SKETCH.image(this.particleGraphics,
+                    PApplet.cos(3 * PConstants.TAU * this.SKETCH.millis() * 0.0000016f * App.BPM) * i * 12,
+                    PApplet.tan(3 * PConstants.TAU * this.SKETCH.millis() * 0.0000016f * App.BPM) * i * 12,
                     0.5f);
 
             // It doesn't even move ._.

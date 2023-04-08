@@ -57,7 +57,7 @@ public class NerdLayer implements HardwareEventsHandler {
         return this.active;
     }
 
-    public void setActive(boolean p_toggleState) {
+    public void setActive(final boolean p_toggleState) {
         this.active = p_toggleState;
 
         if (this.active) {

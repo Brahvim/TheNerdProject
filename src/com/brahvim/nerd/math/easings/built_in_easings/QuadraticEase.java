@@ -6,7 +6,7 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class QuadraticEase extends NerdEasingFunction {
 
-	public QuadraticEase(Sketch p_parentSketch) {
+	public QuadraticEase(final Sketch p_parentSketch) {
 		super(p_parentSketch);
 	}
 
