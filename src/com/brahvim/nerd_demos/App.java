@@ -16,6 +16,7 @@ public class App {
      * // TODO: Make a UDP API!
      * // TODO: Just make it easier to animate, somehow!
      * // TODO: Collision Algorithms (also for 3D space)?!
+     * // TODO: Fix `AlWavBuffer`. What if `IntBuffer`s work?
      * // TODO: ANDROID Port with OpenAL. Get that done! (SWIG wrapper!)
      */
 

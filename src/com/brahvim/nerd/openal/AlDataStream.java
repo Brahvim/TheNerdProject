@@ -1,6 +1,7 @@
 package com.brahvim.nerd.openal;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 import org.lwjgl.openal.AL11;
@@ -30,7 +31,9 @@ public class AlDataStream {
 			this.unusedBuffersPool.add(new AlWavBuffer(this.alMan));
 
 		final AlWavBuffer toQueue = this.unusedBuffersPool.remove(0);
-		toQueue.setData(p_alFormat, ByteBuffer.wrap(p_bytes), p_sampleRate);
+		toQueue.setData(p_alFormat, ByteBuffer.wrap(p_bytes)
+				.order(ByteOrder.nativeOrder()).asIntBuffer(),
+				p_sampleRate);
 		this.source.queueBuffers(toQueue);
 		this.alMan.checkAlError();
 		this.buffers.add(toQueue);

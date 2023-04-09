@@ -1,6 +1,7 @@
 package com.brahvim.nerd.openal;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -193,13 +194,17 @@ public class AlCapture extends AlNativeResource {
 		if (this.lastCapFormat == -1 || this.lastCapSampleRate == -1)
 			return this.capturedData;
 
-		p_buffer.setData(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
+		p_buffer.setData(this.lastCapFormat,
+				this.capturedData.order(ByteOrder.nativeOrder()).asIntBuffer(),
+				this.lastCapSampleRate);
 		return this.capturedData;
 	}
 
 	public AlWavBuffer storeIntoBuffer() {
 		final AlWavBuffer toRet = new AlWavBuffer(this.alMan);
-		toRet.setData(this.lastCapFormat, this.capturedData, this.lastCapSampleRate);
+		toRet.setData(this.lastCapFormat,
+				this.capturedData.order(ByteOrder.nativeOrder()).asIntBuffer(),
+				this.lastCapSampleRate);
 		return toRet;
 	}
 	// endregion
