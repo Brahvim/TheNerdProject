@@ -53,7 +53,6 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.core.PVector;
 import processing.opengl.PGL;
-import processing.opengl.PGraphics3D;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
@@ -1694,27 +1693,42 @@ public class Sketch extends PApplet {
 	// endregion
 
 	public void unprojectMouse() {
-		final float originalNear;
+		// [WORKS, NOT CHEAP + STILL INACCURATE]
+		// Unprojection of my own:
+		PVector u = new PVector(super.mouseX, super.mouseY);
+		u = this.glGraphics.projection.mult(u, null);
+		u = this.glGraphics.cameraInv.mult(u, null);
+		u.x -= this.qx;
+		// u.sub(super.width, super.height);
+		// u.add(this.cx, this.cy);
+		// u.add(this.cx, this.cy);
+		this.mouse.set(u);
 
-		if (this.currentCamera != null) {
-			originalNear = this.currentCamera.near;
-			this.currentCamera.near = this.currentCamera.mouseZ;
-			this.currentCamera.applyMatrix();
-		} else
-			originalNear = 0;
+		// System.out.println(this.mouse);
 
-		// Unproject:
-		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.g);
-		// this.mouse.set(0, 0, 0); // Does not help!
-
-		this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
-				// `0.9f`: at the near clipping plane.
-				// `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
-				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
-				0, this.mouse);
-
-		if (this.currentCamera != null)
-			this.currentCamera.near = originalNear;
+		/*
+		 * final float originalNear;
+		 * 
+		 * if (this.currentCamera != null) {
+		 * originalNear = this.currentCamera.near;
+		 * this.currentCamera.near = this.currentCamera.mouseZ;
+		 * this.currentCamera.applyMatrix();
+		 * } else
+		 * originalNear = 0;
+		 * 
+		 * // Unproject:
+		 * this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.g);
+		 * // this.mouse.set(0, 0, 0); // Does not help!
+		 * 
+		 * this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
+		 * // `0.9f`: at the near clipping plane.
+		 * // `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
+		 * // 0.9f + map(mouseY, height, 0, 0, 0.1f),
+		 * 0, this.mouse);
+		 * 
+		 * if (this.currentCamera != null)
+		 * this.currentCamera.near = originalNear;
+		 */
 
 		/*
 		 * if (this.currentCamera == null)
@@ -1946,7 +1960,8 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Start a `JAVA2D` sketch with an undecorated window.
-	public JFrame createSketchPanel(final Runnable p_exitTask, final Sketch p_sketch, final PGraphics p_sketchGraphics) {
+	public JFrame createSketchPanel(final Runnable p_exitTask, final Sketch p_sketch,
+			final PGraphics p_sketchGraphics) {
 		// This is what `PApplet::frame` used to contain:
 		super.frame = null;
 		final JFrame toRet = (JFrame) ((PSurfaceAWT.SmoothCanvas) p_sketch

@@ -127,6 +127,10 @@ public class DemoScene4 extends NerdScene {
         SKETCH.endShape();
         // endregion
 
+        SKETCH.in2d(() -> {
+            SKETCH.circle(SKETCH.mouse.x, SKETCH.mouse.y, 20);
+        });
+
     }
 
     private float nerdRotTime() {
