@@ -321,17 +321,7 @@ public class NerdTcpServer {
 		this.startedShutdown = true;
 		// System.out.println("`NerdTcpServer::shutdown()` has begun!");
 
-		synchronized (this.CLIENTS) {
-			System.out.printf(
-					"`NerdTcpServer::shutdown()` will now remove `%d` clients.\n",
-					this.CLIENTS.size());
-
-			for (int i = this.CLIENTS.size() - 1; i != -1; i--) {
-				System.out.printf("Removed a client, `%d` remaining.\n",
-						this.CLIENTS.size());
-				this.CLIENTS.get(i).disconnect();
-			}
-		}
+		this.disconnectAll();
 
 		// System.out.println("`NerdTcpServer::shutdown()` disconnected all clients.");
 
@@ -355,15 +345,8 @@ public class NerdTcpServer {
 
 	public void disconnectAll() {
 		synchronized (this.CLIENTS) {
-			System.out.printf(
-					"`NerdTcpServer::disconnectAll()`. `%d` clients will be removed.\n",
-					this.CLIENTS.size());
-
-			for (int i = this.CLIENTS.size() - 1; i != -1; i--) {
-				System.out.printf("Removed a client, `%d` remaining.\n",
-						this.CLIENTS.size());
+			for (int i = this.CLIENTS.size() - 1; i != -1; i--)
 				this.CLIENTS.get(i).disconnect();
-			}
 		}
 	}
 
