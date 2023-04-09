@@ -44,14 +44,21 @@ public abstract class NerdAbstractTcpClient {
 		if (this.hasDisconnected)
 			return;
 
+		// System.out.println(
+		// "`NerdAbstractTcpClient::disconnect()` will now call `impl()`.");
 		this.hasDisconnected = true;
 		this.disconnectImpl();
+
+		// System.out.println(
+		// "`NerdAbstractTcpClient::disconnect()` will now close the socket.");
 
 		try {
 			this.socket.close();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
+
+		// System.out.println("`NerdAbstractTcpClient::disconnect()` completed.");
 	}
 
 	// region Abstraction

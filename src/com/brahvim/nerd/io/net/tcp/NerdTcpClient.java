@@ -1,8 +1,10 @@
 package com.brahvim.nerd.io.net.tcp;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Vector;
@@ -67,7 +69,8 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 		if (this.inMessageLoop)
 			return;
 
-		System.out.println("`NerdTcpClient::startMessageThread()`");
+		if (super.hasDisconnected)
+			return;
 
 		this.inMessageLoop = true;
 		this.MESSAGE_CALLBACKS.add(p_mesageCallback);
@@ -82,8 +85,11 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 				e.printStackTrace();
 			}
 
-			while (!super.hasDisconnected)
+			while (true)
 				try {
+					if (this.commsThread.isInterrupted())
+						return;
+
 					stream.available();
 					// ^^^ This is literally gunna return `0`!
 					// ..I guess we use fixed sizes around here...
@@ -101,6 +107,9 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 					synchronized (this.MESSAGE_CALLBACKS) {
 						for (final var c : this.MESSAGE_CALLBACKS)
 							try {
+								// System.out.println("""
+								// `NerdTcpClient::serverCommThread::run()` \
+								// called a message callback.""");
 								c.accept(packet);
 							} catch (final Exception e) {
 								e.printStackTrace();
@@ -109,28 +118,27 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 				} catch (final IOException e) {
 					// When the client disconnects, this exception is thrown by
 					// `*InputStream::read*()`:
-					// if (e instanceof EOFException)
-					// this.disconnectImpl();
-					// else if (e instanceof SocketException)
-					// e.printStackTrace();
-					// else
-					e.printStackTrace();
+					if (e instanceof EOFException)
+						this.disconnect();
+					else if (e instanceof SocketException)
+						this.disconnect();
+					// e.printStackTrace(); // I have NO idea what to do!
+					else
+						e.printStackTrace();
 				}
 		});
 
 		this.commsThread.setName("NerdTcpServerListenerOnPort" + this.socket.getLocalPort());
 		this.commsThread.setDaemon(true);
 		this.commsThread.start();
+
 	}
 	// endregion
 
 	@Override
-	public void disconnectImpl() {
-		try {
-			this.commsThread.join();
-		} catch (final InterruptedException e) {
-			e.printStackTrace();
-		}
+	protected void disconnectImpl() {
+		if (this.commsThread != null)
+			this.commsThread.interrupt();
 	}
 
 	// region Sending stuff.

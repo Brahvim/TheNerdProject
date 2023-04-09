@@ -53,12 +53,14 @@ public class NerdTcpServer {
 		}
 		// endregion
 
-		protected void startMessageThread() {
+		private void startMessageThread() {
 			if (this.inMessageLoop)
 				return;
 
-			this.inMessageLoop = true;
+			if (super.hasDisconnected)
+				return;
 
+			this.inMessageLoop = true;
 			this.serverCommThread = new Thread(() -> {
 				// No worries - the same stream is used till the socket shuts down.
 				DataInputStream stream = null;
@@ -70,8 +72,14 @@ public class NerdTcpServer {
 					e.printStackTrace();
 				}
 
-				while (!super.hasDisconnected)
+				while (true)
 					try {
+						// System.out.println("NerdTcpServer.NerdTcpServerClient.startMessageThread()");
+						if (this.serverCommThread.isInterrupted())
+							return;
+
+						// System.out.printf("hasDisconnected: `%s`.\n", super.hasDisconnected);
+						// System.out.println("`NerdTcpServer.NerdTcpServerClient::serverCommsThread::run()`");
 						stream.available();
 						// ^^^ This is literally gunna return `0`!
 						// ..I guess we use fixed sizes around here...
@@ -82,9 +90,10 @@ public class NerdTcpServer {
 						stream.read(packetData); // It needs to know the length of the array!
 						final var packet = new NerdTcpServer.NerdClientSentTcpPacket(this, packetData);
 
-						// System.out.println(
-						// "`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` read the
-						// stream.");
+						// System.out.println("""
+						// `NerdTcpServer.NerdTcpServerClient\
+						// ::serverCommThread::run()` read the \
+						// stream.""");
 
 						// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
 						// have to reconstruct it every time, fearing that one of these callbacks might
@@ -96,9 +105,10 @@ public class NerdTcpServer {
 							// entered the synced block.""");
 							for (final var c : this.MESSAGE_CALLBACKS)
 								try {
-									// System.out.println(
-									// "`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` called a
-									// message callback.");
+									// System.out.println("""
+									// `NerdTcpServer.NerdTcpServerClient\
+									// ::serverCommThread::run()` \
+									// called a message callback.""");
 									c.accept(packet);
 								} catch (final Exception e) {
 									e.printStackTrace();
@@ -108,7 +118,7 @@ public class NerdTcpServer {
 						// When the client disconnects, this exception is thrown by
 						// `*InputStream::read*()`:
 						if (e instanceof EOFException)
-							this.disconnectImpl();
+							this.disconnect();
 						else
 							e.printStackTrace();
 					}
@@ -188,12 +198,9 @@ public class NerdTcpServer {
 		}
 
 		@Override
-		public void disconnectImpl() {
-			try {
-				this.serverCommThread.join();
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
+		protected void disconnectImpl() {
+			if (this.serverCommThread != null)
+				this.serverCommThread.interrupt();
 
 			synchronized (NerdTcpServer.this.CLIENTS) {
 				NerdTcpServer.this.CLIENTS.remove(this);
@@ -208,8 +215,8 @@ public class NerdTcpServer {
 
 	private Thread connsThread;
 	private ServerSocket socket;
-	private volatile boolean startedShutdown;
-	private volatile Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> connectionCallback;
+	private boolean startedShutdown;
+	private Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> connectionCallback;
 	// endregion
 
 	// region Construction.
@@ -271,6 +278,8 @@ public class NerdTcpServer {
 		this.connsThread = new Thread(() -> {
 			while (!this.startedShutdown)
 				try { // Loop, or try-catch block first?
+						// System.out.println("`NerdTcpServer::connsThread::run()`");
+
 					final var client = new NerdTcpServer.NerdTcpServerClient(this.socket.accept());
 
 					synchronized (NerdTcpServer.this.CLIENTS) {
@@ -282,9 +291,12 @@ public class NerdTcpServer {
 
 					final var callback = this.connectionCallback.apply(client);
 
-					if (callback != null)
+					if (callback != null) {
 						client.addMessageCallback(callback);
-					client.startMessageThread();
+						client.startMessageThread();
+					} else {
+						client.disconnect();
+					}
 				} catch (final IOException e) {
 					if (!(e instanceof SocketTimeoutException))
 						e.printStackTrace();
@@ -307,6 +319,21 @@ public class NerdTcpServer {
 			return;
 
 		this.startedShutdown = true;
+		// System.out.println("`NerdTcpServer::shutdown()` has begun!");
+
+		synchronized (this.CLIENTS) {
+			System.out.printf(
+					"`NerdTcpServer::shutdown()` will now remove `%d` clients.\n",
+					this.CLIENTS.size());
+
+			for (int i = this.CLIENTS.size() - 1; i != -1; i--) {
+				System.out.printf("Removed a client, `%d` remaining.\n",
+						this.CLIENTS.size());
+				this.CLIENTS.get(i).disconnect();
+			}
+		}
+
+		// System.out.println("`NerdTcpServer::shutdown()` disconnected all clients.");
 
 		try {
 			this.connsThread.join();
@@ -314,18 +341,30 @@ public class NerdTcpServer {
 			e.printStackTrace();
 		}
 
-		this.disconnectAll();
+		// System.out.println("`NerdTcpServer::shutdown()` stopped `connsThread`.");
 
 		try {
 			this.socket.close();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
+
+		// System.out.println("`NerdTcpServer::shutdown()` closed its `ServerSocket`
+		// instance.");
 	}
 
-	public synchronized void disconnectAll() {
-		for (int i = this.CLIENTS.size() - 1; i != 0; i--)
-			this.CLIENTS.get(i).disconnectImpl();
+	public void disconnectAll() {
+		synchronized (this.CLIENTS) {
+			System.out.printf(
+					"`NerdTcpServer::disconnectAll()`. `%d` clients will be removed.\n",
+					this.CLIENTS.size());
+
+			for (int i = this.CLIENTS.size() - 1; i != -1; i--) {
+				System.out.printf("Removed a client, `%d` remaining.\n",
+						this.CLIENTS.size());
+				this.CLIENTS.get(i).disconnect();
+			}
+		}
 	}
 
 	// region Sending stuff.
