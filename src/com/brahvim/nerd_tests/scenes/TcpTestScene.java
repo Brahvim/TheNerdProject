@@ -13,13 +13,21 @@ public class TcpTestScene extends NerdScene {
 	protected void setup(final SceneState p_state) {
 		final NerdTcpServer server = new NerdTcpServer(8080).onNewConnection((c) -> {
 			System.out.println("Ayy! A new client joined! Info: " + c.getSocket().toString());
-			return (p) -> System.out.printf("Client messaged: `%s`, using `%d` bytes.\n",
-					new String(p.getData(), StandardCharsets.UTF_8), p.getDataLength());
+			return (p) -> {
+				final var client = p.getSender();
+
+				client.removeAllMessageCallbacks();
+				client.addMessageCallback(p2 -> System.out.printf("New client callback!"));
+
+				System.out.printf("Client messaged: `%s`, using `%d` bytes.\n",
+						new String(p.getData(), StandardCharsets.UTF_8), p.getDataLength());
+			};
 		});
 
 		final NerdTcpClient client = new NerdTcpClient("127.0.0.1", 8080);
 
 		client.send("Hey there - \":D!~");
+		client.send("Is the new callback there yet? :D");
 		// SKETCH.delay(5_000);
 		// client.disconnect();
 
