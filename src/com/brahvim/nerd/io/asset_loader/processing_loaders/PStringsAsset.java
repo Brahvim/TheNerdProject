@@ -2,10 +2,10 @@ package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
-import com.brahvim.nerd.io.asset_loader.AssetType;
+import com.brahvim.nerd.io.asset_loader.AssetLoader;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-public class PStringsAsset extends AssetType<String[]> {
+public class PStringsAsset extends AssetLoader<String[]> {
 
 	// region SINGLETON STUFF.
 	private static PStringsAsset LOADER = new PStringsAsset();

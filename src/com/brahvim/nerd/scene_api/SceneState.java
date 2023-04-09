@@ -19,7 +19,8 @@ public class SceneState {
         this.DATA.clear();
     }
 
-    public Object compute(final String key, final BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
+    public Object compute(final String key,
+            final BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
         return this.DATA.compute(key, remappingFunction);
     }
 
@@ -70,11 +71,10 @@ public class SceneState {
     }
     // endregion
 
-    /*
-     * Don't waste time casting.
-     * But, don't muddle with types.
-     * It'll start throwing exceptions!
-     */
+    // region Methods to modify the saved state's data.
+    // Don't waste time casting.
+    // But, don't muddle with types.
+    // It'll start throwing exceptions!
     /**
      * Returns {@code null} if the key is not contained.
      */
@@ -104,6 +104,7 @@ public class SceneState {
     public <T> T remove(final String p_key) {
         return (T) this.DATA.remove(p_key);
     }
+    // endregion
 
     // Useless idea: How about a "queue getter"? 🤪
     /*

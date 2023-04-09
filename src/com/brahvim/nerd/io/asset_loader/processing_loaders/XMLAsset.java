@@ -2,17 +2,17 @@ package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
-import com.brahvim.nerd.io.asset_loader.AssetType;
+import com.brahvim.nerd.io.asset_loader.AssetLoader;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.data.XML;
 
-public class XMLAsset extends AssetType<XML> {
+public class XMLAsset extends AssetLoader<XML> {
 
 	// region SINGLETON STUFF.
 	private static XMLAsset LOADER = new XMLAsset();
 
-	public static AssetType<XML> getLoader() {
+	public static AssetLoader<XML> getLoader() {
 		return XMLAsset.LOADER;
 	}
 	// endregion

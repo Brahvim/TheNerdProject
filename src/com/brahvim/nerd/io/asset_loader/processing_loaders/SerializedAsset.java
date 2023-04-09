@@ -3,15 +3,15 @@ package com.brahvim.nerd.io.asset_loader.processing_loaders;
 import com.brahvim.nerd.io.ByteSerial;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
-import com.brahvim.nerd.io.asset_loader.AssetType;
+import com.brahvim.nerd.io.asset_loader.AssetLoader;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-public class SerializedAsset extends AssetType<Object> {
+public class SerializedAsset extends AssetLoader<Object> {
 
 	// region SINGLETON STUFF.
 	private static SerializedAsset LOADER = new SerializedAsset();
 
-	public static AssetType<?> getLoader() {
+	public static AssetLoader<?> getLoader() {
 		return SerializedAsset.LOADER;
 	}
 	// endregion

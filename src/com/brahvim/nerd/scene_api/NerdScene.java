@@ -14,71 +14,10 @@ import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 /**
  * <h2>Do not use as an anonymous class!</h2>
  * <i>Always extend!</i>
+ *
+ * @author Brahvim Bhaktvatsal
  */
-
-public class NerdScene implements HardwareEventsHandler {
-
-  // region Inner classes.
-  /*
-   * public NerdScene.AutoDrawable
-   * createAutoDrawable(NerdScene.AutoDrawableInstance p_instance) {
-   * NerdScene.AutoDrawable toRet = this.new AutoDrawable() {
-   * 
-   * @Override
-   * public void draw() {
-   * p_instance.draw();
-   * }
-   * };
-   * 
-   * return toRet;
-   * }
-   * 
-   * public interface AutoDrawableInstance {
-   * public void draw();
-   * }
-   * 
-   * public abstract class AutoDrawable {
-   * private static final ArrayList<AutoDrawable> ALL_AUTO_DRAWABLES = new
-   * ArrayList<>(5);
-   * 
-   * public AutoDrawable() {
-   * NerdScene.AutoDrawable.ALL_AUTO_DRAWABLES.add(this);
-   * }
-   * 
-   * public void draw() {
-   * }
-   * }
-   */
-
-  /*
-   * public class LayerKey extends NerdKey {
-   * private final NerdScene SCENE;
-   * private final Sketch SKETCH;
-   * private final Class<? extends NerdLayer> LAYER_CLASS;
-   * 
-   * private LayerKey(NerdScene p_scene, Sketch p_sketch, Class<? extends
-   * NerdLayer> p_layerClass) {
-   * this.LAYER_CLASS = p_layerClass;
-   * this.SCENE = p_scene;
-   * this.SKETCH = p_sketch;
-   * }
-   * 
-   * public NerdScene getScene() {
-   * return this.SCENE;
-   * }
-   * 
-   * public Sketch getSketch() {
-   * return this.SKETCH;
-   * }
-   * 
-   * @Override
-   * public boolean isFor(Class<?> p_class) {
-   * return this.LAYER_CLASS.equals(p_class);
-   * }
-   * 
-   * }
-   */
-  // endregion
+public class NerdScene {
 
   // region `public` fields.
   public final NerdScene SCENE = this;
@@ -103,7 +42,7 @@ public class NerdScene implements HardwareEventsHandler {
 
   private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
 
-  LAYER_CONSTRUCTORS = new HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>(0);
+  LAYER_CONSTRUCTORS = new HashMap<>(0);
 
   /*
    * Alternative approach: storing a reference to the constructor WITHIN the class
@@ -649,6 +588,68 @@ public class NerdScene implements HardwareEventsHandler {
   }
 
   protected void post() {
+  }
+  // endregion
+  // endregion
+
+  // region Events.
+  // region Mouse events.
+  public void mousePressed() {
+  }
+
+  public void mouseReleased() {
+  }
+
+  public void mouseMoved() {
+  }
+
+  public void mouseClicked() {
+  }
+
+  public void mouseDragged() {
+  }
+
+  // @SuppressWarnings("unused")
+  public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
+  }
+  // endregion
+
+  // region Keyboard events.
+  public void keyTyped() {
+  }
+
+  public void keyPressed() {
+  }
+
+  public void keyReleased() {
+  }
+  // endregion
+
+  // region Touch events.
+  public void touchStarted() {
+  }
+
+  public void touchMoved() {
+  }
+
+  public void touchEnded() {
+  }
+  // endregion
+
+  // region Window focus events.
+  public void focusLost() {
+  }
+
+  public void exit() {
+  }
+
+  public void resized() {
+  }
+
+  public void focusGained() {
+  }
+
+  public void monitorChanged() {
   }
   // endregion
   // endregion

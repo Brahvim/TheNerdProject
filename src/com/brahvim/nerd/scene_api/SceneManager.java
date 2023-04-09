@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
+import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class SceneManager {
@@ -453,6 +454,21 @@ public class SceneManager {
         });
         // endregion
 
+    }
+    // endregion
+
+    // region Persistent asset operations.
+    public void reloadGivenPersistentAsset(final NerdAsset p_asset) {
+        this.PERSISTENT_ASSETS.remove(p_asset);
+        this.PERSISTENT_ASSETS.add(p_asset.getLoader(), p_asset.getPath());
+    }
+
+    public void reloadPersistentAssets() {
+        final NerdAsset[] assets = (NerdAsset[]) this.PERSISTENT_ASSETS.toArray();
+        this.PERSISTENT_ASSETS.clear();
+
+        for (final NerdAsset a : assets)
+            this.PERSISTENT_ASSETS.add(a.getLoader(), a.getPath());
     }
     // endregion
 

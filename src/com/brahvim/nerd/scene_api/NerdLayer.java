@@ -4,52 +4,35 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 /**
- * Just like {@code Scene}s, {@code Layer}s
+ * Just like {@link NerdScene}s, {@link NerdLayer}s
  * are used by extending this class.
- * To add a {@code Layer} to a {@code Scene}, use the
+ * To add a {@link NerdLayer} to a {@link NerdScene}, use the
  * {@code SceneClass::startLayer(LayerClass.class)}
  * method, where {@code LayerClass} and {@code SceneClass}
- * are any two classes extending the {@code Layer}
- * and {@code Scene} classes, respectively.
+ * are any two classes extending the {@link NerdLayer}
+ * and {@link NerdScene} classes, respectively.
  *
  * @author Brahvim Bhaktvatsal
  */
-public class NerdLayer implements HardwareEventsHandler {
+public class NerdLayer {
 
     // region `public` fields.
     // Seriously, why did I set these to be `protected`?
     public final NerdLayer LAYER = this;
+
     public /* final */ Sketch SKETCH;
     public /* final */ NerdScene SCENE;
-    public /* final */ NerdAbstractCamera CAMERA;
+    public /* final */ NerdScene NerdSCENE;
     public /* final */ SceneManager MANAGER;
+    public /* final */ NerdAbstractCamera CAMERA;
     // endregion
 
     // region `private` fields.
+    private int timesActivated;
     private boolean active = true;
-    private int timesActivatedCount;
     // endregion
 
     protected NerdLayer() {
-        // region Verify and 'use' key.
-        // if (p_key == null) {
-        // throw new IllegalArgumentException("""
-        // Please use a `NerdSceneManager` instance to make a `NerdScene`!""");
-        // } else if (p_key.isUsed()) {
-        // throw new IllegalArgumentException("""
-        // Please use a `NerdSceneManager` instance to make a `NerdScene`! That is a
-        // used key!""");
-        // } else if (!p_key.isFor(this.getClass()))
-        // throw new IllegalArgumentException("""
-        // Please use a `NerdSceneManager` instance to make a `NerdScene`! That key is
-        // not for me!""");
-
-        // p_key.use();
-        // endregion
-
-        // this.SCENE = (SCENE_TYPE) p_key.getScene();
-        // this.SKETCH = p_key.getSketch();
-        // this.MANAGER = this.SCENE.MANAGER;
     }
 
     // region Activity status.
@@ -62,18 +45,80 @@ public class NerdLayer implements HardwareEventsHandler {
 
         if (this.active) {
             this.setup();
-            this.timesActivatedCount++;
+            this.timesActivated++;
         } else
             this.layerExit();
     }
 
-    public int timesActivated() {
-        return this.timesActivatedCount;
+    public int getTimesActivated() {
+        return this.timesActivated;
     }
     // endregion
 
+    // region Events.
+    // region Mouse events.
+    public void mousePressed() {
+    }
+
+    public void mouseReleased() {
+    }
+
+    public void mouseMoved() {
+    }
+
+    public void mouseClicked() {
+    }
+
+    public void mouseDragged() {
+    }
+
+    // @SuppressWarnings("unused")
+    public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
+    }
+    // endregion
+
+    // region Keyboard events.
+    public void keyTyped() {
+    }
+
+    public void keyPressed() {
+    }
+
+    public void keyReleased() {
+    }
+    // endregion
+
+    // region Touch events.
+    public void touchStarted() {
+    }
+
+    public void touchMoved() {
+    }
+
+    public void touchEnded() {
+    }
+    // endregion
+
+    // region Window focus events.
+    public void focusLost() {
+    }
+
+    public void exit() {
+    }
+
+    public void resized() {
+    }
+
+    public void focusGained() {
+    }
+
+    public void monitorChanged() {
+    }
+    // endregion
+    // endregion
+
     // region `protected` methods. Nobody can call them outside of this package!
-    // region `Layer`-only (`protected`) callbacks!
+    // region `NerdLayer`-only (`protected`) callbacks!
     protected void layerExit() {
     }
     // endregion

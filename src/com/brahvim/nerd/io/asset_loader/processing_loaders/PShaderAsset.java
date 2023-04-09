@@ -2,18 +2,18 @@ package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
-import com.brahvim.nerd.io.asset_loader.AssetType;
+import com.brahvim.nerd.io.asset_loader.AssetLoader;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
 import processing.opengl.PShader;
 
-public class PShaderAsset extends AssetType<PShader> {
+public class PShaderAsset extends AssetLoader<PShader> {
 
 	// region SINGLETON STUFF.
 	private static PShaderAsset LOADER = new PShaderAsset();
 
-	public static AssetType<?> getLoader() {
+	public static AssetLoader<?> getLoader() {
 		return PShaderAsset.LOADER;
 	}
 	// endregion

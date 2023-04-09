@@ -24,28 +24,28 @@ public class AssetManager {
     }
 
     // region `makeAsset()` overloads.
-    public <T> NerdAsset makeAsset(final AssetType<T> p_type, final String p_path, final AssetLoaderOptions... p_options) {
+    public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path, final AssetLoaderOptions... p_options) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAssets` need data!");
         return new NerdAsset(this.SKETCH, p_type, p_path, p_options);
     }
 
-    public <T> NerdAsset makeAsset(final AssetType<T> p_type, final String p_path) {
+    public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path) {
         return this.makeAsset(p_type, p_path, (AssetLoaderOptions[]) null);
     }
     // endregion
 
     // region `add()` overloads.
-    public <T> AssetManager add(final AssetType<T> p_type, final String p_path, final AssetLoaderOptions... p_options) {
+    public <T> AssetManager add(final AssetLoader<T> p_type, final String p_path, final AssetLoaderOptions... p_options) {
         this.ASSETS.add(this.makeAsset(p_type, p_path, p_options));
         return this;
     }
 
-    public <T> AssetManager add(final AssetType<T> p_type, final String p_path, final Runnable p_onLoad) {
+    public <T> AssetManager add(final AssetLoader<T> p_type, final String p_path, final Runnable p_onLoad) {
         return this.add(p_type, p_path, p_onLoad);
     }
 
-    public <T> AssetManager add(final AssetType<T> p_type, final String p_path) {
+    public <T> AssetManager add(final AssetLoader<T> p_type, final String p_path) {
         return this.add(p_type, p_path, (AssetLoaderOptions[]) null);
     }
 

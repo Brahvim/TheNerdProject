@@ -3,7 +3,6 @@
 /README.md
 /lib
 
-TheNerdProject.jar
-#*.jar
+*.jar
 *.zip
 *.log

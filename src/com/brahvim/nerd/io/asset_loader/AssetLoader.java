@@ -3,14 +3,14 @@ package com.brahvim.nerd.io.asset_loader;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 // Keeping this outside saves typing!:
-public abstract class AssetType<AssetT> {
+public abstract class AssetLoader<AssetT> {
     // `private static final YourAssetType LOADER = new YourAssetType();`
 
-    protected AssetType() {
+    protected AssetLoader() {
     }
 
     // Hey there! Also include this method in your class!:
-    public static AssetType<?> getLoader() {
+    public static AssetLoader<?> getLoader() {
         throw new UnsupportedOperationException();
         // return null; // `return YourAssetType.LOADER;`
     }
@@ -21,7 +21,7 @@ public abstract class AssetType<AssetT> {
      *                                    weren't meant for it.
      */
     public abstract AssetT fetchData(
-            Sketch p_sketch, String p_path, AssetLoaderOptions... p_options)
+            final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
             throws AssetLoaderFailedException, IllegalArgumentException;
 
 }

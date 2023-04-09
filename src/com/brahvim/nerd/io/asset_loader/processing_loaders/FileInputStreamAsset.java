@@ -6,15 +6,15 @@ import java.io.FileNotFoundException;
 
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
 import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
-import com.brahvim.nerd.io.asset_loader.AssetType;
+import com.brahvim.nerd.io.asset_loader.AssetLoader;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-public class FileInputStreamAsset extends AssetType<FileInputStream> {
+public class FileInputStreamAsset extends AssetLoader<FileInputStream> {
 
 	// region SINGLETON STUFF.
 	private static FileInputStreamAsset LOADER = new FileInputStreamAsset();
 
-	public static AssetType<?> getLoader() {
+	public static AssetLoader<?> getLoader() {
 		return FileInputStreamAsset.LOADER;
 	}
 	// endregion

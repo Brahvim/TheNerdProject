@@ -11,7 +11,7 @@ public class NerdAsset {
 
     private final String PATH;
     private final Sketch SKETCH;
-    private final AssetType<?> LOADER;
+    private final AssetLoader<?> LOADER;
 
     private int frame;
     private Object data;
@@ -22,7 +22,7 @@ public class NerdAsset {
     // endregion
 
     // region Constructors!
-    public NerdAsset(final Sketch p_sketch, final AssetType<?> p_type, final String p_path) {
+    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path) {
         // this.verifyKey(p_key);
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
@@ -35,17 +35,18 @@ public class NerdAsset {
         this.startLoading();
     }
 
-    public NerdAsset(final Sketch p_sketch, final AssetType<?> p_type, final String p_path, final Runnable p_onLoad) {
+    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path, final Runnable p_onLoad) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
     }
 
-    public NerdAsset(final Sketch p_sketch, final AssetType<?> p_type, final String p_path, final AssetLoaderOptions... p_options) {
+    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path,
+            final AssetLoaderOptions... p_options) {
         this(p_sketch, p_type, p_path);
         this.options = p_options;
     }
 
-    public NerdAsset(final Sketch p_sketch, final AssetType<?> p_type, final String p_path, final Runnable p_onLoad,
+    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path, final Runnable p_onLoad,
             final AssetLoaderOptions... p_options) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
@@ -101,6 +102,10 @@ public class NerdAsset {
     // endregion
 
     // region Getters.
+    public String getPath() {
+        return this.PATH;
+    }
+
     /**
      * Ensures that the asset has loaded, then returns its data,
      * given the name of a file (without the extension!).<br>
@@ -115,18 +120,16 @@ public class NerdAsset {
         return (RetT) this.data;
     }
 
-    // Tends to return `Object`s instead :|
-    // public AssetDataT getData() {
-    // this.completeLoad();
-    // return this.data;
-    // }
-
     public int getLoadFrame() {
         return this.frame;
     }
 
     public long getLoadMillis() {
         return this.millis;
+    }
+
+    public AssetLoader<?> getLoader() {
+        return this.LOADER;
     }
     // endregion
     // endregion
