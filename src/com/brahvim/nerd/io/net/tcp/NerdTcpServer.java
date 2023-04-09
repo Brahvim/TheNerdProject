@@ -9,9 +9,9 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Vector;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -19,16 +19,32 @@ import processing.core.PApplet;
 
 public class NerdTcpServer {
 
+	public class NerdClientSentTcpPacket extends NerdAbstractTcpPacket {
+
+		private final NerdTcpServer.NerdTcpServerClient CLIENT;
+
+		private NerdClientSentTcpPacket(final NerdTcpServer.NerdTcpServerClient p_client,
+				final byte[] p_data) {
+			super(p_data);
+			this.CLIENT = p_client;
+		}
+
+		public NerdTcpServer.NerdTcpServerClient getSender() {
+			return this.CLIENT;
+		}
+
+	}
+
 	public class NerdTcpServerClient extends NerdAbstractTcpClient {
 
 		// region Fields.
-		private final HashSet<Consumer<NerdReceivableTcpPacket>> MESSAGE_CALLBACKS = new HashSet<>();
+		private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
 
 		private Thread serverCommThread;
 		private boolean inMessageLoop, hasDisconnected;
 		// endregion
 
-		// region Construction.
+		// region Constructors.
 		public NerdTcpServerClient(final Socket p_socket) {
 			super(p_socket);
 		}
@@ -36,6 +52,7 @@ public class NerdTcpServer {
 		public NerdTcpServerClient(final String p_serverIp, final int p_myPort) {
 			super(p_serverIp, p_myPort);
 		}
+		// endregion
 
 		private void startMessageThread() {
 			if (this.inMessageLoop)
@@ -64,7 +81,7 @@ public class NerdTcpServer {
 						final int packetSize = stream.readInt();
 						final byte[] packetData = new byte[packetSize];
 						stream.read(packetData); // It needs to know the length of the array!
-						final NerdReceivableTcpPacket packet = new NerdReceivableTcpPacket(this, packetData);
+						final var packet = new NerdTcpServer.NerdClientSentTcpPacket(this, packetData);
 
 						// System.out.println(
 						// "`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` read the
@@ -102,7 +119,6 @@ public class NerdTcpServer {
 			this.serverCommThread.setDaemon(true);
 			this.serverCommThread.start();
 		}
-		// endregion
 
 		// region ...Sending or something, I dunno.
 		@Override
@@ -131,7 +147,7 @@ public class NerdTcpServer {
 
 		// region Working with the message callbacks collection.
 		public NerdTcpServer.NerdTcpServerClient addMessageCallback(
-				final Consumer<NerdReceivableTcpPacket> p_callback) {
+				final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
 			synchronized (this.MESSAGE_CALLBACKS) {
 				this.MESSAGE_CALLBACKS.add(p_callback);
 			}
@@ -140,7 +156,7 @@ public class NerdTcpServer {
 
 		@SuppressWarnings("all")
 		public NerdTcpServer.NerdTcpServerClient removeMessageCallback(
-				final Consumer<NerdReceivableTcpPacket> p_callback) {
+				final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
 			synchronized (this.MESSAGE_CALLBACKS) {
 				this.MESSAGE_CALLBACKS.remove(p_callback);
 			}
@@ -150,15 +166,15 @@ public class NerdTcpServer {
 		/**
 		 * @return A copy of the {@link HashSet} containing all message callbacks.
 		 */
-		public HashSet<Consumer<NerdReceivableTcpPacket>> getAllMessageCallbacks() {
+		public HashSet<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> getAllMessageCallbacks() {
 			synchronized (this.MESSAGE_CALLBACKS) {
 				return new HashSet<>(this.MESSAGE_CALLBACKS);
 			}
 		}
 
 		@SuppressWarnings("all")
-		public HashSet<Consumer<NerdReceivableTcpPacket>> removeAllMessageCallbacks() {
-			HashSet<Consumer<NerdReceivableTcpPacket>> toRet = null;
+		public HashSet<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> removeAllMessageCallbacks() {
+			HashSet<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> toRet = null;
 			synchronized (this.MESSAGE_CALLBACKS) {
 				toRet = new HashSet<>(this.MESSAGE_CALLBACKS);
 				this.MESSAGE_CALLBACKS.clear();
@@ -185,8 +201,8 @@ public class NerdTcpServer {
 				e.printStackTrace();
 			}
 
-			synchronized (NerdTcpServer.this.clients) {
-				NerdTcpServer.this.clients.remove(this);
+			synchronized (NerdTcpServer.this.CLIENTS) {
+				NerdTcpServer.this.CLIENTS.remove(this);
 			}
 
 			super.disconnect();
@@ -196,17 +212,19 @@ public class NerdTcpServer {
 	}
 
 	// region Fields.
-	private final ArrayList<NerdTcpServer.NerdTcpServerClient> clients = new ArrayList<>();
+	// Concurrency is huge:
+	private final Vector<NerdTcpServer.NerdTcpServerClient> CLIENTS = new Vector<>(1);
 
 	private Thread connsThread;
 	private ServerSocket socket;
 	private volatile boolean startedShutdown;
-	private Function<NerdAbstractTcpClient, Consumer<NerdReceivableTcpPacket>> connectionCallback;
+	private volatile Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> connectionCallback;
 	// endregion
 
 	// region Construction.
+	// region Constructors.
 	public NerdTcpServer(final int p_port,
-			final Function<NerdAbstractTcpClient, Consumer<NerdReceivableTcpPacket>> p_connectionCallback) {
+			final Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> p_connectionCallback) {
 		this.connectionCallback = p_connectionCallback;
 
 		try {
@@ -229,7 +247,7 @@ public class NerdTcpServer {
 	}
 
 	public NerdTcpServer(final int p_port, final int p_maxConnReqsAtOnce,
-			final Function<NerdAbstractTcpClient, Consumer<NerdReceivableTcpPacket>> p_connectionCallback) {
+			final Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> p_connectionCallback) {
 		this.connectionCallback = p_connectionCallback;
 
 		try {
@@ -250,6 +268,7 @@ public class NerdTcpServer {
 
 		this.delegatedConstruction();
 	}
+	// endregion
 
 	private void delegatedConstruction() {
 		try {
@@ -263,8 +282,8 @@ public class NerdTcpServer {
 				try { // Loop, or try-catch block first?
 					final var client = new NerdTcpServer.NerdTcpServerClient(this.socket.accept());
 
-					synchronized (NerdTcpServer.this.clients) {
-						this.clients.add(client);
+					synchronized (NerdTcpServer.this.CLIENTS) {
+						this.CLIENTS.add(client);
 					}
 
 					if (this.connectionCallback == null)
@@ -287,7 +306,7 @@ public class NerdTcpServer {
 	// endregion
 
 	public NerdTcpServer onNewConnection(
-			final Function<NerdAbstractTcpClient, Consumer<NerdReceivableTcpPacket>> p_callback) {
+			final Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> p_callback) {
 		this.connectionCallback = Objects.requireNonNull(p_callback);
 		return this;
 	}
@@ -304,16 +323,18 @@ public class NerdTcpServer {
 			e.printStackTrace();
 		}
 
-		synchronized (this.clients) {
-			for (int i = this.clients.size() - 1; i != 0; i--)
-				this.clients.get(i).disconnect();
-		}
+		this.disconnectAll();
 
 		try {
 			this.socket.close();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public synchronized void disconnectAll() {
+		for (int i = this.CLIENTS.size() - 1; i != 0; i--)
+			this.CLIENTS.get(i).disconnect();
 	}
 
 	// region Sending stuff.
@@ -363,8 +384,8 @@ public class NerdTcpServer {
 	}
 
 	public NerdTcpServer sendToAll(final byte[] p_data) {
-		synchronized (this.clients) {
-			for (final NerdTcpServerClient c : this.clients)
+		synchronized (this.CLIENTS) {
+			for (final NerdTcpServerClient c : this.CLIENTS)
 				c.send(p_data);
 		}
 

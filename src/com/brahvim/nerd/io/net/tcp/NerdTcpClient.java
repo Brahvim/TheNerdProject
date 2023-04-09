@@ -1,30 +1,41 @@
 package com.brahvim.nerd.io.net.tcp;
 
+import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
+import java.util.Vector;
 import java.util.function.Consumer;
 
 import processing.core.PApplet;
 
 public class NerdTcpClient extends NerdAbstractTcpClient {
 
+	public class NerdServerSentTcpPacket extends NerdAbstractTcpPacket {
+
+		public NerdServerSentTcpPacket(final byte[] p_data) {
+			super(p_data);
+		}
+
+	}
+
 	// region Fields.
-	private final HashSet<Consumer<NerdReceivableTcpPacket>> MESSAGE_CALLBACKS = new HashSet<>();
+	private final Vector<Consumer<NerdTcpClient.NerdServerSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
 
 	private Thread commsThread;
 	private boolean inMessageLoop;
 	// endregion
 
 	// region Construction.
+	// region Constructors.
 	public NerdTcpClient(final Socket p_socket) {
 		super(p_socket);
 	}
 
 	public NerdTcpClient(final Socket p_socket,
-			final Consumer<NerdReceivableTcpPacket> p_mesageCallback) {
+			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
 		this(p_socket);
 		this.startMessageThread(p_mesageCallback);
 	}
@@ -34,7 +45,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 	}
 
 	public NerdTcpClient(final String p_serverIp, final int p_myPort,
-			final Consumer<NerdReceivableTcpPacket> p_mesageCallback) {
+			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
 		this(p_serverIp, p_myPort);
 		this.startMessageThread(p_mesageCallback);
 	}
@@ -44,24 +55,76 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 	}
 
 	public NerdTcpClient(final int p_port,
-			final Consumer<NerdReceivableTcpPacket> p_mesageCallback) {
+			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
 		this(p_port);
 		this.startMessageThread(p_mesageCallback);
 	}
+	// endregion
 
-	private void startMessageThread(final Consumer<NerdReceivableTcpPacket> p_mesageCallback) {
+	private void startMessageThread(final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
 		if (this.inMessageLoop)
 			return;
 
 		this.inMessageLoop = true;
 		this.MESSAGE_CALLBACKS.add(p_mesageCallback);
-
 		this.commsThread = new Thread(() -> {
+			// No worries - the same stream is used till the socket shuts down.
+			DataInputStream stream = null;
+
+			// ...Get that stream!:
+			try {
+				stream = new DataInputStream(this.socket.getInputStream());
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+
+			while (true)
+				try {
+					stream.available();
+					// ^^^ This is literally gunna return `0`!
+					// ..I guess we use fixed sizes around here...
+
+					// ..Now read it:
+					final int packetSize = stream.readInt();
+					final byte[] packetData = new byte[packetSize];
+					stream.read(packetData); // It needs to know the length of the array!
+					final var packet = new NerdTcpClient.NerdServerSentTcpPacket(packetData);
+
+					// System.out.println(
+					// "`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` read the
+					// stream.");
+
+					// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
+					// have to reconstruct it every time, fearing that one of these callbacks might
+					// change the contents of the packet.
+
+					synchronized (this.MESSAGE_CALLBACKS) {
+						// System.out.println("""
+						// `NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` \
+						// entered the synced block.""");
+						for (final var c : this.MESSAGE_CALLBACKS)
+							try {
+								// System.out.println(
+								// "`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` called a
+								// message callback.");
+								c.accept(packet);
+							} catch (final Exception e) {
+								e.printStackTrace();
+							}
+					}
+				} catch (final IOException e) {
+					// When the client disconnects, this exception is thrown by
+					// `*InpuStream::read*()`:
+					if (e instanceof EOFException)
+						this.disconnect();
+					else
+						e.printStackTrace();
+				}
 		});
 
 		this.commsThread.setName("NerdTcpServerListenerOnPort" + this.socket.getLocalPort());
 		this.commsThread.setDaemon(true);
-		// this.commsThread.start();
+		this.commsThread.start();
 	}
 	// endregion
 

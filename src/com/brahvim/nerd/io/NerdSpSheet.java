@@ -51,11 +51,6 @@ public class NerdSpSheet implements Cloneable {
 		return toCache;
 	}
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return this.clone();
-	}
-
 	public NerdSpSheet clone(final Sketch p_sketch) {
 		final NerdSpSheet toRet = new NerdSpSheet(this.SKETCH, this.sheet);
 

@@ -2,6 +2,7 @@ package com.brahvim.nerd_tests.scenes;
 
 import java.nio.charset.StandardCharsets;
 
+import com.brahvim.nerd.io.NerdBufferUtils;
 import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -15,10 +16,8 @@ public class TcpTestScene extends NerdScene {
 			System.out.println("Ayy! A new client joined! Info: " + c.getSocket().toString());
 			return (p) -> {
 				final var client = p.getSender();
-
 				client.removeAllMessageCallbacks();
-				client.addMessageCallback(p2 -> System.out.printf("New client callback!"));
-
+				client.addMessageCallback(p2 -> System.out.println("New client callback!"));
 				System.out.printf("Client messaged: `%s`, using `%d` bytes.\n",
 						new String(p.getData(), StandardCharsets.UTF_8), p.getDataLength());
 			};
@@ -28,6 +27,9 @@ public class TcpTestScene extends NerdScene {
 
 		client.send("Hey there - \":D!~");
 		client.send("Is the new callback there yet? :D");
+
+		for (int i = 0; i < 3; i++)
+			client.send(NerdBufferUtils.toByteArray(i));
 		// SKETCH.delay(5_000);
 		// client.disconnect();
 
