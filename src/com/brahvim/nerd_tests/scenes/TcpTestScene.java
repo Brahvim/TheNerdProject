@@ -10,8 +10,8 @@ import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
 public class TcpTestScene extends NerdScene {
-	// I'm not using JSON here, which is a ***totally*** valid option here, thanks
-	// to Processing!
+	// I'm not using JSON here, which is *the* standard for communication nowadays.
+	// Thanks to Processing, however, you can (the `processing.data` package)!
 
 	// region Fields!
 	public final String MESSAGE = """
