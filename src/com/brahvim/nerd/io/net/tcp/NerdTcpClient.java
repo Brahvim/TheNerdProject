@@ -1,7 +1,6 @@
 package com.brahvim.nerd.io.net.tcp;
 
 import java.io.DataInputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -14,9 +13,12 @@ import processing.core.PApplet;
 public class NerdTcpClient extends NerdAbstractTcpClient {
 
 	public class NerdServerSentTcpPacket extends NerdAbstractTcpPacket {
-
 		public NerdServerSentTcpPacket(final byte[] p_data) {
 			super(p_data);
+		}
+
+		public NerdTcpClient getReceivingClient() {
+			return NerdTcpClient.this;
 		}
 
 	}
@@ -65,6 +67,8 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 		if (this.inMessageLoop)
 			return;
 
+		System.out.println("`NerdTcpClient::startMessageThread()`");
+
 		this.inMessageLoop = true;
 		this.MESSAGE_CALLBACKS.add(p_mesageCallback);
 		this.commsThread = new Thread(() -> {
@@ -78,7 +82,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 				e.printStackTrace();
 			}
 
-			while (true)
+			while (!super.hasDisconnected)
 				try {
 					stream.available();
 					// ^^^ This is literally gunna return `0`!
@@ -90,23 +94,13 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 					stream.read(packetData); // It needs to know the length of the array!
 					final var packet = new NerdTcpClient.NerdServerSentTcpPacket(packetData);
 
-					// System.out.println(
-					// "`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` read the
-					// stream.");
-
 					// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
 					// have to reconstruct it every time, fearing that one of these callbacks might
 					// change the contents of the packet.
 
 					synchronized (this.MESSAGE_CALLBACKS) {
-						// System.out.println("""
-						// `NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` \
-						// entered the synced block.""");
 						for (final var c : this.MESSAGE_CALLBACKS)
 							try {
-								// System.out.println(
-								// "`NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` called a
-								// message callback.");
 								c.accept(packet);
 							} catch (final Exception e) {
 								e.printStackTrace();
@@ -114,11 +108,13 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 					}
 				} catch (final IOException e) {
 					// When the client disconnects, this exception is thrown by
-					// `*InpuStream::read*()`:
-					if (e instanceof EOFException)
-						this.disconnect();
-					else
-						e.printStackTrace();
+					// `*InputStream::read*()`:
+					// if (e instanceof EOFException)
+					// this.disconnectImpl();
+					// else if (e instanceof SocketException)
+					// e.printStackTrace();
+					// else
+					e.printStackTrace();
 				}
 		});
 
@@ -127,6 +123,15 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 		this.commsThread.start();
 	}
 	// endregion
+
+	@Override
+	public void disconnectImpl() {
+		try {
+			this.commsThread.join();
+		} catch (final InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
 	// region Sending stuff.
 	@Override

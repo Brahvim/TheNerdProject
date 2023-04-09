@@ -12,8 +12,10 @@ import java.net.UnknownHostException;
 public abstract class NerdAbstractTcpClient {
 
 	protected Socket socket;
+	protected boolean inMessageLoop, hasDisconnected;
 
-	public NerdAbstractTcpClient(final String p_serverIp, final int p_myPort) {
+	// region (`package`-level) Constructors.
+	/* `package` */ NerdAbstractTcpClient(final String p_serverIp, final int p_myPort) {
 		try {
 			this.socket = new Socket(p_serverIp, p_myPort);
 		} catch (final UnknownHostException e) {
@@ -23,7 +25,7 @@ public abstract class NerdAbstractTcpClient {
 		}
 	}
 
-	public NerdAbstractTcpClient(final int p_myPort) {
+	/* `package` */ NerdAbstractTcpClient(final int p_myPort) {
 		try {
 			this.socket = new Socket((String) null, p_myPort);
 		} catch (final UnknownHostException e) {
@@ -33,18 +35,23 @@ public abstract class NerdAbstractTcpClient {
 		}
 	}
 
-	public NerdAbstractTcpClient(final Socket p_socket) {
+	/* `package` */ NerdAbstractTcpClient(final Socket p_socket) {
 		this.socket = p_socket;
 	}
+	// endregion
 
-	public NerdAbstractTcpClient disconnect() {
+	public void disconnect() {
+		if (this.hasDisconnected)
+			return;
+
+		this.hasDisconnected = true;
+		this.disconnectImpl();
+
 		try {
 			this.socket.close();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
-
-		return this;
 	}
 
 	// region Abstraction
@@ -58,6 +65,8 @@ public abstract class NerdAbstractTcpClient {
 	// `AbstractTcpClient`. Yes, overloads can return subclasses and still keep
 	// `@Override` happy! Java is awesome.
 
+	protected abstract void disconnectImpl();
+
 	public abstract NerdAbstractTcpClient send(final NerdAbstractTcpPacket p_data);
 
 	public abstract NerdAbstractTcpClient send(final String p_data);
@@ -66,10 +75,13 @@ public abstract class NerdAbstractTcpClient {
 	// endregion
 
 	// region Getters.
-	public int getPort() {
+	public int getServerPort() {
 		return this.socket.getPort();
 	}
 
+	/**
+	 * @return {@code -1} if the internal {@link Socket} has not yet been started.
+	 */
 	public int getLocalPort() {
 		return this.socket.getLocalPort();
 	}
@@ -78,11 +90,11 @@ public abstract class NerdAbstractTcpClient {
 		return this.socket;
 	}
 
-	public InetAddress getIp() {
+	public InetAddress getServerIp() {
 		return this.socket.getInetAddress();
 	}
 
-	public String getIpString() {
+	public String getIpServerString() {
 		return this.socket.getInetAddress().toString();
 	}
 	// endregion

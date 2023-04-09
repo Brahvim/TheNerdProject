@@ -41,7 +41,6 @@ public class NerdTcpServer {
 		private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
 
 		private Thread serverCommThread;
-		private boolean inMessageLoop, hasDisconnected;
 		// endregion
 
 		// region Constructors.
@@ -54,7 +53,7 @@ public class NerdTcpServer {
 		}
 		// endregion
 
-		private void startMessageThread() {
+		protected void startMessageThread() {
 			if (this.inMessageLoop)
 				return;
 
@@ -71,7 +70,7 @@ public class NerdTcpServer {
 					e.printStackTrace();
 				}
 
-				while (true)
+				while (!super.hasDisconnected)
 					try {
 						stream.available();
 						// ^^^ This is literally gunna return `0`!
@@ -107,9 +106,9 @@ public class NerdTcpServer {
 						}
 					} catch (final IOException e) {
 						// When the client disconnects, this exception is thrown by
-						// `*InpuStream::read*()`:
+						// `*InputStream::read*()`:
 						if (e instanceof EOFException)
-							this.disconnect();
+							this.disconnectImpl();
 						else
 							e.printStackTrace();
 					}
@@ -189,12 +188,7 @@ public class NerdTcpServer {
 		}
 
 		@Override
-		public NerdTcpServer.NerdTcpServerClient disconnect() {
-			if (this.hasDisconnected)
-				return this;
-
-			this.hasDisconnected = true;
-
+		public void disconnectImpl() {
 			try {
 				this.serverCommThread.join();
 			} catch (final InterruptedException e) {
@@ -204,9 +198,6 @@ public class NerdTcpServer {
 			synchronized (NerdTcpServer.this.CLIENTS) {
 				NerdTcpServer.this.CLIENTS.remove(this);
 			}
-
-			super.disconnect();
-			return this;
 		}
 
 	}
@@ -334,7 +325,7 @@ public class NerdTcpServer {
 
 	public synchronized void disconnectAll() {
 		for (int i = this.CLIENTS.size() - 1; i != 0; i--)
-			this.CLIENTS.get(i).disconnect();
+			this.CLIENTS.get(i).disconnectImpl();
 	}
 
 	// region Sending stuff.
