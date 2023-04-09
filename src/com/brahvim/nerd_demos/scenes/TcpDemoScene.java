@@ -1,4 +1,4 @@
-package com.brahvim.nerd_tests.scenes;
+package com.brahvim.nerd_demos.scenes;
 
 import java.util.function.Consumer;
 
@@ -9,7 +9,7 @@ import com.brahvim.nerd.io.net.tcp.NerdTcpServer.NerdClientSentTcpPacket;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
-public class TcpTestScene extends NerdScene {
+public class TcpDemoScene extends NerdScene {
 	// I'm not using JSON here, which is *the* standard for communication nowadays.
 	// Thanks to Processing, however, you can (the `processing.data` package)!
 

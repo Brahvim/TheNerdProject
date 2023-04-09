@@ -1,18 +1,18 @@
-package com.brahvim.nerd_tests.scenes;
+package com.brahvim.nerd_demos.scenes;
 
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
-import com.brahvim.nerd_tests.App;
+import com.brahvim.nerd_demos.App;
 
 import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.event.MouseEvent;
 
-public class TestScene4 extends NerdScene {
+public class DemoScene4 extends NerdScene {
 
     // region Fields!
     private PImage nerd;
@@ -60,7 +60,7 @@ public class TestScene4 extends NerdScene {
         // endregion
 
         // Loaded this scene for the first time? Do this!:
-        if (App.FIRST_SCENE_CLASS == TestScene4.class && this.SCENE.getTimesLoaded() == 0) {
+        if (App.FIRST_SCENE_CLASS == DemoScene4.class && this.SCENE.getTimesLoaded() == 0) {
             SKETCH.fullscreen = false;
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();
@@ -138,7 +138,7 @@ public class TestScene4 extends NerdScene {
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
             case PConstants.LEFT -> MANAGER.restartScene();
-            case PConstants.RIGHT -> MANAGER.startScene(TestScene3.class);
+            case PConstants.RIGHT -> MANAGER.startScene(DemoScene3.class);
         }
     }
 

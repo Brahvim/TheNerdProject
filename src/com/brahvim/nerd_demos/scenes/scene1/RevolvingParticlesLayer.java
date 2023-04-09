@@ -1,7 +1,7 @@
-package com.brahvim.nerd_tests.layers;
+package com.brahvim.nerd_demos.scenes.scene1;
 
 import com.brahvim.nerd.scene_api.NerdLayer;
-import com.brahvim.nerd_tests.App;
+import com.brahvim.nerd_demos.App;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

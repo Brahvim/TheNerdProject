@@ -1,4 +1,4 @@
-package com.brahvim.nerd_tests;
+package com.brahvim.nerd_demos;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 

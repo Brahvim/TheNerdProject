@@ -1,4 +1,4 @@
-package com.brahvim.nerd_tests.scenes;
+package com.brahvim.nerd_demos.scenes.scene1;
 
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PFontAsset;
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
@@ -9,16 +9,14 @@ import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlBandpassFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
-import com.brahvim.nerd_tests.App;
-import com.brahvim.nerd_tests.layers.BackgroundLayer;
-import com.brahvim.nerd_tests.layers.BoxAnimationLayer;
-import com.brahvim.nerd_tests.layers.RevolvingParticlesLayer;
+import com.brahvim.nerd_demos.App;
+import com.brahvim.nerd_demos.scenes.DemoScene4;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 
-public class TestScene1 extends NerdScene {
+public class DemoScene1 extends NerdScene {
 
     private PFont font;
     private SineEase ease;
@@ -93,7 +91,7 @@ public class TestScene1 extends NerdScene {
     @Override
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
-            case PConstants.RIGHT -> MANAGER.startScene(TestScene4.class);
+            case PConstants.RIGHT -> MANAGER.startScene(DemoScene4.class);
         }
     }
 

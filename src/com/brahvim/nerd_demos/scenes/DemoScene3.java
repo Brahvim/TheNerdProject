@@ -1,4 +1,4 @@
-package com.brahvim.nerd_tests.scenes;
+package com.brahvim.nerd_demos.scenes;
 
 import java.awt.event.KeyEvent;
 
@@ -8,8 +8,9 @@ import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
-import com.brahvim.nerd_tests.App;
-import com.brahvim.nerd_tests.CubeManager;
+import com.brahvim.nerd_demos.App;
+import com.brahvim.nerd_demos.CubeManager;
+import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -17,7 +18,7 @@ import processing.core.PImage;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
-public class TestScene3 extends NerdScene {
+public class DemoScene3 extends NerdScene {
 
     // region Fields.
     private PImage bgGrad;
@@ -84,7 +85,7 @@ public class TestScene3 extends NerdScene {
     @Override
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
-            case PConstants.RIGHT -> MANAGER.startScene(TestScene1.class);
+            case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
             case PConstants.CENTER -> this.cubeMan.removeAll();
             case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
         }

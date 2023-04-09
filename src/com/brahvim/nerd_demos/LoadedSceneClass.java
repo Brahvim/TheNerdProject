@@ -1,4 +1,4 @@
-package com.brahvim.nerd_tests;
+package com.brahvim.nerd_demos;
 
 import com.brahvim.nerd.io.class_loaders.SceneClassLoader;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
@@ -6,12 +6,12 @@ import com.brahvim.nerd.scene_api.NerdScene;
 
 public enum LoadedSceneClass {
 
-	TEST_SCENE_5(
+	DEMO_SCENE_5(
 			// JARs only!
-			"file:/" + Sketch.DATA_DIR_PATH + "TestScene5.jar",
-			"com.brahvim.nerd_tests.scenes.TestScene5");
+			"file:/" + Sketch.DATA_DIR_PATH + "DemoScene5.jar",
+			"com.brahvim.nerd_tests.scenes.DemoScene5");
 
-	// region Non-enum stuff.
+	// region Non-`enum` stuff.
 	// I asked ChatGPT about naming conventions for `final` fields, and it said
 	// *this* was fine. Yes, I already knew about `System.out`:
 	private final SceneClassLoader sceneClassLoader;

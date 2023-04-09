@@ -1,17 +1,16 @@
-package com.brahvim.nerd_tests.scenes;
+package com.brahvim.nerd_demos.scenes;
 
 import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.rendering.cameras.FpsCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
-import com.brahvim.nerd_tests.layers.PauseMenuLayer;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
 
-public class TestScene6 extends NerdScene {
+public class DemoScene6 extends NerdScene {
 
     // region Fields.
     private FpsCamera CAMERA;
@@ -29,8 +28,6 @@ public class TestScene6 extends NerdScene {
             SKETCH.centerWindow();
             SKETCH.fullscreen = true;
         }
-
-        this.SCENE.addLayers(PauseMenuLayer.class);
 
         // Need to do this!...:
         CAMERA = STATE.get("Camera", new FpsCamera(SKETCH));

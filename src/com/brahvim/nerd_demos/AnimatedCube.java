@@ -1,4 +1,4 @@
-package com.brahvim.nerd_tests;
+package com.brahvim.nerd_demos;
 
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.openal.AlSource;

@@ -1,10 +1,11 @@
-package com.brahvim.nerd_tests.scenes;
+package com.brahvim.nerd_demos.scenes;
 
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
+import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
-public class TestScene2 extends NerdScene {
+public class DemoScene2 extends NerdScene {
     private SineEase boxHorizWave, boxVertWave;
 
     @Override
@@ -52,7 +53,7 @@ public class TestScene2 extends NerdScene {
 
     @Override
     public void mouseClicked() {
-        MANAGER.startScene(TestScene1.class);
+        MANAGER.startScene(DemoScene1.class);
     }
 
 }

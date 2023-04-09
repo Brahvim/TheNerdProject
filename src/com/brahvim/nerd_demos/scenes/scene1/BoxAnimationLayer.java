@@ -1,4 +1,4 @@
-package com.brahvim.nerd_tests.layers;
+package com.brahvim.nerd_demos.scenes.scene1;
 
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.scene_api.NerdLayer;

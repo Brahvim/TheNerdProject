@@ -5,11 +5,16 @@ import com.brahvim.nerd.scene_api.SceneState;
 
 import processing.core.PApplet;
 
-public class TestScene5 extends NerdScene {
+public class DemoScene5 extends NerdScene {
+
+    private final String TEXT = String.format(
+            "Welcome to `%s`!",
+            this.getClass().getSimpleName());
 
     @Override
     protected void setup(SceneState p_state) {
-        System.out.println("Welcome to `TestScene5`!");
+        System.out.println(this.TEXT);
+        SKETCH.getCamera().pos.z = 500;
     }
 
     @Override
@@ -18,17 +23,16 @@ public class TestScene5 extends NerdScene {
         SKETCH.fill(233);
 
         SKETCH.pushMatrix();
-        SKETCH.translate(SKETCH.cx, SKETCH.cy);
         SKETCH.scale(2);
-        SKETCH.text(SCENE.getClass().getSimpleName(), 0, 0);
+        SKETCH.text(this.TEXT, 0, 0);
         SKETCH.popMatrix();
 
-        SKETCH.circle(SKETCH.mouseX, SKETCH.mouseY, 20);
+        SKETCH.circle(SKETCH.mouseX - SKETCH.cx, SKETCH.mouseY - SKETCH.cy, 20);
     }
 
     @Override
     public void mouseClicked() {
-        MANAGER.startScene(TestScene4.class);
+        MANAGER.startScene(DemoScene4.class);
     }
 
 }
