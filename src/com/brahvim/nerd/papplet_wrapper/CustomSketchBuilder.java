@@ -1,9 +1,9 @@
 package com.brahvim.nerd.papplet_wrapper;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 
 import processing.core.PApplet;
@@ -26,7 +26,7 @@ public abstract class CustomSketchBuilder {
         this.SKETCH_KEY = new SketchKey();
     }
 
-    public final Sketch build(final String[] p_javaMainArgs) {
+    public final SketchBuildArtifacts build(final String[] p_javaMainArgs) {
         final Sketch constructedSketch = this.buildImpl(p_javaMainArgs);
         final String[] args = new String[] { constructedSketch.getClass().getName() };
 
@@ -35,7 +35,7 @@ public abstract class CustomSketchBuilder {
         else
             PApplet.runSketch(PApplet.concat(args, p_javaMainArgs), constructedSketch);
 
-        return constructedSketch;
+        return new SketchBuildArtifacts(constructedSketch);
     }
 
     protected abstract Sketch buildImpl(String[] p_javaMainArgs);
@@ -148,9 +148,13 @@ public abstract class CustomSketchBuilder {
     }
     // endregion
 
-    public CustomSketchBuilder setSceneManagerSettings(final Supplier<SceneManagerSettings> p_settingsBuilder) {
+    public CustomSketchBuilder setSceneManagerSettings(final Consumer<SceneManagerSettings> p_settingsBuilder) {
+        final var toPass = new SceneManager.SceneManagerSettings();
+
         if (p_settingsBuilder != null)
-            this.SKETCH_KEY.sceneManagerSettings = p_settingsBuilder.get();
+            p_settingsBuilder.accept(toPass);
+
+        this.SKETCH_KEY.sceneManagerSettings = toPass;
         return this;
     }
 

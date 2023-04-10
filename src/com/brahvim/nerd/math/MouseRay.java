@@ -5,8 +5,13 @@ import com.jogamp.opengl.GL2;
 import processing.core.PVector;
 import processing.opengl.PJOGL;
 
+// From the same page `Unprojector` is from. I'm tired of, but am still trying 
+// to get `Unprojector` to work...
+
 //public class Selection_in_OPENGL_A3D_Only
 public class MouseRay {
+
+	// region Fields.
 	// Need to know Left/Right elevations.
 	public static final int VIEW_PERSP = 0;
 	public static final int VIEW_AXON = 1;
@@ -25,6 +30,7 @@ public class MouseRay {
 	protected double[] m_adModelview = new double[16];
 	protected double[] m_adProjection = new double[16];
 	protected int[] m_aiViewport = new int[4];
+	// endregion
 
 	// -------------------------
 
@@ -35,17 +41,17 @@ public class MouseRay {
 
 		if (pgl != null) {
 			m_iProjection = projection;
-			pgl.glGetDoublev(pgl.GL_MODELVIEW_MATRIX, this.m_adModelview, 0);
-			pgl.glGetDoublev(pgl.GL_PROJECTION_MATRIX, this.m_adProjection, 0);
-			pgl.glGetIntegerv(pgl.GL_VIEWPORT, this.m_aiViewport, 0);
+			pgl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, this.m_adModelview, 0);
+			pgl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, this.m_adProjection, 0);
+			pgl.glGetIntegerv(GL2.GL_VIEWPORT, this.m_aiViewport, 0);
 		}
 
 	}
 
 	// -------------------------
 
-	public boolean calculatePickPoints(int x, int y, PJOGL pgl) { // Calculate positions on the near and far
-																	// 3D frustum planes.
+	// Calculate positions on the near and far 3D frustum planes.
+	public boolean calculatePickPoints(int x, int y, PJOGL pgl) {
 
 		if (pgl != null) {
 

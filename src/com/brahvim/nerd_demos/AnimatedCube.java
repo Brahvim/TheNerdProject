@@ -91,7 +91,7 @@ public class AnimatedCube extends TestEulerBody {
 
     public AnimatedCube plopIn(final AlBuffer<?> p_popAudioBuffer) {
         if (p_popAudioBuffer != null)
-            this.popSrc = new AlSource(App.AL, p_popAudioBuffer);
+            this.popSrc = new AlSource(App.OPENAL, p_popAudioBuffer);
 
         this.popSrc.setPosition(PVector.mult(super.pos, 0.001f));
         this.visible = true;

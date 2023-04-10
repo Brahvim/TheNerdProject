@@ -41,7 +41,7 @@ public class DemoScene3 extends NerdScene {
         this.calculateBgGrad();
         CAMERA = new FlyCamera(SKETCH);
         CAMERA.fov = PApplet.radians(75);
-        App.AL.unitSize = 250.0f;
+        App.OPENAL.unitSize = 250.0f;
         SKETCH.setCamera(CAMERA);
 
         final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];

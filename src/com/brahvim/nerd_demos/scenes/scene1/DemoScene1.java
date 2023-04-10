@@ -37,14 +37,14 @@ public class DemoScene1 extends NerdScene {
         this.font = MANAGER.PERSISTENT_ASSETS.get("Arial-Black-48").getData();
         this.ease = new SineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
 
-        this.sceneOneAnnounce = new AlSource(App.AL, ASSETS.get("SceneOne").getData());
-        this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(App.AL)
+        this.sceneOneAnnounce = new AlSource(App.OPENAL, ASSETS.get("SceneOne").getData());
+        this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(App.OPENAL)
                 .setBandpassGainHf(0.01f)
                 .setBandpassGainLf(0.18f));
 
         this.sceneOneAnnounce.setEffectSlot(
-                new AlAuxiliaryEffectSlot(App.AL,
-                        new AlDistortion(App.AL)
+                new AlAuxiliaryEffectSlot(App.OPENAL,
+                        new AlDistortion(App.OPENAL)
                                 .setDistortionGain(1)));
 
         this.sceneOneAnnounce.setGain(0.25f);

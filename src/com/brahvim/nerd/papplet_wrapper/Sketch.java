@@ -203,7 +203,12 @@ public class Sketch extends PApplet {
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
 	public final StringTable STRINGS;
+
 	public final HashMap<String, Object> EXTENSIONS;
+	// `Object`s instead of a custom interface because you can't do
+	// that to libraries you didn't write! (...or you'd be writing subclasses of the
+	// library classes. Manual work. Uhh...)
+
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
 	// Dimensions of the inital size of the window:

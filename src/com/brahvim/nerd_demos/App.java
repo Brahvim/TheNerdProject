@@ -4,8 +4,8 @@ import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.SketchBuildArtifacts;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
 public class App {
@@ -29,7 +29,7 @@ public class App {
     public static final int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 
-    public static volatile NerdAl AL;
+    public static volatile NerdAl OPENAL;
 
     private static volatile int tickCount;
     private static volatile boolean tick;
@@ -43,7 +43,7 @@ public class App {
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
                 .setAntiAliasing(4)
-                .addNerdExt(new NerdAlExt((s) -> {
+                .addNerdExt(new NerdAlExt(s -> {
                     // ...for `DemoScene3`!!!:
                     s.monoSources = Integer.MAX_VALUE;
                     s.stereoSources = Integer.MAX_VALUE;
@@ -52,25 +52,14 @@ public class App {
                 // .startFullscreen()
                 .canResize()
 
-                // ...apparently these listeners take literally `0` millseconds to finish
-                // calling! They're much faster, actually! That `0` millisecond time included
-                // starting and stopping a `MillisTimer`!
-                // ..they should be faster than a v-table thingy anyway, amirite?
-                .addSketchConstructionListener((s) -> {
-                    App.AL = s.getNerdExt("OpenAL");
-                    System.out.println(s.STRINGS.get("Meta.onConstruct"));
-                    // These work too - commenting them out so they don't clog-the-log!:
-                    // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
-                    // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
-                })
+                .addSketchConstructionListener(
+                        s -> System.out.println(s.STRINGS.get("Meta.onConstruct")))
 
-                .setSceneManagerSettings(() -> {
-                    final var toRet = new SceneManagerSettings();
-                    toRet.onScenePreload.preloadOnlyOnce = false;
-                    return toRet;
-                });
+                .setSceneManagerSettings(s -> s.onScenePreload.preloadOnlyOnce = false);
 
-        builder.build(p_args);
+        // Build the sketch and collect build artifacts:
+        final SketchBuildArtifacts artifacts = builder.build(p_args);
+        App.OPENAL = (NerdAl) artifacts.getExtObject("OpenAL");
         // endregion
 
         App.startTickThread();
