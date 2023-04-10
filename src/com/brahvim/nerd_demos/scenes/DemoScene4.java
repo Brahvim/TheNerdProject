@@ -62,7 +62,7 @@ public class DemoScene4 extends NerdScene {
         // Loaded this scene for the first time? Do this!:
         if (App.FIRST_SCENE_CLASS == DemoScene4.class && this.SCENE.getTimesLoaded() == 0) {
             SKETCH.fullscreen = false;
-            SKETCH.getSurface().setSize(1600, 900);
+            SKETCH.glWindow.setSize(1600, 900);
             SKETCH.centerWindow();
         } else { // Do not play `this.rubberDuck` if this is the first start!
             App.OPENAL.setListenerVelocity(App.OPENAL.getContext(), 0, 0, 0);
@@ -87,8 +87,8 @@ public class DemoScene4 extends NerdScene {
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
         SKETCH.noStroke();
-        SKETCH.textureWrap(PConstants.REPEAT);
         SKETCH.getCamera().pos.z = 500;
+        SKETCH.textureWrap(PConstants.REPEAT);
 
         this.ncx = this.nerd.width * 0.5f;
         this.ncy = this.nerd.height * 0.5f;
@@ -136,9 +136,8 @@ public class DemoScene4 extends NerdScene {
         // endregion
 
         SKETCH.in2d(() -> {
-            SKETCH.translate(SKETCH.cx, SKETCH.cy);
-            SKETCH.translate(SKETCH.mouse.x, SKETCH.mouse.y, SKETCH.mouse.z);
-            SKETCH.circle(0, 0, 1);
+            SKETCH.translate(SKETCH.getMouseInWorld());
+            SKETCH.circle(0, 0, 20);
         });
 
     }

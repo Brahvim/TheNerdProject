@@ -13,7 +13,7 @@ public abstract class NerdAbstractCamera {
 
     // region Fields.
     public static final float DEFAULT_CAM_FOV = PApplet.radians(60),
-            DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10_000, DEFAULT_CAM_MOUSE_Z = 25;
+            DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10_000, DEFAULT_CAM_MOUSE_Z = 1;
 
     public final Sketch SKETCH;
     public Consumer<NerdAbstractCamera> script; // Smart users will write complete classes for these.
@@ -78,11 +78,7 @@ public abstract class NerdAbstractCamera {
         // #JIT_FTW!:
 
         this.clear();
-
         this.runScript();
-
-        this.SKETCH.unprojectMouse();
-
         this.applyMatrix();
     }
 

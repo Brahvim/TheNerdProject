@@ -15,7 +15,6 @@ public class App {
      * // TODO: Make it easier to animate, somehow!
      * // TODO: Improve multi-context OpenAL support.
      * // TODO: Collision Algorithms (also for 3D space)?!
-     * // TODO: I beg you. How to unproject screen coordinates?
      * // TODO: ANDROID Port with OpenAL. Get that done! (SWIG wrapper!)
      */
 

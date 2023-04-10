@@ -300,7 +300,7 @@ public class Sketch extends PApplet {
 	public boolean fullscreen, pfullscreen;
 	public boolean cursorConfined, cursorVisible = true; // "nO previoS versiuN!11!!"
 	public boolean pcursorConfined, pcursorVisible = true; // onU previoS versiuN!11!!1!!11!
-	public PVector mouse = new PVector(), pmouse = new PVector(); // MOUS!
+	public PVector mouseAsVec = new PVector(), pmouseAsVec = new PVector(); // MOUS!
 
 	public boolean pmouseLeft, pmouseMid, pmouseRight; // Previous frame...
 	public float pmouseScroll, pmouseScrollDelta;
@@ -625,26 +625,25 @@ public class Sketch extends PApplet {
 		// endregion
 		// endregion
 
-		// region Apply the camera and unprojection when using OpenGL:
-		// Needed by `this.unprojectMouse()`:
-		this.mouse.set(super.mouseX, super.mouseY);
-		this.unprojectMouse();
-
+		// region Apply the camera when using OpenGL!
 		if (this.USES_OPENGL) {
-			if (this.currentCamera != null) {
-				this.currentCamera.apply(); // Do all three tasks!
-			}
-			// If `this.currentCamera` is `null`, but wasn't,
+			if (this.currentCamera == null) {
+				this.defaultCamera.apply();
 
-			// else if (this.currentCamera != this.previousCamera)
-			// System.out.printf(
-			// "Sketch \"%s\" has no camera! Consider adding one...?", this.NAME);
-			// Use the default camera instead?
+				// If `this.currentCamera` is `null`, but wasn't,
+				if (this.currentCamera != this.previousCamera)
+					System.out.printf("""
+							Sketch \"%s\" has no camera! \
+							Consider adding one...?""", this.NAME);
+			} else
+				this.currentCamera.apply(); // Else, do all three tasks using the current one!
 		}
 		// endregion
 
 		// region Call all draw listeners.
-		for (final Consumer<Sketch> c : this.DRAW_LISTENERS)
+		for (
+
+		final Consumer<Sketch> c : this.DRAW_LISTENERS)
 			if (c != null)
 				c.accept(this);
 		// endregion
@@ -686,7 +685,7 @@ public class Sketch extends PApplet {
 		this.pkey = super.key;
 		this.pwidth = this.width;
 		this.pheight = this.height;
-		this.pmouse.set(this.mouse);
+		this.pmouseAsVec.set(this.mouseAsVec);
 		this.pfocused = this.focused;
 		this.pkeyCode = this.keyCode;
 		this.pmouseMid = this.mouseMid;
@@ -1562,16 +1561,32 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region 2D rendering.
+	/**
+	 * Pushes the graphics buffer, disables depth testing and resets all current
+	 * transformations (they're restored by a call to `Sketch::pop()` later!).
+	 */
 	public void begin2d() {
 		super.hint(PConstants.DISABLE_DEPTH_TEST);
 		this.push(); // #JIT_FTW!
+		super.resetMatrix();
 	}
 
+	/**
+	 * Pops back transformations and enables depth testing.
+	 */
 	public void end2d() {
 		super.hint(PConstants.ENABLE_DEPTH_TEST);
 		this.pop(); // #JIT_FTW!
 	}
 
+	/**
+	 * Pushes the graphics buffer, disables depth testing, resets all current
+	 * transformations, calls your {@link Runnable} {@code p_toDraw}, and
+	 * finally, pops back the transformations and enables depth testing!
+	 * 
+	 * @see {@link Sketch#end2d()}
+	 * @see {@link Sketch#begin2d()}
+	 */
 	public void in2d(final Runnable p_toDraw) {
 		// #JIT_FTW!
 		this.begin2d();
@@ -1699,130 +1714,79 @@ public class Sketch extends PApplet {
 	}
 	// endregion
 
-	public void unprojectMouse() {
+	// region Unprojection via `world*()` and `getMouseInWorld*()`!
+	// region 2D versions!:
+	public float worldX(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0).x;
+	}
 
-		/*
-		 * // [WORKS, NOT CHEAP + STILL INACCURATE]
-		 * // Unprojection of my own:
-		 * PVector u = new PVector(super.mouseX, super.mouseY);
-		 * u = this.glGraphics.projection.mult(u, null);
-		 * u = this.glGraphics.cameraInv.mult(u, null);
-		 * u.x -= this.qx;
-		 * // u.sub(super.width, super.height);
-		 * // u.add(this.cx, this.cy);
-		 * // u.add(this.cx, this.cy);
-		 * this.mouse.set(u);
-		 * 
-		 * System.out.println(this.mouse);
-		 */
+	public float worldY(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0).y;
+	}
 
-		final float originalNear;
-		final boolean camNotNull = this.currentCamera != null;
+	public float worldZ(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0).z;
+	}
+	// endregion
 
-		if (camNotNull) {
-			originalNear = this.currentCamera.near;
-			this.currentCamera.near = this.currentCamera.mouseZ;
-			this.currentCamera.applyMatrix();
-		} else
-			originalNear = 0;
+	// region 3D versions (should use!):
+	public float worldX(final float p_x, final float p_y, final float p_z) {
+		return this.worldVec(p_x, p_y, p_z).x;
+	}
 
+	public float worldY(final float p_x, final float p_y, final float p_z) {
+		return this.worldVec(p_x, p_y, p_z).y;
+	}
+
+	public float worldZ(final float p_x, final float p_y, final float p_z) {
+		return this.worldVec(p_x, p_y, p_z).z;
+	}
+	// endregion
+
+	// region `worldVec()`!
+	public PVector worldVec(final PVector p_vec) {
+		return this.worldVec(p_vec.x, p_vec.y, p_vec.z);
+	}
+
+	public PVector worldVec(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0);
+	}
+
+	public PVector worldVec(final float p_x, final float p_y, final float p_z) {
+		final PVector toRet = new PVector();
 		// Unproject:
 		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) super.g);
-		// this.mouse.set(0, 0, 0); // Does not help!
-
-		this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
+		this.UNPROJECTOR.gluUnProject(
+				p_x, super.height - p_y,
 				// `0.9f`: at the near clipping plane.
-				// `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
+				// `0.9999f`: at the far clipping plane. (NO! Calculate EPSILON first! *Then-*)
 				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
-				0, this.mouse);
+				super.map(p_z, this.currentCamera.near, this.currentCamera.far, 0, 1),
+				toRet);
 
-		if (camNotNull)
-			this.currentCamera.near = originalNear;
+		return toRet;
+	}
+	// endregion
 
-		/*
-		 * if (this.currentCamera == null)
-		 * return;
-		 * 
-		 * float originalNear = this.currentCamera.near;
-		 * this.currentCamera.near = this.currentCamera.mouseZ;
-		 * this.currentCamera.applyMatrix();
-		 * 
-		 * // Unproject:
-		 * this.UNPROJECTOR.captureViewMatrix((PGraphics3D) g);
-		 * // `0.9f`: at the near clipping plane.
-		 * // `0.9999f`: at the far clipping plane.
-		 * this.UNPROJECTOR.gluUnProject(
-		 * super.mouseX, super.height - super.mouseY,
-		 * // 0.9f + map(mouseY, height, 0, 0, 0.1f),
-		 * 0, this.mouse);
-		 * 
-		 * this.currentCamera.near = originalNear;
-		 */
-
+	// region Mouse!
+	/**
+	 * Caching this vector never works. Call this method everytime!~
+	 * People recalculate things framely in computer graphics anyway! :joy:
+	 */
+	public PVector getMouseInWorld() {
+		return this.getMouseInWorldFromFarPlane(this.currentCamera.mouseZ);
 	}
 
-	public void unprojectTouches() {
-		// Left empty, used on Android! (Implementation for Android, below:)
-		/*
-		 * Sketch.UNPROJ_TOUCHES.clear();
-		 * TouchEvent.Pointer[] touches = super.touches;
-		 * 
-		 * for (int i = 0; i < touches.length; i++) {
-		 * // [WORKS, CHEAPEST, SAME LEVEL OF ACCURACY]
-		 * // My own 'mapping' method!:
-		 * /*
-		 * PVector u = new PVector(
-		 * PApplet.map(touches[i].x, 0, super.displayWidth,
-		 * 0, super.width),
-		 * PApplet.map(touches[i].y, 0, super.displayHeight,
-		 * 0, super.height));
-		 * <asterisk>/
-		 * //u.add(super.cameraPos);
-		 * 
-		 * // [WORKS, NOT CHEAP + STILL INACCURATE]
-		 * // Unprojection of my own:
-		 * PVector u = new PVector(touches[i].x, touches[i].y);
-		 * u = super.glGraphics.modelviewInv.mult(u, null);
-		 * //u = super.glGraphics.cameraInv.mult(u, null);
-		 * u.sub(super.width, super.height);
-		 * u.add(super.cx, super.cy);
-		 * 
-		 * // [FAILURE] Unprojection using the `Unprojector` class:
-		 * /*
-		 * PVector u = new PVector(touches[i].x, touches[i].y);
-		 * // Believe in the JIT!~
-		 * Unprojector.captureViewMatrix(((PGraphics3D)super.getGraphics()
-		 * ));
-		 * System.out.printf("Was unprojection successful? %s\n",
-		 * Unprojector.gluUnProject(u.x, u.y, u.z, u) // Yes, you can do that. Passing
-		 * by value.
-		 * ? "Yes!" : "No...");
-		 * u.x *= 1.2f; //super.qx;
-		 * u.y *= 1.2f; //super.qy;
-		 * <asterisk>/
-		 * 
-		 * // (...here's longer text explaining that.. :)
-		 * /*
-		 * // [sic] "As different streams having their sources in different places all
-		 * mingles
-		 * // their water in the sea, so, O Lord, the different paths which men take
-		 * through
-		 * // tendencies, various touch as they appear, crooked or straight, all lead to
-		 * Thee."
-		 * // - Swami Vivekananda, quoting a hymn in his `1893` Chicago convention
-		 * speech.
-		 * // (((I do not guarantee complete correctness in the copying of that
-		 * quote.)))
-		 * <asterisk>/
-		 * // ^^^ be accessed in some other way, but
-		 * whatever... (...that basically, this `u.z` modfication will go unchanged,
-		 * // no matter what un-projection method you use!:)
-		 * u.z = touches[i].pressure; // Should
-		 * 
-		 * this.UNPROJ_TOUCHES.add(u);
-		 * }
-		 */
+	public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
+		return this.worldVec(super.mouseX, super.mouseY,
+				this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
 	}
+
+	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
+		return this.worldVec(super.mouseX, super.mouseY, p_distanceFromCamera);
+	}
+	// endregion
+	// endregion
 	// endregion
 
 	// region Key-press and key-type helper methods.
