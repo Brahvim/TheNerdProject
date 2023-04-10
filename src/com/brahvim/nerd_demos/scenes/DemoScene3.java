@@ -61,6 +61,7 @@ public class DemoScene3 extends NerdScene {
 
     @Override
     protected void draw() {
+        // Faster in `draw()`:
         if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
             this.cubeMan.removeAll(); // REALLY helps the GC out!
             System.gc();
@@ -84,29 +85,16 @@ public class DemoScene3 extends NerdScene {
                         color1, color2, PApplet.map(y, 0, this.bgGrad.height, 0, 1));
     }
 
-    // region Input event callbacks.
-    @Override
-    public void mouseClicked() {
-        switch (SKETCH.mouseButton) {
-            case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
-            case PConstants.CENTER -> this.cubeMan.removeAll();
-            case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
-        }
-    }
-
-    @Override
-    public void mouseWheel(final MouseEvent p_mouseEvent) {
-        CAMERA.fov -= p_mouseEvent.getCount() * 0.1f;
-        CAMERA.fov = PApplet.constrain(CAMERA.fov, 0, 130);
-    }
-    // endregion
-
     private void controlCamera() {
         // Increase speed when holding `Ctrl`:
         /* final */ float velMultiplier = 1;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
             velMultiplier = 2;
+
+        if (!CAMERA.holdMouse && SKETCH.mousePressed) {
+            // CAMERA.
+        }
 
         // region Roll.
         if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
@@ -136,7 +124,33 @@ public class DemoScene3 extends NerdScene {
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_D))
             CAMERA.moveX(velMultiplier * this.playerVel.x);
+
         // endregion
     }
+
+    // region Input event callbacks.
+    @Override
+    public void mouseClicked() {
+        switch (SKETCH.mouseButton) {
+            case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
+            case PConstants.CENTER -> this.cubeMan.removeAll();
+            case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
+        }
+    }
+
+    @Override
+    public void keyPressed() {
+        if (SKETCH.keyIsPressed(KeyEvent.VK_F)) {
+            SKETCH.cursorVisible = !SKETCH.cursorVisible;
+            CAMERA.holdMouse = !CAMERA.holdMouse;
+        }
+    }
+
+    @Override
+    public void mouseWheel(final MouseEvent p_mouseEvent) {
+        CAMERA.fov -= p_mouseEvent.getCount() * 0.1f;
+        CAMERA.fov = PApplet.constrain(CAMERA.fov, 0, 130);
+    }
+    // endregion
 
 }

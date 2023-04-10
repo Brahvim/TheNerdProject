@@ -13,11 +13,11 @@ public class FlyCamera extends NerdAbstractCamera {
     // region Fields.
     public static final float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
 
-    public boolean holdMouse = true;
     public float yaw, zoom, pitch;
-    public PVector front = new PVector(), defaultCamFront = new PVector();
     public boolean shouldConstrainPitch = true;
+    public boolean holdMouse = true, pholdMouse;
     public float mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
+    public PVector front = new PVector(), defaultCamFront = new PVector();
     // endregion
 
     // region Construction.
@@ -47,15 +47,8 @@ public class FlyCamera extends NerdAbstractCamera {
             final Point point = this.calculateMouseLockPos();
             super.SKETCH.ROBOT.mouseMove(point.x, point.y);
         }
-    }
 
-    private Point calculateMouseLockPos() {
-        if (this.SKETCH.fullscreen)
-            return new Point(this.SKETCH.displayWidthHalf, this.SKETCH.displayHeightHalf);
-        else
-            return new Point(
-                    (int) (super.SKETCH.WINDOW_POSITION.x),
-                    (int) (super.SKETCH.WINDOW_POSITION.y));
+        this.pholdMouse = this.holdMouse;
     }
 
     @Override
@@ -143,16 +136,12 @@ public class FlyCamera extends NerdAbstractCamera {
 
         if (this.holdMouse) {
             this.yaw += this.mouseSensitivity
-                    * (super.SKETCH.GLOBAL_MOUSE_POINT.x - mouseLockPos.x); // super.SKETCH.displayWidthHalf);
+                    * (super.SKETCH.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
             this.pitch += this.mouseSensitivity
-                    * (super.SKETCH.GLOBAL_MOUSE_POINT.y - mouseLockPos.y); // super.SKETCH.displayHeightHalf);
-        } else {
-            this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - mouseLockPos.x);
-            this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - mouseLockPos.y);
-            // this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX -
-            // super.SKETCH.pmouseX);
-            // this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY -
-            // super.SKETCH.pmouseY); // Remember! Opposite!
+                    * (super.SKETCH.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
+        } else { // if (super.SKETCH.mousePressed) {
+            this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
+            this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
         }
         // endregion
 
@@ -175,6 +164,15 @@ public class FlyCamera extends NerdAbstractCamera {
                 YAW_SIN * PITCH_COS);
         this.front.normalize();
         // endregion
+    }
+
+    private Point calculateMouseLockPos() {
+        if (this.SKETCH.fullscreen)
+            return new Point(this.SKETCH.displayWidthHalf, this.SKETCH.displayHeightHalf);
+        else
+            return new Point(
+                    (int) (super.SKETCH.WINDOW_POSITION.x),
+                    (int) (super.SKETCH.WINDOW_POSITION.y));
     }
     // endregion
 

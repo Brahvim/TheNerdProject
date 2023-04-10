@@ -16,9 +16,9 @@ public class DemoScene4 extends NerdScene {
 
     // region Fields!
     private PImage nerd;
-    private PGraphics nerdGraphics;
-    private AlSource rubberDuck;
     private float ncx, ncy;
+    private AlSource rubberDuck;
+    private PGraphics nerdGraphics;
 
     private final float MAG_SCROLL_ACC_MOD = 0.001f,
             MAG_SCROLL_DECAY_ACC = 0.8f,
@@ -135,10 +135,10 @@ public class DemoScene4 extends NerdScene {
         SKETCH.endShape();
         // endregion
 
-        SKETCH.in2d(() -> {
-            SKETCH.translate(SKETCH.getMouseInWorld());
-            SKETCH.circle(0, 0, 20);
-        });
+        // SKETCH.in2d(() -> {
+        SKETCH.translate(SKETCH.getMouseInWorld());
+        SKETCH.circle(0, 0, 20);
+        // });
 
     }
 
