@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
-import com.brahvim.nerd.math.StaticUnprojector;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
@@ -629,16 +628,18 @@ public class Sketch extends PApplet {
 		// region Apply the camera and unprojection when using OpenGL:
 		// Needed by `this.unprojectMouse()`:
 		this.mouse.set(super.mouseX, super.mouseY);
-		if (this.RENDERER == PConstants.P3D) {
-			this.unprojectMouse();
+		this.unprojectMouse();
 
-			if (this.currentCamera != null)
+		if (this.USES_OPENGL) {
+			if (this.currentCamera != null) {
 				this.currentCamera.apply(); // Do all three tasks!
+			}
 			// If `this.currentCamera` is `null`, but wasn't,
 
 			// else if (this.currentCamera != this.previousCamera)
 			// System.out.printf(
 			// "Sketch \"%s\" has no camera! Consider adding one...?", this.NAME);
+			// Use the default camera instead?
 		}
 		// endregion
 
@@ -1726,17 +1727,14 @@ public class Sketch extends PApplet {
 			originalNear = 0;
 
 		// Unproject:
-		/* StaticUnprojector */ this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.g);
+		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) super.g);
 		// this.mouse.set(0, 0, 0); // Does not help!
 
-		/* StaticUnprojector */ this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
+		this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
 				// `0.9f`: at the near clipping plane.
 				// `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
 				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
 				0, this.mouse);
-
-		this.mouse.x *= this.qx;
-		this.mouse.y *= this.qy;
 
 		if (camNotNull)
 			this.currentCamera.near = originalNear;

@@ -125,17 +125,20 @@ public class DemoScene4 extends NerdScene {
         // SKETCH.vertex(0, SKETCH.height, 0, SKETCH.height);
 
         SKETCH.vertex(0, 0, this.nerdRotTime(), this.nerdRotTime());
-        SKETCH.vertex(SKETCH.width, 0, this.nerdRotTime() + SKETCH.width, this.nerdRotTime());
+        SKETCH.vertex(SKETCH.width, 0, this.nerdRotTime() + SKETCH.width,
+                this.nerdRotTime());
         SKETCH.vertex(SKETCH.width, SKETCH.height,
                 this.nerdRotTime() + SKETCH.width, this.nerdRotTime() + SKETCH.height);
-        SKETCH.vertex(0, SKETCH.height, this.nerdRotTime(), this.nerdRotTime() + SKETCH.height);
+        SKETCH.vertex(0, SKETCH.height, this.nerdRotTime(), this.nerdRotTime() +
+                SKETCH.height);
 
         SKETCH.endShape();
         // endregion
 
         SKETCH.in2d(() -> {
-            SKETCH.translate(0, 0, -CAMERA.pos.z);
-            SKETCH.circle(SKETCH.mouse.x, SKETCH.mouse.y, 50);
+            SKETCH.translate(SKETCH.cx, SKETCH.cy);
+            SKETCH.translate(SKETCH.mouse.x, SKETCH.mouse.y, SKETCH.mouse.z);
+            SKETCH.circle(0, 0, 1);
         });
 
     }

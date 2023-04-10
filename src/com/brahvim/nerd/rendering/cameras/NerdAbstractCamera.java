@@ -76,8 +76,13 @@ public abstract class NerdAbstractCamera {
     // region Pre-implemented methods.
     public void apply() {
         // #JIT_FTW!:
+
         this.clear();
+
         this.runScript();
+
+        this.SKETCH.unprojectMouse();
+
         this.applyMatrix();
     }
 
