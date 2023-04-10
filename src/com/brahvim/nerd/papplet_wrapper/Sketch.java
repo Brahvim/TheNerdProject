@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.StringTable;
+import com.brahvim.nerd.math.StaticUnprojector;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
@@ -1698,18 +1699,21 @@ public class Sketch extends PApplet {
 	// endregion
 
 	public void unprojectMouse() {
-		//// [WORKS, NOT CHEAP + STILL INACCURATE]
-		//// Unprojection of my own:
-		// PVector u = new PVector(super.mouseX, super.mouseY);
-		// u = this.glGraphics.projection.mult(u, null);
-		// u = this.glGraphics.cameraInv.mult(u, null);
-		// u.x -= this.qx;
-		//// u.sub(super.width, super.height);
-		//// u.add(this.cx, this.cy);
-		//// u.add(this.cx, this.cy);
-		// this.mouse.set(u);
 
-		// System.out.println(this.mouse);
+		/*
+		 * // [WORKS, NOT CHEAP + STILL INACCURATE]
+		 * // Unprojection of my own:
+		 * PVector u = new PVector(super.mouseX, super.mouseY);
+		 * u = this.glGraphics.projection.mult(u, null);
+		 * u = this.glGraphics.cameraInv.mult(u, null);
+		 * u.x -= this.qx;
+		 * // u.sub(super.width, super.height);
+		 * // u.add(this.cx, this.cy);
+		 * // u.add(this.cx, this.cy);
+		 * this.mouse.set(u);
+		 * 
+		 * System.out.println(this.mouse);
+		 */
 
 		final float originalNear;
 		final boolean camNotNull = this.currentCamera != null;
@@ -1722,14 +1726,17 @@ public class Sketch extends PApplet {
 			originalNear = 0;
 
 		// Unproject:
-		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.g);
+		/* StaticUnprojector */ this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.g);
 		// this.mouse.set(0, 0, 0); // Does not help!
 
-		this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
+		/* StaticUnprojector */ this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
 				// `0.9f`: at the near clipping plane.
 				// `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
 				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
 				0, this.mouse);
+
+		this.mouse.x *= this.qx;
+		this.mouse.y *= this.qy;
 
 		if (camNotNull)
 			this.currentCamera.near = originalNear;

@@ -10,12 +10,11 @@ import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
 public class App {
 
-    // TODOs!:
     /*
-     * // TODO: Make a UDP API!
-     * // TODO: Just make it easier to animate, somehow!
+     * // TODO: Just MAKE a UDP API!
+     * // TODO: Make it easier to animate, somehow!
+     * // TODO: Improve multi-context OpenAL support.
      * // TODO: Collision Algorithms (also for 3D space)?!
-     * // TODO: Fix `AlWavBuffer`. What if `IntBuffer`s work?
      * // TODO: I beg you. How to unproject screen coordinates?
      * // TODO: ANDROID Port with OpenAL. Get that done! (SWIG wrapper!)
      */

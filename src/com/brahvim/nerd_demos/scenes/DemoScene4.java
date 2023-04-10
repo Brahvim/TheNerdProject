@@ -134,11 +134,8 @@ public class DemoScene4 extends NerdScene {
         // endregion
 
         SKETCH.in2d(() -> {
-            SKETCH.translate(0, 0, CAMERA.pos.z);
-            SKETCH.circle(
-                    SKETCH.mouse.x, // * SKETCH.qx,
-                    SKETCH.mouse.y, // * SKETCH.qy,
-                    50);
+            SKETCH.translate(0, 0, -CAMERA.pos.z);
+            SKETCH.circle(SKETCH.mouse.x, SKETCH.mouse.y, 50);
         });
 
     }
