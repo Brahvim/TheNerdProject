@@ -53,6 +53,7 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.core.PVector;
 import processing.opengl.PGL;
+import processing.opengl.PGraphics3D;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
@@ -389,7 +390,6 @@ public class Sketch extends PApplet {
 
 		this.sceneMan = new SceneManager(this, p_key.sceneChangeListeners); // Before `Sketch::AL`!
 
-		this.NAME = p_key.name;
 		this.RENDERER = p_key.renderer;
 		this.ICON_PATH = p_key.iconPath;
 		this.EXTENSIONS = p_key.nerdExtensions;
@@ -400,6 +400,7 @@ public class Sketch extends PApplet {
 		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
+		this.NAME = p_key.name == null ? "TheNerdProject" : p_key.name;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
 		// endregion
 
@@ -629,10 +630,10 @@ public class Sketch extends PApplet {
 			if (this.currentCamera != null)
 				this.currentCamera.apply(); // Do all three tasks!
 			// If `this.currentCamera` is `null`, but wasn't,
-			else if (this.currentCamera != this.previousCamera)
-				// System.out.printf(
-				// "Sketch \"%s\" has no camera! Consider adding one...?", this.NAME)
-				;
+
+			// else if (this.currentCamera != this.previousCamera)
+			// System.out.printf(
+			// "Sketch \"%s\" has no camera! Consider adding one...?", this.NAME);
 		}
 		// endregion
 
@@ -788,7 +789,7 @@ public class Sketch extends PApplet {
 			if (this.ALT_ENTER_FULLSCREEN) {
 				if (super.keyCode == KeyEvent.VK_ENTER &&
 						this.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19 /* Same as `VK_PAUSE`. */)) {
-					System.out.println("`Alt`-`Enter` fullscreen!");
+					// System.out.println("`Alt`-`Enter` fullscreen!");
 					this.fullscreen = !this.fullscreen;
 				}
 			}
@@ -797,14 +798,14 @@ public class Sketch extends PApplet {
 				switch (this.RENDERER) {
 					case PConstants.P2D, PConstants.P3D:
 						if (super.keyCode == 107) { // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
-							System.out.println("`F11` fullscreen!");
+							// System.out.println("`F11` fullscreen!");
 							this.fullscreen = !this.fullscreen;
 						}
 						break;
 
 					case PConstants.JAVA2D:
 						if (super.keyCode == KeyEvent.VK_F11) {
-							System.out.println("`F11` fullscreen!");
+							// System.out.println("`F11` fullscreen!");
 							this.fullscreen = !this.fullscreen;
 						}
 						break;
@@ -1693,42 +1694,41 @@ public class Sketch extends PApplet {
 	// endregion
 
 	public void unprojectMouse() {
-		// [WORKS, NOT CHEAP + STILL INACCURATE]
-		// Unprojection of my own:
-		PVector u = new PVector(super.mouseX, super.mouseY);
-		u = this.glGraphics.projection.mult(u, null);
-		u = this.glGraphics.cameraInv.mult(u, null);
-		u.x -= this.qx;
-		// u.sub(super.width, super.height);
-		// u.add(this.cx, this.cy);
-		// u.add(this.cx, this.cy);
-		this.mouse.set(u);
+		//// [WORKS, NOT CHEAP + STILL INACCURATE]
+		//// Unprojection of my own:
+		// PVector u = new PVector(super.mouseX, super.mouseY);
+		// u = this.glGraphics.projection.mult(u, null);
+		// u = this.glGraphics.cameraInv.mult(u, null);
+		// u.x -= this.qx;
+		//// u.sub(super.width, super.height);
+		//// u.add(this.cx, this.cy);
+		//// u.add(this.cx, this.cy);
+		// this.mouse.set(u);
 
 		// System.out.println(this.mouse);
 
-		/*
-		 * final float originalNear;
-		 * 
-		 * if (this.currentCamera != null) {
-		 * originalNear = this.currentCamera.near;
-		 * this.currentCamera.near = this.currentCamera.mouseZ;
-		 * this.currentCamera.applyMatrix();
-		 * } else
-		 * originalNear = 0;
-		 * 
-		 * // Unproject:
-		 * this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.g);
-		 * // this.mouse.set(0, 0, 0); // Does not help!
-		 * 
-		 * this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
-		 * // `0.9f`: at the near clipping plane.
-		 * // `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
-		 * // 0.9f + map(mouseY, height, 0, 0, 0.1f),
-		 * 0, this.mouse);
-		 * 
-		 * if (this.currentCamera != null)
-		 * this.currentCamera.near = originalNear;
-		 */
+		final float originalNear;
+		final boolean camNotNull = this.currentCamera != null;
+
+		if (camNotNull) {
+			originalNear = this.currentCamera.near;
+			this.currentCamera.near = this.currentCamera.mouseZ;
+			this.currentCamera.applyMatrix();
+		} else
+			originalNear = 0;
+
+		// Unproject:
+		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.g);
+		// this.mouse.set(0, 0, 0); // Does not help!
+
+		this.UNPROJECTOR.gluUnProject(super.mouseX, super.height - super.mouseY,
+				// `0.9f`: at the near clipping plane.
+				// `0.9999f`: at the far clipping plane. (NO! Calculate epsilon first, then-)
+				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
+				0, this.mouse);
+
+		if (camNotNull)
+			this.currentCamera.near = originalNear;
 
 		/*
 		 * if (this.currentCamera == null)

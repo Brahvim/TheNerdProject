@@ -166,7 +166,8 @@ public class NerdAl {
 		this.checkAlError();
 	}
 
-	public void setListenerIntTriplet(final long p_ctxId, final int p_alEnum, final int p_i1, final int p_i2, final int p_i3) {
+	public void setListenerIntTriplet(final long p_ctxId, final int p_alEnum, final int p_i1, final int p_i2,
+			final int p_i3) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alListener3i(p_alEnum, p_i1, p_i2, p_i3);
@@ -184,7 +185,8 @@ public class NerdAl {
 		this.checkAlError();
 	}
 
-	public void setListenerFloatTriplet(final long p_ctxId, final int p_alEnum, final float p_f1, final float p_f2, final float p_f3) {
+	public void setListenerFloatTriplet(final long p_ctxId, final int p_alEnum, final float p_f1, final float p_f2,
+			final float p_f3) {
 		ALC11.alcMakeContextCurrent(p_ctxId);
 		this.checkAlcError();
 		AL11.alListener3f(p_alEnum, p_f1, p_f2, p_f3);
@@ -240,7 +242,21 @@ public class NerdAl {
 	}
 
 	public void setListenerOrientation(final AlContext p_ctx, final float... p_values) {
-		this.setListenerFloatTriplet(p_ctx.getId(), AL11.AL_ORIENTATION, p_values);
+		final float[] values = new float[3];
+
+		// The usual case is for `y` to be `1`, and the rest to be `0`.
+		// This should keep that logic significantly fast:
+		values[0] = p_values[0] == 0.0f ? 0.0f : p_values[0] > 0.0f ? 1.0f : -1.0f;
+		values[1] = p_values[1] == 0.0f ? 0.0f : p_values[1] > 0.0f ? 1.0f : -1.0f;
+		values[2] = p_values[2] == 0.0f ? 0.0f : p_values[2] > 0.0f ? 1.0f : -1.0f;
+
+		try { // Need to put this in a try-catch block...
+			this.setListenerFloatVector(p_ctx.getId(), AL11.AL_ORIENTATION, values);
+		} catch (final AlException e) { // TOO MANY FALSE POSITIVES!
+			// System.out.printf("""
+			// Setting the listener's orientation to `%s` failed!
+			// Values: `[%.7f, %.7f, %.7f]`.""", p_value, values[0], values[1], values[2]);
+		}
 	}
 	// endregion
 
@@ -254,7 +270,21 @@ public class NerdAl {
 	}
 
 	public void setListenerOrientation(final AlContext p_ctx, final PVector p_value) {
-		this.setListenerFloatTriplet(p_ctx.getId(), AL11.AL_ORIENTATION, p_value.x, p_value.y, p_value.z);
+		final float[] values = p_value.array();
+
+		// The usual case is for `y` to be `1`, and the rest to be `0`.
+		// This should keep that logic significantly fast:
+		values[0] = values[0] == 0.0f ? 0.0f : values[0] > 0.0f ? 1.0f : -1.0f;
+		values[1] = values[1] == 0.0f ? 0.0f : values[1] > 0.0f ? 1.0f : -1.0f;
+		values[2] = values[2] == 0.0f ? 0.0f : values[2] > 0.0f ? 1.0f : -1.0f;
+
+		try { // Need to put this in a try-catch block...
+			this.setListenerFloatVector(p_ctx.getId(), AL11.AL_ORIENTATION, values);
+		} catch (final AlException e) { // TOO MANY FALSE POSITIVES!
+			// System.out.printf("""
+			// Setting the listener's orientation to `%s` failed!
+			// Values: `[%.7f, %.7f, %.7f]`.""", p_value, values[0], values[1], values[2]);
+		}
 	}
 	// endregion
 	// endregion
@@ -300,7 +330,21 @@ public class NerdAl {
 	}
 
 	public void setListenerOrientation(final float... p_values) {
-		this.setListenerFloatTriplet(this.DEFAULT_CONTEXT_ID, AL11.AL_ORIENTATION, p_values);
+		final float[] values = new float[3];
+
+		// The usual case is for `y` to be `1`, and the rest to be `0`.
+		// This should keep that logic significantly fast:
+		values[0] = p_values[0] == 0.0f ? 0.0f : p_values[0] > 0.0f ? 1.0f : -1.0f;
+		values[1] = p_values[1] == 0.0f ? 0.0f : p_values[1] > 0.0f ? 1.0f : -1.0f;
+		values[2] = p_values[2] == 0.0f ? 0.0f : p_values[2] > 0.0f ? 1.0f : -1.0f;
+
+		try { // Need to put this in a try-catch block...
+			this.setListenerFloatVector(this.DEFAULT_CONTEXT_ID, AL11.AL_ORIENTATION, values);
+		} catch (final AlException e) { // TOO MANY FALSE POSITIVES!
+			// System.out.printf("""
+			// Setting the listener's orientation to `%s` failed!
+			// Values: `[%.7f, %.7f, %.7f]`.""", p_value, values[0], values[1], values[2]);
+		}
 	}
 	// endregion
 

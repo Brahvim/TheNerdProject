@@ -35,7 +35,7 @@ public class DemoScene4 extends NerdScene {
 
     @Override
     protected void setup(final SceneState p_state) {
-        System.out.printf("`TestScene4.setup()` here, I was called `%d` times!\n",
+        System.out.printf("`TestScene4::setup()` here, I was called `%d` times!\n",
                 this.SCENE.getTimesLoaded());
 
         // region OpenAL Test.
@@ -65,9 +65,15 @@ public class DemoScene4 extends NerdScene {
             SKETCH.getSurface().setSize(1600, 900);
             SKETCH.centerWindow();
         } else { // Do not play `this.rubberDuck` if this is the first start!
+            App.AL.setListenerVelocity(App.AL.getContext(), 0, 0, 0);
+            App.AL.setListenerPosition(App.AL.getContext(), 0, 0, 500);
+            App.AL.setListenerOrientation(App.AL.getContext(), 0, 1, 0);
+
+            // for (int i = 0; i < 50; i++) // I literally told OpenAL to do this 50 TIMES.
             this.rubberDuck.setPosition(
-                    0.01f * (SKETCH.mouseX - SKETCH.cx),
-                    0, 0.01f * (SKETCH.mouseY - SKETCH.cy));
+                    5 * (SKETCH.mouseX - SKETCH.cx),
+                    0,
+                    5 * (SKETCH.mouseY - SKETCH.cy));
 
             App.AL.unitSize = 1;
             System.out.println(CAMERA.pos);
@@ -128,7 +134,11 @@ public class DemoScene4 extends NerdScene {
         // endregion
 
         SKETCH.in2d(() -> {
-            SKETCH.circle(SKETCH.mouse.x, SKETCH.mouse.y, 20);
+            SKETCH.translate(0, 0, CAMERA.pos.z);
+            SKETCH.circle(
+                    SKETCH.mouse.x, // * SKETCH.qx,
+                    SKETCH.mouse.y, // * SKETCH.qy,
+                    50);
         });
 
     }

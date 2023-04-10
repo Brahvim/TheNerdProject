@@ -50,7 +50,14 @@ public class NerdAlExt extends NerdExt {
 			toRet.setListenerOrientation(camera.up);
 			toRet.setListenerVelocity(PVector.sub(camera.pos, lastCameraPos));
 			// PVector.div((PVector.sub(camera.pos, lastCameraPos)), this.unitSize));
-			toRet.setListenerPosition(PVector.div(camera.pos, toRet.unitSize));
+
+			// JIT-style optimization + protection from `0`!:
+			if (toRet.unitSize == 1.0f)
+				toRet.setListenerPosition(camera.pos);
+			if (toRet.unitSize == 0.0f)
+				toRet.setListenerPosition(camera.pos);
+			else
+				toRet.setListenerPosition(PVector.div(camera.pos, toRet.unitSize));
 
 			lastCameraPos.set(camera.pos);
 		});
@@ -59,6 +66,7 @@ public class NerdAlExt extends NerdExt {
 		p_builder.addSketchDisposalListener((s) -> toRet.completeDisposal());
 
 		return toRet;
+
 	}
 
 	@Override

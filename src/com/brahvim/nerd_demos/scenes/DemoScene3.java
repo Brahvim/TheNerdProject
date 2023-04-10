@@ -61,8 +61,11 @@ public class DemoScene3 extends NerdScene {
 
     @Override
     protected void draw() {
-        if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
-            MANAGER.restartScene(STATE);
+        if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
+            this.cubeMan.removeAll(); // REALLY helps the GC out!
+            System.gc();
+            MANAGER.restartScene();
+        }
 
         SKETCH.lights();
         SKETCH.background(this.bgGrad);
