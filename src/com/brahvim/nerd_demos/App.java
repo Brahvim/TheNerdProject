@@ -1,6 +1,5 @@
 package com.brahvim.nerd_demos;
 
-import com.brahvim.nerd.openal.AlContext;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
@@ -44,12 +43,10 @@ public class App {
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
                 .setAntiAliasing(4)
-                .addNerdExt(new NerdAlExt(() -> {
-                    final var toRet = new AlContext.AlContextSettings();
-                    // ...for `TestScene3`!!!:
-                    toRet.monoSources = Integer.MAX_VALUE;
-                    toRet.stereoSources = Integer.MAX_VALUE;
-                    return toRet;
+                .addNerdExt(new NerdAlExt((s) -> {
+                    // ...for `DemoScene3`!!!:
+                    s.monoSources = Integer.MAX_VALUE;
+                    s.stereoSources = Integer.MAX_VALUE;
                 }))
                 // .preventCloseOnEscape()
                 // .startFullscreen()
@@ -60,11 +57,8 @@ public class App {
                 // starting and stopping a `MillisTimer`!
                 // ..they should be faster than a v-table thingy anyway, amirite?
                 .addSketchConstructionListener((s) -> {
-                    System.out.println(s.STRINGS.get("Meta.onConstruct"));
-
-                    // ...Also do some actual work!:
                     App.AL = s.getNerdExt("OpenAL");
-
+                    System.out.println(s.STRINGS.get("Meta.onConstruct"));
                     // These work too - commenting them out so they don't clog-the-log!:
                     // System.out.println(s.STRINGS.fromArray("Meta.arrExample", 0));
                     // System.out.println(s.STRINGS.randomFromArray("Meta.arrExample"));
@@ -72,8 +66,7 @@ public class App {
 
                 .setSceneManagerSettings(() -> {
                     final var toRet = new SceneManagerSettings();
-                    // TODO Review this!
-                    // toRet.onScenePreload.onlyFirstPreload = false;
+                    toRet.onScenePreload.preloadOnlyOnce = false;
                     return toRet;
                 });
 

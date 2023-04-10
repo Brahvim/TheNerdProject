@@ -388,8 +388,6 @@ public class Sketch extends PApplet {
 		this.DISPOSAL_LISTENERS = p_key.disposalListeners;
 		// endregion
 
-		this.sceneMan = new SceneManager(this, p_key.sceneChangeListeners); // Before `Sketch::AL`!
-
 		this.RENDERER = p_key.renderer;
 		this.ICON_PATH = p_key.iconPath;
 		this.EXTENSIONS = p_key.nerdExtensions;
@@ -408,6 +406,7 @@ public class Sketch extends PApplet {
 		this.UNPROJECTOR = new Unprojector();
 		this.fullscreen = this.STARTED_FULLSCREEN;
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
+		this.sceneMan = new SceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
 		// endregion
 
 		// region Setting OpenGL renderer icons.

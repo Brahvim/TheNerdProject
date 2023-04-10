@@ -13,53 +13,6 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 public class SceneManager {
 
     // region Inner classes.
-    // region ...here lies `SceneKey`.
-    // Why was it rejected? Read this...:
-    /*
-     * ...because making a new constructor in every subclass is a way to pass the
-     * key object around!
-     * 
-     * ...of course, it's extra code that you have to write out, and..
-     * 
-     * I learnt that `protected` fields can also be accessed by any class in the
-     * same package as the declaring class (yes, specifying no modifier does that,
-     * but apparently `protected` does, too!). If somebody were to construct a
-     * `NerdScene` instance (for example, by using a `static` method in their
-     * subclass, which could access the constructor because it's `protected`),
-     * they won't be able to initialize important fields like `STATE` and `ASSETS`
-     * anyway. Sad.
-     */
-
-    // ...here. Here it actually lies:
-    /*
-     * public static class SceneKey extends NerdKey {
-     * 
-     * private final SceneManager MANAGER;
-     * public final Class<? extends NerdScene> INTENDED_USER_CLASS;
-     * 
-     * private SceneKey(SceneManager p_sceneManager,
-     * Class<? extends NerdScene> p_sceneThatWillUseThis) {
-     * this.MANAGER = p_sceneManager;
-     * this.INTENDED_USER_CLASS = p_sceneThatWillUseThis;
-     * }
-     * 
-     * public SceneManager getSceneManager() {
-     * return this.MANAGER;
-     * }
-     * 
-     * @Override
-     * public boolean isFor(Class<?> p_class) {
-     * // Putting `p_class` in the argument eliminates the need for a `null` check.
-     * return this.INTENDED_USER_CLASS.equals(p_class);
-     * }
-     * 
-     * /*
-     * public Class<? extends Scene> getSceneClass() {
-     * return this.sceneClass;
-     * }
-     */
-    // endregion
-
     // My code style: If it is an inner class, also write the name of the outer
     // class. I do this to aid reading and to prevent namespace pollution.
 
@@ -117,7 +70,7 @@ public class SceneManager {
              * <br>
              * {@code true} by default!
              */
-            public volatile boolean onlyFirstPreload = true;
+            public volatile boolean preloadOnlyOnce = true;
 
         }
 
@@ -175,7 +128,7 @@ public class SceneManager {
      */
     private final HashMap<Class<? extends NerdScene>, SceneManager.SceneCache>
     //
-    SCENE_CLASS_TO_CACHE = new HashMap<>(2);
+    SCENE_CACHE = new HashMap<>(2);
     private final Sketch SKETCH;
 
     // Notes on some strange (useless? Useful?!) idea.
@@ -207,6 +160,17 @@ public class SceneManager {
     // endregion
 
     // region Construction.
+    public SceneManager(final Sketch p_sketch,
+            final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners,
+            final SceneManager.SceneManagerSettings p_settings) {
+        this.SKETCH = p_sketch;
+        this.settings = p_settings;
+        this.SCENE_CHANGE_LISTENERS = p_listeners;
+        this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
+
+        this.initSceneListeners();
+    }
+
     public SceneManager(final Sketch p_sketch, final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
@@ -527,7 +491,7 @@ public class SceneManager {
 
         return ((HashSet<Class<? extends NerdScene>>)
 
-        ((HashSet<Class<? extends NerdScene>>) (this.SCENE_CLASS_TO_CACHE.keySet())).clone());
+        ((HashSet<Class<? extends NerdScene>>) (this.SCENE_CACHE.keySet())).clone());
     }
 
     // Older implementation of `knownScenes()`:
@@ -541,7 +505,7 @@ public class SceneManager {
 
     // region `Scene`-operations.
     public int timesGivenSceneWasLoaded(final Class<? extends NerdScene> p_sceneClass) {
-        return this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).timesLoaded;
+        return this.SCENE_CACHE.get(p_sceneClass).timesLoaded;
     }
 
     // To those who want vararg versions of these `loadSceneAssets` tasks:
@@ -579,7 +543,7 @@ public class SceneManager {
         if (this.givenSceneRanPreload(p_sceneClass))
             return;
 
-        final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE
+        final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE
                 .get(p_sceneClass);
 
         if (SCENE_CACHE != null)
@@ -612,7 +576,7 @@ public class SceneManager {
         if (this.prevSceneClass == null)
             return;
 
-        final SceneManager.SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.prevSceneClass);
+        final SceneManager.SceneCache cache = this.SCENE_CACHE.get(this.prevSceneClass);
         final NerdScene toUse = this.constructScene(cache.CONSTRUCTOR);
 
         this.setScene(toUse, p_setupState);
@@ -644,7 +608,7 @@ public class SceneManager {
             throw new NullPointerException("`SceneManager::startScene()` received `null`.");
 
         if (this.hasCached(p_sceneClass)) {
-            this.setScene(this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference, p_setupState);
+            this.setScene(this.SCENE_CACHE.get(p_sceneClass).cachedReference, p_setupState);
             return true;
         } else {
             this.startSceneImpl(p_sceneClass, p_setupState);
@@ -666,7 +630,7 @@ public class SceneManager {
 
     // region `private` `NerdScene` operations.
     private boolean givenSceneRanPreload(final Class<? extends NerdScene> p_sceneClass) {
-        final NerdScene SCENE_CACHE = this.SCENE_CLASS_TO_CACHE
+        final NerdScene SCENE_CACHE = this.SCENE_CACHE
                 .get(p_sceneClass).cachedReference;
 
         return SCENE_CACHE == null ? false : SCENE_CACHE.hasCompletedPreload();
@@ -688,20 +652,20 @@ public class SceneManager {
         if (this.timesGivenSceneWasLoaded(SCENE_CLASS) == 0) {
             // p_scene.ASSETS.clear();
             p_scene.runPreload();
-            this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
+            this.SCENE_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
             return;
         }
 
         // region Preloads other than the first one.
         // You're allowed to preload only once?
         // Don't re-load, just use the cache!:
-        if (this.settings.onScenePreload.onlyFirstPreload) {
-            final AssetManager a = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS;
-            p_scene.ASSETS = a;
+        if (this.settings.onScenePreload.preloadOnlyOnce) {
+            final AssetManager man = this.SCENE_CACHE.get(SCENE_CLASS).ASSETS;
+            p_scene.ASSETS = man;
         } else { // Else, since you're supposed to run `preload()` every time, do that!:
             p_scene.ASSETS.clear();
             p_scene.runPreload();
-            this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
+            this.SCENE_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
         }
         // endregion
 
@@ -717,18 +681,18 @@ public class SceneManager {
     private boolean hasCached(final Class<? extends NerdScene> p_sceneClass) {
         // If you haven't been asked to run the scene even once, you didn't cache it!
         // Say you haven't!:
-        if (!this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass))
+        if (!this.SCENE_CACHE.containsKey(p_sceneClass))
             return false;
 
         // ...so you ran the scene? Great! ...BUT DO YOU HAVE THE SCENE OBJECT?!
-        return !this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cacheIsNull();
+        return !this.SCENE_CACHE.get(p_sceneClass).cacheIsNull();
 
         // Ugh, -_- this is cheating...:
         // return !this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference != null;
     }
 
     private void cacheScene(final Class<? extends NerdScene> p_sceneClass, final boolean p_isDeletable) {
-        if (this.SCENE_CLASS_TO_CACHE.containsKey(p_sceneClass))
+        if (this.SCENE_CACHE.containsKey(p_sceneClass))
             return;
 
         final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
@@ -775,7 +739,7 @@ public class SceneManager {
 
         // region Initialize it!
         final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
-        final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CLASS_TO_CACHE.get(SCENE_CLASS);
+        final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE.get(SCENE_CLASS);
 
         // Initialize fields as if this was a part of the construction.
         toRet.MANAGER = this;
@@ -788,7 +752,7 @@ public class SceneManager {
         // cache and a saved state!
         if (SCENE_CACHE == null) {
             toRet.STATE = new SceneState();
-            this.SCENE_CLASS_TO_CACHE.put(SCENE_CLASS,
+            this.SCENE_CACHE.put(SCENE_CLASS,
                     new SceneManager.SceneCache(p_sceneConstructor, toRet));
         } else
             toRet.STATE = SCENE_CACHE.STATE;
@@ -841,7 +805,7 @@ public class SceneManager {
             // if (!this.hasCached(this.currSceneClass))
             // this.currScene.ASSETS.clear();
 
-            final SceneManager.SceneCache cache = this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
+            final SceneManager.SceneCache cache = this.SCENE_CACHE.get(this.currSceneClass);
             cache.nullifyCache();
 
             // What `deleteCacheIfCan()` did, I guess (or used to do)!:

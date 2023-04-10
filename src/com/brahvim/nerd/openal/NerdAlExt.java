@@ -1,6 +1,6 @@
 package com.brahvim.nerd.openal;
 
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 import com.brahvim.nerd.papplet_wrapper.CustomSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.NerdExt;
@@ -17,10 +17,11 @@ public class NerdAlExt extends NerdExt {
 		this.settings = p_settings;
 	}
 
-	public NerdAlExt(final Supplier<AlContext.AlContextSettings> p_settingsBuilder) {
+	public NerdAlExt(final Consumer<AlContext.AlContextSettings> p_settingsBuilder) {
+		final var toPass = new AlContext.AlContextSettings();
 		if (p_settingsBuilder != null)
-			this.settings = p_settingsBuilder.get();
-		// `get()` resulting in `null`, won't matter! `AlContext` handles that!~
+			p_settingsBuilder.accept(toPass);
+		this.settings = toPass;
 	}
 	// endregion
 
