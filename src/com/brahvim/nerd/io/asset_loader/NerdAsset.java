@@ -94,7 +94,7 @@ public class NerdAsset {
         // Once the asset has loaded, `loaded` is set to `true` and the `postCallback`
         // is no longer necessary.
         // However, we need to update `ploaded` for one last frame.
-        // To do so, we add a "self-removing" callback.
+        // To do so, we add a "self-removing" callback!:
 
         final NerdAsset ASSET = this;
         final Consumer<Sketch> whenLoaded = new Consumer<Sketch>() {
@@ -104,7 +104,6 @@ public class NerdAsset {
                 p_sketch.removePostListener(this);
             }
         };
-
         this.SKETCH.addPostListener(whenLoaded);
         this.SKETCH.removePostListener(postCallback);
     }

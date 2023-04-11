@@ -1,8 +1,8 @@
 package com.brahvim.nerd.papplet_wrapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.openal.AlContext;
@@ -24,31 +24,31 @@ import processing.core.PConstants;
     public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
 
     // region Listeners.
-    public LinkedHashSet<Consumer<Sketch>> sketchConstructedListeners,
+    public ArrayList<Consumer<Sketch>> sketchConstructedListeners,
             settingsListeners, setupListeners, exitListeners, disposalListeners;
 
     // Initializing the listeners:
     {
-        this.exitListeners = new LinkedHashSet<>();
-        this.setupListeners = new LinkedHashSet<>();
-        this.settingsListeners = new LinkedHashSet<>();
-        this.disposalListeners = new LinkedHashSet<>();
-        this.sceneChangeListeners = new LinkedHashSet<>();
-        this.sketchConstructedListeners = new LinkedHashSet<>();
+        this.exitListeners = new ArrayList<>();
+        this.setupListeners = new ArrayList<>();
+        this.settingsListeners = new ArrayList<>();
+        this.disposalListeners = new ArrayList<>();
+        this.sceneChangeListeners = new ArrayList<>();
+        this.sketchConstructedListeners = new ArrayList<>();
     }
 
-    public LinkedHashSet<SceneManager.SceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
+    public ArrayList<SceneManager.SceneChangeListener> sceneChangeListeners = new ArrayList<>();
 
-    public LinkedHashSet<Consumer<Sketch>> preListeners, postListeners,
+    public ArrayList<Consumer<Sketch>> preListeners, postListeners,
             drawListeners, preDrawListeners, postDrawListeners;
 
     // Intializing these listeners as well haha:
     {
-        this.preListeners = new LinkedHashSet<>();
-        this.postListeners = new LinkedHashSet<>();
-        this.drawListeners = new LinkedHashSet<>();
-        this.preDrawListeners = new LinkedHashSet<>();
-        this.postDrawListeners = new LinkedHashSet<>();
+        this.preListeners = new ArrayList<>();
+        this.postListeners = new ArrayList<>();
+        this.drawListeners = new ArrayList<>();
+        this.preDrawListeners = new ArrayList<>();
+        this.postDrawListeners = new ArrayList<>();
     }
     // endregion
 

@@ -348,16 +348,16 @@ public class Sketch extends PApplet {
 	protected SceneManager sceneMan; // Don't use static initialization for this..?
 
 	// region Callback listeners!
-	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<SketchDisplayListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
+	protected final ArrayList<SketchMouseListener> MOUSE_LISTENERS = new ArrayList<>(1);
+	protected final ArrayList<SketchTouchListener> TOUCH_LISTENERS = new ArrayList<>(1);
+	protected final ArrayList<SketchDisplayListener> WINDOW_LISTENERS = new ArrayList<>(1);
+	protected final ArrayList<SketchKeyboardListener> KEYBOARD_LISTENERS = new ArrayList<>(1);
 
-	protected LinkedHashSet<Consumer<Sketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
-	protected LinkedHashSet<Consumer<Sketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
+	protected ArrayList<Consumer<Sketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
+	protected ArrayList<Consumer<Sketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
 
-	protected LinkedHashSet<Consumer<Sketch>> PRE_LISTENERS, POST_LISTENERS;
-	protected LinkedHashSet<Consumer<Sketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
+	protected ArrayList<Consumer<Sketch>> PRE_LISTENERS, POST_LISTENERS;
+	protected ArrayList<Consumer<Sketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
 	// endregion
 	// endregion
 
@@ -468,9 +468,11 @@ public class Sketch extends PApplet {
 		this.ROBOT = toAssign;
 		// endregion
 
-		for (final Consumer<Sketch> c : p_key.sketchConstructedListeners)
-			if (c != null)
-				c.accept(this);
+		for (int i = p_key.sketchConstructedListeners.size() - 1; i != -1; i--) {
+			final var l = p_key.sketchConstructedListeners.get(i);
+			if (l != null)
+				l.accept(this);
+		}
 	}
 
 	@Override
@@ -544,9 +546,11 @@ public class Sketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		for (final Consumer<Sketch> c : this.SETUP_LISTENERS)
-			if (c != null)
-				c.accept(this);
+		for (int i = this.SETUP_LISTENERS.size() - 1; i != -1; i--) {
+			final var l = this.SETUP_LISTENERS.get(i);
+			if (l != null)
+				l.accept(this);
+		}
 	}
 
 	public void pre() {
@@ -593,9 +597,11 @@ public class Sketch extends PApplet {
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
 
-		for (final Consumer<Sketch> c : this.PRE_LISTENERS)
-			if (c != null)
-				c.accept(this);
+		for (int i = this.PRE_LISTENERS.size() - 1; i != -1; i--) {
+			final var l = this.PRE_LISTENERS.get(i);
+			if (l != null)
+				l.accept(this);
+		}
 	}
 
 	@Override
@@ -605,9 +611,11 @@ public class Sketch extends PApplet {
 		this.pframeTime = this.frameStartTime;
 
 		// region Call all pre-render listeners.
-		for (final Consumer<Sketch> c : this.PRE_DRAW_LISTENERS)
-			if (c != null)
-				c.accept(this);
+		for (int i = this.PRE_DRAW_LISTENERS.size() - 1; i != -1; i--) {
+			final var l = this.PRE_DRAW_LISTENERS.get(i);
+			if (l != null)
+				l.accept(this);
+		}
 		// endregion
 
 		// region Update frame-ly mouse settings.
@@ -640,11 +648,11 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Call all draw listeners.
-		for (
-
-		final Consumer<Sketch> c : this.DRAW_LISTENERS)
-			if (c != null)
-				c.accept(this);
+		for (int i = this.DRAW_LISTENERS.size() - 1; i != -1; i--) {
+			final var l = this.DRAW_LISTENERS.get(i);
+			if (l != null)
+				l.accept(this);
+		}
 		// endregion
 
 		// region If it doesn't yet exist, construct the scene!
@@ -657,17 +665,22 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Call all post-render listeners.
-		for (final Consumer<Sketch> c : this.POST_DRAW_LISTENERS)
-			if (c != null)
-				c.accept(this);
+		final var list = this.POST_DRAW_LISTENERS;
+		for (int i = list.size() - 1; i != -1; i--) {
+			final var l = list.get(i);
+			if (l != null)
+				l.accept(this);
+		}
 		// endregion
 
 	}
 
 	public void post() {
-		for (final Consumer<Sketch> c : this.POST_LISTENERS)
-			if (c != null)
-				c.accept(this);
+		for (int i = this.POST_LISTENERS.size() - 1; i != -1; i--) {
+			final var l = this.POST_LISTENERS.get(i);
+			if (l != null)
+				l.accept(this);
+		}
 
 		if (this.USES_OPENGL)
 			super.endPGL();
@@ -702,18 +715,22 @@ public class Sketch extends PApplet {
 
 	@Override
 	public void exit() {
-		for (final Consumer<Sketch> c : this.EXIT_LISTENERS)
-			if (c != null)
-				c.accept(this);
+		for (int i = this.EXIT_LISTENERS.size() - 1; i != -1; i--) {
+			final var l = this.EXIT_LISTENERS.get(i);
+			if (l != null)
+				l.accept(this);
+		}
 
 		super.exit();
 	}
 
 	@Override
 	public void dispose() {
-		for (final Consumer<Sketch> c : this.DISPOSAL_LISTENERS)
-			if (c != null)
-				c.accept(this);
+		for (int i = this.DISPOSAL_LISTENERS.size() - 1; i != -1; i--) {
+			final var l = this.DISPOSAL_LISTENERS.get(i);
+			if (l != null)
+				l.accept(this);
+		}
 
 		super.dispose();
 	}

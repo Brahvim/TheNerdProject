@@ -2,9 +2,9 @@ package com.brahvim.nerd.scene_api;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
@@ -139,7 +139,7 @@ public class SceneManager {
      */
 
     // region Sketch Event Listeners.
-    private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS;
+    private final ArrayList<SceneChangeListener> SCENE_CHANGE_LISTENERS;
 
     @SuppressWarnings("unused")
     private Sketch.SketchMouseListener mouseListener;
@@ -161,7 +161,7 @@ public class SceneManager {
 
     // region Construction.
     public SceneManager(final Sketch p_sketch,
-            final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners,
+            final ArrayList<SceneManager.SceneChangeListener> p_listeners,
             final SceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
@@ -171,7 +171,7 @@ public class SceneManager {
         this.initSceneListeners();
     }
 
-    public SceneManager(final Sketch p_sketch, final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
+    public SceneManager(final Sketch p_sketch, final ArrayList<SceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
         this.settings = new SceneManager.SceneManagerSettings();
@@ -183,7 +183,7 @@ public class SceneManager {
     public SceneManager(final Sketch p_sketch, final SceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
-        this.SCENE_CHANGE_LISTENERS = new LinkedHashSet<>(0);
+        this.SCENE_CHANGE_LISTENERS = new ArrayList<>(0);
         this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
 
         this.initSceneListeners();
@@ -191,7 +191,7 @@ public class SceneManager {
 
     public SceneManager(final Sketch p_sketch,
             final SceneManager.SceneManagerSettings p_settings,
-            final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
+            final ArrayList<SceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
@@ -830,9 +830,11 @@ public class SceneManager {
 
         this.SKETCH.push();
 
-        for (final SceneChangeListener l : this.SCENE_CHANGE_LISTENERS)
+        for (int i = this.SCENE_CHANGE_LISTENERS.size() - 1; i != -1; i--) {
+            final var l = this.SCENE_CHANGE_LISTENERS.get(i);
             if (l != null)
                 l.sceneChanged(this.SKETCH, this.prevSceneClass, this.currSceneClass);
+        }
 
         this.currScene.runSetup(p_state);
     }
