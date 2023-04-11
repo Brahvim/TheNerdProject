@@ -441,16 +441,12 @@ public class SceneManager {
         return this.SKETCH;
     }
 
-    public NerdScene getCurrentScene() {
-        return this.currScene;
-    }
-
     public boolean didSceneChange() {
         return this.changedSceneThisFrame;
     }
 
-    public SceneManager.SceneManagerSettings getManagerSettings() {
-        return this.settings;
+    public NerdScene getCurrentScene() {
+        return this.currScene;
     }
 
     public Class<? extends NerdScene> getCurrentSceneClass() {
@@ -459,6 +455,10 @@ public class SceneManager {
 
     public Class<? extends NerdScene> getPreviousSceneClass() {
         return this.prevSceneClass;
+    }
+
+    public SceneManager.SceneManagerSettings getManagerSettings() {
+        return this.settings;
     }
     // endregion
 
@@ -522,11 +522,7 @@ public class SceneManager {
         if (this.givenSceneRanPreload(p_sceneClass))
             return;
 
-        final Thread thread = new Thread(() -> {
-            // Lambdas allow for `this!:
-            this.loadSceneAssets(p_sceneClass, p_forcibly);
-        });
-
+        final Thread thread = new Thread(() -> this.loadSceneAssets(p_sceneClass, p_forcibly));
         thread.setName("NerdAssetLoader_" + this.getClass().getSimpleName());
         thread.start();
     }
@@ -543,8 +539,7 @@ public class SceneManager {
         if (this.givenSceneRanPreload(p_sceneClass))
             return;
 
-        final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE
-                .get(p_sceneClass);
+        final SceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE.get(p_sceneClass);
 
         if (SCENE_CACHE != null)
             if (SCENE_CACHE.cachedReference.hasCompletedPreload())
@@ -650,7 +645,7 @@ public class SceneManager {
 
         // If this scene has never been loaded up before, preload the data!
         if (this.timesGivenSceneWasLoaded(SCENE_CLASS) == 0) {
-            // p_scene.ASSETS.clear();
+            // p_scene.ASSETS.clear(); // Not needed - this code will never have bugs. Hah!
             p_scene.runPreload();
             this.SCENE_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
             return;

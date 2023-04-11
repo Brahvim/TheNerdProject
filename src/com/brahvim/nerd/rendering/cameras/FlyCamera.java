@@ -41,12 +41,8 @@ public class FlyCamera extends NerdAbstractCamera {
     public void apply() {
         super.apply();
 
-        if (this.holdMouse && super.SKETCH.focused) {
+        if (super.SKETCH.focused)
             this.mouseTransform();
-
-            final Point point = this.calculateMouseLockPos();
-            super.SKETCH.ROBOT.mouseMove(point.x, point.y);
-        }
 
         this.pholdMouse = this.holdMouse;
     }
@@ -128,18 +124,22 @@ public class FlyCamera extends NerdAbstractCamera {
     }
 
     protected void mouseTransform() {
-        // region Update `yaw` and `pitch`:
-        // System.out.println(super.SKETCH.GLOBAL_MOUSE_POINT);
-        // System.out.println(super.SKETCH.displayWidthHalf);
+        if (!this.holdMouse && this.pholdMouse)
+            return;
 
+        if (this.holdMouse && !this.pholdMouse)
+            return;
+
+        // region Update `yaw` and `pitch`, and perform the mouse-lock:
         final Point mouseLockPos = this.calculateMouseLockPos();
 
         if (this.holdMouse) {
+            super.SKETCH.ROBOT.mouseMove(mouseLockPos.x, mouseLockPos.y);
             this.yaw += this.mouseSensitivity
                     * (super.SKETCH.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
             this.pitch += this.mouseSensitivity
                     * (super.SKETCH.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
-        } else { // if (super.SKETCH.mousePressed) {
+        } else if (super.SKETCH.mousePressed) {
             this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
             this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
         }

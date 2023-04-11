@@ -432,9 +432,8 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Preloading assets from scenes we want to!
-		for (final Class<? extends NerdScene> c : p_key.scenesToPreload) {
+		for (final Class<? extends NerdScene> c : p_key.scenesToPreload)
 			this.sceneMan.loadSceneAssetsAsync(c);
-		}
 		// endregion
 
 		// region Non-fullscreen window's dimensions when starting fullscreen.

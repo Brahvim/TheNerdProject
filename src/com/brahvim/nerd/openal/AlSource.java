@@ -29,6 +29,7 @@ public class AlSource extends AlNativeResource {
 	private final int id;
 	private final NerdAl alMan;
 	private final AlContext context;
+
 	private AlBuffer<?> buffer;
 	private AlDataStream stream;
 	private AlAuxiliaryEffectSlot effectSlot;
