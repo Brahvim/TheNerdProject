@@ -11,8 +11,7 @@ import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 public class App {
 
     /*
-     * // TODO: Release the OpenAL API to the world!
-     * // TODO: Make a separate library for `NerdAlExt` with more support for Nerd!
+     * // TODO: Improve Nerd-OpenAL with more support for Nerd!
      * // TODO: (Such as a `SOURCES` `Set` and `String` `Map` for each `NerdScene`!)
      * 
      * // TODO: Just MAKE a UDP API!

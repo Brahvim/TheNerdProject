@@ -22,6 +22,7 @@ public class AssetManager {
         this.SKETCH = p_sketch;
     }
 
+    // region `NerdAsset`-operations!
     // region `makeAsset()` overloads.
     public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path,
             final AssetLoaderOptions... p_options) {
@@ -72,10 +73,12 @@ public class AssetManager {
      */
     @Deprecated
     public boolean contains(final String p_fileName) {
-        for (final NerdAsset a : this.ASSETS)
-            if (a.NAME.equals(p_fileName))
-                return true;
-        return false;
+        return this.get(p_fileName) != null;
+
+        // for (final NerdAsset a : this.ASSETS)
+        // if (a.NAME.equals(p_fileName))
+        // return true;
+        // return false;
     }
 
     public NerdAsset get(final String p_fileName) {

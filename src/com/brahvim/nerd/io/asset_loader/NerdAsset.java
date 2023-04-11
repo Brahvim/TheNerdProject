@@ -24,7 +24,6 @@ public class NerdAsset {
 
     // region Construction.
     public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path) {
-        // this.verifyKey(p_key);
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
 
@@ -127,6 +126,14 @@ public class NerdAsset {
         return this.PATH;
     }
 
+    public int getLoadFrame() {
+        return this.frame;
+    }
+
+    public long getLoadMillis() {
+        return this.millis;
+    }
+
     /**
      * Ensures that the asset has loaded, then returns its data,
      * given the name of a file (without the extension!).<br>
@@ -139,14 +146,6 @@ public class NerdAsset {
     public <RetT> RetT getData() {
         this.completeLoad();
         return (RetT) this.data;
-    }
-
-    public int getLoadFrame() {
-        return this.frame;
-    }
-
-    public long getLoadMillis() {
-        return this.millis;
     }
 
     public AssetLoader<?> getLoader() {
