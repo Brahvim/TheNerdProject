@@ -65,9 +65,9 @@ public class DemoScene4 extends NerdScene {
             SKETCH.glWindow.setSize(1600, 900);
             SKETCH.centerWindow();
         } else { // Do not play `this.rubberDuck` if this is the first start!
-            App.OPENAL.setListenerVelocity(App.OPENAL.getContext(), 0, 0, 0);
-            App.OPENAL.setListenerPosition(App.OPENAL.getContext(), 0, 0, 500);
-            App.OPENAL.setListenerOrientation(App.OPENAL.getContext(), 0, 1, 0);
+            App.OPENAL.setListenerVelocity(0, 0, 0);
+            App.OPENAL.setListenerPosition(0, 0, 500);
+            App.OPENAL.setListenerOrientation(0, 1, 0);
 
             // for (int i = 0; i < 50; i++) // I literally told OpenAL to do this 50 TIMES.
             this.rubberDuck.setPosition(
