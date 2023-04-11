@@ -14,17 +14,17 @@ public class AssetManager {
 
     // region Fields.
     private final Sketch SKETCH;
-    // private final AssetManager.AssetKey ASSET_KEY;
     private final HashSet<NerdAsset> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
     // Do we even *need* assets in any scene from the very beginning?
     // endregion
 
-    public AssetManager(final Sketch p_key) {
-        this.SKETCH = p_key;
+    public AssetManager(final Sketch p_sketch) {
+        this.SKETCH = p_sketch;
     }
 
     // region `makeAsset()` overloads.
-    public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path, final AssetLoaderOptions... p_options) {
+    public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path,
+            final AssetLoaderOptions... p_options) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAssets` need data!");
         return new NerdAsset(this.SKETCH, p_type, p_path, p_options);
@@ -36,26 +36,35 @@ public class AssetManager {
     // endregion
 
     // region `add()` overloads.
-    public <T> AssetManager add(final AssetLoader<T> p_type, final String p_path, final AssetLoaderOptions... p_options) {
-        this.ASSETS.add(this.makeAsset(p_type, p_path, p_options));
-        return this;
+    public <T> NerdAsset add(final AssetLoader<T> p_type, final String p_path,
+            final AssetLoaderOptions... p_options) {
+        final var toRet = this.makeAsset(p_type, p_path, p_options);
+        this.ASSETS.add(toRet);
+        return toRet;
     }
 
-    public <T> AssetManager add(final AssetLoader<T> p_type, final String p_path, final Runnable p_onLoad) {
+    public <T> NerdAsset add(final AssetLoader<T> p_type, final String p_path,
+            final Runnable p_onLoad, final AssetLoaderOptions... p_options) {
+        return this.add(p_type, p_path, p_options).setLoadCallback(p_onLoad);
+    }
+
+    public <T> NerdAsset add(final AssetLoader<T> p_type, final String p_path,
+            final Runnable p_onLoad) {
         return this.add(p_type, p_path, p_onLoad);
     }
 
-    public <T> AssetManager add(final AssetLoader<T> p_type, final String p_path) {
+    public <T> NerdAsset add(final AssetLoader<T> p_type, final String p_path) {
         return this.add(p_type, p_path, (AssetLoaderOptions[]) null);
     }
 
-    public <T> AssetManager add(final NerdAsset p_asset) {
+    public <T> NerdAsset add(final NerdAsset p_asset) {
         this.ASSETS.add(p_asset);
-        return this;
+        return p_asset;
     }
+    // endregion
 
     /**
-     * @deprecated since using {@link AssetManager#get()} is better. In cases
+     * @deprecated Since using {@link AssetManager#get()} is better. In cases
      *             where you'd want to check for the availability of an asset, you
      *             probably also a want a reference to it, in which case, it is much
      *             better to use {@link AssetManager#get()} and check if the return
@@ -89,11 +98,6 @@ public class AssetManager {
 
     public void clear() {
         this.ASSETS.clear();
-    }
-
-    public void updatePreviousLoadState() {
-        for (final NerdAsset a : this.ASSETS)
-            a.updatePreviousLoadState();
     }
     // endregion
 

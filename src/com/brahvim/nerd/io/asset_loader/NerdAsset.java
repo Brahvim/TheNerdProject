@@ -1,6 +1,7 @@
 package com.brahvim.nerd.io.asset_loader;
 
 import java.io.File;
+import java.util.function.Consumer;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -21,7 +22,7 @@ public class NerdAsset {
     private boolean loaded, ploaded, failure;
     // endregion
 
-    // region Constructors!
+    // region Construction.
     public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path) {
         // this.verifyKey(p_key);
         if (p_type == null || p_path == null)
@@ -35,7 +36,8 @@ public class NerdAsset {
         this.startLoading();
     }
 
-    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path, final Runnable p_onLoad) {
+    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path,
+            final Runnable p_onLoad) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
     }
@@ -46,13 +48,12 @@ public class NerdAsset {
         this.options = p_options;
     }
 
-    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path, final Runnable p_onLoad,
-            final AssetLoaderOptions... p_options) {
+    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path,
+            final Runnable p_onLoad, final AssetLoaderOptions... p_options) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
         this.options = p_options;
     }
-    // endregion
 
     private String findName() {
         String toRet = new File(this.PATH).getName(); // Parses wth `/`s too!
@@ -66,6 +67,7 @@ public class NerdAsset {
         toRet = toRet.substring(0, lastCharId);
         return toRet;
     }
+    // endregion
 
     // region Load status requests.
     public NerdAsset setLoadCallback(final Runnable p_onLoad) {
@@ -80,11 +82,31 @@ public class NerdAsset {
     }
 
     public void startLoading() {
+        // Adding callbacks for each asset since `AssetManager`s don't handle loading.
+        final Consumer<Sketch> postCallback = s -> this.ploaded = this.loaded;
+        this.SKETCH.addPostListener(postCallback);
         this.fetchData();
         this.loaded = true;
 
         if (this.onLoad != null)
             this.onLoad.run();
+
+        // Once the asset has loaded, `loaded` is set to `true` and the `postCallback`
+        // is no longer necessary.
+        // However, we need to update `ploaded` for one last frame.
+        // To do so, we add a "self-removing" callback.
+
+        final NerdAsset ASSET = this;
+        final Consumer<Sketch> whenLoaded = new Consumer<Sketch>() {
+            @Override
+            public void accept(final Sketch p_sketch) {
+                ASSET.ploaded = true;
+                p_sketch.removePostListener(this);
+            }
+        };
+
+        this.SKETCH.addPostListener(whenLoaded);
+        this.SKETCH.removePostListener(postCallback);
     }
 
     // region "Yes/No" questions.
@@ -137,45 +159,13 @@ public class NerdAsset {
     private void fetchData() {
         try {
             this.data = this.LOADER.fetchData(this.SKETCH, this.PATH, this.options);
+            this.millis = this.SKETCH.millis();
+            this.frame = this.SKETCH.frameCount;
         } catch (final AssetLoaderFailedException e) {
             this.data = null;
             this.failure = true;
             e.printStackTrace();
         }
-
-        this.frame = this.SKETCH.frameCount;
-        this.millis = this.SKETCH.millis();
-
-        /*
-         * switch (this.TYPE) {{
-         * 
-         * case PAUDIO -> {
-         * SoundFile file = new SoundFile(SKETCH, this.PATH,
-         * NerdAsset.CACHE_SOUNDFILES);
-         * 
-         * try {
-         * file.channels();
-         * } catch (final NullPointerException e) {
-         * file.removeFromCache();
-         * this.failure = true;
-         * this.data = null; // `file` should be GC'ed by the end of this method.
-         * }
-         * 
-         * this.data = file;
-         * }
-         * 
-         * // I know where the `default` may be used!
-         * // WHEN THE "TYPE:NULL"! ;)
-         * // default -> {}
-         * 
-         * }
-         */
-
-    }
-
-    public void updatePreviousLoadState() { // AssetManager.AssetKey p_key) {
-        // if (this.verifyKey(p_key))
-        this.ploaded = this.loaded;
     }
 
 }

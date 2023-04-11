@@ -11,11 +11,15 @@ import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 public class App {
 
     /*
+     * // TODO: Release the OpenAL API to the world!
+     * // TODO: Make a separate library for `NerdAlExt` with more support for Nerd!
+     * // TODO: (Such as a `SOURCES` `Set` and `String` `Map` for each `NerdScene`!)
+     * 
      * // TODO: Just MAKE a UDP API!
      * // TODO: Make it easier to animate, somehow!
-     * // TODO: Improve multi-context OpenAL support.
      * // TODO: Collision Algorithms (also for 3D space)?!
-     * // TODO: ANDROID Port with OpenAL. Get that done! (SWIG wrapper!)
+     * // TODO: Reconsider adding multi-context OpenAL support...?
+     * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
      */
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =

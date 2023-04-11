@@ -398,9 +398,6 @@ public class SceneManager {
         });
 
         this.SKETCH.addPostListener((s) -> {
-            if (SCENE_MAN.PERSISTENT_ASSETS != null)
-                SCENE_MAN.PERSISTENT_ASSETS.updatePreviousLoadState();
-
             if (SCENE_MAN.currScene != null)
                 SCENE_MAN.currScene.runPost();
 

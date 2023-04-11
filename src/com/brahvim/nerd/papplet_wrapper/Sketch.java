@@ -678,9 +678,6 @@ public class Sketch extends PApplet {
 		for (final PVector v : this.UNPROJ_TOUCHES)
 			this.PREV_UNPROJ_TOUCHES.add(v);
 
-		if (this.currentScene != null)
-			this.currentScene.ASSETS.updatePreviousLoadState();
-
 		this.pkey = super.key;
 		this.pwidth = this.width;
 		this.pheight = this.height;
