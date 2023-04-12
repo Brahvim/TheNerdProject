@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
@@ -51,35 +50,24 @@ public class UdpSocket {
          *
          * @apiNote Is {@link ReceiverThread#UDP_PACKET_MAX_SIZE} ({@code 65_507}) by
          *          default.
-         * @implNote This <i>should</i> instead, be {@code 576} by default.
-         *           To know why, please see {@link<a href=
-         *           "https://stackoverflow.com/a/9235558/">this</a>}.
-         *
+         *          Though <b>a higher value will use more
+         *          bandwidth.</b> This number should not be something you need to
+         *          worry about. Even if a dial-up router fragments the packet, the
+         *          packet won't get corrupted. If even a single fragment fails to
+         *          reach, the entire packet is discarded.
+         * 
+         * @implNote This <i>should</i> instead, be {@code 576}, <b><i>or even
+         *           {@code 543}</b></i> by default.
          *           <br>
          *           </br>
-         *           This field should not be something you need to worry about. Modern
-         *           computers are fast enough already. A {@code 65}KB allocation
-         *           cannot be a problem when your application already takes
-         *           {@code 200}MB in RAM, GC'ing away much of it every second,
-         *           and still sailing well.
+         *           To know why, please see {@link<a href=
+         *           "https://stackoverflow.com/a/9235558/">this</a>}.
          */
-        // PS The reason mentioned for deprecation is *probably* one of
-        // ***the worst*** decisions of my life! :joy:
         @Deprecated
         public Integer packetMaxSize = ReceiverThread.UDP_PACKET_MAX_SIZE;
         // ^^^ PS a more precise number is `543` bytes.
         // Update (as of `21 December, 2022`): It. Doesn't. MATTER.
         // Just come up with a fixed the packet size! The rest is fine!
-
-        /**
-         * This {@code Runnable} defines the actual code executed in the
-         * {@link UdpSocket.ReceiverThread#thread} thread.
-         * <p>
-         * You may choose to modify it since it has been declared {@code public}.
-         *
-         * @see UdpSocket.ReceiverThread#Receiver(UdpSocket)
-         */
-        public Runnable task;
 
         /**
          * The {@code Thread} that handles the network's receive calls.
@@ -297,9 +285,8 @@ public class UdpSocket {
         /* final */ DatagramSocket toRet = null;
 
         try {
-            toRet = new DatagramSocket(null);
+            toRet = new DatagramSocket(p_port);
             toRet.setReuseAddress(true);
-            toRet.bind(new InetSocketAddress(p_port));
             toRet.setSoTimeout(p_timeout);
         } catch (final SocketException e) {
             e.printStackTrace();
@@ -386,9 +373,8 @@ public class UdpSocket {
                 this.receiver.stop();
             this.sock.close();
 
-            this.sock = new DatagramSocket(null);
+            this.sock = new DatagramSocket(p_port, previous);
             this.sock.setReuseAddress(true);
-            this.sock.bind(new InetSocketAddress(previous, p_port));
 
             if (receiverWasNull)
                 this.receiver = new ReceiverThread();
