@@ -131,8 +131,6 @@ public class AnimatedCube extends TestEulerBody {
 
         super.integrate();
         super.SKETCH.push();
-        super.SKETCH.fill(255);
-
         super.SKETCH.translate(super.pos);
         super.SKETCH.rotate(super.rot);
         super.SKETCH.scale(this.size * this.plopWave.get());

@@ -25,7 +25,7 @@ public class UdpSocket {
 
     // Concurrent stuff *haha:*
     /**
-     * The {@link UdpSocket.ReceiverThread} class helps {@code UdpSocket}s receive
+     * The {@link UdpSocket.ReceiverThread} class helps {@link UdpSocket}s receive
      * data on
      * a separate thread, aiding with application performance and modern
      * hardware programming practices. It may NOT, be useful on systems like
@@ -81,14 +81,6 @@ public class UdpSocket {
          */
         public Runnable task;
 
-        private static int NUMBER_OF_THREADS = 0;
-
-        /**
-         * The {@link UdpSocket} instance using this
-         * {@link UdpSocket.ReceiverThread} instance.
-         */
-        private final UdpSocket PARENT_SOCK;
-
         /**
          * The {@code Thread} that handles the network's receive calls.
          *
@@ -100,141 +92,91 @@ public class UdpSocket {
         private Thread thread; // Ti's but a daemon thread.
 
         /**
-         * An internal {@code private} variable that lets the thread know whether or not
-         * to continue execution, so that it can be joined back into the current
-         * (usually main) thread.
-         *
-         * @see UdpSocket.ReceiverThread#start()
-         * @see UdpSocket.ReceiverThread#stop()
+         * Internal field holding data used by the receiver thread.
          */
-        private boolean doRun;
+        // B I G __ A L L O C A T I O N:
+        private byte[] byteData = new byte[this.packetMaxSize /* 65535 */];
         // endregion
 
         /**
-         * Given the 'parent' {@link UdpSocket} that objects of this class are to
-         * be attached to, this class will handle receiving UDP packets.
-         *
-         * @param p_parent The {@code UdpSocket} instance.
-         * @implNote {@code p_parent} may not be used since {@code Receiver} is a class
-         *           nested inside {@link UdpSocket}
+         * Starts the thread and listens for events.
          */
-        private ReceiverThread(final UdpSocket p_parent) {
-            ReceiverThread.NUMBER_OF_THREADS++;
-            this.PARENT_SOCK = p_parent;
-
-            // Scope is what matters.
-            // That's also why I use Hungarian notation.
-            final UdpSocket.ReceiverThread REC = this;
-            final UdpSocket PARENT = this.PARENT_SOCK;
-
-            // Sure, we have lambda expressions, but I won't be using them, haha.
-            // **This is a full on anonymous class.**
-            this.task = new Runnable() {
-                // No mutual exclusion locking here, by the way. This
-                // `short`(`byteArrayMaxSize`) *should* be fine here?
-                // Ehh, it's fine. Is it THAT important to use `AtomicShort` right-away anyway?
-                // (...or `volatile`?)
-
-                private byte[] byteData = new byte[REC.packetMaxSize /* 65535 */];
-                // ^^^ B I G ___ A L L O C A T I O N !
-
-                // ^^^ This could've been outside, declared `final` or "effectively `final`",
-                // but I re-allocate it anyway (`memset()`s using loops are SLOW!), so I can't
-                // do that...
-                // Yes, I enjoy using `this` in lambdas, too. Can't here. It's alright.
-
-                @Override
-                public void run() {
-                    // We got some work?
-                    while (REC.doRun) {
-                        try {
-                            PARENT.in = new DatagramPacket(this.byteData, this.byteData.length);
-                            if (PARENT.sock != null)
-                                PARENT.sock.receive(PARENT.in); // Fetch it well!
-                        } catch (final IOException e) {
-                            if (e instanceof SocketTimeoutException) {
-                                // ¯\_(ツ)_/¯
-                                // System.out.println("Timeout ended! Continuing...");
-                            } else if (e instanceof SocketException) {
-                                REC.doRun = false;
-                                return;
-                            } else
-                                e.printStackTrace(); // ¯\_(ツ)_/¯
-                        }
-
-                        // Callback!:
-                        if (PARENT.in != null) {
-                            final InetAddress addr = PARENT.in.getAddress();
-
-                            if (addr == null)
-                                continue;
-
-                            // System.out.println("Calling `onReceive()`!");
-
-                            // The user's code can throw exceptions and ERRORS(!) that could pause our
-                            // thread.
-                            // :)
-
-                            // ..Gotta handle those!:
-
-                            try {
-                                final byte[] copy = new byte[this.byteData.length];
-
-                                System.arraycopy(this.byteData, 0, copy, 0, this.byteData.length);
-
-                                // Super slow `memset()`...
-                                // for (int i = 0; i < byteData.length; i++)
-                                // byteData[i] = 0;
-
-                                // ~~...but I just didn't want to use `System.arraycopy()`
-                                // with a freshly allocated array. What a WASTE!~~
-
-                                this.byteData = new byte[REC.packetMaxSize];
-                                // PS It IS TWO WHOLE ORDERS OF MAGNITUDE faster to allocate
-                                // than to do a loop and set values.
-                                // I'm only worried about de-allocation.
-
-                                PARENT.onReceive(copy,
-                                        addr.toString().substring(1),
-                                        PARENT.in.getPort());
-                            } catch (final Exception e) {
-                                e.printStackTrace();
-                            } catch (final Error e) {
-                                e.printStackTrace();
-                            }
-                        } // End of `if (PARENT.in != null)`.
-
-                    } // End of `while` loop,
-                } // End of `run()`,
-            }; // End of the `Runnable` constructor!... :D!~
-
-            // GO! ":D
-            this.start();
+        private ReceiverThread() {
+            this.thread = new Thread(this::receiverTasks);
+            this.thread.setName("UdpSocketReceiverOnPort" + UdpSocket.this.getPort());
+            this.thread.setDaemon(true); // The JVM can shut down without waiting for this thread to.
+            this.thread.start();
         }
 
-        public static int getNumberOfReceivers() {
-            // LOL (Autocomplete moment):
-            return com.brahvim.nerd.io.net.UdpSocket.ReceiverThread.NUMBER_OF_THREADS;
-        }
+        private void receiverTasks() {
+            // We got some work?
+            while (!Thread.interrupted()) {
+                try {
+                    UdpSocket.this.in = new DatagramPacket(this.byteData, this.byteData.length);
+                    if (UdpSocket.this.sock != null)
+                        UdpSocket.this.sock.receive(UdpSocket.this.in); // Fetch it well!
+                } catch (final IOException e) {
+                    if (e instanceof SocketTimeoutException) {
+                        // ¯\_(ツ)_/¯
+                        // System.out.println("Timeout ended! Continuing...");
+                    } else if (e instanceof SocketException) {
+                        this.thread.interrupt();
+                        return;
+                    } else
+                        e.printStackTrace(); // ¯\_(ツ)_/¯
+                }
+
+                // Callback!:
+                if (UdpSocket.this.in != null) {
+                    final InetAddress addr = UdpSocket.this.in.getAddress();
+
+                    if (addr == null)
+                        continue;
+
+                    // System.out.println("Calling `onReceive()`!");
+
+                    // The user's code can throw exceptions that could pause our
+                    // thread.
+                    // :)
+
+                    // ..Gotta handle those!:
+
+                    try {
+                        final byte[] copy = new byte[this.byteData.length];
+
+                        System.arraycopy(this.byteData, 0, copy, 0, this.byteData.length);
+
+                        // Super slow `memset()`...
+                        // for (int i = 0; i < byteData.length; i++)
+                        // byteData[i] = 0;
+
+                        // ~~...but I just didn't want to use `System.arraycopy()`
+                        // with a freshly allocated array. What a WASTE!~~
+
+                        this.byteData = new byte[this.packetMaxSize];
+                        // PS It IS TWO WHOLE ORDERS OF MAGNITUDE faster to allocate
+                        // than to do a loop and set values.
+                        // I'm only worried about de-allocation.
+
+                        UdpSocket.this.onReceive(copy,
+                                addr.toString().substring(1),
+                                UdpSocket.this.in.getPort());
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                    } catch (final Error e) { // Also, ERRORS! ...if possible, that is.
+                        e.printStackTrace();
+                    }
+                } // End of `if (PARENT.in != null)`.
+
+            } // End of `while` loop,
+        } // End of `run()`,
 
         public Thread getThread() {
             return this.thread;
         }
 
-        public void start() {
-            if (this.task == null)
-                System.out.println("`UdpSocket.ReceiverThread::task` was null! "
-                        + "You must've assigned it to that accidentally, or not at all.");
-            this.doRun = true;
-            this.thread = new Thread(this.task);
-            this.thread.setName("UDP Socket Receiver Thread " + ReceiverThread.NUMBER_OF_THREADS);
-            this.thread.setDaemon(true); // The JVM can shut down without waiting for this thread to.
-            this.thread.start();
-        }
-
         public void stop() {
-            UdpSocket.ReceiverThread.NUMBER_OF_THREADS--;
-            this.doRun = false;
+            this.thread.interrupt();
             try {
                 this.thread.join();
             } catch (final InterruptedException e) {
@@ -246,7 +188,7 @@ public class UdpSocket {
 
     // region Fields!
     /**
-     * The default timeout value, in milliseconds, for each {@code UdpSocket}. Used
+     * The default timeout value, in milliseconds, for each {@link UdpSocket}. Used
      * if a timeout value is not specified in the constructor.
      *
      * @implSpec Should be {@code 32}.
@@ -274,19 +216,19 @@ public class UdpSocket {
     private DatagramSocket sock;
 
     /**
-     * Holds the previous {@code DatagramPacket} that was received.
+     * Holds the previous {@link DatagramPacket} that was received.
      */
     private DatagramPacket in;
 
     /**
-     * Holds the previous {@code DatagramPacket} that was sent.
+     * Holds the previous {@link DatagramPacket} that was sent.
      */
     private DatagramPacket out;
     // endregion
 
     // region Construction!~
     /**
-     * Constructs a {@code UdpSocket} with an empty port requested from the OS, the
+     * Constructs a {@link UdpSocket} with an empty port requested from the OS, the
      * receiver thread of which will time-out every
      * {@link UdpSocket#DEFAULT_TIMEOUT} milliseconds.
      *
@@ -297,7 +239,7 @@ public class UdpSocket {
     }
 
     /**
-     * Constructs a {@code UdpSocket} with the specified port, the receiver thread
+     * Constructs a {@link UdpSocket} with the specified port, the receiver thread
      * of which will time-out every {@link UdpSocket#DEFAULT_TIMEOUT}
      * milliseconds.
      *
@@ -308,15 +250,15 @@ public class UdpSocket {
     }
 
     /**
-     * Constructs a {@code UdpSocket} with the specified socket.
+     * Constructs a {@link UdpSocket} with the specified socket.
      */
     public UdpSocket(final DatagramSocket p_sock) {
         this.sock = p_sock;
-        this.receiver = new ReceiverThread(this);
+        this.receiver = new ReceiverThread();
     }
 
     /**
-     * Constructs a {@code UdpSocket} with the specified port and receiver thread
+     * Constructs a {@link UdpSocket} with the specified port and receiver thread
      * timeout (in milliseconds).
      *
      * @apiNote This constructor used to try to force the OS into giving the port of
@@ -336,7 +278,7 @@ public class UdpSocket {
         // System.out.println(this.sock.getLocalAddress());
 
         if (this.receiver == null)
-            this.receiver = new ReceiverThread(this);
+            this.receiver = new ReceiverThread();
 
         this.onStart();
     }
@@ -345,11 +287,11 @@ public class UdpSocket {
     // region `public` and `static` method[s]!
     /**
      * Tries to 'force' the OS into constructing a socket with the port specified
-     * using {@code DatagramSocket.setReuseAddress(boolean)}.
+     * using {@link DatagramSocket#setReuseAddress()}.
      *
      * @param p_port    The port to use,
      * @param p_timeout The timeout for the port's receiving thread.
-     * @return A {@code java.net.DatagramSocket}.
+     * @return A {@link java.net.DatagramSocket}.
      */
     public static DatagramSocket createSocketForcingPort(final int p_port, final int p_timeout) {
         /* final */ DatagramSocket toRet = null;
@@ -369,7 +311,7 @@ public class UdpSocket {
 
     // region Callback methods to overload. These are what you get! LOOK HERE!
     /**
-     * Simply called by the constructor of {@code UdpSocket}, really.
+     * Simply called by the constructor of {@link UdpSocket}, really.
      */
     protected void onStart() {
     }
@@ -399,11 +341,12 @@ public class UdpSocket {
     public void setSocket(final DatagramSocket p_sock) {
         this.receiver.stop();
         this.sock = p_sock;
-        this.receiver.start();
+        this.receiver = new ReceiverThread();
     }
 
     /**
-     * @return {@code -1} if there is a UDP error.
+     * @return {@code -1} if there is a UDP error (A {@link SocketException} to be
+     *         specific).
      */
     public int getTimeout() {
         try {
@@ -448,9 +391,7 @@ public class UdpSocket {
             this.sock.bind(new InetSocketAddress(previous, p_port));
 
             if (receiverWasNull)
-                this.receiver = new ReceiverThread(this);
-
-            this.receiver.start();
+                this.receiver = new ReceiverThread();
 
             System.out.printf("Successfully forced the port to: `%d`.\n", this.sock.getLocalPort());
         } catch (final SocketException e) {
