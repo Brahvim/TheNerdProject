@@ -63,8 +63,8 @@ public class UdpSocket {
          *           To know why, please see {@link<a href=
          *           "https://stackoverflow.com/a/9235558/">this</a>}.
          */
-        @Deprecated
-        public final int packetSize;
+        // @Deprecated
+        // public final int packetMaxSize;
 
         /**
          * The {@code Thread} that handles the network's receive calls.
@@ -87,9 +87,7 @@ public class UdpSocket {
          * Starts the thread and listens for events.
          */
         private ReceiverThread() {
-            this.packetSize = ReceiverThread.UDP_PACKET_MAX_SIZE;
-            this.byteData = new byte[this.packetSize];
-
+            this.byteData = new byte[ReceiverThread.UDP_PACKET_MAX_SIZE];
             this.thread = new Thread(this::receiverTasks);
             this.thread.setName("UdpSocketReceiverOnPort" + UdpSocket.this.getPort());
             this.thread.setDaemon(true); // The JVM can shut down without waiting for this thread to.
@@ -141,7 +139,7 @@ public class UdpSocket {
                         // ~~...but I just didn't want to use `System.arraycopy()`
                         // with a freshly allocated array. What a WASTE!~~
 
-                        this.byteData = new byte[this.packetSize];
+                        this.byteData = new byte[ReceiverThread.UDP_PACKET_MAX_SIZE];
                         // PS It IS TWO WHOLE ORDERS OF MAGNITUDE faster to allocate
                         // than to do a loop and set values.
                         // I'm only worried about de-allocation.
@@ -154,7 +152,7 @@ public class UdpSocket {
                     } catch (final Error e) { // Also, ERRORS! ...if possible, that is.
                         e.printStackTrace();
                     }
-                } // End of `if (PARENT.in != null)`.
+                } // End of `if (UdpSocket.this.in != null)`.
 
             } // End of `while` loop,
         } // End of `run()`,
