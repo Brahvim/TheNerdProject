@@ -37,9 +37,9 @@ public class UdpSocket {
 
         // region Fields.
         // Standard receive buffer sizes:
-        public static final int UDP_PACKET_LEAST_SIZE = 543;
+        public static final int UDP_PACKET_SAFE_SIZE = 576;
         public static final int UDP_PACKET_MAX_SIZE = 65_507;
-        public static final int UDP_PACKET_RECOMMENDED_SIZE = 576;
+        public static final int UDP_PACKET_MOST_SAFE_SIZE = 543;
 
         // You also need to fit the HEADER! The max is NOT `65535`!
 
@@ -64,10 +64,7 @@ public class UdpSocket {
          *           "https://stackoverflow.com/a/9235558/">this</a>}.
          */
         @Deprecated
-        public Integer packetMaxSize = ReceiverThread.UDP_PACKET_MAX_SIZE;
-        // ^^^ PS a more precise number is `543` bytes.
-        // Update (as of `21 December, 2022`): It. Doesn't. MATTER.
-        // Just come up with a fixed the packet size! The rest is fine!
+        public final int packetSize;
 
         /**
          * The {@code Thread} that handles the network's receive calls.
@@ -83,13 +80,16 @@ public class UdpSocket {
          * Internal field holding data used by the receiver thread.
          */
         // B I G __ A L L O C A T I O N:
-        private byte[] byteData = new byte[this.packetMaxSize /* 65535 */];
+        private byte[] byteData;
         // endregion
 
         /**
          * Starts the thread and listens for events.
          */
         private ReceiverThread() {
+            this.packetSize = ReceiverThread.UDP_PACKET_MAX_SIZE;
+            this.byteData = new byte[this.packetSize];
+
             this.thread = new Thread(this::receiverTasks);
             this.thread.setName("UdpSocketReceiverOnPort" + UdpSocket.this.getPort());
             this.thread.setDaemon(true); // The JVM can shut down without waiting for this thread to.
@@ -141,7 +141,7 @@ public class UdpSocket {
                         // ~~...but I just didn't want to use `System.arraycopy()`
                         // with a freshly allocated array. What a WASTE!~~
 
-                        this.byteData = new byte[this.packetMaxSize];
+                        this.byteData = new byte[this.packetSize];
                         // PS It IS TWO WHOLE ORDERS OF MAGNITUDE faster to allocate
                         // than to do a loop and set values.
                         // I'm only worried about de-allocation.
