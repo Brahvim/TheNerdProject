@@ -36,10 +36,14 @@ public class UdpSocket {
     public class ReceiverThread {
 
         // region Fields.
+        /**
+         * Please note that the specified standard buffer sizes are 4 bytes less than
+         * what is actually allowed - the first 4 bytes hold the size of the data.
+         */
         // Standard receive buffer sizes:
-        public static final int UDP_PACKET_SAFE_SIZE = 576;
-        public static final int UDP_PACKET_MAX_SIZE = 65_507;
-        public static final int UDP_PACKET_MOST_SAFE_SIZE = 543;
+        public static final int UDP_PACKET_SAFE_SIZE = 564;
+        public static final int UDP_PACKET_MAX_SIZE = 65_503;
+        public static final int UDP_PACKET_MOST_SAFE_SIZE = 539;
 
         // You also need to fit the HEADER! The max is NOT `65535`!
 
@@ -130,7 +134,7 @@ public class UdpSocket {
                     // ..Gotta handle those!:
 
                     try {
-                        final byte[] copy = new byte[this.byteData.length];
+                        final byte[] copy = new byte[UdpSocket.this.in.getLength()];
 
                         System.arraycopy(this.byteData, 0, copy, 0, this.byteData.length);
 
@@ -204,14 +208,14 @@ public class UdpSocket {
     private DatagramSocket sock;
 
     /**
-     * Holds the previous {@link DatagramPacket} that was received.
-     */
-    private DatagramPacket in;
-
-    /**
      * Holds the previous {@link DatagramPacket} that was sent.
      */
     private DatagramPacket out;
+
+    /**
+     * Holds the previous {@link DatagramPacket} that was received.
+     */
+    private DatagramPacket in;
     // endregion
 
     // region Construction!~
@@ -391,13 +395,14 @@ public class UdpSocket {
         return this.sock.getLocalAddress();
     }
 
+    // These allow concurrent modification - bad!:
     public DatagramPacket getLastPacketSent() {
         return this.out;
     }
 
-    public DatagramPacket getLastPacketReceived() {
-        return this.in;
-    }
+    // public DatagramPacket getLastPacketReceived() {
+    // return this.in;
+    // }
     // endregion
 
     // region Other `public` methods!:
