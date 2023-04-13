@@ -22,29 +22,6 @@ import java.nio.charset.StandardCharsets;
 
 public class UdpSocket {
 
-    public static void main(String[] args) {
-        final UdpSocket sock1 = new UdpSocket() {
-            @Override
-            public void onReceive(byte[] p_data, String p_ip, int p_port) {
-                System.out.println(new String(p_data));
-            }
-        }, sock2 = new UdpSocket() {
-            @Override
-            public void onReceive(byte[] p_data, String p_ip, int p_port) {
-                System.out.println(new String(p_data));
-            }
-        };
-
-        sock1.send("Hello!", "127.0.0.1", sock2.getPort());
-
-        try {
-            Thread.sleep(800);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
     // Concurrent stuff *haha:*
     /**
      * The {@link UdpSocket.ReceiverThread} class helps {@link UdpSocket}s receive
