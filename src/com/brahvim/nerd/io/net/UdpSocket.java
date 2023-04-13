@@ -22,6 +22,29 @@ import java.nio.charset.StandardCharsets;
 
 public class UdpSocket {
 
+    public static void main(String[] args) {
+        final UdpSocket sock1 = new UdpSocket() {
+            @Override
+            public void onReceive(byte[] p_data, String p_ip, int p_port) {
+                System.out.println(new String(p_data));
+            }
+        }, sock2 = new UdpSocket() {
+            @Override
+            public void onReceive(byte[] p_data, String p_ip, int p_port) {
+                System.out.println(new String(p_data));
+            }
+        };
+
+        sock1.send("Hello!", "127.0.0.1", sock2.getPort());
+
+        try {
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     // Concurrent stuff *haha:*
     /**
      * The {@link UdpSocket.ReceiverThread} class helps {@link UdpSocket}s receive
@@ -108,7 +131,7 @@ public class UdpSocket {
                         final byte[] copy = new byte[UdpSocket.this.in.getLength()];
 
                         // Don't worry, this won't crash. *I hope.*
-                        System.arraycopy(this.byteData, 0, copy, 0, this.byteData.length);
+                        System.arraycopy(this.byteData, 0, copy, 0, copy.length);
 
                         // Super slow `memset()`...
                         // for (int i = 0; i < byteData.length; i++)
@@ -116,7 +139,6 @@ public class UdpSocket {
 
                         // ~~...but I just didn't want to use `System.arraycopy()`
                         // with a freshly allocated array. What a WASTE!~~
-
                         this.byteData = new byte[ReceiverThread.PACKET_MAX_SIZE];
                         // PS It IS TWO WHOLE ORDERS OF MAGNITUDE faster to allocate
                         // than to do a loop and set values. Java allocations ARE fast.
