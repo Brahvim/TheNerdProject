@@ -37,38 +37,10 @@ public class UdpSocket {
 
         // region Fields.
         /**
-         * Please note that the specified standard buffer sizes are 4 bytes less than
-         * what is actually allowed - the first 4 bytes hold the size of the data.
+         * Number of bytes allocated to hold the data in a packet. The size of the
+         * array is truncated before it is passed to `UdpSocket::onReceive()`.
          */
-        // Standard receive buffer sizes:
-        public static final int UDP_PACKET_SAFE_SIZE = 564;
-        public static final int UDP_PACKET_MAX_SIZE = 65_503;
-        public static final int UDP_PACKET_MOST_SAFE_SIZE = 539;
-
-        // You also need to fit the HEADER! The max is NOT `65535`!
-
-        /**
-         * Sets the size of the buffer (in bytes) data is received into. The maximum
-         * possible size is {@link ReceiverThread#UDP_PACKET_MAX_SIZE} ({@code 65_507})
-         * bytes.
-         *
-         * @apiNote Is {@link ReceiverThread#UDP_PACKET_MAX_SIZE} ({@code 65_507}) by
-         *          default.
-         *          Though <b>a higher value will use more
-         *          bandwidth.</b> This number should not be something you need to
-         *          worry about. Even if a dial-up router fragments the packet, the
-         *          packet won't get corrupted. If even a single fragment fails to
-         *          reach, the entire packet is discarded.
-         * 
-         * @implNote This <i>should</i> instead, be {@code 576}, <b><i>or even
-         *           {@code 543}</b></i> by default.
-         *           <br>
-         *           </br>
-         *           To know why, please see {@link<a href=
-         *           "https://stackoverflow.com/a/9235558/">this</a>}.
-         */
-        @Deprecated
-        public final int packetSize;
+        public final static int PACKET_MAX_SIZE = 70_000;
 
         /**
          * The {@code Thread} that handles the network's receive calls.
@@ -91,8 +63,7 @@ public class UdpSocket {
          * Starts the thread and listens for events.
          */
         private ReceiverThread() {
-            this.packetSize = ReceiverThread.UDP_PACKET_MAX_SIZE;
-            this.byteData = new byte[this.packetSize];
+            this.byteData = new byte[ReceiverThread.PACKET_MAX_SIZE];
 
             this.thread = new Thread(this::receiverTasks);
             this.thread.setName("UdpSocketReceiverOnPort" + UdpSocket.this.getPort());
@@ -136,6 +107,7 @@ public class UdpSocket {
                     try {
                         final byte[] copy = new byte[UdpSocket.this.in.getLength()];
 
+                        // Don't worry, this won't crash. *I hope.*
                         System.arraycopy(this.byteData, 0, copy, 0, this.byteData.length);
 
                         // Super slow `memset()`...
@@ -145,10 +117,10 @@ public class UdpSocket {
                         // ~~...but I just didn't want to use `System.arraycopy()`
                         // with a freshly allocated array. What a WASTE!~~
 
-                        this.byteData = new byte[this.packetSize];
+                        this.byteData = new byte[ReceiverThread.PACKET_MAX_SIZE];
                         // PS It IS TWO WHOLE ORDERS OF MAGNITUDE faster to allocate
-                        // than to do a loop and set values.
-                        // I'm only worried about de-allocation.
+                        // than to do a loop and set values. Java allocations ARE fast.
+                        // I'm only worried about de-allocation. GCs can be slow, right?
 
                         UdpSocket.this.onReceive(copy,
                                 addr.toString().substring(1),
