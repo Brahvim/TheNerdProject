@@ -15,13 +15,18 @@ public class AnimatedCube extends TestEulerBody {
     public float size = 40;
     public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
-    private boolean visible = true;
     private final SineEase plopWave;
+    private boolean visible = true;
     private AlSource popSrc;
     // endregion
 
     public AnimatedCube(final NerdScene p_scene) {
         super(p_scene.SKETCH);
+
+        super.pos.set(
+                super.SKETCH.random(-super.SKETCH.cx, super.SKETCH.cx),
+                super.SKETCH.random(-super.SKETCH.cy, super.SKETCH.cy),
+                super.SKETCH.random(-600, 600));
 
         super.pos.set(
                 super.SKETCH.random(-super.SKETCH.cx, super.SKETCH.cx),
@@ -103,6 +108,7 @@ public class AnimatedCube extends TestEulerBody {
     }
 
     public AnimatedCube plopOut(final Runnable p_runnable) {
+        this.plopWave.freqMult = 0.00001f;
         this.plopWave.endWhenAngleIncrementsBy(90)
                 .start(270, () -> {
                     p_runnable.run();
@@ -126,8 +132,9 @@ public class AnimatedCube extends TestEulerBody {
 
         if (this.plopWave.active)
             if (this.popSrc != null)
-                if (this.popSrc.isStopped())
-                    this.popSrc.dispose();
+                if (this.popSrc.isDisposed())
+                    if (this.popSrc.isStopped())
+                        this.popSrc.dispose();
 
         super.integrate();
         super.SKETCH.push();

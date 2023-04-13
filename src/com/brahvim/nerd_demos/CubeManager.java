@@ -15,17 +15,16 @@ import processing.core.PVector;
 public class CubeManager {
 
 	// region Fields.
-	public int CUBES_PER_CLICK = 7;
+	public int CUBES_PER_CLICK = 70;
 	public int CUBES_ADDED_EVERY_FRAME = 2;
 
 	private final ArrayList<AnimatedCube> CUBES = new ArrayList<>();
 	private final NerdScene SCENE;
 	private final Sketch SKETCH;
 
-	@SuppressWarnings("unused")
-	private int cubesToAdd, cubesToRemove;
 	private AlBuffer<?>[] popAudios;
 	private PShape CUBE_SHAPE;
+	private int cubesToAdd;
 	// endregion
 
 	// region Constructors.
@@ -82,8 +81,11 @@ public class CubeManager {
 			if (!CollisionAlgorithms.ptRect(
 					pos.x, pos.y,
 					-5000, -5000,
-					5000, 5000))
-				this.CUBES.remove(i); // `this.cubesToRemove++;`
+					5000, 5000)) {
+				// this.CUBES.remove(i); // `this.cubesToRemove++;`
+				final int cubeId = i;
+				cube.plopOut(() -> this.CUBES.remove(cubeId));
+			}
 		}
 
 		// Used to let the cubes 'plop-out', though unused right now!
@@ -92,8 +94,9 @@ public class CubeManager {
 		// cube.plopOut(() -> this.CUBES.remove(cube));
 		// }
 
-		for (final AnimatedCube c : this.CUBES)
-			c.draw(this.CUBE_SHAPE);
+		// for (final AnimatedCube c : this.CUBES)
+		for (int i = this.CUBES.size() - 1; i != -1; i--)
+			this.CUBES.get(i).draw(this.CUBE_SHAPE);
 	}
 
 	public void emitCubes(final int p_howMany) {
