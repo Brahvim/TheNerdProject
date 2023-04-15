@@ -1716,6 +1716,12 @@ public class Sketch extends PApplet {
 		return this.defaultCamera.clone();
 	}
 
+	public NerdAbstractCamera setCameraToDefault() {
+		final NerdAbstractCamera toRet = this.getDefaultCameraClone();
+		this.setCamera(toRet);
+		return toRet;
+	}
+
 	/**
 	 * @return The previous camera the {@link Sketch} had access to.
 	 */

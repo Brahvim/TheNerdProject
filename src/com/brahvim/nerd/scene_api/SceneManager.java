@@ -735,10 +735,9 @@ public class SceneManager {
 
         // Initialize fields as if this was a part of the construction.
         toRet.MANAGER = this;
-        toRet.SKETCH = this.SKETCH;
-        this.SKETCH.setCamera(this.SKETCH.getDefaultCameraClone());
-        toRet.CAMERA = this.SKETCH.getCamera();
-        toRet.ASSETS = new AssetManager(this.SKETCH); // Is this actually a good idea?
+        toRet.SKETCH = toRet.MANAGER.SKETCH;
+        toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
+        toRet.ASSETS = new AssetManager(toRet.SKETCH); // Is this actually a good idea?
 
         // If this is the first time we're constructing this scene, ensure it has a
         // cache and a saved state!
