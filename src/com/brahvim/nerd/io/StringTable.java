@@ -4,16 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PApplet;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
 /**
- * Every {@link NerdScene} has an instance of this class, in the form of
- * {@link NerdScene#STRINGS}. This is done to provide better namespacing.<br>
- * <br>
  * A "global" namespace for these strings is provided through
  * {@link Sketch#STRINGS}, so you can access string table data across scenes!
  */

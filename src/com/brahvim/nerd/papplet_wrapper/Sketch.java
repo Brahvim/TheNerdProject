@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -352,12 +353,16 @@ public class Sketch extends PApplet {
 	protected final ArrayList<SketchTouchListener> TOUCH_LISTENERS = new ArrayList<>(1);
 	protected final ArrayList<SketchDisplayListener> WINDOW_LISTENERS = new ArrayList<>(1);
 	protected final ArrayList<SketchKeyboardListener> KEYBOARD_LISTENERS = new ArrayList<>(1);
+	protected final HashSet<Consumer<Sketch>> CALLBACK_LISTENERS_TO_REMOVE = new HashSet<>(1);
 
+	// Adding a new callbacks list to `Sketch`, or a subclass? REGISTER IT IN THIS!:
+	protected final ArrayList<?>[] LIST_OF_CALLBACK_LISTS;
+	// See the end of the constructor!
+
+	protected ArrayList<Consumer<Sketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
 	protected ArrayList<Consumer<Sketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
 	protected ArrayList<Consumer<Sketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
-
 	protected ArrayList<Consumer<Sketch>> PRE_LISTENERS, POST_LISTENERS;
-	protected ArrayList<Consumer<Sketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
 	// endregion
 	// endregion
 
@@ -468,11 +473,12 @@ public class Sketch extends PApplet {
 		this.ROBOT = toAssign;
 		// endregion
 
-		for (int i = p_key.sketchConstructedListeners.size() - 1; i != -1; i--) {
-			final var l = p_key.sketchConstructedListeners.get(i);
-			if (l != null)
-				l.accept(this);
-		}
+		this.LIST_OF_CALLBACK_LISTS = new ArrayList<?>[] {
+				this.DRAW_LISTENERS, this.PRE_DRAW_LISTENERS, this.POST_DRAW_LISTENERS,
+				this.SETTINGS_LISTENERS, this.SETUP_LISTENERS, this.EXIT_LISTENERS, this.DISPOSAL_LISTENERS,
+				this.PRE_LISTENERS, this.POST_LISTENERS, };
+
+		p_key.sketchConstructedListeners.forEach(l -> l.accept(this));
 	}
 
 	@Override
@@ -494,11 +500,6 @@ public class Sketch extends PApplet {
 	// region Processing sketch workflow.
 	@Override
 	public void setup() {
-		// Causes a NPE in LWJGL. Yes, 'a':
-		// Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-		// this.dispose();
-		// }));
-
 		this.updateWindowRatios();
 		super.surface.setTitle(this.NAME);
 		super.registerMethod("pre", this);
@@ -546,14 +547,15 @@ public class Sketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		for (int i = this.SETUP_LISTENERS.size() - 1; i != -1; i--) {
-			final var l = this.SETUP_LISTENERS.get(i);
-			if (l != null)
-				l.accept(this);
-		}
+		this.SETUP_LISTENERS.forEach(l -> l.accept(this));
 	}
 
 	public void pre() {
+		// Cheap removal strategy, LOL. I'm fed with boilerplate!:
+		for (ArrayList<?> l : this.LIST_OF_CALLBACK_LISTS)
+			// ..Don't use `HashSet::contains()` to check here. Ugh.
+			l.removeAll(this.CALLBACK_LISTENERS_TO_REMOVE);
+
 		this.currentScene = this.sceneMan.getCurrentScene();
 		this.PREV_WINDOW_POSITION.set(this.WINDOW_POSITION);
 		if (this.USES_OPENGL) {
@@ -596,12 +598,7 @@ public class Sketch extends PApplet {
 		// endregion
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
-
-		for (int i = this.PRE_LISTENERS.size() - 1; i != -1; i--) {
-			final var l = this.PRE_LISTENERS.get(i);
-			if (l != null)
-				l.accept(this);
-		}
+		this.PRE_LISTENERS.forEach(l -> l.accept(this));
 	}
 
 	@Override
@@ -610,13 +607,8 @@ public class Sketch extends PApplet {
 		this.frameTime = this.frameStartTime - this.pframeTime;
 		this.pframeTime = this.frameStartTime;
 
-		// region Call all pre-render listeners.
-		for (int i = this.PRE_DRAW_LISTENERS.size() - 1; i != -1; i--) {
-			final var l = this.PRE_DRAW_LISTENERS.get(i);
-			if (l != null)
-				l.accept(this);
-		}
-		// endregion
+		// Call all pre-render listeners:
+		this.PRE_DRAW_LISTENERS.forEach(l -> l.accept(this));
 
 		// region Update frame-ly mouse settings.
 		this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
@@ -647,13 +639,8 @@ public class Sketch extends PApplet {
 		}
 		// endregion
 
-		// region Call all draw listeners.
-		for (int i = this.DRAW_LISTENERS.size() - 1; i != -1; i--) {
-			final var l = this.DRAW_LISTENERS.get(i);
-			if (l != null)
-				l.accept(this);
-		}
-		// endregion
+		// Call all draw listeners:
+		this.DRAW_LISTENERS.forEach(l -> l.accept(this));
 
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.currentScene == null) {
@@ -664,23 +651,12 @@ public class Sketch extends PApplet {
 		}
 		// endregion
 
-		// region Call all post-render listeners.
-		final var list = this.POST_DRAW_LISTENERS;
-		for (int i = list.size() - 1; i != -1; i--) {
-			final var l = list.get(i);
-			if (l != null)
-				l.accept(this);
-		}
-		// endregion
-
+		// Call all post-render listeners:
+		this.POST_DRAW_LISTENERS.forEach(l -> l.accept(this));
 	}
 
 	public void post() {
-		for (int i = this.POST_LISTENERS.size() - 1; i != -1; i--) {
-			final var l = this.POST_LISTENERS.get(i);
-			if (l != null)
-				l.accept(this);
-		}
+		this.POST_LISTENERS.forEach(l -> l.accept(this));
 
 		if (this.USES_OPENGL)
 			super.endPGL();
@@ -715,23 +691,13 @@ public class Sketch extends PApplet {
 
 	@Override
 	public void exit() {
-		for (int i = this.EXIT_LISTENERS.size() - 1; i != -1; i--) {
-			final var l = this.EXIT_LISTENERS.get(i);
-			if (l != null)
-				l.accept(this);
-		}
-
+		this.EXIT_LISTENERS.forEach(l -> l.accept(this));
 		super.exit();
 	}
 
 	@Override
 	public void dispose() {
-		for (int i = this.DISPOSAL_LISTENERS.size() - 1; i != -1; i--) {
-			final var l = this.DISPOSAL_LISTENERS.get(i);
-			if (l != null)
-				l.accept(this);
-		}
-
+		this.DISPOSAL_LISTENERS.forEach(l -> l.accept(this));
 		super.dispose();
 	}
 	// endregion
@@ -910,64 +876,79 @@ public class Sketch extends PApplet {
 
 	// region Callback and extension management.
 	// region Adding listeners.
-	public void addPreListener(final Consumer<Sketch> p_preListener) {
-		this.PRE_LISTENERS.add(p_preListener);
+	public Sketch addPreListener(final Consumer<Sketch> p_preListener) {
+		this.PRE_LISTENERS.add(Objects.requireNonNull(
+				p_preListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+		return this;
 	}
 
-	public void addPostListener(final Consumer<Sketch> p_postListener) {
-		this.POST_LISTENERS.add(p_postListener);
+	public Sketch addPostListener(final Consumer<Sketch> p_postListener) {
+		this.POST_LISTENERS.add(Objects.requireNonNull(
+				p_postListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+		return this;
 	}
 
-	public void addPreDrawListener(final Consumer<Sketch> p_preDrawListener) {
-		this.PRE_DRAW_LISTENERS.add(p_preDrawListener);
+	public Sketch addPreDrawListener(final Consumer<Sketch> p_preDrawListener) {
+		this.PRE_DRAW_LISTENERS.add(Objects.requireNonNull(
+				p_preDrawListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+		return this;
 	}
 
-	public void addDrawListener(final Consumer<Sketch> p_drawListener) {
-		this.DRAW_LISTENERS.add(p_drawListener);
+	public Sketch addDrawListener(final Consumer<Sketch> p_drawListener) {
+		this.DRAW_LISTENERS.add(Objects.requireNonNull(
+				p_drawListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+		return this;
 	}
 
-	public void addPostDrawListener(final Consumer<Sketch> p_postDrawListener) {
-		this.POST_DRAW_LISTENERS.add(p_postDrawListener);
+	public Sketch addPostDrawListener(final Consumer<Sketch> p_postDrawListener) {
+		this.POST_DRAW_LISTENERS.add(Objects.requireNonNull(
+				p_postDrawListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+		return this;
 	}
 
-	public void addSketchExitListener(final Consumer<Sketch> p_exitListener) {
-		this.EXIT_LISTENERS.add(p_exitListener);
+	public Sketch addSketchExitListener(final Consumer<Sketch> p_exitListener) {
+		this.EXIT_LISTENERS.add(Objects.requireNonNull(
+				p_exitListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+		return this;
 	}
 
-	public void addSketchDisposalListener(final Consumer<Sketch> p_disposalListener) {
-		this.DISPOSAL_LISTENERS.add(p_disposalListener);
+	public Sketch addSketchDisposalListener(final Consumer<Sketch> p_disposalListener) {
+		this.DISPOSAL_LISTENERS.add(Objects.requireNonNull(
+				p_disposalListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+		return this;
 	}
 	// endregion
 
 	// region Removing listeners.
-	public void removePreListener(final Consumer<Sketch> p_preListener) {
-		this.PRE_LISTENERS.remove(p_preListener);
+	// Don't need all of these, but still will have them around in case internal
+	// workings change!
+	public void removePreListener(final Consumer<Sketch> p_listener) {
+		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removePostListener(final Consumer<Sketch> p_postListener) {
-		this.POST_LISTENERS.remove(p_postListener);
+	public void removePostListener(final Consumer<Sketch> p_listener) {
+		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removePreDrawListener(final Consumer<Sketch> p_preDrawListener) {
-		this.PRE_DRAW_LISTENERS.remove(p_preDrawListener);
+	public void removePreDrawListener(final Consumer<Sketch> p_listener) {
+		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removeDrawListener(final Consumer<Sketch> p_drawListener) {
-		this.DRAW_LISTENERS.remove(p_drawListener);
+	public void removeDrawListener(final Consumer<Sketch> p_listener) {
+		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removePostDrawListener(final Consumer<Sketch> p_postDrawListener) {
-		this.POST_DRAW_LISTENERS.remove(p_postDrawListener);
+	public void removePostDrawListener(final Consumer<Sketch> p_listener) {
+		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removeSketchExitListener(final Consumer<Sketch> p_exitListener) {
-		this.EXIT_LISTENERS.remove(p_exitListener);
+	public void removeSketchExitListener(final Consumer<Sketch> p_listener) {
+		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removeSketchDisposalListener(final Consumer<Sketch> p_disposalListener) {
-		this.DISPOSAL_LISTENERS.remove(p_disposalListener);
+	public void removeSketchDisposalListener(final Consumer<Sketch> p_listener) {
+		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
-
 	// endregion
 
 	@SuppressWarnings("unchecked")

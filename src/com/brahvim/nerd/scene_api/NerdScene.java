@@ -25,9 +25,9 @@ public class NerdScene {
   // Forgive me. Please!
   public /* final */ Sketch SKETCH;
   public /* final */ SceneState STATE;
-  public /* final */ StringTable STRINGS;
   public /* final */ AssetManager ASSETS;
   public /* final */ SceneManager MANAGER;
+  // public /* final */ StringTable STRINGS; // ...Not every scene needs one.
   public /* final */ NerdAbstractCamera CAMERA; // ...why keep this `protected`?
   // endregion
 
@@ -411,7 +411,6 @@ public class NerdScene {
    */
 
   /* `package` */ void runSetup(final SceneState p_state) {
-    // this.verifyKey(p_sceneKey);
     this.startMillis = this.SKETCH.millis();
     this.setup(p_state);
 
@@ -419,18 +418,18 @@ public class NerdScene {
   }
 
   /* `package` */ void runSceneExited() {
-    // this.verifyKey(p_sceneKey);
     this.sceneExited();
   }
 
   /* `package` */ void runPreload() {
-    // this.verifyKey(p_sceneKey);
     this.preload();
+
+    // if (this.MANAGER.settings.onScenePreload.useExecutors);
+
     this.donePreloading = true;
   }
 
   /* `package` */ void runDraw() {
-    // this.verifyKey(p_sceneKey);
 
     if (this.SKETCH.DRAW_FIRST_CALLER == null)
       throw new NullPointerException("`Sketch::DRAW_CALLBACK_ORDER` cannot be `null`.");
@@ -479,7 +478,6 @@ public class NerdScene {
   }
 
   /* `package` */ void runPost() {
-    // this.verifyKey(p_sceneKey);
     if (this.SKETCH.POST_FIRST_CALLER == null)
       throw new NullPointerException("`Sketch::POST_CALLBACK_ORDER` cannot be `null`.");
 
@@ -517,7 +515,6 @@ public class NerdScene {
   }
 
   /* `package` */ void runPre() {
-    // this.verifyKey(p_sceneKey);
     if (this.SKETCH.PRE_FIRST_CALLER == null)
       throw new NullPointerException("`Sketch::PRE_CALLBACK_ORDER` cannot be `null`.");
 

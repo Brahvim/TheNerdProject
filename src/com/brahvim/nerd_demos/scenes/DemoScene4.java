@@ -71,13 +71,12 @@ public class DemoScene4 extends NerdScene {
 
             // for (int i = 0; i < 50; i++) // I literally told OpenAL to do this 50 TIMES.
             this.rubberDuck.setPosition(
-                    5 * (SKETCH.mouseX - SKETCH.cx),
-                    0,
+                    5 * (SKETCH.mouseX - SKETCH.cx), 0,
                     5 * (SKETCH.mouseY - SKETCH.cy));
 
             App.OPENAL.unitSize = 1;
-            System.out.println(CAMERA.pos);
-            System.out.println(this.rubberDuck.getPosition());
+            // System.out.println(CAMERA.pos);
+            // System.out.println(this.rubberDuck.getPosition());
 
             if (!this.rubberDuck.isPlaying())
                 this.rubberDuck.play();

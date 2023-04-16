@@ -633,6 +633,7 @@ public class SceneManager {
         if (p_scene == null)
             return;
 
+        // If forced to, do it:
         if (p_forcibly) {
             p_scene.runPreload();
             return;

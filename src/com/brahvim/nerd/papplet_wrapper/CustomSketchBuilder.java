@@ -1,5 +1,6 @@
 package com.brahvim.nerd.papplet_wrapper;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -74,48 +75,57 @@ public abstract class CustomSketchBuilder {
     // endregion
 
     // region Adding listeners.
-    public CustomSketchBuilder addSketchConstructionListener(final Consumer<Sketch> p_constructionListener) {
-        this.SKETCH_KEY.sketchConstructedListeners.add(p_constructionListener);
+    public CustomSketchBuilder addSketchConstructionListener(final Consumer<Sketch> p_listener) {
+        this.SKETCH_KEY.sketchConstructedListeners.add(Objects.requireNonNull(
+                p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addSketchDisposalListener(final Consumer<Sketch> p_disposaListener) {
-        this.SKETCH_KEY.disposalListeners.add(p_disposaListener);
+    public CustomSketchBuilder addSketchDisposalListener(final Consumer<Sketch> p_listener) {
+        this.SKETCH_KEY.disposalListeners.add(Objects.requireNonNull(
+                p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addSketchSetupListener(final Consumer<Sketch> p_setupListener) {
-        this.SKETCH_KEY.setupListeners.add(p_setupListener);
+    public CustomSketchBuilder addSketchSetupListener(final Consumer<Sketch> p_listener) {
+        this.SKETCH_KEY.setupListeners.add(Objects.requireNonNull(
+                p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addPreListener(final Consumer<Sketch> p_preListener) {
-        this.SKETCH_KEY.preListeners.add(p_preListener);
+    public CustomSketchBuilder addPreListener(final Consumer<Sketch> p_listener) {
+        this.SKETCH_KEY.preListeners.add(Objects.requireNonNull(
+                p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addPostListener(final Consumer<Sketch> p_postListener) {
-        this.SKETCH_KEY.postListeners.add(p_postListener);
+    public CustomSketchBuilder addPostListener(final Consumer<Sketch> p_listener) {
+        this.SKETCH_KEY.postListeners.add(Objects.requireNonNull(
+                p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addPreDrawListener(final Consumer<Sketch> p_preDrawListener) {
-        this.SKETCH_KEY.preDrawListeners.add(p_preDrawListener);
+    public CustomSketchBuilder addPreDrawListener(final Consumer<Sketch> p_listener) {
+        this.SKETCH_KEY.preDrawListeners.add(Objects.requireNonNull(
+                p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addDrawListener(final Consumer<Sketch> p_drawListener) {
-        this.SKETCH_KEY.drawListeners.add(p_drawListener);
+    public CustomSketchBuilder addDrawListener(final Consumer<Sketch> p_listener) {
+        this.SKETCH_KEY.drawListeners.add(Objects.requireNonNull(
+                p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addPostDrawListener(final Consumer<Sketch> p_postDrawListener) {
-        this.SKETCH_KEY.postDrawListeners.add(p_postDrawListener);
+    public CustomSketchBuilder addPostDrawListener(final Consumer<Sketch> p_listener) {
+        this.SKETCH_KEY.postDrawListeners.add(Objects.requireNonNull(
+                p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addSketchExitListener(final Consumer<Sketch> p_exitListener) {
-        this.SKETCH_KEY.exitListeners.add(p_exitListener);
+    public CustomSketchBuilder addSketchExitListener(final Consumer<Sketch> p_listener) {
+        this.SKETCH_KEY.exitListeners.add(Objects.requireNonNull(
+                p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
     // endregion

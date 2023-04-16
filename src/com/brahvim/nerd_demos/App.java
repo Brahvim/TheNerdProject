@@ -12,6 +12,7 @@ public class App {
 
     /*
      * // TODO: Make it easier to animate, somehow!
+     * // TODO: Use an `ExecutorService` to load assets.
      * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
      */
