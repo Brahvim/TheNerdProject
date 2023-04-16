@@ -13,7 +13,7 @@ import processing.data.JSONObject;
  * A "global" namespace for these strings is provided through
  * {@link Sketch#STRINGS}, so you can access string table data across scenes!
  */
-public class StringTable {
+public class NerdStringTable {
 
     // region Fields.
     private File file;
@@ -22,7 +22,7 @@ public class StringTable {
     // endregion
 
     // region Constructors.
-    public StringTable(final File p_file, final String p_lang) throws FileNotFoundException {
+    public NerdStringTable(final File p_file, final String p_lang) throws FileNotFoundException {
         this.file = p_file;
         this.langauge = p_lang;
 
@@ -36,11 +36,11 @@ public class StringTable {
         this.refresh();
     }
 
-    public StringTable(final String p_filePath, final String p_lang) throws FileNotFoundException {
+    public NerdStringTable(final String p_filePath, final String p_lang) throws FileNotFoundException {
         this(new File(p_filePath), p_lang);
     }
 
-    public StringTable(final File p_file) throws FileNotFoundException {
+    public NerdStringTable(final File p_file) throws FileNotFoundException {
         this.file = p_file;
         this.langauge = "en";
 
@@ -50,7 +50,7 @@ public class StringTable {
         this.refresh();
     }
 
-    public StringTable(final String p_filePath) throws FileNotFoundException {
+    public NerdStringTable(final String p_filePath) throws FileNotFoundException {
         this(new File(p_filePath));
     }
     // endregion

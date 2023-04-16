@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.io.StringTable;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
@@ -17,6 +16,7 @@ import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
  *
  * @author Brahvim Bhaktvatsal
  */
+// Not `abstract` so you overload only what you want.
 public class NerdScene {
 
   // region `public` fields.

@@ -33,7 +33,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import com.brahvim.nerd.io.StringTable;
+import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
@@ -203,7 +203,7 @@ public class Sketch extends PApplet {
 	public final String RENDERER;
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
-	public final StringTable STRINGS;
+	public final NerdStringTable STRINGS;
 
 	public final HashMap<String, Object> EXTENSIONS;
 	// `Object`s instead of a custom interface because you can't do
@@ -425,10 +425,10 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Loading the string table.
-		StringTable loadedTable = null;
+		NerdStringTable loadedTable = null;
 
 		try {
-			loadedTable = new StringTable(p_key.stringTablePath);
+			loadedTable = new NerdStringTable(p_key.stringTablePath);
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
