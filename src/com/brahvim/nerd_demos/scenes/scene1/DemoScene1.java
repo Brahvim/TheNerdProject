@@ -24,7 +24,7 @@ public class DemoScene1 extends NerdScene {
 
     @Override
     protected synchronized void preload() {
-        MANAGER.PERSISTENT_ASSETS.add(PFontAsset.getLoader(), "data/Arial-Black-48.vlw");
+        SKETCH.PERSISTENT_ASSETS.add(PFontAsset.getLoader(), "data/Arial-Black-48.vlw");
         ASSETS.add(OggBufferDataAsset.getLoader(), "data/SceneOne.ogg");
     }
 
@@ -34,7 +34,7 @@ public class DemoScene1 extends NerdScene {
         if (this.SCENE.getTimesLoaded() == 0)
             SKETCH.centerWindow();
 
-        this.font = MANAGER.PERSISTENT_ASSETS.get("Arial-Black-48").getData();
+        this.font = SKETCH.PERSISTENT_ASSETS.get("Arial-Black-48").getData();
         this.ease = new SineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
 
         this.sceneOneAnnounce = new AlSource(App.OPENAL, ASSETS.get("SceneOne").getData());

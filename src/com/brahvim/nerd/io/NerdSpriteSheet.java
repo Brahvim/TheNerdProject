@@ -6,9 +6,9 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PImage;
 
-public class NerdSpSheet implements Cloneable {
+public class NerdSpriteSheet implements Cloneable {
 
-	private class SpPos {
+	private class SpritePos {
 		public int x, y;
 	}
 
@@ -19,10 +19,10 @@ public class NerdSpSheet implements Cloneable {
 	private ArrayList<PImage> sprites = new ArrayList<>(2);
 
 	/** Position of a sprite, as well as its ID in {@code NerdSpSheet::sprites}. */
-	private ArrayList<SpPos> poses = new ArrayList<>(2);
+	private ArrayList<SpritePos> poses = new ArrayList<>(2);
 	// endregion
 
-	public NerdSpSheet(final Sketch p_sketch, final PImage p_sheet) {
+	public NerdSpriteSheet(final Sketch p_sketch, final PImage p_sheet) {
 		this.sheet = p_sheet;
 		this.SKETCH = p_sketch;
 	}
@@ -33,7 +33,7 @@ public class NerdSpSheet implements Cloneable {
 	 */
 	public PImage getSprite(final int p_x, final int p_y, final int p_width, final int p_height) {
 		for (int i = this.poses.size() - 1; i != -1; i--) {
-			final SpPos p = this.poses.get(i);
+			final SpritePos p = this.poses.get(i);
 			if (p.x == p_x && p.y == p_y)
 				return this.sprites.get(i);
 		}
@@ -51,8 +51,8 @@ public class NerdSpSheet implements Cloneable {
 		return toCache;
 	}
 
-	public NerdSpSheet clone(final Sketch p_sketch) {
-		final NerdSpSheet toRet = new NerdSpSheet(this.SKETCH, this.sheet);
+	public NerdSpriteSheet clone(final Sketch p_sketch) {
+		final NerdSpriteSheet toRet = new NerdSpriteSheet(this.SKETCH, this.sheet);
 
 		toRet.poses = new ArrayList<>(this.poses);
 		toRet.sprites = new ArrayList<>(this.sprites);

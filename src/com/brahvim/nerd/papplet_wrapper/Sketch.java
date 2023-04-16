@@ -34,6 +34,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.NerdStringTable;
+import com.brahvim.nerd.io.asset_loader.AssetManager;
+import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
@@ -204,6 +206,7 @@ public class Sketch extends PApplet {
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
 	public final NerdStringTable STRINGS;
+	public final AssetManager PERSISTENT_ASSETS;
 
 	public final HashMap<String, Object> EXTENSIONS;
 	// `Object`s instead of a custom interface because you can't do
@@ -257,19 +260,25 @@ public class Sketch extends PApplet {
 
 	/**
 	 * Controls whether {@link NerdScene#pre()} or {@link NerdLayer#pre()} is
-	 * called first by the sketch. {@link Sketch.CallbackOrder#SCENE} by default.
+	 * called first by the sketch.
+	 * 
+	 * @apiNote {@link Sketch.CallbackOrder#SCENE} by default.
 	 */
 	public CallbackOrder PRE_FIRST_CALLER = CallbackOrder.SCENE;
 
 	/**
 	 * Controls whether {@link NerdScene#draw()} or {@link NerdLayer#draw()} is
-	 * called first by the sketch. {@link Sketch.CallbackOrder#LAYER} by default.
+	 * called first by the sketch.
+	 * 
+	 * @apiNote {@link Sketch.CallbackOrder#LAYER} by default.
 	 */
 	public CallbackOrder DRAW_FIRST_CALLER = CallbackOrder.LAYER;
 
 	/**
 	 * Controls whether {@link NerdScene#post()} or {@link NerdLayer#post()} is
-	 * called first by the sketch. {@link Sketch.CallbackOrder#LAYER} by default.
+	 * called first by the sketch.
+	 * 
+	 * @apiNote {@link Sketch.CallbackOrder#LAYER} by default.
 	 */
 	public CallbackOrder POST_FIRST_CALLER = CallbackOrder.LAYER;
 	// endregion
@@ -415,6 +424,7 @@ public class Sketch extends PApplet {
 		// region Non-key settings.
 		this.UNPROJECTOR = new Unprojector();
 		this.fullscreen = this.STARTED_FULLSCREEN;
+		this.PERSISTENT_ASSETS = new AssetManager(this);
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
 		this.sceneMan = new SceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
 		// endregion
@@ -872,6 +882,21 @@ public class Sketch extends PApplet {
 			}
 	}
 	// endregion
+	// endregion
+
+	// region Persistent asset operations.
+	public void reloadGivenPersistentAsset(final NerdAsset p_asset) {
+		this.PERSISTENT_ASSETS.remove(p_asset);
+		this.PERSISTENT_ASSETS.add(p_asset.getLoader(), p_asset.getPath());
+	}
+
+	public void reloadPersistentAssets() {
+		final NerdAsset[] assets = (NerdAsset[]) this.PERSISTENT_ASSETS.toArray();
+		this.PERSISTENT_ASSETS.clear();
+
+		for (final NerdAsset a : assets)
+			this.PERSISTENT_ASSETS.add(a.getLoader(), a.getPath());
+	}
 	// endregion
 
 	// region Callback and extension management.

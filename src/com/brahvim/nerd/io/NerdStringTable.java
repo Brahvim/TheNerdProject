@@ -2,6 +2,7 @@ package com.brahvim.nerd.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Iterator;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -13,7 +14,7 @@ import processing.data.JSONObject;
  * A "global" namespace for these strings is provided through
  * {@link Sketch#STRINGS}, so you can access string table data across scenes!
  */
-public class NerdStringTable {
+public class NerdStringTable implements Cloneable {
 
     // region Fields.
     private File file;
@@ -22,6 +23,21 @@ public class NerdStringTable {
     // endregion
 
     // region Constructors.
+    @SuppressWarnings("unchecked")
+    public NerdStringTable(final NerdStringTable p_table) {
+        this.file = p_table.file.getAbsoluteFile();
+        this.langauge = p_table.langauge;
+        this.json = new JSONObject();
+
+        Iterator<String> keysItr = (Iterator<String>) p_table.json.keyIterator();
+        while (keysItr.hasNext()) {
+            final String s = keysItr.next();
+            p_table.json.getJSONObject(s);
+
+            
+        }
+    }
+
     public NerdStringTable(final File p_file, final String p_lang) throws FileNotFoundException {
         this.file = p_file;
         this.langauge = p_lang;

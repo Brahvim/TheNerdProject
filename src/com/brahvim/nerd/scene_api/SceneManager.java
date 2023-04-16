@@ -68,15 +68,26 @@ public class SceneManager {
              * the {@link NerdScene} is used. Turn to {@code false} to load scene assets
              * each time, so that assets are updated.<br>
              * </br>
-             * {@code true} by default!
+             * 
+             * @apiNote {@code true} by default!
              */
             public volatile boolean preloadOnlyOnce = true;
 
             /**
              * When {@code true}, {@link NerdScene#preload()} runs the loading process in
-             * many threads using a {@link java.util.concurrent.ExecutorService}.
+             * multiple threads using a {@link java.util.concurrent.ExecutorService}. If
+             * {@link SceneManager.SceneManagerSettings.OnScenePreload#completeWithinPreloadCall}
+             * is {@code false}, the asset loading is not guaranteed to finish within
+             * preload
+             * 
+             * @apiNote {@code true} by default!
              */
             public volatile boolean useExecutors = true;
+
+            /**
+             * @apiNote {@code true} by default!
+             */
+            public volatile boolean completeWithinPreloadCall = true;
 
         }
 
@@ -95,7 +106,8 @@ public class SceneManager {
              * Clears the screen according to
              * {@link SceneManager.SceneManagerSettings.OnSceneSwitch#clearColor}.<br>
              * <br>
-             * {@code false} by default.
+             *
+             * @apiNote {@code false} by default.
              */
             public volatile boolean doClear = false;
 
@@ -114,7 +126,6 @@ public class SceneManager {
     }
     // endregion
 
-    public final AssetManager PERSISTENT_ASSETS;
     public SceneManager.SceneManagerSettings settings;
 
     // region `private` fields.
@@ -132,9 +143,7 @@ public class SceneManager {
      * does no optimization till the first scene switch. All scene switches after
      * that the initial should be fast enough!
      */
-    private final HashMap<Class<? extends NerdScene>, SceneManager.SceneCache>
-    //
-    SCENE_CACHE = new HashMap<>(2);
+    private final HashMap<Class<? extends NerdScene>, SceneManager.SceneCache> SCENE_CACHE = new HashMap<>(2);
     private final Sketch SKETCH;
 
     // Notes on some strange (useless? Useful?!) idea.
@@ -172,7 +181,6 @@ public class SceneManager {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
-        this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
 
         this.initSceneListeners();
     }
@@ -181,7 +189,6 @@ public class SceneManager {
         this.SKETCH = p_sketch;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
         this.settings = new SceneManager.SceneManagerSettings();
-        this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
 
         this.initSceneListeners();
     }
@@ -190,7 +197,6 @@ public class SceneManager {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
         this.SCENE_CHANGE_LISTENERS = new ArrayList<>(0);
-        this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
 
         this.initSceneListeners();
     }
@@ -201,7 +207,6 @@ public class SceneManager {
         this.SKETCH = p_sketch;
         this.settings = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
-        this.PERSISTENT_ASSETS = new AssetManager(this.SKETCH);
 
         this.initSceneListeners();
     }
@@ -421,21 +426,6 @@ public class SceneManager {
         });
         // endregion
 
-    }
-    // endregion
-
-    // region Persistent asset operations.
-    public void reloadGivenPersistentAsset(final NerdAsset p_asset) {
-        this.PERSISTENT_ASSETS.remove(p_asset);
-        this.PERSISTENT_ASSETS.add(p_asset.getLoader(), p_asset.getPath());
-    }
-
-    public void reloadPersistentAssets() {
-        final NerdAsset[] assets = (NerdAsset[]) this.PERSISTENT_ASSETS.toArray();
-        this.PERSISTENT_ASSETS.clear();
-
-        for (final NerdAsset a : assets)
-            this.PERSISTENT_ASSETS.add(a.getLoader(), a.getPath());
     }
     // endregion
 
