@@ -65,7 +65,7 @@ public class DemoScene1 extends NerdScene {
             final float easeVal = this.ease.get();
             SKETCH.colorMode(PConstants.HSB);
             SKETCH.fill(easeVal * 255, 255, 255, 255 * (1 - easeVal));
-            SKETCH.text("Scene `1`!", 0, PApplet.sin(this.SCENE.getMillisSinceStart() * 0.005f) * 25, 50);
+            SKETCH.text("Scene 1", 0, PApplet.sin(this.SCENE.getMillisSinceStart() * 0.005f) * 25, 50);
             // 0, PApplet.sin(MANAGER.sinceSceneStarted() * 0.0125f) * 25);
         }
 

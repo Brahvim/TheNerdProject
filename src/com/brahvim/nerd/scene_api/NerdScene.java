@@ -424,13 +424,13 @@ public class NerdScene {
   /* `package` */ void runPreload() {
     this.preload();
 
-    // if (this.MANAGER.settings.onScenePreload.useExecutors);
+    if (this.MANAGER.settings.onScenePreload.useExecutors)
+      ;
 
     this.donePreloading = true;
   }
 
   /* `package` */ void runDraw() {
-
     if (this.SKETCH.DRAW_FIRST_CALLER == null)
       throw new NullPointerException("`Sketch::DRAW_CALLBACK_ORDER` cannot be `null`.");
 

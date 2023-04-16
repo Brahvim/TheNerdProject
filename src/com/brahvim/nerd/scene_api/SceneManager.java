@@ -64,13 +64,19 @@ public class SceneManager {
             }
 
             /**
-             * When {@code true}, {@code NerdScene::preload()} is run only the first time
+             * When {@code true}, {@link NerdScene#preload()} is run only the first time
              * the {@link NerdScene} is used. Turn to {@code false} to load scene assets
              * each time, so that assets are updated.<br>
-             * <br>
+             * </br>
              * {@code true} by default!
              */
             public volatile boolean preloadOnlyOnce = true;
+
+            /**
+             * When {@code true}, {@link NerdScene#preload()} runs the loading process in
+             * many threads using a {@link java.util.concurrent.ExecutorService}.
+             */
+            public volatile boolean useExecutors = true;
 
         }
 
