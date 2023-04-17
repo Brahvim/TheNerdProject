@@ -34,7 +34,6 @@ public class NerdStringTable implements Cloneable {
             final String s = keysItr.next();
             p_table.json.getJSONObject(s);
 
-            
         }
     }
 
