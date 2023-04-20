@@ -129,7 +129,11 @@ public class AssetManager {
     // This increases CPU usage, right?!
     public void forceLoading() {
         while (!this.hasCompleted())
-            ;
+            try {
+                Thread.sleep(50);
+            } catch (final InterruptedException e) {
+                e.printStackTrace();
+            }
     }
     // endregion
 
