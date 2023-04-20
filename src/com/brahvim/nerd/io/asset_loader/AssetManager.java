@@ -28,7 +28,8 @@ public class AssetManager {
             final AssetLoaderOptions... p_options) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
-        return new NerdAsset(this.SKETCH, p_type, p_path, p_options);
+        final NerdAsset toRet = new NerdAsset(this.SKETCH, p_type, p_path, p_options);
+        return toRet;
     }
 
     public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path) {

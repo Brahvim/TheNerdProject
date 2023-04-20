@@ -4,9 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
@@ -427,8 +424,18 @@ public class NerdScene {
   /* `package` */ void runPreload() {
     this.preload();
 
-    if (this.MANAGER.settings.onScenePreload.useExecutors)
-      ;
+    SKETCH.PERSISTENT_ASSETS.forEach(a -> {
+      if (!a.hasLoaded())
+        a.startLoading();
+    });
+
+    SKETCH.PERSISTENT_ASSETS.forceLoading();
+
+    if (this.MANAGER.settings.onScenePreload.useExecutors) {
+    } else {
+      this.ASSETS.forEach(a -> a.startLoading());
+      this.ASSETS.forEach(a -> a.completeLoad());
+    }
 
     this.donePreloading = true;
   }

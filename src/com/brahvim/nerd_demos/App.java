@@ -11,7 +11,9 @@ import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 public class App {
 
     /*
+     * // TODO: `UdpSocket` needs multicast.
      * // TODO: Make it easier to animate, somehow!
+     * // TODO: REPLACE, ALL, `while (true)`, LOOPS!
      * // TODO: Use an `ExecutorService` to load assets.
      * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).

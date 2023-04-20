@@ -32,7 +32,6 @@ public class NerdAsset {
         this.LOADER = p_type;
         this.SKETCH = p_sketch;
         this.NAME = this.findName();
-        this.startLoading();
     }
 
     public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path,
