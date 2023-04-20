@@ -424,18 +424,19 @@ public class NerdScene {
   /* `package` */ void runPreload() {
     this.preload();
 
-    SKETCH.PERSISTENT_ASSETS.forEach(a -> {
-      if (!a.hasLoaded())
-        a.startLoading();
-    });
+    // TODO: Work on this!
+    // SKETCH.PERSISTENT_ASSETS.forEach(a -> {
+    // if (!a.hasLoaded())
+    // a.startLoading();
+    // });
 
-    SKETCH.PERSISTENT_ASSETS.forceLoading();
+    // SKETCH.PERSISTENT_ASSETS.forceLoading();
 
-    if (this.MANAGER.settings.onScenePreload.useExecutors) {
-    } else {
-      this.ASSETS.forEach(a -> a.startLoading());
-      this.ASSETS.forEach(a -> a.completeLoad());
-    }
+    // if (this.MANAGER.settings.onScenePreload.useExecutors) {
+    // } else {
+    // this.ASSETS.forEach(a -> a.startLoading());
+    // this.ASSETS.forEach(a -> a.completeLoad());
+    // }
 
     this.donePreloading = true;
   }

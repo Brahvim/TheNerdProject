@@ -13,9 +13,9 @@ public class App {
     /*
      * // TODO: `UdpSocket` needs multicast.
      * // TODO: Make it easier to animate, somehow!
-     * // TODO: REPLACE, ALL, `while (true)`, LOOPS!
      * // TODO: Use an `ExecutorService` to load assets.
      * // TODO: Collision Algorithms (also for 3D space)?!
+     * // TODO: REPLACE, THOSE, `while`, LOOPS! (Slow them DOWN!)
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
      */
 

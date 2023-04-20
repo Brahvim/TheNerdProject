@@ -32,6 +32,7 @@ public class NerdAsset {
         this.LOADER = p_type;
         this.SKETCH = p_sketch;
         this.NAME = this.findName();
+        this.startLoading(); // TODO: Remove this and fix stuff in `NerdScene.java`.
     }
 
     public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path,
@@ -73,9 +74,16 @@ public class NerdAsset {
         return this;
     }
 
+    // ...will cause a surge in CPU usage! Careful!...
     public NerdAsset completeLoad() {
-        while (!this.loaded)
+        while (!this.loaded) {
             System.out.println("Waiting for `" + this.NAME + "` to load...");
+            try {
+                Thread.sleep(50);
+            } catch (final InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return this;
     }
 
