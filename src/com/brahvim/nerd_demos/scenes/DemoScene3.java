@@ -65,7 +65,6 @@ public class DemoScene3 extends NerdScene {
 
     @Override
     protected void draw() {
-        System.out.println("DemoScene3.draw()");
         // Faster in `draw()`:
         if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
             this.cubeMan.removeAll(); // REALLY helps the GC out!

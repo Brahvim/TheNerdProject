@@ -442,6 +442,23 @@ public class UdpSocket {
 
     // region `send()` overloads.
     /**
+     * Sends over a {@link DatagramPacket} using the internal
+     * {@link DatagramSocket}.
+     */
+    public void send(final DatagramPacket p_packet) {
+        // System.out.println("The socket sent some data!");
+        try {
+            this.sock.send(this.out = p_packet);
+        } catch (final IOException e) {
+            // if (e instanceof UnknownHostException) {
+            e.printStackTrace();
+            // } else {
+            // e.printStackTrace();
+            // }
+        }
+    }
+
+    /**
      * Sends over a {@code byte[]} to the specified IP address and port.
      */
     public void send(final byte[] p_data, final String p_ip, final int p_port) {

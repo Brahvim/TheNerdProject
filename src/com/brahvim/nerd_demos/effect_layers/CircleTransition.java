@@ -8,7 +8,7 @@ public class CircleTransition extends NerdLayer {
     protected void draw() {
         SKETCH.begin2d();
         SKETCH.fill(0);
-        
+
         SKETCH.end2d();
     }
 

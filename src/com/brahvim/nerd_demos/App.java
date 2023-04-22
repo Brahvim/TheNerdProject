@@ -21,6 +21,7 @@ public class App {
      * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: REPLACE, THOSE, `while`, LOOPS! (Slow them DOWN!)
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
+     * // TODO: Here is a stupid one for an *engine*: 3D-ify shapes!
      */
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =

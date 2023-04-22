@@ -134,10 +134,10 @@ public class DemoScene4 extends NerdScene {
         SKETCH.endShape();
         // endregion
 
-        // SKETCH.in2d(() -> {
-        SKETCH.translate(SKETCH.getMouseInWorld());
-        SKETCH.circle(0, 0, 20);
-        // });
+        SKETCH.in2d(() -> {
+            SKETCH.translate(SKETCH.getMouseInWorld());
+            SKETCH.circle(0, 0, 20);
+        });
 
     }
 

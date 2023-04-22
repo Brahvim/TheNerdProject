@@ -60,6 +60,11 @@ import processing.opengl.PGraphics3D;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
+/**
+ * <h1>¯\_(ツ)_/¯</h1>
+ * 
+ * @author Brahvim Bhaktvatsal
+ */
 public class Sketch extends PApplet {
 
 	// region Abstract inner classes.
@@ -643,9 +648,9 @@ public class Sketch extends PApplet {
 
 				// If `this.currentCamera` is `null`, but wasn't,
 				if (this.currentCamera != this.previousCamera)
-					System.out.printf("""
-							Sketch \"%s\" has no camera! \
-							Consider adding one...?""", this.NAME);
+					System.out.printf(
+							"Sketch \"%s\" has no camera! Consider adding one...?",
+							this.NAME);
 			}
 		}
 		// endregion
@@ -1211,12 +1216,409 @@ public class Sketch extends PApplet {
 	}
 
 	// region From `PGraphics`.
+	// region Shapes.
+	// region `drawShape()` overloads.
+	public void drawShape(final float p_x, final float p_y, final float p_z, final int p_shapeType,
+			final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		SKETCH.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		SKETCH.endShape(PConstants.CLOSE);
+		super.popMatrix();
+	}
+
+	public void drawShape(final float p_x, final float p_y, final int p_shapeType, final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_x, p_y);
+		SKETCH.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		SKETCH.endShape(PConstants.CLOSE);
+		super.popMatrix();
+	}
+
+	public void drawShape(final PVector p_pos, final int p_shapeType, final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		SKETCH.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		SKETCH.endShape(PConstants.CLOSE);
+		super.popMatrix();
+	}
+
+	public void drawShape(final int p_shapeType, final Runnable p_shapingFxn) {
+		SKETCH.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		SKETCH.endShape(PConstants.CLOSE);
+	}
+	// endregion
+
+	// region `drawOpenShape()` overloads.
+	public void drawOpenShape(final float p_x, final float p_y, final float p_z, final int p_shapeType,
+			final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		SKETCH.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		SKETCH.endShape();
+		super.popMatrix();
+	}
+
+	public void drawOpenShape(final float p_x, final float p_y, final int p_shapeType, final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_x, p_y);
+		SKETCH.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		SKETCH.endShape();
+		super.popMatrix();
+	}
+
+	public void drawOpenShape(final PVector p_pos, final int p_shapeType, final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		SKETCH.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		SKETCH.endShape();
+		super.popMatrix();
+	}
+
+	public void drawOpenShape(final int p_shapeType, final Runnable p_shapingFxn) {
+		SKETCH.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		SKETCH.endShape();
+	}
+	// endregion
+
+	public void drawContour(final Runnable p_countouringFxn) {
+		super.beginContour();
+		p_countouringFxn.run();
+		super.endContour();
+	}
+
+	// region `PVector` overloads.
+	public void arc(final PVector p_translation, final PVector p_size,
+			final float p_startAngle, final float p_endAngle) {
+		super.pushMatrix();
+		this.translate(p_translation);
+		super.arc(0, 0, p_size.x, p_size.y, p_startAngle, p_endAngle);
+		super.popMatrix();
+	}
+
+	// Perhaps I should figure out the default arc mode and make the upper one call
+	// this one?:
+	public void arc(final PVector p_translation, final PVector p_size,
+			final float p_startAngle, final float p_endAngle, final int p_mode) {
+		super.pushMatrix();
+		this.translate(p_translation);
+		super.arc(0, 0, p_size.x, p_size.y, p_startAngle, p_endAngle, p_mode);
+		super.popMatrix();
+	}
+
+	public void circle(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.circle(0, 0, p_size);
+		super.popMatrix();
+	}
+
+	// region E L L I P S E S.
+	// ...For when you want to use an ellipse like a circle:
+	public void ellipse(final float p_x, final float p_y, final PVector p_dimensions) {
+		super.ellipse(p_x, p_y, p_dimensions.x, p_dimensions.y);
+	}
+
+	public void ellipse(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.ellipse(0, 0, p_width, p_height);
+		super.popMatrix();
+	}
+
+	public void ellipse(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.ellipse(0, 0, p_dimensions.x, p_dimensions.y);
+		super.popMatrix();
+	}
+
+	public void ellipse(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.ellipse(0, 0, p_size, p_size);
+		super.popMatrix();
+	}
+
+	public void ellipse(final PVector p_pos, final float p_width, final float p_height) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.ellipse(0, 0, p_width, p_height);
+		super.popMatrix();
+	}
+
+	public void ellipse(final PVector p_pos, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.ellipse(0, 0, p_dimensions.x, p_dimensions.y);
+		super.popMatrix();
+	}
+	// endregion
+
+	public void line(final PVector p_from, final PVector p_to) {
+		// `z`-coordinate of first and THEN the second point!:
+		super.line(p_from.x, p_from.y, p_to.x, p_to.y, p_from.z, p_to.y);
+	}
+
+	public void lineInDir/* `lineInDirOfLength` */(
+			final PVector p_start, final PVector p_dir, final float p_length) {
+		// `z`-coordinate of first and THEN the second point!:
+		super.line(p_start.x, p_start.y,
+				p_start.x + p_dir.x * p_length,
+				p_start.y + p_dir.y * p_length,
+				// `z` stuff!:
+				p_start.z, p_start.z + p_dir.z * p_length);
+	}
+
+	public void line2d(final PVector p_from, final PVector p_to) {
+		super.line(p_from.x, p_from.y, p_to.x, p_to.y);
+	}
+
+	// region `radialLine*d()`!
+	public void radialLine2d(final PVector p_from, final float p_angle) {
+		super.line(p_from.x, p_from.y, super.sin(p_angle), super.cos(p_angle));
+	}
+
+	public void radialLine2d(final PVector p_from, final float p_x, final float p_y, final float p_length) {
+		super.line(p_from.x, p_from.y,
+				p_from.x + super.sin(p_x) * p_length,
+				p_from.y + super.cos(p_y) * p_length);
+	}
+
+	public void radialLine2d(final PVector p_from, final float p_x, final float p_y,
+			final float p_xLen, final float p_yLen) {
+		super.line(p_from.x, p_from.y,
+				p_from.x + super.sin(p_x) * p_xLen,
+				p_from.y + super.cos(p_y) * p_yLen);
+	}
+
+	public void radialLine2d(final PVector p_from, final PVector p_trigVals, final float p_size) {
+		this.line(p_from.x, p_from.y, p_trigVals.x, p_trigVals.y);
+	}
+
+	public void radialLine2d(final PVector p_from, final PVector p_values) {
+		this.radialLine2d(p_from, p_values, p_values.z);
+	}
+
+	public void radialLine3d(final PVector p_from, final float p_theta, final float p_phi, final float p_length) {
+		final float sineOfPitch = super.sin(p_theta);
+		super.line(p_from.x, p_from.y,
+				p_from.x + sineOfPitch * super.cos(p_phi) * p_length,
+				p_from.x + sineOfPitch * super.sin(p_phi) * p_length,
+				p_from.z, p_from.x + super.cos(p_theta) * p_length);
+	}
+
+	public void radialLine3d(final PVector p_from, final float p_theta, final float p_phi,
+			final float p_xLen, final float p_yLen, final float p_zLen) {
+		final float sineOfPitch = super.sin(p_theta);
+		super.line(p_from.x, p_from.y,
+				p_from.x + sineOfPitch * super.cos(p_phi) * p_xLen,
+				p_from.x + sineOfPitch * super.sin(p_phi) * p_yLen,
+				p_from.z, p_from.x + super.cos(p_theta) * p_zLen);
+	}
+	// endregion
+
+	public void point(final PVector p_pos) {
+		super.point(p_pos.x, p_pos.y, p_pos.z);
+	}
+
+	public void point2d(final PVector p_pos) {
+		super.point(p_pos.x, p_pos.y, 0);
+	}
+
+	public void quad(final PVector p_first, final PVector p_second, final PVector p_third, final PVector p_fourth) {
+		super.quad(
+				p_first.x, p_first.y,
+				p_second.x, p_second.y,
+				p_third.x, p_third.y,
+				p_fourth.x, p_first.y);
+	}
+
+	// region `rect()` overloads, ;)!
+	public void rect(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.rect(0, 0, p_width, p_height);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height,
+			final float p_radius) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.rect(0, 0, p_width, p_height, p_radius);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z,
+			final float p_width, final float p_height,
+			final float p_topLeftRadius, final float p_topRightRadius,
+			final float p_bottomRightRadius, final float p_bottomLeftRadius) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.rect(0, 0, p_width, p_height,
+				p_topLeftRadius, p_topRightRadius,
+				p_bottomRightRadius, p_bottomLeftRadius);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height,
+			final PVector p_topRadii, final PVector p_bottomRadii) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.rect(0, 0, p_width, p_height,
+				p_topRadii.x, p_topRadii.y,
+				p_bottomRadii.x, p_bottomRadii.y);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final PVector p_dimensions) {
+		super.rect(p_x, p_y, p_dimensions.x, p_dimensions.y);
+	}
+
+	public void rect(final float p_x, final float p_y, final PVector p_dimensions, final float p_radius) {
+		super.rect(p_x, p_y, p_dimensions.x, p_dimensions.y, p_radius);
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z, final PVector p_dimensions,
+			final float p_topLeftRadius, final float p_topRightRadius,
+			final float p_bottomRightRadius, final float p_bottomLeftRadius) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.rect(0, 0,
+				p_dimensions.x, p_dimensions.y,
+				p_topLeftRadius, p_topRightRadius,
+				p_bottomRightRadius, p_bottomLeftRadius);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z, final PVector p_dimensions,
+			final PVector p_topRadii, final PVector p_bottomRadii) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.rect(0, 0,
+				p_dimensions.x, p_dimensions.y,
+				p_topRadii.x, p_topRadii.y,
+				p_bottomRadii.x, p_bottomRadii.y);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final float p_width, final float p_height) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_width, p_height);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final float p_width, final float p_height, final float p_radius) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_width, p_height, p_radius);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final float p_width, final float p_height,
+			final float p_topLeftRadius, final float p_topRightRadius,
+			final float p_bottomRightRadius, final float p_bottomLeftRadius) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_width, p_height,
+				p_topLeftRadius, p_topRightRadius,
+				p_bottomRightRadius, p_bottomLeftRadius);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final float p_width, final float p_height,
+			final PVector p_topRadii, final PVector p_bottomRadii) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_width, p_height,
+				p_topRadii.x, p_topRadii.y,
+				p_bottomRadii.x, p_bottomRadii.y);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_dimensions.x, p_dimensions.y);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final PVector p_dimensions, final float p_radius) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_dimensions.x, p_dimensions.y, p_radius);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final PVector p_dimensions,
+			final float p_topLeftRadius, final float p_topRightRadius,
+			final float p_bottomRightRadius, final float p_bottomLeftRadius) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_dimensions.x, p_dimensions.y,
+				p_topLeftRadius, p_topRightRadius,
+				p_bottomRightRadius, p_bottomLeftRadius);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final PVector p_dimensions,
+			final PVector p_topRadii, final PVector p_bottomRadii) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_dimensions.x, p_dimensions.y,
+				p_topRadii.x, p_topRadii.y,
+				p_bottomRadii.x, p_bottomRadii.y);
+		super.popMatrix();
+	}
+	// endregion
+
+	public void square(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		super.translate(p_pos.x, p_pos.y, p_pos.z);
+		super.square(0, 0, p_size);
+		super.popMatrix();
+	}
+
+	// region `triangle()` overload!
+	// region ...Thoughts about the-uhh, `triangle()` overloads!
+	// I wanted to go crazy, writing out (BY HAND!) versions like...
+	// (shown here without the `final` keyword, of course!):
+	// `triangle(PVector p_v1, float x2, float y2, float x3, float y3)`
+	// `triangle(float x1, float y1, PVector p_v2, float x3, float y3)`
+	// ...
+	// ...AND EVEN:
+	// `triangle(PVector p_v2, float x2, float y2, PVector v3)`.
+	// ...Yeah. You get the point. I'm crazy ;)
+	// Yes, I was going to use more generator code (JavaScript!) for this.
+	// I might be crazy, but am also lazy! :joy:
+	// endregion
+
+	public void triangle(final PVector p_v1, final PVector p_v2, final PVector p_v3) {
+		super.triangle(
+				p_v1.x, p_v1.y,
+				p_v2.x, p_v2.y,
+				p_v3.x, p_v3.y);
+	}
+	// endregion
+
+	// endregion
+
 	@Override
 	public void background(final PImage p_image) {
 		try {
 			super.background(p_image);
 		} catch (final Exception e) {
-			//// Do nothing with the exception. Don't even READ it.
+			// Do nothing with the exception. Don't even READ it.
 			p_image.resize(super.width, super.height);
 			super.background(p_image);
 
@@ -1589,14 +1991,21 @@ public class Sketch extends PApplet {
 		super.hint(PConstants.DISABLE_DEPTH_TEST);
 		this.push(); // #JIT_FTW!
 		super.resetMatrix();
+
+		// Either call `super.ortho()` + translate by `-cy`, or this! (thank ChatGPT!):
+		super.ortho(0, super.width, super.height, 0, -1, 1);
+		super.translate(this.cx, -this.height);
+
+		// super.ortho();
+		// super.translate(0, -this.cy);
 	}
 
 	/**
 	 * Pops back transformations and enables depth testing.
 	 */
 	public void end2d() {
-		super.hint(PConstants.ENABLE_DEPTH_TEST);
 		this.pop(); // #JIT_FTW!
+		super.hint(PConstants.ENABLE_DEPTH_TEST);
 	}
 
 	/**
