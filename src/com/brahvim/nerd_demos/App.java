@@ -17,7 +17,6 @@ import processing.opengl.PGraphicsOpenGL;
 public class App {
 
     /*
-     * // TODO: `UdpSocket` needs multicast.
      * // TODO: Make it easier to animate, somehow!
      * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: REPLACE, THOSE, `while`, LOOPS! (Slow them DOWN!)
