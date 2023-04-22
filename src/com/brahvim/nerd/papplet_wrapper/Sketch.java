@@ -176,8 +176,6 @@ public class Sketch extends PApplet {
 
 	public static final File DATA_DIR = new File("data");
 	public static final String DATA_DIR_PATH = Sketch.DATA_DIR.getAbsolutePath().concat(File.separator);
-	// public static final String DATA_DIR_PATH_TO_DRIVE_ROOT_SUFFIX =
-	// Sketch.getPathToRootFrom(Sketch.DATA_DIR_PATH);
 
 	public static final char[] STANDARD_KEYBOARD_SYMBOLS = {
 			'\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
@@ -356,8 +354,8 @@ public class Sketch extends PApplet {
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
 	protected final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
 
-	protected GraphicsDevice previousMonitor, currentMonitor;
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
+	protected GraphicsDevice previousMonitor, currentMonitor;
 	protected BasicCamera defaultCamera;
 	protected NerdScene currentScene;
 	protected SceneManager sceneMan; // Don't use static initialization for this..?
@@ -1296,6 +1294,102 @@ public class Sketch extends PApplet {
 	}
 
 	// region `PVector` overloads.
+	// region 3D shapes.
+	// region `box()` overloads.
+	public void box(final float p_x, final float p_y, final float p_z,
+			final float p_width, final float p_height, final float p_depth) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.box(p_width, p_height, p_depth);
+		super.popMatrix();
+	}
+
+	public void box(final PVector p_pos, final float p_width, final float p_height, final float p_depth) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.box(p_width, p_height, p_depth);
+		super.popMatrix();
+	}
+
+	public void box(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.box(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+		super.popMatrix();
+	}
+
+	public void box(final float p_x, final float p_y, final float p_z, final float p_size) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.box(p_size);
+		super.popMatrix();
+	}
+
+	public void box(final PVector p_pos, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.box(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+		super.popMatrix();
+	}
+
+	public void box(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.box(p_size);
+		super.popMatrix();
+	}
+	// endregion
+
+	// region `sphere()` overloads (just a copy of the `box()` ones, hehehe.).
+	public void sphere(final float p_x, final float p_y, final float p_z,
+			final float p_width, final float p_height, final float p_depth) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.scale(p_width, p_height, p_depth);
+		super.sphere(1);
+		super.popMatrix();
+	}
+
+	public void sphere(final PVector p_pos, final float p_width, final float p_height, final float p_depth) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.scale(p_width, p_height, p_depth);
+		super.sphere(1);
+		super.popMatrix();
+	}
+
+	public void sphere(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.scale(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+		super.sphere(1);
+		super.popMatrix();
+	}
+
+	public void sphere(final float p_x, final float p_y, final float p_z, final float p_size) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.sphere(p_size);
+		super.popMatrix();
+	}
+
+	public void sphere(final PVector p_pos, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.scale(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+		super.sphere(1);
+		super.popMatrix();
+	}
+
+	public void sphere(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.sphere(p_size);
+		super.popMatrix();
+	}
+	// endregion
+	// endregion
+
 	public void arc(final PVector p_translation, final PVector p_size,
 			final float p_startAngle, final float p_endAngle) {
 		super.pushMatrix();
@@ -1610,7 +1704,7 @@ public class Sketch extends PApplet {
 				p_v3.x, p_v3.y);
 	}
 	// endregion
-
+	// endregion
 	// endregion
 
 	@Override
@@ -1628,6 +1722,7 @@ public class Sketch extends PApplet {
 		}
 	}
 
+	// region Transformations!
 	// "Hah! Gott'em with the name alignment!"
 	public void translate(final PVector p_vec) {
 		super.translate(p_vec.x, p_vec.y, p_vec.z);
@@ -1648,6 +1743,7 @@ public class Sketch extends PApplet {
 		super.rotateY(p_y);
 		super.rotateZ(p_z);
 	}
+	// endregion
 
 	// region `modelVec()` and `screenVec()`.
 	public PVector modelVec() {
@@ -1726,7 +1822,7 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
-	// region `screenX()`-`screenY()`-`screenZ()`, `PVector` + no-arg overloads.
+	// region `screenX()`-`screenY()`-`screenZ()`, `PVector`, plus no-arg overloads.
 	// "Oh! And when the `z` is `-1`, you just add this and sub that. Optimization!"
 	// - That ONE Mathematician.
 
@@ -2150,7 +2246,7 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Unprojection via `world*()` and `getMouseInWorld*()`!
-	// region 2D versions!:
+	// region 2D versions!
 	public float worldX(final float p_x, final float p_y) {
 		return this.worldVec(p_x, p_y, 0).x;
 	}
@@ -2164,7 +2260,7 @@ public class Sketch extends PApplet {
 	}
 	// endregion
 
-	// region 3D versions (should use!):
+	// region 3D versions (should use!).
 	public float worldX(final float p_x, final float p_y, final float p_z) {
 		return this.worldVec(p_x, p_y, p_z).x;
 	}
