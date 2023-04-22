@@ -62,7 +62,7 @@ public class DemoScene4 extends NerdScene {
         // Loaded this scene for the first time? Do this!:
         if (App.FIRST_SCENE_CLASS == DemoScene4.class && this.SCENE.getTimesLoaded() == 0) {
             SKETCH.fullscreen = false;
-            SKETCH.glWindow.setSize(1600, 900);
+            App.WINDOW.setSize(1600, 900);
             SKETCH.centerWindow();
         } else { // Do not play `this.rubberDuck` if this is the first start!
             App.OPENAL.setListenerVelocity(0, 0, 0);

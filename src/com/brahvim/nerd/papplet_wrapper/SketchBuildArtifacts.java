@@ -25,4 +25,8 @@ public class SketchBuildArtifacts {
 		return (RetT) this.EXTENSIONS.get(p_extName);
 	}
 
+	/* `package` */ void addExtObject(final String p_extName, final Object p_extObject) {
+		this.EXTENSIONS.put(p_extName, p_extObject);
+	}
+
 }

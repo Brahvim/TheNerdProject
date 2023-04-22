@@ -4,12 +4,14 @@ import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.CubeManager;
+import com.brahvim.nerd_demos.effect_layers.CinematicBars;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
 import processing.core.PApplet;
@@ -25,7 +27,6 @@ public class DemoScene3 extends NerdScene {
     private FlyCamera CAMERA;
     private CubeManager cubeMan;
     private NerdAmbiLight ambiLight;
-
     private final float GRAVITY = 2;
     private final PVector playerVel = new PVector(10, 7, 10);
     // endregion
@@ -38,10 +39,13 @@ public class DemoScene3 extends NerdScene {
 
     @Override
     protected void setup(final SceneState p_state) {
+        SKETCH.DRAW_FIRST_CALLER = Sketch.CallbackOrder.SCENE;
+        SCENE.addLayers(CinematicBars.class);
+
         this.calculateBgGrad();
         CAMERA = new FlyCamera(SKETCH);
         CAMERA.fov = PApplet.radians(75);
-        App.OPENAL.unitSize = 250.0f;
+        App.OPENAL.unitSize = Float.MAX_VALUE;
         SKETCH.setCamera(CAMERA);
 
         final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
@@ -61,10 +65,11 @@ public class DemoScene3 extends NerdScene {
 
     @Override
     protected void draw() {
+        System.out.println("DemoScene3.draw()");
         // Faster in `draw()`:
         if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
             this.cubeMan.removeAll(); // REALLY helps the GC out!
-            System.gc();
+            System.gc(); // Surprisingly, this is a useful hint to the GC.
             MANAGER.restartScene();
         }
 

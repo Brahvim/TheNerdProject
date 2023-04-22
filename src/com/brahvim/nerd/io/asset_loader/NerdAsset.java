@@ -32,7 +32,6 @@ public class NerdAsset {
         this.LOADER = p_type;
         this.SKETCH = p_sketch;
         this.NAME = this.findName();
-        this.startLoading(); // TODO: Remove this and fix stuff in `NerdScene.java`.
     }
 
     public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path,
@@ -75,7 +74,7 @@ public class NerdAsset {
     }
 
     // ...will cause a surge in CPU usage! Careful!...
-    public NerdAsset completeLoad() {
+    public NerdAsset completeLoad() throws InterruptedException {
         while (!this.loaded) {
             System.out.println("Waiting for `" + this.NAME + "` to load...");
             try {
@@ -84,6 +83,7 @@ public class NerdAsset {
                 e.printStackTrace();
             }
         }
+
         return this;
     }
 
@@ -97,7 +97,7 @@ public class NerdAsset {
         if (this.onLoad != null)
             this.onLoad.run();
 
-        // Once the asset has loaded, `loaded` is set to `true` and the `postCallback`
+        // Once the asset has loaded, `loaded` is set to `true` and `postCallback`
         // is no longer necessary.
         // However, we need to update `ploaded` for one last frame.
         // To do so, we add a "self-removing" callback!:
@@ -151,7 +151,12 @@ public class NerdAsset {
      */
     @SuppressWarnings("unchecked")
     public <RetT> RetT getData() {
-        this.completeLoad();
+        try {
+            this.completeLoad();
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return (RetT) this.data;
     }
 

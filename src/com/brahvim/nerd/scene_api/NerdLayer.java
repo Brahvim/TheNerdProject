@@ -22,7 +22,6 @@ public class NerdLayer {
 
     public /* final */ Sketch SKETCH;
     public /* final */ NerdScene SCENE;
-    public /* final */ NerdScene NerdSCENE;
     public /* final */ SceneManager MANAGER;
     public /* final */ NerdAbstractCamera CAMERA;
     // endregion

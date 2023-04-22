@@ -12,6 +12,9 @@ import processing.core.PVector;
 public class AnimatedCube extends TestEulerBody {
 
     // region Fields.
+    public static int DEFAULT_LIFETIME = 8_000;
+
+    public int lifetime;
     public float size = 40;
     public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
@@ -23,15 +26,12 @@ public class AnimatedCube extends TestEulerBody {
     public AnimatedCube(final NerdScene p_scene) {
         super(p_scene.SKETCH);
 
-        super.pos.set(
-                super.SKETCH.random(-super.SKETCH.cx, super.SKETCH.cx),
-                super.SKETCH.random(-super.SKETCH.cy, super.SKETCH.cy),
-                super.SKETCH.random(-600, 600));
+        this.lifetime = super.SKETCH.millis() + AnimatedCube.DEFAULT_LIFETIME;
 
         super.pos.set(
-                super.SKETCH.random(-super.SKETCH.cx, super.SKETCH.cx),
-                super.SKETCH.random(-super.SKETCH.cy, super.SKETCH.cy),
-                super.SKETCH.random(-600, 600));
+                super.SKETCH.getCamera().pos.x + super.SKETCH.random(-super.SKETCH.cx, super.SKETCH.cx),
+                super.SKETCH.getCamera().pos.y + super.SKETCH.random(-super.SKETCH.cy, super.SKETCH.cy),
+                super.SKETCH.getCamera().pos.z + super.SKETCH.random(-600, 600));
 
         super.acc.set(
                 super.SKETCH.random(-0.01f, 0.01f),
@@ -98,7 +98,9 @@ public class AnimatedCube extends TestEulerBody {
         if (p_popAudioBuffer != null)
             this.popSrc = new AlSource(App.OPENAL, p_popAudioBuffer);
 
-        this.popSrc.setPosition(PVector.mult(super.pos, 0.001f).array());
+        // this.popSrc.setPosition(super.pos.array());
+        // this.popSrc.setPosition(PVector.mult(super.pos, 0.001f).array());
+        this.popSrc.setPosition(PVector.mult(super.pos, Float.MIN_VALUE).array());
         this.visible = true;
         this.popSrc.play();
 
@@ -132,7 +134,7 @@ public class AnimatedCube extends TestEulerBody {
 
         if (this.plopWave.active)
             if (this.popSrc != null)
-                if (this.popSrc.isDisposed())
+                if (!this.popSrc.isDisposed())
                     if (this.popSrc.isStopped())
                         this.popSrc.dispose();
 

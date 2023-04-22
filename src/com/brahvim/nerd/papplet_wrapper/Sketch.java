@@ -237,7 +237,7 @@ public class Sketch extends PApplet {
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
 			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
 
-	private final Sketch SKETCH = this;
+	protected final Sketch SKETCH = this;
 	// endregion
 	// endregion
 
@@ -281,18 +281,6 @@ public class Sketch extends PApplet {
 	 * @apiNote {@link Sketch.CallbackOrder#LAYER} by default.
 	 */
 	public CallbackOrder POST_FIRST_CALLER = CallbackOrder.LAYER;
-	// endregion
-
-	// region Window object and native renderer references ("hacky stuff").
-	// (Why check for errors at all? You know what renderer you used!)
-	public JFrame sketchFrame;
-
-	// OpenGL context:
-	public GL gl;
-	public GLU glu;
-	public PGL pgl;
-	public GLWindow glWindow;
-	public PGraphicsOpenGL glGraphics;
 	// endregion
 
 	// region Frame-wise states, Processing style (modifiable!).
@@ -346,6 +334,18 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region `protected` fields.
+	// region Window object and native renderer references ("hacky stuff").
+	// (Why check for errors at all? You know what renderer you used!)
+	protected JFrame sketchFrame;
+
+	// OpenGL context:
+	protected GL gl;
+	protected GLU glu;
+	protected PGL pgl;
+	protected GLWindow glWindow;
+	protected PGraphicsOpenGL glGraphics;
+	// endregion
+
 	protected final int ANTI_ALIASING;
 	protected final Unprojector UNPROJECTOR;
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
@@ -636,7 +636,9 @@ public class Sketch extends PApplet {
 
 		// region Apply the camera when using OpenGL!
 		if (this.USES_OPENGL) {
-			if (this.currentCamera == null) {
+			if (this.currentCamera != null)
+				this.currentCamera.apply(); // Do all three tasks using the current camera.
+			else { // ..."Here we go again."
 				this.defaultCamera.apply();
 
 				// If `this.currentCamera` is `null`, but wasn't,
@@ -644,8 +646,7 @@ public class Sketch extends PApplet {
 					System.out.printf("""
 							Sketch \"%s\" has no camera! \
 							Consider adding one...?""", this.NAME);
-			} else
-				this.currentCamera.apply(); // Else, do all three tasks using the current one!
+			}
 		}
 		// endregion
 

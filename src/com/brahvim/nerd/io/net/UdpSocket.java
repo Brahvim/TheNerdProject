@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
@@ -377,6 +380,67 @@ public class UdpSocket {
     // endregion
 
     // region Other `public` methods!:
+    // region UDP groups.
+    /**
+     * Works the same as
+     * {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)}.
+     * 
+     * @see UdpSocket#joinGroup(String, int, NetworkInterface)
+     * @see UdpSocket#leaveGroup(String, int, NetworkInterface)
+     * @see UdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+     */
+    /**
+     * Works the same as
+     * {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)}.
+     * 
+     * @see UdpSocket#joinGroup(String, int, NetworkInterface)
+     * @see UdpSocket#leaveGroup(String, int, NetworkInterface)
+     * @see UdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+     */
+    public void joinGroup(final SocketAddress p_sockAddr, final NetworkInterface p_netIf) throws IOException {
+        this.sock.joinGroup(p_sockAddr, p_netIf);
+    }
+
+    /**
+     * Calls {@link UdpSocket#joinGroup(SocketAddress, NetworkInterface)} with an
+     * instance of {@link InetSocketAddress} - effectively the same as
+     * calling {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)} on
+     * the underlying {@link DatagramSocket}.
+     * 
+     * @see UdpSocket#leaveGroup(String, int, NetworkInterface)
+     * @see UdpSocket#joinGroup(SocketAddress, NetworkInterface)
+     * @see UdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+     */
+    public void joinGroup(final String p_ip, final int p_port, final NetworkInterface p_netIf) throws IOException {
+        this.joinGroup(new InetSocketAddress(p_ip, p_port), p_netIf);
+    }
+
+    /**
+     * Works the same as
+     * {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)}.
+     * 
+     * @see UdpSocket#joinGroup(String, int, NetworkInterface)
+     * @see UdpSocket#leaveGroup(String, int, NetworkInterface)
+     */
+    public void leaveGroup(final SocketAddress p_sockAddr, final NetworkInterface p_netIf) throws IOException {
+        this.sock.leaveGroup(p_sockAddr, p_netIf);
+    }
+
+    /**
+     * Calls {@link UdpSocket#leaveGroup(SocketAddress, NetworkInterface)} with an
+     * instance of {@link InetSocketAddress} - effectively the same as
+     * calling {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)} on
+     * the underlying {@link DatagramSocket}.
+     * 
+     * @see UdpSocket#joinGroup(SocketAddress, NetworkInterface)
+     * @see UdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+     */
+    public void leaveGroup(final String p_ip, final int p_port, final NetworkInterface p_netIf) throws IOException {
+        this.sock.leaveGroup(new InetSocketAddress(p_ip, p_port), p_netIf);
+    }
+    // endregion
+
+    // region `send()` overloads.
     /**
      * Sends over a {@code byte[]} to the specified IP address and port.
      */
@@ -405,6 +469,7 @@ public class UdpSocket {
         // extra space, I beg you. I need it for my style! I DON'T insert spaces for
         // code-only comments!
     }
+    // endregion
 
     /**
      * Frees memory used by the Operating System handle and any other resources the

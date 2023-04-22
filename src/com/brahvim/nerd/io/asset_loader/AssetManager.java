@@ -28,8 +28,7 @@ public class AssetManager {
             final AssetLoaderOptions... p_options) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
-        final NerdAsset toRet = new NerdAsset(this.SKETCH, p_type, p_path, p_options);
-        return toRet;
+        return new NerdAsset(this.SKETCH, p_type, p_path, p_options);
     }
 
     public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path) {
@@ -124,16 +123,12 @@ public class AssetManager {
     }
 
     /**
-     * Wait till all assets are done loading!
+     * Load assets that haven't been loaded yet.
      */
-    // This increases CPU usage, right?!
     public void forceLoading() {
-        while (!this.hasCompleted())
-            try {
-                Thread.sleep(50);
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            }
+        for (final NerdAsset a : this.ASSETS)
+            if (!a.hasLoaded())
+                a.startLoading();
     }
     // endregion
 

@@ -77,9 +77,10 @@ public class SceneManager {
              * multiple threads using a {@link java.util.concurrent.ExecutorService}. If
              * {@link SceneManager.SceneManagerSettings.OnScenePreload#completeWithinPreloadCall}
              * is {@code false}, the asset loading is not guaranteed to finish within
-             * preload
+             * {@link NerdScene#preload()}.
              * 
              * @apiNote {@code true} by default!
+             * @implNote Actually, it's {@link NerdScene#runPreload()}.
              */
             public volatile boolean useExecutors = true;
 
@@ -515,7 +516,7 @@ public class SceneManager {
             return;
 
         final Thread thread = new Thread(() -> this.loadSceneAssets(p_sceneClass, p_forcibly));
-        thread.setName("NerdAssetLoader_" + this.getClass().getSimpleName());
+        thread.setName("NerdAsyncAssetLoader_" + this.getClass().getSimpleName());
         thread.start();
     }
 

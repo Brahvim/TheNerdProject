@@ -27,6 +27,9 @@ public abstract class CustomSketchBuilder {
         this.SKETCH_KEY = new SketchKey();
     }
 
+    // Got this passed in here to allow passing in fake values.
+    // I know `sun.java.command` (system property, accessible via
+    // `System.getProperty()`) exists.
     public final SketchBuildArtifacts build(final String[] p_javaMainArgs) {
         final Sketch constructedSketch = this.buildImpl(p_javaMainArgs);
         final String[] args = new String[] { constructedSketch.getClass().getName() };
@@ -36,7 +39,22 @@ public abstract class CustomSketchBuilder {
         else
             PApplet.runSketch(PApplet.concat(args, p_javaMainArgs), constructedSketch);
 
-        return new SketchBuildArtifacts(constructedSketch);
+        final SketchBuildArtifacts toRet = new SketchBuildArtifacts(constructedSketch);
+
+        switch (constructedSketch.RENDERER) {
+            case PConstants.JAVA2D -> toRet.addExtObject(
+                    "JFrame", constructedSketch.sketchFrame);
+
+            case PConstants.P2D, PConstants.P3D -> {
+                toRet.addExtObject("GL", constructedSketch.gl);
+                toRet.addExtObject("GLU", constructedSketch.glu);
+                toRet.addExtObject("PGL", constructedSketch.pgl);
+                toRet.addExtObject("GLWindow", constructedSketch.glWindow);
+                toRet.addExtObject("PGraphicsOpenGL", constructedSketch.glGraphics);
+            }
+        }
+
+        return toRet;
     }
 
     protected abstract Sketch buildImpl(String[] p_javaMainArgs);

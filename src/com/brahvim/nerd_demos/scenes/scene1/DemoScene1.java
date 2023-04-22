@@ -49,7 +49,7 @@ public class DemoScene1 extends NerdScene {
 
         this.sceneOneAnnounce.setGain(0.25f);
 
-        this.SCENE.addLayers(
+        SCENE.addLayers(
                 // Yes, these are started in order:
                 BackgroundLayer.class,
                 BoxAnimationLayer.class,

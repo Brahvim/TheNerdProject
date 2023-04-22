@@ -3,14 +3,12 @@ package com.brahvim.nerd_demos;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import com.brahvim.nerd.math.collision.CollisionAlgorithms;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PConstants;
 import processing.core.PShape;
-import processing.core.PVector;
 
 public class CubeManager {
 
@@ -76,13 +74,19 @@ public class CubeManager {
 
 		for (int i = this.CUBES.size() - 1; i != -1; i--) {
 			final AnimatedCube cube = this.CUBES.get(i);
-			final PVector pos = cube.getPos();
+			// final PVector pos = cube.getPos();
 
-			if (!CollisionAlgorithms.ptRect(
-					pos.x, pos.y,
-					-5000, -5000,
-					5000, 5000)) {
-				// this.CUBES.remove(i); // `this.cubesToRemove++;`
+			// if (!CollisionAlgorithms.ptRect(
+			// pos.x, pos.y,
+			// -5000, -5000,
+			// 5000, 5000)) { // No, I did not take the camera's position into account.
+			// Whoops.
+			// // this.CUBES.remove(i); // `this.cubesToRemove++;`
+			// final int cubeId = i;
+			// cube.plopOut(() -> this.CUBES.remove(cubeId));
+			// }
+
+			if (cube.lifetime - this.SKETCH.millis() < 0) {
 				final int cubeId = i;
 				cube.plopOut(() -> this.CUBES.remove(cubeId));
 			}

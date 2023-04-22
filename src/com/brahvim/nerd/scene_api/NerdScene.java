@@ -4,9 +4,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
+import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
@@ -41,7 +47,7 @@ public class NerdScene {
   // in *in order*, but have no `indexOf()` method!
 
   private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
-
+  // ////////////////////////////////////////////////////////////////////////////////
   LAYER_CONSTRUCTORS = new HashMap<>(0);
 
   /*
@@ -105,7 +111,6 @@ public class NerdScene {
    * instance of the given class, performs the other given task.
    */
   // Actual implementation!:
-  @SuppressWarnings("unchecked")
   public <T extends NerdLayer> void onFirstLayerOfClass(
       final Class<T> p_layerClass, final Consumer<T> p_onFoundTask, final Runnable p_notFoundTask) {
     final T instance = (T) this.getFirstLayerOfClass(p_layerClass);
@@ -223,10 +228,10 @@ public class NerdScene {
 
   // region `getLayers()` and similar.
   // They get a running `Layer`'s reference from its (given) class.
-  public NerdLayer getFirstLayerOfClass(final Class<? extends NerdLayer> p_layerClass) {
+  public <RetT extends NerdLayer> RetT getFirstLayerOfClass(final Class<RetT> p_layerClass) {
     for (final NerdLayer l : this.LAYERS)
       if (l.getClass().equals(p_layerClass))
-        return l;
+        return p_layerClass.cast(l);
     return null;
   }
 
@@ -287,13 +292,19 @@ public class NerdScene {
   // endregion
 
   // region `NerdLayer` state-management.
-  @SafeVarargs // I *actually* am not using `@SafeVarargs`, yes...
-  public final void addLayers(final Class<? extends NerdLayer>... p_layerClasses) {
-    for (final Class<? extends NerdLayer> c : p_layerClasses)
-      this.addLayers(c);
+  @SafeVarargs // I'm not willing to limit your freedom, but this method HAS to be `final`...
+  public final NerdLayer[] addLayers(final Class<? extends NerdLayer>... p_layerClasses) {
+    final NerdLayer[] toRet = new NerdLayer[p_layerClasses.length];
+
+    for (int i = 0; i < p_layerClasses.length; i++) {
+      final Class<? extends NerdLayer> c = p_layerClasses[i];
+      toRet[i] = this.addLayers(c);
+    }
+
+    return toRet;
   }
 
-  public NerdLayer addLayers(final Class<? extends NerdLayer> p_layerClass) {
+  public <RetT extends NerdLayer> RetT addLayers(final Class<RetT> p_layerClass) {
     if (p_layerClass == null)
       throw new NullPointerException(
           "You weren't supposed to pass `null` into `NerdScene::startLayer()`.");
@@ -301,17 +312,13 @@ public class NerdScene {
     // We allow multiple layer instances, by the way.
 
     final Constructor<? extends NerdLayer> layerConstructor = this.getLayerConstructor(p_layerClass);
-    final NerdLayer toStart = this.constructLayer(layerConstructor);
-
-    synchronized (this.LAYERS) {
-      this.LAYERS.add(toStart);
-    }
-
-    toStart.setActive(true);
-    return toStart;
+    final NerdLayer toRet = this.constructLayer(layerConstructor);
+    toRet.setActive(true); // Sets stuff up.
+    this.LAYERS.add(toRet);
+    return p_layerClass.cast(toRet);
   }
 
-  @SafeVarargs // I *actually* am not using `@SafeVarargs`, yes...
+  @SafeVarargs // I'm not willing to limit your freedom, but this method HAS to be `final`...
   public final void restartLayers(final Class<? extends NerdLayer>... p_layerClasses) {
     for (final Class<? extends NerdLayer> c : p_layerClasses)
       this.restartLayers(c);
@@ -423,20 +430,30 @@ public class NerdScene {
 
   /* `package` */ void runPreload() {
     this.preload();
+    SKETCH.PERSISTENT_ASSETS.forceLoading();
 
-    // TODO: Work on this!
-    // SKETCH.PERSISTENT_ASSETS.forEach(a -> {
-    // if (!a.hasLoaded())
-    // a.startLoading();
-    // });
+    if (this.MANAGER.settings.onScenePreload.useExecutors) {
+      final ThreadPoolExecutor executor = new ThreadPoolExecutor(
+          0, 6, 10L, TimeUnit.SECONDS, new SynchronousQueue<>(), r -> {
+            final Thread toRet = new Thread(r);
+            toRet.setName("NerdAssetPreloader_" + this.getClass().getSimpleName());
+            return toRet;
+          });
 
-    // SKETCH.PERSISTENT_ASSETS.forceLoading();
+      final HashSet<Future<?>> futures = new HashSet<>(this.ASSETS.size());
+      this.ASSETS.forEach(a -> futures.add(executor.submit(a::startLoading)));
+      executor.shutdown(); // This tells the executor to stop accepting new tasks.
 
-    // if (this.MANAGER.settings.onScenePreload.useExecutors) {
-    // } else {
-    // this.ASSETS.forEach(a -> a.startLoading());
-    // this.ASSETS.forEach(a -> a.completeLoad());
-    // }
+      // If you must complete within this function, do that:
+      if (this.MANAGER.settings.onScenePreload.completeWithinPreloadCall)
+        try {
+          executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS); // Keep going, keep going...
+          // Can't simply cheat the implementation to make it wait forever!
+        } catch (final InterruptedException e) {
+          e.printStackTrace();
+        }
+    } else
+      this.ASSETS.forEach(NerdAsset::startLoading);
 
     this.donePreloading = true;
   }

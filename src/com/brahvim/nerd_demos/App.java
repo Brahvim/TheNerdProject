@@ -7,13 +7,18 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuildArtifacts;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
+import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.glu.GLU;
+
+import processing.opengl.PGL;
+import processing.opengl.PGraphicsOpenGL;
 
 public class App {
 
     /*
      * // TODO: `UdpSocket` needs multicast.
      * // TODO: Make it easier to animate, somehow!
-     * // TODO: Use an `ExecutorService` to load assets.
      * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: REPLACE, THOSE, `while`, LOOPS! (Slow them DOWN!)
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
@@ -28,7 +33,12 @@ public class App {
     public static final int BPM = 100,
             BPM_INT = (int) (App.BPM / 60_000.0f);
 
+    public static volatile GL GL;
+    public static volatile GLU GLU;
+    public static volatile PGL PGL;
     public static volatile NerdAl OPENAL;
+    public static volatile GLWindow WINDOW;
+    public static volatile PGraphicsOpenGL GRAPHICS;
 
     private static volatile int tickCount;
     private static volatile boolean tick;
