@@ -28,8 +28,8 @@ public class DemoScene4 extends NerdScene {
 
     @Override
     protected void preload() {
-        ASSETS.add(PImageAsset.getLoader(), SKETCH.ICON_PATH);
-        ASSETS.add(OggBufferDataAsset.getLoader(), "data/RUBBER DUCK.ogg");
+        ASSETS.add(new PImageAsset(), SKETCH.ICON_PATH);
+        ASSETS.add(new OggBufferDataAsset(), "data/RUBBER DUCK.ogg");
         System.out.println("Test Scene 4 asset preload completed!");
     }
 

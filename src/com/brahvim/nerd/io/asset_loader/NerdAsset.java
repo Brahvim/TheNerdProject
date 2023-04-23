@@ -18,7 +18,6 @@ public class NerdAsset {
     private Object data;
     private Runnable onLoad;
     private long millis = -1;
-    private AssetLoaderOptions[] options;
     private boolean loaded, ploaded, failure;
     // endregion
 
@@ -34,23 +33,9 @@ public class NerdAsset {
         this.NAME = this.findName();
     }
 
-    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path,
-            final Runnable p_onLoad) {
+    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path, final Runnable p_onLoad) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
-    }
-
-    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path,
-            final AssetLoaderOptions... p_options) {
-        this(p_sketch, p_type, p_path);
-        this.options = p_options;
-    }
-
-    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path,
-            final Runnable p_onLoad, final AssetLoaderOptions... p_options) {
-        this(p_sketch, p_type, p_path);
-        this.onLoad = p_onLoad;
-        this.options = p_options;
     }
 
     private String findName() {
@@ -168,7 +153,7 @@ public class NerdAsset {
 
     private void fetchData() {
         try {
-            this.data = this.LOADER.fetchData(this.SKETCH, this.PATH, this.options);
+            this.data = this.LOADER.fetchData(this.SKETCH, this.PATH);
             this.millis = this.SKETCH.millis();
             this.frame = this.SKETCH.frameCount;
         } catch (final AssetLoaderFailedException e) {

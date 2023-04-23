@@ -11,7 +11,6 @@ import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.CubeManager;
-import com.brahvim.nerd_demos.effect_layers.CinematicBars;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
 import processing.core.PApplet;
@@ -34,13 +33,13 @@ public class DemoScene3 extends NerdScene {
     @Override
     protected synchronized void preload() {
         for (int i = 1; i != 5; i++)
-            ASSETS.add(OggBufferDataAsset.getLoader(), "data/Pops/Pop" + i + ".ogg");
+            ASSETS.add(new OggBufferDataAsset(), "data/Pops/Pop" + i + ".ogg");
     }
 
     @Override
     protected void setup(final SceneState p_state) {
         MANAGER.settings.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
-        SCENE.addLayers(CinematicBars.class);
+        // SCENE.addLayers(CinematicBars.class);
 
         this.calculateBgGrad();
         CAMERA = new FlyCamera(SKETCH);

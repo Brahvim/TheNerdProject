@@ -1,7 +1,6 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.AssetLoaderFailedException;
-import com.brahvim.nerd.io.asset_loader.AssetLoaderOptions;
 import com.brahvim.nerd.io.asset_loader.AssetLoader;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -10,19 +9,11 @@ import processing.opengl.PShader;
 
 public class PShaderAsset extends AssetLoader<PShader> {
 
-	// region SINGLETON STUFF.
-	private static PShaderAsset LOADER = new PShaderAsset();
-
-	public static AssetLoader<?> getLoader() {
-		return PShaderAsset.LOADER;
-	}
-	// endregion
-
 	/**
 	 * To load two shaders, separate the paths passed to {@code p_path} with a `\0`.
 	 */
 	@Override
-	public PShader fetchData(final Sketch p_sketch, final String p_path, final AssetLoaderOptions... p_options)
+	public PShader fetchData(final Sketch p_sketch, final String p_path)
 			throws AssetLoaderFailedException, IllegalArgumentException {
 		final int questId = p_path.indexOf('\0');
 		PShader shader = null;

@@ -23,44 +23,23 @@ public class AssetManager {
     }
 
     // region `NerdAsset`-operations!
-    // region `makeAsset()` overloads.
-    public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path,
-            final AssetLoaderOptions... p_options) {
+    public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
-        return new NerdAsset(this.SKETCH, p_type, p_path, p_options);
+        return new NerdAsset(this.SKETCH, p_type, p_path);
     }
-
-    public <T> NerdAsset makeAsset(final AssetLoader<T> p_type, final String p_path) {
-        return this.makeAsset(p_type, p_path, (AssetLoaderOptions[]) null);
-    }
-    // endregion
 
     // region `add()` overloads.
-    public <T> NerdAsset add(final AssetLoader<T> p_type, final String p_path,
-            final AssetLoaderOptions... p_options) {
-        final var toRet = this.makeAsset(p_type, p_path, p_options);
+    public <T> NerdAsset add(final AssetLoader<T> p_type, final String p_path, final Runnable p_onLoad) {
+        final var toRet = this.makeAsset(p_type, p_path);
         this.ASSETS.add(toRet);
         return toRet;
     }
 
-    public <T> NerdAsset add(final AssetLoader<T> p_type, final String p_path,
-            final Runnable p_onLoad, final AssetLoaderOptions... p_options) {
-        return this.add(p_type, p_path, p_options).setLoadCallback(p_onLoad);
-    }
-
-    public <T> NerdAsset add(final AssetLoader<T> p_type, final String p_path,
-            final Runnable p_onLoad) {
-        return this.add(p_type, p_path, p_onLoad);
-    }
-
     public <T> NerdAsset add(final AssetLoader<T> p_type, final String p_path) {
-        return this.add(p_type, p_path, (AssetLoaderOptions[]) null);
-    }
-
-    public <T> NerdAsset add(final NerdAsset p_asset) {
-        this.ASSETS.add(p_asset);
-        return p_asset;
+        final var toRet = this.makeAsset(p_type, p_path);
+        this.ASSETS.add(toRet);
+        return toRet;
     }
     // endregion
 
