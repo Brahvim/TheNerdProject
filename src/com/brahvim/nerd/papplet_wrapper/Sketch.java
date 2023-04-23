@@ -2173,6 +2173,9 @@ public class Sketch extends PApplet {
 	}
 
 	public NerdAbstractCamera setCameraToDefault() {
+		if (!this.USES_OPENGL)
+			return null;
+
 		final NerdAbstractCamera toRet = this.getDefaultCameraClone();
 		this.setCamera(toRet);
 		return toRet;
@@ -2573,5 +2576,10 @@ public class Sketch extends PApplet {
 	}
 	// endregion
 	// endregion
+
+	@Override
+	public void frameMoved(int x, int y) {
+		System.out.printf("Frame moved! `%d`, `%d`.\n", x, y);
+	}
 
 }

@@ -6,6 +6,10 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuildArtifacts;
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd_demos.scenes.DemoScene4;
+import com.brahvim.nerd_demos.scenes.DemoScene6;
+import com.brahvim.nerd_demos.scenes.Java2dDemoScene;
+import com.brahvim.nerd_demos.scenes.TcpDemoScene;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
@@ -28,7 +32,7 @@ public class App {
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
             // LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-            DemoScene1.class;
+            Java2dDemoScene.class;
 
     // region `App`'s *other* fields.
     public static final int BPM = 100,
@@ -52,6 +56,7 @@ public class App {
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
+                .usesJavaRenderer()
                 .setAntiAliasing(4)
                 .addNerdExt(new NerdAlExt(s -> {
                     // ...for `DemoScene3`!!!:
