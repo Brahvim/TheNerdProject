@@ -134,9 +134,8 @@ public class AnimatedCube extends TestEulerBody {
 
         if (this.plopWave.active)
             if (this.popSrc != null)
-                if (!this.popSrc.isDisposed())
-                    if (this.popSrc.isStopped())
-                        this.popSrc.dispose();
+                if (this.popSrc.isStopped())
+                    this.popSrc.dispose();
 
         super.integrate();
         super.SKETCH.push();
