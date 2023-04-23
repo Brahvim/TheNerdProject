@@ -14,16 +14,16 @@ public class TestEulerBody {
 	// endregion
 
 	public TestEulerBody(final Sketch p_sketch) {
-		SKETCH = p_sketch;
+		this.SKETCH = p_sketch;
 	}
 
 	public void integrate() {
 		final float deltaTime = SKETCH.frameTime * this.dtMult;
 
 		this.vel.add(this.acc);
-		this.pos.add(PVector.mult(this.vel, this.frict + deltaTime));
-
 		this.rotVel.add(this.rotAcc);
+
+		this.pos.add(PVector.mult(this.vel, this.frict + deltaTime));
 		this.rot.add(PVector.mult(this.rotVel, this.rotFrict + deltaTime));
 	}
 
