@@ -1481,6 +1481,7 @@ public class Sketch extends PApplet {
 	}
 
 	// region `rect()` overloads, ;)!
+	@Override
 	public void rect(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height) {
 		super.pushMatrix();
 		this.translate(p_x, p_y, p_z);

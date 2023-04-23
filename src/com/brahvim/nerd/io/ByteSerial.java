@@ -433,7 +433,8 @@ public class ByteSerial {
         ByteSerial.toFile(p_object, new File(p_fileName));
     }
 
-    public static void toFile(final Serializable p_object, final String p_fileName, final Consumer<IOException> p_onIo) {
+    public static void toFile(final Serializable p_object, final String p_fileName,
+            final Consumer<IOException> p_onIo) {
         ByteSerial.toFile(p_object, new File(p_fileName), p_onIo);
     }
 

@@ -2,7 +2,6 @@ package com.brahvim.nerd.papplet_wrapper;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -27,2044 +26,1604 @@ import processing.event.MouseEvent;
 import processing.opengl.PGL;
 import processing.opengl.PShader;
 
-public class PAppWrap extends PApplet {
+public class PAppWrap {
 
-    @Override
-    public void ambient(int rgb) {
-        super.ambient(rgb);
+    protected final PApplet applet;
+
+    public PAppWrap() {
+        this.applet = new PApplet();
     }
 
-    @Override
-    public void ambient(float gray) {
-        super.ambient(gray);
+    public void ambient(final int rgb) {
+        this.applet.ambient(rgb);
     }
 
-    @Override
-    public void ambient(float v1, float v2, float v3) {
-        super.ambient(v1, v2, v3);
+    public void ambient(final float gray) {
+        this.applet.ambient(gray);
     }
 
-    @Override
-    public void ambientLight(float v1, float v2, float v3) {
-        super.ambientLight(v1, v2, v3);
+    public void ambient(final float v1, final float v2, final float v3) {
+        this.applet.ambient(v1, v2, v3);
     }
 
-    @Override
-    public void ambientLight(float v1, float v2, float v3, float x, float y, float z) {
-        super.ambientLight(v1, v2, v3, x, y, z);
+    public void ambientLight(final float v1, final float v2, final float v3) {
+        this.applet.ambientLight(v1, v2, v3);
     }
 
-    @Override
-    public void applyMatrix(PMatrix source) {
-        super.applyMatrix(source);
+    public void ambientLight(final float v1, final float v2, final float v3, final float x, final float y,
+            final float z) {
+        this.applet.ambientLight(v1, v2, v3, x, y, z);
     }
 
-    @Override
-    public void applyMatrix(PMatrix2D source) {
-        super.applyMatrix(source);
+    public void applyMatrix(final PMatrix source) {
+        this.applet.applyMatrix(source);
     }
 
-    @Override
-    public void applyMatrix(PMatrix3D source) {
-        super.applyMatrix(source);
+    public void applyMatrix(final PMatrix2D source) {
+        this.applet.applyMatrix(source);
     }
 
-    @Override
-    public void applyMatrix(float n00, float n01, float n02, float n10, float n11, float n12) {
-        super.applyMatrix(n00, n01, n02, n10, n11, n12);
+    public void applyMatrix(final PMatrix3D source) {
+        this.applet.applyMatrix(source);
     }
 
-    @Override
-    public void applyMatrix(float n00, float n01, float n02, float n03, float n10, float n11, float n12, float n13,
-            float n20, float n21, float n22, float n23, float n30, float n31, float n32, float n33) {
-        super.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
+    public void applyMatrix(final float n00, final float n01, final float n02, final float n10, final float n11,
+            final float n12) {
+        this.applet.applyMatrix(n00, n01, n02, n10, n11, n12);
     }
 
-    @Override
-    public void arc(float a, float b, float c, float d, float start, float stop) {
-        super.arc(a, b, c, d, start, stop);
+    public void applyMatrix(final float n00, final float n01, final float n02, final float n03, final float n10,
+            final float n11, final float n12, final float n13,
+            final float n20, final float n21, final float n22, final float n23, final float n30, final float n31,
+            final float n32, final float n33) {
+        this.applet.applyMatrix(n00, n01, n02, n03, n10, n11, n12, n13, n20, n21, n22, n23, n30, n31, n32, n33);
     }
 
-    @Override
-    public void arc(float a, float b, float c, float d, float start, float stop, int mode) {
-        super.arc(a, b, c, d, start, stop, mode);
+    public void arc(final float a, final float b, final float c, final float d, final float start, final float stop) {
+        this.applet.arc(a, b, c, d, start, stop);
     }
 
-    @Override
-    public void attrib(String name, float... values) {
-        super.attrib(name, values);
+    public void arc(final float a, final float b, final float c, final float d, final float start, final float stop,
+            final int mode) {
+        this.applet.arc(a, b, c, d, start, stop, mode);
     }
 
-    @Override
-    public void attrib(String name, int... values) {
-        super.attrib(name, values);
+    public void attrib(final String name, final float... values) {
+        this.applet.attrib(name, values);
     }
 
-    @Override
-    public void attrib(String name, boolean... values) {
-        super.attrib(name, values);
+    public void attrib(final String name, final int... values) {
+        this.applet.attrib(name, values);
     }
 
-    @Override
-    public void attribColor(String name, int color) {
-        super.attribColor(name, color);
+    public void attrib(final String name, final boolean... values) {
+        this.applet.attrib(name, values);
     }
 
-    @Override
-    public void attribNormal(String name, float nx, float ny, float nz) {
-        super.attribNormal(name, nx, ny, nz);
+    public void attribColor(final String name, final int color) {
+        this.applet.attribColor(name, color);
     }
 
-    @Override
-    public void attribPosition(String name, float x, float y, float z) {
-        super.attribPosition(name, x, y, z);
+    public void attribNormal(final String name, final float nx, final float ny, final float nz) {
+        this.applet.attribNormal(name, nx, ny, nz);
     }
 
-    @Override
-    public void background(int rgb) {
-        super.background(rgb);
+    public void attribPosition(final String name, final float x, final float y, final float z) {
+        this.applet.attribPosition(name, x, y, z);
     }
 
-    @Override
-    public void background(float gray) {
-        super.background(gray);
+    public void background(final int rgb) {
+        this.applet.background(rgb);
     }
 
-    @Override
-    public void background(PImage image) {
-        super.background(image);
+    public void background(final float gray) {
+        this.applet.background(gray);
     }
 
-    @Override
-    public void background(int rgb, float alpha) {
-        super.background(rgb, alpha);
+    public void background(final PImage image) {
+        this.applet.background(image);
     }
 
-    @Override
-    public void background(float gray, float alpha) {
-        super.background(gray, alpha);
+    public void background(final int rgb, final float alpha) {
+        this.applet.background(rgb, alpha);
     }
 
-    @Override
-    public void background(float v1, float v2, float v3) {
-        super.background(v1, v2, v3);
+    public void background(final float gray, final float alpha) {
+        this.applet.background(gray, alpha);
     }
 
-    @Override
-    public void background(float v1, float v2, float v3, float alpha) {
-        super.background(v1, v2, v3, alpha);
+    public void background(final float v1, final float v2, final float v3) {
+        this.applet.background(v1, v2, v3);
     }
 
-    @Override
+    public void background(final float v1, final float v2, final float v3, final float alpha) {
+        this.applet.background(v1, v2, v3, alpha);
+    }
+
     public void beginCamera() {
-        super.beginCamera();
+        this.applet.beginCamera();
     }
 
-    @Override
     public void beginContour() {
-        super.beginContour();
+        this.applet.beginContour();
     }
 
-    @Override
     public PGL beginPGL() {
-        return super.beginPGL();
+        return this.applet.beginPGL();
     }
 
-    @Override
-    public void beginRaw(PGraphics rawGraphics) {
-        super.beginRaw(rawGraphics);
+    public void beginRaw(final PGraphics rawGraphics) {
+        this.applet.beginRaw(rawGraphics);
     }
 
-    @Override
-    public PGraphics beginRaw(String renderer, String filename) {
-        return super.beginRaw(renderer, filename);
+    public PGraphics beginRaw(final String renderer, final String filename) {
+        return this.applet.beginRaw(renderer, filename);
     }
 
-    @Override
-    public void beginRecord(PGraphics recorder) {
-        super.beginRecord(recorder);
+    public void beginRecord(final PGraphics recorder) {
+        this.applet.beginRecord(recorder);
     }
 
-    @Override
-    public PGraphics beginRecord(String renderer, String filename) {
-        return super.beginRecord(renderer, filename);
+    public PGraphics beginRecord(final String renderer, final String filename) {
+        return this.applet.beginRecord(renderer, filename);
     }
 
-    @Override
     public void beginShape() {
-        super.beginShape();
+        this.applet.beginShape();
     }
 
-    @Override
-    public void beginShape(int kind) {
-        super.beginShape(kind);
+    public void beginShape(final int kind) {
+        this.applet.beginShape(kind);
     }
 
-    @Override
-    public void bezier(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-        super.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+    public void bezier(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3,
+            final float x4, final float y4) {
+        this.applet.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
     }
 
-    @Override
-    public void bezier(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3,
-            float x4, float y4, float z4) {
-        super.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    public void bezier(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
+            final float x3, final float y3, final float z3,
+            final float x4, final float y4, final float z4) {
+        this.applet.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
     }
 
-    @Override
-    public void bezierDetail(int detail) {
-        super.bezierDetail(detail);
+    public void bezierDetail(final int detail) {
+        this.applet.bezierDetail(detail);
     }
 
-    @Override
-    public float bezierPoint(float a, float b, float c, float d, float t) {
-        return super.bezierPoint(a, b, c, d, t);
+    public float bezierPoint(final float a, final float b, final float c, final float d, final float t) {
+        return this.applet.bezierPoint(a, b, c, d, t);
     }
 
-    @Override
-    public float bezierTangent(float a, float b, float c, float d, float t) {
-        return super.bezierTangent(a, b, c, d, t);
+    public float bezierTangent(final float a, final float b, final float c, final float d, final float t) {
+        return this.applet.bezierTangent(a, b, c, d, t);
     }
 
-    @Override
-    public void bezierVertex(float x2, float y2, float x3, float y3, float x4, float y4) {
-        super.bezierVertex(x2, y2, x3, y3, x4, y4);
+    public void bezierVertex(final float x2, final float y2, final float x3, final float y3, final float x4,
+            final float y4) {
+        this.applet.bezierVertex(x2, y2, x3, y3, x4, y4);
     }
 
-    @Override
-    public void bezierVertex(float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4) {
-        super.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    public void bezierVertex(final float x2, final float y2, final float z2, final float x3, final float y3,
+            final float z3, final float x4, final float y4, final float z4) {
+        this.applet.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
     }
 
-    @Override
-    public void blend(int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int mode) {
-        super.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    public void blend(final int sx, final int sy, final int sw, final int sh, final int dx, final int dy, final int dw,
+            final int dh, final int mode) {
+        this.applet.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
     }
 
-    @Override
-    public void blend(PImage src, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int mode) {
-        super.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    public void blend(final PImage src, final int sx, final int sy, final int sw, final int sh, final int dx,
+            final int dy,
+            final int dw, final int dh, final int mode) {
+        this.applet.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
     }
 
-    @Override
-    public void blendMode(int mode) {
-        super.blendMode(mode);
+    public void blendMode(final int mode) {
+        this.applet.blendMode(mode);
     }
 
-    @Override
-    public void box(float size) {
-        super.box(size);
+    public void box(final float size) {
+        this.applet.box(size);
     }
 
-    @Override
-    public void box(float w, float h, float d) {
-        super.box(w, h, d);
+    public void box(final float w, final float h, final float d) {
+        this.applet.box(w, h, d);
     }
 
-    @Override
     public void camera() {
-        super.camera();
+        this.applet.camera();
     }
 
-    @Override
-    public void camera(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX,
-            float upY, float upZ) {
-        super.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+    public void camera(final float eyeX, final float eyeY, final float eyeZ, final float centerX, final float centerY,
+            final float centerZ, final float upX,
+            final float upY, final float upZ) {
+        this.applet.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     }
 
-    @Override
-    public void circle(float x, float y, float extent) {
-        super.circle(x, y, extent);
+    public void circle(final float x, final float y, final float extent) {
+        this.applet.circle(x, y, extent);
     }
 
-    @Override
     public void clear() {
-        super.clear();
+        this.applet.clear();
     }
 
-    @Override
-    public void clip(float a, float b, float c, float d) {
-        super.clip(a, b, c, d);
+    public void clip(final float a, final float b, final float c, final float d) {
+        this.applet.clip(a, b, c, d);
     }
 
-    @Override
-    public void colorMode(int mode) {
-        super.colorMode(mode);
+    public void colorMode(final int mode) {
+        this.applet.colorMode(mode);
     }
 
-    @Override
-    public void colorMode(int mode, float max) {
-        super.colorMode(mode, max);
+    public void colorMode(final int mode, final float max) {
+        this.applet.colorMode(mode, max);
     }
 
-    @Override
-    public void colorMode(int mode, float max1, float max2, float max3) {
-        super.colorMode(mode, max1, max2, max3);
+    public void colorMode(final int mode, final float max1, final float max2, final float max3) {
+        this.applet.colorMode(mode, max1, max2, max3);
     }
 
-    @Override
-    public void colorMode(int mode, float max1, float max2, float max3, float maxA) {
-        super.colorMode(mode, max1, max2, max3, maxA);
+    public void colorMode(final int mode, final float max1, final float max2, final float max3, final float maxA) {
+        this.applet.colorMode(mode, max1, max2, max3, maxA);
     }
 
-    @Override
     public PImage copy() {
-        return super.copy();
+        return this.applet.copy();
     }
 
-    @Override
-    public void copy(int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh) {
-        super.copy(sx, sy, sw, sh, dx, dy, dw, dh);
+    public void copy(final int sx, final int sy, final int sw, final int sh, final int dx, final int dy, final int dw,
+            final int dh) {
+        this.applet.copy(sx, sy, sw, sh, dx, dy, dw, dh);
     }
 
-    @Override
-    public void copy(PImage src, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh) {
-        super.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
+    public void copy(final PImage src, final int sx, final int sy, final int sw, final int sh, final int dx,
+            final int dy,
+            final int dw, final int dh) {
+        this.applet.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
     }
 
-    @Override
-    public PFont createFont(String name, float size) {
-        return super.createFont(name, size);
+    public PFont createFont(final String name, final float size) {
+        return this.applet.createFont(name, size);
     }
 
-    @Override
-    public PFont createFont(String name, float size, boolean smooth) {
-        return super.createFont(name, size, smooth);
+    public PFont createFont(final String name, final float size, final boolean smooth) {
+        return this.applet.createFont(name, size, smooth);
     }
 
-    @Override
-    public PFont createFont(String name, float size, boolean smooth, char[] charset) {
-        return super.createFont(name, size, smooth, charset);
+    public PFont createFont(final String name, final float size, final boolean smooth, final char[] charset) {
+        return this.applet.createFont(name, size, smooth, charset);
     }
 
-    @Override
-    public PGraphics createGraphics(int w, int h) {
-        return super.createGraphics(w, h);
+    public PGraphics createGraphics(final int w, final int h) {
+        return this.applet.createGraphics(w, h);
     }
 
-    @Override
-    public PGraphics createGraphics(int w, int h, String renderer) {
-        return super.createGraphics(w, h, renderer);
+    public PGraphics createGraphics(final int w, final int h, final String renderer) {
+        return this.applet.createGraphics(w, h, renderer);
     }
 
-    @Override
-    public PGraphics createGraphics(int w, int h, String renderer, String path) {
-        return super.createGraphics(w, h, renderer, path);
+    public PGraphics createGraphics(final int w, final int h, final String renderer, final String path) {
+        return this.applet.createGraphics(w, h, renderer, path);
     }
 
-    @Override
-    public PImage createImage(int w, int h, int format) {
-        return super.createImage(w, h, format);
+    public PImage createImage(final int w, final int h, final int format) {
+        return this.applet.createImage(w, h, format);
     }
 
-    @Override
-    public InputStream createInput(String filename) {
-        return super.createInput(filename);
+    public InputStream createInput(final String filename) {
+        return this.applet.createInput(filename);
     }
 
-    @Override
-    public InputStream createInputRaw(String filename) {
-        return super.createInputRaw(filename);
+    public InputStream createInputRaw(final String filename) {
+        return this.applet.createInputRaw(filename);
     }
 
-    @Override
-    public OutputStream createOutput(String filename) {
-        return super.createOutput(filename);
+    public OutputStream createOutput(final String filename) {
+        return this.applet.createOutput(filename);
     }
 
-    @Override
-    public BufferedReader createReader(String filename) {
-        return super.createReader(filename);
+    public BufferedReader createReader(final String filename) {
+        return this.applet.createReader(filename);
     }
 
-    @Override
     public PShape createShape() {
-        return super.createShape();
+        return this.applet.createShape();
     }
 
-    @Override
-    public PShape createShape(int type) {
-        return super.createShape(type);
+    public PShape createShape(final int type) {
+        return this.applet.createShape(type);
     }
 
-    @Override
-    public PShape createShape(int kind, float... p) {
-        return super.createShape(kind, p);
+    public PShape createShape(final int kind, final float... p) {
+        return this.applet.createShape(kind, p);
     }
 
-    @Override
-    public PrintWriter createWriter(String filename) {
-        return super.createWriter(filename);
+    public PrintWriter createWriter(final String filename) {
+        return this.applet.createWriter(filename);
     }
 
-    @Override
     public void cursor() {
-        super.cursor();
+        this.applet.cursor();
     }
 
-    @Override
-    public void cursor(int kind) {
-        super.cursor(kind);
+    public void cursor(final int kind) {
+        this.applet.cursor(kind);
     }
 
-    @Override
-    public void cursor(PImage img) {
-        super.cursor(img);
+    public void cursor(final PImage img) {
+        this.applet.cursor(img);
     }
 
-    @Override
-    public void cursor(PImage img, int x, int y) {
-        super.cursor(img, x, y);
+    public void cursor(final PImage img, final int x, final int y) {
+        this.applet.cursor(img, x, y);
     }
 
-    @Override
-    public void curve(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-        super.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+    public void curve(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3,
+            final float x4, final float y4) {
+        this.applet.curve(x1, y1, x2, y2, x3, y3, x4, y4);
     }
 
-    @Override
-    public void curve(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3,
-            float x4, float y4, float z4) {
-        super.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    public void curve(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
+            final float x3, final float y3, final float z3,
+            final float x4, final float y4, final float z4) {
+        this.applet.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
     }
 
-    @Override
-    public void curveDetail(int detail) {
-        super.curveDetail(detail);
+    public void curveDetail(final int detail) {
+        this.applet.curveDetail(detail);
     }
 
-    @Override
-    public float curvePoint(float a, float b, float c, float d, float t) {
-        return super.curvePoint(a, b, c, d, t);
+    public float curvePoint(final float a, final float b, final float c, final float d, final float t) {
+        return this.applet.curvePoint(a, b, c, d, t);
     }
 
-    @Override
-    public float curveTangent(float a, float b, float c, float d, float t) {
-        return super.curveTangent(a, b, c, d, t);
+    public float curveTangent(final float a, final float b, final float c, final float d, final float t) {
+        return this.applet.curveTangent(a, b, c, d, t);
     }
 
-    @Override
-    public void curveTightness(float tightness) {
-        super.curveTightness(tightness);
+    public void curveTightness(final float tightness) {
+        this.applet.curveTightness(tightness);
     }
 
-    @Override
-    public void curveVertex(float x, float y) {
-        super.curveVertex(x, y);
+    public void curveVertex(final float x, final float y) {
+        this.applet.curveVertex(x, y);
     }
 
-    @Override
-    public void curveVertex(float x, float y, float z) {
-        super.curveVertex(x, y, z);
+    public void curveVertex(final float x, final float y, final float z) {
+        this.applet.curveVertex(x, y, z);
     }
 
-    @Override
-    public File dataFile(String where) {
-        return super.dataFile(where);
+    public File dataFile(final String where) {
+        return this.applet.dataFile(where);
     }
 
-    @Override
-    public String dataPath(String where) {
-        return super.dataPath(where);
+    public String dataPath(final String where) {
+        return this.applet.dataPath(where);
     }
 
-    @Override
-    public void delay(int napTime) {
-        super.delay(napTime);
+    public void delay(final int napTime) {
+        this.applet.delay(napTime);
     }
 
-    @Override
-    public void die(String what) {
-        super.die(what);
+    public void die(final String what) {
+        this.applet.die(what);
     }
 
-    @Override
-    public void die(String what, Exception e) {
-        super.die(what, e);
+    public void die(final String what, final Exception e) {
+        this.applet.die(what, e);
     }
 
-    @Override
-    public void directionalLight(float v1, float v2, float v3, float nx, float ny, float nz) {
-        super.directionalLight(v1, v2, v3, nx, ny, nz);
+    public void directionalLight(final float v1, final float v2, final float v3, final float nx, final float ny,
+            final float nz) {
+        this.applet.directionalLight(v1, v2, v3, nx, ny, nz);
     }
 
-    @Override
     public int displayDensity() {
-        return super.displayDensity();
+        return this.applet.displayDensity();
     }
 
-    @Override
-    public int displayDensity(int display) {
-        return super.displayDensity(display);
+    public int displayDensity(final int display) {
+        return this.applet.displayDensity(display);
     }
 
-    @Override
     public void dispose() {
-        super.dispose();
+        this.applet.dispose();
     }
 
-    @Override
     public void draw() {
-        super.draw();
+        this.applet.draw();
     }
 
-    @Override
-    public void edge(boolean edge) {
-        super.edge(edge);
+    public void edge(final boolean edge) {
+        this.applet.edge(edge);
     }
 
-    @Override
-    public void ellipse(float a, float b, float c, float d) {
-        super.ellipse(a, b, c, d);
+    public void ellipse(final float a, final float b, final float c, final float d) {
+        this.applet.ellipse(a, b, c, d);
     }
 
-    @Override
-    public void ellipseMode(int mode) {
-        super.ellipseMode(mode);
+    public void ellipseMode(final int mode) {
+        this.applet.ellipseMode(mode);
     }
 
-    @Override
-    public void emissive(int rgb) {
-        super.emissive(rgb);
+    public void emissive(final int rgb) {
+        this.applet.emissive(rgb);
     }
 
-    @Override
-    public void emissive(float gray) {
-        super.emissive(gray);
+    public void emissive(final float gray) {
+        this.applet.emissive(gray);
     }
 
-    @Override
-    public void emissive(float v1, float v2, float v3) {
-        super.emissive(v1, v2, v3);
+    public void emissive(final float v1, final float v2, final float v3) {
+        this.applet.emissive(v1, v2, v3);
     }
 
-    @Override
     public void endCamera() {
-        super.endCamera();
+        this.applet.endCamera();
     }
 
-    @Override
     public void endContour() {
-        super.endContour();
+        this.applet.endContour();
     }
 
-    @Override
     public void endPGL() {
-        super.endPGL();
+        this.applet.endPGL();
     }
 
-    @Override
     public void endRaw() {
-        super.endRaw();
+        this.applet.endRaw();
     }
 
-    @Override
     public void endRecord() {
-        super.endRecord();
+        this.applet.endRecord();
     }
 
-    @Override
     public void endShape() {
-        super.endShape();
+        this.applet.endShape();
     }
 
-    @Override
-    public void endShape(int mode) {
-        super.endShape(mode);
+    public void endShape(final int mode) {
+        this.applet.endShape(mode);
     }
 
-    @Override
     public void exit() {
-        super.exit();
+        this.applet.exit();
     }
 
-    @Override
     public void exitActual() {
-        super.exitActual();
+        this.applet.exitActual();
     }
 
-    @Override
     public boolean exitCalled() {
-        return super.exitCalled();
+        return this.applet.exitCalled();
     }
 
-    @Override
-    public void fill(int rgb) {
-        super.fill(rgb);
+    public void fill(final int rgb) {
+        this.applet.fill(rgb);
     }
 
-    @Override
-    public void fill(float gray) {
-        super.fill(gray);
+    public void fill(final float gray) {
+        this.applet.fill(gray);
     }
 
-    @Override
-    public void fill(int rgb, float alpha) {
-        super.fill(rgb, alpha);
+    public void fill(final int rgb, final float alpha) {
+        this.applet.fill(rgb, alpha);
     }
 
-    @Override
-    public void fill(float gray, float alpha) {
-        super.fill(gray, alpha);
+    public void fill(final float gray, final float alpha) {
+        this.applet.fill(gray, alpha);
     }
 
-    @Override
-    public void fill(float v1, float v2, float v3) {
-        super.fill(v1, v2, v3);
+    public void fill(final float v1, final float v2, final float v3) {
+        this.applet.fill(v1, v2, v3);
     }
 
-    @Override
-    public void fill(float v1, float v2, float v3, float alpha) {
-        super.fill(v1, v2, v3, alpha);
+    public void fill(final float v1, final float v2, final float v3, final float alpha) {
+        this.applet.fill(v1, v2, v3, alpha);
     }
 
-    @Override
-    public void filter(PShader shader) {
-        super.filter(shader);
+    public void filter(final PShader shader) {
+        this.applet.filter(shader);
     }
 
-    @Override
-    public void filter(int kind) {
-        super.filter(kind);
+    public void filter(final int kind) {
+        this.applet.filter(kind);
     }
 
-    @Override
-    public void filter(int kind, float param) {
-        super.filter(kind, param);
+    public void filter(final int kind, final float param) {
+        this.applet.filter(kind, param);
     }
 
-    @Override
     public void flush() {
-        super.flush();
+        this.applet.flush();
     }
 
-    @Override
     public void focusGained() {
-        super.focusGained();
+        this.applet.focusGained();
     }
 
-    @Override
     public void focusLost() {
-        super.focusLost();
+        this.applet.focusLost();
     }
 
-    @Override
-    public void frameMoved(int x, int y) {
-        super.frameMoved(x, y);
+    public void frameMoved(final int x, final int y) {
+        this.applet.frameMoved(x, y);
     }
 
-    @Override
-    public void frameRate(float fps) {
-        super.frameRate(fps);
+    public void frameRate(final float fps) {
+        this.applet.frameRate(fps);
     }
 
-    @Override
-    public void frameResized(int w, int h) {
-        super.frameResized(w, h);
+    public void frameResized(final int w, final int h) {
+        this.applet.frameResized(w, h);
     }
 
-    @Override
-    public void frustum(float left, float right, float bottom, float top, float near, float far) {
-        super.frustum(left, right, bottom, top, near, far);
+    public void frustum(final float left, final float right, final float bottom, final float top, final float near,
+            final float far) {
+        this.applet.frustum(left, right, bottom, top, near, far);
     }
 
-    @Override
     public void fullScreen() {
-        super.fullScreen();
+        this.applet.fullScreen();
     }
 
-    @Override
-    public void fullScreen(int display) {
-        super.fullScreen(display);
+    public void fullScreen(final int display) {
+        this.applet.fullScreen(display);
     }
 
-    @Override
-    public void fullScreen(String renderer) {
-        super.fullScreen(renderer);
+    public void fullScreen(final String renderer) {
+        this.applet.fullScreen(renderer);
     }
 
-    @Override
-    public void fullScreen(String renderer, int display) {
-        super.fullScreen(renderer, display);
+    public void fullScreen(final String renderer, final int display) {
+        this.applet.fullScreen(renderer, display);
     }
 
-    @Override
     public PImage get() {
-        return super.get();
+        return this.applet.get();
     }
 
-    @Override
-    public int get(int x, int y) {
-        return super.get(x, y);
+    public int get(final int x, final int y) {
+        return this.applet.get(x, y);
     }
 
-    @Override
-    public PImage get(int x, int y, int w, int h) {
-        return super.get(x, y, w, h);
+    public PImage get(final int x, final int y, final int w, final int h) {
+        return this.applet.get(x, y, w, h);
     }
 
-    @Override
     public PGraphics getGraphics() {
-        return super.getGraphics();
+        return this.applet.getGraphics();
     }
 
-    @Override
     public PMatrix getMatrix() {
-        return super.getMatrix();
+        return this.applet.getMatrix();
     }
 
-    @Override
-    public PMatrix2D getMatrix(PMatrix2D target) {
-        return super.getMatrix(target);
+    public PMatrix2D getMatrix(final PMatrix2D target) {
+        return this.applet.getMatrix(target);
     }
 
-    @Override
-    public PMatrix3D getMatrix(PMatrix3D target) {
-        return super.getMatrix(target);
+    public PMatrix3D getMatrix(final PMatrix3D target) {
+        return this.applet.getMatrix(target);
     }
 
-    @Override
     public PSurface getSurface() {
-        return super.getSurface();
+        return this.applet.getSurface();
     }
 
-    @Override
     public void handleDraw() {
-        super.handleDraw();
+        this.applet.handleDraw();
     }
 
-    @Override
-    public void hint(int which) {
-        super.hint(which);
+    public void hint(final int which) {
+        this.applet.hint(which);
     }
 
-    @Override
-    public void image(PImage img, float a, float b) {
-        super.image(img, a, b);
+    public void image(final PImage img, final float a, final float b) {
+        this.applet.image(img, a, b);
     }
 
-    @Override
-    public void image(PImage img, float a, float b, float c, float d) {
-        super.image(img, a, b, c, d);
+    public void image(final PImage img, final float a, final float b, final float c, final float d) {
+        this.applet.image(img, a, b, c, d);
     }
 
-    @Override
-    public void image(PImage img, float a, float b, float c, float d, int u1, int v1, int u2, int v2) {
-        super.image(img, a, b, c, d, u1, v1, u2, v2);
+    public void image(final PImage img, final float a, final float b, final float c, final float d, final int u1,
+            final int v1, final int u2,
+            final int v2) {
+        this.applet.image(img, a, b, c, d, u1, v1, u2, v2);
     }
 
-    @Override
-    public void imageMode(int mode) {
-        super.imageMode(mode);
+    public void imageMode(final int mode) {
+        this.applet.imageMode(mode);
     }
 
-    @Override
-    public String insertFrame(String what) {
-        return super.insertFrame(what);
+    public String insertFrame(final String what) {
+        return this.applet.insertFrame(what);
     }
 
-    @Override
     public boolean isLooping() {
-        return super.isLooping();
+        return this.applet.isLooping();
     }
 
-    @Override
     public void keyPressed() {
-        super.keyPressed();
+        this.applet.keyPressed();
     }
 
-    @Override
-    public void keyPressed(KeyEvent event) {
-        super.keyPressed(event);
+    public void keyPressed(final KeyEvent event) {
+        this.applet.keyPressed(event);
     }
 
-    @Override
     public void keyReleased() {
-        super.keyReleased();
+        this.applet.keyReleased();
     }
 
-    @Override
-    public void keyReleased(KeyEvent event) {
-        super.keyReleased(event);
+    public void keyReleased(final KeyEvent event) {
+        this.applet.keyReleased(event);
     }
 
-    @Override
     public void keyTyped() {
-        super.keyTyped();
+        this.applet.keyTyped();
     }
 
-    @Override
-    public void keyTyped(KeyEvent event) {
-        super.keyTyped(event);
+    public void keyTyped(final KeyEvent event) {
+        this.applet.keyTyped(event);
     }
 
-    @Override
-    public int lerpColor(int c1, int c2, float amt) {
-        return super.lerpColor(c1, c2, amt);
+    public int lerpColor(final int c1, final int c2, final float amt) {
+        return this.applet.lerpColor(c1, c2, amt);
     }
 
-    @Override
-    public void lightFalloff(float constant, float linear, float quadratic) {
-        super.lightFalloff(constant, linear, quadratic);
+    public void lightFalloff(final float constant, final float linear, final float quadratic) {
+        this.applet.lightFalloff(constant, linear, quadratic);
     }
 
-    @Override
-    public void lightSpecular(float v1, float v2, float v3) {
-        super.lightSpecular(v1, v2, v3);
+    public void lightSpecular(final float v1, final float v2, final float v3) {
+        this.applet.lightSpecular(v1, v2, v3);
     }
 
-    @Override
     public void lights() {
-        super.lights();
+        this.applet.lights();
     }
 
-    @Override
-    public void line(float x1, float y1, float x2, float y2) {
-        super.line(x1, y1, x2, y2);
+    public void line(final float x1, final float y1, final float x2, final float y2) {
+        this.applet.line(x1, y1, x2, y2);
     }
 
-    @Override
-    public void line(float x1, float y1, float z1, float x2, float y2, float z2) {
-        super.line(x1, y1, z1, x2, y2, z2);
+    public void line(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2) {
+        this.applet.line(x1, y1, z1, x2, y2, z2);
     }
 
-    @Override
-    public void link(String url) {
-        super.link(url);
+    public void link(final String url) {
+        this.applet.link(url);
     }
 
-    @Override
-    public File[] listFiles(String path, String... options) {
-        return super.listFiles(path, options);
+    public File[] listFiles(final String path, final String... options) {
+        return this.applet.listFiles(path, options);
     }
 
-    @Override
-    public String[] listPaths(String path, String... options) {
-        return super.listPaths(path, options);
+    public String[] listPaths(final String path, final String... options) {
+        return this.applet.listPaths(path, options);
     }
 
-    @Override
-    public byte[] loadBytes(String filename) {
-        return super.loadBytes(filename);
+    public byte[] loadBytes(final String filename) {
+        return this.applet.loadBytes(filename);
     }
 
-    @Override
-    public PFont loadFont(String filename) {
-        return super.loadFont(filename);
+    public PFont loadFont(final String filename) {
+        return this.applet.loadFont(filename);
     }
 
-    @Override
-    public PImage loadImage(String filename) {
-        return super.loadImage(filename);
+    public PImage loadImage(final String filename) {
+        return this.applet.loadImage(filename);
     }
 
-    @Override
-    public PImage loadImage(String filename, String extension) {
-        return super.loadImage(filename, extension);
+    public PImage loadImage(final String filename, final String extension) {
+        return this.applet.loadImage(filename, extension);
     }
 
-    @Override
-    public JSONArray loadJSONArray(String filename) {
-        return super.loadJSONArray(filename);
+    public JSONArray loadJSONArray(final String filename) {
+        return this.applet.loadJSONArray(filename);
     }
 
-    @Override
-    public JSONObject loadJSONObject(String filename) {
-        return super.loadJSONObject(filename);
+    public JSONObject loadJSONObject(final String filename) {
+        return this.applet.loadJSONObject(filename);
     }
 
-    @Override
     public void loadPixels() {
-        super.loadPixels();
+        this.applet.loadPixels();
     }
 
-    @Override
-    public PShader loadShader(String fragFilename) {
-        return super.loadShader(fragFilename);
+    public PShader loadShader(final String fragFilename) {
+        return this.applet.loadShader(fragFilename);
     }
 
-    @Override
-    public PShader loadShader(String fragFilename, String vertFilename) {
-        return super.loadShader(fragFilename, vertFilename);
+    public PShader loadShader(final String fragFilename, final String vertFilename) {
+        return this.applet.loadShader(fragFilename, vertFilename);
     }
 
-    @Override
-    public PShape loadShape(String filename) {
-        return super.loadShape(filename);
+    public PShape loadShape(final String filename) {
+        return this.applet.loadShape(filename);
     }
 
-    @Override
-    public PShape loadShape(String filename, String options) {
-        return super.loadShape(filename, options);
+    public PShape loadShape(final String filename, final String options) {
+        return this.applet.loadShape(filename, options);
     }
 
-    @Override
-    public String[] loadStrings(String filename) {
-        return super.loadStrings(filename);
+    public String[] loadStrings(final String filename) {
+        return this.applet.loadStrings(filename);
     }
 
-    @Override
-    public Table loadTable(String filename) {
-        return super.loadTable(filename);
+    public Table loadTable(final String filename) {
+        return this.applet.loadTable(filename);
     }
 
-    @Override
-    public Table loadTable(String filename, String options) {
-        return super.loadTable(filename, options);
+    public Table loadTable(final String filename, final String options) {
+        return this.applet.loadTable(filename, options);
     }
 
-    @Override
-    public XML loadXML(String filename) {
-        return super.loadXML(filename);
+    public XML loadXML(final String filename) {
+        return this.applet.loadXML(filename);
     }
 
-    @Override
-    public XML loadXML(String filename, String options) {
-        return super.loadXML(filename, options);
+    public XML loadXML(final String filename, final String options) {
+        return this.applet.loadXML(filename, options);
     }
 
-    @Override
     public synchronized void loop() {
-        super.loop();
+        this.applet.loop();
     }
 
-    @Override
-    public void mask(PImage img) {
-        super.mask(img);
+    public void mask(final PImage img) {
+        this.applet.mask(img);
     }
 
-    @Override
-    public void method(String name) {
-        super.method(name);
+    public void method(final String name) {
+        this.applet.method(name);
     }
 
-    @Override
     public int millis() {
-        return super.millis();
+        return this.applet.millis();
     }
 
-    @Override
-    public float modelX(float x, float y, float z) {
-        return super.modelX(x, y, z);
+    public float modelX(final float x, final float y, final float z) {
+        return this.applet.modelX(x, y, z);
     }
 
-    @Override
-    public float modelY(float x, float y, float z) {
-        return super.modelY(x, y, z);
+    public float modelY(final float x, final float y, final float z) {
+        return this.applet.modelY(x, y, z);
     }
 
-    @Override
-    public float modelZ(float x, float y, float z) {
-        return super.modelZ(x, y, z);
+    public float modelZ(final float x, final float y, final float z) {
+        return this.applet.modelZ(x, y, z);
     }
 
-    @Override
     public void mouseClicked() {
-        super.mouseClicked();
+        this.applet.mouseClicked();
     }
 
-    @Override
-    public void mouseClicked(MouseEvent event) {
-        super.mouseClicked(event);
+    public void mouseClicked(final MouseEvent event) {
+        this.applet.mouseClicked(event);
     }
 
-    @Override
     public void mouseDragged() {
-        super.mouseDragged();
+        this.applet.mouseDragged();
     }
 
-    @Override
-    public void mouseDragged(MouseEvent event) {
-        super.mouseDragged(event);
+    public void mouseDragged(final MouseEvent event) {
+        this.applet.mouseDragged(event);
     }
 
-    @Override
     public void mouseEntered() {
-        super.mouseEntered();
+        this.applet.mouseEntered();
     }
 
-    @Override
-    public void mouseEntered(MouseEvent event) {
-        super.mouseEntered(event);
+    public void mouseEntered(final MouseEvent event) {
+        this.applet.mouseEntered(event);
     }
 
-    @Override
     public void mouseExited() {
-        super.mouseExited();
+        this.applet.mouseExited();
     }
 
-    @Override
-    public void mouseExited(MouseEvent event) {
-        super.mouseExited(event);
+    public void mouseExited(final MouseEvent event) {
+        this.applet.mouseExited(event);
     }
 
-    @Override
     public void mouseMoved() {
-        super.mouseMoved();
+        this.applet.mouseMoved();
     }
 
-    @Override
-    public void mouseMoved(MouseEvent event) {
-        super.mouseMoved(event);
+    public void mouseMoved(final MouseEvent event) {
+        this.applet.mouseMoved(event);
     }
 
-    @Override
     public void mousePressed() {
-        super.mousePressed();
+        this.applet.mousePressed();
     }
 
-    @Override
-    public void mousePressed(MouseEvent event) {
-        super.mousePressed(event);
+    public void mousePressed(final MouseEvent event) {
+        this.applet.mousePressed(event);
     }
 
-    @Override
     public void mouseReleased() {
-        super.mouseReleased();
+        this.applet.mouseReleased();
     }
 
-    @Override
-    public void mouseReleased(MouseEvent event) {
-        super.mouseReleased(event);
+    public void mouseReleased(final MouseEvent event) {
+        this.applet.mouseReleased(event);
     }
 
-    @Override
     public void mouseWheel() {
-        super.mouseWheel();
+        this.applet.mouseWheel();
     }
 
-    @Override
-    public void mouseWheel(MouseEvent event) {
-        super.mouseWheel(event);
+    public void mouseWheel(final MouseEvent event) {
+        this.applet.mouseWheel(event);
     }
 
-    @Override
     public void noClip() {
-        super.noClip();
+        this.applet.noClip();
     }
 
-    @Override
     public void noCursor() {
-        super.noCursor();
+        this.applet.noCursor();
     }
 
-    @Override
     public void noFill() {
-        super.noFill();
+        this.applet.noFill();
     }
 
-    @Override
     public void noLights() {
-        super.noLights();
+        this.applet.noLights();
     }
 
-    @Override
     public synchronized void noLoop() {
-        super.noLoop();
+        this.applet.noLoop();
     }
 
-    @Override
     public void noSmooth() {
-        super.noSmooth();
+        this.applet.noSmooth();
     }
 
-    @Override
     public void noStroke() {
-        super.noStroke();
+        this.applet.noStroke();
     }
 
-    @Override
     public void noTexture() {
-        super.noTexture();
+        this.applet.noTexture();
     }
 
-    @Override
     public void noTint() {
-        super.noTint();
+        this.applet.noTint();
     }
 
-    @Override
-    public float noise(float x) {
-        return super.noise(x);
+    public float noise(final float x) {
+        return this.applet.noise(x);
     }
 
-    @Override
-    public float noise(float x, float y) {
-        return super.noise(x, y);
+    public float noise(final float x, final float y) {
+        return this.applet.noise(x, y);
     }
 
-    @Override
-    public float noise(float x, float y, float z) {
-        return super.noise(x, y, z);
+    public float noise(final float x, final float y, final float z) {
+        return this.applet.noise(x, y, z);
     }
 
-    @Override
-    public void noiseDetail(int lod) {
-        super.noiseDetail(lod);
+    public void noiseDetail(final int lod) {
+        this.applet.noiseDetail(lod);
     }
 
-    @Override
-    public void noiseDetail(int lod, float falloff) {
-        super.noiseDetail(lod, falloff);
+    public void noiseDetail(final int lod, final float falloff) {
+        this.applet.noiseDetail(lod, falloff);
     }
 
-    @Override
-    public void noiseSeed(long seed) {
-        super.noiseSeed(seed);
+    public void noiseSeed(final long seed) {
+        this.applet.noiseSeed(seed);
     }
 
-    @Override
-    public void normal(float nx, float ny, float nz) {
-        super.normal(nx, ny, nz);
+    public void normal(final float nx, final float ny, final float nz) {
+        this.applet.normal(nx, ny, nz);
     }
 
-    @Override
-    public void orientation(int which) {
-        super.orientation(which);
+    public void orientation(final int which) {
+        this.applet.orientation(which);
     }
 
-    @Override
     public void ortho() {
-        super.ortho();
+        this.applet.ortho();
     }
 
-    @Override
-    public void ortho(float left, float right, float bottom, float top) {
-        super.ortho(left, right, bottom, top);
+    public void ortho(final float left, final float right, final float bottom, final float top) {
+        this.applet.ortho(left, right, bottom, top);
     }
 
-    @Override
-    public void ortho(float left, float right, float bottom, float top, float near, float far) {
-        super.ortho(left, right, bottom, top, near, far);
+    public void ortho(final float left, final float right, final float bottom, final float top, final float near,
+            final float far) {
+        this.applet.ortho(left, right, bottom, top, near, far);
     }
 
-    @Override
-    public JSONArray parseJSONArray(String input) {
-        return super.parseJSONArray(input);
+    public JSONArray parseJSONArray(final String input) {
+        return this.applet.parseJSONArray(input);
     }
 
-    @Override
-    public JSONObject parseJSONObject(String input) {
-        return super.parseJSONObject(input);
+    public JSONObject parseJSONObject(final String input) {
+        return this.applet.parseJSONObject(input);
     }
 
-    @Override
-    public XML parseXML(String xmlString) {
-        return super.parseXML(xmlString);
+    public XML parseXML(final String xmlString) {
+        return this.applet.parseXML(xmlString);
     }
 
-    @Override
-    public XML parseXML(String xmlString, String options) {
-        return super.parseXML(xmlString, options);
+    public XML parseXML(final String xmlString, final String options) {
+        return this.applet.parseXML(xmlString, options);
     }
 
-    @Override
     public void pause() {
-        super.pause();
+        this.applet.pause();
     }
 
-    @Override
     public void perspective() {
-        super.perspective();
+        this.applet.perspective();
     }
 
-    @Override
-    public void perspective(float fovy, float aspect, float zNear, float zFar) {
-        super.perspective(fovy, aspect, zNear, zFar);
+    public void perspective(final float fovy, final float aspect, final float zNear, final float zFar) {
+        this.applet.perspective(fovy, aspect, zNear, zFar);
     }
 
-    @Override
-    public void pixelDensity(int density) {
-        super.pixelDensity(density);
+    public void pixelDensity(final int density) {
+        this.applet.pixelDensity(density);
     }
 
-    @Override
-    public void point(float x, float y) {
-        super.point(x, y);
+    public void point(final float x, final float y) {
+        this.applet.point(x, y);
     }
 
-    @Override
-    public void point(float x, float y, float z) {
-        super.point(x, y, z);
+    public void point(final float x, final float y, final float z) {
+        this.applet.point(x, y, z);
     }
 
-    @Override
-    public void pointLight(float v1, float v2, float v3, float x, float y, float z) {
-        super.pointLight(v1, v2, v3, x, y, z);
+    public void pointLight(final float v1, final float v2, final float v3, final float x, final float y,
+            final float z) {
+        this.applet.pointLight(v1, v2, v3, x, y, z);
     }
 
-    @Override
     public void pop() {
-        super.pop();
+        this.applet.pop();
     }
 
-    @Override
     public void popMatrix() {
-        super.popMatrix();
+        this.applet.popMatrix();
     }
 
-    @Override
     public void popStyle() {
-        super.popStyle();
+        this.applet.popStyle();
     }
 
-    @Override
-    public void postEvent(Event pe) {
-        super.postEvent(pe);
+    public void postEvent(final Event pe) {
+        this.applet.postEvent(pe);
     }
 
-    @Override
     public void printCamera() {
-        super.printCamera();
+        this.applet.printCamera();
     }
 
-    @Override
     public void printMatrix() {
-        super.printMatrix();
+        this.applet.printMatrix();
     }
 
-    @Override
     public void printProjection() {
-        super.printProjection();
+        this.applet.printProjection();
     }
 
-    @Override
     public void push() {
-        super.push();
+        this.applet.push();
     }
 
-    @Override
     public void pushMatrix() {
-        super.pushMatrix();
+        this.applet.pushMatrix();
     }
 
-    @Override
     public void pushStyle() {
-        super.pushStyle();
+        this.applet.pushStyle();
     }
 
-    @Override
-    public void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-        super.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+    public void quad(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3,
+            final float x4, final float y4) {
+        this.applet.quad(x1, y1, x2, y2, x3, y3, x4, y4);
     }
 
-    @Override
-    public void quadraticVertex(float cx, float cy, float x3, float y3) {
-        super.quadraticVertex(cx, cy, x3, y3);
+    public void quadraticVertex(final float cx, final float cy, final float x3, final float y3) {
+        this.applet.quadraticVertex(cx, cy, x3, y3);
     }
 
-    @Override
-    public void quadraticVertex(float cx, float cy, float cz, float x3, float y3, float z3) {
-        super.quadraticVertex(cx, cy, cz, x3, y3, z3);
+    public void quadraticVertex(final float cx, final float cy, final float cz, final float x3, final float y3,
+            final float z3) {
+        this.applet.quadraticVertex(cx, cy, cz, x3, y3, z3);
     }
 
-    @Override
-    public void rect(float a, float b, float c, float d) {
-        super.rect(a, b, c, d);
+    public void rect(final float a, final float b, final float c, final float d) {
+        this.applet.rect(a, b, c, d);
     }
 
-    @Override
-    public void rect(float a, float b, float c, float d, float r) {
-        super.rect(a, b, c, d, r);
+    public void rect(final float a, final float b, final float c, final float d, final float r) {
+        this.applet.rect(a, b, c, d, r);
     }
 
-    @Override
-    public void rect(float a, float b, float c, float d, float tl, float tr, float br, float bl) {
-        super.rect(a, b, c, d, tl, tr, br, bl);
+    public void rect(final float a, final float b, final float c, final float d, final float tl, final float tr,
+            final float br, final float bl) {
+        this.applet.rect(a, b, c, d, tl, tr, br, bl);
     }
 
-    @Override
-    public void rectMode(int mode) {
-        super.rectMode(mode);
+    public void rectMode(final int mode) {
+        this.applet.rectMode(mode);
     }
 
-    @Override
     public synchronized void redraw() {
-        super.redraw();
+        this.applet.redraw();
     }
 
-    @Override
-    public void registerMethod(String methodName, Object target) {
-        super.registerMethod(methodName, target);
+    public void registerMethod(final String methodName, final Object target) {
+        this.applet.registerMethod(methodName, target);
     }
 
-    @Override
-    public PImage requestImage(String filename) {
-        return super.requestImage(filename);
+    public PImage requestImage(final String filename) {
+        return this.applet.requestImage(filename);
     }
 
-    @Override
-    public PImage requestImage(String filename, String extension) {
-        return super.requestImage(filename, extension);
+    public PImage requestImage(final String filename, final String extension) {
+        return this.applet.requestImage(filename, extension);
     }
 
-    @Override
     public void resetMatrix() {
-        super.resetMatrix();
+        this.applet.resetMatrix();
     }
 
-    @Override
     public void resetShader() {
-        super.resetShader();
+        this.applet.resetShader();
     }
 
-    @Override
-    public void resetShader(int kind) {
-        super.resetShader(kind);
+    public void resetShader(final int kind) {
+        this.applet.resetShader(kind);
     }
 
-    @Override
     public void resume() {
-        super.resume();
+        this.applet.resume();
     }
 
-    @Override
-    public void rotate(float angle) {
-        super.rotate(angle);
+    public void rotate(final float angle) {
+        this.applet.rotate(angle);
     }
 
-    @Override
-    public void rotate(float angle, float x, float y, float z) {
-        super.rotate(angle, x, y, z);
+    public void rotate(final float angle, final float x, final float y, final float z) {
+        this.applet.rotate(angle, x, y, z);
     }
 
-    @Override
-    public void rotateX(float angle) {
-        super.rotateX(angle);
+    public void rotateX(final float angle) {
+        this.applet.rotateX(angle);
     }
 
-    @Override
-    public void rotateY(float angle) {
-        super.rotateY(angle);
+    public void rotateY(final float angle) {
+        this.applet.rotateY(angle);
     }
 
-    @Override
-    public void rotateZ(float angle) {
-        super.rotateZ(angle);
+    public void rotateZ(final float angle) {
+        this.applet.rotateZ(angle);
     }
 
-    @Override
-    public void save(String filename) {
-        super.save(filename);
+    public void save(final String filename) {
+        this.applet.save(filename);
     }
 
-    @Override
-    public void saveBytes(String filename, byte[] data) {
-        super.saveBytes(filename, data);
+    public void saveBytes(final String filename, final byte[] data) {
+        this.applet.saveBytes(filename, data);
     }
 
-    @Override
-    public File saveFile(String where) {
-        return super.saveFile(where);
+    public File saveFile(final String where) {
+        return this.applet.saveFile(where);
     }
 
-    @Override
     public void saveFrame() {
-        super.saveFrame();
+        this.applet.saveFrame();
     }
 
-    @Override
-    public void saveFrame(String filename) {
-        super.saveFrame(filename);
+    public void saveFrame(final String filename) {
+        this.applet.saveFrame(filename);
     }
 
-    @Override
-    public boolean saveJSONArray(JSONArray json, String filename) {
-        return super.saveJSONArray(json, filename);
+    public boolean saveJSONArray(final JSONArray json, final String filename) {
+        return this.applet.saveJSONArray(json, filename);
     }
 
-    @Override
-    public boolean saveJSONArray(JSONArray json, String filename, String options) {
-        return super.saveJSONArray(json, filename, options);
+    public boolean saveJSONArray(final JSONArray json, final String filename, final String options) {
+        return this.applet.saveJSONArray(json, filename, options);
     }
 
-    @Override
-    public boolean saveJSONObject(JSONObject json, String filename) {
-        return super.saveJSONObject(json, filename);
+    public boolean saveJSONObject(final JSONObject json, final String filename) {
+        return this.applet.saveJSONObject(json, filename);
     }
 
-    @Override
-    public boolean saveJSONObject(JSONObject json, String filename, String options) {
-        return super.saveJSONObject(json, filename, options);
+    public boolean saveJSONObject(final JSONObject json, final String filename, final String options) {
+        return this.applet.saveJSONObject(json, filename, options);
     }
 
-    @Override
-    public String savePath(String where) {
-        return super.savePath(where);
+    public String savePath(final String where) {
+        return this.applet.savePath(where);
     }
 
-    @Override
-    public boolean saveStream(String target, String source) {
-        return super.saveStream(target, source);
+    public boolean saveStream(final String target, final String source) {
+        return this.applet.saveStream(target, source);
     }
 
-    @Override
-    public boolean saveStream(File target, String source) {
-        return super.saveStream(target, source);
+    public boolean saveStream(final File target, final String source) {
+        return this.applet.saveStream(target, source);
     }
 
-    @Override
-    public boolean saveStream(String target, InputStream source) {
-        return super.saveStream(target, source);
+    public boolean saveStream(final String target, final InputStream source) {
+        return this.applet.saveStream(target, source);
     }
 
-    @Override
-    public void saveStrings(String filename, String[] data) {
-        super.saveStrings(filename, data);
+    public void saveStrings(final String filename, final String[] data) {
+        this.applet.saveStrings(filename, data);
     }
 
-    @Override
-    public boolean saveTable(Table table, String filename) {
-        return super.saveTable(table, filename);
+    public boolean saveTable(final Table table, final String filename) {
+        return this.applet.saveTable(table, filename);
     }
 
-    @Override
-    public boolean saveTable(Table table, String filename, String options) {
-        return super.saveTable(table, filename, options);
+    public boolean saveTable(final Table table, final String filename, final String options) {
+        return this.applet.saveTable(table, filename, options);
     }
 
-    @Override
-    public boolean saveXML(XML xml, String filename) {
-        return super.saveXML(xml, filename);
+    public boolean saveXML(final XML xml, final String filename) {
+        return this.applet.saveXML(xml, filename);
     }
 
-    @Override
-    public boolean saveXML(XML xml, String filename, String options) {
-        return super.saveXML(xml, filename, options);
+    public boolean saveXML(final XML xml, final String filename, final String options) {
+        return this.applet.saveXML(xml, filename, options);
     }
 
-    @Override
-    public void scale(float s) {
-        super.scale(s);
+    public void scale(final float s) {
+        this.applet.scale(s);
     }
 
-    @Override
-    public void scale(float x, float y) {
-        super.scale(x, y);
+    public void scale(final float x, final float y) {
+        this.applet.scale(x, y);
     }
 
-    @Override
-    public void scale(float x, float y, float z) {
-        super.scale(x, y, z);
+    public void scale(final float x, final float y, final float z) {
+        this.applet.scale(x, y, z);
     }
 
-    @Override
-    public float screenX(float x, float y) {
-        return super.screenX(x, y);
+    public float screenX(final float x, final float y) {
+        return this.applet.screenX(x, y);
     }
 
-    @Override
-    public float screenX(float x, float y, float z) {
-        return super.screenX(x, y, z);
+    public float screenX(final float x, final float y, final float z) {
+        return this.applet.screenX(x, y, z);
     }
 
-    @Override
-    public float screenY(float x, float y) {
-        return super.screenY(x, y);
+    public float screenY(final float x, final float y) {
+        return this.applet.screenY(x, y);
     }
 
-    @Override
-    public float screenY(float x, float y, float z) {
-        return super.screenY(x, y, z);
+    public float screenY(final float x, final float y, final float z) {
+        return this.applet.screenY(x, y, z);
     }
 
-    @Override
-    public float screenZ(float x, float y, float z) {
-        return super.screenZ(x, y, z);
+    public float screenZ(final float x, final float y, final float z) {
+        return this.applet.screenZ(x, y, z);
     }
 
-    @Override
-    public void selectFolder(String prompt, String callback) {
-        super.selectFolder(prompt, callback);
+    public void selectFolder(final String prompt, final String callback) {
+        this.applet.selectFolder(prompt, callback);
     }
 
-    @Override
-    public void selectFolder(String prompt, String callback, File file) {
-        super.selectFolder(prompt, callback, file);
+    public void selectFolder(final String prompt, final String callback, final File file) {
+        this.applet.selectFolder(prompt, callback, file);
     }
 
-    @Override
-    public void selectFolder(String prompt, String callback, File file, Object callbackObject) {
-        super.selectFolder(prompt, callback, file, callbackObject);
+    public void selectFolder(final String prompt, final String callback, final File file, final Object callbackObject) {
+        this.applet.selectFolder(prompt, callback, file, callbackObject);
     }
 
-    @Override
-    public void selectInput(String prompt, String callback) {
-        super.selectInput(prompt, callback);
+    public void selectInput(final String prompt, final String callback) {
+        this.applet.selectInput(prompt, callback);
     }
 
-    @Override
-    public void selectInput(String prompt, String callback, File file) {
-        super.selectInput(prompt, callback, file);
+    public void selectInput(final String prompt, final String callback, final File file) {
+        this.applet.selectInput(prompt, callback, file);
     }
 
-    @Override
-    public void selectInput(String prompt, String callback, File file, Object callbackObject) {
-        super.selectInput(prompt, callback, file, callbackObject);
+    public void selectInput(final String prompt, final String callback, final File file, final Object callbackObject) {
+        this.applet.selectInput(prompt, callback, file, callbackObject);
     }
 
-    @Override
-    public void selectOutput(String prompt, String callback) {
-        super.selectOutput(prompt, callback);
+    public void selectOutput(final String prompt, final String callback) {
+        this.applet.selectOutput(prompt, callback);
     }
 
-    @Override
-    public void selectOutput(String prompt, String callback, File file) {
-        super.selectOutput(prompt, callback, file);
+    public void selectOutput(final String prompt, final String callback, final File file) {
+        this.applet.selectOutput(prompt, callback, file);
     }
 
-    @Override
-    public void selectOutput(String prompt, String callback, File file, Object callbackObject) {
-        super.selectOutput(prompt, callback, file, callbackObject);
+    public void selectOutput(final String prompt, final String callback, final File file, final Object callbackObject) {
+        this.applet.selectOutput(prompt, callback, file, callbackObject);
     }
 
-    @Override
-    public void set(int x, int y, int c) {
-        super.set(x, y, c);
+    public void set(final int x, final int y, final int c) {
+        this.applet.set(x, y, c);
     }
 
-    @Override
-    public void set(int x, int y, PImage img) {
-        super.set(x, y, img);
+    public void set(final int x, final int y, final PImage img) {
+        this.applet.set(x, y, img);
     }
 
-    @Override
-    public void setMatrix(PMatrix source) {
-        super.setMatrix(source);
+    public void setMatrix(final PMatrix source) {
+        this.applet.setMatrix(source);
     }
 
-    @Override
-    public void setMatrix(PMatrix2D source) {
-        super.setMatrix(source);
+    public void setMatrix(final PMatrix2D source) {
+        this.applet.setMatrix(source);
     }
 
-    @Override
-    public void setMatrix(PMatrix3D source) {
-        super.setMatrix(source);
+    public void setMatrix(final PMatrix3D source) {
+        this.applet.setMatrix(source);
     }
 
-    @Override
-    public void setSize(int width, int height) {
-        super.setSize(width, height);
+    public void setSize(final int width, final int height) {
+        this.applet.setSize(width, height);
     }
 
-    @Override
     public void settings() {
-        super.settings();
+        this.applet.settings();
     }
 
-    @Override
     public void setup() {
-        super.setup();
+        this.applet.setup();
     }
 
-    @Override
-    public void shader(PShader shader) {
-        super.shader(shader);
+    public void shader(final PShader shader) {
+        this.applet.shader(shader);
     }
 
-    @Override
-    public void shader(PShader shader, int kind) {
-        super.shader(shader, kind);
+    public void shader(final PShader shader, final int kind) {
+        this.applet.shader(shader, kind);
     }
 
-    @Override
-    public void shape(PShape shape) {
-        super.shape(shape);
+    public void shape(final PShape shape) {
+        this.applet.shape(shape);
     }
 
-    @Override
-    public void shape(PShape shape, float x, float y) {
-        super.shape(shape, x, y);
+    public void shape(final PShape shape, final float x, final float y) {
+        this.applet.shape(shape, x, y);
     }
 
-    @Override
-    public void shape(PShape shape, float a, float b, float c, float d) {
-        super.shape(shape, a, b, c, d);
+    public void shape(final PShape shape, final float a, final float b, final float c, final float d) {
+        this.applet.shape(shape, a, b, c, d);
     }
 
-    @Override
-    public void shapeMode(int mode) {
-        super.shapeMode(mode);
+    public void shapeMode(final int mode) {
+        this.applet.shapeMode(mode);
     }
 
-    @Override
-    public void shearX(float angle) {
-        super.shearX(angle);
+    public void shearX(final float angle) {
+        this.applet.shearX(angle);
     }
 
-    @Override
-    public void shearY(float angle) {
-        super.shearY(angle);
+    public void shearY(final float angle) {
+        this.applet.shearY(angle);
     }
 
-    @Override
-    public void shininess(float shine) {
-        super.shininess(shine);
+    public void shininess(final float shine) {
+        this.applet.shininess(shine);
     }
 
-    @Override
-    public void size(int width, int height) {
-        super.size(width, height);
+    public void size(final int width, final int height) {
+        this.applet.size(width, height);
     }
 
-    @Override
-    public void size(int width, int height, String renderer) {
-        super.size(width, height, renderer);
+    public void size(final int width, final int height, final String renderer) {
+        this.applet.size(width, height, renderer);
     }
 
-    @Override
-    public void size(int width, int height, String renderer, String path) {
-        super.size(width, height, renderer, path);
+    public void size(final int width, final int height, final String renderer, final String path) {
+        this.applet.size(width, height, renderer, path);
     }
 
-    @Override
-    public File sketchFile(String where) {
-        return super.sketchFile(where);
+    public File sketchFile(final String where) {
+        return this.applet.sketchFile(where);
     }
 
-    @Override
     public String sketchPath() {
-        return super.sketchPath();
+        return this.applet.sketchPath();
     }
 
-    @Override
-    public String sketchPath(String where) {
-        return super.sketchPath(where);
+    public String sketchPath(final String where) {
+        return this.applet.sketchPath(where);
     }
 
-    @Override
     public void smooth() {
-        super.smooth();
+        this.applet.smooth();
     }
 
-    @Override
-    public void smooth(int level) {
-        super.smooth(level);
+    public void smooth(final int level) {
+        this.applet.smooth(level);
     }
 
-    @Override
-    public void specular(int rgb) {
-        super.specular(rgb);
+    public void specular(final int rgb) {
+        this.applet.specular(rgb);
     }
 
-    @Override
-    public void specular(float gray) {
-        super.specular(gray);
+    public void specular(final float gray) {
+        this.applet.specular(gray);
     }
 
-    @Override
-    public void specular(float v1, float v2, float v3) {
-        super.specular(v1, v2, v3);
+    public void specular(final float v1, final float v2, final float v3) {
+        this.applet.specular(v1, v2, v3);
     }
 
-    @Override
-    public void sphere(float r) {
-        super.sphere(r);
+    public void sphere(final float r) {
+        this.applet.sphere(r);
     }
 
-    @Override
-    public void sphereDetail(int res) {
-        super.sphereDetail(res);
+    public void sphereDetail(final int res) {
+        this.applet.sphereDetail(res);
     }
 
-    @Override
-    public void sphereDetail(int ures, int vres) {
-        super.sphereDetail(ures, vres);
+    public void sphereDetail(final int ures, final int vres) {
+        this.applet.sphereDetail(ures, vres);
     }
 
-    @Override
-    public void spotLight(float v1, float v2, float v3, float x, float y, float z, float nx, float ny, float nz,
-            float angle, float concentration) {
-        super.spotLight(v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration);
+    public void spotLight(final float v1, final float v2, final float v3, final float x, final float y, final float z,
+            final float nx, final float ny, final float nz,
+            final float angle, final float concentration) {
+        this.applet.spotLight(v1, v2, v3, x, y, z, nx, ny, nz, angle, concentration);
     }
 
-    @Override
-    public void square(float x, float y, float extent) {
-        super.square(x, y, extent);
+    public void square(final float x, final float y, final float extent) {
+        this.applet.square(x, y, extent);
     }
 
-    @Override
     public void start() {
-        super.start();
+        this.applet.start();
     }
 
-    @Override
     public void stop() {
-        super.stop();
+        this.applet.stop();
     }
 
-    @Override
-    public void stroke(int rgb) {
-        super.stroke(rgb);
+    public void stroke(final int rgb) {
+        this.applet.stroke(rgb);
     }
 
-    @Override
-    public void stroke(float gray) {
-        super.stroke(gray);
+    public void stroke(final float gray) {
+        this.applet.stroke(gray);
     }
 
-    @Override
-    public void stroke(int rgb, float alpha) {
-        super.stroke(rgb, alpha);
+    public void stroke(final int rgb, final float alpha) {
+        this.applet.stroke(rgb, alpha);
     }
 
-    @Override
-    public void stroke(float gray, float alpha) {
-        super.stroke(gray, alpha);
+    public void stroke(final float gray, final float alpha) {
+        this.applet.stroke(gray, alpha);
     }
 
-    @Override
-    public void stroke(float v1, float v2, float v3) {
-        super.stroke(v1, v2, v3);
+    public void stroke(final float v1, final float v2, final float v3) {
+        this.applet.stroke(v1, v2, v3);
     }
 
-    @Override
-    public void stroke(float v1, float v2, float v3, float alpha) {
-        super.stroke(v1, v2, v3, alpha);
+    public void stroke(final float v1, final float v2, final float v3, final float alpha) {
+        this.applet.stroke(v1, v2, v3, alpha);
     }
 
-    @Override
-    public void strokeCap(int cap) {
-        super.strokeCap(cap);
+    public void strokeCap(final int cap) {
+        this.applet.strokeCap(cap);
     }
 
-    @Override
-    public void strokeJoin(int join) {
-        super.strokeJoin(join);
+    public void strokeJoin(final int join) {
+        this.applet.strokeJoin(join);
     }
 
-    @Override
-    public void strokeWeight(float weight) {
-        super.strokeWeight(weight);
+    public void strokeWeight(final float weight) {
+        this.applet.strokeWeight(weight);
     }
 
-    @Override
-    public void style(PStyle s) {
-        super.style(s);
+    public void style(final PStyle s) {
+        this.applet.style(s);
     }
 
-    @Override
-    public void text(char c, float x, float y) {
-        super.text(c, x, y);
+    public void text(final char c, final float x, final float y) {
+        this.applet.text(c, x, y);
     }
 
-    @Override
-    public void text(String str, float x, float y) {
-        super.text(str, x, y);
+    public void text(final String str, final float x, final float y) {
+        this.applet.text(str, x, y);
     }
 
-    @Override
-    public void text(int num, float x, float y) {
-        super.text(num, x, y);
+    public void text(final int num, final float x, final float y) {
+        this.applet.text(num, x, y);
     }
 
-    @Override
-    public void text(float num, float x, float y) {
-        super.text(num, x, y);
+    public void text(final float num, final float x, final float y) {
+        this.applet.text(num, x, y);
     }
 
-    @Override
-    public void text(char c, float x, float y, float z) {
-        super.text(c, x, y, z);
+    public void text(final char c, final float x, final float y, final float z) {
+        this.applet.text(c, x, y, z);
     }
 
-    @Override
-    public void text(String str, float x, float y, float z) {
-        super.text(str, x, y, z);
+    public void text(final String str, final float x, final float y, final float z) {
+        this.applet.text(str, x, y, z);
     }
 
-    @Override
-    public void text(int num, float x, float y, float z) {
-        super.text(num, x, y, z);
+    public void text(final int num, final float x, final float y, final float z) {
+        this.applet.text(num, x, y, z);
     }
 
-    @Override
-    public void text(float num, float x, float y, float z) {
-        super.text(num, x, y, z);
+    public void text(final float num, final float x, final float y, final float z) {
+        this.applet.text(num, x, y, z);
     }
 
-    @Override
-    public void text(char[] chars, int start, int stop, float x, float y) {
-        super.text(chars, start, stop, x, y);
+    public void text(final char[] chars, final int start, final int stop, final float x, final float y) {
+        this.applet.text(chars, start, stop, x, y);
     }
 
-    @Override
-    public void text(String str, float x1, float y1, float x2, float y2) {
-        super.text(str, x1, y1, x2, y2);
+    public void text(final String str, final float x1, final float y1, final float x2, final float y2) {
+        this.applet.text(str, x1, y1, x2, y2);
     }
 
-    @Override
-    public void text(char[] chars, int start, int stop, float x, float y, float z) {
-        super.text(chars, start, stop, x, y, z);
+    public void text(final char[] chars, final int start, final int stop, final float x, final float y, final float z) {
+        this.applet.text(chars, start, stop, x, y, z);
     }
 
-    @Override
-    public void textAlign(int alignX) {
-        super.textAlign(alignX);
+    public void textAlign(final int alignX) {
+        this.applet.textAlign(alignX);
     }
 
-    @Override
-    public void textAlign(int alignX, int alignY) {
-        super.textAlign(alignX, alignY);
+    public void textAlign(final int alignX, final int alignY) {
+        this.applet.textAlign(alignX, alignY);
     }
 
-    @Override
     public float textAscent() {
-        return super.textAscent();
+        return this.applet.textAscent();
     }
 
-    @Override
     public float textDescent() {
-        return super.textDescent();
+        return this.applet.textDescent();
     }
 
-    @Override
-    public void textFont(PFont which) {
-        super.textFont(which);
+    public void textFont(final PFont which) {
+        this.applet.textFont(which);
     }
 
-    @Override
-    public void textFont(PFont which, float size) {
-        super.textFont(which, size);
+    public void textFont(final PFont which, final float size) {
+        this.applet.textFont(which, size);
     }
 
-    @Override
-    public void textLeading(float leading) {
-        super.textLeading(leading);
+    public void textLeading(final float leading) {
+        this.applet.textLeading(leading);
     }
 
-    @Override
-    public void textMode(int mode) {
-        super.textMode(mode);
+    public void textMode(final int mode) {
+        this.applet.textMode(mode);
     }
 
-    @Override
-    public void textSize(float size) {
-        super.textSize(size);
+    public void textSize(final float size) {
+        this.applet.textSize(size);
     }
 
-    @Override
-    public float textWidth(char c) {
-        return super.textWidth(c);
+    public float textWidth(final char c) {
+        return this.applet.textWidth(c);
     }
 
-    @Override
-    public float textWidth(String str) {
-        return super.textWidth(str);
+    public float textWidth(final String str) {
+        return this.applet.textWidth(str);
     }
 
-    @Override
-    public float textWidth(char[] chars, int start, int length) {
-        return super.textWidth(chars, start, length);
+    public float textWidth(final char[] chars, final int start, final int length) {
+        return this.applet.textWidth(chars, start, length);
     }
 
-    @Override
-    public void texture(PImage image) {
-        super.texture(image);
+    public void texture(final PImage image) {
+        this.applet.texture(image);
     }
 
-    @Override
-    public void textureMode(int mode) {
-        super.textureMode(mode);
+    public void textureMode(final int mode) {
+        this.applet.textureMode(mode);
     }
 
-    @Override
-    public void textureWrap(int wrap) {
-        super.textureWrap(wrap);
+    public void textureWrap(final int wrap) {
+        this.applet.textureWrap(wrap);
     }
 
-    @Override
-    public void thread(String name) {
-        super.thread(name);
+    public void thread(final String name) {
+        this.applet.thread(name);
     }
 
-    @Override
-    public void tint(int rgb) {
-        super.tint(rgb);
+    public void tint(final int rgb) {
+        this.applet.tint(rgb);
     }
 
-    @Override
-    public void tint(float gray) {
-        super.tint(gray);
+    public void tint(final float gray) {
+        this.applet.tint(gray);
     }
 
-    @Override
-    public void tint(int rgb, float alpha) {
-        super.tint(rgb, alpha);
+    public void tint(final int rgb, final float alpha) {
+        this.applet.tint(rgb, alpha);
     }
 
-    @Override
-    public void tint(float gray, float alpha) {
-        super.tint(gray, alpha);
+    public void tint(final float gray, final float alpha) {
+        this.applet.tint(gray, alpha);
     }
 
-    @Override
-    public void tint(float v1, float v2, float v3) {
-        super.tint(v1, v2, v3);
+    public void tint(final float v1, final float v2, final float v3) {
+        this.applet.tint(v1, v2, v3);
     }
 
-    @Override
-    public void tint(float v1, float v2, float v3, float alpha) {
-        super.tint(v1, v2, v3, alpha);
+    public void tint(final float v1, final float v2, final float v3, final float alpha) {
+        this.applet.tint(v1, v2, v3, alpha);
     }
 
-    @Override
-    public void translate(float x, float y) {
-        super.translate(x, y);
+    public void translate(final float x, final float y) {
+        this.applet.translate(x, y);
     }
 
-    @Override
-    public void translate(float x, float y, float z) {
-        super.translate(x, y, z);
+    public void translate(final float x, final float y, final float z) {
+        this.applet.translate(x, y, z);
     }
 
-    @Override
-    public void triangle(float x1, float y1, float x2, float y2, float x3, float y3) {
-        super.triangle(x1, y1, x2, y2, x3, y3);
+    public void triangle(final float x1, final float y1, final float x2, final float y2, final float x3,
+            final float y3) {
+        this.applet.triangle(x1, y1, x2, y2, x3, y3);
     }
 
-    @Override
-    public void unregisterMethod(String name, Object target) {
-        super.unregisterMethod(name, target);
+    public void unregisterMethod(final String name, final Object target) {
+        this.applet.unregisterMethod(name, target);
     }
 
-    @Override
     public void updatePixels() {
-        super.updatePixels();
+        this.applet.updatePixels();
+    }
+
+    public void updatePixels(final int x1, final int y1, final int x2, final int y2) {
+        this.applet.updatePixels(x1, y1, x2, y2);
+    }
+
+    public void vertex(final float[] v) {
+        this.applet.vertex(v);
+    }
+
+    public void vertex(final float x, final float y) {
+        this.applet.vertex(x, y);
+    }
+
+    public void vertex(final float x, final float y, final float z) {
+        this.applet.vertex(x, y, z);
+    }
+
+    public void vertex(final float x, final float y, final float u, final float v) {
+        this.applet.vertex(x, y, u, v);
+    }
+
+    public void vertex(final float x, final float y, final float z, final float u, final float v) {
+        this.applet.vertex(x, y, z, u, v);
     }
 
     @Override
-    public void updatePixels(int x1, int y1, int x2, int y2) {
-        super.updatePixels(x1, y1, x2, y2);
-    }
-
-    @Override
-    public void vertex(float[] v) {
-        super.vertex(v);
-    }
-
-    @Override
-    public void vertex(float x, float y) {
-        super.vertex(x, y);
-    }
-
-    @Override
-    public void vertex(float x, float y, float z) {
-        super.vertex(x, y, z);
-    }
-
-    @Override
-    public void vertex(float x, float y, float u, float v) {
-        super.vertex(x, y, u, v);
-    }
-
-    @Override
-    public void vertex(float x, float y, float z, float u, float v) {
-        super.vertex(x, y, z, u, v);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public boolean equals(final Object obj) {
+        return this.applet.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return this.applet.hashCode();
     }
 
     @Override
     public String toString() {
-        return super.toString();
+        return this.applet.toString();
     }
-
-    // region `protected` methods.
-    @Override
-    protected PGraphics createPrimaryGraphics() {
-        return super.createPrimaryGraphics();
-    }
-
-    @Override
-    protected void dequeueEvents() {
-        super.dequeueEvents();
-    }
-
-    @Override
-    protected void handleKeyEvent(KeyEvent event) {
-        super.handleKeyEvent(event);
-    }
-
-    @Override
-    protected void handleMethods(String methodName) {
-        super.handleMethods(methodName);
-    }
-
-    @Override
-    protected void handleMethods(String methodName, Object[] args) {
-        super.handleMethods(methodName, args);
-    }
-
-    @Override
-    protected void handleMouseEvent(MouseEvent event) {
-        super.handleMouseEvent(event);
-    }
-
-    @Override
-    protected PSurface initSurface() {
-        return super.initSurface();
-    }
-
-    @Override
-    protected PImage loadImageIO(String filename) {
-        return super.loadImageIO(filename);
-    }
-
-    @Override
-    protected PImage loadImageTGA(String filename) throws IOException {
-        return super.loadImageTGA(filename);
-    }
-
-    @Override
-    protected PGraphics makeGraphics(int w, int h, String renderer, String path, boolean primary) {
-        return super.makeGraphics(w, h, renderer, path, primary);
-    }
-
-    @Override
-    protected void printStackTrace(Throwable t) {
-        super.printStackTrace(t);
-    }
-
-    @Override
-    protected void runSketch() {
-        super.runSketch();
-    }
-
-    @Override
-    protected void runSketch(String[] args) {
-        super.runSketch(args);
-    }
-
-    @Override
-    protected void showSurface() {
-        super.showSurface();
-    }
-
-    @Override
-    protected void startSurface() {
-        super.startSurface();
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-
-    @Override
-    @Deprecated
-    protected void finalize() throws Throwable {
-        super.finalize();
-    }
-    // endregion
-
 }
