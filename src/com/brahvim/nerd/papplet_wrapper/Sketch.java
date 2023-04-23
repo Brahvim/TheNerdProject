@@ -555,7 +555,6 @@ public class Sketch extends PApplet {
 		}
 
 		this.centerWindow();
-
 		super.rectMode(PConstants.CENTER);
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);

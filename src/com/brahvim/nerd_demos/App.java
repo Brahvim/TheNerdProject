@@ -18,7 +18,6 @@ public class App {
 
     /*
      * // TODO: Make it easier to animate, somehow!
-     * // TODO: Modularize `Sketch` further. Good code!~
      * // TODO: Collision Algorithms (also for 3D space)?!
      * // TODO: REPLACE, THOSE, `while`, LOOPS! (Slow them DOWN!)
      * // TODO: ...especially the one in `post()` for fullscreen.
