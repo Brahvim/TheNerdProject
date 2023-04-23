@@ -95,10 +95,6 @@ public class DemoScene3 extends NerdScene {
         if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
             velMultiplier = 2;
 
-        if (!CAMERA.holdMouse && SKETCH.mousePressed) {
-            // CAMERA.
-        }
-
         // region Roll.
         if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
             CAMERA.up.x += velMultiplier * 0.01f;
