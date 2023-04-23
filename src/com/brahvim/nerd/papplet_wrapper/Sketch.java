@@ -976,7 +976,7 @@ public class Sketch extends PApplet {
 
 	protected void framelyWindowSetup() {
 		switch (this.RENDERER) {
-			case PConstants.JAVA2D:
+			case PConstants.JAVA2D -> {
 				// Fullscreen?
 				// https://stackoverflow.com/a/11570414/
 
@@ -988,11 +988,13 @@ public class Sketch extends PApplet {
 						;
 
 					if (this.fullscreen) {
-						// If `super.displayDim` are set to the actual (AWT) ones:
+						// If `super.display*` are set to the actual (AWT) ones:
 
 						// this.sketchFrame.setLocation(-7, -30);
 						// this.sketchFrame.setSize(super.displayWidth - 354,
 						// super.displayHeight - 270);
+
+						// Though these are arbitrary numbers, they work cross-platform, surprisingly!:
 
 						// this.sketchFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 						this.sketchFrame.setLocation(-8, -30);
@@ -1013,8 +1015,9 @@ public class Sketch extends PApplet {
 				else
 					super.noCursor();
 				break;
+			}
 
-			case PConstants.P3D, PConstants.P2D:
+			case PConstants.P3D, PConstants.P2D -> {
 				if (this.pfullscreen != this.fullscreen) {
 					this.glWindow.setFullscreen(this.fullscreen);
 
@@ -1024,8 +1027,8 @@ public class Sketch extends PApplet {
 					// (It didn't, during my tests, surprisingly :O
 					// The window just... waited there and didn't change states O_O
 					// ...and then Processing began rendering again :D
-					// Apparently `setFullscreen()` returns `boolean`, meaning that it does
-					// error-checking! Kind of JogAmp!)
+					// Apparently `setFullscreen()` returns a `boolean`, meaning that it does
+					// error-checking! Quite kind of JogAmp!)
 
 					// region Older logic (no time checking!).
 					// while (this.fullscreen ? !this.glWindow.isFullscreen() :
@@ -1055,7 +1058,7 @@ public class Sketch extends PApplet {
 						;
 				}
 				break;
-
+			}
 		}
 	}
 
