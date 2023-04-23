@@ -210,17 +210,17 @@ public abstract class CustomSketchBuilder {
     }
 
     // region `Sketch.CallbackOrder`.
-    public CustomSketchBuilder setPreCallOrder(final Sketch.CallbackOrder p_order) {
+    public CustomSketchBuilder setPreCallOrder(final SceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.preCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder setDrawCallOrder(final Sketch.CallbackOrder p_order) {
+    public CustomSketchBuilder setDrawCallOrder(final SceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.drawCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder setPostCallOrder(final Sketch.CallbackOrder p_order) {
+    public CustomSketchBuilder setPostCallOrder(final SceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.postCallOrder = p_order;
         return this;
     }

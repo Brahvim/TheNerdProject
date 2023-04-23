@@ -19,9 +19,9 @@ import processing.core.PConstants;
     public int width = 400, height = 400, antiAliasing;
     public AlContext.AlContextSettings alContextSettings;
     public HashMap<String, Object> nerdExtensions = new HashMap<>();
-    public Sketch.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
     public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
     public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
+    public SceneManager.SceneManagerSettings.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
     // region Listeners.
     public ArrayList<Consumer<Sketch>> sketchConstructedListeners,

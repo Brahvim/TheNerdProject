@@ -41,7 +41,6 @@ import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
-import com.brahvim.nerd.scene_api.NerdLayer;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
 import com.jogamp.newt.opengl.GLWindow;
@@ -203,8 +202,8 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Instance constants.
-	public final String NAME;
 	public final Robot ROBOT;
+	public final String NAME;
 	public final String RENDERER;
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
@@ -242,48 +241,6 @@ public class Sketch extends PApplet {
 
 	protected final Sketch SKETCH = this;
 	// endregion
-	// endregion
-
-	// region App workflow callbacks scene-or-layer order.
-	/**
-	 * Dictates to every {@link Sketch} instance, the order in which a
-	 * {@link NerdScene} or {@link NerdLayer} is allowed to call certain "workflow
-	 * events" ({@code pre()}, {@code draw()} and {@code post()}) from Processing
-	 * 
-	 * @see {@link Sketch#PRE_FIRST_CALLER} - {@link CallbackOrder#SCENE} by
-	 *      default.
-	 * @see {@link Sketch#DRAW_FIRST_CALLER} - {@link CallbackOrder#LAYER} by
-	 *      default.
-	 * @see {@link Sketch#POST_FIRST_CALLER} - {@link CallbackOrder#LAYER} by
-	 *      default.
-	 */
-	public static enum CallbackOrder {
-		SCENE(), LAYER();
-	}
-
-	/**
-	 * Controls whether {@link NerdScene#pre()} or {@link NerdLayer#pre()} is
-	 * called first by the sketch.
-	 * 
-	 * @apiNote {@link Sketch.CallbackOrder#SCENE} by default.
-	 */
-	public CallbackOrder PRE_FIRST_CALLER = CallbackOrder.SCENE;
-
-	/**
-	 * Controls whether {@link NerdScene#draw()} or {@link NerdLayer#draw()} is
-	 * called first by the sketch.
-	 * 
-	 * @apiNote {@link Sketch.CallbackOrder#LAYER} by default.
-	 */
-	public CallbackOrder DRAW_FIRST_CALLER = CallbackOrder.LAYER;
-
-	/**
-	 * Controls whether {@link NerdScene#post()} or {@link NerdLayer#post()} is
-	 * called first by the sketch.
-	 * 
-	 * @apiNote {@link Sketch.CallbackOrder#LAYER} by default.
-	 */
-	public CallbackOrder POST_FIRST_CALLER = CallbackOrder.LAYER;
 	// endregion
 
 	// region Frame-wise states, Processing style (modifiable!).
@@ -381,19 +338,7 @@ public class Sketch extends PApplet {
 	// region Construction, `settings()`...
 	public Sketch(final SketchKey p_key) {
 		Objects.requireNonNull(p_key, "Please use a `SketchKey` instance to make a `Sketch`!");
-
 		// region Key settings.
-		// region Setting `Sketch.CallbackOrder`s.
-		if (p_key.preCallOrder != null)
-			this.PRE_FIRST_CALLER = p_key.preCallOrder;
-
-		if (p_key.drawCallOrder != null)
-			this.DRAW_FIRST_CALLER = p_key.drawCallOrder;
-
-		if (p_key.postCallOrder != null)
-			this.POST_FIRST_CALLER = p_key.postCallOrder;
-		// endregion
-
 		// region Listeners!...
 		this.SETTINGS_LISTENERS = p_key.settingsListeners;
 		this.SETUP_LISTENERS = p_key.setupListeners;

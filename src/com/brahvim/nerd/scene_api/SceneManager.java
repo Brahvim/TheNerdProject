@@ -57,6 +57,48 @@ public class SceneManager {
 
     public static class SceneManagerSettings {
 
+        // region App workflow callbacks scene-or-layer order.
+        /**
+         * Dictates to every {@link SceneManager} instance, the order in which a
+         * {@link NerdScene} or {@link NerdLayer} is allowed to call certain "workflow
+         * events" ({@code pre()}, {@code draw()} and {@code post()}) from Processing
+         * 
+         * @see {@link SceneManager.SceneManagerSettings#preFirstCaller} -
+         *      {@link CallbackOrder#SCENE} by
+         *      default.
+         * @see {@link SceneManager.SceneManagerSettings#drawFirstCaller} -
+         *      {@link CallbackOrder#LAYER} by
+         *      default.
+         * @see {@link SceneManager.SceneManagerSettings#postFirstCaller} -
+         *      {@link CallbackOrder#LAYER} by
+         *      default.
+         */
+        public static enum CallbackOrder {
+            SCENE(), LAYER();
+        }
+
+        /**
+         * Controls whether {@link NerdScene#pre()} or {@link NerdLayer#pre()} is
+         * called first by the {@link SceneManager}. If the value of this field is ever
+         * {@code null}, it is set to its default, {@link CallbackOrder#SCENE}.
+         */
+        public CallbackOrder preFirstCaller = CallbackOrder.SCENE;
+
+        /**
+         * Controls whether {@link NerdScene#draw()} or {@link NerdLayer#draw()} is
+         * called first by the {@link SceneManager}. If the value of this field is ever
+         * {@code null}, it is set to its default, {@link CallbackOrder#LAYER}.
+         */
+        public CallbackOrder drawFirstCaller = CallbackOrder.LAYER;
+
+        /**
+         * Controls whether {@link NerdScene#post()} or {@link NerdLayer#post()} is
+         * called first by the {@link SceneManager}. If the value of this field is ever
+         * {@code null}, it is set to its default, {@link CallbackOrder#LAYER}.
+         */
+        public CallbackOrder postFirstCaller = CallbackOrder.LAYER;
+        // endregion
+
         public class OnScenePreload {
 
             private OnScenePreload() {
@@ -112,8 +154,10 @@ public class SceneManager {
             public volatile boolean doClear = false;
 
             /**
-             * Resets {@link Sketch#PRE_FIRST_CALLER}, {@link Sketch#DRAW_FIRST_CALLER}, and
-             * {@link Sketch#POST_FIRST_CALLER} to their default values!
+             * Resets {@link SceneManager.SceneManagerSettings#preFirstCaller},
+             * {@link SceneManager.SceneManagerSettings#drawFirstCaller}, and
+             * {@link SceneManager.SceneManagerSettings#postFirstCaller} to their default
+             * values!
              */
             public volatile boolean resetSceneLayerCallbackOrder = true;
 
@@ -778,9 +822,9 @@ public class SceneManager {
         }
 
         if (this.settings.onSceneSwitch.resetSceneLayerCallbackOrder) {
-            this.SKETCH.PRE_FIRST_CALLER = Sketch.CallbackOrder.SCENE;
-            this.SKETCH.DRAW_FIRST_CALLER = Sketch.CallbackOrder.LAYER;
-            this.SKETCH.POST_FIRST_CALLER = Sketch.CallbackOrder.LAYER;
+            this.settings.preFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
+            this.settings.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+            this.settings.postFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
         }
         // endregion
 

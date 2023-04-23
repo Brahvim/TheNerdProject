@@ -4,10 +4,10 @@ import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
-import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneManager;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.CubeManager;
@@ -39,7 +39,7 @@ public class DemoScene3 extends NerdScene {
 
     @Override
     protected void setup(final SceneState p_state) {
-        SKETCH.DRAW_FIRST_CALLER = Sketch.CallbackOrder.SCENE;
+        MANAGER.settings.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
         SCENE.addLayers(CinematicBars.class);
 
         this.calculateBgGrad();

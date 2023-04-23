@@ -459,13 +459,13 @@ public class NerdScene {
   }
 
   /* `package` */ void runDraw() {
-    if (this.SKETCH.DRAW_FIRST_CALLER == null)
-      throw new NullPointerException("`Sketch::DRAW_CALLBACK_ORDER` cannot be `null`.");
+    if (this.MANAGER.settings.drawFirstCaller == null)
+      this.MANAGER.settings.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.SKETCH.DRAW_FIRST_CALLER) {
+    switch (this.MANAGER.settings.drawFirstCaller) {
       case SCENE -> {
         this.SKETCH.pushMatrix();
         this.SKETCH.pushStyle();
@@ -506,13 +506,13 @@ public class NerdScene {
   }
 
   /* `package` */ void runPost() {
-    if (this.SKETCH.POST_FIRST_CALLER == null)
-      throw new NullPointerException("`Sketch::POST_CALLBACK_ORDER` cannot be `null`.");
+    if (this.MANAGER.settings.postFirstCaller == null)
+      this.MANAGER.settings.postFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.SKETCH.PRE_FIRST_CALLER) {
+    switch (this.MANAGER.settings.preFirstCaller) {
       case SCENE -> {
         this.post();
 
@@ -543,13 +543,13 @@ public class NerdScene {
   }
 
   /* `package` */ void runPre() {
-    if (this.SKETCH.PRE_FIRST_CALLER == null)
-      throw new NullPointerException("`Sketch::PRE_CALLBACK_ORDER` cannot be `null`.");
+    if (this.MANAGER.settings.preFirstCaller == null)
+      this.MANAGER.settings.preFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.SKETCH.PRE_FIRST_CALLER) {
+    switch (this.MANAGER.settings.preFirstCaller) {
       case SCENE -> {
         this.pre();
 
