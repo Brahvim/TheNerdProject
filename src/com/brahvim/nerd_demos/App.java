@@ -6,10 +6,6 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuildArtifacts;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd_demos.scenes.DemoScene4;
-import com.brahvim.nerd_demos.scenes.DemoScene6;
-import com.brahvim.nerd_demos.scenes.Java2dDemoScene;
-import com.brahvim.nerd_demos.scenes.TcpDemoScene;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
@@ -21,18 +17,17 @@ import processing.opengl.PGraphicsOpenGL;
 public class App {
 
     /*
-     * // TODO: Make it easier to animate, somehow!
-     * // TODO: Collision Algorithms (also for 3D space)?!
+     * // TODO: Make it easier to animate, somehow!?
+     * // TODO: Collision Algorithms (also for 3D space).
      * // TODO: REPLACE, THOSE, `while`, LOOPS! (Slow them DOWN!)
      * // TODO: ...especially the one in `post()` for fullscreen.
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
-     * // TODO: Here is a stupid one for an *engine*: 3D-ify shapes!
      */
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
             // LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-            Java2dDemoScene.class;
+            DemoScene1.class;
 
     // region `App`'s *other* fields.
     public static final int BPM = 100,
@@ -56,7 +51,6 @@ public class App {
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
-                .usesJavaRenderer()
                 .setAntiAliasing(4)
                 .addNerdExt(new NerdAlExt(s -> {
                     // ...for `DemoScene3`!!!:

@@ -2577,9 +2577,4 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
-	@Override
-	public void frameMoved(int x, int y) {
-		System.out.printf("Frame moved! `%d`, `%d`.\n", x, y);
-	}
-
 }
