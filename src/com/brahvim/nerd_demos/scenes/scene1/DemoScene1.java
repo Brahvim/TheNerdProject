@@ -24,17 +24,17 @@ public class DemoScene1 extends NerdScene {
 
     @Override
     protected synchronized void preload() {
-        SKETCH.PERSISTENT_ASSETS.add(new PFontAsset(), "data/Arial-Black-48.vlw");
+        SKETCH.ASSETS.add(new PFontAsset(), "data/Arial-Black-48.vlw");
         ASSETS.add(new OggBufferDataAsset(), "data/SceneOne.ogg");
     }
 
     @Override
     protected void setup(final SceneState p_state) {
-        // SKETCH.fullscreen = true;
+        // WINDOW.fullscreen = true;
         if (this.SCENE.getTimesLoaded() == 0)
-            SKETCH.centerWindow();
+            WINDOW.centerWindow();
 
-        this.font = SKETCH.PERSISTENT_ASSETS.get("Arial-Black-48").getData();
+        this.font = SKETCH.ASSETS.get("Arial-Black-48").getData();
         this.ease = new SineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
 
         this.sceneOneAnnounce = new AlSource(App.OPENAL, ASSETS.get("SceneOne").getData());

@@ -58,9 +58,9 @@ public class RevolvingParticlesLayer extends NerdLayer {
             // It doesn't even move ._.
             /*
              * SKETCH.image(this.particleGraphics,
-             * ((i & 1) == 0 ? 1 : -1) * SKETCH.cx
+             * ((i & 1) == 0 ? 1 : -1) * WINDOW.cx
              * + 200 * PApplet.cos(SKETCH.millis() * 0.001f), // angle),
-             * ((i & 1) == 0 ? 1 : -1) * SKETCH.cy
+             * ((i & 1) == 0 ? 1 : -1) * WINDOW.cy
              * + 200 * PApplet.sin(SKETCH.millis() * 0.001f), // angle),
              * 0.5f);
              */
@@ -68,12 +68,12 @@ public class RevolvingParticlesLayer extends NerdLayer {
             // Parabola!
             /*
              * SKETCH.image(this.particleGraphics,
-             * ((i & 1) == 0 ? 1 : -1) * SKETCH.cx
+             * ((i & 1) == 0 ? 1 : -1) * WINDOW.cx
              * + 200 * angle
              * * PApplet.cos(
              * PApplet.sin(SKETCH.millis() * 0.001f // * SKETCH.millis()
              * * SKETCH.millis() * 0.001f * angle)),
-             * ((i & 1) == 0 ? 1 : -1) * SKETCH.cy
+             * ((i & 1) == 0 ? 1 : -1) * WINDOW.cy
              * + 200 * angle
              * * PApplet.sin(
              * PApplet.cos(SKETCH.millis() * 0.001f // * SKETCH.millis()

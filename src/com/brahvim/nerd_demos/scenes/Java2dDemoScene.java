@@ -24,7 +24,7 @@ public class Java2dDemoScene extends NerdScene {
 
     @Override
     protected void draw() {
-        App.OPENAL.setListenerPosition(SKETCH.cx, SKETCH.cy, 0);
+        App.OPENAL.setListenerPosition(WINDOW.cx, WINDOW.cy, 0);
     }
 
     @Override

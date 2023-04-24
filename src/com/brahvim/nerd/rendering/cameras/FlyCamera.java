@@ -3,6 +3,8 @@ package com.brahvim.nerd.rendering.cameras;
 import java.awt.Point;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -18,20 +20,29 @@ public class FlyCamera extends NerdAbstractCamera {
     public boolean holdMouse = true, pholdMouse;
     public float mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
     public PVector front = new PVector(), defaultCamFront = new PVector();
+
+    private final NerdWindowManager WINDOW;
+    private final NerdDisplayManager DISPLAYS;
     // endregion
 
     // region Construction.
     public FlyCamera(final Sketch p_sketch) {
         super(p_sketch);
         this.front = super.pos.copy();
-        super.SKETCH.cursorVisible = false;
+        this.WINDOW = super.SKETCH.WINDOW;
+        this.DISPLAYS = super.SKETCH.DISPLAYS;
+
+        this.WINDOW.cursorVisible = false;
         this.defaultCamFront = this.front.copy();
     }
 
     public FlyCamera(final Sketch p_sketch, final PVector p_defaultFront) {
         super(p_sketch);
         this.front.set(p_defaultFront);
-        super.SKETCH.cursorVisible = false;
+        this.WINDOW = super.SKETCH.WINDOW;
+        this.DISPLAYS = super.SKETCH.DISPLAYS;
+
+        this.WINDOW.cursorVisible = false;
         this.defaultCamFront.set(p_defaultFront);
     }
     // endregion
@@ -124,10 +135,8 @@ public class FlyCamera extends NerdAbstractCamera {
     }
 
     protected void mouseTransform() {
-        if (!this.holdMouse && this.pholdMouse)
-            return;
-
-        if (this.holdMouse && !this.pholdMouse)
+        if (!this.holdMouse && this.pholdMouse
+                || this.holdMouse && !this.pholdMouse)
             return;
 
         // region Update `yaw` and `pitch`, and perform the mouse-lock:
@@ -167,12 +176,13 @@ public class FlyCamera extends NerdAbstractCamera {
     }
 
     private Point calculateMouseLockPos() {
-        if (this.SKETCH.fullscreen)
-            return new Point(this.SKETCH.displayWidthHalf, this.SKETCH.displayHeightHalf);
-        else
-            return new Point(
-                    (int) (super.SKETCH.WINDOW_POSITION.x),
-                    (int) (super.SKETCH.WINDOW_POSITION.y));
+        if (this.WINDOW.fullscreen) {
+            // this.DISPLAYS.updateDisplayRatios();
+            return new Point(this.DISPLAYS.displayWidthHalf, this.DISPLAYS.displayHeightHalf);
+        } else {
+            final PVector position = this.WINDOW.getPosition();
+            return new Point((int) position.x, (int) position.y);
+        }
     }
     // endregion
 

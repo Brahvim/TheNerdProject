@@ -6,7 +6,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuildArtifacts;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
+import com.brahvim.nerd_demos.scenes.DemoScene4;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
@@ -25,7 +25,7 @@ public class App {
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
             // LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-            DemoScene1.class;
+            DemoScene4.class;
 
     // region `App`'s *other* fields.
     public static final int BPM = 100,
@@ -62,7 +62,7 @@ public class App {
                 .addSketchConstructionListener(
                         s -> System.out.println(s.STRINGS.get("Meta.onConstruct")))
 
-                .setSceneManagerSettings(s -> s.onScenePreload.preloadOnlyOnce = false);
+                .setSceneManagerSettings(s -> s.ON_PRELOAD.preloadOnlyOnce = false);
 
         // Build the sketch and collect build artifacts:
         final SketchBuildArtifacts artifacts = builder.build(p_args);

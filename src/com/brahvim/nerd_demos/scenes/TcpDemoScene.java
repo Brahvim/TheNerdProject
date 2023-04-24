@@ -60,7 +60,7 @@ public class TcpDemoScene extends NerdScene {
 	@Override
 	protected void setup(final SceneState p_state) {
 		SKETCH.textSize(25);
-		SKETCH.fullscreen = true;
+		WINDOW.fullscreen = true;
 		SKETCH.getCamera().pos.z = 500;
 	}
 

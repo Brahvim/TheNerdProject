@@ -61,9 +61,9 @@ public class DemoScene4 extends NerdScene {
 
         // Loaded this scene for the first time? Do this!:
         if (App.FIRST_SCENE_CLASS == DemoScene4.class && this.SCENE.getTimesLoaded() == 0) {
-            SKETCH.fullscreen = false;
-            App.WINDOW.setSize(1600, 900);
-            SKETCH.centerWindow();
+            WINDOW.fullscreen = false;
+            WINDOW.setSize(1600, 900);
+            WINDOW.centerWindow();
         } else { // Do not play `this.rubberDuck` if this is the first start!
             App.OPENAL.setListenerVelocity(0, 0, 0);
             App.OPENAL.setListenerPosition(0, 0, 500);
@@ -71,8 +71,8 @@ public class DemoScene4 extends NerdScene {
 
             // for (int i = 0; i < 50; i++) // I literally told OpenAL to do this 50 TIMES.
             this.rubberDuck.setPosition(
-                    5 * (SKETCH.mouseX - SKETCH.cx), 0,
-                    5 * (SKETCH.mouseY - SKETCH.cy));
+                    5 * (SKETCH.mouseX - WINDOW.cx), 0,
+                    5 * (SKETCH.mouseY - WINDOW.cy));
 
             App.OPENAL.unitSize = 1;
             // System.out.println(CAMERA.pos);
@@ -96,7 +96,7 @@ public class DemoScene4 extends NerdScene {
     @Override
     protected void draw() {
         SKETCH.clear();
-        SKETCH.translate(-SKETCH.cx, -SKETCH.cy);
+        SKETCH.translate(-WINDOW.cx, -WINDOW.cy);
 
         this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);
         this.magScroll += (this.magScrollVel *= this.MAG_SCROLL_DECAY_VEL);

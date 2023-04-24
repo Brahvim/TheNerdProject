@@ -38,7 +38,7 @@ public class DemoScene3 extends NerdScene {
 
     @Override
     protected void setup(final SceneState p_state) {
-        MANAGER.settings.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
+        MANAGER.SETTINGS.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
         // SCENE.addLayers(CinematicBars.class);
 
         this.calculateBgGrad();
@@ -140,7 +140,7 @@ public class DemoScene3 extends NerdScene {
     @Override
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_F)) {
-            SKETCH.cursorVisible = !SKETCH.cursorVisible;
+            WINDOW.cursorVisible = !WINDOW.cursorVisible;
             CAMERA.holdMouse = !CAMERA.holdMouse;
         }
     }

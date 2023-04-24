@@ -34,14 +34,6 @@ public abstract class NerdAbstractCamera {
 
     public NerdAbstractCamera(final Sketch p_sketch) {
         this.SKETCH = p_sketch;
-        // this.up = new PVector(0, 1, 0);
-        // this.defaultCamUp = this.up.copy();
-
-        // this.pos = new PVector(this.SKETCH.cx, this.SKETCH.cy,
-        // this.SKETCH.cy / PApplet.tan(PConstants.PI * 30 / 180));
-        // this.defaultCamPos = this.pos.copy();
-
-        // this.useDefaultsFromProcessing();
     }
 
     public abstract void applyMatrix();
@@ -63,8 +55,8 @@ public abstract class NerdAbstractCamera {
                     this.fov, this.aspect, this.near, this.far);
 
             case PConstants.ORTHOGRAPHIC -> this.SKETCH.ortho(
-                    -this.SKETCH.cx, this.SKETCH.cx,
-                    -this.SKETCH.cy, this.SKETCH.cy,
+                    -this.SKETCH.WINDOW.cx, this.SKETCH.WINDOW.cx,
+                    -this.SKETCH.WINDOW.cy, this.SKETCH.WINDOW.cy,
                     this.near, this.far);
 
             default -> throw new UnsupportedOperationException(

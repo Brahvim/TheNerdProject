@@ -25,8 +25,8 @@ public class DemoScene6 extends NerdScene {
     protected void setup(final SceneState p_state) {
         // Loaded this scene for the first time? Do this!:
         if (this.SCENE.getTimesLoaded() == 0) {
-            SKETCH.centerWindow();
-            SKETCH.fullscreen = true;
+            WINDOW.centerWindow();
+            WINDOW.fullscreen = true;
         }
 
         // Need to do this!...:
@@ -35,12 +35,12 @@ public class DemoScene6 extends NerdScene {
         STATE.set("TimesLoaded", this.SCENE.getTimesLoaded());
 
         // Do not forget to do these!:
-        SKETCH.cursorVisible = false;
+        WINDOW.cursorVisible = false;
         SKETCH.setCamera(CAMERA);
         // The camera won't be "auto-used" otherwise!!!
 
         // Give us a "starting position"!:
-        CAMERA.pos.set(SKETCH.cx, this.PLAYER_START_Y);
+        CAMERA.pos.set(WINDOW.cx, this.PLAYER_START_Y);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class DemoScene6 extends NerdScene {
     @Override
     public void keyPressed() {
         if (SKETCH.keyIsPressed(KeyEvent.VK_F)) {
-            SKETCH.cursorVisible = !SKETCH.cursorVisible;
+            WINDOW.cursorVisible = !WINDOW.cursorVisible;
             CAMERA.holdMouse = !CAMERA.holdMouse;
         }
 

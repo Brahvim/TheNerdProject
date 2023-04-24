@@ -27,7 +27,7 @@ public class DemoScene5 extends NerdScene {
         SKETCH.text(this.TEXT, 0, 0);
         SKETCH.popMatrix();
 
-        SKETCH.circle(SKETCH.mouseX - SKETCH.cx, SKETCH.mouseY - SKETCH.cy, 20);
+        SKETCH.circle(SKETCH.mouseX - WINDOW.cx, SKETCH.mouseY - WINDOW.cy, 20);
     }
 
     @Override

@@ -2,9 +2,9 @@ package com.brahvim.nerd.scene_api;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
@@ -131,6 +131,14 @@ public class SceneManager {
              */
             public volatile boolean completeWithinPreloadCall = true;
 
+            /**
+             * The maximum number of threads multithreaded asset loading started
+             * in {@link NerdScene#preload()} can use.
+             * 
+             * @apiNote {@code 6} by default!
+             */
+            public volatile int maxExecutorThreads = 6;
+
         }
 
         public class OnSceneSwitch {
@@ -163,14 +171,14 @@ public class SceneManager {
 
         }
 
-        public final SceneManager.SceneManagerSettings.OnSceneSwitch onSceneSwitch = new OnSceneSwitch();
+        public final SceneManager.SceneManagerSettings.OnSceneSwitch ON_SWITCH = new OnSceneSwitch();
 
-        public final SceneManager.SceneManagerSettings.OnScenePreload onScenePreload = new OnScenePreload();
+        public final SceneManager.SceneManagerSettings.OnScenePreload ON_PRELOAD = new OnScenePreload();
 
     }
     // endregion
 
-    public SceneManager.SceneManagerSettings settings;
+    public final SceneManager.SceneManagerSettings SETTINGS;
 
     // region `private` fields.
     /**
@@ -198,7 +206,8 @@ public class SceneManager {
      */
 
     // region Sketch Event Listeners.
-    private final ArrayList<SceneChangeListener> SCENE_CHANGE_LISTENERS;
+    private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS; // May get passed to constructor!
+    private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0);
 
     @SuppressWarnings("unused")
     private Sketch.SketchMouseListener mouseListener;
@@ -207,7 +216,7 @@ public class SceneManager {
     private Sketch.SketchTouchListener touchListener;
 
     @SuppressWarnings("unused")
-    private Sketch.SketchDisplayListener windowListener;
+    private Sketch.SketchWindowListener windowListener;
 
     @SuppressWarnings("unused")
     private Sketch.SketchKeyboardListener keyboardListener;
@@ -220,36 +229,35 @@ public class SceneManager {
 
     // region Construction.
     public SceneManager(final Sketch p_sketch,
-            final ArrayList<SceneManager.SceneChangeListener> p_listeners,
+            final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners,
             final SceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
-        this.settings = p_settings;
+        this.SETTINGS = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
 
         this.initSceneListeners();
     }
 
-    public SceneManager(final Sketch p_sketch, final ArrayList<SceneManager.SceneChangeListener> p_listeners) {
+    public SceneManager(final Sketch p_sketch, final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
-        this.settings = new SceneManager.SceneManagerSettings();
+        this.SETTINGS = new SceneManager.SceneManagerSettings();
 
         this.initSceneListeners();
     }
 
     public SceneManager(final Sketch p_sketch, final SceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
-        this.settings = p_settings;
-        this.SCENE_CHANGE_LISTENERS = new ArrayList<>(0);
-
+        this.SETTINGS = p_settings;
+        this.SCENE_CHANGE_LISTENERS = new LinkedHashSet<>(0);
         this.initSceneListeners();
     }
 
     public SceneManager(final Sketch p_sketch,
             final SceneManager.SceneManagerSettings p_settings,
-            final ArrayList<SceneManager.SceneChangeListener> p_listeners) {
+            final LinkedHashSet<SceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
-        this.settings = p_settings;
+        this.SETTINGS = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
 
         this.initSceneListeners();
@@ -370,7 +378,7 @@ public class SceneManager {
             }
         };
 
-        this.windowListener = this.SKETCH.new SketchDisplayListener() {
+        this.windowListener = this.SKETCH.new SketchWindowListener() {
             @Override
             public void focusLost() {
                 if (SCENE_MAN.currScene == null)
@@ -495,7 +503,7 @@ public class SceneManager {
     }
 
     public SceneManager.SceneManagerSettings getManagerSettings() {
-        return this.settings;
+        return this.SETTINGS;
     }
     // endregion
 
@@ -505,7 +513,7 @@ public class SceneManager {
     }
 
     public void removeSceneChangedListener(final SceneManager.SceneChangeListener p_listener) {
-        this.SCENE_CHANGE_LISTENERS.remove(p_listener);
+        this.SCENE_CHANGE_LISTENERS_TO_REMOVE.add(p_listener);
     }
 
     /**
@@ -692,7 +700,7 @@ public class SceneManager {
         // region Preloads other than the first one.
         // You're allowed to preload only once?
         // Don't re-load, just use the cache!:
-        if (this.settings.onScenePreload.preloadOnlyOnce) {
+        if (this.SETTINGS.ON_PRELOAD.preloadOnlyOnce) {
             final AssetManager man = this.SCENE_CACHE.get(SCENE_CLASS).ASSETS;
             p_scene.ASSETS = man;
         } else { // Else, since you're supposed to run `preload()` every time, do that!:
@@ -777,6 +785,8 @@ public class SceneManager {
         // Initialize fields as if this was a part of the construction.
         toRet.MANAGER = this;
         toRet.SKETCH = toRet.MANAGER.SKETCH;
+        toRet.WINDOW = toRet.SKETCH.WINDOW;
+        toRet.DISPLAYS = toRet.SKETCH.DISPLAYS;
         toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
         toRet.ASSETS = new AssetManager(toRet.SKETCH); // Is this actually a good idea?
 
@@ -810,21 +820,21 @@ public class SceneManager {
 
     // The scene-deleter!!!
     private void setScene(final NerdScene p_currentScene, final SceneState p_state) {
-        this.SKETCH.cursorVisible = true;
-        this.SKETCH.cursorConfined = false;
+        this.SKETCH.WINDOW.cursorVisible = true;
+        this.SKETCH.WINDOW.cursorConfined = false;
 
-        // region `this.SETTINGS.onSceneSwitch` tasks.
-        if (this.settings.onSceneSwitch.doClear) {
-            if (this.settings.onSceneSwitch.clearColor == -1)
+        // region `this.SETTINGS.ON_SWITCH` tasks.
+        if (this.SETTINGS.ON_SWITCH.doClear) {
+            if (this.SETTINGS.ON_SWITCH.clearColor == -1)
                 this.SKETCH.clear();
             else
-                this.SKETCH.background(this.settings.onSceneSwitch.clearColor);
+                this.SKETCH.background(this.SETTINGS.ON_SWITCH.clearColor);
         }
 
-        if (this.settings.onSceneSwitch.resetSceneLayerCallbackOrder) {
-            this.settings.preFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
-            this.settings.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
-            this.settings.postFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+        if (this.SETTINGS.ON_SWITCH.resetSceneLayerCallbackOrder) {
+            this.SETTINGS.preFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
+            this.SETTINGS.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+            this.SETTINGS.postFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
         }
         // endregion
 
@@ -870,11 +880,7 @@ public class SceneManager {
 
         this.SKETCH.push();
 
-        for (int i = this.SCENE_CHANGE_LISTENERS.size() - 1; i != -1; i--) {
-            final var l = this.SCENE_CHANGE_LISTENERS.get(i);
-            if (l != null)
-                l.sceneChanged(this.SKETCH, this.prevSceneClass, this.currSceneClass);
-        }
+        this.SCENE_CHANGE_LISTENERS.removeAll(this.SCENE_CHANGE_LISTENERS_TO_REMOVE);
 
         this.currScene.runSetup(p_state);
     }

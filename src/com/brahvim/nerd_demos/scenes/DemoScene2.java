@@ -28,7 +28,7 @@ public class DemoScene2 extends NerdScene {
         // System.out.println(SKETCH.frameRate);
 
         SKETCH.translate(SKETCH.mouseAsVec.x, SKETCH.mouseAsVec.y);
-        SKETCH.translate(SKETCH.cx, SKETCH.cy);
+        SKETCH.translate(WINDOW.cx, WINDOW.cy);
         SKETCH.text("Scene `2`!", 0, 0);
 
         // region Translation.

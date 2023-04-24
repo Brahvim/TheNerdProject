@@ -14,6 +14,8 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 /**
@@ -34,7 +36,9 @@ public class NerdScene {
   public /* final */ AssetManager ASSETS;
   public /* final */ SceneManager MANAGER;
   // public /* final */ StringTable STRINGS; // ...Not every scene needs one.
+  public /* final */ NerdWindowManager WINDOW;
   public /* final */ NerdAbstractCamera CAMERA; // ...why keep this `protected`?
+  public /* final */ NerdDisplayManager DISPLAYS;
   // endregion
 
   // region `private` fields.
@@ -430,11 +434,12 @@ public class NerdScene {
 
   /* `package` */ void runPreload() {
     this.preload();
-    SKETCH.PERSISTENT_ASSETS.forceLoading();
+    SKETCH.ASSETS.forceLoading();
 
-    if (this.MANAGER.settings.onScenePreload.useExecutors) {
+    if (this.MANAGER.SETTINGS.ON_PRELOAD.useExecutors) {
       final ThreadPoolExecutor executor = new ThreadPoolExecutor(
-          0, 6, 10L, TimeUnit.SECONDS, new SynchronousQueue<>(), r -> {
+          0, this.MANAGER.SETTINGS.ON_PRELOAD.maxExecutorThreads,
+          10L, TimeUnit.SECONDS, new SynchronousQueue<>(), r -> {
             final Thread toRet = new Thread(r);
             toRet.setName("NerdAssetPreloader_" + this.getClass().getSimpleName());
             return toRet;
@@ -445,7 +450,7 @@ public class NerdScene {
       executor.shutdown(); // This tells the executor to stop accepting new tasks.
 
       // If you must complete within this function, do that:
-      if (this.MANAGER.settings.onScenePreload.completeWithinPreloadCall)
+      if (this.MANAGER.SETTINGS.ON_PRELOAD.completeWithinPreloadCall)
         try {
           executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS); // Keep going, keep going...
           // Can't simply cheat the implementation to make it wait forever!
@@ -459,13 +464,13 @@ public class NerdScene {
   }
 
   /* `package` */ void runDraw() {
-    if (this.MANAGER.settings.drawFirstCaller == null)
-      this.MANAGER.settings.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+    if (this.MANAGER.SETTINGS.drawFirstCaller == null)
+      this.MANAGER.SETTINGS.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.MANAGER.settings.drawFirstCaller) {
+    switch (this.MANAGER.SETTINGS.drawFirstCaller) {
       case SCENE -> {
         this.SKETCH.pushMatrix();
         this.SKETCH.pushStyle();
@@ -506,13 +511,13 @@ public class NerdScene {
   }
 
   /* `package` */ void runPost() {
-    if (this.MANAGER.settings.postFirstCaller == null)
-      this.MANAGER.settings.postFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+    if (this.MANAGER.SETTINGS.postFirstCaller == null)
+      this.MANAGER.SETTINGS.postFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.MANAGER.settings.preFirstCaller) {
+    switch (this.MANAGER.SETTINGS.preFirstCaller) {
       case SCENE -> {
         this.post();
 
@@ -543,13 +548,13 @@ public class NerdScene {
   }
 
   /* `package` */ void runPre() {
-    if (this.MANAGER.settings.preFirstCaller == null)
-      this.MANAGER.settings.preFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
+    if (this.MANAGER.SETTINGS.preFirstCaller == null)
+      this.MANAGER.SETTINGS.preFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
-    switch (this.MANAGER.settings.preFirstCaller) {
+    switch (this.MANAGER.SETTINGS.preFirstCaller) {
       case SCENE -> {
         this.pre();
 

@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class SketchBuildArtifacts {
 
-	public final Sketch SKETCH;
+	private final Sketch SKETCH;
 	private final HashMap<String, Object> EXTENSIONS;
 
 	/* `package` */ SketchBuildArtifacts(final Sketch p_sketch) {

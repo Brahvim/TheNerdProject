@@ -4,7 +4,6 @@ import java.awt.AWTException;
 import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
@@ -23,6 +22,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -37,6 +37,8 @@ import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.AssetManager;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.math.Unprojector;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
@@ -124,9 +126,9 @@ public class Sketch extends PApplet {
 
 	}
 
-	public /* `abstract` */ class SketchDisplayListener {
+	public /* `abstract` */ class SketchWindowListener {
 
-		public SketchDisplayListener() {
+		public SketchWindowListener() {
 			Sketch.this.SKETCH.WINDOW_LISTENERS.add(this);
 		}
 
@@ -182,23 +184,6 @@ public class Sketch extends PApplet {
 			']', ';', ',', '.', '/', '\\', ':', '|', '<',
 			'>', '_', '+', '?'
 	};
-
-	// region `java.awt` constants.
-	public static final GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment
-			.getLocalGraphicsEnvironment();
-
-	public static GraphicsDevice[] JAVA_SCREENS = Sketch.LOCAL_GRAPHICS_ENVIRONMENT
-			.getScreenDevices();
-
-	public static GraphicsDevice DEFAULT_JAVA_SCREEN = Sketch.LOCAL_GRAPHICS_ENVIRONMENT
-			.getDefaultScreenDevice();
-
-	public static DisplayMode DEFAULT_JAVA_SCREEN_MODE = Sketch.DEFAULT_JAVA_SCREEN
-			.getDisplayMode();
-
-	public static int DEFAULT_REFRESH_RATE = Sketch.DEFAULT_JAVA_SCREEN_MODE
-			.getRefreshRate();
-	// endregion
 	// endregion
 
 	// region Instance constants.
@@ -207,13 +192,30 @@ public class Sketch extends PApplet {
 	public final String RENDERER;
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
+	public final AssetManager ASSETS;
 	public final NerdStringTable STRINGS;
-	public final AssetManager PERSISTENT_ASSETS;
 
 	public final HashMap<String, Object> EXTENSIONS;
 	// `Object`s instead of a custom interface because you can't do
 	// that to libraries you didn't write! (...or you'd be writing subclasses of the
 	// library classes. Manual work. Uhh...)
+
+	// region `java.awt` constants.
+	public final GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment
+			.getLocalGraphicsEnvironment();
+
+	public GraphicsDevice[] JAVA_SCREENS = this.LOCAL_GRAPHICS_ENVIRONMENT
+			.getScreenDevices();
+
+	public GraphicsDevice DEFAULT_JAVA_SCREEN = this.LOCAL_GRAPHICS_ENVIRONMENT
+			.getDefaultScreenDevice();
+
+	public DisplayMode DEFAULT_JAVA_SCREEN_MODE = this.DEFAULT_JAVA_SCREEN
+			.getDisplayMode();
+
+	public int DEFAULT_REFRESH_RATE = this.DEFAULT_JAVA_SCREEN_MODE
+			.getRefreshRate();
+	// endregion
 
 	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
 
@@ -231,71 +233,44 @@ public class Sketch extends PApplet {
 	public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
 	public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
 
-	/** Position of the window relative to the monitor. */
-	public final PVector WINDOW_POSITION = new PVector(),
-			PREV_WINDOW_POSITION = new PVector();
-
 	/** Certain setting for the sketch. */
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
 			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
 
-	protected final Sketch SKETCH = this;
+	public final NerdDisplayManager DISPLAYS;
+	public final NerdWindowManager WINDOW;
+	public final SceneManager SCENES;
 	// endregion
 	// endregion
 
-	// region Frame-wise states, Processing style (modifiable!).
-	public char pkey; // Previous fraaaaame!...
+	// region Frame-wise states, Processing style (thus mutable).
+	// ...yeah, these ain't mutable, are they?:
+	public final ArrayList<PVector> UNPROJ_TOUCHES = new ArrayList<>(10);
+	public final ArrayList<PVector> PREV_UNPROJ_TOUCHES = new ArrayList<>(10);
+
+	public PVector mouseAsVec = new PVector();
+	public float mouseScroll, mouseScrollDelta;
+	public boolean mouseLeft, mouseMid, mouseRight;
+
+	// Previous fraaaaame!...
+	public char pkey;
 	public boolean pfocused;
 	public int pmouseButton, pkeyCode;
 	public boolean pkeyPressed, pmousePressed;
-	public final ArrayList<PVector> UNPROJ_TOUCHES = new ArrayList<>(10); // Previous frame...
-
-	// Current frame!
-	public float mouseScroll, mouseScrollDelta;
-	public boolean mouseLeft, mouseMid, mouseRight;
-	public final ArrayList<PVector> PREV_UNPROJ_TOUCHES = new ArrayList<>(10);
-
-	public boolean fullscreen, pfullscreen;
-	public boolean cursorConfined, cursorVisible = true; // "nO previoS versiuN!11!!"
-	public boolean pcursorConfined, pcursorVisible = true; // onU previoS versiuN!11!!1!!11!
-	public PVector mouseAsVec = new PVector(), pmouseAsVec = new PVector(); // MOUS!
-
-	public boolean pmouseLeft, pmouseMid, pmouseRight; // Previous frame...
+	public PVector pmouseAsVec = new PVector();
 	public float pmouseScroll, pmouseScrollDelta;
+	public boolean pmouseLeft, pmouseMid, pmouseRight;
 	// endregion
 
-	// region "Dimensions".
 	// Time (`millis()` returns `int`!):
 	public int frameStartTime, pframeTime, frameTime;
-
-	// Display dimensions:
-	public float displayScr;
-	public int displayRefreshRate;
-	public int displayWidthHalf, displayHeightHalf;
-	public int displayWidthQuart, displayHeightQuart;
-	public int displayWidthTwice, displayHeightTwice; // <-- Twice!
-	public int displayWidthThirdQuart, displayHeightThirdQuart;
-
-	// Previous frame display dimensions:
-	public float pdisplayScr;
-	public int pdisplayRefreshRate;
-	public int pdisplayWidth, pdisplayHeight; // <-- Not included with Processing!
-	public int pdisplayWidthHalf, pdisplayHeightHalf;
-	public int pdisplayWidthQuart, pdisplayHeightQuart;
-	public int pdisplayWidthTwice, pdisplayHeightTwice; // <-- Twice!
-	public int ppixelDensity, ppixelWidth, ppixelHeight; // <-- Also not included with Processing!
-	public int pdisplayWidthThirdQuart, pdisplayHeightThirdQuart;
-
-	// Windows dimensions for the current and previous frames:
-	public float pdbx, pdby, pcx, pcy, pqx, pqy, pq3x, pq3y, pscr;
-	public float dbx, dby, cx, cy, qx, qy, q3x, q3y, scr;
-	public int pwidth, pheight;
-	// endregion
 	// endregion
 
 	// region `protected` fields.
+	protected final Sketch SKETCH = this; // "Ti's just a pointer, bro".
+
 	// region Window object and native renderer references ("hacky stuff").
-	// (Why check for errors at all? You know what renderer you used!)
+	// ("Why check for `null` at all? You know what renderer you used!")
 	protected JFrame sketchFrame;
 
 	// OpenGL context:
@@ -312,32 +287,33 @@ public class Sketch extends PApplet {
 	protected final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
 
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
-	protected GraphicsDevice previousMonitor, currentMonitor;
 	protected BasicCamera defaultCamera;
 	protected NerdScene currentScene;
-	protected SceneManager sceneMan; // Don't use static initialization for this..?
+	protected PImage iconImage;
 
-	// region Callback listeners!
-	protected final ArrayList<SketchMouseListener> MOUSE_LISTENERS = new ArrayList<>(1);
-	protected final ArrayList<SketchTouchListener> TOUCH_LISTENERS = new ArrayList<>(1);
-	protected final ArrayList<SketchDisplayListener> WINDOW_LISTENERS = new ArrayList<>(1);
-	protected final ArrayList<SketchKeyboardListener> KEYBOARD_LISTENERS = new ArrayList<>(1);
+	// region Callback listeners,
+	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
+	// ...to remove!:
 	protected final HashSet<Consumer<Sketch>> CALLBACK_LISTENERS_TO_REMOVE = new HashSet<>(1);
 
 	// Adding a new callbacks list to `Sketch`, or a subclass? REGISTER IT IN THIS!:
-	protected final ArrayList<?>[] LIST_OF_CALLBACK_LISTS;
+	protected final Collection<?>[] LIST_OF_CALLBACK_LISTS;
 	// See the end of the constructor!
 
-	protected ArrayList<Consumer<Sketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
-	protected ArrayList<Consumer<Sketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
-	protected ArrayList<Consumer<Sketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
-	protected ArrayList<Consumer<Sketch>> PRE_LISTENERS, POST_LISTENERS;
+	protected LinkedHashSet<Consumer<Sketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
+	protected LinkedHashSet<Consumer<Sketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
+	protected LinkedHashSet<Consumer<Sketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
+	protected LinkedHashSet<Consumer<Sketch>> PRE_LISTENERS, POST_LISTENERS;
 	// endregion
 	// endregion
 
 	// region Construction, `settings()`...
 	public Sketch(final SketchKey p_key) {
 		Objects.requireNonNull(p_key, "Please use a `SketchKey` instance to make a `Sketch`!");
+
 		// region Key settings.
 		// region Listeners!...
 		this.SETTINGS_LISTENERS = p_key.settingsListeners;
@@ -365,16 +341,17 @@ public class Sketch extends PApplet {
 		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
-		this.NAME = p_key.name == null ? "TheNerdProject" : p_key.name;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
+		this.NAME = p_key.name == null ? "TheNerdProject" : p_key.name;
 		// endregion
 
 		// region Non-key settings.
 		this.UNPROJECTOR = new Unprojector();
-		this.fullscreen = this.STARTED_FULLSCREEN;
-		this.PERSISTENT_ASSETS = new AssetManager(this);
+		this.DISPLAYS = new NerdDisplayManager(this);
+		this.ASSETS = new AssetManager(this);
+		this.WINDOW = NerdWindowManager.createWindowMan(this);
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
-		this.sceneMan = new SceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
+		this.SCENES = new SceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
 		// endregion
 
 		// region Setting OpenGL renderer icons.
@@ -396,7 +373,7 @@ public class Sketch extends PApplet {
 
 		// region Preloading assets from scenes we want to!
 		for (final Class<? extends NerdScene> c : p_key.scenesToPreload)
-			this.sceneMan.loadSceneAssetsAsync(c);
+			this.SCENES.loadSceneAssetsAsync(c);
 		// endregion
 
 		// region Non-fullscreen window's dimensions when starting fullscreen.
@@ -431,7 +408,7 @@ public class Sketch extends PApplet {
 		this.ROBOT = toAssign;
 		// endregion
 
-		this.LIST_OF_CALLBACK_LISTS = new ArrayList<?>[] {
+		this.LIST_OF_CALLBACK_LISTS = new Collection<?>[] {
 				this.DRAW_LISTENERS, this.PRE_DRAW_LISTENERS, this.POST_DRAW_LISTENERS,
 				this.SETTINGS_LISTENERS, this.SETUP_LISTENERS, this.EXIT_LISTENERS, this.DISPOSAL_LISTENERS,
 				this.PRE_LISTENERS, this.POST_LISTENERS, };
@@ -458,11 +435,15 @@ public class Sketch extends PApplet {
 	// region Processing sketch workflow.
 	@Override
 	public void setup() {
-		this.updateWindowRatios();
+		this.iconImage = super.loadImage(this.ICON_PATH);
+		this.DISPLAYS.updateDisplayRatios();
+		this.WINDOW.updateWindowRatios();
+		this.WINDOW.init();
+
 		super.surface.setTitle(this.NAME);
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
-		super.frameRate(Sketch.DEFAULT_REFRESH_RATE);
+		super.frameRate(this.DEFAULT_REFRESH_RATE);
 
 		// I should make a super slow "convenience" method to perform this
 		// `switch (this.RENDERER)` using `Runnable`s!
@@ -470,8 +451,8 @@ public class Sketch extends PApplet {
 
 		// Renderer-specific object initialization and settings!:
 		switch (this.RENDERER) {
-			case PConstants.P2D, PConstants.P3D:
-				this.glWindow = (GLWindow) super.surface.getNative();
+			case PConstants.P2D, PConstants.P3D -> {
+				this.glWindow = (GLWindow) this.WINDOW.getNativeObject();
 				this.glGraphics = (PGraphicsOpenGL) super.g;
 				this.gl = this.glWindow.getGL();
 				this.glu = new GLU();
@@ -484,22 +465,15 @@ public class Sketch extends PApplet {
 
 				// Done in the constructor! `setup()`'s too late for this!:
 				// PJOGL.setIcon(this.iconPath);
-				break;
+			}
 
-			case PConstants.JAVA2D:
-				final PSurfaceAWT.SmoothCanvas canvas = (PSurfaceAWT.SmoothCanvas) super.surface.getNative();
-				this.sketchFrame = (JFrame) canvas.getFrame();
-
-				if (this.INITIALLY_RESIZABLE)
-					super.surface.setResizable(true);
-
-				super.surface.setIcon(super.loadImage(this.ICON_PATH));
+			case PConstants.JAVA2D -> {
+				this.sketchFrame = (JFrame) this.WINDOW.getNativeObject();
 				// "Loose" image loading is usually not a good idea, but I guess it's here...
 				// super.surface.setIcon(super.loadImage(this.iconPath));
-				break;
+			}
 		}
 
-		this.centerWindow();
 		super.rectMode(PConstants.CENTER);
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
@@ -509,50 +483,16 @@ public class Sketch extends PApplet {
 
 	public void pre() {
 		// Cheap removal strategy, LOL. I'm fed with boilerplate!:
-		for (ArrayList<?> l : this.LIST_OF_CALLBACK_LISTS)
+		for (final Collection<?> c : this.LIST_OF_CALLBACK_LISTS)
 			// ..Don't use `HashSet::contains()` to check here. Ugh.
-			l.removeAll(this.CALLBACK_LISTENERS_TO_REMOVE);
+			c.removeAll(this.CALLBACK_LISTENERS_TO_REMOVE);
 
-		this.currentScene = this.sceneMan.getCurrentScene();
-		this.PREV_WINDOW_POSITION.set(this.WINDOW_POSITION);
-		if (this.USES_OPENGL) {
+		if (this.USES_OPENGL)
 			this.pgl = super.beginPGL();
-			this.WINDOW_POSITION.set(this.SKETCH.glWindow.getX(), this.SKETCH.glWindow.getY());
-		} else
-			this.WINDOW_POSITION.set(this.sketchFrame.getX(), this.sketchFrame.getY());
+		this.currentScene = this.SCENES.getCurrentScene();
 
-		// When the window is resized, do the following!:
-		if (!(this.pwidth == super.width || this.pheight == super.height)) {
-			this.updateWindowRatios();
-			for (final SketchDisplayListener l : this.WINDOW_LISTENERS)
-				l.resized();
-		}
-
-		// region Current and previous frame monitor settings, plus callback!.
-		final GraphicsDevice[] updatedList = Sketch.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
-		if (Sketch.JAVA_SCREENS != updatedList) {
-			Sketch.DEFAULT_JAVA_SCREEN = Sketch.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
-			Sketch.DEFAULT_JAVA_SCREEN_MODE = Sketch.DEFAULT_JAVA_SCREEN.getDisplayMode();
-			Sketch.DEFAULT_REFRESH_RATE = Sketch.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
-		}
-
-		if (this.previousMonitor != this.currentMonitor) {
-			this.previousMonitor = this.currentMonitor;
-			this.updateDisplayRatios();
-			for (final SketchDisplayListener l : this.WINDOW_LISTENERS)
-				l.monitorChanged();
-		}
-
-		if (super.focused)
-			this.currentMonitor = Sketch.getGraphicsDeviceAt(this.GLOBAL_MOUSE_POINT);
-
-		// Update `super.displayWidth` and `super.displayHeight`:
-		if (this.currentMonitor != null) {
-			final DisplayMode CURRENT_MON_MODE = this.currentMonitor.getDisplayMode();
-			super.displayWidth = CURRENT_MON_MODE.getWidth();
-			super.displayHeight = CURRENT_MON_MODE.getHeight();
-		}
-		// endregion
+		this.WINDOW.preCallback(this.WINDOW_LISTENERS);
+		this.DISPLAYS.preCallback(this.WINDOW_LISTENERS);
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
 		this.PRE_LISTENERS.forEach(l -> l.accept(this));
@@ -605,7 +545,7 @@ public class Sketch extends PApplet {
 			if (this.FIRST_SCENE_CLASS == null)
 				System.err.println("There is no first `NerdScene`! It's `null`!");
 			else
-				this.sceneMan.startScene(this.FIRST_SCENE_CLASS);
+				this.SCENES.startScene(this.FIRST_SCENE_CLASS);
 		}
 		// endregion
 
@@ -619,29 +559,24 @@ public class Sketch extends PApplet {
 		if (this.USES_OPENGL)
 			super.endPGL();
 
-		this.framelyWindowSetup();
+		this.WINDOW.postCallback();
 
 		// region Previous state updates!!!
 		for (final PVector v : this.UNPROJ_TOUCHES)
 			this.PREV_UNPROJ_TOUCHES.add(v);
 
 		this.pkey = super.key;
-		this.pwidth = this.width;
-		this.pheight = this.height;
-		this.pmouseAsVec.set(this.mouseAsVec);
 		this.pfocused = this.focused;
 		this.pkeyCode = this.keyCode;
 		this.pmouseMid = this.mouseMid;
 		this.pmouseLeft = this.mouseLeft;
 		this.pmouseRight = this.mouseRight;
-		this.pfullscreen = this.fullscreen;
 		this.pkeyPressed = super.keyPressed;
 		this.pmouseButton = this.mouseButton;
 		this.pmouseScroll = this.mouseScroll;
+		this.pmouseAsVec.set(this.mouseAsVec);
 		this.pmousePressed = super.mousePressed;
 		this.previousCamera = this.currentCamera;
-		this.pcursorVisible = this.cursorVisible;
-		this.pcursorConfined = this.cursorConfined;
 		this.pmouseScrollDelta = this.mouseScrollDelta;
 		// endregion
 
@@ -731,8 +666,8 @@ public class Sketch extends PApplet {
 			if (this.ALT_ENTER_FULLSCREEN) {
 				if (super.keyCode == KeyEvent.VK_ENTER &&
 						this.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19 /* Same as `VK_PAUSE`. */)) {
+					this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
 					// System.out.println("`Alt`-`Enter` fullscreen!");
-					this.fullscreen = !this.fullscreen;
 				}
 			}
 
@@ -740,15 +675,15 @@ public class Sketch extends PApplet {
 				switch (this.RENDERER) {
 					case PConstants.P2D, PConstants.P3D:
 						if (super.keyCode == 107) { // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
+							this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
 							// System.out.println("`F11` fullscreen!");
-							this.fullscreen = !this.fullscreen;
 						}
 						break;
 
 					case PConstants.JAVA2D:
 						if (super.keyCode == KeyEvent.VK_F11) {
+							this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
 							// System.out.println("`F11` fullscreen!");
-							this.fullscreen = !this.fullscreen;
 						}
 						break;
 				}
@@ -810,7 +745,7 @@ public class Sketch extends PApplet {
 		// `handleDraw()`,
 		// which is probably when events are handled:
 		if (!super.isLooping())
-			for (final SketchDisplayListener l : this.WINDOW_LISTENERS) {
+			for (final SketchWindowListener l : this.WINDOW_LISTENERS) {
 				l.focusGained();
 			}
 	}
@@ -825,7 +760,7 @@ public class Sketch extends PApplet {
 		// `handleDraw()`,
 		// which is probably when events are handled:
 		if (!super.isLooping())
-			for (final SketchDisplayListener l : this.WINDOW_LISTENERS) {
+			for (final SketchWindowListener l : this.WINDOW_LISTENERS) {
 				l.focusLost();
 			}
 	}
@@ -834,16 +769,16 @@ public class Sketch extends PApplet {
 
 	// region Persistent asset operations.
 	public void reloadGivenPersistentAsset(final NerdAsset p_asset) {
-		this.PERSISTENT_ASSETS.remove(p_asset);
-		this.PERSISTENT_ASSETS.add(p_asset.getLoader(), p_asset.getPath());
+		this.ASSETS.remove(p_asset);
+		this.ASSETS.add(p_asset.getLoader(), p_asset.getPath());
 	}
 
 	public void reloadPersistentAssets() {
-		final NerdAsset[] assets = (NerdAsset[]) this.PERSISTENT_ASSETS.toArray();
-		this.PERSISTENT_ASSETS.clear();
+		final NerdAsset[] assets = (NerdAsset[]) this.ASSETS.toArray();
+		this.ASSETS.clear();
 
 		for (final NerdAsset a : assets)
-			this.PERSISTENT_ASSETS.add(a.getLoader(), a.getPath());
+			this.ASSETS.add(a.getLoader(), a.getPath());
 	}
 	// endregion
 
@@ -931,235 +866,25 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Utilities!~
-	// region Ah yes, GETTERS AND SETTERS. Even here!
+	// region Ah yes, GETTERS AND SETTERS. Even here!:
+	public PImage getIconImage() {
+		return this.iconImage;
+	}
+
 	public SceneManager getSceneManager() {
-		return this.sceneMan;
+		return this.SCENES;
 	}
 
-	public SceneManager setSceneManager(final SceneManager p_sceneMan) {
-		Objects.requireNonNull(p_sceneMan,
-				"`Sketch::setSceneManager()` cannot take in a `null`!");
-		return this.sceneMan = p_sceneMan;
-	}
-	// endregion
-
-	// region Window queries.
-	public void centerWindow() {
-		// You called this function when the window changed its size or position, right?
-		// Remember: Computers with multiple displays exist! We shouldn't cache this:
-		this.updateWindowRatios();
-
-		final DisplayMode CURRENT_DISPLAY_MODE = this.currentMonitor == null
-				? Sketch.DEFAULT_JAVA_SCREEN_MODE
-				: this.currentMonitor.getDisplayMode();
-
-		final int WIDTH = CURRENT_DISPLAY_MODE.getWidth(),
-				HEIGHT = CURRENT_DISPLAY_MODE.getHeight();
-
-		switch (this.RENDERER) {
-			case PConstants.P3D, PConstants.P2D:
-				this.glWindow.setPosition(
-						(int) ((WIDTH * 0.5f) - this.cx),
-						(int) ((HEIGHT * 0.5f) - this.cy));
-				break;
-
-			default:
-				super.surface.setLocation(
-						(int) (WIDTH / 2 - this.width),
-						(int) (HEIGHT / 2 - this.q3y));
-				break;
-		}
-
-		// super.surface.setLocation(winX, winY);
-		// (Well, changing the display does NOT effect those variables in any way :|)
+	public NerdWindowManager getWindowManager() {
+		return this.WINDOW;
 	}
 
-	protected void framelyWindowSetup() {
-		switch (this.RENDERER) {
-			case PConstants.JAVA2D -> {
-				// Fullscreen?
-				// https://stackoverflow.com/a/11570414/
-
-				if (this.pfullscreen != this.fullscreen) {
-					this.sketchFrame.removeNotify();
-
-					this.sketchFrame.setVisible(false);
-					while (this.sketchFrame.isDisplayable())
-						;
-
-					if (this.fullscreen) {
-						// If `super.display*` are set to the actual (AWT) ones:
-
-						// this.sketchFrame.setLocation(-7, -30);
-						// this.sketchFrame.setSize(super.displayWidth - 354,
-						// super.displayHeight - 270);
-
-						// Though these are arbitrary numbers, they work cross-platform, surprisingly!:
-
-						// this.sketchFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-						this.sketchFrame.setLocation(-8, -30);
-						this.sketchFrame.setSize(super.displayWidth + 15, super.displayHeight);
-						this.sketchFrame.setUndecorated(true);
-					} else {
-						this.centerWindow();
-						this.sketchFrame.setSize(this.INIT_WIDTH, this.INIT_HEIGHT);
-						this.sketchFrame.setUndecorated(false);
-					}
-
-					this.sketchFrame.setVisible(true);
-					this.sketchFrame.addNotify();
-				}
-
-				if (this.cursorVisible)
-					super.cursor();
-				else
-					super.noCursor();
-				break;
-			}
-
-			case PConstants.P3D, PConstants.P2D -> {
-				if (this.pfullscreen != this.fullscreen) {
-					this.glWindow.setFullscreen(this.fullscreen);
-
-					// Wait for the window to change its mode.
-					// Don't wait for more than `5000` milliseconds!:
-					// ...yes, that should crash the program :|
-					// (It didn't, during my tests, surprisingly :O
-					// The window just... waited there and didn't change states O_O
-					// ...and then Processing began rendering again :D
-					// Apparently `setFullscreen()` returns a `boolean`, meaning that it does
-					// error-checking! Quite kind of JogAmp!)
-
-					// region Older logic (no time checking!).
-					// while (this.fullscreen ? !this.glWindow.isFullscreen() :
-					// this.glWindow.isFullscreen())
-					// ;
-					// endregion
-
-					final long fsStartMillis = System.currentTimeMillis();
-
-					while (this.fullscreen != this.glWindow.isFullscreen())
-						if (System.currentTimeMillis() - fsStartMillis > 5000)
-							break; // Throw an exception instead?
-
-				}
-
-				// I knew this already, but you may want to check out:
-				// http://twicetwo.com/blog/processing/2016/03/01/processing-locking-the-mouse.html
-
-				if (this.cursorConfined != this.pcursorConfined)
-					this.glWindow.confinePointer(this.cursorConfined);
-				while (this.cursorConfined ? !this.glWindow.isPointerConfined() : this.glWindow.isPointerConfined())
-					;
-
-				if (this.cursorVisible != this.pcursorVisible) {
-					this.glWindow.setPointerVisible(this.cursorVisible);
-					while (this.cursorVisible ? !this.glWindow.isPointerVisible() : this.glWindow.isPointerVisible())
-						;
-				}
-				break;
-			}
-		}
-	}
-
-	// I tried the 3rd-to-last method in
-	// https://stackoverflow.com/a/21592711/,
-	// but https://stackoverflow.com/a/1248865/ was what worked.
-	// And yes, I modified it.
-	public static GraphicsDevice getGraphicsDeviceAt(final Point p_pos) {
-		for (final GraphicsDevice d : Sketch.JAVA_SCREENS)
-			for (final GraphicsConfiguration c : d.getConfigurations())
-				if (c.getBounds().contains(p_pos))
-					return d;
-
-		// If the point is outside all monitors, default to the default monitor!:
-		return Sketch.DEFAULT_JAVA_SCREEN;
-	}
-	// endregion
-
-	// region Get monitor info.
-	public GraphicsDevice getCurrentMonitor() {
-		return this.currentMonitor;
-	}
-
-	public GraphicsDevice getPreviousMonitor() {
-		return this.previousMonitor;
+	public NerdDisplayManager getDisplayManager() {
+		return this.DISPLAYS;
 	}
 	// endregion
 
 	// region Rendering utilities!
-	public void updateWindowRatios() {
-		this.dbx = super.width * 2;
-		this.dby = super.height * 2;
-
-		this.cx = super.width * 0.5f;
-		this.cy = super.height * 0.5f;
-
-		this.qx = this.cx * 0.5f;
-		this.qy = this.cy * 0.5f;
-
-		this.q3x = this.cx + this.qx;
-		this.q3y = this.cy + this.qy;
-
-		this.scr = (float) super.width / (float) super.height;
-	}
-
-	public void updateDisplayRatios() {
-		this.displayWidthTwice = super.displayWidth * 2;
-		this.displayHeightTwice = super.displayHeight * 2;
-		this.displayScr = (float) super.displayWidth / (float) super.displayHeight;
-		this.displayRefreshRate = this.currentMonitor.getDisplayMode().getRefreshRate();
-
-		this.displayWidthHalf = super.displayWidth / 2;
-		this.displayHeightHalf = super.displayHeight / 2;
-
-		// Dividing directly by `4` for more precision...?
-		this.displayWidthQuart = super.displayWidth / 4;
-		this.displayHeightQuart = super.displayHeight / 4;
-
-		this.displayWidthThirdQuart = this.displayWidthHalf + this.displayWidthQuart;
-		this.displayHeightThirdQuart = this.displayWidthHalf + this.displayWidthQuart;
-	}
-
-	public void recordCurrentWindowRatios() {
-		this.pdbx = this.dbx;
-		this.pdby = this.dby;
-
-		this.pcx = this.cx;
-		this.pcy = this.cy;
-
-		this.pqx = this.qx;
-		this.pqy = this.qy;
-
-		this.pq3x = this.q3x;
-		this.pq3y = this.q3y;
-
-		this.pscr = this.scr;
-	}
-
-	public void recordCurrentDisplayRatios() {
-		this.pdisplayScr = this.displayScr;
-		this.ppixelWidth = super.pixelWidth;
-		this.ppixelHeight = super.pixelHeight;
-		this.ppixelDensity = super.pixelDensity;
-		this.pdisplayRefreshRate = this.displayRefreshRate;
-
-		this.pdisplayWidthTwice = this.displayWidthTwice;
-		this.pdisplayHeightTwice = this.displayHeightTwice;
-
-		this.pdisplayWidth = super.displayWidth;
-		this.pdisplayHeight = super.displayHeight;
-
-		this.pdisplayWidthHalf = this.displayWidthHalf;
-		this.pdisplayHeightHalf = this.displayHeightHalf;
-
-		this.pdisplayWidthQuart = this.displayWidthQuart;
-		this.pdisplayHeightQuart = this.displayHeightQuart;
-
-		this.pdisplayWidthThirdQuart = this.displayWidthThirdQuart;
-		this.pdisplayHeightThirdQuart = this.displayHeightThirdQuart;
-	}
-
 	// region From `PGraphics`.
 	// region Shapes.
 	// region `drawShape()` overloads.
@@ -1857,15 +1582,15 @@ public class Sketch extends PApplet {
 	}
 
 	public void perspective(final float p_fov, final float p_near, final float p_far) {
-		super.perspective(p_fov, this.scr, p_near, p_far);
+		super.perspective(p_fov, this.WINDOW.scr, p_near, p_far);
 	}
 
 	public void ortho(final NerdAbstractCamera p_cam) {
-		super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_cam.near, p_cam.far);
+		super.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy, this.WINDOW.cy, p_cam.near, p_cam.far);
 	}
 
 	public void ortho(final float p_near, final float p_far) {
-		super.ortho(-this.cx, this.cx, -this.cy, this.cy, p_near, p_far);
+		super.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy, this.WINDOW.cy, p_near, p_far);
 	}
 
 	/**
@@ -2038,10 +1763,10 @@ public class Sketch extends PApplet {
 
 		// Either call `super.ortho()` + translate by `-cy`, or this! (thank ChatGPT!):
 		super.ortho(0, super.width, super.height, 0, -1, 1);
-		super.translate(this.cx, -this.height);
+		super.translate(this.WINDOW.cx, -this.height);
 
 		// super.ortho();
-		// super.translate(0, -this.cy);
+		// super.translate(0, -this.WIN_MAN.cy);
 	}
 
 	/**
@@ -2267,6 +1992,30 @@ public class Sketch extends PApplet {
 	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
 		return this.worldVec(super.mouseX, super.mouseY, p_distanceFromCamera);
 	}
+	// endregion
+
+	// region Touches.
+	// /**
+	// * Caching this vector never works. Call this method everytime!~
+	// * People recalculate things framely in computer graphics anyway! :joy:
+	// */
+	// public PVector getTouchInWorld(final int p_touchId) {
+	// return this.getTouchInWorldFromFarPlane(p_touchId,
+	// this.currentCamera.mouseZ);
+	// }
+
+	// public PVector getTouchInWorldFromFarPlane(final float p_touchId, final float
+	// p_distanceFromFarPlane) {
+	// final TouchEvent.Pointer touch = super.touches[p_touchId];
+	// return this.worldVec(touch.x, touch.y,
+	// this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
+	// }
+
+	// public PVector getTouchInWorldAtZ(final int p_touchId, final float
+	// p_distanceFromCamera) {
+	// final TouchEvent.Pointer touch = super.touches[p_touchId];
+	// return this.worldVec(touch.x, touch.y, p_distanceFromCamera);
+	// }
 	// endregion
 	// endregion
 	// endregion
@@ -2574,9 +2323,10 @@ public class Sketch extends PApplet {
 	// Used by `Sketch::createSketchPanel()`:
 	// ~~Should've made a method-class for this.~~
 	protected void updateSketchMouse() {
-		final Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-		super.mouseX = mousePoint.x - this.sketchFrame.getLocation().x;
-		super.mouseY = mousePoint.y - this.sketchFrame.getLocation().y;
+		final Point mousePoint = MouseInfo.getPointerInfo().getLocation(),
+				sketchFramePoint = ((JFrame) this.WINDOW.getNativeObject()).getLocation();
+		super.mouseX = mousePoint.x - sketchFramePoint.x;
+		super.mouseY = mousePoint.y - sketchFramePoint.y;
 	}
 	// endregion
 	// endregion
