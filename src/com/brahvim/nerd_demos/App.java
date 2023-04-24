@@ -17,8 +17,11 @@ import processing.opengl.PGraphicsOpenGL;
 public class App {
 
     /*
+     * // TODO: ECS.
      * // TODO: Make it easier to animate, somehow!?
      * // TODO: Collision Algorithms (also for 3D space).
+     * // TODO: `NerdInputManager`. (I'm tired, *please-*)
+     * // TODO: `PAppWrap`. ...wrap EVERY class, perhaps?!
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
      */
 
