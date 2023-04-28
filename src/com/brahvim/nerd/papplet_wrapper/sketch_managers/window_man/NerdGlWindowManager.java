@@ -39,13 +39,18 @@ import processing.core.PVector;
     }
 
     @Override
+    public PVector getPosition() {
+        return new PVector(this.window.getX(), this.window.getY());
+    }
+
+    @Override
     public Object getNativeObject() {
         return this.window;
     }
 
     @Override
-    public PVector getPosition() {
-        return new PVector(this.window.getX(), this.window.getY());
+    public boolean getAlwaysOnTop() {
+        return this.window.isAlwaysOnTop();
     }
     // endregion
 
@@ -78,6 +83,14 @@ import processing.core.PVector;
     public NerdGlWindowManager setPosition(final PVector p_position) {
         this.window.setPosition((int) p_position.x, (int) p_position.y);
         return this;
+    }
+
+    @Override
+    public boolean setAlwaysOnTop(final boolean p_status) {
+        this.window.setAlwaysOnTop(p_status);
+        while (!this.window.isAlwaysOnTop())
+            ;
+        return true;
     }
     // endregion
 

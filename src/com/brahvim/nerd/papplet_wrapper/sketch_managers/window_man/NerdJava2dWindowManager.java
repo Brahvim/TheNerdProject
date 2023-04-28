@@ -36,13 +36,18 @@ import processing.core.PVector;
     }
 
     @Override
+    public PVector getPosition() {
+        return new PVector(this.window.getX(), this.window.getY());
+    }
+
+    @Override
     public Object getNativeObject() {
         return this.window;
     }
 
     @Override
-    public PVector getPosition() {
-        return new PVector(this.window.getX(), this.window.getY());
+    public boolean getAlwaysOnTop() {
+        return this.window.isAlwaysOnTop();
     }
     // endregion
 
@@ -77,11 +82,25 @@ import processing.core.PVector;
         return this;
     }
 
+    /**
+     * @return Whether or not the operation was successful.
+     */
+    @Override
+    public boolean setAlwaysOnTop(final boolean p_name) {
+        if (!this.window.isAlwaysOnTopSupported())
+            return false;
+
+        // this.window.removeNotify();
+        this.window.setAlwaysOnTop(true);
+        // this.window.addNotify();
+
+        return true;
+    }
+
     public NerdJava2dWindowManager setIcon(final Image p_image) {
         this.window.setIconImage(p_image);
         return this;
     }
-
     // endregion
 
     @Override

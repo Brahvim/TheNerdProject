@@ -2324,7 +2324,7 @@ public class Sketch extends PApplet {
 	// ~~Should've made a method-class for this.~~
 	protected void updateSketchMouse() {
 		final Point mousePoint = MouseInfo.getPointerInfo().getLocation(),
-				sketchFramePoint = ((JFrame) this.WINDOW.getNativeObject()).getLocation();
+				sketchFramePoint = this.sketchFrame.getLocation();
 		super.mouseX = mousePoint.x - sketchFramePoint.x;
 		super.mouseY = mousePoint.y - sketchFramePoint.y;
 	}

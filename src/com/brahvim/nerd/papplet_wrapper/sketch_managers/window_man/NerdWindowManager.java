@@ -124,10 +124,14 @@ public abstract class NerdWindowManager {
     public abstract PVector getPosition();
 
     public abstract Object getNativeObject();
+
+    public abstract boolean getAlwaysOnTop();
     // endregion
 
     // region Setters.
     // Implementations return pointers of their own type, not `NerdWindowManager*`s,
+    public abstract boolean setAlwaysOnTop(final boolean p_name);
+
     public abstract NerdWindowManager setName(final String p_name);
 
     public abstract NerdWindowManager setSize(final PVector p_size);
