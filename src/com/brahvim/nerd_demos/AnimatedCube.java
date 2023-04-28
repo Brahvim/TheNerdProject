@@ -5,6 +5,7 @@ import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.scene_api.NerdScene;
 
+import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
 import processing.core.PVector;
@@ -14,8 +15,8 @@ public class AnimatedCube extends TestEulerBody {
     // region Fields.
     public static int DEFAULT_LIFETIME = 8_000;
 
-    public int lifetime;
     public float size = 40;
+    public int startTime, lifetime;
     public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
     private final SineEase plopWave;
@@ -26,7 +27,8 @@ public class AnimatedCube extends TestEulerBody {
     public AnimatedCube(final NerdScene p_scene) {
         super(p_scene.SKETCH);
 
-        this.lifetime = super.SKETCH.millis() + AnimatedCube.DEFAULT_LIFETIME;
+        this.startTime = SKETCH.millis();
+        this.lifetime = this.startTime + AnimatedCube.DEFAULT_LIFETIME;
 
         super.pos.set(
                 super.SKETCH.getCamera().pos.x + super.SKETCH.random(-super.SKETCH.WINDOW.cx, super.SKETCH.WINDOW.cx),
@@ -142,6 +144,12 @@ public class AnimatedCube extends TestEulerBody {
         super.SKETCH.translate(super.pos);
         super.SKETCH.rotate(super.rot);
         super.SKETCH.scale(this.size * this.plopWave.get());
+
+        // Performance drop + doesn't work!:
+        // for (int i = 0; i < p_shape.getVertexCount(); i++)
+        // p_shape.setFill(i, SKETCH.color(255, PApplet.map(SKETCH.millis(),
+        // this.startTime, this.lifetime, 0, 255)));
+
         super.SKETCH.shape(p_shape);
         super.SKETCH.pop();
     }

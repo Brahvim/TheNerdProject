@@ -22,12 +22,16 @@ import processing.event.MouseEvent;
 public class DemoScene3 extends NerdScene {
 
     // region Fields.
+    private static final float ACC_FRICT = 0.8f;
+    private static final float VEL_FRICT = 0.9f;
+
+    private final float GRAVITY = 2;
+    private final PVector playerAcc = new PVector(), playerVel = new PVector();
+
     private PImage bgGrad;
     private FlyCamera CAMERA;
     private CubeManager cubeMan;
     private NerdAmbiLight ambiLight;
-    private final float GRAVITY = 2;
-    private final PVector playerVel = new PVector(10, 7, 10);
     // endregion
 
     @Override
@@ -74,7 +78,7 @@ public class DemoScene3 extends NerdScene {
         SKETCH.lights();
         SKETCH.background(this.bgGrad);
         this.ambiLight.apply();
-        this.controlCamera();
+        this.controlCameraWithAcc();
         this.cubeMan.draw();
     }
 
@@ -86,6 +90,56 @@ public class DemoScene3 extends NerdScene {
             for (int x = 0; x < this.bgGrad.width; x++)
                 this.bgGrad.pixels[x + y * this.bgGrad.width] = SKETCH.lerpColor(
                         color1, color2, PApplet.map(y, 0, this.bgGrad.height, 0, 1));
+    }
+
+    private void controlCameraWithAcc() {
+        // Increase speed when holding `Ctrl`:
+        final float accMultiplier;
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
+            accMultiplier = 5;
+        else
+            accMultiplier = 2;
+
+        // region Roll.
+        if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
+            CAMERA.up.x += accMultiplier * 0.01f;
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_C))
+            CAMERA.up.x += -accMultiplier * 0.01f;
+        // endregion
+
+        // region Elevation.
+        if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
+            this.playerAcc.y += this.GRAVITY * -accMultiplier;
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
+            this.playerAcc.y += accMultiplier;
+        // endregion
+
+        // region `W`-`A`-`S`-`D` controls.
+        if (SKETCH.keyIsPressed(KeyEvent.VK_W))
+            this.playerAcc.z += -accMultiplier;
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_A))
+            this.playerAcc.x += -accMultiplier;
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_S))
+            this.playerAcc.z += accMultiplier;
+
+        if (SKETCH.keyIsPressed(KeyEvent.VK_D))
+            this.playerAcc.x += accMultiplier;
+
+        this.playerVel.add(this.playerAcc);
+        this.playerAcc.mult(DemoScene3.ACC_FRICT);
+        this.playerVel.mult(DemoScene3.VEL_FRICT);
+
+        CAMERA.moveX(this.playerVel.x);
+        CAMERA.moveY(this.playerVel.y);
+        CAMERA.moveZ(this.playerVel.z);
+
+        // this.playerAcc.set(0, 0, 0);
+        // endregion
     }
 
     private void controlCamera() {
@@ -123,7 +177,6 @@ public class DemoScene3 extends NerdScene {
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_D))
             CAMERA.moveX(velMultiplier * this.playerVel.x);
-
         // endregion
     }
 
