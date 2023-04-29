@@ -6,6 +6,7 @@ import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_demos.App;
+import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -30,13 +31,13 @@ public class DemoScene4 extends NerdScene {
     protected void preload() {
         ASSETS.add(new PImageAsset(), SKETCH.ICON_PATH);
         ASSETS.add(new OggBufferDataAsset(), "data/RUBBER DUCK.ogg");
-        System.out.println("Test Scene 4 asset preload completed!");
+        // System.out.println("`DemoScene4` asset preload completed!");
     }
 
     @Override
     protected void setup(final SceneState p_state) {
-        System.out.printf("`TestScene4::setup()` here, I was called `%d` times!\n",
-                this.SCENE.getTimesLoaded());
+        // System.out.printf("`DemoScene4::setup()` here, I was called `%d` times!\n",
+        // this.SCENE.getTimesLoaded());
 
         // region OpenAL Test.
         // ..so the effects and filters wrk perfectly, but I just didn't want them in
@@ -86,7 +87,7 @@ public class DemoScene4 extends NerdScene {
         this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
         SKETCH.noStroke();
-        SKETCH.getCamera().pos.z = 500;
+        SKETCH.getCamera().getPos().z = 500;
         SKETCH.textureWrap(PConstants.REPEAT);
 
         this.ncx = this.nerd.width * 0.5f;
@@ -100,7 +101,7 @@ public class DemoScene4 extends NerdScene {
 
         this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);
         this.magScroll += (this.magScrollVel *= this.MAG_SCROLL_DECAY_VEL);
-        CAMERA.pos.z += this.magScrollVel;
+        CAMERA.getPos().z += this.magScrollVel;
 
         // region Draw the nerds!!!
         SKETCH.beginShape();

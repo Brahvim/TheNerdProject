@@ -40,13 +40,13 @@ public class DemoScene6 extends NerdScene {
         // The camera won't be "auto-used" otherwise!!!
 
         // Give us a "starting position"!:
-        CAMERA.pos.set(WINDOW.cx, this.PLAYER_START_Y);
+        CAMERA.getPos().set(WINDOW.cx, this.PLAYER_START_Y);
     }
 
     @Override
     protected void draw() {
         CAMERA.fov = PConstants.PI / 3 + 0.01f * SKETCH.mouseScroll;
-        CAMERA.pos.y = PApplet.sin(SKETCH.millis() * 0.001f) * 25;
+        CAMERA.getPos().y = PApplet.sin(SKETCH.millis() * 0.001f) * 25;
         this.controlCamera();
 
         // region Actual rendering!
@@ -83,11 +83,11 @@ public class DemoScene6 extends NerdScene {
 
     private void controlCamera() {
         // region Gravity:
-        CAMERA.pos.y += this.GRAVITY;
+        CAMERA.getPos().y += this.GRAVITY;
 
         // Don't-go-underneath check:
-        if (CAMERA.pos.y > this.PLAYER_MIN_Y)
-            CAMERA.pos.y = this.PLAYER_MIN_Y;
+        if (CAMERA.getPos().y > this.PLAYER_MIN_Y)
+            CAMERA.getPos().y = this.PLAYER_MIN_Y;
         // endregion
 
         // region Key-press handling.
@@ -99,10 +99,10 @@ public class DemoScene6 extends NerdScene {
 
         // region Roll.
         if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
-            CAMERA.up.x += velMultiplier * 0.01f;
+            CAMERA.getUp().x += velMultiplier * 0.01f;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_C))
-            CAMERA.up.x += -velMultiplier * 0.01f;
+            CAMERA.getUp().x += -velMultiplier * 0.01f;
         // endregion
 
         // region Elevation.

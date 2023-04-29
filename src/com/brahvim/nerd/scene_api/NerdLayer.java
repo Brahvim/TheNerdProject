@@ -113,6 +113,9 @@ public class NerdLayer {
 
     public void monitorChanged() {
     }
+
+    public void fullscreenChanged(final boolean p_state) {
+    }
     // endregion
     // endregion
 

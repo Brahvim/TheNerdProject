@@ -1,4 +1,4 @@
-package com.brahvim.nerd_demos.scenes;
+package com.brahvim.nerd_demos.scenes.scene3;
 
 import java.awt.event.KeyEvent;
 
@@ -22,7 +22,7 @@ import processing.event.MouseEvent;
 public class DemoScene3 extends NerdScene {
 
     // region Fields.
-    private static final float ACC_FRICT = 0.8f;
+    private static final float ACC_FRICT = 0.9f;
     private static final float VEL_FRICT = 0.9f;
 
     private final float GRAVITY = 2;
@@ -82,6 +82,7 @@ public class DemoScene3 extends NerdScene {
         this.cubeMan.draw();
     }
 
+    // region My methods :)
     private void calculateBgGrad() {
         final int color1 = SKETCH.color(224, 152, 27), color2 = SKETCH.color(232, 81, 194);
         this.bgGrad = SKETCH.createImage(SKETCH.width, SKETCH.height, PConstants.RGB);
@@ -92,21 +93,24 @@ public class DemoScene3 extends NerdScene {
                         color1, color2, PApplet.map(y, 0, this.bgGrad.height, 0, 1));
     }
 
+    // @SuppressWarnings("unused")6
     private void controlCameraWithAcc() {
         // Increase speed when holding `Ctrl`:
         final float accMultiplier;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
-            accMultiplier = 5;
-        else
             accMultiplier = 2;
+        else if (SKETCH.keyIsPressed(KeyEvent.VK_ALT))
+            accMultiplier = 0.125f;
+        else
+            accMultiplier = 0.5f;
 
         // region Roll.
         if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
-            CAMERA.up.x += accMultiplier * 0.01f;
+            CAMERA.getUp().x += accMultiplier * 0.1f;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_C))
-            CAMERA.up.x += -accMultiplier * 0.01f;
+            CAMERA.getUp().x += -accMultiplier * 0.1f;
         // endregion
 
         // region Elevation.
@@ -142,24 +146,27 @@ public class DemoScene3 extends NerdScene {
         // endregion
     }
 
+    @SuppressWarnings("unused")
     private void controlCamera() {
         // Increase speed when holding `Ctrl`:
-        /* final */ float velMultiplier = 1;
+        final float velMultiplier;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
             velMultiplier = 2;
+        else
+            velMultiplier = 1;
 
         // region Roll.
         if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
-            CAMERA.up.x += velMultiplier * 0.01f;
+            CAMERA.getUp().x += velMultiplier;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_C))
-            CAMERA.up.x += -velMultiplier * 0.01f;
+            CAMERA.getUp().x += -velMultiplier;
         // endregion
 
         // region Elevation.
         if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
-            CAMERA.moveY(this.GRAVITY * velMultiplier * -this.playerVel.y);
+            CAMERA.moveY(/* `this.GRAVITY *` */ velMultiplier * -this.playerVel.y);
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
             CAMERA.moveY(velMultiplier * this.playerVel.y);
@@ -179,8 +186,9 @@ public class DemoScene3 extends NerdScene {
             CAMERA.moveX(velMultiplier * this.playerVel.x);
         // endregion
     }
+    // endregion
 
-    // region Input event callbacks.
+    // region Event callbacks.
     @Override
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
@@ -202,6 +210,11 @@ public class DemoScene3 extends NerdScene {
     public void mouseWheel(final MouseEvent p_mouseEvent) {
         CAMERA.fov -= p_mouseEvent.getCount() * 0.1f;
         CAMERA.fov = PApplet.constrain(CAMERA.fov, 0, 130);
+    }
+
+    @Override
+    public void fullscreenChanged(final boolean p_state) {
+        System.out.printf("`DemoScene3::fullscreenChanged()`: `%s`.\n", p_state);
     }
     // endregion
 

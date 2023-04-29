@@ -380,6 +380,18 @@ public class SceneManager {
 
         this.windowListener = this.SKETCH.new SketchWindowListener() {
             @Override
+            public void fullscreenChanged(final boolean p_state) {
+                if (SCENE_MAN.currScene == null)
+                    return;
+
+                SCENE_MAN.currScene.fullscreenChanged(p_state);
+                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
+                    if (l != null)
+                        if (l.isActive())
+                            l.fullscreenChanged(p_state);
+            }
+
+            @Override
             public void focusLost() {
                 if (SCENE_MAN.currScene == null)
                     return;

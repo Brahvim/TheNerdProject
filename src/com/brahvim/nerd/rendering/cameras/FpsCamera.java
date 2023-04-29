@@ -20,4 +20,12 @@ public class FpsCamera extends FlyCamera {
         this.height += p_velY;
     }
 
+    public float getHeight() {
+        return this.height;
+    }
+
+    public void setHeight(final float p_height) {
+        this.height = p_height;
+    }
+
 }

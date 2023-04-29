@@ -8,9 +8,9 @@
         },
         "arrExample": {
             "en": [
-                "Random word `#1`!",
-                "Random word `#2`!",
-                "Random word `#3`!"
+                "Random line `#1`!",
+                "Random line `#2`!",
+                "Random line `#3`!"
             ]
         }
     },

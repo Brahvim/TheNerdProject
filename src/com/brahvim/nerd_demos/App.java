@@ -21,8 +21,9 @@ public class App {
      * // TODO: Make it easier to animate, somehow!?
      * // TODO: Collision Algorithms (also for 3D space).
      * // TODO: `NerdInputManager`. (I'm tired, *please-*)
-     * // TODO: `PAppWrap`. ...wrap EVERY class, perhaps?!
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
+     * // TODO: PERFORMANCE ON ANDROID. Performance in general sucks!...
+     * // TODO: Cleanup the "callback mess" that `SceneManager` "creates"...
      */
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =

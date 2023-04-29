@@ -1,5 +1,7 @@
 package com.brahvim.nerd.rendering.cameras;
 
+import java.util.Objects;
+
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PVector;
@@ -10,7 +12,7 @@ import processing.core.PVector;
  */
 public class BasicCamera extends NerdAbstractCamera {
 
-    public PVector center, defaultCamCenter;
+    protected PVector center, defaultCamCenter;
 
     protected BasicCamera(final Sketch p_sketch) {
         super(p_sketch);
@@ -42,6 +44,22 @@ public class BasicCamera extends NerdAbstractCamera {
         // ...nope! I'll remove this! It causes the camera position to seem to change
         // when you resize the window!
         // Lesson learnt: **use this only if your camera never moves!**
+    }
+
+    public PVector getCenter() {
+        return this.center;
+    }
+
+    public PVector getDefaultCamCenter() {
+        return this.defaultCamCenter;
+    }
+
+    public void setCenter(final PVector p_vec) {
+        this.center = p_vec;
+    }
+
+    public void setDefaultCamCenter(final PVector p_defaultCamCenter) {
+        this.defaultCamCenter = Objects.requireNonNull(p_defaultCamCenter);
     }
 
     @Override

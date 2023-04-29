@@ -133,9 +133,6 @@ public class Sketch extends PApplet {
 		}
 
 		// region Window focus events.
-		public void resized() {
-		}
-
 		public void focusLost() {
 		}
 
@@ -143,7 +140,13 @@ public class Sketch extends PApplet {
 		}
 		// endregion
 
+		public void resized() {
+		}
+
 		public void monitorChanged() {
+		}
+
+		public void fullscreenChanged(final boolean p_state) {
 		}
 
 	}
@@ -559,7 +562,7 @@ public class Sketch extends PApplet {
 		if (this.USES_OPENGL)
 			super.endPGL();
 
-		this.WINDOW.postCallback();
+		this.WINDOW.postCallback(this.WINDOW_LISTENERS);
 
 		// region Previous state updates!!!
 		for (final PVector v : this.UNPROJ_TOUCHES)
@@ -1384,8 +1387,10 @@ public class Sketch extends PApplet {
 	public void background(final PImage p_image) {
 		try {
 			super.background(p_image);
-		} catch (final Exception e) {
+		} catch (final RuntimeException e) {
 			// Do nothing with the exception. Don't even READ it.
+			// final PImage copy = p_image.get();
+			// copy.resize(super.width, super.height);
 			p_image.resize(super.width, super.height);
 			super.background(p_image);
 
@@ -1552,20 +1557,20 @@ public class Sketch extends PApplet {
 	// region Camera matrix configuration.
 	public void camera(final BasicCamera p_cam) {
 		super.camera(
-				p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
-				p_cam.center.x, p_cam.center.y, p_cam.center.z,
-				p_cam.up.x, p_cam.up.y, p_cam.up.z);
+				p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z,
+				p_cam.getCenter().x, p_cam.getCenter().y, p_cam.getCenter().z,
+				p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
 	}
 
 	public void camera(final FlyCamera p_cam) {
 		super.camera(
-				p_cam.pos.x, p_cam.pos.y, p_cam.pos.z,
+				p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z,
 
-				p_cam.pos.x + p_cam.front.x,
-				p_cam.pos.y + p_cam.front.y,
-				p_cam.pos.z + p_cam.front.z,
+				p_cam.getPos().x + p_cam.front.x,
+				p_cam.getPos().y + p_cam.front.y,
+				p_cam.getPos().z + p_cam.front.z,
 
-				p_cam.up.x, p_cam.up.y, p_cam.up.z);
+				p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
 	}
 
 	public void camera(final PVector p_pos, final PVector p_center, final PVector p_up) {

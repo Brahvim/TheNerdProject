@@ -28,7 +28,7 @@ public class BoxAnimationLayer extends NerdLayer {
 
         // CAMERA.center.x = squareAmp / 2.5f;
         // CAMERA.pos.y = squareAmp / 1.5f;
-        CAMERA.up.x = this.camRotWave.get() * PConstants.TAU;
+        CAMERA.getUp().x = this.camRotWave.get() * PConstants.TAU;
 
         SKETCH.translate(
                 PApplet.cos(SKETCH.millis() * 0.001f) * squareAmp,

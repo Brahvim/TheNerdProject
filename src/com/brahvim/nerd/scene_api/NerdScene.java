@@ -667,6 +667,9 @@ public class NerdScene {
   // endregion
 
   // region Window focus events.
+  public void fullscreenChanged(final boolean p_state) {
+  }
+
   public void focusLost() {
   }
 

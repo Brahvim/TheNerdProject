@@ -159,14 +159,19 @@ public abstract class NerdWindowManager {
         // When the window is resized, do the following!:
         if (!(this.pwidth == this.width || this.pheight == this.height)) {
             this.updateWindowRatios();
-            for (final Sketch.SketchWindowListener l : Objects.requireNonNull(p_windowListeners,
-                    "`NerdWindowManager::preCallback()` received `null`.)"))
+            for (final Sketch.SketchWindowListener l : Objects.requireNonNull(
+                    p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
                 l.resized();
         }
     }
 
-    public void postCallback() {
+    public void postCallback(final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
         this.postCallbackImpl();
+
+        if (this.pfullscreen != this.fullscreen)
+            for (final Sketch.SketchWindowListener l : Objects.requireNonNull(
+                    p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
+                l.fullscreenChanged(this.fullscreen);
 
         this.pfullscreen = this.fullscreen;
         this.pcursorVisible = this.cursorVisible;

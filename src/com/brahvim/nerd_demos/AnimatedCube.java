@@ -5,7 +5,6 @@ import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.scene_api.NerdScene;
 
-import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PShape;
 import processing.core.PVector;
@@ -31,9 +30,12 @@ public class AnimatedCube extends TestEulerBody {
         this.lifetime = this.startTime + AnimatedCube.DEFAULT_LIFETIME;
 
         super.pos.set(
-                super.SKETCH.getCamera().pos.x + super.SKETCH.random(-super.SKETCH.WINDOW.cx, super.SKETCH.WINDOW.cx),
-                super.SKETCH.getCamera().pos.y + super.SKETCH.random(-super.SKETCH.WINDOW.cy, super.SKETCH.WINDOW.cy),
-                super.SKETCH.getCamera().pos.z + super.SKETCH.random(-600, 600));
+                super.SKETCH.getCamera().getPos().x
+                        + super.SKETCH.random(-super.SKETCH.WINDOW.cx, super.SKETCH.WINDOW.cx),
+                super.SKETCH.getCamera().getPos().y
+                        + super.SKETCH.random(-super.SKETCH.WINDOW.cy, super.SKETCH.WINDOW.cy),
+                super.SKETCH.getCamera().getPos().z
+                        + super.SKETCH.random(-600, 600));
 
         super.acc.set(
                 super.SKETCH.random(-0.01f, 0.01f),

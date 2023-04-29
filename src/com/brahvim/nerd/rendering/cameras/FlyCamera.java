@@ -181,7 +181,9 @@ public class FlyCamera extends NerdAbstractCamera {
             return new Point(this.DISPLAYS.displayWidthHalf, this.DISPLAYS.displayHeightHalf);
         } else {
             final PVector position = this.WINDOW.getPosition();
-            return new Point((int) position.x, (int) position.y);
+            return new Point(
+                    (int) (position.x + this.WINDOW.cx),
+                    (int) (position.y + this.WINDOW.cy));
         }
     }
     // endregion

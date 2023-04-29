@@ -73,7 +73,7 @@ public class DemoScene1 extends NerdScene {
         if (this.ease.wasActive() && !this.ease.active)
             this.sceneOneAnnounce.dispose();
 
-        CAMERA.pos.z = PApplet.abs(PApplet.sin(this.SCENE.getMillisSinceStart() * 0.001f)) * 500;
+        CAMERA.getPos().z = PApplet.abs(PApplet.sin(this.SCENE.getMillisSinceStart() * 0.001f)) * 500;
 
         /*
          * if (SKETCH.frameCount % 5 == 0) {

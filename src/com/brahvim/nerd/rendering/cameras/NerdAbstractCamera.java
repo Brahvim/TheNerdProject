@@ -1,5 +1,6 @@
 package com.brahvim.nerd.rendering.cameras;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
@@ -26,8 +27,9 @@ public abstract class NerdAbstractCamera {
             mouseZ = NerdAbstractCamera.DEFAULT_CAM_MOUSE_Z,
             aspect /* `= 1`? */;
 
-    public PVector pos = new PVector(), up = new PVector(0, 1, 0);
-    public PVector defaultCamUp, defaultCamPos;
+    protected PVector pos = new PVector(), up = new PVector(0, 1, 0),
+            defaultCamUp, defaultCamPos;
+
     public int projection = PConstants.PERSPECTIVE;
     public boolean doScript = true, doAutoClear = true, doAutoAspect = true;
     // endregion
@@ -66,6 +68,24 @@ public abstract class NerdAbstractCamera {
     }
 
     // region Pre-implemented methods.
+    // region Getters and setters.
+    public PVector getUp() {
+        return this.up;
+    }
+
+    public PVector getPos() {
+        return this.pos;
+    }
+
+    public void setUp(final PVector p_up) {
+        this.up = p_up;
+    }
+
+    public void setPos(final PVector p_pos) {
+        this.pos = p_pos;
+    }
+    // endregion
+
     public void apply() {
         // #JIT_FTW!:
 
@@ -112,6 +132,22 @@ public abstract class NerdAbstractCamera {
     public void runScript() {
         if (this.script != null && this.doScript)
             this.script.accept(this);
+    }
+
+    public PVector getDefaultCamUp() {
+        return this.defaultCamPos;
+    }
+
+    public PVector getDefaultCamPos() {
+        return this.defaultCamPos;
+    }
+
+    public void setDefaultCamUp(final PVector p_vec) {
+        this.defaultCamUp = Objects.requireNonNull(p_vec);
+    }
+
+    public void setDefaultCamPos(final PVector p_vec) {
+        this.defaultCamPos = Objects.requireNonNull(p_vec);
     }
 
     // region `setClearColor()` overloads.
