@@ -40,9 +40,9 @@ import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
-import com.brahvim.nerd.rendering.cameras.BasicCamera;
-import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
-import com.brahvim.nerd.rendering.cameras.FlyCamera;
+import com.brahvim.nerd.rendering.cameras.NerdBasicCamera;
+import com.brahvim.nerd.rendering.cameras.NerdBasicCameraBuilder;
+import com.brahvim.nerd.rendering.cameras.NerdFlyCamera;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.NerdSceneManager;
@@ -294,7 +294,7 @@ public class Sketch extends PApplet {
 	protected final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
 
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
-	protected BasicCamera defaultCamera;
+	protected NerdBasicCamera defaultCamera;
 	protected NerdScene currentScene;
 	protected PImage iconImage;
 
@@ -465,7 +465,7 @@ public class Sketch extends PApplet {
 				this.gl = this.glWindow.getGL();
 				this.glu = new GLU();
 
-				this.defaultCamera = new BasicCameraBuilder(this).build();
+				this.defaultCamera = new NerdBasicCameraBuilder(this).build();
 				this.currentCamera = this.defaultCamera;
 
 				if (this.INITIALLY_RESIZABLE)
@@ -1565,14 +1565,14 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Camera matrix configuration.
-	public void camera(final BasicCamera p_cam) {
+	public void camera(final NerdBasicCamera p_cam) {
 		super.camera(
 				p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z,
 				p_cam.getCenter().x, p_cam.getCenter().y, p_cam.getCenter().z,
 				p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
 	}
 
-	public void camera(final FlyCamera p_cam) {
+	public void camera(final NerdFlyCamera p_cam) {
 		super.camera(
 				p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z,
 
@@ -1912,7 +1912,7 @@ public class Sketch extends PApplet {
 		return this.previousCamera;
 	}
 
-	public BasicCamera getDefaultCameraClone() {
+	public NerdBasicCamera getDefaultCameraClone() {
 		return this.defaultCamera.clone();
 	}
 

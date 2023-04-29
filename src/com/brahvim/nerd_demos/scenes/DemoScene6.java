@@ -2,7 +2,7 @@ package com.brahvim.nerd_demos.scenes;
 
 import java.awt.event.KeyEvent;
 
-import com.brahvim.nerd.rendering.cameras.FpsCamera;
+import com.brahvim.nerd.rendering.cameras.NerdFpsCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 
@@ -13,7 +13,7 @@ import processing.core.PVector;
 public class DemoScene6 extends NerdScene {
 
     // region Fields.
-    private FpsCamera CAMERA;
+    private NerdFpsCamera CAMERA;
     private final PVector playerVel = new PVector(10, 7, 10);
 
     private final float GRAVITY = 2;
@@ -30,7 +30,7 @@ public class DemoScene6 extends NerdScene {
         }
 
         // Need to do this!...:
-        CAMERA = STATE.get("Camera", new FpsCamera(SKETCH));
+        CAMERA = STATE.get("Camera", new NerdFpsCamera(SKETCH));
         CAMERA.setClearColor(0x006699);
         STATE.set("TimesLoaded", this.SCENE.getTimesLoaded());
 

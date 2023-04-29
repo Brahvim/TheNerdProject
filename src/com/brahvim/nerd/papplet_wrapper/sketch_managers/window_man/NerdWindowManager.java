@@ -74,7 +74,6 @@ public abstract class NerdWindowManager {
         // (Well, changing the display does NOT effect those variables in any way :|)
     }
 
-    // FIXME No implementation of this method works correctly!
     protected abstract void centerWindowImpl(final float p_displayWidth, final float p_displayHeight);
     // endregion
 

@@ -9,7 +9,7 @@ import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowMan
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class FlyCamera extends NerdAbstractCamera {
+public class NerdFlyCamera extends NerdAbstractCamera {
     // Mathematics, thanks to https://learnopengl.com/Getting-started/Camera!
 
     // region Fields.
@@ -18,7 +18,7 @@ public class FlyCamera extends NerdAbstractCamera {
     public float yaw, zoom, pitch;
     public boolean shouldConstrainPitch = true;
     public boolean holdMouse = true, pholdMouse;
-    public float mouseSensitivity = FlyCamera.DEFAULT_MOUSE_SENSITIVITY;
+    public float mouseSensitivity = NerdFlyCamera.DEFAULT_MOUSE_SENSITIVITY;
     public PVector front = new PVector(), defaultCamFront = new PVector();
 
     private final NerdWindowManager WINDOW;
@@ -26,7 +26,7 @@ public class FlyCamera extends NerdAbstractCamera {
     // endregion
 
     // region Construction.
-    public FlyCamera(final Sketch p_sketch) {
+    public NerdFlyCamera(final Sketch p_sketch) {
         super(p_sketch);
         this.front = super.pos.copy();
         this.WINDOW = super.SKETCH.WINDOW;
@@ -36,7 +36,7 @@ public class FlyCamera extends NerdAbstractCamera {
         this.defaultCamFront = this.front.copy();
     }
 
-    public FlyCamera(final Sketch p_sketch, final PVector p_defaultFront) {
+    public NerdFlyCamera(final Sketch p_sketch, final PVector p_defaultFront) {
         super(p_sketch);
         this.front.set(p_defaultFront);
         this.WINDOW = super.SKETCH.WINDOW;
@@ -59,8 +59,8 @@ public class FlyCamera extends NerdAbstractCamera {
     }
 
     @Override
-    public FlyCamera clone() {
-        final FlyCamera toRet = new FlyCamera(super.SKETCH);
+    public NerdFlyCamera clone() {
+        final NerdFlyCamera toRet = new NerdFlyCamera(super.SKETCH);
 
         // region Copying settings over to `toRet`.
         toRet.up = new PVector(super.up.x, super.up.x, super.up.z);

@@ -25,7 +25,7 @@ import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
  *
  * @author Brahvim Bhaktvatsal
  */
-// Not `abstract` so you overload only what you want.
+// Not `abstract` so you get to override only what you want.
 public class NerdScene {
 
   // region `public` fields.

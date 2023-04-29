@@ -2,10 +2,10 @@ package com.brahvim.nerd.rendering.cameras;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-public class FpsCamera extends FlyCamera {
+public class NerdFpsCamera extends NerdFlyCamera {
     private float height;
 
-    public FpsCamera(final Sketch p_sketch) {
+    public NerdFpsCamera(final Sketch p_sketch) {
         super(p_sketch);
     }
 

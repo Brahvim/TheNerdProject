@@ -79,21 +79,24 @@ public class NerdSceneManager {
 
         /**
          * Controls whether {@link NerdScene#pre()} or {@link NerdLayer#pre()} is
-         * called first by the {@link NerdSceneManager}. If the value of this field is ever
+         * called first by the {@link NerdSceneManager}. If the value of this field is
+         * ever
          * {@code null}, it is set to its default, {@link CallbackOrder#SCENE}.
          */
         public CallbackOrder preFirstCaller = CallbackOrder.SCENE;
 
         /**
          * Controls whether {@link NerdScene#draw()} or {@link NerdLayer#draw()} is
-         * called first by the {@link NerdSceneManager}. If the value of this field is ever
+         * called first by the {@link NerdSceneManager}. If the value of this field is
+         * ever
          * {@code null}, it is set to its default, {@link CallbackOrder#LAYER}.
          */
         public CallbackOrder drawFirstCaller = CallbackOrder.LAYER;
 
         /**
          * Controls whether {@link NerdScene#post()} or {@link NerdLayer#post()} is
-         * called first by the {@link NerdSceneManager}. If the value of this field is ever
+         * called first by the {@link NerdSceneManager}. If the value of this field is
+         * ever
          * {@code null}, it is set to its default, {@link CallbackOrder#LAYER}.
          */
         public CallbackOrder postFirstCaller = CallbackOrder.LAYER;
@@ -164,7 +167,8 @@ public class NerdSceneManager {
             /**
              * Resets {@link NerdSceneManager.SceneManagerSettings#preFirstCaller},
              * {@link NerdSceneManager.SceneManagerSettings#drawFirstCaller}, and
-             * {@link NerdSceneManager.SceneManagerSettings#postFirstCaller} to their default
+             * {@link NerdSceneManager.SceneManagerSettings#postFirstCaller} to their
+             * default
              * values!
              */
             public volatile boolean resetSceneLayerCallbackOrder = true;
@@ -238,7 +242,8 @@ public class NerdSceneManager {
         this.initSceneListeners();
     }
 
-    public NerdSceneManager(final Sketch p_sketch, final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners) {
+    public NerdSceneManager(final Sketch p_sketch,
+            final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
         this.SETTINGS = new NerdSceneManager.SceneManagerSettings();
@@ -797,6 +802,8 @@ public class NerdSceneManager {
         // Initialize fields as if this was a part of the construction.
         toRet.MANAGER = this;
         toRet.SKETCH = toRet.MANAGER.SKETCH;
+
+        toRet.INPUT = toRet.SKETCH.INPUT;
         toRet.WINDOW = toRet.SKETCH.WINDOW;
         toRet.DISPLAYS = toRet.SKETCH.DISPLAYS;
         toRet.CAMERA = toRet.SKETCH.setCameraToDefault();

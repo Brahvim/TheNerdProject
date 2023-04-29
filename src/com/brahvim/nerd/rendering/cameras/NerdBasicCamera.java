@@ -7,14 +7,14 @@ import com.brahvim.nerd.papplet_wrapper.Sketch;
 import processing.core.PVector;
 
 /**
- * @apiNote Please use a {@link BasicCameraBuilder} to get instances of
- *          {@link BasicCamera}.
+ * @apiNote Please use a {@link NerdBasicCameraBuilder} to get instances of
+ *          {@link NerdBasicCamera}.
  */
-public class BasicCamera extends NerdAbstractCamera {
+public class NerdBasicCamera extends NerdAbstractCamera {
 
     protected PVector center, defaultCamCenter;
 
-    protected BasicCamera(final Sketch p_sketch) {
+    protected NerdBasicCamera(final Sketch p_sketch) {
         super(p_sketch);
         this.center = new PVector(); // super.SKETCH.cx, super.SKETCH.cy);
     }
@@ -63,8 +63,8 @@ public class BasicCamera extends NerdAbstractCamera {
     }
 
     @Override
-    public BasicCamera clone() {
-        final BasicCamera toRet = new BasicCamera(this.SKETCH);
+    public NerdBasicCamera clone() {
+        final NerdBasicCamera toRet = new NerdBasicCamera(this.SKETCH);
 
         // region Copying camera parameters.
         toRet.up.set(this.up);

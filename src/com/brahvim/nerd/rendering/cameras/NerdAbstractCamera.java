@@ -122,10 +122,10 @@ public abstract class NerdAbstractCamera {
         this.projection = PConstants.PERSPECTIVE;
         this.doScript = true;
         this.doAutoClear = true;
-        this.far = BasicCamera.DEFAULT_CAM_FAR;
-        this.fov = BasicCamera.DEFAULT_CAM_FOV;
-        this.near = BasicCamera.DEFAULT_CAM_NEAR;
-        this.mouseZ = BasicCamera.DEFAULT_CAM_MOUSE_Z;
+        this.far = NerdBasicCamera.DEFAULT_CAM_FAR;
+        this.fov = NerdBasicCamera.DEFAULT_CAM_FOV;
+        this.near = NerdBasicCamera.DEFAULT_CAM_NEAR;
+        this.mouseZ = NerdBasicCamera.DEFAULT_CAM_MOUSE_Z;
         // endregion
     }
 

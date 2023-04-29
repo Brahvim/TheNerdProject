@@ -4,11 +4,11 @@ import java.awt.event.KeyEvent;
 import java.util.Objects;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.rendering.cameras.FlyCamera;
+import com.brahvim.nerd.rendering.cameras.NerdFlyCamera;
 
 import processing.core.PVector;
 
-public class SmoothCamera extends FlyCamera {
+public class SmoothCamera extends NerdFlyCamera {
 
     // region Fields.
     public float accFrict = 0.9f, velFrict = 0.9f;

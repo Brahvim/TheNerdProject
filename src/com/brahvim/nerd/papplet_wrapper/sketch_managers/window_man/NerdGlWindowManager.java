@@ -140,7 +140,7 @@ import processing.core.PVector;
     @Override
     protected void centerWindowImpl(final float p_displayWidth, final float p_displayHeight) {
         this.window.setPosition(
-                (int) ((p_displayHeight * 0.5f) - super.cx),
+                (int) ((p_displayWidth * 0.5f) - super.cx),
                 (int) ((p_displayHeight * 0.5f) - super.cy));
     }
 

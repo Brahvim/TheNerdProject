@@ -6,6 +6,8 @@ import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_demos.App;
 
+import processing.core.PApplet;
+
 public class Java2dDemoScene extends NerdScene {
 
     private AlSource rubberDuckSource;
@@ -19,7 +21,6 @@ public class Java2dDemoScene extends NerdScene {
     protected void setup(SceneState p_state) {
         App.OPENAL.unitSize = 1;
         this.rubberDuckSource = new AlSource(App.OPENAL, ASSETS.get("RUBBER DUCK").getData());
-        this.rubberDuckSource.setGain(5);
     }
 
     @Override
@@ -29,7 +30,10 @@ public class Java2dDemoScene extends NerdScene {
 
     @Override
     public void mouseClicked() {
-        this.rubberDuckSource.setPosition(SKETCH.mouseX, SKETCH.mouseY, 0);
+        this.rubberDuckSource.setPosition(
+                PApplet.map(INPUT.mouseX, 0, WINDOW.width, WINDOW.qx, WINDOW.q3x),
+                PApplet.map(INPUT.mouseY, 0, WINDOW.height, WINDOW.qy, WINDOW.q3y), 0);
+        System.out.println(this.rubberDuckSource.getPosition());
         this.rubberDuckSource.play();
     }
 
