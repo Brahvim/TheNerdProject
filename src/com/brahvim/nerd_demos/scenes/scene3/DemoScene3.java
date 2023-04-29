@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
-import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.lights.NerdAmbiLight;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.SceneManager;
@@ -22,14 +21,8 @@ import processing.event.MouseEvent;
 public class DemoScene3 extends NerdScene {
 
     // region Fields.
-    private static final float ACC_FRICT = 0.9f;
-    private static final float VEL_FRICT = 0.9f;
-
-    private final float GRAVITY = 2;
-    private final PVector playerAcc = new PVector(), playerVel = new PVector();
-
     private PImage bgGrad;
-    private FlyCamera CAMERA;
+    private SmoothCamera CAMERA;
     private CubeManager cubeMan;
     private NerdAmbiLight ambiLight;
     // endregion
@@ -44,13 +37,13 @@ public class DemoScene3 extends NerdScene {
     protected void setup(final SceneState p_state) {
         MANAGER.SETTINGS.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
         // SCENE.addLayers(CinematicBars.class);
-
         this.calculateBgGrad();
-        CAMERA = new FlyCamera(SKETCH);
-        CAMERA.fov = PApplet.radians(75);
-        App.OPENAL.unitSize = Float.MAX_VALUE;
-        SKETCH.setCamera(CAMERA);
 
+        CAMERA = new SmoothCamera(SKETCH);
+        CAMERA.fov = PApplet.radians(75);
+        SKETCH.setCamera(this.CAMERA);
+
+        App.OPENAL.unitSize = Float.MAX_VALUE;
         final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
         for (int i = 1; i != 5; i++)
             alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
@@ -78,7 +71,6 @@ public class DemoScene3 extends NerdScene {
         SKETCH.lights();
         SKETCH.background(this.bgGrad);
         this.ambiLight.apply();
-        this.controlCameraWithAcc();
         this.cubeMan.draw();
     }
 
@@ -91,100 +83,6 @@ public class DemoScene3 extends NerdScene {
             for (int x = 0; x < this.bgGrad.width; x++)
                 this.bgGrad.pixels[x + y * this.bgGrad.width] = SKETCH.lerpColor(
                         color1, color2, PApplet.map(y, 0, this.bgGrad.height, 0, 1));
-    }
-
-    // @SuppressWarnings("unused")6
-    private void controlCameraWithAcc() {
-        // Increase speed when holding `Ctrl`:
-        final float accMultiplier;
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
-            accMultiplier = 2;
-        else if (SKETCH.keyIsPressed(KeyEvent.VK_ALT))
-            accMultiplier = 0.125f;
-        else
-            accMultiplier = 0.5f;
-
-        // region Roll.
-        if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
-            CAMERA.getUp().x += accMultiplier * 0.1f;
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_C))
-            CAMERA.getUp().x += -accMultiplier * 0.1f;
-        // endregion
-
-        // region Elevation.
-        if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
-            this.playerAcc.y += /* this.GRAVITY * */ -accMultiplier;
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
-            this.playerAcc.y += accMultiplier;
-        // endregion
-
-        // region `W`-`A`-`S`-`D` controls.
-        if (SKETCH.keyIsPressed(KeyEvent.VK_W))
-            this.playerAcc.z += -accMultiplier;
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_A))
-            this.playerAcc.x += -accMultiplier;
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_S))
-            this.playerAcc.z += accMultiplier;
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_D))
-            this.playerAcc.x += accMultiplier;
-
-        this.playerVel.add(this.playerAcc);
-        this.playerAcc.mult(DemoScene3.ACC_FRICT);
-        this.playerVel.mult(DemoScene3.VEL_FRICT);
-
-        CAMERA.moveX(this.playerVel.x);
-        CAMERA.moveY(this.playerVel.y);
-        CAMERA.moveZ(this.playerVel.z);
-
-        // this.playerAcc.set(0, 0, 0);
-        // endregion
-    }
-
-    @SuppressWarnings("unused")
-    private void controlCamera() {
-        // Increase speed when holding `Ctrl`:
-        final float velMultiplier;
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
-            velMultiplier = 2;
-        else
-            velMultiplier = 1;
-
-        // region Roll.
-        if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
-            CAMERA.getUp().x += velMultiplier;
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_C))
-            CAMERA.getUp().x += -velMultiplier;
-        // endregion
-
-        // region Elevation.
-        if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
-            CAMERA.moveY(/* `this.GRAVITY *` */ velMultiplier * -this.playerVel.y);
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
-            CAMERA.moveY(velMultiplier * this.playerVel.y);
-        // endregion
-
-        // region `W`-`A`-`S`-`D` controls.
-        if (SKETCH.keyIsPressed(KeyEvent.VK_W))
-            CAMERA.moveZ(velMultiplier * -this.playerVel.z);
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_A))
-            CAMERA.moveX(velMultiplier * -this.playerVel.x);
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_S))
-            CAMERA.moveZ(velMultiplier * this.playerVel.z);
-
-        if (SKETCH.keyIsPressed(KeyEvent.VK_D))
-            CAMERA.moveX(velMultiplier * this.playerVel.x);
-        // endregion
     }
     // endregion
 

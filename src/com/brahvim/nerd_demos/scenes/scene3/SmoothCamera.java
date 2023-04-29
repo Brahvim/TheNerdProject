@@ -11,7 +11,7 @@ import processing.core.PVector;
 public class SmoothCamera extends FlyCamera {
 
     // region Fields.
-    public float accFrict, velFrict;
+    public float accFrict = 0.9f, velFrict = 0.9f;
     public float normalSpeed = 0.5f, fastSpeed = 2, slowSpeed = 0.125f;
 
     private PVector accVec = new PVector(), velVec = new PVector();
@@ -45,8 +45,10 @@ public class SmoothCamera extends FlyCamera {
     }
     // endregion
 
-    public void update() {
+    @Override
+    public void apply() {
         this.controlCameraWithAcc();
+        super.apply();
     }
 
     private void controlCameraWithAcc() {
@@ -54,11 +56,11 @@ public class SmoothCamera extends FlyCamera {
         final float accMultiplier;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
-            accMultiplier = 2;
+            accMultiplier = this.fastSpeed;
         else if (SKETCH.keyIsPressed(KeyEvent.VK_ALT))
-            accMultiplier = 0.125f;
+            accMultiplier = this.slowSpeed;
         else
-            accMultiplier = 0.5f;
+            accMultiplier = this.normalSpeed;
 
         // region Roll.
         if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
@@ -70,7 +72,7 @@ public class SmoothCamera extends FlyCamera {
 
         // region Elevation.
         if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
-            this.accVec.y += /* this.GRAVITY * */ -accMultiplier;
+            this.accVec.y += -accMultiplier;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
             this.accVec.y += accMultiplier;
@@ -89,15 +91,13 @@ public class SmoothCamera extends FlyCamera {
         if (SKETCH.keyIsPressed(KeyEvent.VK_D))
             this.accVec.x += accMultiplier;
 
-        this.velVec.add(this.accVec);
         this.accVec.mult(this.accFrict);
+        this.velVec.add(this.accVec);
         this.velVec.mult(this.velFrict);
 
         super.moveX(this.velVec.x);
         super.moveY(this.velVec.y);
         super.moveZ(this.velVec.z);
-
-        // this.accVec.set(0, 0, 0);
         // endregion
     }
 
