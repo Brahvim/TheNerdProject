@@ -6,6 +6,9 @@ import java.util.List;
 
 public class HuslColorConvertor {
 
+    private HuslColorConvertor() {
+    }
+
     private static class Length {
         final boolean greaterEqualZero;
         final double length;
@@ -38,6 +41,7 @@ public class HuslColorConvertor {
     private static double epsilon = 0.0088564516;
     // endregion
 
+    // region `private` utilities.
     private static List<double[]> getBounds(final double L) {
         final ArrayList<double[]> result = new ArrayList<double[]>();
 
@@ -158,6 +162,7 @@ public class HuslColorConvertor {
 
         return results;
     }
+    // endregion
 
     // region Conversions.
     public static double[] xyzToRgb(final double[] tuple) {
@@ -375,7 +380,7 @@ public class HuslColorConvertor {
     }
     // endregion
 
-    // region RGB <--> HUSL(p)
+    // region RGB to HUSL(p)
     public static double[] hsluvToRgb(final double[] tuple) {
         return HuslColorConvertor.lchToRgb(HuslColorConvertor.hsluvToLch(tuple));
     }

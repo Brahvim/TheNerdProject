@@ -47,11 +47,11 @@ public class SmoothCamera extends FlyCamera {
 
     @Override
     public void apply() {
-        this.controlCameraWithAcc();
+        this.controlCamera();
         super.apply();
     }
 
-    private void controlCameraWithAcc() {
+    private void controlCamera() {
         // Increase speed when holding `Ctrl`:
         final float accMultiplier;
 

@@ -69,17 +69,18 @@ import processing.opengl.PJOGL;
 public class Sketch extends PApplet {
 
 	// region Abstract inner classes.
-	// Used abstract classes instead of interfaces for these (two) reasons:
+	// Used ordinary classes instead of interfaces (or `abstract` ones) for these
+	// (two) reasons:
 	/*
 	 * - No security for `ALL_REFERENCES` from the user! It'll be `public`!
 	 * - For registering the reference into the `ALL_REFERENCES` collection,
-	 * a `default` method may be used. However, the method is overriable,
+	 * a `default` method may be used. However, the method is overrideable,
 	 * meaning that registering code becomes modifiable, letting the user
-	 * accidentally change what they weren't supposed to!
+	 * change what they weren't supposed to!
 	 */
 
 	// region Input listeners.
-	public /* `abstract` */ class SketchMouseListener {
+	public class SketchMouseListener {
 
 		public SketchMouseListener() {
 			Sketch.this.SKETCH.MOUSE_LISTENERS.add(this);
@@ -107,7 +108,7 @@ public class Sketch extends PApplet {
 
 	}
 
-	public /* `abstract` */ class SketchTouchListener {
+	public class SketchTouchListener {
 
 		public SketchTouchListener() {
 			Sketch.this.SKETCH.TOUCH_LISTENERS.add(this);
@@ -126,7 +127,7 @@ public class Sketch extends PApplet {
 
 	}
 
-	public /* `abstract` */ class SketchWindowListener {
+	public class SketchWindowListener {
 
 		public SketchWindowListener() {
 			Sketch.this.SKETCH.WINDOW_LISTENERS.add(this);
@@ -140,6 +141,7 @@ public class Sketch extends PApplet {
 		}
 		// endregion
 
+		// region Other window events.
 		public void resized() {
 		}
 
@@ -148,10 +150,11 @@ public class Sketch extends PApplet {
 
 		public void fullscreenChanged(final boolean p_state) {
 		}
+		// endregion
 
 	}
 
-	public /* `abstract` */ class SketchKeyboardListener {
+	public class SketchKeyboardListener {
 
 		public SketchKeyboardListener() {
 			Sketch.this.SKETCH.KEYBOARD_LISTENERS.add(this);
@@ -196,8 +199,8 @@ public class Sketch extends PApplet {
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
 	public final AssetManager ASSETS;
+	public final Unprojector UNPROJECTOR;
 	public final NerdStringTable STRINGS;
-
 	public final HashMap<String, Object> EXTENSIONS;
 	// `Object`s instead of a custom interface because you can't do
 	// that to libraries you didn't write! (...or you'd be writing subclasses of the
@@ -285,7 +288,6 @@ public class Sketch extends PApplet {
 	// endregion
 
 	protected final int ANTI_ALIASING;
-	protected final Unprojector UNPROJECTOR;
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
 	protected final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
 
@@ -651,7 +653,7 @@ public class Sketch extends PApplet {
 		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
 			// ...could call that callback here directly, but I decided this!:
 			// "Filter these keys using the utility method[s]?"
-
+			//
 			// ...and thus-this check was born!:
 			if (Sketch.isTypeable(super.key))
 				l.keyTyped();
@@ -745,8 +747,7 @@ public class Sketch extends PApplet {
 		super.focused = true;
 
 		// I guess this works because `looping` is `false` for sometime after
-		// `handleDraw()`,
-		// which is probably when events are handled:
+		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
 			for (final SketchWindowListener l : this.WINDOW_LISTENERS) {
 				l.focusGained();
@@ -760,8 +761,7 @@ public class Sketch extends PApplet {
 		super.focused = false;
 
 		// I guess this works because `looping` is `false` for sometime after
-		// `handleDraw()`,
-		// which is probably when events are handled:
+		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
 			for (final SketchWindowListener l : this.WINDOW_LISTENERS) {
 				l.focusLost();
@@ -1690,8 +1690,8 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
-	// region `push()` and `pop()` simply don't work in `PApplet`...:
-	// ..so I made them work myself!
+	// region `push()` and `pop()` simply don't work in `PApplet`,
+	// ...so I re-wrote them myself!
 	@Override
 	public void push() {
 		super.pushMatrix();
@@ -2140,6 +2140,16 @@ public class Sketch extends PApplet {
 	}
 
 	public void addTypedKeyTo(final StringBuilder p_str) {
+		final char typedChar = this.getTypedKey();
+		final int strLen = p_str.length();
+
+		if (typedChar == '\b' && strLen > 0)
+			p_str.substring(strLen - 1, strLen);
+		else
+			p_str.append(Character.toString(typedChar));
+	}
+
+	public void addTypedKeyTo(final StringBuffer p_str) {
 		final char typedChar = this.getTypedKey();
 		final int strLen = p_str.length();
 
