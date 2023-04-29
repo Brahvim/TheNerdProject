@@ -11,10 +11,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.io.asset_loader.AssetManager;
+import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
@@ -31,14 +32,14 @@ public class NerdScene {
   public final NerdScene SCENE = this;
   // Forgive me for breaking naming conventions here.
   // Forgive me. Please!
-  public /* final */ Sketch SKETCH;
-  public /* final */ SceneState STATE;
-  public /* final */ AssetManager ASSETS;
-  public /* final */ SceneManager MANAGER;
-  // public /* final */ StringTable STRINGS; // ...Not every scene needs one.
-  public /* final */ NerdWindowManager WINDOW;
-  public /* final */ NerdAbstractCamera CAMERA; // ...why keep this `protected`?
-  public /* final */ NerdDisplayManager DISPLAYS;
+  public Sketch SKETCH;
+  public SceneState STATE;
+  public NerdInputManager INPUT;
+  public NerdAssetManager ASSETS;
+  public NerdSceneManager MANAGER;
+  public NerdWindowManager WINDOW;
+  public NerdAbstractCamera CAMERA;
+  public NerdDisplayManager DISPLAYS;
   // endregion
 
   // region `private` fields.
@@ -393,9 +394,14 @@ public class NerdScene {
     // endregion
 
     toRet.SCENE = this;
-    toRet.SKETCH = this.SKETCH;
-    toRet.CAMERA = this.CAMERA;
-    toRet.MANAGER = this.MANAGER;
+    toRet.STATE = toRet.SCENE.STATE;
+    toRet.INPUT = toRet.SCENE.INPUT;
+    toRet.SKETCH = toRet.SCENE.SKETCH;
+    toRet.ASSETS = toRet.SCENE.ASSETS;
+    toRet.WINDOW = toRet.SCENE.WINDOW;
+    toRet.CAMERA = toRet.SCENE.CAMERA;
+    toRet.MANAGER = toRet.SCENE.MANAGER;
+    toRet.DISPLAYS = toRet.SCENE.DISPLAYS;
 
     return toRet;
   }
@@ -465,7 +471,7 @@ public class NerdScene {
 
   /* `package` */ void runDraw() {
     if (this.MANAGER.SETTINGS.drawFirstCaller == null)
-      this.MANAGER.SETTINGS.drawFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+      this.MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
@@ -512,7 +518,7 @@ public class NerdScene {
 
   /* `package` */ void runPost() {
     if (this.MANAGER.SETTINGS.postFirstCaller == null)
-      this.MANAGER.SETTINGS.postFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+      this.MANAGER.SETTINGS.postFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
@@ -549,7 +555,7 @@ public class NerdScene {
 
   /* `package` */ void runPre() {
     if (this.MANAGER.SETTINGS.preFirstCaller == null)
-      this.MANAGER.SETTINGS.preFirstCaller = SceneManager.SceneManagerSettings.CallbackOrder.SCENE;
+      this.MANAGER.SETTINGS.preFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.SCENE;
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
@@ -599,9 +605,9 @@ public class NerdScene {
   // region App workflow callbacks.
   /**
    * {@link NerdScene#setup()} is called when one of
-   * {@link SceneManager#startScene(Class)},
-   * {@link SceneManager#restartScene(Class)}, or
-   * {@link SceneManager#startPreviousScene(Class)}
+   * {@link NerdSceneManager#startScene(Class)},
+   * {@link NerdSceneManager#restartScene(Class)}, or
+   * {@link NerdSceneManager#startPreviousScene(Class)}
    * is called, after the {@link NerdScene} finishes executing
    * {@link NerdScene#preload()},<br>
    * <br>

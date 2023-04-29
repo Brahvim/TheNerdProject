@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
-public class AssetManager {
+public class NerdAssetManager {
 
     // region Fields.
     private final Sketch SKETCH;
@@ -18,7 +18,7 @@ public class AssetManager {
     // Do we even *need* assets in any scene from the very beginning?
     // endregion
 
-    public AssetManager(final Sketch p_sketch) {
+    public NerdAssetManager(final Sketch p_sketch) {
         this.SKETCH = p_sketch;
     }
 
@@ -44,10 +44,10 @@ public class AssetManager {
     // endregion
 
     /**
-     * @deprecated Since using {@link AssetManager#get()} is better. In cases
+     * @deprecated Since using {@link NerdAssetManager#get()} is better. In cases
      *             where you'd want to check for the availability of an asset, you
      *             probably also a want a reference to it, in which case, it is much
-     *             better to use {@link AssetManager#get()} and check if the return
+     *             better to use {@link NerdAssetManager#get()} and check if the return
      *             value is {@code null}.
      */
     @Deprecated

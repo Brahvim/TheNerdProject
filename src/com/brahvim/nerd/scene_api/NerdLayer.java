@@ -1,6 +1,10 @@
 package com.brahvim.nerd.scene_api;
 
+import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 /**
@@ -20,10 +24,16 @@ public class NerdLayer {
     // Seriously, why did I set these to be `protected`?
     public final NerdLayer LAYER = this;
 
-    public /* final */ Sketch SKETCH;
-    public /* final */ NerdScene SCENE;
-    public /* final */ SceneManager MANAGER;
-    public /* final */ NerdAbstractCamera CAMERA;
+    public Sketch SKETCH;
+    public SceneState STATE;
+    public NerdInputManager INPUT;
+    public NerdAssetManager ASSETS;
+    public NerdSceneManager MANAGER;
+    public NerdWindowManager WINDOW;
+    public NerdAbstractCamera CAMERA;
+    public NerdDisplayManager DISPLAYS;
+
+    protected NerdScene SCENE;
     // endregion
 
     // region `private` fields.

@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.openal.AlContext;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager;
-import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
+import com.brahvim.nerd.scene_api.NerdSceneManager;
+import com.brahvim.nerd.scene_api.NerdSceneManager.SceneManagerSettings;
 
 import processing.core.PConstants;
 
@@ -21,7 +21,7 @@ import processing.core.PConstants;
     public HashMap<String, Object> nerdExtensions = new HashMap<>();
     public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
     public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
-    public SceneManager.SceneManagerSettings.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
+    public NerdSceneManager.SceneManagerSettings.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
     // region Listeners.
     public LinkedHashSet<Consumer<Sketch>> sketchConstructedListeners,
@@ -37,7 +37,7 @@ import processing.core.PConstants;
         this.sketchConstructedListeners = new LinkedHashSet<>();
     }
 
-    public LinkedHashSet<SceneManager.SceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
+    public LinkedHashSet<NerdSceneManager.SceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
 
     public LinkedHashSet<Consumer<Sketch>> preListeners, postListeners,
             drawListeners, preDrawListeners, postDrawListeners;

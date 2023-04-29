@@ -4,8 +4,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager;
-import com.brahvim.nerd.scene_api.SceneManager.SceneManagerSettings;
+import com.brahvim.nerd.scene_api.NerdSceneManager;
+import com.brahvim.nerd.scene_api.NerdSceneManager.SceneManagerSettings;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -177,7 +177,7 @@ public abstract class CustomSketchBuilder {
     // endregion
 
     public CustomSketchBuilder setSceneManagerSettings(final Consumer<SceneManagerSettings> p_settingsBuilder) {
-        final var toPass = new SceneManager.SceneManagerSettings();
+        final var toPass = new NerdSceneManager.SceneManagerSettings();
 
         if (p_settingsBuilder != null)
             p_settingsBuilder.accept(toPass);
@@ -210,17 +210,17 @@ public abstract class CustomSketchBuilder {
     }
 
     // region `Sketch.CallbackOrder`.
-    public CustomSketchBuilder setPreCallOrder(final SceneManager.SceneManagerSettings.CallbackOrder p_order) {
+    public CustomSketchBuilder setPreCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.preCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder setDrawCallOrder(final SceneManager.SceneManagerSettings.CallbackOrder p_order) {
+    public CustomSketchBuilder setDrawCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.drawCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder setPostCallOrder(final SceneManager.SceneManagerSettings.CallbackOrder p_order) {
+    public CustomSketchBuilder setPostCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.postCallOrder = p_order;
         return this;
     }

@@ -34,17 +34,18 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.NerdStringTable;
-import com.brahvim.nerd.io.asset_loader.AssetManager;
+import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 import com.brahvim.nerd.rendering.cameras.BasicCamera;
 import com.brahvim.nerd.rendering.cameras.BasicCameraBuilder;
 import com.brahvim.nerd.rendering.cameras.FlyCamera;
 import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneManager;
+import com.brahvim.nerd.scene_api.NerdSceneManager;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
@@ -198,7 +199,7 @@ public class Sketch extends PApplet {
 	public final String RENDERER;
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
-	public final AssetManager ASSETS;
+	public final NerdAssetManager ASSETS;
 	public final Unprojector UNPROJECTOR;
 	public final NerdStringTable STRINGS;
 	public final HashMap<String, Object> EXTENSIONS;
@@ -245,7 +246,8 @@ public class Sketch extends PApplet {
 
 	public final NerdDisplayManager DISPLAYS;
 	public final NerdWindowManager WINDOW;
-	public final SceneManager SCENES;
+	public final NerdSceneManager SCENES;
+	public final NerdInputManager INPUT;
 	// endregion
 	// endregion
 
@@ -317,7 +319,7 @@ public class Sketch extends PApplet {
 
 	// region Construction, `settings()`...
 	public Sketch(final SketchKey p_key) {
-		Objects.requireNonNull(p_key, "Please use a `SketchKey` instance to make a `Sketch`!");
+		Objects.requireNonNull(p_key, "Please use a `SketchKey` or `CustomSketchBuilder` to make a `Sketch`!");
 
 		// region Key settings.
 		// region Listeners!...
@@ -352,11 +354,12 @@ public class Sketch extends PApplet {
 
 		// region Non-key settings.
 		this.UNPROJECTOR = new Unprojector();
+		this.INPUT = new NerdInputManager(SKETCH, this.keysHeld);
 		this.DISPLAYS = new NerdDisplayManager(this);
-		this.ASSETS = new AssetManager(this);
+		this.ASSETS = new NerdAssetManager(this);
 		this.WINDOW = NerdWindowManager.createWindowMan(this);
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
-		this.SCENES = new SceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
+		this.SCENES = new NerdSceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
 		// endregion
 
 		// region Setting OpenGL renderer icons.
@@ -874,7 +877,7 @@ public class Sketch extends PApplet {
 		return this.iconImage;
 	}
 
-	public SceneManager getSceneManager() {
+	public NerdSceneManager getSceneManager() {
 		return this.SCENES;
 	}
 

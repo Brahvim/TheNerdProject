@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 // I must mention that this is from stackoverflow.
 
 public class HotspotStatus {
-    // region Query results constants (not using an `enum`, yes...).
+    // region Query results constants. (Not using an `enum`, just like the Android SDK, yes...)
     public static final int AP_STATE_DISABLING = 10;
     public static final int AP_STATE_DISABLED = 11;
     public static final int AP_STATE_ENABLING = 12;

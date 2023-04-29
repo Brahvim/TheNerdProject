@@ -1,6 +1,6 @@
 package com.brahvim.nerd.papplet_wrapper.sketch_managers;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
@@ -12,15 +12,34 @@ import processing.opengl.PGraphics3D;
 public class NerdInputManager {
 
     // region Fields.
+    public char key;
+    public int keyCode;
+    public boolean keyPressed;
+
+    public int mouseButton;
+    public boolean mousePressed;
     public float mouseX, mouseY;
+    public float pmouseX, pmouseY;
 
     private final Sketch SKETCH;
-    private final ArrayList<Integer> keysHeld;
+    private final LinkedHashSet<Integer> keysHeld;
     // endregion
 
-    public NerdInputManager(final Sketch p_sketch, final ArrayList<Integer> p_keysHeldListRef) {
+    public NerdInputManager(final Sketch p_sketch, final LinkedHashSet<Integer> p_keysHeldListRef) {
         this.SKETCH = p_sketch;
         this.keysHeld = p_keysHeldListRef;
+
+        this.SKETCH.addPreDrawListener((s) -> {
+            this.key = s.key;
+            this.mouseX = s.mouseX;
+            this.mouseY = s.mouseY;
+            this.pmouseX = s.pmouseX;
+            this.pmouseY = s.pmouseY;
+            this.keyCode = s.keyCode;
+            this.keyPressed = s.keyPressed;
+            this.mouseButton = s.mouseButton;
+            this.mousePressed = s.mousePressed;
+        });
     }
 
     // region Mouse and coordinate conversion utilities.
