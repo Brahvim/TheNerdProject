@@ -1383,6 +1383,13 @@ public class Sketch extends PApplet {
 	// endregion
 	// endregion
 
+	/**
+	 * Method to automatically resize the passed image if needed.
+	 * This does not make a copy of your image (performance!~), so,
+	 * ...make sure to do so, if you need to!
+	 * 
+	 * // TODO: Make a method like `setBackground()` that makes an actual copy!
+	 */
 	@Override
 	public void background(final PImage p_image) {
 		try {
