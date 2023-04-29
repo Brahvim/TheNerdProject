@@ -115,7 +115,7 @@ public class DemoScene3 extends NerdScene {
 
         // region Elevation.
         if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
-            this.playerAcc.y += this.GRAVITY * -accMultiplier;
+            this.playerAcc.y += /* this.GRAVITY * */ -accMultiplier;
 
         if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
             this.playerAcc.y += accMultiplier;
