@@ -438,7 +438,7 @@ public class NerdScene {
     this.sceneExited();
   }
 
-  /* `package` */ void runPreload() {
+  /* `package` */ synchronized void runPreload() {
     this.preload();
     SKETCH.ASSETS.forceLoading();
 

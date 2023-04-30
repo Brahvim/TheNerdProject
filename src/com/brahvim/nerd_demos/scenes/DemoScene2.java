@@ -6,6 +6,7 @@ import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
 public class DemoScene2 extends NerdScene {
+
     private SineEase boxHorizWave, boxVertWave;
 
     @Override

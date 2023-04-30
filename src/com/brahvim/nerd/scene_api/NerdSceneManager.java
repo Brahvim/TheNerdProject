@@ -251,7 +251,8 @@ public class NerdSceneManager {
         this.initSceneListeners();
     }
 
-    public NerdSceneManager(final Sketch p_sketch, final NerdSceneManager.SceneManagerSettings p_settings) {
+    public NerdSceneManager(final Sketch p_sketch,
+            final NerdSceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
         this.SETTINGS = p_settings;
         this.SCENE_CHANGE_LISTENERS = new LinkedHashSet<>(0);
@@ -472,24 +473,24 @@ public class NerdSceneManager {
         };
 
         // region Workflow callbacks.
-        this.SKETCH.addPreListener((s) -> {
+        this.SKETCH.addPreListener(s -> {
             if (SCENE_MAN.currScene != null)
                 SCENE_MAN.currScene.runPre();
         });
 
-        this.SKETCH.addPostListener((s) -> {
+        this.SKETCH.addPostListener(s -> {
             if (SCENE_MAN.currScene != null)
                 SCENE_MAN.currScene.runPost();
 
             SCENE_MAN.changedSceneThisFrame = false;
         });
 
-        this.SKETCH.addDrawListener((s) -> {
+        this.SKETCH.addDrawListener(s -> {
             if (SCENE_MAN.currScene != null)
                 SCENE_MAN.currScene.runDraw();
         });
 
-        this.SKETCH.addSketchExitListener((s) -> {
+        this.SKETCH.addSketchExitListener(s -> {
             if (SCENE_MAN.currScene != null)
                 SCENE_MAN.currScene.runExit();
         });

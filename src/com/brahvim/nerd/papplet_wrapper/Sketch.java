@@ -299,6 +299,9 @@ public class Sketch extends PApplet {
 	protected PImage iconImage;
 
 	// region Callback listeners,
+	// LAMBDAS ARE EXPENSIVVVVVE! Allocate only this!:
+	protected final Consumer<Consumer<Sketch>> DEF_CALLBACK_COLLECTION_ITR_LAMBDA = l -> l.accept(this);
+
 	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
@@ -421,7 +424,7 @@ public class Sketch extends PApplet {
 				this.SETTINGS_LISTENERS, this.SETUP_LISTENERS, this.EXIT_LISTENERS, this.DISPOSAL_LISTENERS,
 				this.PRE_LISTENERS, this.POST_LISTENERS, };
 
-		p_key.sketchConstructedListeners.forEach(l -> l.accept(this));
+		p_key.sketchConstructedListeners.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
 	}
 
 	@Override
@@ -486,7 +489,7 @@ public class Sketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		this.SETUP_LISTENERS.forEach(l -> l.accept(this));
+		this.SETUP_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
 	}
 
 	public void pre() {
@@ -503,7 +506,7 @@ public class Sketch extends PApplet {
 		this.DISPLAYS.preCallback(this.WINDOW_LISTENERS);
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
-		this.PRE_LISTENERS.forEach(l -> l.accept(this));
+		this.PRE_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
 	}
 
 	@Override
@@ -513,7 +516,7 @@ public class Sketch extends PApplet {
 		this.pframeTime = this.frameStartTime;
 
 		// Call all pre-render listeners:
-		this.PRE_DRAW_LISTENERS.forEach(l -> l.accept(this));
+		this.PRE_DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
 
 		// region Update frame-ly mouse settings.
 		this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
@@ -546,7 +549,7 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// Call all draw listeners:
-		this.DRAW_LISTENERS.forEach(l -> l.accept(this));
+		this.DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
 
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.currentScene == null) {
@@ -558,11 +561,11 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// Call all post-render listeners:
-		this.POST_DRAW_LISTENERS.forEach(l -> l.accept(this));
+		this.POST_DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
 	}
 
 	public void post() {
-		this.POST_LISTENERS.forEach(l -> l.accept(this));
+		this.POST_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
 
 		if (this.USES_OPENGL)
 			super.endPGL();
@@ -592,13 +595,13 @@ public class Sketch extends PApplet {
 
 	@Override
 	public void exit() {
-		this.EXIT_LISTENERS.forEach(l -> l.accept(this));
+		this.EXIT_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
 		super.exit();
 	}
 
 	@Override
 	public void dispose() {
-		this.DISPOSAL_LISTENERS.forEach(l -> l.accept(this));
+		this.DISPOSAL_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
 		super.dispose();
 	}
 	// endregion
