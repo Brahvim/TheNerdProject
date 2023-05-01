@@ -1,11 +1,11 @@
-package com.brahvim.nerd.scene_api;
+package com.brahvim.nerd.api.scene_api;
 
+import com.brahvim.nerd.api.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
-import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 /**
  * Just like {@link NerdScene}s, {@link NerdLayer}s
@@ -25,7 +25,7 @@ public class NerdLayer {
     public final NerdLayer LAYER = this;
 
     public Sketch SKETCH;
-    public SceneState STATE;
+    public NerdSceneState STATE;
     public NerdInputManager INPUT;
     public NerdAssetManager ASSETS;
     public NerdSceneManager MANAGER;

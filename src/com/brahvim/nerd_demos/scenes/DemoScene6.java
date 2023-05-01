@@ -2,9 +2,9 @@ package com.brahvim.nerd_demos.scenes;
 
 import java.awt.event.KeyEvent;
 
-import com.brahvim.nerd.rendering.cameras.NerdFpsCamera;
-import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneState;
+import com.brahvim.nerd.api.cameras.NerdFpsCamera;
+import com.brahvim.nerd.api.scene_api.NerdScene;
+import com.brahvim.nerd.api.scene_api.NerdSceneState;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -22,7 +22,7 @@ public class DemoScene6 extends NerdScene {
     // endregion
 
     @Override
-    protected void setup(final SceneState p_state) {
+    protected void setup(final NerdSceneState p_state) {
         // Loaded this scene for the first time? Do this!:
         if (this.SCENE.getTimesLoaded() == 0) {
             WINDOW.centerWindow();

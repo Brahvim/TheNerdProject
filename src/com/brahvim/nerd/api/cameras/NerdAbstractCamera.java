@@ -1,4 +1,4 @@
-package com.brahvim.nerd.rendering.cameras;
+package com.brahvim.nerd.api.cameras;
 
 import java.util.Objects;
 import java.util.function.Consumer;

@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 
+import com.brahvim.nerd.api.scene_api.NerdScene;
+import com.brahvim.nerd.api.scene_api.NerdSceneManager;
+import com.brahvim.nerd.api.scene_api.NerdSceneManager.SceneManagerSettings;
 import com.brahvim.nerd.openal.AlContext;
-import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.NerdSceneManager;
-import com.brahvim.nerd.scene_api.NerdSceneManager.SceneManagerSettings;
 
 import processing.core.PConstants;
 

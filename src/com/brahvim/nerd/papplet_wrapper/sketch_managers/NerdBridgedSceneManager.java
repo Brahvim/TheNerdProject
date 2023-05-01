@@ -1,8 +1,9 @@
-package com.brahvim.nerd.papplet_wrapper;
+package com.brahvim.nerd.papplet_wrapper.sketch_managers;
 
 import java.util.LinkedHashSet;
 
-import com.brahvim.nerd.scene_api.NerdSceneManager;
+import com.brahvim.nerd.api.scene_api.NerdSceneManager;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public class NerdBridgedSceneManager extends NerdSceneManager {
 
@@ -30,39 +31,39 @@ public class NerdBridgedSceneManager extends NerdSceneManager {
 
     // region Workflow callbacks.
     @Override
-    protected void runPre() {
+    public void runPre() {
         super.runPre();
     }
 
     @Override
-    protected void runPost() {
+    public void runPost() {
         super.runPost();
     }
 
     @Override
-    protected void runDraw() {
+    public void runDraw() {
         super.runDraw();
     }
 
     @Override
-    protected void runExit() {
+    public void runExit() {
         super.runExit();
     }
 
     @Override
-    protected void runDispose() {
+    public void runDispose() {
         super.runDispose();
     }
 
     // Too expensive! Need a `push()` and `pop()`:
     /*
      * @Override
-     * protected void runPreDraw() {
+     * public void runPreDraw() {
      * super.runPreDraw();
      * }
      * 
      * @Override
-     * protected void runPostDraw() {
+     * public void runPostDraw() {
      * super.runPostDraw();
      * }
      */

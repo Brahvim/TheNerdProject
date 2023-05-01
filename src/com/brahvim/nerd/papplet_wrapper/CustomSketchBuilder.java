@@ -3,9 +3,9 @@ package com.brahvim.nerd.papplet_wrapper;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.NerdSceneManager;
-import com.brahvim.nerd.scene_api.NerdSceneManager.SceneManagerSettings;
+import com.brahvim.nerd.api.scene_api.NerdScene;
+import com.brahvim.nerd.api.scene_api.NerdSceneManager;
+import com.brahvim.nerd.api.scene_api.NerdSceneManager.SceneManagerSettings;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

@@ -1,4 +1,4 @@
-package com.brahvim.nerd;
+package com.brahvim.nerd.api;
 
 import java.util.function.Consumer;
 
