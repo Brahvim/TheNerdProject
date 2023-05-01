@@ -184,7 +184,10 @@ public class NerdSceneManager {
 
     public final NerdSceneManager.SceneManagerSettings SETTINGS;
 
-    // region `private` fields.
+    // region `protected` and `private` fields.
+    protected boolean changedSceneThisFrame;
+    protected NerdScene currScene;
+
     /**
      * This {@code HashMap} contains cached data about each {@code NerdScene} class
      * any {@code NerdSceneManager} instance has cached or ran.<br>
@@ -225,10 +228,7 @@ public class NerdSceneManager {
     @SuppressWarnings("unused")
     private Sketch.SketchKeyboardListener keyboardListener;
     // endregion
-
     private Class<? extends NerdScene> currSceneClass, prevSceneClass;
-    private boolean changedSceneThisFrame;
-    private NerdScene currScene;
     // endregion
 
     // region Construction.
@@ -471,32 +471,49 @@ public class NerdSceneManager {
                             l.keyReleased();
             }
         };
-
-        // region Workflow callbacks.
-        this.SKETCH.addPreListener(s -> {
-            if (SCENE_MAN.currScene != null)
-                SCENE_MAN.currScene.runPre();
-        });
-
-        this.SKETCH.addPostListener(s -> {
-            if (SCENE_MAN.currScene != null)
-                SCENE_MAN.currScene.runPost();
-
-            SCENE_MAN.changedSceneThisFrame = false;
-        });
-
-        this.SKETCH.addDrawListener(s -> {
-            if (SCENE_MAN.currScene != null)
-                SCENE_MAN.currScene.runDraw();
-        });
-
-        this.SKETCH.addSketchExitListener(s -> {
-            if (SCENE_MAN.currScene != null)
-                SCENE_MAN.currScene.runExit();
-        });
-        // endregion
-
     }
+    // endregion
+
+    // region Workflow callbacks.
+    protected void runPre() {
+        if (this.currScene != null)
+            this.currScene.runPre();
+    }
+
+    protected void runPost() {
+        if (this.currScene != null)
+            this.currScene.runPost();
+
+        this.changedSceneThisFrame = false;
+    }
+
+    protected void runDraw() {
+        if (this.currScene != null)
+            this.currScene.runDraw();
+    }
+
+    protected void runExit() {
+        if (this.currScene != null)
+            this.currScene.runExit();
+    }
+
+    protected void runDispose() {
+        if (this.currScene != null)
+            this.currScene.runDispose();
+    }
+
+    // Too expensive! Need a `push()` and `pop()`.
+    /*
+     * protected void runPreDraw() {
+     * if (this.currScene != null)
+     * this.currScene.runPreDraw();
+     * }
+     * 
+     * protected void runPostDraw() {
+     * if (this.currScene != null)
+     * this.currScene.runPostDraw();
+     * }
+     */
     // endregion
 
     // region [`public`] Getters.
@@ -861,7 +878,7 @@ public class NerdSceneManager {
         this.prevSceneClass = this.currSceneClass;
         if (this.prevSceneClass != null) {
             // Exit the scene, and nullify the cache.
-            this.currScene.runSceneExited();
+            this.currScene.runSceneChanged();
 
             // Do not clear! Theyr're cached!
             // if (!this.hasCached(this.currSceneClass))

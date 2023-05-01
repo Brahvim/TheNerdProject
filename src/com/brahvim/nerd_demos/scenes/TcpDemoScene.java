@@ -2,7 +2,7 @@ package com.brahvim.nerd_demos.scenes;
 
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.io.ByteSerial;
+import com.brahvim.nerd.io.NerdByteSerial;
 import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer.NerdClientSentTcpPacket;
@@ -42,7 +42,7 @@ public class TcpDemoScene extends NerdScene {
 		@Override
 		public void accept(final NerdClientSentTcpPacket p_packet) {
 			// Get the client's message:
-			final Query message = (Query) ByteSerial.fromBytes(p_packet.getData());
+			final Query message = (Query) NerdByteSerial.fromBytes(p_packet.getData());
 			final NerdTcpServer.NerdTcpServerClient client = p_packet.getSender();
 			Response response = null; // In here, we store our response!
 
@@ -52,7 +52,7 @@ public class TcpDemoScene extends NerdScene {
 			}
 
 			// Send the response over!
-			client.send(ByteSerial.toBytes(response));
+			client.send(NerdByteSerial.toBytes(response));
 		}
 
 	}
@@ -86,7 +86,7 @@ public class TcpDemoScene extends NerdScene {
 
 					if (clientAccepted) {
 						// This client got accepted - hooray! Tell it!:
-						c.send(ByteSerial.toBytes(Response.ALLOWED));
+						c.send(NerdByteSerial.toBytes(Response.ALLOWED));
 						System.out.println("Ayy! A new client joined! Info: "
 								+ c.getSocket().toString());
 					} else // Tell us that it got rejected otherwise.
@@ -104,7 +104,7 @@ public class TcpDemoScene extends NerdScene {
 					// `p` holds the packet of data received!:
 					p -> {
 						// Get the server's message,
-						final Response message = (Response) ByteSerial.fromBytes(p.getData());
+						final Response message = (Response) NerdByteSerial.fromBytes(p.getData());
 						Query response = null; // We'll store our response here.
 
 						switch (message) {
@@ -119,7 +119,7 @@ public class TcpDemoScene extends NerdScene {
 						}
 
 						if (response != null)
-							p.getReceivingClient().send(ByteSerial.toBytes(response));
+							p.getReceivingClient().send(NerdByteSerial.toBytes(response));
 					});
 
 		SKETCH.delay(50);

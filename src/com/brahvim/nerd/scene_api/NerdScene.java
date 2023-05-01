@@ -409,7 +409,6 @@ public class NerdScene {
   // endregion
 
   // region Anything callback-related, LOL.
-  // region ~~`SceneManager.SceneKey`~~ app-workflow callback runners.
   /*
    * 
    * private void verifyKey(SceneManager.SceneKey p_key) {
@@ -432,10 +431,6 @@ public class NerdScene {
     this.setup(p_state);
 
     // `NerdLayer`s don't get to respond to this `setup()`.
-  }
-
-  /* `package` */ void runSceneExited() {
-    this.sceneExited();
   }
 
   /* `package` */ synchronized void runPreload() {
@@ -469,6 +464,97 @@ public class NerdScene {
     this.donePreloading = true;
   }
 
+  /* `package` */ void runSceneChanged() {
+    this.sceneChanged();
+  }
+
+  // SUPER expensive for how little they will be used (need `push()` an `pop()`)!:
+  /*
+   * void runPostDraw() {
+   * if (this.MANAGER.SETTINGS.drawFirstCaller == null)
+   * this.MANAGER.SETTINGS.drawFirstCaller =
+   * NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+   * 
+   * // To avoid asynchronous changes from causing repetition, we put both parts
+   * in
+   * // `if` and `else` block.
+   * 
+   * switch (this.MANAGER.SETTINGS.drawFirstCaller) {
+   * case SCENE -> {
+   * this.SKETCH.push();
+   * this.postDraw();
+   * this.SKETCH.pop();
+   * 
+   * for (final NerdLayer l : this.LAYERS)
+   * if (l != null)
+   * if (l.isActive()) {
+   * this.SKETCH.push();
+   * l.postDraw();
+   * this.SKETCH.pop();
+   * }
+   * }
+   * 
+   * case LAYER -> {
+   * for (final NerdLayer l : this.LAYERS)
+   * if (l != null)
+   * if (l.isActive()) {
+   * this.SKETCH.push();
+   * l.postDraw();
+   * this.SKETCH.pop();
+   * }
+   * 
+   * this.SKETCH.push();
+   * this.postDraw();
+   * this.SKETCH.pop();
+   * }
+   * }
+   * }
+   * 
+   * void runPreDraw() {
+   * if (this.MANAGER.SETTINGS.drawFirstCaller == null)
+   * this.MANAGER.SETTINGS.drawFirstCaller =
+   * NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+   * 
+   * // To avoid asynchronous changes from causing repetition, we put both parts
+   * in
+   * // `if` and `else` block.
+   * 
+   * switch (this.MANAGER.SETTINGS.drawFirstCaller) {
+   * case SCENE -> {
+   * this.SKETCH.push();
+   * this.preDraw();
+   * this.SKETCH.pop();
+   * 
+   * for (final NerdLayer l : this.LAYERS)
+   * if (l != null)
+   * if (l.isActive()) {
+   * this.SKETCH.push();
+   * l.preDraw();
+   * this.SKETCH.pop();
+   * }
+   * }
+   * 
+   * case LAYER -> {
+   * for (final NerdLayer l : this.LAYERS)
+   * if (l != null)
+   * if (l.isActive()) {
+   * this.SKETCH.push();
+   * l.preDraw();
+   * this.SKETCH.pop();
+   * }
+   * 
+   * this.SKETCH.push();
+   * this.preDraw();
+   * this.SKETCH.pop();
+   * }
+   * }
+   * }
+   */
+
+  /* `package` */ void runDispose() {
+    this.dispose();
+  }
+
   /* `package` */ void runDraw() {
     if (this.MANAGER.SETTINGS.drawFirstCaller == null)
       this.MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
@@ -478,20 +564,16 @@ public class NerdScene {
 
     switch (this.MANAGER.SETTINGS.drawFirstCaller) {
       case SCENE -> {
-        this.SKETCH.pushMatrix();
-        this.SKETCH.pushStyle();
+        this.SKETCH.push();
         this.draw();
-        this.SKETCH.popStyle();
-        this.SKETCH.popMatrix();
+        this.SKETCH.pop();
 
         for (final NerdLayer l : this.LAYERS)
           if (l != null)
             if (l.isActive()) {
-              this.SKETCH.pushMatrix();
-              this.SKETCH.pushStyle();
+              this.SKETCH.push();
               l.draw();
-              this.SKETCH.popStyle();
-              this.SKETCH.popMatrix();
+              this.SKETCH.pop();
             }
       }
 
@@ -499,18 +581,14 @@ public class NerdScene {
         for (final NerdLayer l : this.LAYERS)
           if (l != null)
             if (l.isActive()) {
-              this.SKETCH.pushMatrix();
-              this.SKETCH.pushStyle();
+              this.SKETCH.push();
               l.draw();
-              this.SKETCH.popStyle();
-              this.SKETCH.popMatrix();
+              this.SKETCH.pop();
             }
 
-        this.SKETCH.pushMatrix();
-        this.SKETCH.pushStyle();
+        this.SKETCH.push();
         this.draw();
-        this.SKETCH.popStyle();
-        this.SKETCH.popMatrix();
+        this.SKETCH.pop();
       }
     }
 
@@ -580,9 +658,8 @@ public class NerdScene {
     }
 
   }
-  // endregion
 
-  // region Scene callbacks.
+  // region Scene workflow callbacks.
   /**
    * Used by a {@code NerdScene} to load {@code NerdAsset}s
    * into their, or their {@code NerdSceneManager}'s {@code NerdAssetManager}.<br>
@@ -598,11 +675,9 @@ public class NerdScene {
   protected synchronized void preload() {
   }
 
-  protected void sceneExited() {
+  protected void sceneChanged() {
   }
-  // endregion
 
-  // region App workflow callbacks.
   /**
    * {@link NerdScene#setup()} is called when one of
    * {@link NerdSceneManager#startScene(Class)},
@@ -625,6 +700,16 @@ public class NerdScene {
 
   protected void post() {
   }
+
+  protected void exit() {
+  }
+
+  // protected void preDraw() { }
+
+  protected void dispose() {
+  }
+
+  // protected void postDraw() { }
   // endregion
   // endregion
 
@@ -677,9 +762,6 @@ public class NerdScene {
   }
 
   public void focusLost() {
-  }
-
-  public void exit() {
   }
 
   public void resized() {

@@ -9,7 +9,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.brahvim.nerd.io.ByteSerial;
+import com.brahvim.nerd.io.NerdByteSerial;
 
 public class SceneState {
     private final HashMap<String, Object> DATA = new HashMap<>(0);
@@ -119,15 +119,15 @@ public class SceneState {
 
     // region Serialization.
     public byte[] toByteArray() {
-        return ByteSerial.toBytes(this.DATA);
+        return NerdByteSerial.toBytes(this.DATA);
     }
 
     public void toFile(final File p_file) {
-        ByteSerial.toFile(this.DATA, p_file);
+        NerdByteSerial.toFile(this.DATA, p_file);
     }
 
     public void toFile(final String p_fileName) {
-        ByteSerial.toFile(this.DATA, p_fileName);
+        NerdByteSerial.toFile(this.DATA, p_fileName);
     }
     // endregion
 

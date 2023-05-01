@@ -34,16 +34,16 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.io.NerdStringTable;
-import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
+import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.math.Unprojector;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
+import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.rendering.cameras.NerdBasicCamera;
 import com.brahvim.nerd.rendering.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.rendering.cameras.NerdFlyCamera;
-import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd.scene_api.NerdSceneManager;
 import com.jogamp.newt.opengl.GLWindow;
@@ -244,9 +244,9 @@ public class Sketch extends PApplet {
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
 			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
 
+	public final NerdBridgedSceneManager SCENES;
 	public final NerdDisplayManager DISPLAYS;
 	public final NerdWindowManager WINDOW;
-	public final NerdSceneManager SCENES;
 	public final NerdInputManager INPUT;
 	// endregion
 	// endregion
@@ -360,9 +360,9 @@ public class Sketch extends PApplet {
 		this.INPUT = new NerdInputManager(SKETCH, this.keysHeld);
 		this.DISPLAYS = new NerdDisplayManager(this);
 		this.ASSETS = new NerdAssetManager(this);
+		this.SCENES = new NerdBridgedSceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
 		this.WINDOW = NerdWindowManager.createWindowMan(this);
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
-		this.SCENES = new NerdSceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
 		// endregion
 
 		// region Setting OpenGL renderer icons.
@@ -507,6 +507,7 @@ public class Sketch extends PApplet {
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
 		this.PRE_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.SCENES.runPre();
 	}
 
 	@Override
@@ -550,6 +551,7 @@ public class Sketch extends PApplet {
 
 		// Call all draw listeners:
 		this.DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.SCENES.runDraw();
 
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.currentScene == null) {
@@ -591,17 +593,20 @@ public class Sketch extends PApplet {
 		this.pmouseScrollDelta = this.mouseScrollDelta;
 		// endregion
 
+		this.SCENES.runPost();
 	}
 
 	@Override
 	public void exit() {
 		this.EXIT_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.SCENES.runExit();
 		super.exit();
 	}
 
 	@Override
 	public void dispose() {
 		this.DISPOSAL_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.SCENES.runDispose();
 		super.dispose();
 	}
 	// endregion
@@ -881,7 +886,7 @@ public class Sketch extends PApplet {
 	}
 
 	public NerdSceneManager getSceneManager() {
-		return this.SCENES;
+		return this.SCENES; // Actually a `NerdBridgedSceneManager`!
 	}
 
 	public NerdWindowManager getWindowManager() {
