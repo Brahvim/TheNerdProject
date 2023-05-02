@@ -1,17 +1,21 @@
-package com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man;
+package com.brahvim.nerd.papplet_wrapper.window_man_subs;
 
+import java.util.LinkedHashSet;
+
+import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PVector;
 
-/* `package` */ class NerdGlWindowManager extends NerdWindowManager {
+public class NerdGlWindowManager extends NerdWindowManager {
 
     protected GLWindow window;
 
     // region Construction and initialization.
-    public NerdGlWindowManager(final Sketch p_sketch) {
-        super(p_sketch);
+    public NerdGlWindowManager(final Sketch p_sketch,
+            final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
+        super(p_sketch, p_windowListeners);
     }
 
     @Override

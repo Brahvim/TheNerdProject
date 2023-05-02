@@ -1,8 +1,8 @@
 package com.brahvim.nerd_demos;
 
-import com.brahvim.nerd.api.scene_api.NerdScene;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.NerdAlExt;
+import com.brahvim.nerd.papplet_wrapper.NerdScene;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.SketchBuildArtifacts;

@@ -3,8 +3,8 @@ package com.brahvim.nerd_demos;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import com.brahvim.nerd.api.scene_api.NerdScene;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd.papplet_wrapper.NerdScene;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PConstants;

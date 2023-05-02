@@ -1,7 +1,7 @@
 package com.brahvim.nerd_demos;
 
-import com.brahvim.nerd.api.scene_api.NerdScene;
 import com.brahvim.nerd.io.class_loaders.SceneClassLoader;
+import com.brahvim.nerd.papplet_wrapper.NerdScene;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 public enum LoadedSceneClass {

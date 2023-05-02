@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api.scene_api;
+package com.brahvim.nerd.papplet_wrapper;
 
 import java.io.File;
 import java.util.Collection;

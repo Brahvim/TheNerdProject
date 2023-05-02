@@ -1,7 +1,5 @@
 package com.brahvim.nerd_demos.scenes.scene1;
 
-import com.brahvim.nerd.api.scene_api.NerdScene;
-import com.brahvim.nerd.api.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PFontAsset;
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.openal.AlSource;
@@ -9,6 +7,8 @@ import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlBandpassFilter;
+import com.brahvim.nerd.papplet_wrapper.NerdScene;
+import com.brahvim.nerd.papplet_wrapper.NerdSceneState;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.scenes.DemoScene4;
 
