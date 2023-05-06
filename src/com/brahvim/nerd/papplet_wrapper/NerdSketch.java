@@ -36,7 +36,7 @@ import javax.swing.KeyStroke;
 import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
-import com.brahvim.nerd.math.Unprojector;
+import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
@@ -67,7 +67,7 @@ import processing.opengl.PJOGL;
  * 
  * @author Brahvim Bhaktvatsal
  */
-public class Sketch extends PApplet {
+public class NerdSketch extends PApplet {
 
 	// region Abstract inner classes.
 	// Used ordinary classes instead of interfaces (or `abstract` ones) for these
@@ -84,7 +84,7 @@ public class Sketch extends PApplet {
 	public class SketchMouseListener {
 
 		public SketchMouseListener() {
-			Sketch.this.SKETCH.MOUSE_LISTENERS.add(this);
+			NerdSketch.this.SKETCH.MOUSE_LISTENERS.add(this);
 		}
 
 		// region Mouse events.
@@ -112,7 +112,7 @@ public class Sketch extends PApplet {
 	public class SketchTouchListener {
 
 		public SketchTouchListener() {
-			Sketch.this.SKETCH.TOUCH_LISTENERS.add(this);
+			NerdSketch.this.SKETCH.TOUCH_LISTENERS.add(this);
 		}
 
 		// region Touch events.
@@ -131,7 +131,7 @@ public class Sketch extends PApplet {
 	public class SketchWindowListener {
 
 		public SketchWindowListener() {
-			Sketch.this.SKETCH.WINDOW_LISTENERS.add(this);
+			NerdSketch.this.SKETCH.WINDOW_LISTENERS.add(this);
 		}
 
 		// region Window focus events.
@@ -158,7 +158,7 @@ public class Sketch extends PApplet {
 	public class SketchKeyboardListener {
 
 		public SketchKeyboardListener() {
-			Sketch.this.SKETCH.KEYBOARD_LISTENERS.add(this);
+			NerdSketch.this.SKETCH.KEYBOARD_LISTENERS.add(this);
 		}
 
 		// region Keyboard events.
@@ -180,10 +180,10 @@ public class Sketch extends PApplet {
 	// region Constants.
 	// region `static` constants.
 	public static final File EXEC_DIR = new File("");
-	public static final String EXEC_DIR_PATH = Sketch.EXEC_DIR.getAbsolutePath().concat(File.separator);
+	public static final String EXEC_DIR_PATH = NerdSketch.EXEC_DIR.getAbsolutePath().concat(File.separator);
 
 	public static final File DATA_DIR = new File("data");
-	public static final String DATA_DIR_PATH = Sketch.DATA_DIR.getAbsolutePath().concat(File.separator);
+	public static final String DATA_DIR_PATH = NerdSketch.DATA_DIR.getAbsolutePath().concat(File.separator);
 
 	public static final char[] STANDARD_KEYBOARD_SYMBOLS = {
 			'\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
@@ -200,7 +200,7 @@ public class Sketch extends PApplet {
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
 	public final NerdAssetManager ASSETS;
-	public final Unprojector UNPROJECTOR;
+	public final NerdUnprojector UNPROJECTOR;
 	public final NerdStringTable STRINGS;
 	public final HashMap<String, Object> EXTENSIONS;
 	// `Object`s instead of a custom interface because you can't do
@@ -275,7 +275,7 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region `protected` fields.
-	protected final Sketch SKETCH = this; // "Ti's just a pointer, bro".
+	protected final NerdSketch SKETCH = this; // "Ti's just a pointer, bro".
 
 	// region Window object and native renderer references ("hacky stuff").
 	// ("Why check for `null` at all? You know what renderer you used!")
@@ -300,28 +300,28 @@ public class Sketch extends PApplet {
 
 	// region Callback listeners,
 	// LAMBDAS ARE EXPENSIVVVVVE! Allocate only this!:
-	protected final Consumer<Consumer<Sketch>> DEF_CALLBACK_COLLECTION_ITR_LAMBDA = l -> l.accept(this);
+	protected final Consumer<Consumer<NerdSketch>> DEF_CALLBACK_COLLECTION_ITR_LAMBDA = l -> l.accept(this);
 
 	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
 	// ...to remove!:
-	protected final HashSet<Consumer<Sketch>> CALLBACK_LISTENERS_TO_REMOVE = new HashSet<>(1);
+	protected final HashSet<Consumer<NerdSketch>> CALLBACK_LISTENERS_TO_REMOVE = new HashSet<>(1);
 
 	// Adding a new callbacks list to `Sketch`, or a subclass? REGISTER IT IN THIS!:
 	protected final Collection<?>[] LIST_OF_CALLBACK_LISTS;
 	// See the end of the constructor!
 
-	protected LinkedHashSet<Consumer<Sketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
-	protected LinkedHashSet<Consumer<Sketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
-	protected LinkedHashSet<Consumer<Sketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
-	protected LinkedHashSet<Consumer<Sketch>> PRE_LISTENERS, POST_LISTENERS;
+	protected LinkedHashSet<Consumer<NerdSketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
+	protected LinkedHashSet<Consumer<NerdSketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
+	protected LinkedHashSet<Consumer<NerdSketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
+	protected LinkedHashSet<Consumer<NerdSketch>> PRE_LISTENERS, POST_LISTENERS;
 	// endregion
 	// endregion
 
 	// region Construction, `settings()`...
-	public Sketch(final SketchKey p_key) {
+	public NerdSketch(final NerdSketchBuilderSettings p_key) {
 		Objects.requireNonNull(p_key, "Please use a `SketchKey` or `CustomSketchBuilder` to make a `Sketch`!");
 
 		// region Key settings.
@@ -356,7 +356,7 @@ public class Sketch extends PApplet {
 		// endregion
 
 		// region Non-key settings.
-		this.UNPROJECTOR = new Unprojector();
+		this.UNPROJECTOR = new NerdUnprojector();
 		this.INPUT = new NerdInputManager(SKETCH, this.keysHeld);
 		this.DISPLAYS = new NerdDisplayManager(this);
 		this.ASSETS = new NerdAssetManager(this);
@@ -437,7 +437,7 @@ public class Sketch extends PApplet {
 		super.smooth(this.ANTI_ALIASING);
 		super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER);
 
-		for (final Consumer<Sketch> c : this.SETTINGS_LISTENERS)
+		for (final Consumer<NerdSketch> c : this.SETTINGS_LISTENERS)
 			if (c != null)
 				c.accept(this);
 	}
@@ -666,7 +666,7 @@ public class Sketch extends PApplet {
 			// "Filter these keys using the utility method[s]?"
 			//
 			// ...and thus-this check was born!:
-			if (Sketch.isTypeable(super.key))
+			if (NerdSketch.isTypeable(super.key))
 				l.keyTyped();
 		}
 	}
@@ -798,43 +798,43 @@ public class Sketch extends PApplet {
 
 	// region Callback and extension management.
 	// region Adding listeners.
-	public Sketch addPreListener(final Consumer<Sketch> p_preListener) {
+	public NerdSketch addPreListener(final Consumer<NerdSketch> p_preListener) {
 		this.PRE_LISTENERS.add(Objects.requireNonNull(
 				p_preListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
 		return this;
 	}
 
-	public Sketch addPostListener(final Consumer<Sketch> p_postListener) {
+	public NerdSketch addPostListener(final Consumer<NerdSketch> p_postListener) {
 		this.POST_LISTENERS.add(Objects.requireNonNull(
 				p_postListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
 		return this;
 	}
 
-	public Sketch addPreDrawListener(final Consumer<Sketch> p_preDrawListener) {
+	public NerdSketch addPreDrawListener(final Consumer<NerdSketch> p_preDrawListener) {
 		this.PRE_DRAW_LISTENERS.add(Objects.requireNonNull(
 				p_preDrawListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
 		return this;
 	}
 
-	public Sketch addDrawListener(final Consumer<Sketch> p_drawListener) {
+	public NerdSketch addDrawListener(final Consumer<NerdSketch> p_drawListener) {
 		this.DRAW_LISTENERS.add(Objects.requireNonNull(
 				p_drawListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
 		return this;
 	}
 
-	public Sketch addPostDrawListener(final Consumer<Sketch> p_postDrawListener) {
+	public NerdSketch addPostDrawListener(final Consumer<NerdSketch> p_postDrawListener) {
 		this.POST_DRAW_LISTENERS.add(Objects.requireNonNull(
 				p_postDrawListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
 		return this;
 	}
 
-	public Sketch addSketchExitListener(final Consumer<Sketch> p_exitListener) {
+	public NerdSketch addSketchExitListener(final Consumer<NerdSketch> p_exitListener) {
 		this.EXIT_LISTENERS.add(Objects.requireNonNull(
 				p_exitListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
 		return this;
 	}
 
-	public Sketch addSketchDisposalListener(final Consumer<Sketch> p_disposalListener) {
+	public NerdSketch addSketchDisposalListener(final Consumer<NerdSketch> p_disposalListener) {
 		this.DISPOSAL_LISTENERS.add(Objects.requireNonNull(
 				p_disposalListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
 		return this;
@@ -844,31 +844,31 @@ public class Sketch extends PApplet {
 	// region Removing listeners.
 	// Don't need all of these, but still will have them around in case internal
 	// workings change!
-	public void removePreListener(final Consumer<Sketch> p_listener) {
+	public void removePreListener(final Consumer<NerdSketch> p_listener) {
 		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removePostListener(final Consumer<Sketch> p_listener) {
+	public void removePostListener(final Consumer<NerdSketch> p_listener) {
 		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removePreDrawListener(final Consumer<Sketch> p_listener) {
+	public void removePreDrawListener(final Consumer<NerdSketch> p_listener) {
 		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removeDrawListener(final Consumer<Sketch> p_listener) {
+	public void removeDrawListener(final Consumer<NerdSketch> p_listener) {
 		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removePostDrawListener(final Consumer<Sketch> p_listener) {
+	public void removePostDrawListener(final Consumer<NerdSketch> p_listener) {
 		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removeSketchExitListener(final Consumer<Sketch> p_listener) {
+	public void removeSketchExitListener(final Consumer<NerdSketch> p_listener) {
 		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
-	public void removeSketchDisposalListener(final Consumer<Sketch> p_listener) {
+	public void removeSketchDisposalListener(final Consumer<NerdSketch> p_listener) {
 		this.CALLBACK_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 	// endregion
@@ -1745,7 +1745,7 @@ public class Sketch extends PApplet {
 
 	@Override
 	public PGraphics createGraphics(final int w, final int h, final String renderer) {
-		return this.createGraphics(w, h, renderer, Sketch.EXEC_DIR_PATH);
+		return this.createGraphics(w, h, renderer, NerdSketch.EXEC_DIR_PATH);
 	}
 
 	@Override
@@ -1805,8 +1805,8 @@ public class Sketch extends PApplet {
 	 * transformations, calls your {@link Runnable} {@code p_toDraw}, and
 	 * finally, pops back the transformations and enables depth testing!
 	 * 
-	 * @see {@link Sketch#end2d()}
-	 * @see {@link Sketch#begin2d()}
+	 * @see {@link NerdSketch#end2d()}
+	 * @see {@link NerdSketch#begin2d()}
 	 */
 	public void in2d(final Runnable p_toDraw) {
 		// #JIT_FTW!
@@ -1861,11 +1861,11 @@ public class Sketch extends PApplet {
 
 	// region File system utlities.
 	public static String fromExecDir(final String p_path) {
-		return Sketch.EXEC_DIR_PATH + p_path;
+		return NerdSketch.EXEC_DIR_PATH + p_path;
 	}
 
 	public static String fromDataDir(final String p_path) {
-		return Sketch.DATA_DIR_PATH + p_path;
+		return NerdSketch.DATA_DIR_PATH + p_path;
 	}
 
 	// region [DEPRECATED] Overloads for `getPathToRootFrom()`.
@@ -1878,7 +1878,7 @@ public class Sketch extends PApplet {
 	 */
 	@Deprecated
 	public static String getPathToRootFrom(final File p_path) {
-		return Sketch.getPathToRootFrom(p_path.getAbsolutePath());
+		return NerdSketch.getPathToRootFrom(p_path.getAbsolutePath());
 	}
 
 	/**
@@ -1934,7 +1934,7 @@ public class Sketch extends PApplet {
 	}
 
 	/**
-	 * @return The previous camera the {@link Sketch} had access to.
+	 * @return The previous camera the {@link NerdSketch} had access to.
 	 */
 	public NerdAbstractCamera setCamera(final NerdAbstractCamera p_camera) {
 		final NerdAbstractCamera toRet = this.previousCamera;
@@ -2091,7 +2091,7 @@ public class Sketch extends PApplet {
 
 	public static boolean isStandardKeyboardSymbol(final char p_char) {
 		// boolean is = false;
-		for (final char ch : Sketch.STANDARD_KEYBOARD_SYMBOLS)
+		for (final char ch : NerdSketch.STANDARD_KEYBOARD_SYMBOLS)
 			// Can't use this!:
 			// return ch == p_char;
 			// What if the array being examined is empty?!
@@ -2111,11 +2111,11 @@ public class Sketch extends PApplet {
 		return Character.isDigit(p_char) ||
 				Character.isLetter(p_char) ||
 				Character.isWhitespace(p_char) ||
-				Sketch.isStandardKeyboardSymbol(p_char);
+				NerdSketch.isStandardKeyboardSymbol(p_char);
 	}
 
 	public char getTypedKey() {
-		if (Sketch.isTypeable(this.key))
+		if (NerdSketch.isTypeable(this.key))
 			return this.key;
 
 		// New way to do this in Java!:
@@ -2197,7 +2197,7 @@ public class Sketch extends PApplet {
 	// endregion
 
 	// region Start a `JAVA2D` sketch with an undecorated window.
-	public JFrame createSketchPanel(final Runnable p_exitTask, final Sketch p_sketch,
+	public JFrame createSketchPanel(final Runnable p_exitTask, final NerdSketch p_sketch,
 			final PGraphics p_sketchGraphics) {
 		// This is what `PApplet::frame` used to contain:
 		super.frame = null;

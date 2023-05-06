@@ -1,19 +1,19 @@
 package com.brahvim.nerd_demos;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PVector;
 
 public class TestEulerBody {
 
 	// region Fields.
-	protected final Sketch SKETCH;
+	protected final NerdSketch SKETCH;
 	protected float frict = 1, rotFrict = 1, dtMult = 0.1f;
 	protected PVector pos = new PVector(), vel = new PVector(), acc = new PVector();
 	protected PVector rot = new PVector(), rotVel = new PVector(), rotAcc = new PVector();
 	// endregion
 
-	public TestEulerBody(final Sketch p_sketch) {
+	public TestEulerBody(final NerdSketch p_sketch) {
 		this.SKETCH = p_sketch;
 	}
 

@@ -5,7 +5,7 @@ import java.awt.Image;
 
 import javax.swing.JFrame;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.awt.PSurfaceAWT;
 import processing.core.PVector;
@@ -15,7 +15,7 @@ import processing.core.PVector;
     protected JFrame window;
     protected PSurfaceAWT.SmoothCanvas canvas;
 
-    public NerdJava2dWindowManager(final Sketch p_sketch) {
+    public NerdJava2dWindowManager(final NerdSketch p_sketch) {
         super(p_sketch);
     }
 

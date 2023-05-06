@@ -1,11 +1,11 @@
 package com.brahvim.nerd.math.easings.built_in_easings;
 
 import com.brahvim.nerd.math.easings.NerdEasingFunction;
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PApplet;
 
-public class SineEase extends NerdEasingFunction {
+public class NerdSineEase extends NerdEasingFunction {
 
 	// region Fields.
 	/**
@@ -26,11 +26,11 @@ public class SineEase extends NerdEasingFunction {
 	// endregion
 
 	// region Constructors.
-	public SineEase(final Sketch p_parentSketch) {
+	public NerdSineEase(final NerdSketch p_parentSketch) {
 		super(p_parentSketch);
 	}
 
-	public SineEase(final Sketch p_parentSketch, final float p_freqMult) {
+	public NerdSineEase(final NerdSketch p_parentSketch, final float p_freqMult) {
 		super(p_parentSketch);
 		this.freqMult = p_freqMult;
 	}
@@ -38,7 +38,7 @@ public class SineEase extends NerdEasingFunction {
 	/**
 	 * @apiNote {@code p_angleOffset} are treated as radians.
 	 */
-	public SineEase(final Sketch p_parentSketch, final float p_freqMult, final float p_angleOffset) {
+	public NerdSineEase(final NerdSketch p_parentSketch, final float p_freqMult, final float p_angleOffset) {
 		super(p_parentSketch);
 		this.freqMult = p_freqMult;
 		super.parameterOffset = p_angleOffset;
@@ -47,19 +47,19 @@ public class SineEase extends NerdEasingFunction {
 	// endregion
 
 	@Override
-	public SineEase start() {
+	public NerdSineEase start() {
 		super.start();
 		return this;
 	}
 
 	// region End and extend!
 	@Override
-	public SineEase endAfterMillis(final int p_millis) {
+	public NerdSineEase endAfterMillis(final int p_millis) {
 		super.endTime = super.aliveTime + p_millis;
 		return this;
 	}
 
-	public SineEase endWhenAngleIncrementsBy(float p_angle) {
+	public NerdSineEase endWhenAngleIncrementsBy(float p_angle) {
 		// Don't ask me why it took me `10` months to get this to work, even with the
 		// right formula in my head, since day `1`!
 		// ...totally didn't forget to convert to radians or something!
@@ -77,7 +77,7 @@ public class SineEase extends NerdEasingFunction {
 	/**
 	 * Method to put the wave at a given angle within given time.
 	 */
-	public SineEase endWhenAngleIncrementsToWithin(float p_angle, final float p_before) {
+	public NerdSineEase endWhenAngleIncrementsToWithin(float p_angle, final float p_before) {
 		p_angle = PApplet.radians(PApplet.abs(p_angle));
 		this.freqMult = (p_angle - super.parameterOffset) / p_before;
 		return this;
@@ -89,7 +89,7 @@ public class SineEase extends NerdEasingFunction {
 		// return this.end();
 	}
 
-	public SineEase extendEndByAngle(final float p_angle) {
+	public NerdSineEase extendEndByAngle(final float p_angle) {
 		final float endTime = this.endTime; // Benefits of using `this.`!~
 		this.endWhenAngleIncrementsBy(p_angle);
 		this.endTime += endTime;

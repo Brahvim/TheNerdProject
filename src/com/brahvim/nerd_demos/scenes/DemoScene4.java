@@ -4,7 +4,7 @@ import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneState;
+import com.brahvim.nerd.scene_api.NerdSceneState;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 
@@ -35,7 +35,7 @@ public class DemoScene4 extends NerdScene {
     }
 
     @Override
-    protected void setup(final SceneState p_state) {
+    protected void setup(final NerdSceneState p_state) {
         // System.out.printf("`DemoScene4::setup()` here, I was called `%d` times!\n",
         // this.SCENE.getTimesLoaded());
 

@@ -2,7 +2,7 @@ package com.brahvim.nerd.math.easings;
 
 // Thanks to `easings.net`!
 
-public class Easings {
+public class NerdEasingFunctions {
 
     public static float cubic(final float x) {
         return 1.0f - (float) Math.pow(1 - x, 3);

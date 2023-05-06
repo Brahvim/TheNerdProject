@@ -2,7 +2,7 @@ package com.brahvim.nerd.papplet_wrapper.sketch_managers;
 
 import java.util.LinkedHashSet;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -21,11 +21,11 @@ public class NerdInputManager {
     public float mouseX, mouseY;
     public float pmouseX, pmouseY;
 
-    private final Sketch SKETCH;
+    private final NerdSketch SKETCH;
     private final LinkedHashSet<Integer> keysHeld;
     // endregion
 
-    public NerdInputManager(final Sketch p_sketch, final LinkedHashSet<Integer> p_keysHeldListRef) {
+    public NerdInputManager(final NerdSketch p_sketch, final LinkedHashSet<Integer> p_keysHeldListRef) {
         this.SKETCH = p_sketch;
         this.keysHeld = p_keysHeldListRef;
 
@@ -337,7 +337,7 @@ public class NerdInputManager {
 
     public static boolean isStandardKeyboardSymbol(final char p_char) {
         // boolean is = false;
-        for (final char ch : Sketch.STANDARD_KEYBOARD_SYMBOLS)
+        for (final char ch : NerdSketch.STANDARD_KEYBOARD_SYMBOLS)
             // Can't use this!:
             // return ch == p_char;
             // What if the array being examined is empty?!
@@ -357,11 +357,11 @@ public class NerdInputManager {
         return Character.isDigit(p_char) ||
                 Character.isLetter(p_char) ||
                 Character.isWhitespace(p_char) ||
-                Sketch.isStandardKeyboardSymbol(p_char);
+                NerdSketch.isStandardKeyboardSymbol(p_char);
     }
 
     public char getTypedKey() {
-        if (Sketch.isTypeable(this.SKETCH.key))
+        if (NerdSketch.isTypeable(this.SKETCH.key))
             return this.SKETCH.key;
 
         // New way to do this in Java!:

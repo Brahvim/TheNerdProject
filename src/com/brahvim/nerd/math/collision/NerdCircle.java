@@ -11,6 +11,7 @@ import processing.core.PVector;
 // THE SHAPE OBJECT CANNOT BE CHANGED!
 
 public class NerdCircle {
+
     // region Fields.
     public PVector pos;
     public float radius;
@@ -60,6 +61,7 @@ public class NerdCircle {
     }
 
     public boolean contains(final PVector p_point) {
-        return CollisionAlgorithms.ptCircle(p_point, this.pos, this.radius);
+        return NerdCollisionAlgorithms.ptCircle(p_point, this.pos, this.radius);
     }
+
 }

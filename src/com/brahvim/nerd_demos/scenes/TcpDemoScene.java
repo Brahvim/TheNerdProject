@@ -7,7 +7,7 @@ import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer.NerdClientSentTcpPacket;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneState;
+import com.brahvim.nerd.scene_api.NerdSceneState;
 
 public class TcpDemoScene extends NerdScene {
 	// I'm not using JSON here, which is *the* standard for communication nowadays.
@@ -58,7 +58,7 @@ public class TcpDemoScene extends NerdScene {
 	}
 
 	@Override
-	protected void setup(final SceneState p_state) {
+	protected void setup(final NerdSceneState p_state) {
 		SKETCH.textSize(25);
 		WINDOW.fullscreen = true;
 		SKETCH.getCamera().getPos().z = 500;

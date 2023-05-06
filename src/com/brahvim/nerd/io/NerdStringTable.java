@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PApplet;
 import processing.data.JSONArray;
@@ -12,7 +12,7 @@ import processing.data.JSONObject;
 
 /**
  * A "global" namespace for these strings is provided through
- * {@link Sketch#STRINGS}, so you can access string table data across scenes!
+ * {@link NerdSketch#STRINGS}, so you can access string table data across scenes!
  */
 public class NerdStringTable implements Cloneable {
 

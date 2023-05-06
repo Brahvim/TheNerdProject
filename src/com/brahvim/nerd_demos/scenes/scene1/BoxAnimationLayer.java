@@ -1,6 +1,6 @@
 package com.brahvim.nerd_demos.scenes.scene1;
 
-import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
+import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd.scene_api.NerdLayer;
 
 import processing.core.PApplet;
@@ -8,15 +8,15 @@ import processing.core.PConstants;
 
 public class BoxAnimationLayer extends NerdLayer {
 
-    private SineEase squareAmpWave, camRotWave;
+    private NerdSineEase squareAmpWave, camRotWave;
 
     @Override
     protected void setup() {
-        this.squareAmpWave = new SineEase(SKETCH, 100 / 60_000.0f);
+        this.squareAmpWave = new NerdSineEase(SKETCH, 100 / 60_000.0f);
         this.squareAmpWave.absoluteValue = true;
         this.squareAmpWave.start();
 
-        this.camRotWave = new SineEase(SKETCH, 50 / 60_000.0f);
+        this.camRotWave = new NerdSineEase(SKETCH, 50 / 60_000.0f);
         // this.camRotWave.absoluteValue = true;
         this.camRotWave.start();
     }

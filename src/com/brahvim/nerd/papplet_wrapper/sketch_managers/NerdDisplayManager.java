@@ -7,12 +7,12 @@ import java.awt.Point;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 
 public class NerdDisplayManager {
 
-    protected final Sketch SKETCH;
+    protected final NerdSketch SKETCH;
     protected final NerdWindowManager WINDOW;
     protected GraphicsDevice previousMonitor, currentMonitor;
 
@@ -39,7 +39,7 @@ public class NerdDisplayManager {
     public int pdisplayWidthThirdQuart, pdisplayHeightThirdQuart;
     // endregion
 
-    public NerdDisplayManager(final Sketch p_sketch) {
+    public NerdDisplayManager(final NerdSketch p_sketch) {
         this.SKETCH = p_sketch;
         this.WINDOW = this.SKETCH.WINDOW;
     }
@@ -87,7 +87,7 @@ public class NerdDisplayManager {
     }
 
     // region Current and previous frame monitor settings, plus callback!
-    public void preCallback(final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
+    public void preCallback(final LinkedHashSet<NerdSketch.SketchWindowListener> p_windowListeners) {
         this.displayWidth = this.SKETCH.displayWidth;
         this.displayHeight = this.SKETCH.displayHeight;
 
@@ -101,7 +101,7 @@ public class NerdDisplayManager {
         if (this.previousMonitor != this.currentMonitor) {
             this.previousMonitor = this.currentMonitor;
             this.updateDisplayRatios();
-            for (final Sketch.SketchWindowListener l : Objects.requireNonNull(p_windowListeners,
+            for (final NerdSketch.SketchWindowListener l : Objects.requireNonNull(p_windowListeners,
                     "`NerdDisplayManager::preCallback()` received `null`!"))
                 l.monitorChanged();
         }

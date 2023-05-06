@@ -2,7 +2,7 @@ package com.brahvim.nerd.io;
 
 import java.util.ArrayList;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PImage;
 
@@ -13,7 +13,7 @@ public class NerdSpriteSheet implements Cloneable {
 	}
 
 	// region Fields.
-	private final Sketch SKETCH;
+	private final NerdSketch SKETCH;
 
 	private final PImage sheet; // Not `final` so the user can dispose off sheets after one use.
 	private ArrayList<PImage> sprites = new ArrayList<>(2);
@@ -22,7 +22,7 @@ public class NerdSpriteSheet implements Cloneable {
 	private ArrayList<SpritePos> poses = new ArrayList<>(2);
 	// endregion
 
-	public NerdSpriteSheet(final Sketch p_sketch, final PImage p_sheet) {
+	public NerdSpriteSheet(final NerdSketch p_sketch, final PImage p_sheet) {
 		this.sheet = p_sheet;
 		this.SKETCH = p_sketch;
 	}
@@ -51,7 +51,7 @@ public class NerdSpriteSheet implements Cloneable {
 		return toCache;
 	}
 
-	public NerdSpriteSheet clone(final Sketch p_sketch) {
+	public NerdSpriteSheet clone(final NerdSketch p_sketch) {
 		final NerdSpriteSheet toRet = new NerdSpriteSheet(this.SKETCH, this.sheet);
 
 		toRet.poses = new ArrayList<>(this.poses);

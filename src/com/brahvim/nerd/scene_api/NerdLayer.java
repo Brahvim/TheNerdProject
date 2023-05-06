@@ -1,7 +1,7 @@
 package com.brahvim.nerd.scene_api;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
@@ -24,8 +24,8 @@ public class NerdLayer {
     // Seriously, why did I set these to be `protected`?
     public final NerdLayer LAYER = this;
 
-    public Sketch SKETCH;
-    public SceneState STATE;
+    public NerdSketch SKETCH;
+    public NerdSceneState STATE;
     public NerdInputManager INPUT;
     public NerdAssetManager ASSETS;
     public NerdSceneManager MANAGER;

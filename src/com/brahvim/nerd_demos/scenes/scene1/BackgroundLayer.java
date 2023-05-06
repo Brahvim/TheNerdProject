@@ -1,15 +1,15 @@
 package com.brahvim.nerd_demos.scenes.scene1;
 
-import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
+import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd.scene_api.NerdLayer;
 
 public class BackgroundLayer extends NerdLayer {
 
-    private SineEase fadeWave;
+    private NerdSineEase fadeWave;
 
     @Override
     protected void setup() {
-        this.fadeWave = new SineEase(SKETCH, 0.001f);
+        this.fadeWave = new NerdSineEase(SKETCH, 0.001f);
         this.fadeWave.absoluteValue = true;
         this.fadeWave.start();
     }

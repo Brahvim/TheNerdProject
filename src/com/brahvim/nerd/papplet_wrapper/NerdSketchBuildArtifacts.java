@@ -2,17 +2,17 @@ package com.brahvim.nerd.papplet_wrapper;
 
 import java.util.HashMap;
 
-public class SketchBuildArtifacts {
+public class NerdSketchBuildArtifacts {
 
-	private final Sketch SKETCH;
+	private final NerdSketch SKETCH;
 	private final HashMap<String, Object> EXTENSIONS;
 
-	/* `package` */ SketchBuildArtifacts(final Sketch p_sketch) {
+	/* `package` */ NerdSketchBuildArtifacts(final NerdSketch p_sketch) {
 		this.SKETCH = p_sketch;
 		this.EXTENSIONS = this.SKETCH.EXTENSIONS;
 	}
 
-	public Sketch getSketch() {
+	public NerdSketch getSketch() {
 		return this.SKETCH;
 	}
 

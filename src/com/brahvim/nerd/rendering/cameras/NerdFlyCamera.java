@@ -2,7 +2,7 @@ package com.brahvim.nerd.rendering.cameras;
 
 import java.awt.Point;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 
@@ -26,7 +26,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
     // endregion
 
     // region Construction.
-    public NerdFlyCamera(final Sketch p_sketch) {
+    public NerdFlyCamera(final NerdSketch p_sketch) {
         super(p_sketch);
         this.front = super.pos.copy();
         this.WINDOW = super.SKETCH.WINDOW;
@@ -36,7 +36,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
         this.defaultCamFront = this.front.copy();
     }
 
-    public NerdFlyCamera(final Sketch p_sketch, final PVector p_defaultFront) {
+    public NerdFlyCamera(final NerdSketch p_sketch, final PVector p_defaultFront) {
         super(p_sketch);
         this.front.set(p_defaultFront);
         this.WINDOW = super.SKETCH.WINDOW;

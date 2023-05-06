@@ -1,6 +1,6 @@
 package com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PVector;
@@ -10,7 +10,7 @@ import processing.core.PVector;
     protected GLWindow window;
 
     // region Construction and initialization.
-    public NerdGlWindowManager(final Sketch p_sketch) {
+    public NerdGlWindowManager(final NerdSketch p_sketch) {
         super(p_sketch);
     }
 

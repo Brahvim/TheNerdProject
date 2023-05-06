@@ -5,6 +5,7 @@ import processing.core.PVector;
 
 // Brought to you, *from* my other (currently supa'-duper secret, ";P!) project, "AGC"!:
 public class NerdQuad {
+
     // region Fields.
     /**
      * The <i>actual</i> position of the quadrilateral.
@@ -69,6 +70,7 @@ public class NerdQuad {
     }
 
     public boolean contains(final PVector p_point) {
-        return CollisionAlgorithms.ptRect(p_point, this.start, this.end);
+        return NerdCollisionAlgorithms.ptRect(p_point, this.start, this.end);
     }
+
 }

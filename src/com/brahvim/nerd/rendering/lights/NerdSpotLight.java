@@ -1,6 +1,6 @@
 package com.brahvim.nerd.rendering.lights;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PVector;
 
@@ -10,22 +10,22 @@ public class NerdSpotLight extends NerdLight {
 	public PVector dir;
 
 	// region Constructors.
-	public NerdSpotLight(final Sketch p_sketch) {
+	public NerdSpotLight(final NerdSketch p_sketch) {
 		super(p_sketch);
 		this.dir = new PVector();
 	}
 
-	public NerdSpotLight(final Sketch p_sketch, final PVector p_pos) {
+	public NerdSpotLight(final NerdSketch p_sketch, final PVector p_pos) {
 		super(p_sketch, p_pos);
 		this.dir = new PVector();
 	}
 
-	public NerdSpotLight(final Sketch p_sketch, final PVector p_pos, final PVector p_color) {
+	public NerdSpotLight(final NerdSketch p_sketch, final PVector p_pos, final PVector p_color) {
 		super(p_sketch, p_pos, p_color);
 		this.dir = new PVector();
 	}
 
-	public NerdSpotLight(final Sketch p_sketch, final PVector p_pos, final PVector p_color, final PVector p_dir) {
+	public NerdSpotLight(final NerdSketch p_sketch, final PVector p_pos, final PVector p_color, final PVector p_dir) {
 		super(p_sketch, p_pos, p_color);
 		this.dir = p_dir.copy();
 	}

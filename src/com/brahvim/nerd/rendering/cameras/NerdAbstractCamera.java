@@ -3,7 +3,7 @@ package com.brahvim.nerd.rendering.cameras;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -16,7 +16,7 @@ public abstract class NerdAbstractCamera {
     public static final float DEFAULT_CAM_FOV = PApplet.radians(60),
             DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10_000, DEFAULT_CAM_MOUSE_Z = 1;
 
-    public final Sketch SKETCH;
+    public final NerdSketch SKETCH;
     public Consumer<NerdAbstractCamera> script; // Smart users will write complete classes for these.
 
     // ...yeah, for some reason `PApplet::color()` fails.
@@ -34,7 +34,7 @@ public abstract class NerdAbstractCamera {
     public boolean doScript = true, doAutoClear = true, doAutoAspect = true;
     // endregion
 
-    public NerdAbstractCamera(final Sketch p_sketch) {
+    public NerdAbstractCamera(final NerdSketch p_sketch) {
         this.SKETCH = p_sketch;
     }
 

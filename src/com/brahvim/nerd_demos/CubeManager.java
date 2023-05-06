@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PConstants;
@@ -18,7 +18,7 @@ public class CubeManager {
 
 	private final ArrayList<AnimatedCube> CUBES = new ArrayList<>();
 	private final NerdScene SCENE;
-	private final Sketch SKETCH;
+	private final NerdSketch SKETCH;
 
 	private AlBuffer<?>[] popAudios;
 	private PShape CUBE_SHAPE;

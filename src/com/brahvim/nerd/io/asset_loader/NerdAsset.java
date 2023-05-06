@@ -3,7 +3,7 @@ package com.brahvim.nerd.io.asset_loader;
 import java.io.File;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 public class NerdAsset {
 
@@ -11,7 +11,7 @@ public class NerdAsset {
     public final String NAME;
 
     private final String PATH;
-    private final Sketch SKETCH;
+    private final NerdSketch SKETCH;
     private final AssetLoader<?> LOADER;
 
     private int frame;
@@ -22,7 +22,7 @@ public class NerdAsset {
     // endregion
 
     // region Construction.
-    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path) {
+    public NerdAsset(final NerdSketch p_sketch, final AssetLoader<?> p_type, final String p_path) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
 
@@ -33,7 +33,7 @@ public class NerdAsset {
         this.NAME = this.findName();
     }
 
-    public NerdAsset(final Sketch p_sketch, final AssetLoader<?> p_type, final String p_path, final Runnable p_onLoad) {
+    public NerdAsset(final NerdSketch p_sketch, final AssetLoader<?> p_type, final String p_path, final Runnable p_onLoad) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
     }
@@ -74,7 +74,7 @@ public class NerdAsset {
 
     public void startLoading() {
         // Adding callbacks for each asset since `AssetManager`s don't handle loading.
-        final Consumer<Sketch> postCallback = s -> this.ploaded = this.loaded;
+        final Consumer<NerdSketch> postCallback = s -> this.ploaded = this.loaded;
         this.SKETCH.addPostListener(postCallback);
         this.fetchData();
         this.loaded = true;
@@ -88,9 +88,9 @@ public class NerdAsset {
         // To do so, we add a "self-removing" callback!:
 
         final NerdAsset ASSET = this;
-        final Consumer<Sketch> whenLoaded = new Consumer<Sketch>() {
+        final Consumer<NerdSketch> whenLoaded = new Consumer<NerdSketch>() {
             @Override
-            public void accept(final Sketch p_sketch) {
+            public void accept(final NerdSketch p_sketch) {
                 ASSET.ploaded = true;
                 p_sketch.removePostListener(this);
             }

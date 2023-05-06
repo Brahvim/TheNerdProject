@@ -2,7 +2,7 @@ package com.brahvim.nerd.rendering.cameras;
 
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -10,9 +10,9 @@ import processing.core.PVector;
 public class NerdBasicCameraBuilder {
 
     private final NerdBasicCamera build;
-    private final Sketch SKETCH;
+    private final NerdSketch SKETCH;
 
-    public NerdBasicCameraBuilder(final Sketch p_sketch) {
+    public NerdBasicCameraBuilder(final NerdSketch p_sketch) {
         this.SKETCH = p_sketch; // Used by `setClearColor()`.
         this.build = new NerdBasicCamera(p_sketch);
 

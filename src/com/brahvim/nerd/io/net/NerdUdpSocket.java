@@ -12,7 +12,7 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * {@link UdpSocket} helps two applications running on different machines
+ * {@link NerdUdpSocket} helps two applications running on different machines
  * connect via networks following the "User Datagram Protocol" and let them
  * listen to each other on a different thread for easier asynchronous
  * multitasking.<br>
@@ -23,18 +23,18 @@ import java.nio.charset.StandardCharsets;
  * @author Brahvim Bhaktvatsal
  */
 
-public class UdpSocket {
+public class NerdUdpSocket {
 
     // Concurrent stuff *haha:*
     /**
-     * The {@link UdpSocket.ReceiverThread} class helps {@link UdpSocket}s receive
+     * The {@link NerdUdpSocket.ReceiverThread} class helps {@link NerdUdpSocket}s receive
      * data on
      * a separate thread, aiding with application performance and modern
      * hardware programming practices. It may NOT, be useful on systems like
      * Android, where ALL networking tasks must be done asynchronously.
      *
      * @author Brahvim Bhaktvatsal
-     * @see UdpSocket
+     * @see NerdUdpSocket
      */
     public class ReceiverThread {
 
@@ -48,10 +48,10 @@ public class UdpSocket {
         /**
          * The {@code Thread} that handles the network's receive calls.
          *
-         * @implSpec {@link UdpSocket.ReceiverThread#start()}
+         * @implSpec {@link NerdUdpSocket.ReceiverThread#start()}
          *           should set this to be a daemon thread.
-         * @see UdpSocket.ReceiverThread#start()
-         * @see UdpSocket.ReceiverThread#stop()
+         * @see NerdUdpSocket.ReceiverThread#start()
+         * @see NerdUdpSocket.ReceiverThread#stop()
          */
         private Thread thread; // Ti's but a daemon thread.
 
@@ -69,7 +69,7 @@ public class UdpSocket {
             this.byteData = new byte[ReceiverThread.PACKET_MAX_SIZE];
 
             this.thread = new Thread(this::receiverTasks);
-            this.thread.setName("UdpSocketReceiverOnPort" + UdpSocket.this.getPort());
+            this.thread.setName("UdpSocketReceiverOnPort" + NerdUdpSocket.this.getPort());
             this.thread.setDaemon(true); // The JVM can shut down without waiting for this thread to.
             this.thread.start();
         }
@@ -78,9 +78,9 @@ public class UdpSocket {
             // We got some work?
             while (!Thread.interrupted()) {
                 try {
-                    UdpSocket.this.in = new DatagramPacket(this.byteData, this.byteData.length);
-                    if (UdpSocket.this.sock != null)
-                        UdpSocket.this.sock.receive(UdpSocket.this.in); // Fetch it well!
+                    NerdUdpSocket.this.in = new DatagramPacket(this.byteData, this.byteData.length);
+                    if (NerdUdpSocket.this.sock != null)
+                        NerdUdpSocket.this.sock.receive(NerdUdpSocket.this.in); // Fetch it well!
                 } catch (final IOException e) {
                     if (e instanceof SocketTimeoutException) {
                         // ¯\_(ツ)_/¯
@@ -93,8 +93,8 @@ public class UdpSocket {
                 }
 
                 // Callback!:
-                if (UdpSocket.this.in != null) {
-                    final InetAddress addr = UdpSocket.this.in.getAddress();
+                if (NerdUdpSocket.this.in != null) {
+                    final InetAddress addr = NerdUdpSocket.this.in.getAddress();
 
                     if (addr == null)
                         continue;
@@ -108,7 +108,7 @@ public class UdpSocket {
                     // ..Gotta handle those!:
 
                     try {
-                        final byte[] copy = new byte[UdpSocket.this.in.getLength()];
+                        final byte[] copy = new byte[NerdUdpSocket.this.in.getLength()];
 
                         // Don't worry, this won't crash. *I hope.*
                         System.arraycopy(this.byteData, 0, copy, 0, copy.length);
@@ -124,9 +124,9 @@ public class UdpSocket {
                         // than to do a loop and set values. Java allocations ARE fast.
                         // I'm only worried about de-allocation. GCs can be slow, right?
 
-                        UdpSocket.this.onReceive(copy,
+                        NerdUdpSocket.this.onReceive(copy,
                                 addr.toString().substring(1),
-                                UdpSocket.this.in.getPort());
+                                NerdUdpSocket.this.in.getPort());
                     } catch (final Exception e) {
                         e.printStackTrace();
                     } catch (final Error e) { // Also, ERRORS! ...if possible, that is.
@@ -154,7 +154,7 @@ public class UdpSocket {
 
     // region Fields!
     /**
-     * The default timeout value, in milliseconds, for each {@link UdpSocket}. Used
+     * The default timeout value, in milliseconds, for each {@link NerdUdpSocket}. Used
      * if a timeout value is not specified in the constructor.
      *
      * @implSpec Should be {@code 32}.
@@ -162,7 +162,7 @@ public class UdpSocket {
     public static final int DEFAULT_TIMEOUT = 32;
 
     /**
-     * The internal, {@code private} {@link UdpSocket.ReceiverThread} instance.
+     * The internal, {@code private} {@link NerdUdpSocket.ReceiverThread} instance.
      * In abstract words, it handles threading for receiving messages.
      */
     protected ReceiverThread receiver;
@@ -172,11 +172,11 @@ public class UdpSocket {
      * networking.<br>
      * <br>
      * If you need to change it, consider using the
-     * {@link UdpSocket#setSocket(DatagramSocket)}
+     * {@link NerdUdpSocket#setSocket(DatagramSocket)}
      * method (it pauses the receiving thread, swaps the socket, and resumes
      * listening).<br>
      * <br>
-     * {@link UdpSocket#getSocket()} <b>should</b> be used for equality checks,
+     * {@link NerdUdpSocket#getSocket()} <b>should</b> be used for equality checks,
      * etcetera.
      */
     private DatagramSocket sock;
@@ -194,45 +194,45 @@ public class UdpSocket {
 
     // region Construction!~
     /**
-     * Constructs a {@link UdpSocket} with an empty port requested from the OS, the
+     * Constructs a {@link NerdUdpSocket} with an empty port requested from the OS, the
      * receiver thread of which will time-out every
-     * {@link UdpSocket#DEFAULT_TIMEOUT} milliseconds.
+     * {@link NerdUdpSocket#DEFAULT_TIMEOUT} milliseconds.
      *
-     * @implSpec {@link UdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
+     * @implSpec {@link NerdUdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
      */
-    public UdpSocket() {
-        this(0, UdpSocket.DEFAULT_TIMEOUT);
+    public NerdUdpSocket() {
+        this(0, NerdUdpSocket.DEFAULT_TIMEOUT);
     }
 
     /**
-     * Constructs a {@link UdpSocket} with the specified port, the receiver thread
-     * of which will time-out every {@link UdpSocket#DEFAULT_TIMEOUT}
+     * Constructs a {@link NerdUdpSocket} with the specified port, the receiver thread
+     * of which will time-out every {@link NerdUdpSocket#DEFAULT_TIMEOUT}
      * milliseconds.
      *
-     * @implSpec {@link UdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
+     * @implSpec {@link NerdUdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
      */
-    public UdpSocket(final int p_port) {
-        this(p_port, UdpSocket.DEFAULT_TIMEOUT);
+    public NerdUdpSocket(final int p_port) {
+        this(p_port, NerdUdpSocket.DEFAULT_TIMEOUT);
     }
 
     /**
-     * Constructs a {@link UdpSocket} with the specified socket.
+     * Constructs a {@link NerdUdpSocket} with the specified socket.
      */
-    public UdpSocket(final DatagramSocket p_sock) {
+    public NerdUdpSocket(final DatagramSocket p_sock) {
         this.sock = p_sock;
         this.receiver = new ReceiverThread();
     }
 
     /**
-     * Constructs a {@link UdpSocket} with the specified port and receiver thread
+     * Constructs a {@link NerdUdpSocket} with the specified port and receiver thread
      * timeout (in milliseconds).
      *
      * @apiNote This constructor used to try to force the OS into giving the port of
      *          the user's choice. This functionality has now been split. Please see
-     *          {@link UdpSocket#createSocketForcingPort(int, int)} and
-     *          {@link UdpSocket#UdpSocket(DatagramSocket)}.
+     *          {@link NerdUdpSocket#createSocketForcingPort(int, int)} and
+     *          {@link NerdUdpSocket#UdpSocket(DatagramSocket)}.
      */
-    public UdpSocket(final int p_port, final int p_timeout) {
+    public NerdUdpSocket(final int p_port, final int p_timeout) {
         try {
             this.sock = new DatagramSocket(p_port);
             this.sock.setSoTimeout(p_timeout);
@@ -276,7 +276,7 @@ public class UdpSocket {
 
     // region Callback methods to overload. These are what you get! LOOK HERE!
     /**
-     * Simply called by the constructor of {@link UdpSocket}, really.
+     * Simply called by the constructor of {@link NerdUdpSocket}, really.
      */
     protected void onStart() {
     }
@@ -393,23 +393,23 @@ public class UdpSocket {
      * Works the same as
      * {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)}.
      * 
-     * @see UdpSocket#joinGroup(String, int, NetworkInterface)
-     * @see UdpSocket#leaveGroup(String, int, NetworkInterface)
-     * @see UdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+     * @see NerdUdpSocket#joinGroup(String, int, NetworkInterface)
+     * @see NerdUdpSocket#leaveGroup(String, int, NetworkInterface)
+     * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
      */
     public void joinGroup(final SocketAddress p_sockAddr, final NetworkInterface p_netIf) throws IOException {
         this.sock.joinGroup(p_sockAddr, p_netIf);
     }
 
     /**
-     * Calls {@link UdpSocket#joinGroup(SocketAddress, NetworkInterface)} with an
+     * Calls {@link NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)} with an
      * instance of {@link InetSocketAddress} - effectively the same as
      * calling {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)} on
      * the underlying {@link DatagramSocket}.
      * 
-     * @see UdpSocket#leaveGroup(String, int, NetworkInterface)
-     * @see UdpSocket#joinGroup(SocketAddress, NetworkInterface)
-     * @see UdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+     * @see NerdUdpSocket#leaveGroup(String, int, NetworkInterface)
+     * @see NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
+     * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
      */
     public void joinGroup(final String p_ip, final int p_port, final NetworkInterface p_netIf) throws IOException {
         this.joinGroup(new InetSocketAddress(p_ip, p_port), p_netIf);
@@ -419,21 +419,21 @@ public class UdpSocket {
      * Works the same as
      * {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)}.
      * 
-     * @see UdpSocket#joinGroup(String, int, NetworkInterface)
-     * @see UdpSocket#leaveGroup(String, int, NetworkInterface)
+     * @see NerdUdpSocket#joinGroup(String, int, NetworkInterface)
+     * @see NerdUdpSocket#leaveGroup(String, int, NetworkInterface)
      */
     public void leaveGroup(final SocketAddress p_sockAddr, final NetworkInterface p_netIf) throws IOException {
         this.sock.leaveGroup(p_sockAddr, p_netIf);
     }
 
     /**
-     * Calls {@link UdpSocket#leaveGroup(SocketAddress, NetworkInterface)} with an
+     * Calls {@link NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)} with an
      * instance of {@link InetSocketAddress} - effectively the same as
      * calling {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)} on
      * the underlying {@link DatagramSocket}.
      * 
-     * @see UdpSocket#joinGroup(SocketAddress, NetworkInterface)
-     * @see UdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+     * @see NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
+     * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
      */
     public void leaveGroup(final String p_ip, final int p_port, final NetworkInterface p_netIf) throws IOException {
         this.sock.leaveGroup(new InetSocketAddress(p_ip, p_port), p_netIf);

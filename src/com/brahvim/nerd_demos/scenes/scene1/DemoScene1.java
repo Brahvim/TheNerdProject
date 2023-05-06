@@ -1,14 +1,14 @@
 package com.brahvim.nerd_demos.scenes.scene1;
 
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PFontAsset;
-import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
+import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_ext_efx.AlAuxiliaryEffectSlot;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlBandpassFilter;
 import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneState;
+import com.brahvim.nerd.scene_api.NerdSceneState;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.scenes.DemoScene4;
 
@@ -19,7 +19,7 @@ import processing.core.PFont;
 public class DemoScene1 extends NerdScene {
 
     private PFont font;
-    private SineEase ease;
+    private NerdSineEase ease;
     private AlSource sceneOneAnnounce;
 
     @Override
@@ -29,13 +29,13 @@ public class DemoScene1 extends NerdScene {
     }
 
     @Override
-    protected void setup(final SceneState p_state) {
+    protected void setup(final NerdSceneState p_state) {
         // WINDOW.fullscreen = true;
         if (this.SCENE.getTimesLoaded() == 0)
             WINDOW.centerWindow();
 
         this.font = SKETCH.ASSETS.get("Arial-Black-48").getData();
-        this.ease = new SineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
+        this.ease = new NerdSineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
 
         this.sceneOneAnnounce = new AlSource(App.OPENAL, ASSETS.get("SceneOne").getData());
         this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(App.OPENAL)

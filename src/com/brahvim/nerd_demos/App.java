@@ -3,8 +3,8 @@ package com.brahvim.nerd_demos;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
-import com.brahvim.nerd.papplet_wrapper.Sketch;
-import com.brahvim.nerd.papplet_wrapper.SketchBuildArtifacts;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 import com.jogamp.newt.opengl.GLWindow;
@@ -46,7 +46,7 @@ public class App {
     public static void main(final String[] p_args) {
         // region Building the `Sketch`!
         final NerdSketchBuilder builder = new NerdSketchBuilder();
-        builder.setStringTablePath(Sketch.fromDataDir("Nerd_StringTable.json"))
+        builder.setStringTablePath(NerdSketch.fromDataDir("Nerd_StringTable.json"))
                 .setIconPath("data/sunglass_nerd.png")
                 .setFirstScene(App.FIRST_SCENE_CLASS)
                 .setTitle("The Nerd Project")
@@ -66,7 +66,7 @@ public class App {
                 .setSceneManagerSettings(s -> s.ON_PRELOAD.preloadOnlyOnce = false);
 
         // Build the sketch and collect build artifacts:
-        final SketchBuildArtifacts artifacts = builder.build(p_args);
+        final NerdSketchBuildArtifacts artifacts = builder.build(p_args);
         App.OPENAL = (NerdAl) artifacts.getExtObject("OpenAL");
         // endregion
 

@@ -11,27 +11,27 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 /**
- * Want to hack into the {@link Sketch} class and control its inner workings
+ * Want to hack into the {@link NerdSketch} class and control its inner workings
  * beyond just... using callbacks? Why not extend it!?<br>
  * <br>
  *
- * Override/Implement {@link CustomSketchBuilder#build()}, and return an
- * instance of your own {@link Sketch} subclass!
+ * Override/Implement {@link NerdCustomSketchBuilder#build()}, and return an
+ * instance of your own {@link NerdSketch} subclass!
  */
-public abstract class CustomSketchBuilder {
+public abstract class NerdCustomSketchBuilder {
 
     // region Field*[s]*, constructor, building...
-    protected final SketchKey SKETCH_KEY;
+    protected final NerdSketchBuilderSettings SKETCH_KEY;
 
-    public CustomSketchBuilder() {
-        this.SKETCH_KEY = new SketchKey();
+    public NerdCustomSketchBuilder() {
+        this.SKETCH_KEY = new NerdSketchBuilderSettings();
     }
 
     // Got this passed in here to allow passing in fake values.
     // I know `sun.java.command` (system property, accessible via
     // `System.getProperty()`) exists.
-    public final SketchBuildArtifacts build(final String[] p_javaMainArgs) {
-        final Sketch constructedSketch = this.buildImpl(p_javaMainArgs);
+    public final NerdSketchBuildArtifacts build(final String[] p_javaMainArgs) {
+        final NerdSketch constructedSketch = this.buildImpl(p_javaMainArgs);
         final String[] args = new String[] { constructedSketch.getClass().getName() };
 
         if (p_javaMainArgs == null || p_javaMainArgs.length == 0)
@@ -39,7 +39,7 @@ public abstract class CustomSketchBuilder {
         else
             PApplet.runSketch(PApplet.concat(args, p_javaMainArgs), constructedSketch);
 
-        final SketchBuildArtifacts toRet = new SketchBuildArtifacts(constructedSketch);
+        final NerdSketchBuildArtifacts toRet = new NerdSketchBuildArtifacts(constructedSketch);
 
         switch (constructedSketch.RENDERER) {
             case PConstants.JAVA2D -> toRet.addExtObject(
@@ -57,98 +57,98 @@ public abstract class CustomSketchBuilder {
         return toRet;
     }
 
-    protected abstract Sketch buildImpl(String[] p_javaMainArgs);
+    protected abstract NerdSketch buildImpl(String[] p_javaMainArgs);
     // endregion
 
     // region Renderer selection.
-    public CustomSketchBuilder usesJavaRenderer() {
+    public NerdCustomSketchBuilder usesJavaRenderer() {
         this.SKETCH_KEY.renderer = PConstants.JAVA2D;
         return this;
     }
 
-    public CustomSketchBuilder usesOpenGlRenderer() {
+    public NerdCustomSketchBuilder usesOpenGlRenderer() {
         this.SKETCH_KEY.renderer = PConstants.P3D;
         return this;
     }
 
-    public CustomSketchBuilder usesJavaFxRenderer() {
+    public NerdCustomSketchBuilder usesJavaFxRenderer() {
         this.SKETCH_KEY.renderer = PConstants.FX2D;
         return this;
     }
 
-    public CustomSketchBuilder usesPdfRenderer() {
+    public NerdCustomSketchBuilder usesPdfRenderer() {
         this.SKETCH_KEY.renderer = PConstants.PDF;
         return this;
     }
 
-    public CustomSketchBuilder usesSvgRenderer() {
+    public NerdCustomSketchBuilder usesSvgRenderer() {
         this.SKETCH_KEY.renderer = PConstants.SVG;
         return this;
     }
 
-    public CustomSketchBuilder usesDxfRenderer() {
+    public NerdCustomSketchBuilder usesDxfRenderer() {
         this.SKETCH_KEY.renderer = PConstants.DXF;
         return this;
     }
     // endregion
 
     // region Adding listeners.
-    public CustomSketchBuilder addSketchConstructionListener(final Consumer<Sketch> p_listener) {
+    public NerdCustomSketchBuilder addSketchConstructionListener(final Consumer<NerdSketch> p_listener) {
         this.SKETCH_KEY.sketchConstructedListeners.add(Objects.requireNonNull(
                 p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addSketchDisposalListener(final Consumer<Sketch> p_listener) {
+    public NerdCustomSketchBuilder addSketchDisposalListener(final Consumer<NerdSketch> p_listener) {
         this.SKETCH_KEY.disposalListeners.add(Objects.requireNonNull(
                 p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addSketchSetupListener(final Consumer<Sketch> p_listener) {
+    public NerdCustomSketchBuilder addSketchSetupListener(final Consumer<NerdSketch> p_listener) {
         this.SKETCH_KEY.setupListeners.add(Objects.requireNonNull(
                 p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addPreListener(final Consumer<Sketch> p_listener) {
+    public NerdCustomSketchBuilder addPreListener(final Consumer<NerdSketch> p_listener) {
         this.SKETCH_KEY.preListeners.add(Objects.requireNonNull(
                 p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addPostListener(final Consumer<Sketch> p_listener) {
+    public NerdCustomSketchBuilder addPostListener(final Consumer<NerdSketch> p_listener) {
         this.SKETCH_KEY.postListeners.add(Objects.requireNonNull(
                 p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addPreDrawListener(final Consumer<Sketch> p_listener) {
+    public NerdCustomSketchBuilder addPreDrawListener(final Consumer<NerdSketch> p_listener) {
         this.SKETCH_KEY.preDrawListeners.add(Objects.requireNonNull(
                 p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addDrawListener(final Consumer<Sketch> p_listener) {
+    public NerdCustomSketchBuilder addDrawListener(final Consumer<NerdSketch> p_listener) {
         this.SKETCH_KEY.drawListeners.add(Objects.requireNonNull(
                 p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addPostDrawListener(final Consumer<Sketch> p_listener) {
+    public NerdCustomSketchBuilder addPostDrawListener(final Consumer<NerdSketch> p_listener) {
         this.SKETCH_KEY.postDrawListeners.add(Objects.requireNonNull(
                 p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
 
-    public CustomSketchBuilder addSketchExitListener(final Consumer<Sketch> p_listener) {
+    public NerdCustomSketchBuilder addSketchExitListener(final Consumer<NerdSketch> p_listener) {
         this.SKETCH_KEY.exitListeners.add(Objects.requireNonNull(
                 p_listener, "A listener passed to `SketchKey` cannot be `null`"));
         return this;
     }
     // endregion
 
-    public CustomSketchBuilder addNerdExt(final NerdExt p_extObj) {
+    public NerdCustomSketchBuilder addNerdExt(final NerdExt p_extObj) {
         this.SKETCH_KEY.nerdExtensions.put(
                 p_extObj.getExtName(),
                 p_extObj.init(this));
@@ -159,24 +159,24 @@ public abstract class CustomSketchBuilder {
     // region `set()`.
     // region Window settings!
     // region Dimensions.
-    public CustomSketchBuilder setWidth(final int p_width) {
+    public NerdCustomSketchBuilder setWidth(final int p_width) {
         this.SKETCH_KEY.width = p_width;
         return this;
     }
 
-    public CustomSketchBuilder setHeight(final int p_height) {
+    public NerdCustomSketchBuilder setHeight(final int p_height) {
         this.SKETCH_KEY.height = p_height;
         return this;
     }
     // endregion
 
-    public CustomSketchBuilder setTitle(final String p_name) {
+    public NerdCustomSketchBuilder setTitle(final String p_name) {
         this.SKETCH_KEY.name = p_name;
         return this;
     }
     // endregion
 
-    public CustomSketchBuilder setSceneManagerSettings(final Consumer<SceneManagerSettings> p_settingsBuilder) {
+    public NerdCustomSketchBuilder setSceneManagerSettings(final Consumer<SceneManagerSettings> p_settingsBuilder) {
         final var toPass = new NerdSceneManager.SceneManagerSettings();
 
         if (p_settingsBuilder != null)
@@ -186,41 +186,41 @@ public abstract class CustomSketchBuilder {
         return this;
     }
 
-    public CustomSketchBuilder setSceneManagerSettings(final SceneManagerSettings p_settings) {
+    public NerdCustomSketchBuilder setSceneManagerSettings(final SceneManagerSettings p_settings) {
         if (p_settings != null)
             this.SKETCH_KEY.sceneManagerSettings = p_settings;
         return this;
     }
 
-    public CustomSketchBuilder setStringTablePath(final String p_path) {
+    public NerdCustomSketchBuilder setStringTablePath(final String p_path) {
         this.SKETCH_KEY.stringTablePath = p_path;
         return this;
     }
 
-    public CustomSketchBuilder setFirstScene(final Class<? extends NerdScene> p_firstScene) {
+    public NerdCustomSketchBuilder setFirstScene(final Class<? extends NerdScene> p_firstScene) {
         // Objects.requireNonNull(p_firstScene, "The first scene needs to be set, and
         // cannot be `null`!");
         this.SKETCH_KEY.firstScene = p_firstScene;
         return this;
     }
 
-    public CustomSketchBuilder setAntiAliasing(final int p_value) {
+    public NerdCustomSketchBuilder setAntiAliasing(final int p_value) {
         this.SKETCH_KEY.antiAliasing = p_value;
         return this;
     }
 
     // region `Sketch.CallbackOrder`.
-    public CustomSketchBuilder setPreCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
+    public NerdCustomSketchBuilder setPreCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.preCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder setDrawCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
+    public NerdCustomSketchBuilder setDrawCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.drawCallOrder = p_order;
         return this;
     }
 
-    public CustomSketchBuilder setPostCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
+    public NerdCustomSketchBuilder setPostCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.postCallOrder = p_order;
         return this;
     }
@@ -228,44 +228,44 @@ public abstract class CustomSketchBuilder {
     // endregion
 
     // region Window behaviors and properties.
-    public CustomSketchBuilder setIconPath(final String p_pathString) {
+    public NerdCustomSketchBuilder setIconPath(final String p_pathString) {
         this.SKETCH_KEY.iconPath = p_pathString;
         return this;
     }
 
-    public CustomSketchBuilder canResize() {
+    public NerdCustomSketchBuilder canResize() {
         this.SKETCH_KEY.canResize = true;
         return this;
     }
 
-    public CustomSketchBuilder preventCloseOnEscape() {
+    public NerdCustomSketchBuilder preventCloseOnEscape() {
         this.SKETCH_KEY.dontCloseOnEscape = true;
         return this;
     }
 
-    public CustomSketchBuilder startFullscreen() {
+    public NerdCustomSketchBuilder startFullscreen() {
         this.SKETCH_KEY.startedFullscreen = true;
         return this;
     }
 
-    public CustomSketchBuilder cannotFullscreen() {
+    public NerdCustomSketchBuilder cannotFullscreen() {
         this.SKETCH_KEY.cannotFullscreen = false;
         return this;
     }
 
-    public CustomSketchBuilder cannotF11Fullscreen() {
+    public NerdCustomSketchBuilder cannotF11Fullscreen() {
         this.SKETCH_KEY.cannotF11Fullscreen = true;
         return this;
     }
 
-    public CustomSketchBuilder cannotAltEnterFullscreen() {
+    public NerdCustomSketchBuilder cannotAltEnterFullscreen() {
         this.SKETCH_KEY.cannotAltEnterFullscreen = true;
         return this;
     }
     // endregion
 
     // region Any kind of pre-loading.
-    public CustomSketchBuilder preLoadAssets(final Class<? extends NerdScene> p_sceneClass) {
+    public NerdCustomSketchBuilder preLoadAssets(final Class<? extends NerdScene> p_sceneClass) {
         if (p_sceneClass == null)
             return this;
 
@@ -274,7 +274,7 @@ public abstract class CustomSketchBuilder {
     }
 
     @SuppressWarnings("all")
-    public CustomSketchBuilder preLoadAssets(final Class<? extends NerdScene>... p_sceneClasses) {
+    public NerdCustomSketchBuilder preLoadAssets(final Class<? extends NerdScene>... p_sceneClasses) {
         if (p_sceneClasses == null)
             return this;
 

@@ -1,28 +1,29 @@
 package com.brahvim.nerd.math.timing;
 
-public class MillisTimer {
+public class NerdNanosTimer {
+
     private boolean active;
     private long startTime, endTime;
 
-    public MillisTimer() {
+    public NerdNanosTimer() {
         this.restart();
     }
 
     // region State manipulation!
     public void stop() {
         this.active = false;
-        this.endTime = System.currentTimeMillis();
+        this.endTime = System.nanoTime();
     }
 
     public void restart() {
         this.active = true;
-        this.startTime = System.currentTimeMillis();
+        this.startTime = System.nanoTime();
     }
     // endregion
 
     // region Duration getters.
     public long get() {
-        return this.active ? System.currentTimeMillis() - this.startTime : this.endTime - this.startTime;
+        return this.active ? System.nanoTime() - this.startTime : this.endTime - this.startTime;
     }
 
     public int getInt() {

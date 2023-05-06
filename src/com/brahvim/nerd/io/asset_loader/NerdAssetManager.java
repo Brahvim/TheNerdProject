@@ -8,17 +8,17 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 public class NerdAssetManager {
 
     // region Fields.
-    private final Sketch SKETCH;
+    private final NerdSketch SKETCH;
     private final HashSet<NerdAsset> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
     // Do we even *need* assets in any scene from the very beginning?
     // endregion
 
-    public NerdAssetManager(final Sketch p_sketch) {
+    public NerdAssetManager(final NerdSketch p_sketch) {
         this.SKETCH = p_sketch;
     }
 

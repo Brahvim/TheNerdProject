@@ -2,7 +2,7 @@ package com.brahvim.nerd.rendering.cameras;
 
 import java.util.Objects;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PVector;
 
@@ -14,7 +14,7 @@ public class NerdBasicCamera extends NerdAbstractCamera {
 
     protected PVector center, defaultCamCenter;
 
-    protected NerdBasicCamera(final Sketch p_sketch) {
+    protected NerdBasicCamera(final NerdSketch p_sketch) {
         super(p_sketch);
         this.center = new PVector(); // super.SKETCH.cx, super.SKETCH.cy);
     }

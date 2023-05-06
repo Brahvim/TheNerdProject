@@ -7,23 +7,23 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
-public class LoadeableClass<ClassT> {
+public class NerdLoadeableClass<ClassT> {
 
 	// region Fields.
 	public URL url;
 	public String qualifiedName;
 
-	private static final ArrayList<LoadeableClass<?>> ALL_LOADEABLE_CLASSES = new ArrayList<>();
+	private static final ArrayList<NerdLoadeableClass<?>> ALL_LOADEABLE_CLASSES = new ArrayList<>();
 
 	private Class<? extends ClassT> loadedClass;
 	// endregion
 
 	// region Constructors.
-	public LoadeableClass(final URL p_url, final String p_fullyQualifiedName) {
+	public NerdLoadeableClass(final URL p_url, final String p_fullyQualifiedName) {
 		this.loadClass(p_url, p_fullyQualifiedName);
 	}
 
-	public LoadeableClass(final File p_jarOrClassFolder, final String p_fullyQualifiedName) {
+	public NerdLoadeableClass(final File p_jarOrClassFolder, final String p_fullyQualifiedName) {
 		try {
 			this.loadClass(new URL(p_jarOrClassFolder.getAbsolutePath()), p_fullyQualifiedName);
 		} catch (final MalformedURLException e) {
@@ -31,7 +31,7 @@ public class LoadeableClass<ClassT> {
 		}
 	}
 
-	public LoadeableClass(final String p_jarOrClassFolder, final String p_fullyQualifiedName) {
+	public NerdLoadeableClass(final String p_jarOrClassFolder, final String p_fullyQualifiedName) {
 		try {
 			this.loadClass(new URL(p_jarOrClassFolder), p_fullyQualifiedName);
 		} catch (final MalformedURLException e) {
@@ -58,7 +58,7 @@ public class LoadeableClass<ClassT> {
 			e.printStackTrace();
 		}
 
-		LoadeableClass.ALL_LOADEABLE_CLASSES.add(this);
+		NerdLoadeableClass.ALL_LOADEABLE_CLASSES.add(this);
 
 	}
 

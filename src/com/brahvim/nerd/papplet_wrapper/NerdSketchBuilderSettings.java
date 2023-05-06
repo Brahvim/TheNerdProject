@@ -12,8 +12,7 @@ import com.brahvim.nerd.scene_api.NerdSceneManager.SceneManagerSettings;
 
 import processing.core.PConstants;
 
-// Hmmm... "`SketchSettings`" instead..?
-/* package */ class SketchKey {
+/* package */ class NerdSketchBuilderSettings {
     public Class<? extends NerdScene> firstScene;
     public SceneManagerSettings sceneManagerSettings;
     public int width = 400, height = 400, antiAliasing;
@@ -24,7 +23,7 @@ import processing.core.PConstants;
     public NerdSceneManager.SceneManagerSettings.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
     // region Listeners.
-    public LinkedHashSet<Consumer<Sketch>> sketchConstructedListeners,
+    public LinkedHashSet<Consumer<NerdSketch>> sketchConstructedListeners,
             settingsListeners, setupListeners, exitListeners, disposalListeners;
 
     // Initializing the listeners:
@@ -39,7 +38,7 @@ import processing.core.PConstants;
 
     public LinkedHashSet<NerdSceneManager.SceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
 
-    public LinkedHashSet<Consumer<Sketch>> preListeners, postListeners,
+    public LinkedHashSet<Consumer<NerdSketch>> preListeners, postListeners,
             drawListeners, preDrawListeners, postDrawListeners;
 
     // Intializing these listeners as well, haha:

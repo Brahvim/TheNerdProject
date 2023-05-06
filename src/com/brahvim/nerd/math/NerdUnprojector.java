@@ -9,7 +9,7 @@ import processing.opengl.PGraphics3D;
 // http://andrewmarsh.com/blog/2011/12/04/gluunproject-p3d-and-opengl-sketches/
 // Note: `6:14` AM, `18/December/2022`: I removed the `bValid` field entirely.
 
-public class Unprojector {
+public class NerdUnprojector {
 
   // region Fields.
   // These store information about the sketch's viewport:

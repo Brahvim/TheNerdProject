@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 public class NerdSceneManager {
 
@@ -16,7 +16,7 @@ public class NerdSceneManager {
     // class. I do this to aid reading and to prevent namespace pollution.
 
     public interface SceneChangeListener {
-        public void sceneChanged(Sketch sketch,
+        public void sceneChanged(NerdSketch sketch,
                 Class<? extends NerdScene> previous,
                 Class<? extends NerdScene> current);
     }
@@ -27,7 +27,7 @@ public class NerdSceneManager {
     private static class SceneCache {
 
         // region Fields.
-        private final SceneState STATE;
+        private final NerdSceneState STATE;
         private final Constructor<? extends NerdScene> CONSTRUCTOR;
 
         private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
@@ -150,8 +150,8 @@ public class NerdSceneManager {
             }
 
             /**
-             * If set to {@code -1}, will call {@link Sketch#clear()} and not
-             * {@link Sketch#background()}. <b>This is the default behavior!</b>
+             * If set to {@code -1}, will call {@link NerdSketch#clear()} and not
+             * {@link NerdSketch#background()}. <b>This is the default behavior!</b>
              */
             public volatile int clearColor = -1;
 
@@ -203,7 +203,7 @@ public class NerdSceneManager {
      * that the initial should be fast enough!
      */
     private final HashMap<Class<? extends NerdScene>, NerdSceneManager.SceneCache> SCENE_CACHE = new HashMap<>(2);
-    private final Sketch SKETCH;
+    private final NerdSketch SKETCH;
 
     // Notes on some strange (useless? Useful?!) idea.
     /*
@@ -217,22 +217,22 @@ public class NerdSceneManager {
     private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0);
 
     @SuppressWarnings("unused")
-    private Sketch.SketchMouseListener mouseListener;
+    private NerdSketch.SketchMouseListener mouseListener;
 
     @SuppressWarnings("unused")
-    private Sketch.SketchTouchListener touchListener;
+    private NerdSketch.SketchTouchListener touchListener;
 
     @SuppressWarnings("unused")
-    private Sketch.SketchWindowListener windowListener;
+    private NerdSketch.SketchWindowListener windowListener;
 
     @SuppressWarnings("unused")
-    private Sketch.SketchKeyboardListener keyboardListener;
+    private NerdSketch.SketchKeyboardListener keyboardListener;
     // endregion
     private Class<? extends NerdScene> currSceneClass, prevSceneClass;
     // endregion
 
     // region Construction.
-    public NerdSceneManager(final Sketch p_sketch,
+    public NerdSceneManager(final NerdSketch p_sketch,
             final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners,
             final NerdSceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
@@ -242,7 +242,7 @@ public class NerdSceneManager {
         this.initSceneListeners();
     }
 
-    public NerdSceneManager(final Sketch p_sketch,
+    public NerdSceneManager(final NerdSketch p_sketch,
             final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
@@ -251,7 +251,7 @@ public class NerdSceneManager {
         this.initSceneListeners();
     }
 
-    public NerdSceneManager(final Sketch p_sketch,
+    public NerdSceneManager(final NerdSketch p_sketch,
             final NerdSceneManager.SceneManagerSettings p_settings) {
         this.SKETCH = p_sketch;
         this.SETTINGS = p_settings;
@@ -259,7 +259,7 @@ public class NerdSceneManager {
         this.initSceneListeners();
     }
 
-    public NerdSceneManager(final Sketch p_sketch,
+    public NerdSceneManager(final NerdSketch p_sketch,
             final NerdSceneManager.SceneManagerSettings p_settings,
             final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners) {
         this.SKETCH = p_sketch;
@@ -517,7 +517,7 @@ public class NerdSceneManager {
     // endregion
 
     // region [`public`] Getters.
-    public Sketch getSketch() {
+    public NerdSketch getSketch() {
         return this.SKETCH;
     }
 
@@ -633,7 +633,7 @@ public class NerdSceneManager {
         this.restartScene(null);
     }
 
-    public void restartScene(final SceneState p_setupState) {
+    public void restartScene(final NerdSceneState p_setupState) {
         if (this.currSceneClass == null)
             return;
 
@@ -647,7 +647,7 @@ public class NerdSceneManager {
         this.startPreviousScene(null);
     }
 
-    public void startPreviousScene(final SceneState p_setupState) {
+    public void startPreviousScene(final NerdSceneState p_setupState) {
         if (this.prevSceneClass == null)
             return;
 
@@ -678,7 +678,7 @@ public class NerdSceneManager {
         return this.startScene(p_sceneClass, null);
     }
 
-    public boolean startScene(final Class<? extends NerdScene> p_sceneClass, final SceneState p_setupState) {
+    public boolean startScene(final Class<? extends NerdScene> p_sceneClass, final NerdSceneState p_setupState) {
         if (p_sceneClass == null)
             throw new NullPointerException("`SceneManager::startScene()` received `null`.");
 
@@ -830,7 +830,7 @@ public class NerdSceneManager {
         // If this is the first time we're constructing this scene, ensure it has a
         // cache and a saved state!
         if (SCENE_CACHE == null) {
-            toRet.STATE = new SceneState();
+            toRet.STATE = new NerdSceneState();
             this.SCENE_CACHE.put(SCENE_CLASS,
                     new NerdSceneManager.SceneCache(p_sceneConstructor, toRet));
         } else
@@ -844,7 +844,7 @@ public class NerdSceneManager {
     }
 
     // Yes, this checks for errors.
-    private void startSceneImpl(final Class<? extends NerdScene> p_sceneClass, final SceneState p_state) {
+    private void startSceneImpl(final Class<? extends NerdScene> p_sceneClass, final NerdSceneState p_state) {
         final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
 
         final NerdScene toStart = this.constructScene(sceneConstructor);
@@ -856,7 +856,7 @@ public class NerdSceneManager {
     }
 
     // The scene-deleter!!!
-    private void setScene(final NerdScene p_currentScene, final SceneState p_state) {
+    private void setScene(final NerdScene p_currentScene, final NerdSceneState p_state) {
         this.SKETCH.WINDOW.cursorVisible = true;
         this.SKETCH.WINDOW.cursorConfined = false;
 
@@ -906,7 +906,7 @@ public class NerdSceneManager {
     }
 
     // Set the time, *then* call `SceneManager::runSetup()`.
-    private void setupCurrentScene(final SceneState p_state) {
+    private void setupCurrentScene(final NerdSceneState p_state) {
         this.loadSceneAssets(this.currScene, false);
 
         final boolean prevSceneClassNotNull = this.prevSceneClass != null;

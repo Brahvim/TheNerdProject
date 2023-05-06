@@ -3,9 +3,9 @@ package com.brahvim.nerd.math;
 import processing.core.PVector;
 
 // "pls no instance" ; ~ ;)
-public final class VecUtilsForPVector {
+public final class NerdPVectorUtils {
 
-    private VecUtilsForPVector() {
+    private NerdPVectorUtils() {
     }
 
     // region Conversions.

@@ -1,6 +1,6 @@
 package com.brahvim.nerd_demos;
 
-import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
+import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.scene_api.NerdScene;
@@ -18,7 +18,7 @@ public class AnimatedCube extends TestEulerBody {
     public int startTime, lifetime;
     public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
-    private final SineEase plopWave;
+    private final NerdSineEase plopWave;
     private boolean visible = true;
     private AlSource popSrc;
     // endregion
@@ -52,7 +52,7 @@ public class AnimatedCube extends TestEulerBody {
                 super.SKETCH.random(-0.0001f, 0.0001f),
                 super.SKETCH.random(-0.0001f, 0.0001f));
 
-        this.plopWave = new SineEase(super.SKETCH);
+        this.plopWave = new NerdSineEase(super.SKETCH);
         this.plopWave.inactValue = 1;
     }
 

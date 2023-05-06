@@ -4,7 +4,7 @@ import java.awt.DisplayMode;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
 
 import processing.core.PConstants;
@@ -26,14 +26,14 @@ public abstract class NerdWindowManager {
     public float dbx, dby, cx, cy, qx, qy, q3x, q3y, scr;
     public int width, height, pwidth, pheight;
 
-    protected final Sketch SKETCH;
+    protected final NerdSketch SKETCH;
 
     protected PSurface surface;
     protected NerdDisplayManager displays;
     // endregion
 
     // region Construction and initialization.
-    public NerdWindowManager(final Sketch p_sketch) {
+    public NerdWindowManager(final NerdSketch p_sketch) {
         this.SKETCH = p_sketch;
         this.fullscreen = this.SKETCH.STARTED_FULLSCREEN;
     }
@@ -50,7 +50,7 @@ public abstract class NerdWindowManager {
     /**
      * Feel free not to use this method and call constructors yourself!
      */
-    public static NerdWindowManager createWindowMan(final Sketch p_sketch) {
+    public static NerdWindowManager createWindowMan(final NerdSketch p_sketch) {
         return switch (p_sketch.RENDERER) {
             case PConstants.P2D, PConstants.P3D -> new NerdGlWindowManager(p_sketch);
             case PConstants.JAVA2D -> new NerdJava2dWindowManager(p_sketch);
@@ -143,7 +143,7 @@ public abstract class NerdWindowManager {
     // endregion
 
     // region Callbacks.
-    public void preCallback(final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
+    public void preCallback(final LinkedHashSet<NerdSketch.SketchWindowListener> p_windowListeners) {
         // Previous state:
         this.pwidth = this.width;
         this.pheight = this.height;
@@ -158,17 +158,17 @@ public abstract class NerdWindowManager {
         // When the window is resized, do the following!:
         if (!(this.pwidth == this.width || this.pheight == this.height)) {
             this.updateWindowRatios();
-            for (final Sketch.SketchWindowListener l : Objects.requireNonNull(
+            for (final NerdSketch.SketchWindowListener l : Objects.requireNonNull(
                     p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
                 l.resized();
         }
     }
 
-    public void postCallback(final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
+    public void postCallback(final LinkedHashSet<NerdSketch.SketchWindowListener> p_windowListeners) {
         this.postCallbackImpl();
 
         if (this.pfullscreen != this.fullscreen)
-            for (final Sketch.SketchWindowListener l : Objects.requireNonNull(
+            for (final NerdSketch.SketchWindowListener l : Objects.requireNonNull(
                     p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
                 l.fullscreenChanged(this.fullscreen);
 

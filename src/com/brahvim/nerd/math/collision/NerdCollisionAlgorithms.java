@@ -4,7 +4,8 @@ import processing.core.PVector;
 
 // Brought to you, *from* my other (currently supa'-duper secret, ";P!) project, "AGC"!:
 // Courtesy of https://github.com/bmoren/p5.collide2D
-public class CollisionAlgorithms {
+public class NerdCollisionAlgorithms {
+
     public static boolean ptPoly(final float p_x, final float p_y, final PVector[] p_poly) {
         // As seen on Sir Ben's GitHub!:
         /*
@@ -36,9 +37,9 @@ public class CollisionAlgorithms {
          */
 
         // region Here, CC-BY-NC-SA International 4.0, here's my version!:
+        int next;
         boolean ret = false;
 
-        int next;
         for (int i = 0; i < p_poly.length; i++) {
             next = i + 1;
 
@@ -76,7 +77,7 @@ public class CollisionAlgorithms {
             final float p_vertX, final float p_vertY,
             final float p_rectStartX, final float p_rectStartY,
             final float p_rectWidth, final float p_rectHeight) {
-        return CollisionAlgorithms.ptRect(
+        return NerdCollisionAlgorithms.ptRect(
                 p_vertX, p_vertY,
                 p_rectStartX, p_rectStartY,
                 p_rectStartX + p_rectWidth,
@@ -87,7 +88,7 @@ public class CollisionAlgorithms {
             final PVector p_vertex,
             final PVector p_rectPos,
             final PVector p_rectDims) {
-        return CollisionAlgorithms.ptRect(
+        return NerdCollisionAlgorithms.ptRect(
                 p_vertex.x, p_vertex.y,
                 p_rectPos.x, p_rectPos.y,
                 p_rectPos.x + p_rectDims.x,
@@ -95,14 +96,14 @@ public class CollisionAlgorithms {
     }
 
     public static boolean ptRect(final PVector p_vertex, final NerdQuad p_rect) {
-        return CollisionAlgorithms.ptRect(p_vertex, p_rect.start, p_rect.end);
+        return NerdCollisionAlgorithms.ptRect(p_vertex, p_rect.start, p_rect.end);
     }
 
     public static boolean ptRect(
             final PVector p_vertex,
             final PVector p_rectStart,
             final PVector p_rectEnd) {
-        return CollisionAlgorithms.ptRect(
+        return NerdCollisionAlgorithms.ptRect(
                 p_vertex.x, p_vertex.y,
                 p_rectStart.x, p_rectStart.y,
                 p_rectEnd.x, p_rectEnd.y);
@@ -117,4 +118,5 @@ public class CollisionAlgorithms {
                 && p_vertY > p_rectStartY
                 && p_vertY < p_rectEndY;
     }
+
 }

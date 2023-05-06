@@ -3,7 +3,7 @@ package com.brahvim.nerd_demos.scenes.scene3;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.brahvim.nerd.rendering.cameras.NerdFlyCamera;
 
 import processing.core.PVector;
@@ -18,11 +18,11 @@ public class SmoothCamera extends NerdFlyCamera {
     // endregion
 
     // region Construction.
-    public SmoothCamera(final Sketch p_sketch) {
+    public SmoothCamera(final NerdSketch p_sketch) {
         super(p_sketch);
     }
 
-    public SmoothCamera(final Sketch p_sketch, final PVector p_defaultFront) {
+    public SmoothCamera(final NerdSketch p_sketch, final PVector p_defaultFront) {
         super(p_sketch, p_defaultFront);
     }
     // endregion

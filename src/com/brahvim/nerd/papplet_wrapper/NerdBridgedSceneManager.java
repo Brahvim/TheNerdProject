@@ -7,22 +7,22 @@ import com.brahvim.nerd.scene_api.NerdSceneManager;
 public class NerdBridgedSceneManager extends NerdSceneManager {
 
     // region Constructors.
-    public NerdBridgedSceneManager(Sketch p_sketch,
+    public NerdBridgedSceneManager(NerdSketch p_sketch,
             LinkedHashSet<SceneChangeListener> p_listeners) {
         super(p_sketch, p_listeners);
     }
 
-    public NerdBridgedSceneManager(Sketch p_sketch,
+    public NerdBridgedSceneManager(NerdSketch p_sketch,
             LinkedHashSet<SceneChangeListener> p_listeners,
             SceneManagerSettings p_settings) {
         super(p_sketch, p_listeners, p_settings);
     }
 
-    public NerdBridgedSceneManager(Sketch p_sketch, SceneManagerSettings p_settings) {
+    public NerdBridgedSceneManager(NerdSketch p_sketch, SceneManagerSettings p_settings) {
         super(p_sketch, p_settings);
     }
 
-    public NerdBridgedSceneManager(Sketch p_sketch, SceneManagerSettings p_settings,
+    public NerdBridgedSceneManager(NerdSketch p_sketch, SceneManagerSettings p_settings,
             LinkedHashSet<SceneChangeListener> p_listeners) {
         super(p_sketch, p_settings, p_listeners);
     }

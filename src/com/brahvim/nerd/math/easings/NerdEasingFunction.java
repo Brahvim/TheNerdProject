@@ -1,6 +1,6 @@
 package com.brahvim.nerd.math.easings;
 
-import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 // It is better to extend this class than to have `java.util.Function`s in it.
 // How else would we have stuff like `SineEase::freqMult`, then?!
@@ -53,14 +53,14 @@ public abstract class NerdEasingFunction {
      */
     public boolean absoluteValue = false;
 
-    protected final Sketch SKETCH;
+    protected final NerdSketch SKETCH;
 
     protected boolean pactive = false;
     protected float lastValue;
     protected Runnable onEnd;
     // endregion
 
-    protected NerdEasingFunction(final Sketch p_parentSketch) {
+    protected NerdEasingFunction(final NerdSketch p_parentSketch) {
         this.SKETCH = p_parentSketch;
     }
 
