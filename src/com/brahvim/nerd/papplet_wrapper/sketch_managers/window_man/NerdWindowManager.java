@@ -1,11 +1,11 @@
-package com.brahvim.nerd.papplet_wrapper;
+package com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man;
 
 import java.awt.DisplayMode;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 
-import com.brahvim.nerd.papplet_wrapper.window_man_subs.NerdDefaultWindowManager;
-import com.brahvim.nerd.papplet_wrapper.window_man_subs.NerdGlWindowManager;
-import com.brahvim.nerd.papplet_wrapper.window_man_subs.NerdJava2dWindowManager;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
 
 import processing.core.PConstants;
 import processing.core.PSurface;
@@ -27,18 +27,15 @@ public abstract class NerdWindowManager {
     public int width, height, pwidth, pheight;
 
     protected final Sketch SKETCH;
-    protected final LinkedHashSet<Sketch.SketchWindowListener> WINDOW_LISTENERS;
 
     protected PSurface surface;
     protected NerdDisplayManager displays;
     // endregion
 
     // region Construction and initialization.
-    public NerdWindowManager(final Sketch p_sketch,
-            final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
+    public NerdWindowManager(final Sketch p_sketch) {
         this.SKETCH = p_sketch;
         this.fullscreen = this.SKETCH.STARTED_FULLSCREEN;
-        this.WINDOW_LISTENERS = p_windowListeners;
     }
 
     public void init() {
@@ -53,12 +50,11 @@ public abstract class NerdWindowManager {
     /**
      * Feel free not to use this method and call constructors yourself!
      */
-    public static NerdWindowManager createWindowMan(final Sketch p_sketch,
-            final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
+    public static NerdWindowManager createWindowMan(final Sketch p_sketch) {
         return switch (p_sketch.RENDERER) {
-            case PConstants.P2D, PConstants.P3D -> new NerdGlWindowManager(p_sketch, p_windowListeners);
-            case PConstants.JAVA2D -> new NerdJava2dWindowManager(p_sketch, p_windowListeners);
-            default -> new NerdDefaultWindowManager(p_sketch, p_windowListeners);
+            case PConstants.P2D, PConstants.P3D -> new NerdGlWindowManager(p_sketch);
+            case PConstants.JAVA2D -> new NerdJava2dWindowManager(p_sketch);
+            default -> null;
         };
     }
 
@@ -133,7 +129,7 @@ public abstract class NerdWindowManager {
 
     // region Setters.
     // Implementations return pointers of their own type, not `NerdWindowManager*`s,
-    public abstract boolean setAlwaysOnTop(final boolean p_status);
+    public abstract boolean setAlwaysOnTop(final boolean p_name);
 
     public abstract NerdWindowManager setName(final String p_name);
 
@@ -147,7 +143,7 @@ public abstract class NerdWindowManager {
     // endregion
 
     // region Callbacks.
-    protected void preCallback() {
+    public void preCallback(final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
         // Previous state:
         this.pwidth = this.width;
         this.pheight = this.height;
@@ -162,16 +158,18 @@ public abstract class NerdWindowManager {
         // When the window is resized, do the following!:
         if (!(this.pwidth == this.width || this.pheight == this.height)) {
             this.updateWindowRatios();
-            for (final Sketch.SketchWindowListener l : this.WINDOW_LISTENERS)
+            for (final Sketch.SketchWindowListener l : Objects.requireNonNull(
+                    p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
                 l.resized();
         }
     }
 
-    protected void postCallback() {
+    public void postCallback(final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
         this.postCallbackImpl();
 
         if (this.pfullscreen != this.fullscreen)
-            for (final Sketch.SketchWindowListener l : this.WINDOW_LISTENERS)
+            for (final Sketch.SketchWindowListener l : Objects.requireNonNull(
+                    p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
                 l.fullscreenChanged(this.fullscreen);
 
         this.pfullscreen = this.fullscreen;

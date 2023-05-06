@@ -1,23 +1,23 @@
-package com.brahvim.nerd.papplet_wrapper;
+package com.brahvim.nerd.papplet_wrapper.sketch_managers;
 
 import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.Point;
 import java.util.LinkedHashSet;
+import java.util.Objects;
+
+import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 
 public class NerdDisplayManager {
 
-    // region Fields.
     protected final Sketch SKETCH;
     protected final NerdWindowManager WINDOW;
     protected GraphicsDevice previousMonitor, currentMonitor;
-    protected final LinkedHashSet<Sketch.SketchWindowListener> WINDOW_LISTENERS;
-    // endregion
 
     // region Display properties.
     public float displayScr;
-    public boolean monitorChanged;
     public int pixelDensity;
     public int displayRefreshRate;
     public int pixelWidth, pixelHeight;
@@ -30,7 +30,6 @@ public class NerdDisplayManager {
 
     // region Previous frame display properties.
     public float pdisplayScr;
-    public boolean pmonitorChanged;
     public int pdisplayRefreshRate;
     public int pdisplayWidth, pdisplayHeight; // <-- Not included with Processing!
     public int pdisplayWidthHalf, pdisplayHeightHalf;
@@ -40,14 +39,12 @@ public class NerdDisplayManager {
     public int pdisplayWidthThirdQuart, pdisplayHeightThirdQuart;
     // endregion
 
-    public NerdDisplayManager(final Sketch p_sketch,
-            final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
+    public NerdDisplayManager(final Sketch p_sketch) {
         this.SKETCH = p_sketch;
         this.WINDOW = this.SKETCH.WINDOW;
-        this.WINDOW_LISTENERS = p_windowListeners;
     }
 
-    protected void updateDisplayRatios() {
+    public void updateDisplayRatios() {
         this.displayWidthTwice = this.displayWidth * 2;
         this.displayHeightTwice = this.displayHeight * 2;
         this.displayScr = (float) this.displayWidth / (float) this.displayHeight;
@@ -66,7 +63,7 @@ public class NerdDisplayManager {
         this.displayHeightThirdQuart = this.displayWidthHalf + this.displayWidthQuart;
     }
 
-    protected void recordCurrentDisplayRatios() {
+    public void recordCurrentDisplayRatios() {
         this.pdisplayScr = this.displayScr;
         this.ppixelWidth = this.pixelWidth;
         this.ppixelHeight = this.pixelHeight;
@@ -90,7 +87,7 @@ public class NerdDisplayManager {
     }
 
     // region Current and previous frame monitor settings, plus callback!
-    protected void preCallback() {
+    public void preCallback(final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
         this.displayWidth = this.SKETCH.displayWidth;
         this.displayHeight = this.SKETCH.displayHeight;
 
@@ -103,10 +100,9 @@ public class NerdDisplayManager {
 
         if (this.previousMonitor != this.currentMonitor) {
             this.previousMonitor = this.currentMonitor;
-            this.monitorChanged = true;
             this.updateDisplayRatios();
-
-            for (final Sketch.SketchWindowListener l : this.WINDOW_LISTENERS)
+            for (final Sketch.SketchWindowListener l : Objects.requireNonNull(p_windowListeners,
+                    "`NerdDisplayManager::preCallback()` received `null`!"))
                 l.monitorChanged();
         }
 
@@ -120,11 +116,6 @@ public class NerdDisplayManager {
             this.SKETCH.displayHeight = CURRENT_MON_MODE.getHeight();
         }
     }
-
-    protected void postCallback() {
-        this.recordCurrentDisplayRatios();
-    }
-    // endregion
 
     // region Getters.
     public GraphicsDevice getPreviousMonitor() {

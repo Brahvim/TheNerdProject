@@ -1,6 +1,8 @@
-package com.brahvim.nerd.papplet_wrapper;
+package com.brahvim.nerd.papplet_wrapper.sketch_managers;
 
 import java.util.LinkedHashSet;
+
+import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

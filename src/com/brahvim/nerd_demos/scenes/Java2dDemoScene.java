@@ -1,9 +1,9 @@
 package com.brahvim.nerd_demos.scenes;
 
+import com.brahvim.nerd.api.scene_api.NerdScene;
+import com.brahvim.nerd.api.scene_api.NerdSceneState;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
-import com.brahvim.nerd.papplet_wrapper.NerdScene;
-import com.brahvim.nerd.papplet_wrapper.NerdSceneState;
 import com.brahvim.nerd_demos.App;
 
 import processing.core.PApplet;

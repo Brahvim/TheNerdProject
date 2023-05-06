@@ -1,6 +1,6 @@
 package com.brahvim.nerd_demos.effect_layers;
 
-import com.brahvim.nerd.papplet_wrapper.NerdLayer;
+import com.brahvim.nerd.api.scene_api.NerdLayer;
 
 public class CircleTransition extends NerdLayer {
 

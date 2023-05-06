@@ -2,9 +2,9 @@ package com.brahvim.nerd.api.cameras;
 
 import java.awt.Point;
 
-import com.brahvim.nerd.papplet_wrapper.NerdDisplayManager;
-import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 
 import processing.core.PApplet;
 import processing.core.PVector;

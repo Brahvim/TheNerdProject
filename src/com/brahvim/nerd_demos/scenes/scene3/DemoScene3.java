@@ -3,11 +3,11 @@ package com.brahvim.nerd_demos.scenes.scene3;
 import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.api.lights.NerdAmbiLight;
+import com.brahvim.nerd.api.scene_api.NerdScene;
+import com.brahvim.nerd.api.scene_api.NerdSceneManager;
+import com.brahvim.nerd.api.scene_api.NerdSceneState;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
-import com.brahvim.nerd.papplet_wrapper.NerdScene;
-import com.brahvim.nerd.papplet_wrapper.NerdSceneManager;
-import com.brahvim.nerd.papplet_wrapper.NerdSceneState;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.CubeManager;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;

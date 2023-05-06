@@ -1,7 +1,7 @@
 package com.brahvim.nerd_demos.scenes.scene1;
 
+import com.brahvim.nerd.api.scene_api.NerdLayer;
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
-import com.brahvim.nerd.papplet_wrapper.NerdLayer;
 
 public class BackgroundLayer extends NerdLayer {
 

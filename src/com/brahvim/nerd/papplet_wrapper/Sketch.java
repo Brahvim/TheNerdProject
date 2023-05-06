@@ -37,10 +37,16 @@ import com.brahvim.nerd.api.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.api.cameras.NerdBasicCamera;
 import com.brahvim.nerd.api.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.api.cameras.NerdFlyCamera;
+import com.brahvim.nerd.api.scene_api.NerdScene;
+import com.brahvim.nerd.api.scene_api.NerdSceneManager;
 import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.math.Unprojector;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdBridgedSceneManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
@@ -239,9 +245,9 @@ public class Sketch extends PApplet {
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
 			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
 
+	public final NerdBridgedSceneManager SCENES;
 	public final NerdDisplayManager DISPLAYS;
 	public final NerdWindowManager WINDOW;
-	public final NerdSceneManager SCENES;
 	public final NerdInputManager INPUT;
 	// endregion
 	// endregion
@@ -353,10 +359,10 @@ public class Sketch extends PApplet {
 		// region Non-key settings.
 		this.UNPROJECTOR = new Unprojector();
 		this.INPUT = new NerdInputManager(SKETCH, this.keysHeld);
-		this.DISPLAYS = new NerdDisplayManager(this, this.WINDOW_LISTENERS);
+		this.DISPLAYS = new NerdDisplayManager(this);
 		this.ASSETS = new NerdAssetManager(this);
-		this.SCENES = new NerdSceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
-		this.WINDOW = NerdWindowManager.createWindowMan(this, this.WINDOW_LISTENERS);
+		this.SCENES = new NerdBridgedSceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
+		this.WINDOW = NerdWindowManager.createWindowMan(this);
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
 		// endregion
 
@@ -497,8 +503,8 @@ public class Sketch extends PApplet {
 			this.pgl = super.beginPGL();
 		this.currentScene = this.SCENES.getCurrentScene();
 
-		this.WINDOW.preCallback();
-		this.DISPLAYS.preCallback();
+		this.WINDOW.preCallback(this.WINDOW_LISTENERS);
+		this.DISPLAYS.preCallback(this.WINDOW_LISTENERS);
 
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
 		this.PRE_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
@@ -567,7 +573,7 @@ public class Sketch extends PApplet {
 		if (this.USES_OPENGL)
 			super.endPGL();
 
-		this.WINDOW.postCallback();
+		this.WINDOW.postCallback(this.WINDOW_LISTENERS);
 
 		// region Previous state updates!!!
 		for (final PVector v : this.UNPROJ_TOUCHES)

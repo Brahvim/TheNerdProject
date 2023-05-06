@@ -1,7 +1,11 @@
-package com.brahvim.nerd.papplet_wrapper;
+package com.brahvim.nerd.api.scene_api;
 
 import com.brahvim.nerd.api.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 
 /**
  * Just like {@link NerdScene}s, {@link NerdLayer}s

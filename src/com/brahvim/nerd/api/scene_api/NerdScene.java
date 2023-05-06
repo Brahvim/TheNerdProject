@@ -1,4 +1,4 @@
-package com.brahvim.nerd.papplet_wrapper;
+package com.brahvim.nerd.api.scene_api;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +14,10 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.api.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
+import com.brahvim.nerd.papplet_wrapper.Sketch;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
+import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 
 /**
  * <h2>Do not use as an anonymous class!</h2>

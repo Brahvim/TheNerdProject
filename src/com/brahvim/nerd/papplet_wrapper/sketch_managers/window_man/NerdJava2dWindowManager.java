@@ -1,25 +1,22 @@
-package com.brahvim.nerd.papplet_wrapper.window_man_subs;
+package com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.util.LinkedHashSet;
 
 import javax.swing.JFrame;
 
-import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
 import processing.awt.PSurfaceAWT;
 import processing.core.PVector;
 
-public class NerdJava2dWindowManager extends NerdWindowManager {
+/* `package` */ class NerdJava2dWindowManager extends NerdWindowManager {
 
     protected JFrame window;
     protected PSurfaceAWT.SmoothCanvas canvas;
 
-    public NerdJava2dWindowManager(final Sketch p_sketch,
-            final LinkedHashSet<Sketch.SketchWindowListener> p_windowListeners) {
-        super(p_sketch, p_windowListeners);
+    public NerdJava2dWindowManager(final Sketch p_sketch) {
+        super(p_sketch);
     }
 
     // region Getters.
@@ -89,7 +86,7 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
      * @return Whether or not the operation was successful.
      */
     @Override
-    public boolean setAlwaysOnTop(final boolean p_status) {
+    public boolean setAlwaysOnTop(final boolean p_name) {
         if (!this.window.isAlwaysOnTopSupported())
             return false;
 
