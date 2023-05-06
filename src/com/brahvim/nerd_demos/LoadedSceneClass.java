@@ -12,16 +12,14 @@ public enum LoadedSceneClass {
 			"com.brahvim.nerd_tests.scenes.DemoScene5");
 
 	// region Non-`enum` stuff.
-	// I asked ChatGPT about naming conventions for `final` fields, and it said
-	// *this* was fine. Yes, I already knew about `System.out`:
-	private final NerdSceneClassLoader sceneClassLoader;
+	private final NerdSceneClassLoader SCENE_CLASS_LOADER;
 
 	private LoadedSceneClass(final String p_urlString, final String p_fullyQualifiedName) {
-		this.sceneClassLoader = new NerdSceneClassLoader(p_urlString, p_fullyQualifiedName);
+		this.SCENE_CLASS_LOADER = new NerdSceneClassLoader(p_urlString, p_fullyQualifiedName);
 	}
 
-	public Class<? extends NerdScene> getSceneClassLoader() {
-		return this.sceneClassLoader.getLoadedClass();
+	public Class<? extends NerdScene> getSCENE_CLASS_LOADER() {
+		return this.SCENE_CLASS_LOADER.getLoadedClass();
 	}
 	// endregion
 
