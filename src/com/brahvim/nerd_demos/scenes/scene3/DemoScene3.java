@@ -43,8 +43,8 @@ public class DemoScene3 extends NerdScene {
         CAMERA.fov = PApplet.radians(75);
         SKETCH.setCamera(this.CAMERA);
 
-        App.OPENAL.unitSize = Float.MAX_VALUE;
         final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
+        App.OPENAL.unitSize = Float.MAX_VALUE;
         for (int i = 1; i != 5; i++)
             alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
 

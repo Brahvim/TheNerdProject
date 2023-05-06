@@ -27,8 +27,8 @@ public class NerdSceneManager {
     private static class SceneCache {
 
         // region Fields.
-        private final Constructor<? extends NerdScene> CONSTRUCTOR;
         private final SceneState STATE;
+        private final Constructor<? extends NerdScene> CONSTRUCTOR;
 
         private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
         private NerdAssetManager ASSETS;
