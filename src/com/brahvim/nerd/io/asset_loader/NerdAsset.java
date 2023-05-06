@@ -12,7 +12,7 @@ public class NerdAsset {
 
     private final String PATH;
     private final NerdSketch SKETCH;
-    private final AssetLoader<?> LOADER;
+    private final NerdAssetLoader<?> LOADER;
 
     private int frame;
     private Object data;
@@ -22,7 +22,7 @@ public class NerdAsset {
     // endregion
 
     // region Construction.
-    public NerdAsset(final NerdSketch p_sketch, final AssetLoader<?> p_type, final String p_path) {
+    public NerdAsset(final NerdSketch p_sketch, final NerdAssetLoader<?> p_type, final String p_path) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
 
@@ -33,7 +33,7 @@ public class NerdAsset {
         this.NAME = this.findName();
     }
 
-    public NerdAsset(final NerdSketch p_sketch, final AssetLoader<?> p_type, final String p_path,
+    public NerdAsset(final NerdSketch p_sketch, final NerdAssetLoader<?> p_type, final String p_path,
             final Runnable p_onLoad) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
@@ -146,7 +146,7 @@ public class NerdAsset {
         return (RetT) this.data;
     }
 
-    public AssetLoader<?> getLoader() {
+    public NerdAssetLoader<?> getLoader() {
         return this.LOADER;
     }
     // endregion
@@ -157,7 +157,7 @@ public class NerdAsset {
             this.data = this.LOADER.fetchData(this.SKETCH, this.PATH);
             this.millis = this.SKETCH.millis();
             this.frame = this.SKETCH.frameCount;
-        } catch (final AssetLoaderFailedException e) {
+        } catch (final NerdAssetLoaderException e) {
             this.data = null;
             this.failure = true;
             e.printStackTrace();
