@@ -12,7 +12,8 @@ import processing.data.JSONObject;
 
 /**
  * A "global" namespace for these strings is provided through
- * {@link NerdSketch#STRINGS}, so you can access string table data across scenes!
+ * {@link NerdSketch#STRINGS}, so you can access string table data across
+ * scenes!
  */
 public class NerdStringTable implements Cloneable {
 

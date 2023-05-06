@@ -27,7 +27,8 @@ public class NerdUdpSocket {
 
     // Concurrent stuff *haha:*
     /**
-     * The {@link NerdUdpSocket.ReceiverThread} class helps {@link NerdUdpSocket}s receive
+     * The {@link NerdUdpSocket.ReceiverThread} class helps {@link NerdUdpSocket}s
+     * receive
      * data on
      * a separate thread, aiding with application performance and modern
      * hardware programming practices. It may NOT, be useful on systems like
@@ -154,7 +155,8 @@ public class NerdUdpSocket {
 
     // region Fields!
     /**
-     * The default timeout value, in milliseconds, for each {@link NerdUdpSocket}. Used
+     * The default timeout value, in milliseconds, for each {@link NerdUdpSocket}.
+     * Used
      * if a timeout value is not specified in the constructor.
      *
      * @implSpec Should be {@code 32}.
@@ -194,7 +196,8 @@ public class NerdUdpSocket {
 
     // region Construction!~
     /**
-     * Constructs a {@link NerdUdpSocket} with an empty port requested from the OS, the
+     * Constructs a {@link NerdUdpSocket} with an empty port requested from the OS,
+     * the
      * receiver thread of which will time-out every
      * {@link NerdUdpSocket#DEFAULT_TIMEOUT} milliseconds.
      *
@@ -205,7 +208,8 @@ public class NerdUdpSocket {
     }
 
     /**
-     * Constructs a {@link NerdUdpSocket} with the specified port, the receiver thread
+     * Constructs a {@link NerdUdpSocket} with the specified port, the receiver
+     * thread
      * of which will time-out every {@link NerdUdpSocket#DEFAULT_TIMEOUT}
      * milliseconds.
      *
@@ -224,7 +228,8 @@ public class NerdUdpSocket {
     }
 
     /**
-     * Constructs a {@link NerdUdpSocket} with the specified port and receiver thread
+     * Constructs a {@link NerdUdpSocket} with the specified port and receiver
+     * thread
      * timeout (in milliseconds).
      *
      * @apiNote This constructor used to try to force the OS into giving the port of
@@ -402,7 +407,8 @@ public class NerdUdpSocket {
     }
 
     /**
-     * Calls {@link NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)} with an
+     * Calls {@link NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)} with
+     * an
      * instance of {@link InetSocketAddress} - effectively the same as
      * calling {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)} on
      * the underlying {@link DatagramSocket}.
@@ -427,7 +433,8 @@ public class NerdUdpSocket {
     }
 
     /**
-     * Calls {@link NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)} with an
+     * Calls {@link NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)} with
+     * an
      * instance of {@link InetSocketAddress} - effectively the same as
      * calling {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)} on
      * the underlying {@link DatagramSocket}.

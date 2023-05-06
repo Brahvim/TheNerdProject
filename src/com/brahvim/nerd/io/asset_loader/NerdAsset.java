@@ -33,7 +33,8 @@ public class NerdAsset {
         this.NAME = this.findName();
     }
 
-    public NerdAsset(final NerdSketch p_sketch, final AssetLoader<?> p_type, final String p_path, final Runnable p_onLoad) {
+    public NerdAsset(final NerdSketch p_sketch, final AssetLoader<?> p_type, final String p_path,
+            final Runnable p_onLoad) {
         this(p_sketch, p_type, p_path);
         this.onLoad = p_onLoad;
     }

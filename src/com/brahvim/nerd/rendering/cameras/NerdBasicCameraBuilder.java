@@ -213,7 +213,8 @@ public class NerdBasicCameraBuilder {
         return this;
     }
 
-    public NerdBasicCameraBuilder setClearColor(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
+    public NerdBasicCameraBuilder setClearColor(final float p_v1, final float p_v2, final float p_v3,
+            final float p_alpha) {
         this.build.clearColorParam1 = p_v1;
         this.build.clearColorParam2 = p_v2;
         this.build.clearColorParam3 = p_v3;

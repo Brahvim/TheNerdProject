@@ -47,7 +47,8 @@ public class NerdAssetManager {
      * @deprecated Since using {@link NerdAssetManager#get()} is better. In cases
      *             where you'd want to check for the availability of an asset, you
      *             probably also a want a reference to it, in which case, it is much
-     *             better to use {@link NerdAssetManager#get()} and check if the return
+     *             better to use {@link NerdAssetManager#get()} and check if the
+     *             return
      *             value is {@code null}.
      */
     @Deprecated
