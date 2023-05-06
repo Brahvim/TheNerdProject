@@ -1,9 +1,9 @@
 package com.brahvim.nerd_demos;
 
-import com.brahvim.nerd.api.scene_api.NerdScene;
 import com.brahvim.nerd.math.easings.built_in_easings.SineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PConstants;
 import processing.core.PShape;

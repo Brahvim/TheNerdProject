@@ -1,9 +1,9 @@
 package com.brahvim.nerd_demos.scenes;
 
-import com.brahvim.nerd.api.scene_api.NerdScene;
-import com.brahvim.nerd.api.scene_api.NerdSceneState;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
+import com.brahvim.nerd.scene_api.NerdScene;
+import com.brahvim.nerd.scene_api.SceneState;
 import com.brahvim.nerd_demos.App;
 
 import processing.core.PApplet;
@@ -18,7 +18,7 @@ public class Java2dDemoScene extends NerdScene {
     }
 
     @Override
-    protected void setup(NerdSceneState p_state) {
+    protected void setup(SceneState p_state) {
         App.OPENAL.unitSize = 1;
         this.rubberDuckSource = new AlSource(App.OPENAL, ASSETS.get("RUBBER DUCK").getData());
     }

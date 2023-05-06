@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api.scene_api;
+package com.brahvim.nerd.scene_api;
 
 import java.io.File;
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 import com.brahvim.nerd.io.NerdByteSerial;
 
-public class NerdSceneState {
+public class SceneState {
     private final HashMap<String, Object> DATA = new HashMap<>(0);
 
     // region From `HashMap`.
@@ -95,7 +95,7 @@ public class NerdSceneState {
      * Else, a new key-value pair is created and saved.
      *
      */
-    public <T> NerdSceneState set(final String p_key, final T p_value) {
+    public <T> SceneState set(final String p_key, final T p_value) {
         this.DATA.put(p_key, p_value);
         return this;
     }

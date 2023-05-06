@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api.scene_api;
+package com.brahvim.nerd.scene_api;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +28,7 @@ public class NerdSceneManager {
 
         // region Fields.
         private final Constructor<? extends NerdScene> CONSTRUCTOR;
-        private final NerdSceneState STATE;
+        private final SceneState STATE;
 
         private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
         private NerdAssetManager ASSETS;
@@ -633,7 +633,7 @@ public class NerdSceneManager {
         this.restartScene(null);
     }
 
-    public void restartScene(final NerdSceneState p_setupState) {
+    public void restartScene(final SceneState p_setupState) {
         if (this.currSceneClass == null)
             return;
 
@@ -647,7 +647,7 @@ public class NerdSceneManager {
         this.startPreviousScene(null);
     }
 
-    public void startPreviousScene(final NerdSceneState p_setupState) {
+    public void startPreviousScene(final SceneState p_setupState) {
         if (this.prevSceneClass == null)
             return;
 
@@ -678,7 +678,7 @@ public class NerdSceneManager {
         return this.startScene(p_sceneClass, null);
     }
 
-    public boolean startScene(final Class<? extends NerdScene> p_sceneClass, final NerdSceneState p_setupState) {
+    public boolean startScene(final Class<? extends NerdScene> p_sceneClass, final SceneState p_setupState) {
         if (p_sceneClass == null)
             throw new NullPointerException("`SceneManager::startScene()` received `null`.");
 
@@ -830,7 +830,7 @@ public class NerdSceneManager {
         // If this is the first time we're constructing this scene, ensure it has a
         // cache and a saved state!
         if (SCENE_CACHE == null) {
-            toRet.STATE = new NerdSceneState();
+            toRet.STATE = new SceneState();
             this.SCENE_CACHE.put(SCENE_CLASS,
                     new NerdSceneManager.SceneCache(p_sceneConstructor, toRet));
         } else
@@ -844,7 +844,7 @@ public class NerdSceneManager {
     }
 
     // Yes, this checks for errors.
-    private void startSceneImpl(final Class<? extends NerdScene> p_sceneClass, final NerdSceneState p_state) {
+    private void startSceneImpl(final Class<? extends NerdScene> p_sceneClass, final SceneState p_state) {
         final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
 
         final NerdScene toStart = this.constructScene(sceneConstructor);
@@ -856,7 +856,7 @@ public class NerdSceneManager {
     }
 
     // The scene-deleter!!!
-    private void setScene(final NerdScene p_currentScene, final NerdSceneState p_state) {
+    private void setScene(final NerdScene p_currentScene, final SceneState p_state) {
         this.SKETCH.WINDOW.cursorVisible = true;
         this.SKETCH.WINDOW.cursorConfined = false;
 
@@ -906,7 +906,7 @@ public class NerdSceneManager {
     }
 
     // Set the time, *then* call `SceneManager::runSetup()`.
-    private void setupCurrentScene(final NerdSceneState p_state) {
+    private void setupCurrentScene(final SceneState p_state) {
         this.loadSceneAssets(this.currScene, false);
 
         final boolean prevSceneClassNotNull = this.prevSceneClass != null;

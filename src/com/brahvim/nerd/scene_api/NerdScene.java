@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api.scene_api;
+package com.brahvim.nerd.scene_api;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -12,12 +12,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
-import com.brahvim.nerd.api.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
+import com.brahvim.nerd.rendering.cameras.NerdAbstractCamera;
 
 /**
  * <h2>Do not use as an anonymous class!</h2>
@@ -33,7 +33,7 @@ public class NerdScene {
   // Forgive me for breaking naming conventions here.
   // Forgive me. Please!
   public Sketch SKETCH;
-  public NerdSceneState STATE;
+  public SceneState STATE;
   public NerdInputManager INPUT;
   public NerdAssetManager ASSETS;
   public NerdSceneManager MANAGER;
@@ -426,7 +426,7 @@ public class NerdScene {
    * }
    */
 
-  /* `package` */ void runSetup(final NerdSceneState p_state) {
+  /* `package` */ void runSetup(final SceneState p_state) {
     this.startMillis = this.SKETCH.millis();
     this.setup(p_state);
 
@@ -689,7 +689,7 @@ public class NerdScene {
    * {@link NerdLayer#setup()} is called <i>when a {@link NerdLayer} is set
    * active</i> using {@link NerdLayer#setActive(boolean)}.
    */
-  protected void setup(final NerdSceneState p_state) {
+  protected void setup(final SceneState p_state) {
   }
 
   protected void pre() {

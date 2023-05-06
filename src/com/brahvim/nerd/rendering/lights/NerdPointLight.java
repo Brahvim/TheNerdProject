@@ -1,4 +1,4 @@
-package com.brahvim.nerd.api.lights;
+package com.brahvim.nerd.rendering.lights;
 
 import com.brahvim.nerd.papplet_wrapper.Sketch;
 
