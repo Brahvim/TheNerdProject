@@ -68,4 +68,100 @@ public class NerdBridgedSceneManager extends NerdSceneManager {
      */
     // endregion
 
+    // region Event callbacks.
+    // region Mouse event callbacks.
+    @Override
+    protected void mousePressed() {
+        super.mousePressed();
+    }
+
+    @Override
+    protected void mouseReleased() {
+        super.mouseReleased();
+    }
+
+    @Override
+    protected void mouseMoved() {
+        super.mouseMoved();
+    }
+
+    @Override
+    protected void mouseClicked() {
+        super.mouseClicked();
+    }
+
+    @Override
+    protected void mouseDragged() {
+        super.mouseDragged();
+    }
+
+    @Override
+    protected void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
+        super.mouseWheel(p_mouseEvent);
+    }
+    // endregion
+
+    // region Touch event callbacks.
+    @Override
+    protected void touchStarted() {
+        super.touchStarted();
+    }
+
+    @Override
+    protected void touchMoved() {
+        super.touchMoved();
+    }
+
+    @Override
+    protected void touchEnded() {
+        super.touchEnded();
+    }
+    // endregion
+
+    // region Window event callbacks.
+    @Override
+    protected void resized() {
+        super.resized();
+    }
+
+    @Override
+    protected void focusLost() {
+        super.focusLost();
+    }
+
+    @Override
+    protected void focusGained() {
+        super.focusGained();
+    }
+
+    @Override
+    protected void monitorChanged() {
+        super.monitorChanged();
+    }
+
+    @Override
+    protected void fullscreenChanged(final boolean p_state) {
+        super.fullscreenChanged(p_state);
+    }
+
+    // endregion
+
+    // region Keyboard event callbacks.
+    @Override
+    protected void keyTyped() {
+        super.keyTyped();
+    }
+
+    @Override
+    protected void keyPressed() {
+        super.keyPressed();
+    }
+
+    @Override
+    protected void keyReleased() {
+        super.keyReleased();
+    }
+    // endregion
+    // endregion
+
 }

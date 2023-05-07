@@ -1,4 +1,4 @@
-package com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man;
+package com.brahvim.nerd.papplet_wrapper.window_man_subs;
 
 import java.awt.Dimension;
 import java.awt.Image;
@@ -6,11 +6,12 @@ import java.awt.Image;
 import javax.swing.JFrame;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
 
 import processing.awt.PSurfaceAWT;
 import processing.core.PVector;
 
-/* `package` */ class NerdJava2dWindowManager extends NerdWindowManager {
+public class NerdJava2dWindowManager extends NerdWindowManager {
 
     protected JFrame window;
     protected PSurfaceAWT.SmoothCanvas canvas;

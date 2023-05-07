@@ -1,8 +1,6 @@
-package com.brahvim.nerd.papplet_wrapper.sketch_managers;
+package com.brahvim.nerd.papplet_wrapper;
 
 import java.util.LinkedHashSet;
-
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -28,18 +26,18 @@ public class NerdInputManager {
     public NerdInputManager(final NerdSketch p_sketch, final LinkedHashSet<Integer> p_keysHeldListRef) {
         this.SKETCH = p_sketch;
         this.keysHeld = p_keysHeldListRef;
+    }
 
-        this.SKETCH.addPreDrawListener((s) -> {
-            this.key = s.key;
-            this.mouseX = s.mouseX;
-            this.mouseY = s.mouseY;
-            this.pmouseX = s.pmouseX;
-            this.pmouseY = s.pmouseY;
-            this.keyCode = s.keyCode;
-            this.keyPressed = s.keyPressed;
-            this.mouseButton = s.mouseButton;
-            this.mousePressed = s.mousePressed;
-        });
+    protected void preDraw() {
+        this.key = this.SKETCH.key;
+        this.mouseX = this.SKETCH.mouseX;
+        this.mouseY = this.SKETCH.mouseY;
+        this.pmouseX = this.SKETCH.pmouseX;
+        this.pmouseY = this.SKETCH.pmouseY;
+        this.keyCode = this.SKETCH.keyCode;
+        this.keyPressed = this.SKETCH.keyPressed;
+        this.mouseButton = this.SKETCH.mouseButton;
+        this.mousePressed = this.SKETCH.mousePressed;
     }
 
     // region Mouse and coordinate conversion utilities.

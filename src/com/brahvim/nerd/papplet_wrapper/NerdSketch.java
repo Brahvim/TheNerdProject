@@ -43,9 +43,6 @@ import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.math.NerdUnprojector;
-import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
-import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
-import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
@@ -615,60 +612,67 @@ public class NerdSketch extends PApplet {
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mousePressed();
-		}
+
+		this.SCENES.mousePressed();
 	}
 
 	@Override
 	public void mouseReleased() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseReleased();
-		}
+
+		this.SCENES.mouseReleased();
 	}
 
 	@Override
 	public void mouseMoved() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseMoved();
-		}
+
+		this.SCENES.mouseMoved();
 	}
 
 	@Override
 	public void mouseClicked() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseClicked();
-		}
+
+		this.SCENES.mouseClicked();
 	}
 
 	@Override
 	public void mouseDragged() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseDragged();
-		}
+
+		this.SCENES.mouseDragged();
 	}
 
-	// @SuppressWarnings("unused")
 	@Override
 	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 		this.mouseScroll += p_mouseEvent.getCount();
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS) {
+
+		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseWheel(p_mouseEvent);
-		}
+
+		this.SCENES.mouseWheel(p_mouseEvent);
 	}
 	// endregion
 
 	// region Keyboard events.
 	@Override
 	public void keyTyped() {
-		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
+		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS)
 			// ...could call that callback here directly, but I decided this!:
 			// "Filter these keys using the utility method[s]?"
 			//
 			// ...and thus-this check was born!:
 			if (NerdSketch.isTypeable(super.key))
 				l.keyTyped();
-		}
+
+		this.SCENES.keyTyped();
 	}
 
 	@Override
@@ -710,9 +714,10 @@ public class NerdSketch extends PApplet {
 			this.keysHeld.add(super.keyCode);
 		}
 
-		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
+		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS)
 			l.keyPressed();
-		}
+
+		this.SCENES.keyPressed();
 	}
 
 	@Override
@@ -724,29 +729,33 @@ public class NerdSketch extends PApplet {
 		} catch (final IndexOutOfBoundsException e) {
 		}
 
-		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS) {
+		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS)
 			l.keyReleased();
-		}
+
+		this.SCENES.keyReleased();
 	}
 	// endregion
 
 	// region Touch events.
 	public void touchStarted() {
-		for (final SketchTouchListener l : this.TOUCH_LISTENERS) {
+		for (final SketchTouchListener l : this.TOUCH_LISTENERS)
 			l.touchStarted();
-		}
+
+		this.SCENES.touchStarted();
 	}
 
 	public void touchMoved() {
-		for (final SketchTouchListener l : this.TOUCH_LISTENERS) {
+		for (final SketchTouchListener l : this.TOUCH_LISTENERS)
 			l.touchMoved();
-		}
+
+		this.SCENES.touchMoved();
 	}
 
 	public void touchEnded() {
-		for (final SketchTouchListener l : this.TOUCH_LISTENERS) {
+		for (final SketchTouchListener l : this.TOUCH_LISTENERS)
 			l.touchEnded();
-		}
+
+		this.SCENES.touchEnded();
 	}
 	// endregion
 
@@ -760,9 +769,10 @@ public class NerdSketch extends PApplet {
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
-			for (final SketchWindowListener l : this.WINDOW_LISTENERS) {
+			for (final SketchWindowListener l : this.WINDOW_LISTENERS)
 				l.focusGained();
-			}
+
+		this.SCENES.focusGained();
 	}
 
 	@Override
@@ -774,9 +784,10 @@ public class NerdSketch extends PApplet {
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
-			for (final SketchWindowListener l : this.WINDOW_LISTENERS) {
+			for (final SketchWindowListener l : this.WINDOW_LISTENERS)
 				l.focusLost();
-			}
+
+		this.SCENES.focusLost();
 	}
 	// endregion
 	// endregion

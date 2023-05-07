@@ -1,11 +1,11 @@
-package com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man;
+package com.brahvim.nerd.papplet_wrapper;
 
 import java.awt.DisplayMode;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
-import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.window_man_subs.NerdGlWindowManager;
+import com.brahvim.nerd.papplet_wrapper.window_man_subs.NerdJava2dWindowManager;
 
 import processing.core.PConstants;
 import processing.core.PSurface;
@@ -158,19 +158,25 @@ public abstract class NerdWindowManager {
         // When the window is resized, do the following!:
         if (!(this.pwidth == this.width || this.pheight == this.height)) {
             this.updateWindowRatios();
+
             for (final NerdSketch.SketchWindowListener l : Objects.requireNonNull(
                     p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
                 l.resized();
+
+            this.SKETCH.SCENES.resized();
         }
     }
 
     public void postCallback(final LinkedHashSet<NerdSketch.SketchWindowListener> p_windowListeners) {
         this.postCallbackImpl();
 
-        if (this.pfullscreen != this.fullscreen)
+        if (this.pfullscreen != this.fullscreen) {
             for (final NerdSketch.SketchWindowListener l : Objects.requireNonNull(
                     p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
                 l.fullscreenChanged(this.fullscreen);
+
+            this.SKETCH.SCENES.fullscreenChanged(this.fullscreen);
+        }
 
         this.pfullscreen = this.fullscreen;
         this.pcursorVisible = this.cursorVisible;

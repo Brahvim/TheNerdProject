@@ -2,10 +2,10 @@ package com.brahvim.nerd.framework.scenes;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
+import com.brahvim.nerd.papplet_wrapper.NerdDisplayManager;
+import com.brahvim.nerd.papplet_wrapper.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
-import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdDisplayManager;
-import com.brahvim.nerd.papplet_wrapper.sketch_managers.NerdInputManager;
-import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
+import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
 
 /**
  * Just like {@link NerdScene}s, {@link NerdLayer}s

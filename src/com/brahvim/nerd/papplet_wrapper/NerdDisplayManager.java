@@ -1,4 +1,4 @@
-package com.brahvim.nerd.papplet_wrapper.sketch_managers;
+package com.brahvim.nerd.papplet_wrapper;
 
 import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;
@@ -6,9 +6,6 @@ import java.awt.GraphicsDevice;
 import java.awt.Point;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
-import com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man.NerdWindowManager;
 
 public class NerdDisplayManager {
 
@@ -104,6 +101,8 @@ public class NerdDisplayManager {
             for (final NerdSketch.SketchWindowListener l : Objects.requireNonNull(p_windowListeners,
                     "`NerdDisplayManager::preCallback()` received `null`!"))
                 l.monitorChanged();
+
+            this.SKETCH.SCENES.monitorChanged();
         }
 
         if (this.SKETCH.focused)

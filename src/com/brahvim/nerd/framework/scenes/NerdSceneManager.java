@@ -15,6 +15,7 @@ public class NerdSceneManager {
     // My code style: If it is an inner class, also write the name of the outer
     // class. I do this to aid reading and to prevent namespace pollution.
 
+    @FunctionalInterface
     public interface SceneChangeListener {
         public void sceneChanged(NerdSketch sketch,
                 Class<? extends NerdScene> previous,
@@ -238,8 +239,6 @@ public class NerdSceneManager {
         this.SKETCH = p_sketch;
         this.SETTINGS = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
-
-        this.initSceneListeners();
     }
 
     public NerdSceneManager(final NerdSketch p_sketch,
@@ -247,8 +246,6 @@ public class NerdSceneManager {
         this.SKETCH = p_sketch;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
         this.SETTINGS = new NerdSceneManager.SceneManagerSettings();
-
-        this.initSceneListeners();
     }
 
     public NerdSceneManager(final NerdSketch p_sketch,
@@ -256,7 +253,6 @@ public class NerdSceneManager {
         this.SKETCH = p_sketch;
         this.SETTINGS = p_settings;
         this.SCENE_CHANGE_LISTENERS = new LinkedHashSet<>(0);
-        this.initSceneListeners();
     }
 
     public NerdSceneManager(final NerdSketch p_sketch,
@@ -265,212 +261,6 @@ public class NerdSceneManager {
         this.SKETCH = p_sketch;
         this.SETTINGS = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
-
-        this.initSceneListeners();
-    }
-
-    private void initSceneListeners() {
-        final NerdSceneManager SCENE_MAN = this;
-
-        this.mouseListener = this.SKETCH.new SketchMouseListener() {
-            @Override
-            public void mousePressed() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.mousePressed();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.mousePressed();
-            }
-
-            @Override
-            public void mouseReleased() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.mouseReleased();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.mouseReleased();
-            }
-
-            @Override
-            public void mouseMoved() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.mouseMoved();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.mouseMoved();
-            }
-
-            @Override
-            public void mouseClicked() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.mouseClicked();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.mouseClicked();
-            }
-
-            @Override
-            public void mouseDragged() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.mouseDragged();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.mouseDragged();
-            }
-
-            @Override
-            public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.mouseWheel(p_mouseEvent);
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.mouseWheel(p_mouseEvent);
-            }
-        };
-
-        this.touchListener = this.SKETCH.new SketchTouchListener() {
-            @Override
-            public void touchStarted() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.touchStarted();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.touchStarted();
-            }
-
-            @Override
-            public void touchMoved() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.touchMoved();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.touchMoved();
-            }
-
-            @Override
-            public void touchEnded() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.touchEnded();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.touchEnded();
-            }
-        };
-
-        this.windowListener = this.SKETCH.new SketchWindowListener() {
-            @Override
-            public void fullscreenChanged(final boolean p_state) {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.fullscreenChanged(p_state);
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.fullscreenChanged(p_state);
-            }
-
-            @Override
-            public void focusLost() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.focusLost();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.focusLost();
-            }
-
-            @Override
-            public void resized() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.resized();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.resized();
-            }
-
-            @Override
-            public void focusGained() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.focusGained();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.focusGained();
-            }
-        };
-
-        this.keyboardListener = this.SKETCH.new SketchKeyboardListener() {
-            @Override
-            public void keyTyped() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.keyTyped();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.keyTyped();
-            }
-
-            @Override
-            public void keyPressed() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.keyPressed();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.keyPressed();
-            }
-
-            @Override
-            public void keyReleased() {
-                if (SCENE_MAN.currScene == null)
-                    return;
-
-                SCENE_MAN.currScene.keyReleased();
-                for (final NerdLayer l : SCENE_MAN.currScene.getLayers())
-                    if (l != null)
-                        if (l.isActive())
-                            l.keyReleased();
-            }
-        };
     }
     // endregion
 
@@ -514,6 +304,203 @@ public class NerdSceneManager {
      * this.currScene.runPostDraw();
      * }
      */
+    // endregion
+
+    // region Event callbacks.
+    // region Mouse event callbacks.
+    protected void mousePressed() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.mousePressed();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.mousePressed();
+    }
+
+    protected void mouseReleased() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.mouseReleased();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.mouseReleased();
+    }
+
+    protected void mouseMoved() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.mouseMoved();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.mouseMoved();
+    }
+
+    protected void mouseClicked() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.mouseClicked();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.mouseClicked();
+    }
+
+    protected void mouseDragged() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.mouseDragged();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.mouseDragged();
+    }
+
+    protected void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.mouseWheel(p_mouseEvent);
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.mouseWheel(p_mouseEvent);
+    }
+    // endregion
+
+    // region Touch event callbacks.
+    protected void touchStarted() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.touchStarted();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.touchStarted();
+    }
+
+    protected void touchMoved() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.touchMoved();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.touchMoved();
+    }
+
+    protected void touchEnded() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.touchEnded();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.touchEnded();
+    }
+    // endregion
+
+    // region Window event callbacks.
+    protected void resized() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.resized();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.resized();
+    }
+
+    protected void focusLost() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.focusLost();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.focusLost();
+    }
+
+    protected void focusGained() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.focusGained();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.focusGained();
+    }
+
+    protected void monitorChanged() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.monitorChanged();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.monitorChanged();
+    }
+
+    protected void fullscreenChanged(final boolean p_state) {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.fullscreenChanged(p_state);
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.fullscreenChanged(p_state);
+    }
+    // endregion
+
+    // region Keyboard event callbacks.
+    protected void keyTyped() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.keyTyped();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.keyTyped();
+    }
+
+    protected void keyPressed() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.keyPressed();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.keyPressed();
+    }
+
+    protected void keyReleased() {
+        if (this.currScene == null)
+            return;
+
+        this.currScene.keyReleased();
+        for (final NerdLayer l : this.currScene.getLayers())
+            if (l != null)
+                if (l.isActive())
+                    l.keyReleased();
+    }
+    // endregion
     // endregion
 
     // region [`public`] Getters.

@@ -1,11 +1,12 @@
-package com.brahvim.nerd.papplet_wrapper.sketch_managers.window_man;
+package com.brahvim.nerd.papplet_wrapper.window_man_subs;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PVector;
 
-/* `package` */ class NerdGlWindowManager extends NerdWindowManager {
+public class NerdGlWindowManager extends NerdWindowManager {
 
     protected GLWindow window;
 

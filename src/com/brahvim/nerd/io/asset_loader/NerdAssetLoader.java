@@ -7,8 +7,8 @@ public abstract class NerdAssetLoader<AssetT> {
 
     /**
      * @throws NerdAssetLoaderException when a failure occurs.
-     * @throws IllegalArgumentException   if the options passed to the loader
-     *                                    weren't meant for it.
+     * @throws IllegalArgumentException if the options passed to the loader
+     *                                  weren't meant for it.
      */
     public abstract AssetT fetchData(
             final NerdSketch p_sketch, final String p_path)
