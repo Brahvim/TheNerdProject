@@ -126,9 +126,9 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 					else
 						e.printStackTrace();
 				}
-		});
+		}, "NerdTcpServerListenerOnPort" + this.socket.getLocalPort());
+		// ^^^ It's faster to give the thread a name in this manner.
 
-		this.commsThread.setName("NerdTcpServerListenerOnPort" + this.socket.getLocalPort());
 		this.commsThread.setDaemon(true);
 		this.commsThread.start();
 

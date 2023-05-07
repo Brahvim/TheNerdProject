@@ -122,9 +122,8 @@ public class NerdTcpServer {
 						else
 							e.printStackTrace();
 					}
-			});
-
-			this.serverCommThread.setName("NerdTcpClientListenerOnPort" + this.socket.getLocalPort());
+			}, "NerdTcpClientListenerOnPort" + this.socket.getLocalPort());
+			// ^^^ Yes, that's the thread's name.
 			this.serverCommThread.setDaemon(true);
 			this.serverCommThread.start();
 		}

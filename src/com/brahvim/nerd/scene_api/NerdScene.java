@@ -82,7 +82,7 @@ public class NerdScene {
 
   // region Queries.
   public int getTimesLoaded() {
-    return this.MANAGER.timesGivenSceneWasLoaded(this.getClass());
+    return this.MANAGER.getTimesSceneLoaded(this.getClass());
   }
 
   public boolean hasCompletedPreload() {
@@ -441,9 +441,7 @@ public class NerdScene {
       final ThreadPoolExecutor executor = new ThreadPoolExecutor(
           0, this.MANAGER.SETTINGS.ON_PRELOAD.maxExecutorThreads,
           10L, TimeUnit.SECONDS, new SynchronousQueue<>(), r -> {
-            final Thread toRet = new Thread(r);
-            toRet.setName("NerdAssetPreloader_" + this.getClass().getSimpleName());
-            return toRet;
+            return new Thread(r, "NerdAssetPreloader_" + this.getClass().getSimpleName());
           });
 
       final HashSet<Future<?>> futures = new HashSet<>(this.ASSETS.size());

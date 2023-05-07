@@ -69,8 +69,8 @@ public class NerdUdpSocket {
         private ReceiverThread() {
             this.byteData = new byte[ReceiverThread.PACKET_MAX_SIZE];
 
-            this.thread = new Thread(this::receiverTasks);
-            this.thread.setName("UdpSocketReceiverOnPort" + NerdUdpSocket.this.getPort());
+            this.thread = new Thread(this::receiverTasks,
+                    "UdpSocketReceiverOnPort" + NerdUdpSocket.this.getPort());
             this.thread.setDaemon(true); // The JVM can shut down without waiting for this thread to.
             this.thread.start();
         }

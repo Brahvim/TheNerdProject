@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.function.Function;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
@@ -185,7 +186,7 @@ public class NerdSceneManager {
     public final NerdSceneManager.SceneManagerSettings SETTINGS;
 
     // region `protected` and `private` fields.
-    protected boolean changedSceneThisFrame;
+    protected boolean sceneSwitchOccured;
     protected NerdScene currScene;
 
     /**
@@ -484,7 +485,7 @@ public class NerdSceneManager {
         if (this.currScene != null)
             this.currScene.runPost();
 
-        this.changedSceneThisFrame = false;
+        this.sceneSwitchOccured = false;
     }
 
     protected void runDraw() {
@@ -521,8 +522,8 @@ public class NerdSceneManager {
         return this.SKETCH;
     }
 
-    public boolean didSceneChange() {
-        return this.changedSceneThisFrame;
+    public boolean didSceneSwitchOccur() {
+        return this.sceneSwitchOccured;
     }
 
     public NerdScene getCurrentScene() {
@@ -543,53 +544,31 @@ public class NerdSceneManager {
     // endregion
 
     // region [`public`] Queries.
-    public void addSceneChangedListener(final NerdSceneManager.SceneChangeListener p_listener) {
+    public final void addSceneChangeListener(final NerdSceneManager.SceneChangeListener p_listener) {
         this.SCENE_CHANGE_LISTENERS.add(p_listener);
     }
 
-    public void removeSceneChangedListener(final NerdSceneManager.SceneChangeListener p_listener) {
+    public final void removeSceneChangeListener(final NerdSceneManager.SceneChangeListener p_listener) {
         this.SCENE_CHANGE_LISTENERS_TO_REMOVE.add(p_listener);
     }
 
     /**
      * Returns a {@link HashSet} of {@link NerdScene} classes including only classes
      * instances of which this {@link NerdSceneManager} has ran.
-     *
-     * @deprecated Need to check to see if this actually works
-     *             (it probably doesn't)!
      */
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public HashSet<Class<? extends NerdScene>> knownScenes() {
-        // Here's what's happening here:
-
-        // HashSet<Class<? extends Scene>> toRetCloneOf =
-        // (HashSet<Class<? extends Scene>>) this.SCENE_CACHE.keySet();
-        // return (HashSet<Class<? extends Scene>>) toRetCloneOf.clone();
-
-        // Cast the `keySet`, clone it, and cast the clone:
-
-        return ((HashSet<Class<? extends NerdScene>>)
-
-        ((HashSet<Class<? extends NerdScene>>) (this.SCENE_CACHE.keySet())).clone());
+    public final HashSet<Class<? extends NerdScene>> getKnownScenesSet() {
+        return new HashSet<>(this.SCENE_CACHE.keySet());
     }
-
-    // Older implementation of `knownScenes()`:
-    /*
-     * @SuppressWarnings("unchecked")
-     * public Class<? extends Scene>[] getSceneClasses() {
-     * return (Class<? extends Scene>[]) this.SCENE_CLASSES.toArray();
-     * }
-     */
     // endregion
 
     // region `Scene`-operations.
-    public int timesGivenSceneWasLoaded(final Class<? extends NerdScene> p_sceneClass) {
+    public int getTimesSceneLoaded(final Class<? extends NerdScene> p_sceneClass) {
         return this.SCENE_CACHE.get(p_sceneClass).timesLoaded;
     }
 
-    // To those who want vararg versions of these `loadSceneAssets` tasks:
-    // "...no!". (I mean, should I just make a bean of some kind?)
+    // region Invoking the asset loader.
+    // To those demanding var-arg versions of these `loadSceneAssets*()` methods:
+    // "...no"! (I mean, should I just make a bean of some kind?)
 
     public void loadSceneAssetsAsync(final Class<? extends NerdScene> p_sceneClass) {
         this.loadSceneAssetsAsync(p_sceneClass, false);
@@ -602,9 +581,13 @@ public class NerdSceneManager {
         if (this.givenSceneRanPreload(p_sceneClass))
             return;
 
-        final Thread thread = new Thread(() -> this.loadSceneAssets(p_sceneClass, p_forcibly));
-        thread.setName("NerdAsyncAssetLoader_" + this.getClass().getSimpleName());
-        thread.start();
+        final var manager = this;
+        new Thread("NerdAsyncAssetLoader_" + this.getClass().getSimpleName()) {
+            @Override
+            public void run() { // Lambdas perform horribly!
+                manager.loadSceneAssets(p_sceneClass, p_forcibly);
+            }
+        }.start();
     }
 
     // Non-async versions:
@@ -627,8 +610,9 @@ public class NerdSceneManager {
 
         this.loadSceneAssets(SCENE_CACHE.cachedReference, p_forcibly);
     }
+    // endregion
 
-    // region Starting a scene.
+    // region Starting, or switching to a scene.
     public void restartScene() {
         this.restartScene(null);
     }
@@ -725,7 +709,7 @@ public class NerdSceneManager {
         final Class<? extends NerdScene> SCENE_CLASS = p_scene.getClass();
 
         // If this scene has never been loaded up before, preload the data!
-        if (this.timesGivenSceneWasLoaded(SCENE_CLASS) == 0) {
+        if (this.getTimesSceneLoaded(SCENE_CLASS) == 0) {
             // p_scene.ASSETS.clear(); // Not needed - this code will never have bugs. Hah!
             p_scene.runPreload();
             this.SCENE_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
@@ -907,6 +891,7 @@ public class NerdSceneManager {
 
     // Set the time, *then* call `SceneManager::runSetup()`.
     private void setupCurrentScene(final NerdSceneState p_state) {
+        this.sceneSwitchOccured = true;
         this.loadSceneAssets(this.currScene, false);
 
         final boolean prevSceneClassNotNull = this.prevSceneClass != null;
