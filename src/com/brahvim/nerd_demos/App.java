@@ -21,6 +21,7 @@ public class App {
      * // TODO: Make it easier to animate, somehow!?
      * // TODO: Collision Algorithms (also for 3D space).d
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
+     * // TODO: `int` tags for entities! Imagine using `|` to access multiple tags!
      */
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =

@@ -20,7 +20,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
  */
 public class NerdLayer {
 
-    // region `public` fields.`
+    // region `public` fields.
     // Seriously, why did I set these to be `protected`?
     public final NerdLayer LAYER = this;
 
@@ -36,7 +36,7 @@ public class NerdLayer {
     protected NerdScene SCENE;
     // endregion
 
-    // region `private` fields.`
+    // region `private` fields.
     private int timesActivated;
     private boolean active = true;
     // endregion
@@ -44,7 +44,7 @@ public class NerdLayer {
     protected NerdLayer() {
     }
 
-    // region Activity status.`
+    // region Activity status.
     public boolean isActive() {
         return this.active;
     }
@@ -64,7 +64,7 @@ public class NerdLayer {
     }
     // endregion
 
-    // region Events.`
+    // region Events.
     // region Mouse events.
     public void mousePressed() {
     }
@@ -129,7 +129,7 @@ public class NerdLayer {
     // endregion
     // endregion
 
-    // region `protected` methods. Nobody can call them outside of this package!`
+    // region `protected` methods. Nobody can call them outside of this package!
     // region `NerdLayer`-only (`protected`) callbacks!
     protected void layerExit() {
     }

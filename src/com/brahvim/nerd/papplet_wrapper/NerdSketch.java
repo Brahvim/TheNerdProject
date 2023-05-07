@@ -243,6 +243,7 @@ public class NerdSketch extends PApplet {
 
 	public final NerdBridgedSceneManager SCENES;
 	public final NerdDisplayManager DISPLAYS;
+	public final NerdBridgedEcsManager ECS;
 	public final NerdWindowManager WINDOW;
 	public final NerdInputManager INPUT;
 	// endregion
@@ -353,13 +354,14 @@ public class NerdSketch extends PApplet {
 		// endregion
 
 		// region Non-key settings.
+		this.ECS = new NerdBridgedEcsManager();
 		this.UNPROJECTOR = new NerdUnprojector();
-		this.INPUT = new NerdInputManager(SKETCH, this.keysHeld);
-		this.DISPLAYS = new NerdDisplayManager(this);
 		this.ASSETS = new NerdAssetManager(this);
-		this.SCENES = new NerdBridgedSceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
+		this.DISPLAYS = new NerdDisplayManager(this);
 		this.WINDOW = NerdWindowManager.createWindowMan(this);
+		this.INPUT = new NerdInputManager(SKETCH, this.keysHeld);
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
+		this.SCENES = new NerdBridgedSceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
 		// endregion
 
 		// region Setting OpenGL renderer icons.
@@ -515,6 +517,7 @@ public class NerdSketch extends PApplet {
 
 		// Call all pre-render listeners:
 		this.PRE_DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.ECS.preDrawCallback();
 
 		// region Update frame-ly mouse settings.
 		this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
