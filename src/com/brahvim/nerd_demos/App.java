@@ -1,11 +1,11 @@
 package com.brahvim.nerd_demos;
 
+import com.brahvim.nerd.framework.scenes.NerdScene;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
-import com.brahvim.nerd.scene_api.NerdScene;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;

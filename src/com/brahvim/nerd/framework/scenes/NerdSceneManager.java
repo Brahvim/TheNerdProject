@@ -1,11 +1,10 @@
-package com.brahvim.nerd.scene_api;
+package com.brahvim.nerd.framework.scenes;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.function.Function;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;

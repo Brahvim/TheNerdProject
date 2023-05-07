@@ -2,7 +2,7 @@ package com.brahvim.nerd.papplet_wrapper;
 
 import java.util.LinkedHashSet;
 
-import com.brahvim.nerd.scene_api.NerdSceneManager;
+import com.brahvim.nerd.framework.scenes.NerdSceneManager;
 
 public class NerdBridgedSceneManager extends NerdSceneManager {
 

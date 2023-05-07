@@ -1,4 +1,4 @@
-package com.brahvim.nerd.scene_api;
+package com.brahvim.nerd.framework.scenes;
 
 import java.io.File;
 import java.util.Collection;

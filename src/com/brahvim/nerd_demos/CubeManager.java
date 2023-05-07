@@ -3,9 +3,9 @@ package com.brahvim.nerd_demos;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import com.brahvim.nerd.framework.scenes.NerdScene;
 import com.brahvim.nerd.openal.al_buffers.AlBuffer;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
-import com.brahvim.nerd.scene_api.NerdScene;
 
 import processing.core.PConstants;
 import processing.core.PShape;

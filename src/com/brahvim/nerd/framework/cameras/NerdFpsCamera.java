@@ -1,4 +1,4 @@
-package com.brahvim.nerd.rendering.cameras;
+package com.brahvim.nerd.framework.cameras;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 

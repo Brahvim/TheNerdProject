@@ -1,7 +1,7 @@
 package com.brahvim.nerd_demos.scenes.scene1;
 
+import com.brahvim.nerd.framework.scenes.NerdLayer;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
-import com.brahvim.nerd.scene_api.NerdLayer;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
