@@ -241,9 +241,8 @@ public class NerdSketch extends PApplet {
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
 			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
 
-	public final NerdBridgedSceneManager SCENES;
+	// `NerdSceneManager` is a `protected` field.
 	public final NerdDisplayManager DISPLAYS;
-	public final NerdBridgedEcsManager ECS;
 	public final NerdWindowManager WINDOW;
 	public final NerdInputManager INPUT;
 	// endregion
@@ -288,6 +287,8 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	protected final int ANTI_ALIASING;
+	protected final NerdBridgedSceneManager SCENES;
+
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
 	protected final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
 
@@ -354,7 +355,6 @@ public class NerdSketch extends PApplet {
 		// endregion
 
 		// region Non-key settings.
-		this.ECS = new NerdBridgedEcsManager();
 		this.UNPROJECTOR = new NerdUnprojector();
 		this.ASSETS = new NerdAssetManager(this);
 		this.DISPLAYS = new NerdDisplayManager(this);
@@ -517,7 +517,6 @@ public class NerdSketch extends PApplet {
 
 		// Call all pre-render listeners:
 		this.PRE_DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
-		this.ECS.updateAll();
 
 		// region Update frame-ly mouse settings.
 		this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;

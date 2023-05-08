@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
+import com.brahvim.nerd.framework.ecs.NerdEcsManager;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.papplet_wrapper.NerdDisplayManager;
 import com.brahvim.nerd.papplet_wrapper.NerdInputManager;
@@ -33,6 +34,7 @@ public class NerdScene {
   // Forgive me for breaking naming conventions here.
   // Forgive me. Please!
   public NerdSketch SKETCH;
+  public NerdEcsManager ECS; // TODO: Allow this to be ""serialized"" into `STATE` etc.
   public NerdSceneState STATE;
   public NerdInputManager INPUT;
   public NerdAssetManager ASSETS;
