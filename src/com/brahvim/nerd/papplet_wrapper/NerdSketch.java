@@ -517,7 +517,7 @@ public class NerdSketch extends PApplet {
 
 		// Call all pre-render listeners:
 		this.PRE_DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
-		this.ECS.preDrawCallback();
+		this.ECS.updateAll();
 
 		// region Update frame-ly mouse settings.
 		this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;

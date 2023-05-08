@@ -1,6 +1,13 @@
 package com.brahvim.nerd.framework.ecs;
 
+import java.util.LinkedList;
+
 public class NerdEcsEntity {
+
+    private final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
+
+    public NerdEcsEntity() {
+    }
 
     // region Events.
     // region Mouse events.
