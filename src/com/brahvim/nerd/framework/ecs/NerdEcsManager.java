@@ -3,10 +3,12 @@ package com.brahvim.nerd.framework.ecs;
 public class NerdEcsManager {
 
     public final NerdEcsEntityManager ENTITY_MAN;
+    public final NerdEcsSystemManager SYSTEM_MAN;
     public final NerdEcsComponentManager COMPONENT_MAN;
 
     public NerdEcsManager() {
         this.ENTITY_MAN = new NerdEcsEntityManager();
+        this.SYSTEM_MAN = new NerdEcsSystemManager();
         this.COMPONENT_MAN = new NerdEcsComponentManager();
     }
 
