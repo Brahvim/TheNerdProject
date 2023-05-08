@@ -1,9 +1,11 @@
 package com.brahvim.nerd.framework.ecs;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class NerdEcsEntity {
+public class NerdEcsEntity implements Serializable {
 
+    private static final long serialVersionUID = -84636463676L;
     private final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
 
     public NerdEcsEntity() {
