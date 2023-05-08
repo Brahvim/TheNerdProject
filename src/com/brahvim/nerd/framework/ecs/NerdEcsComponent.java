@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class NerdEcsComponent implements Serializable {
 
-    private static final long serialVersionUID = -144634679663L;
+    public static final long serialVersionUID = -144634679663L;
 
     public NerdEcsComponent() {
     }
