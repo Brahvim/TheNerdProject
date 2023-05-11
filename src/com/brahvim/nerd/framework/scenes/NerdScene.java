@@ -33,15 +33,15 @@ public class NerdScene {
   public final NerdScene SCENE = this;
   // Forgive me for breaking naming conventions here.
   // Forgive me. Please!
-  public NerdSketch SKETCH;
-  public NerdEcsManager ECS; // TODO: Allow this to be ""serialized"" into `STATE` etc.
-  public NerdSceneState STATE;
-  public NerdInputManager INPUT;
-  public NerdAssetManager ASSETS;
-  public NerdSceneManager MANAGER;
-  public NerdWindowManager WINDOW;
-  public NerdAbstractCamera CAMERA;
-  public NerdDisplayManager DISPLAYS;
+  protected NerdSketch SKETCH;
+  protected NerdEcsManager ECS;
+  protected NerdSceneState STATE;
+  protected NerdInputManager INPUT;
+  protected NerdAssetManager ASSETS;
+  protected NerdSceneManager MANAGER;
+  protected NerdWindowManager WINDOW;
+  protected NerdAbstractCamera CAMERA;
+  protected NerdDisplayManager DISPLAYS;
   // endregion
 
   // region `private` fields.
@@ -80,9 +80,14 @@ public class NerdScene {
   // endregion
 
   protected NerdScene() {
+    this.ECS = new NerdEcsManager(this.SKETCH);
   }
 
   // region Queries.
+  public NerdSketch getSketch() {
+    return this.SKETCH;
+  }
+
   public int getTimesLoaded() {
     return this.MANAGER.getTimesSceneLoaded(this.getClass());
   }

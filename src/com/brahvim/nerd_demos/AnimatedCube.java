@@ -24,7 +24,7 @@ public class AnimatedCube extends TestEulerBody {
     // endregion
 
     public AnimatedCube(final NerdScene p_scene) {
-        super(p_scene.SKETCH);
+        super(p_scene.getSketch());
 
         this.startTime = SKETCH.millis();
         this.lifetime = this.startTime + AnimatedCube.DEFAULT_LIFETIME;

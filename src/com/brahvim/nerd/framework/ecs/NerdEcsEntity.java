@@ -3,12 +3,19 @@ package com.brahvim.nerd.framework.ecs;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-public class NerdEcsEntity implements Serializable {
+public abstract class NerdEcsEntity implements Serializable {
 
     public static final long serialVersionUID = -84636463676L;
+    protected final NerdEcsEntity ENTITY = this;
+
+    protected NerdEcsEntityManager ENTITIES;
+
     private final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
 
     public NerdEcsEntity() {
+    }
+
+    protected void update() {
     }
 
     // region Events.

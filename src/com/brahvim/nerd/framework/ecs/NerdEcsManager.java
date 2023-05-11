@@ -1,12 +1,19 @@
 package com.brahvim.nerd.framework.ecs;
 
+import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+
 public class NerdEcsManager {
 
+    // region Fields.
     public final NerdEcsEntityManager ENTITY_MAN;
     public final NerdEcsSystemManager SYSTEM_MAN;
     public final NerdEcsComponentManager COMPONENT_MAN;
 
-    public NerdEcsManager() {
+    private final NerdSketch SKETCH;
+    // endregion
+
+    public NerdEcsManager(final NerdSketch p_sketch) {
+        this.SKETCH = p_sketch;
         this.ENTITY_MAN = new NerdEcsEntityManager();
         this.SYSTEM_MAN = new NerdEcsSystemManager();
         this.COMPONENT_MAN = new NerdEcsComponentManager();

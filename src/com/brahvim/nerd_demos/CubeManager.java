@@ -28,7 +28,7 @@ public class CubeManager {
 	// region Constructors.
 	public CubeManager(final NerdScene p_scene) {
 		this.SCENE = Objects.requireNonNull(p_scene);
-		SKETCH = this.SCENE.SKETCH;
+		SKETCH = this.SCENE.getSketch();
 
 		this.CUBE_SHAPE = SKETCH.createShape(PConstants.BOX, 1);
 		this.CUBE_SHAPE.setStrokeWeight(0.28f);
@@ -36,13 +36,13 @@ public class CubeManager {
 
 	public CubeManager(final NerdScene p_scene, final PShape p_cubeShape) {
 		this.SCENE = Objects.requireNonNull(p_scene);
-		SKETCH = this.SCENE.SKETCH;
+		SKETCH = this.SCENE.getSketch();
 		this.CUBE_SHAPE = p_cubeShape;
 	}
 
 	public CubeManager(final NerdScene p_scene, final AlBuffer<?>[] p_buffers) {
 		this.SCENE = Objects.requireNonNull(p_scene);
-		SKETCH = this.SCENE.SKETCH;
+		SKETCH = this.SCENE.getSketch();
 		this.popAudios = p_buffers;
 
 		this.CUBE_SHAPE = SKETCH.createShape(PConstants.BOX, 1);
@@ -52,7 +52,7 @@ public class CubeManager {
 	public CubeManager(final NerdScene p_scene,
 			final PShape p_cubeShape, final AlBuffer<?>[] p_buffers) {
 		this.SCENE = Objects.requireNonNull(p_scene);
-		SKETCH = this.SCENE.SKETCH;
+		SKETCH = this.SCENE.getSketch();
 		this.CUBE_SHAPE = p_cubeShape;
 		this.popAudios = p_buffers;
 	}
