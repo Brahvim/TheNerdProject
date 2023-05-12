@@ -1,13 +1,34 @@
 package com.brahvim.nerd.framework.ecs;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 public class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> {
 
+    protected final Class<SystemComponentsT> COMPONENT_TYPE_CLASS;
+
+    @SuppressWarnings("unchecked")
     protected NerdEcsSystem() {
+        // ...Trivial reflection tricks are where ChatGPT is my best friend ._.
+        final Type myGenericSuperclass = this.getClass().getGenericSuperclass();
+
+        if (!(myGenericSuperclass instanceof ParameterizedType)) {
+            throw new RuntimeException(String.format("""
+                    Sorry, but not specifying the generic type argument in your \
+                    `NerdEcsSystem` subclass, `%s`, is illegal.""",
+                    this.getClass().getSimpleName()));
+        }
+
+        this.COMPONENT_TYPE_CLASS = (Class<SystemComponentsT>) ((ParameterizedType) myGenericSuperclass)
+                .getActualTypeArguments()[0];
     }
 
     protected void update(final Collection<SystemComponentsT> p_components) {
+    }
+
+    protected Class<SystemComponentsT> getComponentTypeClass() {
+        return this.COMPONENT_TYPE_CLASS;
     }
 
     // region Events.

@@ -2,14 +2,16 @@ package com.brahvim.nerd.framework.ecs;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.Map;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 public class NerdEcsManager {
 
     // region Fields.
+    public final LinkedHashSet<Class<NerdEcsSystem<?>>> SYSTEM_ORDER = new LinkedHashSet<>();
+
     protected final LinkedList<NerdEcsEntity> ENTITIES = new LinkedList<>();
     protected final LinkedList<NerdEcsSystem<?>> SYSTEMS = new LinkedList<>();
     protected final HashMap<String, NerdEcsEntity> ENTITY_STRING_MAP = new HashMap<>();
@@ -22,6 +24,8 @@ public class NerdEcsManager {
 
     private final HashSet<NerdEcsComponent> COMPONENTS_TO_ADD = new HashSet<>();
     private final HashSet<NerdEcsComponent> COMPONENTS_TO_REMOVE = new HashSet<>();
+
+    @SuppressWarnings("unused")
     private final NerdSketch SKETCH;
     // endregion
 
@@ -32,6 +36,10 @@ public class NerdEcsManager {
     protected void runUpdates() {
         this.ENTITIES.removeAll(this.ENTITIES_TO_REMOVE);
         this.COMPONENTS.removeAll(this.COMPONENTS_TO_REMOVE);
+        // TODO: ...Resume working on the ECS from here!
+        // this.SYSTEMS.forEach((s) -> {
+        // if(s.getComponentTypeClass().equals(s))
+        // });
 
         this.ENTITIES.addAll(this.ENTITIES_TO_ADD);
         this.COMPONENTS.addAll(this.COMPONENTS_TO_ADD);
@@ -41,11 +49,6 @@ public class NerdEcsManager {
         this.ENTITIES_TO_REMOVE.clear();
         this.COMPONENTS_TO_REMOVE.clear();
 
-        // Run all systems:
-        for (Map.Entry<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> e : this.COMPONENT_CLASS_MAP
-                .entrySet()) {
-            // this.SYSTEMS.get
-        }
     }
 
     // region Public API! (For entities only!)
