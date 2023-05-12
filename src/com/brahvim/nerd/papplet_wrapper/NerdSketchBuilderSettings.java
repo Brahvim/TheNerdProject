@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 
+import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scenes.NerdScene;
 import com.brahvim.nerd.framework.scenes.NerdSceneManager;
 import com.brahvim.nerd.framework.scenes.NerdSceneManager.SceneManagerSettings;
@@ -12,8 +13,10 @@ import com.brahvim.nerd.openal.AlContext;
 
 import processing.core.PConstants;
 
-/* package */ class NerdSketchBuilderSettings {
+/* `package` */ class NerdSketchBuilderSettings {
+
     public Class<? extends NerdScene> firstScene;
+    public NerdEcsSystem<?>[] ecsSystemOrder = null;
     public SceneManagerSettings sceneManagerSettings;
     public int width = 400, height = 400, antiAliasing;
     public AlContext.AlContextSettings alContextSettings;
@@ -53,4 +56,5 @@ import processing.core.PConstants;
 
     public boolean dontCloseOnEscape, startedFullscreen, canResize,
             cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
+
 }

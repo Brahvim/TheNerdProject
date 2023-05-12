@@ -44,7 +44,7 @@ public class NerdUdpSocket {
          * Number of bytes allocated to hold the data in a packet. The size of the
          * array is truncated before it is passed to `UdpSocket::onReceive()`.
          */
-        public final static int PACKET_MAX_SIZE = 70_000;
+        public static final int PACKET_MAX_SIZE = 70_000;
 
         /**
          * The {@code Thread} that handles the network's receive calls.

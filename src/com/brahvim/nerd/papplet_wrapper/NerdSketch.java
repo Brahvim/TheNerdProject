@@ -196,9 +196,9 @@ public class NerdSketch extends PApplet {
 	public final String RENDERER;
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
+	public final NerdStringTable STRINGS;
 	public final NerdAssetManager ASSETS;
 	public final NerdUnprojector UNPROJECTOR;
-	public final NerdStringTable STRINGS;
 	public final HashMap<String, Object> EXTENSIONS;
 	// `Object`s instead of a custom interface because you can't do
 	// that to libraries you didn't write! (...or you'd be writing subclasses of the
@@ -361,7 +361,8 @@ public class NerdSketch extends PApplet {
 		this.WINDOW = NerdWindowManager.createWindowMan(this);
 		this.INPUT = new NerdInputManager(SKETCH, this.keysHeld);
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
-		this.SCENES = new NerdBridgedSceneManager(this, p_key.sceneChangeListeners, p_key.sceneManagerSettings);
+		this.SCENES = new NerdBridgedSceneManager(this, p_key.sceneManagerSettings,
+				p_key.sceneChangeListeners, p_key.ecsSystemOrder);
 		// endregion
 
 		// region Setting OpenGL renderer icons.

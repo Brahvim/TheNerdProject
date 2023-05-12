@@ -2,31 +2,15 @@ package com.brahvim.nerd.papplet_wrapper;
 
 import java.util.LinkedHashSet;
 
+import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scenes.NerdSceneManager;
 
 public class NerdBridgedSceneManager extends NerdSceneManager {
 
-    // region Constructors.
-    public NerdBridgedSceneManager(NerdSketch p_sketch,
-            LinkedHashSet<SceneChangeListener> p_listeners) {
-        super(p_sketch, p_listeners);
+    public NerdBridgedSceneManager(final NerdSketch p_sketch, final SceneManagerSettings p_settings,
+            final LinkedHashSet<SceneChangeListener> p_listeners, final NerdEcsSystem<?>[] p_ecsSystems) {
+        super(p_sketch, p_settings, p_listeners, p_ecsSystems);
     }
-
-    public NerdBridgedSceneManager(NerdSketch p_sketch,
-            LinkedHashSet<SceneChangeListener> p_listeners,
-            SceneManagerSettings p_settings) {
-        super(p_sketch, p_listeners, p_settings);
-    }
-
-    public NerdBridgedSceneManager(NerdSketch p_sketch, SceneManagerSettings p_settings) {
-        super(p_sketch, p_settings);
-    }
-
-    public NerdBridgedSceneManager(NerdSketch p_sketch, SceneManagerSettings p_settings,
-            LinkedHashSet<SceneChangeListener> p_listeners) {
-        super(p_sketch, p_settings, p_listeners);
-    }
-    // endregion
 
     // region Workflow callbacks.
     @Override

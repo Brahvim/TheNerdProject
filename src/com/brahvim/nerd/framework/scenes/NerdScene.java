@@ -11,10 +11,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.ecs.NerdEcsManager;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
+import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.papplet_wrapper.NerdDisplayManager;
 import com.brahvim.nerd.papplet_wrapper.NerdInputManager;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
@@ -80,7 +80,6 @@ public class NerdScene {
   // endregion
 
   protected NerdScene() {
-    this.ECS = new NerdEcsManager(this.SKETCH);
   }
 
   // region Queries.
@@ -238,7 +237,7 @@ public class NerdScene {
   // endregion
   // endregion
 
-  // region `getLayers()` and similar.
+  // region `getLayer()` and similar.
   // They get a running `Layer`'s reference from its (given) class.
   public <RetT extends NerdLayer> RetT getFirstLayerOfClass(final Class<RetT> p_layerClass) {
     for (final NerdLayer l : this.LAYERS)

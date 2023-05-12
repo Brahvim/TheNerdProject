@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
+import com.brahvim.nerd.framework.ecs.NerdEcsManager;
+import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
@@ -57,6 +59,8 @@ public class NerdSceneManager {
     }
 
     public static class SceneManagerSettings {
+
+        public NerdEcsSystem<?>[] ecsSystemOrder;
 
         // region App workflow callbacks scene-or-layer order.
         /**
@@ -231,37 +235,15 @@ public class NerdSceneManager {
     private Class<? extends NerdScene> currSceneClass, prevSceneClass;
     // endregion
 
-    // region Construction.
-    public NerdSceneManager(final NerdSketch p_sketch,
-            final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners,
-            final NerdSceneManager.SceneManagerSettings p_settings) {
-        this.SKETCH = p_sketch;
-        this.SETTINGS = p_settings;
-        this.SCENE_CHANGE_LISTENERS = p_listeners;
-    }
-
-    public NerdSceneManager(final NerdSketch p_sketch,
-            final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners) {
-        this.SKETCH = p_sketch;
-        this.SCENE_CHANGE_LISTENERS = p_listeners;
-        this.SETTINGS = new NerdSceneManager.SceneManagerSettings();
-    }
-
-    public NerdSceneManager(final NerdSketch p_sketch,
-            final NerdSceneManager.SceneManagerSettings p_settings) {
-        this.SKETCH = p_sketch;
-        this.SETTINGS = p_settings;
-        this.SCENE_CHANGE_LISTENERS = new LinkedHashSet<>(0);
-    }
-
     public NerdSceneManager(final NerdSketch p_sketch,
             final NerdSceneManager.SceneManagerSettings p_settings,
-            final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners) {
+            final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners,
+            final NerdEcsSystem<?>[] p_ecsSystems) {
         this.SKETCH = p_sketch;
         this.SETTINGS = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
+        this.SETTINGS.ecsSystemOrder = p_ecsSystems;
     }
-    // endregion
 
     // region Workflow callbacks.
     protected void runPre() {
@@ -812,6 +794,14 @@ public class NerdSceneManager {
         toRet.DISPLAYS = toRet.SKETCH.DISPLAYS;
         toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
         toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?
+
+        // Set up the ECS:
+        NerdEcsSystem<?>[] systems = this.SETTINGS.ecsSystemOrder;
+
+        if (systems == null)
+            systems = NerdEcsManager.DEFAULT_ECS_SYSTEMS_ORDER;
+
+        toRet.ECS = new NerdEcsManager(this.SKETCH, systems);
 
         // If this is the first time we're constructing this scene, ensure it has a
         // cache and a saved state!

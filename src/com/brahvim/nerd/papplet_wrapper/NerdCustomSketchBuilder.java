@@ -3,6 +3,7 @@ package com.brahvim.nerd.papplet_wrapper;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scenes.NerdScene;
 import com.brahvim.nerd.framework.scenes.NerdSceneManager;
 import com.brahvim.nerd.framework.scenes.NerdSceneManager.SceneManagerSettings;
@@ -176,6 +177,11 @@ public abstract class NerdCustomSketchBuilder {
     }
     // endregion
 
+    public NerdCustomSketchBuilder setEcsSystemOrder(final NerdEcsSystem<?>[] p_ecsSystems) {
+        this.SKETCH_KEY.ecsSystemOrder = p_ecsSystems;
+        return this;
+    }
+
     public NerdCustomSketchBuilder setSceneManagerSettings(final Consumer<SceneManagerSettings> p_settingsBuilder) {
         final var toPass = new NerdSceneManager.SceneManagerSettings();
 
@@ -209,7 +215,7 @@ public abstract class NerdCustomSketchBuilder {
         return this;
     }
 
-    // region `Sketch.CallbackOrder`.
+    // region Setting `NerdSceneManager.SceneManagerSettings.CallbackOrder`.
     public NerdCustomSketchBuilder setPreCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
         this.SKETCH_KEY.preCallOrder = p_order;
         return this;

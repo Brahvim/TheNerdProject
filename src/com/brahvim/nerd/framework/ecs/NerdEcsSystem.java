@@ -4,9 +4,9 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-public class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> {
+public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> {
 
-    protected final Class<SystemComponentsT> COMPONENT_TYPE_CLASS;
+    private final Class<SystemComponentsT> COMPONENT_TYPE_CLASS;
 
     @SuppressWarnings("unchecked")
     protected NerdEcsSystem() {
@@ -27,7 +27,7 @@ public class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> {
     protected void update(final Collection<SystemComponentsT> p_components) {
     }
 
-    protected Class<SystemComponentsT> getComponentTypeClass() {
+    public Class<SystemComponentsT> getComponentTypeClass() {
         return this.COMPONENT_TYPE_CLASS;
     }
 
@@ -95,5 +95,4 @@ public class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> {
     }
     // endregion
     // endregion
-
 }
