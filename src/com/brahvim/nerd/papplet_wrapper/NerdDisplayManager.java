@@ -84,7 +84,7 @@ public class NerdDisplayManager {
     }
 
     // region Current and previous frame monitor settings, plus callback!
-    public void preCallback(final LinkedHashSet<NerdSketch.SketchWindowListener> p_windowListeners) {
+    public void preCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
         this.displayWidth = this.SKETCH.displayWidth;
         this.displayHeight = this.SKETCH.displayHeight;
 
@@ -98,7 +98,7 @@ public class NerdDisplayManager {
         if (this.previousMonitor != this.currentMonitor) {
             this.previousMonitor = this.currentMonitor;
             this.updateDisplayRatios();
-            for (final NerdSketch.SketchWindowListener l : Objects.requireNonNull(p_windowListeners,
+            for (final NerdSketch.NerdSketchWindowListener l : Objects.requireNonNull(p_windowListeners,
                     "`NerdDisplayManager::preCallback()` received `null`!"))
                 l.monitorChanged();
 

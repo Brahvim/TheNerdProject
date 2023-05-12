@@ -3,7 +3,6 @@ package com.brahvim.nerd.framework.ecs;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
@@ -41,9 +40,6 @@ public class NerdEcsManager {
         this.ENTITIES.removeAll(this.ENTITIES_TO_REMOVE);
         this.COMPONENTS.removeAll(this.COMPONENTS_TO_REMOVE);
 
-        for (final NerdEcsSystem s : this.systems)
-            s.update(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
-
         this.ENTITIES.addAll(this.ENTITIES_TO_ADD);
         this.COMPONENTS.addAll(this.COMPONENTS_TO_ADD);
 
@@ -51,6 +47,9 @@ public class NerdEcsManager {
         this.COMPONENTS_TO_ADD.clear();
         this.ENTITIES_TO_REMOVE.clear();
         this.COMPONENTS_TO_REMOVE.clear();
+
+        for (final NerdEcsSystem s : this.systems)
+            s.update(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
     }
 
     // region Public API!

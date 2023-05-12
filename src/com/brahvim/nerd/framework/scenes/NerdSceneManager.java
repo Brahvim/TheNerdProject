@@ -221,16 +221,16 @@ public class NerdSceneManager {
     private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0);
 
     @SuppressWarnings("unused")
-    private NerdSketch.SketchMouseListener mouseListener;
+    private NerdSketch.NerdSketchMouseListener mouseListener;
 
     @SuppressWarnings("unused")
-    private NerdSketch.SketchTouchListener touchListener;
+    private NerdSketch.NerdSketchTouchListener touchListener;
 
     @SuppressWarnings("unused")
-    private NerdSketch.SketchWindowListener windowListener;
+    private NerdSketch.NerdSketchWindowListener windowListener;
 
     @SuppressWarnings("unused")
-    private NerdSketch.SketchKeyboardListener keyboardListener;
+    private NerdSketch.NerdSketchKeyboardListener keyboardListener;
     // endregion
     private Class<? extends NerdScene> currSceneClass, prevSceneClass;
     // endregion
@@ -294,7 +294,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.mousePressed();
-        this.currScene.ECS.mousePressed();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.mousePressed();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -306,7 +308,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.mouseReleased();
-        this.currScene.ECS.mouseReleased();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.mouseReleased();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -318,7 +322,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.mouseMoved();
-        this.currScene.ECS.mouseMoved();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.mouseMoved();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -330,7 +336,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.mouseClicked();
-        this.currScene.ECS.mouseClicked();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.mouseClicked();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -342,7 +350,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.mouseDragged();
-        this.currScene.ECS.mouseDragged();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.mouseDragged();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -354,7 +364,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.mouseWheel(p_mouseEvent);
-        this.currScene.ECS.mouseWheel(p_mouseEvent);
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.mouseWheel(p_mouseEvent);
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -368,7 +380,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.touchStarted();
-        this.currScene.ECS.touchStarted();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.touchStarted();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -380,7 +394,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.touchMoved();
-        this.currScene.ECS.touchMoved();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.touchMoved();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -392,7 +408,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.touchEnded();
-        this.currScene.ECS.touchEnded();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.touchEnded();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -406,7 +424,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.resized();
-        this.currScene.ECS.resized();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.resized();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -418,7 +438,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.focusLost();
-        this.currScene.ECS.focusLost();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.focusLost();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -430,7 +452,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.focusGained();
-        this.currScene.ECS.focusGained();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.focusGained();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -442,7 +466,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.monitorChanged();
-        this.currScene.ECS.monitorChanged();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.monitorChanged();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -454,7 +480,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.fullscreenChanged(p_state);
-        this.currScene.ECS.fullscreenChanged(p_state);
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.fullscreenChanged(p_state);
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -468,7 +496,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.keyTyped();
-        this.currScene.ECS.keyTyped();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.keyTyped();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -480,7 +510,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.keyPressed();
-        this.currScene.ECS.keyPressed();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.keyPressed();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -492,7 +524,9 @@ public class NerdSceneManager {
             return;
 
         this.currScene.keyReleased();
-        this.currScene.ECS.keyReleased();
+
+        if (this.currScene.ECS != null)
+            this.currScene.ECS.keyReleased();
         for (final NerdLayer l : this.currScene.getLayers())
             if (l != null)
                 if (l.isActive())
@@ -784,8 +818,6 @@ public class NerdSceneManager {
         // region Initialize it!
         final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
         final NerdSceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE.get(SCENE_CLASS);
-
-        toRet.sceneConstructed();
 
         // Initialize fields as if this was a part of the construction.
         if (toRet.MANAGER == null)

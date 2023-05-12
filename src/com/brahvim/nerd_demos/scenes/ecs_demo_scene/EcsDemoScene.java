@@ -13,14 +13,13 @@ public class EcsDemoScene extends NerdScene {
     protected void setup(NerdSceneState p_state) {
         this.ECS.setSystemsOrder(new NerdEcsSystem<?>[] { new EcsDemoSystem() });
         this.entity = ECS.createEntity();
-        final EcsDemoComponent demoComponent = this.entity.attachComponent(EcsDemoComponent.class);
-        // demoComponent.message = "Yo! This message didn't need to be changed but I did
-        // it anyway, haha.";
-    }
 
-    @Override
-    public void mouseClicked() {
-        System.out.println("`EcsDemoScene::mouseClicked()`");
+        // // final EcsDemoComponent demoComponent =
+        this.entity.attachComponent(EcsDemoComponent.class)
+
+        // .message = "Yo! This message didn't need"
+        // + "to be changed but I did it anyway, haha."
+        ;
     }
 
 }

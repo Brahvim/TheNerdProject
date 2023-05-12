@@ -468,10 +468,6 @@ public class NerdScene {
     this.donePreloading = true;
   }
 
-  /* `package` */ void runSceneConstructed() {
-    this.sceneConstructed();
-  }
-
   /* `package` */ void runSceneChanged() {
     this.sceneChanged();
   }
@@ -684,14 +680,6 @@ public class NerdScene {
   }
 
   protected void sceneChanged() {
-  }
-
-  /**
-   * Event for when the scene is constructed, before the scene manager assigns
-   * any fields their values, allowing you to assign them yourself. Please note
-   * that {@link NerdScene#STATE} is re-assigned anyway.
-   */
-  protected void sceneConstructed() {
   }
 
   /**

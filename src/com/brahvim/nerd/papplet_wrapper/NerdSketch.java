@@ -78,9 +78,9 @@ public class NerdSketch extends PApplet {
 	 */
 
 	// region Input listeners.
-	public class SketchMouseListener {
+	public class NerdSketchMouseListener {
 
-		public SketchMouseListener() {
+		public NerdSketchMouseListener() {
 			NerdSketch.this.SKETCH.MOUSE_LISTENERS.add(this);
 		}
 
@@ -106,9 +106,9 @@ public class NerdSketch extends PApplet {
 
 	}
 
-	public class SketchTouchListener {
+	public class NerdSketchTouchListener {
 
-		public SketchTouchListener() {
+		public NerdSketchTouchListener() {
 			NerdSketch.this.SKETCH.TOUCH_LISTENERS.add(this);
 		}
 
@@ -125,9 +125,9 @@ public class NerdSketch extends PApplet {
 
 	}
 
-	public class SketchWindowListener {
+	public class NerdSketchWindowListener {
 
-		public SketchWindowListener() {
+		public NerdSketchWindowListener() {
 			NerdSketch.this.SKETCH.WINDOW_LISTENERS.add(this);
 		}
 
@@ -152,9 +152,9 @@ public class NerdSketch extends PApplet {
 
 	}
 
-	public class SketchKeyboardListener {
+	public class NerdSketchKeyboardListener {
 
-		public SketchKeyboardListener() {
+		public NerdSketchKeyboardListener() {
 			NerdSketch.this.SKETCH.KEYBOARD_LISTENERS.add(this);
 		}
 
@@ -301,10 +301,10 @@ public class NerdSketch extends PApplet {
 	// LAMBDAS ARE EXPENSIVVVVVE! Allocate only this!:
 	protected final Consumer<Consumer<NerdSketch>> DEF_CALLBACK_COLLECTION_ITR_LAMBDA = l -> l.accept(this);
 
-	protected final LinkedHashSet<SketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<SketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<SketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<SketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<NerdSketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<NerdSketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<NerdSketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<NerdSketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
 	// ...to remove!:
 	protected final HashSet<Consumer<NerdSketch>> CALLBACK_LISTENERS_TO_REMOVE = new HashSet<>(1);
 
@@ -615,7 +615,7 @@ public class NerdSketch extends PApplet {
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
+		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mousePressed();
 
 		this.SCENES.mousePressed();
@@ -623,7 +623,7 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseReleased() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
+		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseReleased();
 
 		this.SCENES.mouseReleased();
@@ -631,7 +631,7 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseMoved() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
+		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseMoved();
 
 		this.SCENES.mouseMoved();
@@ -639,7 +639,7 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseClicked() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
+		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseClicked();
 
 		this.SCENES.mouseClicked();
@@ -647,7 +647,7 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseDragged() {
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
+		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseDragged();
 
 		this.SCENES.mouseDragged();
@@ -657,7 +657,7 @@ public class NerdSketch extends PApplet {
 	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 		this.mouseScroll += p_mouseEvent.getCount();
 
-		for (final SketchMouseListener l : this.MOUSE_LISTENERS)
+		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseWheel(p_mouseEvent);
 
 		this.SCENES.mouseWheel(p_mouseEvent);
@@ -667,7 +667,7 @@ public class NerdSketch extends PApplet {
 	// region Keyboard events.
 	@Override
 	public void keyTyped() {
-		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS)
+		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
 			// ...could call that callback here directly, but I decided this!:
 			// "Filter these keys using the utility method[s]?"
 			//
@@ -717,7 +717,7 @@ public class NerdSketch extends PApplet {
 			this.keysHeld.add(super.keyCode);
 		}
 
-		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS)
+		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
 			l.keyPressed();
 
 		this.SCENES.keyPressed();
@@ -732,7 +732,7 @@ public class NerdSketch extends PApplet {
 		} catch (final IndexOutOfBoundsException e) {
 		}
 
-		for (final SketchKeyboardListener l : this.KEYBOARD_LISTENERS)
+		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
 			l.keyReleased();
 
 		this.SCENES.keyReleased();
@@ -741,21 +741,21 @@ public class NerdSketch extends PApplet {
 
 	// region Touch events.
 	public void touchStarted() {
-		for (final SketchTouchListener l : this.TOUCH_LISTENERS)
+		for (final NerdSketchTouchListener l : this.TOUCH_LISTENERS)
 			l.touchStarted();
 
 		this.SCENES.touchStarted();
 	}
 
 	public void touchMoved() {
-		for (final SketchTouchListener l : this.TOUCH_LISTENERS)
+		for (final NerdSketchTouchListener l : this.TOUCH_LISTENERS)
 			l.touchMoved();
 
 		this.SCENES.touchMoved();
 	}
 
 	public void touchEnded() {
-		for (final SketchTouchListener l : this.TOUCH_LISTENERS)
+		for (final NerdSketchTouchListener l : this.TOUCH_LISTENERS)
 			l.touchEnded();
 
 		this.SCENES.touchEnded();
@@ -772,7 +772,7 @@ public class NerdSketch extends PApplet {
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
-			for (final SketchWindowListener l : this.WINDOW_LISTENERS)
+			for (final NerdSketchWindowListener l : this.WINDOW_LISTENERS)
 				l.focusGained();
 
 		this.SCENES.focusGained();
@@ -787,7 +787,7 @@ public class NerdSketch extends PApplet {
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
-			for (final SketchWindowListener l : this.WINDOW_LISTENERS)
+			for (final NerdSketchWindowListener l : this.WINDOW_LISTENERS)
 				l.focusLost();
 
 		this.SCENES.focusLost();

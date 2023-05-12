@@ -5,9 +5,13 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashSet;
 
+import com.brahvim.nerd.framework.scenes.NerdSceneState;
+
 public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> {
 
     private final Class<SystemComponentsT> COMPONENT_TYPE_CLASS;
+
+    // TODO: Actually implement workflow callbacks for systems!
 
     @SuppressWarnings("unchecked")
     protected NerdEcsSystem() {
@@ -25,12 +29,38 @@ public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> 
                 .getActualTypeArguments()[0];
     }
 
+    public final Class<SystemComponentsT> getComponentTypeClass() {
+        return this.COMPONENT_TYPE_CLASS;
+    }
+
     protected void update(final Collection<SystemComponentsT> p_components) {
     }
 
-    public Class<SystemComponentsT> getComponentTypeClass() {
-        return this.COMPONENT_TYPE_CLASS;
+    // region Sketch workflow callbacks.
+    protected synchronized void preload() {
     }
+
+    protected void sceneChanged() {
+    }
+
+    protected void setup(final NerdSceneState p_state) {
+    }
+
+    protected void pre() {
+    }
+
+    protected void draw() {
+    }
+
+    protected void post() {
+    }
+
+    protected void exit() {
+    }
+
+    protected void dispose() {
+    }
+    // endregion
 
     // region Events.
     // region Mouse events.
