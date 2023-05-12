@@ -3,6 +3,7 @@ package com.brahvim.nerd.framework.ecs;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
@@ -10,21 +11,22 @@ public class NerdEcsManager {
 
     // region Fields.
     protected final LinkedList<NerdEcsEntity> ENTITIES = new LinkedList<>();
-    protected final HashMap<String, NerdEcsEntity> STRING_MAP = new HashMap<>();
-    protected final HashMap<Integer, NerdEcsEntity> HASHES_MAP = new HashMap<>();
+    protected final LinkedList<NerdEcsSystem<?>> SYSTEMS = new LinkedList<>();
+    protected final HashMap<String, NerdEcsEntity> ENTITY_STRING_MAP = new HashMap<>();
+    // protected final HashMap<Integer, NerdEcsEntity> ENTITY_HASHES_MAP;
     protected final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
-    protected final HashMap<Class<? extends NerdEcsComponent>, NerdEcsComponent> CLASS_MAP = new HashMap<>();
+    protected final HashMap<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> COMPONENT_CLASS_MAP = new HashMap<>();
 
     private final HashSet<NerdEcsEntity> ENTITIES_TO_ADD = new HashSet<>();
     private final HashSet<NerdEcsEntity> ENTITIES_TO_REMOVE = new HashSet<>();
 
     private final HashSet<NerdEcsComponent> COMPONENTS_TO_ADD = new HashSet<>();
     private final HashSet<NerdEcsComponent> COMPONENTS_TO_REMOVE = new HashSet<>();
-    // private final NerdSketch SKETCH;
+    private final NerdSketch SKETCH;
     // endregion
 
-    public NerdEcsManager(/* final NerdSketch p_sketch */) {
-        // this.SKETCH = p_sketch;
+    public NerdEcsManager(final NerdSketch p_sketch) {
+        this.SKETCH = p_sketch;
     }
 
     protected void runUpdates() {
@@ -39,8 +41,11 @@ public class NerdEcsManager {
         this.ENTITIES_TO_REMOVE.clear();
         this.COMPONENTS_TO_REMOVE.clear();
 
-        // Update all components:
-        this.COMPONENTS.forEach(NerdEcsComponent::update);
+        // Run all systems:
+        for (Map.Entry<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> e : this.COMPONENT_CLASS_MAP
+                .entrySet()) {
+            // this.SYSTEMS.get
+        }
     }
 
     // region Public API! (For entities only!)
@@ -53,9 +58,6 @@ public class NerdEcsManager {
     public void removeEntity(final NerdEcsEntity p_entity) {
         this.ENTITIES_TO_REMOVE.add(p_entity);
     }
-    // endregion
-
-    // region Public API! (For components only!)
     // endregion
 
     protected void addComponent(final NerdEcsComponent p_component) {

@@ -80,7 +80,7 @@ public class NerdScene {
   // endregion
 
   protected NerdScene() {
-    this.ECS = new NerdEcsManager(/* this.SKETCH */);
+    this.ECS = new NerdEcsManager(this.SKETCH);
   }
 
   // region Queries.

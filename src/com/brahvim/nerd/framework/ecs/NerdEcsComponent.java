@@ -9,7 +9,4 @@ public class NerdEcsComponent implements Serializable {
     protected NerdEcsComponent() {
     }
 
-    public void update() {
-    }
-
 }

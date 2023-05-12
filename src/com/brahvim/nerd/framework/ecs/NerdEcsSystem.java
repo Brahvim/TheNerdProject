@@ -1,8 +1,13 @@
 package com.brahvim.nerd.framework.ecs;
 
-public class NerdEcsSystem {
+import java.util.Collection;
 
-    public NerdEcsSystem() {
+public class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> {
+
+    protected NerdEcsSystem() {
+    }
+
+    protected void update(final Collection<SystemComponentsT> p_components) {
     }
 
     // region Events.

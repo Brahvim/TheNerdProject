@@ -5,8 +5,8 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 public class NerdEcsManagerSceneApiBridge extends NerdEcsManager {
 
-    /* `package` */ NerdEcsManagerSceneApiBridge(/* final NerdSketch p_sketch */) {
-        // super(p_sketch);
+    /* `package` */ NerdEcsManagerSceneApiBridge(final NerdSketch p_sketch) {
+        super(p_sketch);
     }
 
     @Override
