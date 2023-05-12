@@ -6,7 +6,10 @@ public class NerdEcsComponent implements Serializable {
 
     public static final long serialVersionUID = -144634679663L;
 
-    public NerdEcsComponent() {
+    protected NerdEcsComponent() {
+    }
+
+    public void update() {
     }
 
 }

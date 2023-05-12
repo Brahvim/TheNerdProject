@@ -1,6 +1,7 @@
 package com.brahvim.nerd.framework.ecs;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 
 public abstract class NerdEcsEntity implements Serializable {
@@ -8,7 +9,7 @@ public abstract class NerdEcsEntity implements Serializable {
     public static final long serialVersionUID = -84636463676L;
     protected final NerdEcsEntity ENTITY = this;
 
-    protected NerdEcsEntityManager ENTITIES;
+    protected NerdEcsManager ECS;
 
     private final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
 
@@ -17,6 +18,58 @@ public abstract class NerdEcsEntity implements Serializable {
 
     protected void update() {
     }
+
+    // region Dynamic component list queries.
+    @SuppressWarnings("unchecked")
+    public <ComponentT extends NerdEcsComponent> ComponentT getComponent(final Class<ComponentT> p_componentClass) {
+        for (final NerdEcsComponent c : this.COMPONENTS)
+            if (c.getClass().equals(p_componentClass))
+                return (ComponentT) c;
+
+        return null;
+    }
+
+    public <ComponentT extends NerdEcsComponent> ComponentT addComponent(final Class<ComponentT> p_componentClass) {
+        ComponentT toRet = null;
+
+        try {
+            toRet = p_componentClass.getConstructor().newInstance();
+        } catch (final InstantiationException e) {
+            e.printStackTrace();
+        } catch (final IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (final IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (final InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (final NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (final SecurityException e) {
+            e.printStackTrace();
+        }
+
+        if (toRet != null)
+            this.COMPONENTS.add(toRet);
+
+        return toRet;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <ComponentT extends NerdEcsComponent> ComponentT removeComponent(final Class<ComponentT> p_componentClass) {
+        ComponentT toRet = null;
+
+        for (final NerdEcsComponent c : this.COMPONENTS)
+            if (c.getClass().equals(p_componentClass))
+                toRet = (ComponentT) c;
+
+
+
+        if (toRet != null)
+            this.COMPONENTS.remove(toRet);
+
+        return toRet;
+    }
+    // endregion
 
     // region Events.
     // region Mouse events.

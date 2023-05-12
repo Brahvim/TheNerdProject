@@ -1,34 +1,39 @@
 package com.brahvim.nerd.framework.ecs;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 public class NerdEcsManager {
 
     // region Fields.
-    public final NerdEcsEntityManager ENTITY_MAN;
-    public final NerdEcsSystemManager SYSTEM_MAN;
-    public final NerdEcsComponentManager COMPONENT_MAN;
+    protected final LinkedList<NerdEcsEntity> ENTITIES = new LinkedList<>();
+    protected final HashMap<String, NerdEcsEntity> STRING_MAP = new HashMap<>();
+    protected final HashMap<Integer, NerdEcsEntity> HASHES_MAP = new HashMap<>();
+    protected final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
+    protected final HashMap<Class<? extends NerdEcsComponent>, NerdEcsComponent> CLASS_MAP = new HashMap<>();
 
+    // private final HashSet<Object>
     private final NerdSketch SKETCH;
     // endregion
 
     public NerdEcsManager(final NerdSketch p_sketch) {
         this.SKETCH = p_sketch;
-        this.ENTITY_MAN = new NerdEcsEntityManager();
-        this.SYSTEM_MAN = new NerdEcsSystemManager();
-        this.COMPONENT_MAN = new NerdEcsComponentManager();
     }
 
     protected void updateAll() {
     }
 
     protected void updateComponents() {
-        this.COMPONENT_MAN.update();
+        for (final NerdEcsComponent c : this.COMPONENTS)
+            c.update();
     }
 
-    protected void updateEntities() {
-        this.ENTITY_MAN.update();
-    }
+    // protected void updateEntities() {
+    // for (final NerdEcsEntity e : this.ENTITIES)
+    // e.update();
+    // }
 
     // region Events.
     // region Mouse events.
