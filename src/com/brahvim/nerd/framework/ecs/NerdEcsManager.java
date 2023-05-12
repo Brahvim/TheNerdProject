@@ -1,6 +1,7 @@
 package com.brahvim.nerd.framework.ecs;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
@@ -14,26 +15,56 @@ public class NerdEcsManager {
     protected final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
     protected final HashMap<Class<? extends NerdEcsComponent>, NerdEcsComponent> CLASS_MAP = new HashMap<>();
 
-    // private final HashSet<Object>
-    private final NerdSketch SKETCH;
+    private final HashSet<NerdEcsEntity> ENTITIES_TO_ADD = new HashSet<>();
+    private final HashSet<NerdEcsEntity> ENTITIES_TO_REMOVE = new HashSet<>();
+
+    private final HashSet<NerdEcsComponent> COMPONENTS_TO_ADD = new HashSet<>();
+    private final HashSet<NerdEcsComponent> COMPONENTS_TO_REMOVE = new HashSet<>();
+    // private final NerdSketch SKETCH;
     // endregion
 
-    public NerdEcsManager(final NerdSketch p_sketch) {
-        this.SKETCH = p_sketch;
+    public NerdEcsManager(/* final NerdSketch p_sketch */) {
+        // this.SKETCH = p_sketch;
     }
 
-    protected void updateAll() {
+    protected void runUpdates() {
+        this.ENTITIES.removeAll(this.ENTITIES_TO_REMOVE);
+        this.COMPONENTS.removeAll(this.COMPONENTS_TO_REMOVE);
+
+        this.ENTITIES.addAll(this.ENTITIES_TO_ADD);
+        this.COMPONENTS.addAll(this.COMPONENTS_TO_ADD);
+
+        this.ENTITIES_TO_ADD.clear();
+        this.COMPONENTS_TO_ADD.clear();
+        this.ENTITIES_TO_REMOVE.clear();
+        this.COMPONENTS_TO_REMOVE.clear();
+
+        // Update all components:
+        this.COMPONENTS.forEach(NerdEcsComponent::update);
     }
 
-    protected void updateComponents() {
-        for (final NerdEcsComponent c : this.COMPONENTS)
-            c.update();
+    // region Public API! (For entities only!)
+    public NerdEcsEntity createEntity() {
+        final NerdEcsEntity toRet = new NerdEcsEntity();
+        this.ENTITIES_TO_ADD.add(toRet);
+        return toRet;
     }
 
-    // protected void updateEntities() {
-    // for (final NerdEcsEntity e : this.ENTITIES)
-    // e.update();
-    // }
+    public void removeEntity(final NerdEcsEntity p_entity) {
+        this.ENTITIES_TO_REMOVE.add(p_entity);
+    }
+    // endregion
+
+    // region Public API! (For components only!)
+    // endregion
+
+    protected void addComponent(final NerdEcsComponent p_component) {
+        this.COMPONENTS_TO_ADD.add(p_component);
+    }
+
+    protected void removeComponent(final NerdEcsComponent p_component) {
+        this.COMPONENTS_TO_REMOVE.add(p_component);
+    }
 
     // region Events.
     // region Mouse events.

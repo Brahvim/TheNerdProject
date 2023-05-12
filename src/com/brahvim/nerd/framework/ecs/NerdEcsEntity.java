@@ -4,22 +4,20 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 
-public abstract class NerdEcsEntity implements Serializable {
+public class NerdEcsEntity implements Serializable {
 
     public static final long serialVersionUID = -84636463676L;
-    protected final NerdEcsEntity ENTITY = this;
 
-    protected NerdEcsManager ECS;
+    protected final transient NerdEcsEntity ENTITY = this;
+
+    protected transient NerdEcsManager ecsMan;
 
     private final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
 
-    public NerdEcsEntity() {
+    protected NerdEcsEntity() {
     }
 
-    protected void update() {
-    }
-
-    // region Dynamic component list queries.
+    // region Dynamic component list queries. (PLEASE! No variadic overloads...)
     @SuppressWarnings("unchecked")
     public <ComponentT extends NerdEcsComponent> ComponentT getComponent(final Class<ComponentT> p_componentClass) {
         for (final NerdEcsComponent c : this.COMPONENTS)
@@ -32,6 +30,7 @@ public abstract class NerdEcsEntity implements Serializable {
     public <ComponentT extends NerdEcsComponent> ComponentT addComponent(final Class<ComponentT> p_componentClass) {
         ComponentT toRet = null;
 
+        // region Construction!
         try {
             toRet = p_componentClass.getConstructor().newInstance();
         } catch (final InstantiationException e) {
@@ -47,9 +46,12 @@ public abstract class NerdEcsEntity implements Serializable {
         } catch (final SecurityException e) {
             e.printStackTrace();
         }
+        // endregion
 
-        if (toRet != null)
+        if (toRet != null) {
             this.COMPONENTS.add(toRet);
+            this.ecsMan.addComponent(toRet);
+        }
 
         return toRet;
     }
@@ -62,10 +64,10 @@ public abstract class NerdEcsEntity implements Serializable {
             if (c.getClass().equals(p_componentClass))
                 toRet = (ComponentT) c;
 
-
-
-        if (toRet != null)
+        if (toRet != null) {
             this.COMPONENTS.remove(toRet);
+            this.ecsMan.removeComponent(toRet);
+        }
 
         return toRet;
     }
