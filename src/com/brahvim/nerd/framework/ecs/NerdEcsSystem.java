@@ -14,9 +14,9 @@ public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> 
         final Type myGenericSuperclass = this.getClass().getGenericSuperclass();
 
         if (!(myGenericSuperclass instanceof ParameterizedType)) {
-            throw new RuntimeException(String.format("""
-                    Sorry, but not specifying the generic type argument in your \
-                    `NerdEcsSystem` subclass, `%s`, is illegal.""",
+            throw new RuntimeException(String.format(
+                    "Sorry, but not specifying the generic type argument in your"
+                            + "`NerdEcsSystem` subclass, `%s`, is illegal.",
                     this.getClass().getSimpleName()));
         }
 
@@ -95,4 +95,5 @@ public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> 
     }
     // endregion
     // endregion
+
 }

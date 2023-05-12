@@ -19,7 +19,7 @@ public class App {
     /*
      * // TODO: ECS.
      * // TODO: Make it easier to animate, somehow!?
-     * // TODO: Collision Algorithms (also for 3D space).d
+     * // TODO: Collision Algorithms (also for 3D space).
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
      * // TODO: `int` tags for entities! Imagine using `|` to access multiple tags!
      */
