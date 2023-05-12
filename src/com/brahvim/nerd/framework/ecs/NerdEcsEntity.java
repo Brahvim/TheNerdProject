@@ -27,7 +27,7 @@ public class NerdEcsEntity implements Serializable {
         return null;
     }
 
-    public <ComponentT extends NerdEcsComponent> ComponentT addComponent(final Class<ComponentT> p_componentClass) {
+    public <ComponentT extends NerdEcsComponent> ComponentT attachComponent(final Class<ComponentT> p_componentClass) {
         ComponentT toRet = null;
 
         // region Construction!

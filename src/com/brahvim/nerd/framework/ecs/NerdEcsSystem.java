@@ -3,6 +3,7 @@ package com.brahvim.nerd.framework.ecs;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashSet;
 
 public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> {
 
@@ -33,65 +34,66 @@ public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> 
 
     // region Events.
     // region Mouse events.
-    public void mousePressed() {
+    public void mousePressed(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void mouseReleased() {
+    public void mouseReleased(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void mouseMoved() {
+    public void mouseMoved(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void mouseClicked() {
+    public void mouseClicked(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void mouseDragged() {
+    public void mouseDragged(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
     // @SuppressWarnings("unused")
-    public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
+    public void mouseWheel(final processing.event.MouseEvent p_mouseEvent,
+            /* final */ HashSet<SystemComponentsT> p_components) {
     }
     // endregion
 
     // region Keyboard events.
-    public void keyTyped() {
+    public void keyTyped(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void keyPressed() {
+    public void keyPressed(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void keyReleased() {
+    public void keyReleased(/* final */ HashSet<SystemComponentsT> p_components) {
     }
     // endregion
 
     // region Touch events.
-    public void touchStarted() {
+    public void touchStarted(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void touchMoved() {
+    public void touchMoved(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void touchEnded() {
+    public void touchEnded(/* final */ HashSet<SystemComponentsT> p_components) {
     }
     // endregion
 
     // region Window focus events.
-    public void focusLost() {
+    public void focusLost(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void exit() {
+    public void exit(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void resized() {
+    public void resized(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void focusGained() {
+    public void focusGained(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void monitorChanged() {
+    public void monitorChanged(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    public void fullscreenChanged(final boolean p_state) {
+    public void fullscreenChanged(final boolean p_state, /* final */ HashSet<SystemComponentsT> p_components) {
     }
     // endregion
     // endregion

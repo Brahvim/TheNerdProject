@@ -441,7 +441,7 @@ public class NerdScene {
 
   /* `package` */ synchronized void runPreload() {
     this.preload();
-    SKETCH.ASSETS.forceLoading();
+    this.ASSETS.forceLoading();
 
     if (this.MANAGER.SETTINGS.ON_PRELOAD.useExecutors) {
       final ThreadPoolExecutor executor = new ThreadPoolExecutor(
@@ -466,6 +466,10 @@ public class NerdScene {
       this.ASSETS.forEach(NerdAsset::startLoading);
 
     this.donePreloading = true;
+  }
+
+  /* `package` */ void runSceneConstructed() {
+    this.sceneConstructed();
   }
 
   /* `package` */ void runSceneChanged() {
@@ -680,6 +684,14 @@ public class NerdScene {
   }
 
   protected void sceneChanged() {
+  }
+
+  /**
+   * Event for when the scene is constructed, before the scene manager assigns
+   * any fields their values, allowing you to assign them yourself. Please note
+   * that {@link NerdScene#STATE} is re-assigned anyway.
+   */
+  protected void sceneConstructed() {
   }
 
   /**

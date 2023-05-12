@@ -60,7 +60,7 @@ public class NerdSceneManager {
 
     public static class SceneManagerSettings {
 
-        public NerdEcsSystem<?>[] ecsSystemOrder;
+        public NerdEcsSystem<?>[] orderOfEcsSystems;
 
         // region App workflow callbacks scene-or-layer order.
         /**
@@ -242,7 +242,7 @@ public class NerdSceneManager {
         this.SKETCH = p_sketch;
         this.SETTINGS = p_settings;
         this.SCENE_CHANGE_LISTENERS = p_listeners;
-        this.SETTINGS.ecsSystemOrder = p_ecsSystems;
+        this.SETTINGS.orderOfEcsSystems = p_ecsSystems;
     }
 
     // region Workflow callbacks.
@@ -785,23 +785,39 @@ public class NerdSceneManager {
         final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
         final NerdSceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE.get(SCENE_CLASS);
 
-        // Initialize fields as if this was a part of the construction.
-        toRet.MANAGER = this;
-        toRet.SKETCH = toRet.MANAGER.SKETCH;
+        toRet.sceneConstructed();
 
-        toRet.INPUT = toRet.SKETCH.INPUT;
-        toRet.WINDOW = toRet.SKETCH.WINDOW;
-        toRet.DISPLAYS = toRet.SKETCH.DISPLAYS;
-        toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
-        toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?
+        // Initialize fields as if this was a part of the construction.
+        if (toRet.MANAGER == null)
+            toRet.MANAGER = this;
+
+        if (toRet.SKETCH == null)
+            toRet.SKETCH = toRet.MANAGER.SKETCH;
+
+        if (toRet.INPUT == null)
+            toRet.INPUT = toRet.SKETCH.INPUT;
+
+        if (toRet.WINDOW == null)
+            toRet.WINDOW = toRet.SKETCH.WINDOW;
+
+        if (toRet.DISPLAYS == null)
+            toRet.DISPLAYS = toRet.SKETCH.DISPLAYS;
+
+        if (toRet.CAMERA == null)
+            toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
+
+        if (toRet.ASSETS == null)
+            toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?
 
         // Set up the ECS:
-        NerdEcsSystem<?>[] systems = this.SETTINGS.ecsSystemOrder;
+        if (toRet.ECS == null) {
+            NerdEcsSystem<?>[] systems = this.SETTINGS.orderOfEcsSystems;
 
-        if (systems == null)
-            systems = NerdEcsManager.DEFAULT_ECS_SYSTEMS_ORDER;
+            if (systems == null)
+                systems = NerdEcsManager.DEFAULT_ECS_SYSTEMS_ORDER;
 
-        toRet.ECS = new NerdEcsManager(this.SKETCH, systems);
+            toRet.ECS = new NerdEcsManager(this.SKETCH, systems);
+        }
 
         // If this is the first time we're constructing this scene, ensure it has a
         // cache and a saved state!
@@ -811,9 +827,6 @@ public class NerdSceneManager {
                     new NerdSceneManager.SceneCache(p_sceneConstructor, toRet));
         } else
             toRet.STATE = SCENE_CACHE.STATE;
-
-        if (SCENE_CACHE != null)
-            SCENE_CACHE.timesLoaded++;
         // endregion
 
         return toRet;
