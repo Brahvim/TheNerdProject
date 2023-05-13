@@ -296,7 +296,7 @@ public class NerdSketch extends PApplet {
 
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	protected NerdBasicCamera defaultCamera;
-	protected PImage iconImage, bgImage;
+	protected PImage iconImage;
 	protected NerdScene currentScene;
 	protected PFont defaultFont;
 
@@ -559,20 +559,6 @@ public class NerdSketch extends PApplet {
 		this.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
 		this.GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_POINT.x, this.GLOBAL_MOUSE_POINT.y);
 		// endregion
-		// endregion
-
-		// region Draw the background image if there is one.
-		if (this.bgImage != null) {
-			super.pushMatrix();
-			super.hint(PConstants.DISABLE_DEPTH_TEST);
-			super.perspective();
-			super.camera();
-			super.image(this.bgImage,
-					this.WINDOW.cx, this.WINDOW.cy,
-					this.WINDOW.width, this.WINDOW.height);
-			super.hint(PConstants.ENABLE_DEPTH_TEST);
-			super.popMatrix();
-		}
 		// endregion
 
 		// region Apply the camera when using OpenGL!
@@ -959,43 +945,6 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// region Rendering utilities!
-	// region Setting a background image.
-	/**
-	 * Sets an image automatically drawn before any rendering, each frame.
-	 * This image is resized automatically as the size of the window changes.
-	 * To allow for the image to be resized without disturbing your copy, its data
-	 * is copied over. If you want your image to be resized automatically, use
-	 * {@link NerdSketch#setBackgroundImageByRef(PImage)}
-	 * 
-	 * @see NerdSketch#removeBackgroundImage()
-	 * @see NerdSketch#setBackgroundImageByRef()
-	 */
-	public void setBackgroundImage(final PImage p_image) {
-		this.bgImage = p_image.get();
-	}
-
-	/**
-	 * Serves the same purpose as {@link NerdSketch#setBackgroundImage(PImage)},
-	 * except that the image passed, is copied by reference. This means that the
-	 * image will be resized as the size of the window changes, and this change will
-	 * be reflected over all references to the image object.
-	 * 
-	 * @see NerdSketch#setBackgroundImage()
-	 * @see NerdSketch#removeBackgroundImage()
-	 */
-	public void setBackgroundImageByRef(final PImage p_image) {
-		this.bgImage = p_image;
-	}
-
-	/**
-	 * Deletes the image data set by {@link NerdSketch#setBackgroundImage()}
-	 * or {@link NerdSketch#setBackgroundImageByRef()}.
-	 */
-	public void removeBackgroundImage() {
-		this.bgImage = null;
-	}
-	// endregion
-
 	// region From `PGraphics`.
 	// region Shapes.
 	// region `drawShape()` overloads.
@@ -1492,25 +1441,22 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	/**
-	 * Method to automatically resize the passed image if needed.
-	 * This does not make a copy of your image (performance!~), so,
-	 * ...make sure to do so, if you need to!
+	 * Draws the {@code p_bgImage} as if it was a background. You may even choose to
+	 * call one of the {@link PApplet#tint()} overloads before calling this!
 	 */
 	@Override
-	// @Deprecated
-	public void background(final PImage p_image) {
-		if (this.bgImage == p_image)
-			this.setBackgroundImageByRef(p_image);
+	public void background(final PImage p_bgImage) {
+		Objects.requireNonNull(p_bgImage);
 
-		// try {
-		// super.background(p_image);
-		// } catch (final RuntimeException e) {
-		// // Do nothing with the exception. Don't even READ it.
-		// // final PImage copy = p_image.get();
-		// // copy.resize(super.width, super.height);
-		// p_image.resize(super.width, super.height);
-		// super.background(p_image);
-		// }
+		super.pushMatrix();
+		super.hint(PConstants.DISABLE_DEPTH_TEST);
+		super.perspective();
+		super.camera();
+		super.image(p_bgImage,
+				this.WINDOW.cx, this.WINDOW.cy,
+				this.WINDOW.width, this.WINDOW.height);
+		super.hint(PConstants.ENABLE_DEPTH_TEST);
+		super.popMatrix();
 	}
 
 	// region Transformations!
@@ -1811,6 +1757,21 @@ public class NerdSketch extends PApplet {
 	}
 	// endregion
 	// endregion
+
+	public float textHeight() {
+		return super.textAscent() - super.textDescent();
+	}
+
+	/**
+	 * Translates by the width of {@code p_text} halved, and the current text
+	 * height, halved, before actually rendering the text.
+	 * 
+	 * @see NerdSketch#textHeight()
+	 * @see PApplet#textWidth(String)
+	 */
+	public void centeredText(final String p_text) {
+		super.text(p_text, super.textWidth(p_text) * 0.5f, this.textHeight() * 0.5f);
+	}
 
 	public PImage svgToImage(final PShape p_shape, final float p_width, final float p_height) {
 		if (p_shape == null)

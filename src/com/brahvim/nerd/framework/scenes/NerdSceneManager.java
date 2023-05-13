@@ -937,6 +937,7 @@ public class NerdSceneManager {
             this.SKETCH.pop();
 
         this.SKETCH.push();
+
         this.SKETCH.textFont(this.SKETCH.getDefaultFont());
 
         this.SCENE_CHANGE_LISTENERS.removeAll(this.SCENE_CHANGE_LISTENERS_TO_REMOVE);

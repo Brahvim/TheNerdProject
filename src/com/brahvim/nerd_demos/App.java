@@ -17,12 +17,10 @@ import processing.opengl.PGraphicsOpenGL;
 public class App {
 
     /*
-     * // TODO: Dyn4j wrapper.
      * // TODO: ECS wrapper for Processing!
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
+     * // TODO: Dyn4j ECS wrapper. ...or A (Javacpp) LiquidFun ECS wrapper!
      * // TODO: "`NerdGraphics`" wrapper to use passed `PGraphics` with features.
-     * // TODO: Call `NerdScene` fields `final` w/ a package-private constructor.
-     * // TODO: Call `NerdLayer` fields `final` w/ a package-private constructor.
      */
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =

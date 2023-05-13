@@ -20,9 +20,10 @@ import processing.event.MouseEvent;
 public class DemoScene3 extends NerdScene {
 
     // region Fields.
+    private PImage bgImage;
     private SmoothCamera CAMERA;
     private CubeManager cubeMan;
-    private NerdAmbiLight ambiLight;
+    private NerdAmbiLight light;
     // endregion
 
     @Override
@@ -46,20 +47,24 @@ public class DemoScene3 extends NerdScene {
             alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
 
         this.cubeMan = new CubeManager(this, alBuffers);
-        this.ambiLight = new NerdAmbiLight(
+        this.light = new NerdAmbiLight(
                 SKETCH,
                 new PVector(0, 0, 0),
-                // new PVector(255, 255, 0) // Yellow
+                // new PVector(255, 255, 0) // Yellow.
                 // new PVector(224, 152, 27) // The orange at the top.
-                // new PVector(228, 117, 111) // The color in the middle
+                // new PVector(228, 117, 111) // The color in the middle.
                 new PVector(232, 81, 194) // The pink at the bottom.
         );
 
-        SKETCH.setBackgroundImage(this.createBackground());
+        this.bgImage = this.createBackgroundImage();
+        SKETCH.background(this.bgImage);
     }
 
     @Override
     protected void draw() {
+        SKETCH.tint(255, 100);
+        SKETCH.background(this.bgImage);
+
         // Faster in `draw()`:
         if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
             this.cubeMan.removeAll(); // REALLY helps the GC out!
@@ -68,19 +73,18 @@ public class DemoScene3 extends NerdScene {
         }
 
         SKETCH.lights();
-        // SKETCH.background(0);
-        this.ambiLight.apply();
+        this.light.apply();
         this.cubeMan.draw();
 
-        SKETCH.in2d(() -> {
-            SKETCH.textSize(42);
-            final String fps = Float.toString(SKETCH.frameRate);
-            SKETCH.text(fps, SKETCH.textWidth(fps) * 0.5f, SKETCH.textAscent() - SKETCH.textDescent());
-        });
+        SKETCH.begin2d();
+        SKETCH.textSize(42);
+        SKETCH.centeredText(Float.toString(SKETCH.frameRate));
+        // SKETCH.text(Float.toString(SKETCH.frameRate), 0, 0);
+        SKETCH.end2d();
     }
 
-    // region My methods :)
-    private PImage createBackground() {
+    // region My method[s] :)
+    private PImage createBackgroundImage() {
         final int color1 = SKETCH.color(224, 152, 27), color2 = SKETCH.color(232, 81, 194);
         final PImage toRet = SKETCH.createImage(256, 256, PConstants.RGB);
 
@@ -98,7 +102,7 @@ public class DemoScene3 extends NerdScene {
     public void mouseClicked() {
         switch (SKETCH.mouseButton) {
             case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
-            case PConstants.CENTER -> this.cubeMan.removeAll();
+            case PConstants.CENTER -> CAMERA.setRoll(0);
             case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
         }
     }

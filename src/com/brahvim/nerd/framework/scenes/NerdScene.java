@@ -25,8 +25,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
  *
  * @author Brahvim Bhaktvatsal
  */
-// Not `abstract` so you get to override only what you want.
-public class NerdScene {
+public abstract class NerdScene {
 
   // region `public` fields.
   public final NerdScene SCENE = this;

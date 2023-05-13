@@ -9,7 +9,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
 
 /**
  * Just like {@link NerdScene}s, {@link NerdLayer}s
- * are used by extending this class.
+ * are used by with inheritance, and not anonymous classes.
  * To add a {@link NerdLayer} to a {@link NerdScene}, use the
  * {@code SceneClass::startLayer(LayerClass.class)}
  * method, where {@code LayerClass} and {@code SceneClass}
@@ -18,7 +18,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
  *
  * @author Brahvim Bhaktvatsal
  */
-public class NerdLayer {
+public abstract class NerdLayer {
 
     // region `public` fields.
     // Seriously, why did I set these to be `protected`?
