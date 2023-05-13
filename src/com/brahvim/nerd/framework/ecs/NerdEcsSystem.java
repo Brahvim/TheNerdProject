@@ -10,8 +10,6 @@ public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> 
 
     private final Class<SystemComponentsT> COMPONENT_TYPE_CLASS;
 
-    // TODO: Actually implement workflow callbacks for systems!
-
     @SuppressWarnings("unchecked")
     protected NerdEcsSystem() {
         // ...Trivial reflection tricks are where ChatGPT is my best friend ._.

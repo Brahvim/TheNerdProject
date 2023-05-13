@@ -1,9 +1,10 @@
-package com.brahvim.nerd_demos;
+package com.brahvim.nerd_demos.scenes.scene3;
 
 import com.brahvim.nerd.framework.scenes.NerdScene;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd.openal.AlSource;
-import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd_demos.App;
+import com.brahvim.nerd.openal.AlBuffer;
 
 import processing.core.PConstants;
 import processing.core.PShape;
@@ -106,7 +107,7 @@ public class AnimatedCube extends TestEulerBody {
         // this.popSrc.setPosition(PVector.mult(super.pos, 0.001f).array());
         this.popSrc.setPosition(PVector.mult(super.pos, Float.MIN_VALUE).array());
         this.visible = true;
-        this.popSrc.play();
+        this.popSrc.playThenDispose();
 
         this.plopWave.freqMult = 0.015f;
         this.plopWave.endWhenAngleIncrementsBy(90).start();
@@ -135,11 +136,6 @@ public class AnimatedCube extends TestEulerBody {
     public void draw(final PShape p_shape) {
         if (!this.visible)
             return;
-
-        if (this.plopWave.active)
-            if (this.popSrc != null)
-                if (this.popSrc.isStopped())
-                    this.popSrc.dispose();
 
         super.integrate();
         super.SKETCH.push();

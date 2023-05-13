@@ -1,10 +1,10 @@
-package com.brahvim.nerd_demos;
+package com.brahvim.nerd_demos.scenes.scene3;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 import com.brahvim.nerd.framework.scenes.NerdScene;
-import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd.openal.AlBuffer;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PConstants;

@@ -7,9 +7,8 @@ import com.brahvim.nerd.framework.scenes.NerdScene;
 import com.brahvim.nerd.framework.scenes.NerdSceneManager;
 import com.brahvim.nerd.framework.scenes.NerdSceneState;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
-import com.brahvim.nerd.openal.al_buffers.AlBuffer;
+import com.brahvim.nerd.openal.AlBuffer;
 import com.brahvim.nerd_demos.App;
-import com.brahvim.nerd_demos.CubeManager;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
 import processing.core.PApplet;
@@ -21,7 +20,6 @@ import processing.event.MouseEvent;
 public class DemoScene3 extends NerdScene {
 
     // region Fields.
-    private PImage bgGrad;
     private SmoothCamera CAMERA;
     private CubeManager cubeMan;
     private NerdAmbiLight ambiLight;
@@ -37,7 +35,6 @@ public class DemoScene3 extends NerdScene {
     protected void setup(final NerdSceneState p_state) {
         MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.SCENE;
         // SCENE.addLayers(CinematicBars.class);
-        this.calculateBgGrad();
 
         CAMERA = new SmoothCamera(SKETCH);
         CAMERA.fov = PApplet.radians(75);
@@ -57,6 +54,8 @@ public class DemoScene3 extends NerdScene {
                 // new PVector(228, 117, 111) // The color in the middle
                 new PVector(232, 81, 194) // The pink at the bottom.
         );
+
+        SKETCH.setBackgroundImage(this.createBackground());
     }
 
     @Override
@@ -69,20 +68,28 @@ public class DemoScene3 extends NerdScene {
         }
 
         SKETCH.lights();
-        SKETCH.background(this.bgGrad);
+        // SKETCH.background(0);
         this.ambiLight.apply();
         this.cubeMan.draw();
+
+        SKETCH.in2d(() -> {
+            SKETCH.textSize(42);
+            final String fps = Float.toString(SKETCH.frameRate);
+            SKETCH.text(fps, SKETCH.textWidth(fps) * 0.5f, SKETCH.textAscent() - SKETCH.textDescent());
+        });
     }
 
     // region My methods :)
-    private void calculateBgGrad() {
+    private PImage createBackground() {
         final int color1 = SKETCH.color(224, 152, 27), color2 = SKETCH.color(232, 81, 194);
-        this.bgGrad = SKETCH.createImage(SKETCH.width, SKETCH.height, PConstants.RGB);
+        final PImage toRet = SKETCH.createImage(256, 256, PConstants.RGB);
 
-        for (int y = 0; y < this.bgGrad.height; y++)
-            for (int x = 0; x < this.bgGrad.width; x++)
-                this.bgGrad.pixels[x + y * this.bgGrad.width] = SKETCH.lerpColor(
-                        color1, color2, PApplet.map(y, 0, this.bgGrad.height, 0, 1));
+        for (int y = 0; y < toRet.height; y++)
+            for (int x = 0; x < toRet.width; x++)
+                toRet.pixels[x + y * toRet.width] = SKETCH.lerpColor(
+                        color1, color2, PApplet.map(y, 0, toRet.height, 0, 1));
+
+        return toRet;
     }
     // endregion
 

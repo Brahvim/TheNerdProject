@@ -6,7 +6,6 @@ import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
-import com.brahvim.nerd_demos.scenes.ecs_demo_scene.EcsDemoScene;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
@@ -18,17 +17,18 @@ import processing.opengl.PGraphicsOpenGL;
 public class App {
 
     /*
-     * // TODO: ECS.
-     * // TODO: Make it easier to animate, somehow!?
-     * // TODO: Collision Algorithms (also for 3D space).
+     * // TODO: Dyn4j wrapper.
+     * // TODO: ECS wrapper for Processing!
      * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
-     * // TODO: `int` tags for entities! Imagine using `|` to access multiple tags!
+     * // TODO: "`NerdGraphics`" wrapper to use passed `PGraphics` with features.
+     * // TODO: Call `NerdScene` fields `final` w/ a package-private constructor.
+     * // TODO: Call `NerdLayer` fields `final` w/ a package-private constructor.
      */
 
     public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
             // Use directly in `setFirstSceneClass()` below!:
             // LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-            EcsDemoScene.class;
+            DemoScene1.class;
 
     // region `App`'s *other* fields.
     public static final int BPM = 100,

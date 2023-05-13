@@ -51,6 +51,7 @@ import com.jogamp.opengl.glu.GLU;
 import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
@@ -295,8 +296,9 @@ public class NerdSketch extends PApplet {
 
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	protected NerdBasicCamera defaultCamera;
+	protected PImage iconImage, bgImage;
 	protected NerdScene currentScene;
-	protected PImage iconImage;
+	protected PFont defaultFont;
 
 	// region Callback listeners,
 	// LAMBDAS ARE EXPENSIVVVVVE! Allocate only this!:
@@ -463,6 +465,13 @@ public class NerdSketch extends PApplet {
 	@Override
 	public void setup() {
 		this.iconImage = super.loadImage(this.ICON_PATH);
+
+		this.WINDOW.width = super.width;
+		this.WINDOW.height = super.height;
+
+		this.DISPLAYS.displayWidth = super.displayWidth;
+		this.DISPLAYS.displayHeight = super.displayHeight;
+
 		this.DISPLAYS.updateDisplayRatios();
 		this.WINDOW.updateWindowRatios();
 		this.WINDOW.init();
@@ -471,6 +480,8 @@ public class NerdSketch extends PApplet {
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
 		super.frameRate(this.DEFAULT_REFRESH_RATE);
+
+		this.defaultFont = super.createFont("SansSerif", this.WINDOW.scr * 72);
 
 		// I should make a super slow "convenience" method to perform this
 		// `switch (this.RENDERER)` using `Runnable`s!
@@ -501,6 +512,7 @@ public class NerdSketch extends PApplet {
 			}
 		}
 
+		super.textFont(this.defaultFont);
 		super.rectMode(PConstants.CENTER);
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
@@ -547,6 +559,20 @@ public class NerdSketch extends PApplet {
 		this.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
 		this.GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_POINT.x, this.GLOBAL_MOUSE_POINT.y);
 		// endregion
+		// endregion
+
+		// region Draw the background image if there is one.
+		if (this.bgImage != null) {
+			super.pushMatrix();
+			super.hint(PConstants.DISABLE_DEPTH_TEST);
+			super.perspective();
+			super.camera();
+			super.image(this.bgImage,
+					this.WINDOW.cx, this.WINDOW.cy,
+					this.WINDOW.width, this.WINDOW.height);
+			super.hint(PConstants.ENABLE_DEPTH_TEST);
+			super.popMatrix();
+		}
 		// endregion
 
 		// region Apply the camera when using OpenGL!
@@ -911,6 +937,10 @@ public class NerdSketch extends PApplet {
 
 	// region Utilities!~
 	// region Ah yes, GETTERS AND SETTERS. Even here!:
+	public PFont getDefaultFont() {
+		return this.defaultFont;
+	}
+
 	public PImage getIconImage() {
 		return this.iconImage;
 	}
@@ -929,6 +959,43 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// region Rendering utilities!
+	// region Setting a background image.
+	/**
+	 * Sets an image automatically drawn before any rendering, each frame.
+	 * This image is resized automatically as the size of the window changes.
+	 * To allow for the image to be resized without disturbing your copy, its data
+	 * is copied over. If you want your image to be resized automatically, use
+	 * {@link NerdSketch#setBackgroundImageByRef(PImage)}
+	 * 
+	 * @see NerdSketch#removeBackgroundImage()
+	 * @see NerdSketch#setBackgroundImageByRef()
+	 */
+	public void setBackgroundImage(final PImage p_image) {
+		this.bgImage = p_image.get();
+	}
+
+	/**
+	 * Serves the same purpose as {@link NerdSketch#setBackgroundImage(PImage)},
+	 * except that the image passed, is copied by reference. This means that the
+	 * image will be resized as the size of the window changes, and this change will
+	 * be reflected over all references to the image object.
+	 * 
+	 * @see NerdSketch#setBackgroundImage()
+	 * @see NerdSketch#removeBackgroundImage()
+	 */
+	public void setBackgroundImageByRef(final PImage p_image) {
+		this.bgImage = p_image;
+	}
+
+	/**
+	 * Deletes the image data set by {@link NerdSketch#setBackgroundImage()}
+	 * or {@link NerdSketch#setBackgroundImageByRef()}.
+	 */
+	public void removeBackgroundImage() {
+		this.bgImage = null;
+	}
+	// endregion
+
 	// region From `PGraphics`.
 	// region Shapes.
 	// region `drawShape()` overloads.
@@ -1428,24 +1495,22 @@ public class NerdSketch extends PApplet {
 	 * Method to automatically resize the passed image if needed.
 	 * This does not make a copy of your image (performance!~), so,
 	 * ...make sure to do so, if you need to!
-	 * 
-	 * // TODO: Make a method like `setBackground()` that makes an actual copy!
 	 */
 	@Override
+	// @Deprecated
 	public void background(final PImage p_image) {
-		try {
-			super.background(p_image);
-		} catch (final RuntimeException e) {
-			// Do nothing with the exception. Don't even READ it.
-			// final PImage copy = p_image.get();
-			// copy.resize(super.width, super.height);
-			p_image.resize(super.width, super.height);
-			super.background(p_image);
+		if (this.bgImage == p_image)
+			this.setBackgroundImageByRef(p_image);
 
-			// super.clear(); // ...apparently `PImage::resize()` is fast enough!
-			// System.out.println("`PApplet::background(PImage)` encountered the size
-			// issue!");
-		}
+		// try {
+		// super.background(p_image);
+		// } catch (final RuntimeException e) {
+		// // Do nothing with the exception. Don't even READ it.
+		// // final PImage copy = p_image.get();
+		// // copy.resize(super.width, super.height);
+		// p_image.resize(super.width, super.height);
+		// super.background(p_image);
+		// }
 	}
 
 	// region Transformations!
@@ -1816,10 +1881,13 @@ public class NerdSketch extends PApplet {
 
 		// Either call `super.ortho()` + translate by `-cy`, or this! (thank ChatGPT!):
 		super.ortho(0, super.width, super.height, 0, -1, 1);
-		super.translate(this.WINDOW.cx, -this.height);
+		// super.translate(this.WINDOW.cx, -this.height);
+		// super.translate(0, 0);
+		super.scale(1, -1);
+		// super.translate(0, -this.height);
 
 		// super.ortho();
-		// super.translate(0, -this.WIN_MAN.cy);
+		// super.translate(0, -this.WINDOW.cy);
 	}
 
 	/**
