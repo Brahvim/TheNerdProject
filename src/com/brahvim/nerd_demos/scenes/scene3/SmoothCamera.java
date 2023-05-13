@@ -64,10 +64,10 @@ public class SmoothCamera extends NerdFlyCamera {
 
 		// region Roll.
 		if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
-			super.getUp().x += accMultiplier * 0.1f;
+			super.getUp().x += this.normalSpeed * 0.1f;
 
 		if (SKETCH.keyIsPressed(KeyEvent.VK_C))
-			super.getUp().x += -accMultiplier * 0.1f;
+			super.getUp().x += -this.normalSpeed * 0.1f;
 		// endregion
 
 		// region Elevation.
