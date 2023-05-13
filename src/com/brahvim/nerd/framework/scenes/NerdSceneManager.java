@@ -13,939 +13,939 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdSceneManager {
 
-    // region Inner classes.
-    // My code style: If it is an inner class, also write the name of the outer
-    // class. I do this to aid reading and to prevent namespace pollution.
-
-    @FunctionalInterface
-    public interface SceneChangeListener {
-        public void sceneChanged(NerdSketch sketch,
-                Class<? extends NerdScene> previous,
-                Class<? extends NerdScene> current);
-    }
-
-    /**
-     * Stores scene data while a scene is not active.
-     */
-    private static class SceneCache {
-
-        // region Fields.
-        private final NerdSceneState STATE;
-        private final Constructor<? extends NerdScene> CONSTRUCTOR;
-
-        private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
-        private NerdAssetManager ASSETS;
-        private int timesLoaded = 0;
-        // endregion
-
-        private SceneCache(final Constructor<? extends NerdScene> p_constructor, final NerdScene p_cachedReference) {
-            this.CONSTRUCTOR = p_constructor;
-            this.cachedReference = p_cachedReference;
-            this.STATE = this.cachedReference.STATE;
-        }
-
-        // region Cache queries.
-        public boolean cacheIsNull() {
-            return this.cachedReference == null;
-        }
-
-        public void /* deleteCache() { */ nullifyCache() {
-            // If this was (hopefully) the only reference to the scene object, it gets GCed!
-            this.cachedReference = null;
-            System.gc();
-        }
-        // endregion
-
-    }
-
-    public static class SceneManagerSettings {
-
-        public NerdEcsSystem<?>[] orderOfEcsSystems;
-
-        // region App workflow callbacks scene-or-layer order.
-        /**
-         * Dictates to every {@link NerdSceneManager} instance, the order in which a
-         * {@link NerdScene} or {@link NerdLayer} is allowed to call certain "workflow
-         * events" ({@code pre()}, {@code draw()} and {@code post()}) from Processing
-         * 
-         * @see {@link NerdSceneManager.SceneManagerSettings#preFirstCaller} -
-         *      {@link CallbackOrder#SCENE} by
-         *      default.
-         * @see {@link NerdSceneManager.SceneManagerSettings#drawFirstCaller} -
-         *      {@link CallbackOrder#LAYER} by
-         *      default.
-         * @see {@link NerdSceneManager.SceneManagerSettings#postFirstCaller} -
-         *      {@link CallbackOrder#LAYER} by
-         *      default.
-         */
-        public static enum CallbackOrder {
-            SCENE(), LAYER();
-        }
-
-        /**
-         * Controls whether {@link NerdScene#pre()} or {@link NerdLayer#pre()} is
-         * called first by the {@link NerdSceneManager}. If the value of this field is
-         * ever
-         * {@code null}, it is set to its default, {@link CallbackOrder#SCENE}.
-         */
-        public CallbackOrder preFirstCaller = CallbackOrder.SCENE;
-
-        /**
-         * Controls whether {@link NerdScene#draw()} or {@link NerdLayer#draw()} is
-         * called first by the {@link NerdSceneManager}. If the value of this field is
-         * ever
-         * {@code null}, it is set to its default, {@link CallbackOrder#LAYER}.
-         */
-        public CallbackOrder drawFirstCaller = CallbackOrder.LAYER;
-
-        /**
-         * Controls whether {@link NerdScene#post()} or {@link NerdLayer#post()} is
-         * called first by the {@link NerdSceneManager}. If the value of this field is
-         * ever
-         * {@code null}, it is set to its default, {@link CallbackOrder#LAYER}.
-         */
-        public CallbackOrder postFirstCaller = CallbackOrder.LAYER;
-        // endregion
-
-        public class OnScenePreload {
-
-            private OnScenePreload() {
-            }
-
-            /**
-             * When {@code true}, {@link NerdScene#preload()} is run only the first time
-             * the {@link NerdScene} is used. Turn to {@code false} to load scene assets
-             * each time, so that assets are updated.<br>
-             * </br>
-             * 
-             * @apiNote {@code true} by default!
-             */
-            public volatile boolean preloadOnlyOnce = true;
-
-            /**
-             * When {@code true}, {@link NerdScene#preload()} runs the loading process in
-             * multiple threads using a {@link java.util.concurrent.ExecutorService}. If
-             * {@link NerdSceneManager.SceneManagerSettings.OnScenePreload#completeWithinPreloadCall}
-             * is {@code false}, the asset loading is not guaranteed to finish within
-             * {@link NerdScene#preload()}.
-             * 
-             * @apiNote {@code true} by default!
-             * @implNote Actually, it's {@link NerdScene#runPreload()}.
-             */
-            public volatile boolean useExecutors = true;
-
-            /**
-             * @apiNote {@code true} by default!
-             */
-            public volatile boolean completeWithinPreloadCall = true;
-
-            /**
-             * The maximum number of threads multithreaded asset loading started
-             * in {@link NerdScene#preload()} can use.
-             * 
-             * @apiNote {@code 6} by default!
-             */
-            public volatile int maxExecutorThreads = 6;
-
-        }
-
-        public class OnSceneSwitch {
-
-            private OnSceneSwitch() {
-            }
-
-            /**
-             * If set to {@code -1}, will call {@link NerdSketch#clear()} and not
-             * {@link NerdSketch#background()}. <b>This is the default behavior!</b>
-             */
-            public volatile int clearColor = -1;
-
-            /**
-             * Clears the screen according to
-             * {@link NerdSceneManager.SceneManagerSettings.OnSceneSwitch#clearColor}.<br>
-             * <br>
-             *
-             * @apiNote {@code false} by default.
-             */
-            public volatile boolean doClear = false;
-
-            /**
-             * Resets {@link NerdSceneManager.SceneManagerSettings#preFirstCaller},
-             * {@link NerdSceneManager.SceneManagerSettings#drawFirstCaller}, and
-             * {@link NerdSceneManager.SceneManagerSettings#postFirstCaller} to their
-             * default values!
-             */
-            public volatile boolean resetSceneLayerCallbackOrder = true;
-
-        }
-
-        public final NerdSceneManager.SceneManagerSettings.OnSceneSwitch ON_SWITCH = new OnSceneSwitch();
-
-        public final NerdSceneManager.SceneManagerSettings.OnScenePreload ON_PRELOAD = new OnScenePreload();
-
-    }
-    // endregion
-
-    public final NerdSceneManager.SceneManagerSettings SETTINGS;
-
-    // region `protected` and `private` fields.
-    protected boolean sceneSwitchOccured;
-    protected NerdScene currScene;
-
-    /**
-     * This {@code HashMap} contains cached data about each {@code NerdScene} class
-     * any {@code NerdSceneManager} instance has cached or ran.<br>
-     * <br>
-     * 
-     * Actual "caching" of a {@code NerdScene} is when its corresponding
-     * {@code SceneManager.SceneCache}'s {@code cachedReference} is not
-     * {@code null}.<br>
-     * <br>
-     * 
-     * The initial capacity here (`2`) is to aid performance, since, the JIT
-     * does no optimization till the first scene switch. All scene switches after
-     * that the initial should be fast enough!
-     */
-    private final HashMap<Class<? extends NerdScene>, NerdSceneManager.SceneCache> SCENE_CACHE = new HashMap<>(2);
-    private final NerdSketch SKETCH;
-
-    // Notes on some strange (useless? Useful?!) idea.
-    /*
-     * Keep track of what `Sketch`es a manager exists for.
-     * `private static final HashSet<? extends Sketch> SKETCHES = new HashSet<>(1);
-     * "Don't let anybody build another!" <-- ...idea I've stopped.
-     */
-
-    // region Sketch Event Listeners.
-    private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS; // May get passed to constructor!
-    private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0);
-
-    @SuppressWarnings("unused")
-    private NerdSketch.NerdSketchMouseListener mouseListener;
-
-    @SuppressWarnings("unused")
-    private NerdSketch.NerdSketchTouchListener touchListener;
-
-    @SuppressWarnings("unused")
-    private NerdSketch.NerdSketchWindowListener windowListener;
-
-    @SuppressWarnings("unused")
-    private NerdSketch.NerdSketchKeyboardListener keyboardListener;
-    // endregion
-    private Class<? extends NerdScene> currSceneClass, prevSceneClass;
-    // endregion
-
-    public NerdSceneManager(final NerdSketch p_sketch, final NerdSceneManager.SceneManagerSettings p_settings,
-            final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners,
-            final NerdEcsSystem<?>[] p_ecsSystems) {
-        this.SKETCH = p_sketch;
-        this.SETTINGS = p_settings;
-        this.SCENE_CHANGE_LISTENERS = p_listeners;
-        this.SETTINGS.orderOfEcsSystems = p_ecsSystems;
-    }
-
-    // region Workflow callbacks.
-    protected void runPre() {
-        if (this.currScene != null)
-            this.currScene.runPre();
-    }
-
-    protected void runPost() {
-        if (this.currScene != null)
-            this.currScene.runPost();
-
-        this.sceneSwitchOccured = false;
-    }
-
-    protected void runDraw() {
-        if (this.currScene != null)
-            this.currScene.runDraw();
-    }
-
-    protected void runExit() {
-        if (this.currScene != null)
-            this.currScene.runExit();
-    }
-
-    protected void runDispose() {
-        if (this.currScene != null)
-            this.currScene.runDispose();
-    }
-
-    // Too expensive! Need a `push()` and `pop()`.
-    /*
-     * protected void runPreDraw() {
-     * if (this.currScene != null)
-     * this.currScene.runPreDraw();
-     * }
-     * 
-     * protected void runPostDraw() {
-     * if (this.currScene != null)
-     * this.currScene.runPostDraw();
-     * }
-     */
-    // endregion
-
-    // region Event callbacks. Passed to the scene first, THEN the ECS!
-    // region Mouse event callbacks.
-    protected void mousePressed() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.mousePressed();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.mousePressed();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mousePressed();
-    }
-
-    protected void mouseReleased() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.mouseReleased();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.mouseReleased();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseReleased();
-    }
-
-    protected void mouseMoved() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.mouseMoved();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.mouseMoved();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseMoved();
-    }
-
-    protected void mouseClicked() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.mouseClicked();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.mouseClicked();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseClicked();
-    }
-
-    protected void mouseDragged() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.mouseDragged();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.mouseDragged();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseDragged();
-    }
-
-    protected void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.mouseWheel(p_mouseEvent);
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.mouseWheel(p_mouseEvent);
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.mouseWheel(p_mouseEvent);
-    }
-    // endregion
-
-    // region Touch event callbacks.
-    protected void touchStarted() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.touchStarted();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.touchStarted();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.touchStarted();
-    }
-
-    protected void touchMoved() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.touchMoved();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.touchMoved();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.touchMoved();
-    }
-
-    protected void touchEnded() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.touchEnded();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.touchEnded();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.touchEnded();
-    }
-    // endregion
-
-    // region Window event callbacks.
-    protected void resized() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.resized();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.resized();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.resized();
-    }
-
-    protected void focusLost() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.focusLost();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.focusLost();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.focusLost();
-    }
-
-    protected void focusGained() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.focusGained();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.focusGained();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.focusGained();
-    }
-
-    protected void monitorChanged() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.monitorChanged();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.monitorChanged();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.monitorChanged();
-    }
-
-    protected void fullscreenChanged(final boolean p_state) {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.fullscreenChanged(p_state);
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.fullscreenChanged(p_state);
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.fullscreenChanged(p_state);
-    }
-    // endregion
-
-    // region Keyboard event callbacks.
-    protected void keyTyped() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.keyTyped();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.keyTyped();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.keyTyped();
-    }
-
-    protected void keyPressed() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.keyPressed();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.keyPressed();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.keyPressed();
-    }
-
-    protected void keyReleased() {
-        if (this.currScene == null)
-            return;
-
-        this.currScene.keyReleased();
-
-        if (this.currScene.ECS != null)
-            this.currScene.ECS.keyReleased();
-        for (final NerdLayer l : this.currScene.getLayers())
-            if (l != null)
-                if (l.isActive())
-                    l.keyReleased();
-    }
-    // endregion
-    // endregion
-
-    // region [`public`] Getters.
-    public NerdSketch getSketch() {
-        return this.SKETCH;
-    }
-
-    public boolean didSceneSwitchOccur() {
-        return this.sceneSwitchOccured;
-    }
-
-    public NerdScene getCurrentScene() {
-        return this.currScene;
-    }
-
-    public Class<? extends NerdScene> getCurrentSceneClass() {
-        return this.currSceneClass;
-    }
-
-    public Class<? extends NerdScene> getPreviousSceneClass() {
-        return this.prevSceneClass;
-    }
-
-    public NerdSceneManager.SceneManagerSettings getManagerSettings() {
-        return this.SETTINGS;
-    }
-    // endregion
-
-    // region [`public`] Queries.
-    public final void addSceneChangeListener(final NerdSceneManager.SceneChangeListener p_listener) {
-        this.SCENE_CHANGE_LISTENERS.add(p_listener);
-    }
-
-    public final void removeSceneChangeListener(final NerdSceneManager.SceneChangeListener p_listener) {
-        this.SCENE_CHANGE_LISTENERS_TO_REMOVE.add(p_listener);
-    }
-
-    /**
-     * Returns a {@link HashSet} of {@link NerdScene} classes including only classes
-     * instances of which this {@link NerdSceneManager} has ran.
-     */
-    public final HashSet<Class<? extends NerdScene>> getKnownScenesSet() {
-        return new HashSet<>(this.SCENE_CACHE.keySet());
-    }
-    // endregion
-
-    // region `Scene`-operations.
-    public int getTimesSceneLoaded(final Class<? extends NerdScene> p_sceneClass) {
-        return this.SCENE_CACHE.get(p_sceneClass).timesLoaded;
-    }
-
-    // region Invoking the asset loader.
-    // To those demanding var-arg versions of these `loadSceneAssets*()` methods:
-    // "...no"! (I mean, should I just make a bean of some kind?)
-
-    public void loadSceneAssetsAsync(final Class<? extends NerdScene> p_sceneClass) {
-        this.loadSceneAssetsAsync(p_sceneClass, false);
-    }
-
-    public void loadSceneAssetsAsync(final Class<? extends NerdScene> p_sceneClass, final boolean p_forcibly) {
-        if (!this.hasCached(p_sceneClass))
-            this.cacheScene(p_sceneClass, true);
-
-        if (this.givenSceneRanPreload(p_sceneClass))
-            return;
-
-        final var manager = this;
-        new Thread("NerdAsyncAssetLoader_" + this.getClass().getSimpleName()) {
-            @Override
-            public void run() { // Lambdas perform horribly!
-                manager.loadSceneAssets(p_sceneClass, p_forcibly);
-            }
-        }.start();
-    }
-
-    // Non-async versions:
-    public void loadSceneAssets(final Class<? extends NerdScene> p_sceneClass) {
-        this.loadSceneAssets(p_sceneClass, false);
-    }
-
-    public void loadSceneAssets(final Class<? extends NerdScene> p_sceneClass, final boolean p_forcibly) {
-        if (!this.hasCached(p_sceneClass))
-            this.cacheScene(p_sceneClass, true);
-
-        if (this.givenSceneRanPreload(p_sceneClass))
-            return;
-
-        final NerdSceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE.get(p_sceneClass);
-
-        if (SCENE_CACHE != null)
-            if (SCENE_CACHE.cachedReference.hasCompletedPreload())
-                return;
-
-        this.loadSceneAssets(SCENE_CACHE.cachedReference, p_forcibly);
-    }
-    // endregion
-
-    // region Starting, or switching to a scene.
-    public void restartScene() {
-        this.restartScene(null);
-    }
-
-    public void restartScene(final NerdSceneState p_setupState) {
-        if (this.currSceneClass == null)
-            return;
-
-        // SceneManager.SceneCache data =
-        // this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
-        // NerdScene toUse = this.constructAndCacheScene(data.CONSTRUCTOR);
-        this.startSceneImpl(this.currSceneClass, p_setupState);
-    }
-
-    public void startPreviousScene() {
-        this.startPreviousScene(null);
-    }
-
-    public void startPreviousScene(final NerdSceneState p_setupState) {
-        if (this.prevSceneClass == null)
-            return;
-
-        final NerdSceneManager.SceneCache cache = this.SCENE_CACHE.get(this.prevSceneClass);
-        final NerdScene toUse = this.constructScene(cache.CONSTRUCTOR);
-
-        this.setScene(toUse, p_setupState);
-    }
-
-    // "Cache if not cached" / "Start cached" method.
-    // Used to experience these (now solved!) problems:
-    /*
-     * - Asking for deletion permissions when you may not be caching is awkward,
-     * - Structure. `cache == null`, `cache.getCache() == null` must result in the
-     * same, but can't be grouped together logicaly, for optimization. This can be
-     * fixed with the use of an "impl" method, but this class already has too many
-     * similarly-named methods!
-     * 
-     * Another approach would be to call `SceneManager::cacheScene()` then query
-     * `SceneManager::SCENE_CACHE`, but that sounds even slower. Even with the JIT!
-     */
-
-    /**
-     * Starts a {@code NerdScene}, and tells using the return value, whether it was
-     * restored from cache or started again.
-     */
-    public boolean startScene(final Class<? extends NerdScene> p_sceneClass) {
-        return this.startScene(p_sceneClass, null);
-    }
-
-    public boolean startScene(final Class<? extends NerdScene> p_sceneClass, final NerdSceneState p_setupState) {
-        if (p_sceneClass == null)
-            throw new NullPointerException("`SceneManager::startScene()` received `null`.");
-
-        if (this.hasCached(p_sceneClass)) {
-            this.setScene(this.SCENE_CACHE.get(p_sceneClass).cachedReference, p_setupState);
-            return true;
-        } else {
-            this.startSceneImpl(p_sceneClass, p_setupState);
-            return false;
-        }
-
-        /*
-         * // This is where `HashSet`s shine more than `ArrayList`s!:
-         * if (this.SCENE_CLASSES.add(p_sceneClass))
-         * this.startSceneImpl(p_sceneClass);
-         * else
-         * throw new IllegalArgumentException("""
-         * Use `SceneManager::restartScene()
-         * to restart a `NerdScene` while it runs!""");
-         */
-
-    }
-    // endregion
-
-    // region `private` `NerdScene` operations.
-    private boolean givenSceneRanPreload(final Class<? extends NerdScene> p_sceneClass) {
-        final NerdScene SCENE_CACHE = this.SCENE_CACHE
-                .get(p_sceneClass).cachedReference;
-
-        return SCENE_CACHE == null ? false : SCENE_CACHE.hasCompletedPreload();
-
-    }
-
-    private void loadSceneAssets(final NerdScene p_scene, final boolean p_forcibly) {
-        if (p_scene == null)
-            return;
-
-        // If forced to, do it:
-        if (p_forcibly) {
-            p_scene.runPreload();
-            return;
-        }
-
-        final Class<? extends NerdScene> SCENE_CLASS = p_scene.getClass();
-
-        // If this scene has never been loaded up before, preload the data!
-        if (this.getTimesSceneLoaded(SCENE_CLASS) == 0) {
-            // p_scene.ASSETS.clear(); // Not needed - this code will never have bugs. Hah!
-            p_scene.runPreload();
-            this.SCENE_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
-            return;
-        }
-
-        // region Preloads other than the first one.
-        // You're allowed to preload only once?
-        // Don't re-load, just use the cache!:
-        if (this.SETTINGS.ON_PRELOAD.preloadOnlyOnce) {
-            final NerdAssetManager man = this.SCENE_CACHE.get(SCENE_CLASS).ASSETS;
-            p_scene.ASSETS = man;
-        } else { // Else, since you're supposed to run `preload()` every time, do that!:
-            p_scene.ASSETS.clear();
-            p_scene.runPreload();
-            this.SCENE_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
-        }
-        // endregion
-
-    }
-
-    // region (`private`) Caching operations.
-    @SuppressWarnings("unused")
-    private void ensureCache(final Class<? extends NerdScene> p_sceneClass) {
-        if (!this.hasCached(p_sceneClass))
-            this.cacheScene(p_sceneClass, false);
-    }
-
-    private boolean hasCached(final Class<? extends NerdScene> p_sceneClass) {
-        // If you haven't been asked to run the scene even once, you didn't cache it!
-        // Say you haven't!:
-        if (!this.SCENE_CACHE.containsKey(p_sceneClass))
-            return false;
-
-        // ...so you ran the scene? Great! ...BUT DO YOU HAVE THE SCENE OBJECT?!
-        return !this.SCENE_CACHE.get(p_sceneClass).cacheIsNull();
-
-        // Ugh, -_- this is cheating...:
-        // return !this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference != null;
-    }
-
-    private void cacheScene(final Class<? extends NerdScene> p_sceneClass, final boolean p_isDeletable) {
-        if (this.SCENE_CACHE.containsKey(p_sceneClass))
-            return;
-
-        final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
-
-        final NerdScene toCache = this.constructScene(sceneConstructor);
-
-        if (toCache == null)
-            throw new RuntimeException("The scene could not be constructed.");
-    }
-    // endregion
-
-    // region `private` construction-and-setup operations!
-    private Constructor<? extends NerdScene> getSceneConstructor(final Class<? extends NerdScene> p_sceneClass) {
-        Constructor<? extends NerdScene> toRet = null;
-
-        try {
-            toRet = p_sceneClass.getConstructor();
-        } catch (final NoSuchMethodException e) {
-            System.err.println("""
-                    Every subclass of `NerdScene` must be `public` with a `public` \"null-constructor\"
-                        (constructor with no arguments), or no overriden constructors at all.""");
-            // e.printStackTrace();
-        }
-
-        return toRet;
-    }
-
-    private NerdScene constructScene(final Constructor<? extends NerdScene> p_sceneConstructor) {
-        NerdScene toRet = null;
-
-        // region Get an instance.
-        try {
-            toRet = (NerdScene) p_sceneConstructor.newInstance();
-        } catch (final InstantiationException e) {
-            e.printStackTrace();
-        } catch (final IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (final InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        // endregion
-
-        // region Initialize it!
-        final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
-        final NerdSceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE.get(SCENE_CLASS);
-
-        // Initialize fields as if this was a part of the construction.
-        if (toRet.MANAGER == null)
-            toRet.MANAGER = this;
-
-        if (toRet.SKETCH == null)
-            toRet.SKETCH = toRet.MANAGER.SKETCH;
-
-        if (toRet.INPUT == null)
-            toRet.INPUT = toRet.SKETCH.INPUT;
-
-        if (toRet.WINDOW == null)
-            toRet.WINDOW = toRet.SKETCH.WINDOW;
-
-        if (toRet.DISPLAYS == null)
-            toRet.DISPLAYS = toRet.SKETCH.DISPLAYS;
-
-        if (toRet.CAMERA == null)
-            toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
-
-        if (toRet.ASSETS == null)
-            toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?
-
-        // Set up the ECS:
-        if (toRet.ECS == null) {
-            NerdEcsSystem<?>[] systems = this.SETTINGS.orderOfEcsSystems;
-
-            if (systems == null)
-                systems = NerdEcsManager.DEFAULT_ECS_SYSTEMS_ORDER;
-
-            toRet.ECS = new NerdBridgedEcsManager(this.SKETCH, systems);
-        }
-
-        // If this is the first time we're constructing this scene, ensure it has a
-        // cache and a saved state!
-        if (SCENE_CACHE == null) {
-            toRet.STATE = new NerdSceneState();
-            this.SCENE_CACHE.put(SCENE_CLASS,
-                    new NerdSceneManager.SceneCache(p_sceneConstructor, toRet));
-        } else
-            toRet.STATE = SCENE_CACHE.STATE;
-        // endregion
-
-        return toRet;
-    }
-
-    // Yes, this checks for errors.
-    private void startSceneImpl(final Class<? extends NerdScene> p_sceneClass, final NerdSceneState p_state) {
-        final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
-
-        final NerdScene toStart = this.constructScene(sceneConstructor);
-
-        if (toStart == null)
-            throw new RuntimeException("The scene could not be constructed.");
-
-        this.setScene(toStart, p_state);
-    }
-
-    // The scene-deleter!!!
-    private void setScene(final NerdScene p_currentScene, final NerdSceneState p_state) {
-        this.SKETCH.WINDOW.cursorVisible = true;
-        this.SKETCH.WINDOW.cursorConfined = false;
-
-        // region `this.SETTINGS.ON_SWITCH` tasks.
-        if (this.SETTINGS.ON_SWITCH.doClear) {
-            if (this.SETTINGS.ON_SWITCH.clearColor == -1)
-                this.SKETCH.clear();
-            else
-                this.SKETCH.background(this.SETTINGS.ON_SWITCH.clearColor);
-        }
-
-        if (this.SETTINGS.ON_SWITCH.resetSceneLayerCallbackOrder) {
-            this.SETTINGS.preFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.SCENE;
-            this.SETTINGS.drawFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
-            this.SETTINGS.postFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
-        }
-        // endregion
-
-        this.prevSceneClass = this.currSceneClass;
-        if (this.prevSceneClass != null) {
-            // Exit the scene, and nullify the cache.
-            this.currScene.runSceneChanged();
-
-            // Do not clear! Theyr're cached!
-            // if (!this.hasCached(this.currSceneClass))
-            // this.currScene.ASSETS.clear();
-
-            final NerdSceneManager.SceneCache cache = this.SCENE_CACHE.get(this.currSceneClass);
-            cache.nullifyCache();
-
-            // What `deleteCacheIfCan()` did, I guess (or used to do)!:
-            /*
-             * // Delete the scene reference if needed:
-             * SceneManager.SceneCache oldSceneManager.SceneCache =
-             * this.SCENE_CACHE.get(this.previousSceneClass);
-             * if (!oldSceneManager.SceneCache.doNotDelete)
-             * oldSceneManager.SceneCache.deleteCache();
-             * // If this was the only reference to the scene object, the scene gets GCed!
-             * System.gc();
-             */
-
-        }
-
-        this.currSceneClass = p_currentScene.getClass();
-        this.currScene = p_currentScene;
-        this.setupCurrentScene(p_state);
-    }
-
-    // Set the time, *then* call `SceneManager::runSetup()`.
-    private void setupCurrentScene(final NerdSceneState p_state) {
-        this.sceneSwitchOccured = true;
-        this.loadSceneAssets(this.currScene, false);
-
-        final boolean prevSceneClassNotNull = this.prevSceneClass != null;
-
-        // Helps in resetting style and transformation info across scenes! YAY!:
-        if (prevSceneClassNotNull)
-            this.SKETCH.pop();
-
-        this.SKETCH.push();
-
-        this.SKETCH.textFont(this.SKETCH.getDefaultFont());
-
-        this.SCENE_CHANGE_LISTENERS.removeAll(this.SCENE_CHANGE_LISTENERS_TO_REMOVE);
-
-        this.currScene.runSetup(p_state);
-    }
-    // endregion
-    // endregion
-    // endregion
+	// region Inner classes.
+	// My code style: If it is an inner class, also write the name of the outer
+	// class. I do this to aid reading and to prevent namespace pollution.
+
+	@FunctionalInterface
+	public interface SceneChangeListener {
+		public void sceneChanged(NerdSketch sketch,
+				Class<? extends NerdScene> previous,
+				Class<? extends NerdScene> current);
+	}
+
+	/**
+	 * Stores scene data while a scene is not active.
+	 */
+	private static class SceneCache {
+
+		// region Fields.
+		private final NerdSceneState STATE;
+		private final Constructor<? extends NerdScene> CONSTRUCTOR;
+
+		private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
+		private NerdAssetManager ASSETS;
+		private int timesLoaded = 0;
+		// endregion
+
+		private SceneCache(final Constructor<? extends NerdScene> p_constructor, final NerdScene p_cachedReference) {
+			this.CONSTRUCTOR = p_constructor;
+			this.cachedReference = p_cachedReference;
+			this.STATE = this.cachedReference.STATE;
+		}
+
+		// region Cache queries.
+		public boolean cacheIsNull() {
+			return this.cachedReference == null;
+		}
+
+		public void /* deleteCache() { */ nullifyCache() {
+			// If this was (hopefully) the only reference to the scene object, it gets GCed!
+			this.cachedReference = null;
+			System.gc();
+		}
+		// endregion
+
+	}
+
+	public static class SceneManagerSettings {
+
+		public NerdEcsSystem<?>[] orderOfEcsSystems;
+
+		// region App workflow callbacks scene-or-layer order.
+		/**
+		 * Dictates to every {@link NerdSceneManager} instance, the order in which a
+		 * {@link NerdScene} or {@link NerdLayer} is allowed to call certain "workflow
+		 * events" ({@code pre()}, {@code draw()} and {@code post()}) from Processing
+		 * 
+		 * @see {@link NerdSceneManager.SceneManagerSettings#preFirstCaller} -
+		 *      {@link CallbackOrder#SCENE} by
+		 *      default.
+		 * @see {@link NerdSceneManager.SceneManagerSettings#drawFirstCaller} -
+		 *      {@link CallbackOrder#LAYER} by
+		 *      default.
+		 * @see {@link NerdSceneManager.SceneManagerSettings#postFirstCaller} -
+		 *      {@link CallbackOrder#LAYER} by
+		 *      default.
+		 */
+		public static enum CallbackOrder {
+			SCENE(), LAYER();
+		}
+
+		/**
+		 * Controls whether {@link NerdScene#pre()} or {@link NerdLayer#pre()} is
+		 * called first by the {@link NerdSceneManager}. If the value of this field is
+		 * ever
+		 * {@code null}, it is set to its default, {@link CallbackOrder#SCENE}.
+		 */
+		public CallbackOrder preFirstCaller = CallbackOrder.SCENE;
+
+		/**
+		 * Controls whether {@link NerdScene#draw()} or {@link NerdLayer#draw()} is
+		 * called first by the {@link NerdSceneManager}. If the value of this field is
+		 * ever
+		 * {@code null}, it is set to its default, {@link CallbackOrder#LAYER}.
+		 */
+		public CallbackOrder drawFirstCaller = CallbackOrder.LAYER;
+
+		/**
+		 * Controls whether {@link NerdScene#post()} or {@link NerdLayer#post()} is
+		 * called first by the {@link NerdSceneManager}. If the value of this field is
+		 * ever
+		 * {@code null}, it is set to its default, {@link CallbackOrder#LAYER}.
+		 */
+		public CallbackOrder postFirstCaller = CallbackOrder.LAYER;
+		// endregion
+
+		public class OnScenePreload {
+
+			private OnScenePreload() {
+			}
+
+			/**
+			 * When {@code true}, {@link NerdScene#preload()} is run only the first time
+			 * the {@link NerdScene} is used. Turn to {@code false} to load scene assets
+			 * each time, so that assets are updated.<br>
+			 * </br>
+			 * 
+			 * @apiNote {@code true} by default!
+			 */
+			public volatile boolean preloadOnlyOnce = true;
+
+			/**
+			 * When {@code true}, {@link NerdScene#preload()} runs the loading process in
+			 * multiple threads using a {@link java.util.concurrent.ExecutorService}. If
+			 * {@link NerdSceneManager.SceneManagerSettings.OnScenePreload#completeWithinPreloadCall}
+			 * is {@code false}, the asset loading is not guaranteed to finish within
+			 * {@link NerdScene#preload()}.
+			 * 
+			 * @apiNote {@code true} by default!
+			 * @implNote Actually, it's {@link NerdScene#runPreload()}.
+			 */
+			public volatile boolean useExecutors = true;
+
+			/**
+			 * @apiNote {@code true} by default!
+			 */
+			public volatile boolean completeWithinPreloadCall = true;
+
+			/**
+			 * The maximum number of threads multithreaded asset loading started
+			 * in {@link NerdScene#preload()} can use.
+			 * 
+			 * @apiNote {@code 6} by default!
+			 */
+			public volatile int maxExecutorThreads = 6;
+
+		}
+
+		public class OnSceneSwitch {
+
+			private OnSceneSwitch() {
+			}
+
+			/**
+			 * If set to {@code -1}, will call {@link NerdSketch#clear()} and not
+			 * {@link NerdSketch#background()}. <b>This is the default behavior!</b>
+			 */
+			public volatile int clearColor = -1;
+
+			/**
+			 * Clears the screen according to
+			 * {@link NerdSceneManager.SceneManagerSettings.OnSceneSwitch#clearColor}.<br>
+			 * <br>
+			 *
+			 * @apiNote {@code false} by default.
+			 */
+			public volatile boolean doClear = false;
+
+			/**
+			 * Resets {@link NerdSceneManager.SceneManagerSettings#preFirstCaller},
+			 * {@link NerdSceneManager.SceneManagerSettings#drawFirstCaller}, and
+			 * {@link NerdSceneManager.SceneManagerSettings#postFirstCaller} to their
+			 * default values!
+			 */
+			public volatile boolean resetSceneLayerCallbackOrder = true;
+
+		}
+
+		public final NerdSceneManager.SceneManagerSettings.OnSceneSwitch ON_SWITCH = new OnSceneSwitch();
+
+		public final NerdSceneManager.SceneManagerSettings.OnScenePreload ON_PRELOAD = new OnScenePreload();
+
+	}
+	// endregion
+
+	public final NerdSceneManager.SceneManagerSettings SETTINGS;
+
+	// region `protected` and `private` fields.
+	protected boolean sceneSwitchOccured;
+	protected NerdScene currScene;
+
+	/**
+	 * This {@code HashMap} contains cached data about each {@code NerdScene} class
+	 * any {@code NerdSceneManager} instance has cached or ran.<br>
+	 * <br>
+	 * 
+	 * Actual "caching" of a {@code NerdScene} is when its corresponding
+	 * {@code SceneManager.SceneCache}'s {@code cachedReference} is not
+	 * {@code null}.<br>
+	 * <br>
+	 * 
+	 * The initial capacity here (`2`) is to aid performance, since, the JIT
+	 * does no optimization till the first scene switch. All scene switches after
+	 * that the initial should be fast enough!
+	 */
+	private final HashMap<Class<? extends NerdScene>, NerdSceneManager.SceneCache> SCENE_CACHE = new HashMap<>(2);
+	private final NerdSketch SKETCH;
+
+	// Notes on some strange (useless? Useful?!) idea.
+	/*
+	 * Keep track of what `Sketch`es a manager exists for.
+	 * `private static final HashSet<? extends Sketch> SKETCHES = new HashSet<>(1);
+	 * "Don't let anybody build another!" <-- ...idea I've stopped.
+	 */
+
+	// region Sketch Event Listeners.
+	private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS; // May get passed to constructor!
+	private final LinkedHashSet<SceneChangeListener> SCENE_CHANGE_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0);
+
+	@SuppressWarnings("unused")
+	private NerdSketch.NerdSketchMouseListener mouseListener;
+
+	@SuppressWarnings("unused")
+	private NerdSketch.NerdSketchTouchListener touchListener;
+
+	@SuppressWarnings("unused")
+	private NerdSketch.NerdSketchWindowListener windowListener;
+
+	@SuppressWarnings("unused")
+	private NerdSketch.NerdSketchKeyboardListener keyboardListener;
+	// endregion
+	private Class<? extends NerdScene> currSceneClass, prevSceneClass;
+	// endregion
+
+	public NerdSceneManager(final NerdSketch p_sketch, final NerdSceneManager.SceneManagerSettings p_settings,
+			final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners,
+			final NerdEcsSystem<?>[] p_ecsSystems) {
+		this.SKETCH = p_sketch;
+		this.SETTINGS = p_settings;
+		this.SCENE_CHANGE_LISTENERS = p_listeners;
+		this.SETTINGS.orderOfEcsSystems = p_ecsSystems;
+	}
+
+	// region Workflow callbacks.
+	protected void runPre() {
+		if (this.currScene != null)
+			this.currScene.runPre();
+	}
+
+	protected void runPost() {
+		if (this.currScene != null)
+			this.currScene.runPost();
+
+		this.sceneSwitchOccured = false;
+	}
+
+	protected void runDraw() {
+		if (this.currScene != null)
+			this.currScene.runDraw();
+	}
+
+	protected void runExit() {
+		if (this.currScene != null)
+			this.currScene.runExit();
+	}
+
+	protected void runDispose() {
+		if (this.currScene != null)
+			this.currScene.runDispose();
+	}
+
+	// Too expensive! Need a `push()` and `pop()`.
+	/*
+	 * protected void runPreDraw() {
+	 * if (this.currScene != null)
+	 * this.currScene.runPreDraw();
+	 * }
+	 * 
+	 * protected void runPostDraw() {
+	 * if (this.currScene != null)
+	 * this.currScene.runPostDraw();
+	 * }
+	 */
+	// endregion
+
+	// region Event callbacks. Passed to the scene first, THEN the ECS!
+	// region Mouse event callbacks.
+	protected void mousePressed() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.mousePressed();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.mousePressed();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.mousePressed();
+	}
+
+	protected void mouseReleased() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.mouseReleased();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.mouseReleased();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.mouseReleased();
+	}
+
+	protected void mouseMoved() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.mouseMoved();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.mouseMoved();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.mouseMoved();
+	}
+
+	protected void mouseClicked() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.mouseClicked();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.mouseClicked();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.mouseClicked();
+	}
+
+	protected void mouseDragged() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.mouseDragged();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.mouseDragged();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.mouseDragged();
+	}
+
+	protected void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.mouseWheel(p_mouseEvent);
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.mouseWheel(p_mouseEvent);
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.mouseWheel(p_mouseEvent);
+	}
+	// endregion
+
+	// region Touch event callbacks.
+	protected void touchStarted() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.touchStarted();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.touchStarted();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.touchStarted();
+	}
+
+	protected void touchMoved() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.touchMoved();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.touchMoved();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.touchMoved();
+	}
+
+	protected void touchEnded() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.touchEnded();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.touchEnded();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.touchEnded();
+	}
+	// endregion
+
+	// region Window event callbacks.
+	protected void resized() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.resized();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.resized();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.resized();
+	}
+
+	protected void focusLost() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.focusLost();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.focusLost();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.focusLost();
+	}
+
+	protected void focusGained() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.focusGained();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.focusGained();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.focusGained();
+	}
+
+	protected void monitorChanged() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.monitorChanged();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.monitorChanged();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.monitorChanged();
+	}
+
+	protected void fullscreenChanged(final boolean p_state) {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.fullscreenChanged(p_state);
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.fullscreenChanged(p_state);
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.fullscreenChanged(p_state);
+	}
+	// endregion
+
+	// region Keyboard event callbacks.
+	protected void keyTyped() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.keyTyped();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.keyTyped();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.keyTyped();
+	}
+
+	protected void keyPressed() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.keyPressed();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.keyPressed();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.keyPressed();
+	}
+
+	protected void keyReleased() {
+		if (this.currScene == null)
+			return;
+
+		this.currScene.keyReleased();
+
+		if (this.currScene.ECS != null)
+			this.currScene.ECS.keyReleased();
+		for (final NerdLayer l : this.currScene.getLayers())
+			if (l != null)
+				if (l.isActive())
+					l.keyReleased();
+	}
+	// endregion
+	// endregion
+
+	// region [`public`] Getters.
+	public NerdSketch getSketch() {
+		return this.SKETCH;
+	}
+
+	public boolean didSceneSwitchOccur() {
+		return this.sceneSwitchOccured;
+	}
+
+	public NerdScene getCurrentScene() {
+		return this.currScene;
+	}
+
+	public Class<? extends NerdScene> getCurrentSceneClass() {
+		return this.currSceneClass;
+	}
+
+	public Class<? extends NerdScene> getPreviousSceneClass() {
+		return this.prevSceneClass;
+	}
+
+	public NerdSceneManager.SceneManagerSettings getManagerSettings() {
+		return this.SETTINGS;
+	}
+	// endregion
+
+	// region [`public`] Queries.
+	public final void addSceneChangeListener(final NerdSceneManager.SceneChangeListener p_listener) {
+		this.SCENE_CHANGE_LISTENERS.add(p_listener);
+	}
+
+	public final void removeSceneChangeListener(final NerdSceneManager.SceneChangeListener p_listener) {
+		this.SCENE_CHANGE_LISTENERS_TO_REMOVE.add(p_listener);
+	}
+
+	/**
+	 * Returns a {@link HashSet} of {@link NerdScene} classes including only classes
+	 * instances of which this {@link NerdSceneManager} has ran.
+	 */
+	public final HashSet<Class<? extends NerdScene>> getKnownScenesSet() {
+		return new HashSet<>(this.SCENE_CACHE.keySet());
+	}
+	// endregion
+
+	// region `Scene`-operations.
+	public int getTimesSceneLoaded(final Class<? extends NerdScene> p_sceneClass) {
+		return this.SCENE_CACHE.get(p_sceneClass).timesLoaded;
+	}
+
+	// region Invoking the asset loader.
+	// To those demanding var-arg versions of these `loadSceneAssets*()` methods:
+	// "...no"! (I mean, should I just make a bean of some kind?)
+
+	public void loadSceneAssetsAsync(final Class<? extends NerdScene> p_sceneClass) {
+		this.loadSceneAssetsAsync(p_sceneClass, false);
+	}
+
+	public void loadSceneAssetsAsync(final Class<? extends NerdScene> p_sceneClass, final boolean p_forcibly) {
+		if (!this.hasCached(p_sceneClass))
+			this.cacheScene(p_sceneClass, true);
+
+		if (this.givenSceneRanPreload(p_sceneClass))
+			return;
+
+		final var manager = this;
+		new Thread("NerdAsyncAssetLoader_" + this.getClass().getSimpleName()) {
+			@Override
+			public void run() { // Lambdas perform horribly!
+				manager.loadSceneAssets(p_sceneClass, p_forcibly);
+			}
+		}.start();
+	}
+
+	// Non-async versions:
+	public void loadSceneAssets(final Class<? extends NerdScene> p_sceneClass) {
+		this.loadSceneAssets(p_sceneClass, false);
+	}
+
+	public void loadSceneAssets(final Class<? extends NerdScene> p_sceneClass, final boolean p_forcibly) {
+		if (!this.hasCached(p_sceneClass))
+			this.cacheScene(p_sceneClass, true);
+
+		if (this.givenSceneRanPreload(p_sceneClass))
+			return;
+
+		final NerdSceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE.get(p_sceneClass);
+
+		if (SCENE_CACHE != null)
+			if (SCENE_CACHE.cachedReference.hasCompletedPreload())
+				return;
+
+		this.loadSceneAssets(SCENE_CACHE.cachedReference, p_forcibly);
+	}
+	// endregion
+
+	// region Starting, or switching to a scene.
+	public void restartScene() {
+		this.restartScene(null);
+	}
+
+	public void restartScene(final NerdSceneState p_setupState) {
+		if (this.currSceneClass == null)
+			return;
+
+		// SceneManager.SceneCache data =
+		// this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
+		// NerdScene toUse = this.constructAndCacheScene(data.CONSTRUCTOR);
+		this.startSceneImpl(this.currSceneClass, p_setupState);
+	}
+
+	public void startPreviousScene() {
+		this.startPreviousScene(null);
+	}
+
+	public void startPreviousScene(final NerdSceneState p_setupState) {
+		if (this.prevSceneClass == null)
+			return;
+
+		final NerdSceneManager.SceneCache cache = this.SCENE_CACHE.get(this.prevSceneClass);
+		final NerdScene toUse = this.constructScene(cache.CONSTRUCTOR);
+
+		this.setScene(toUse, p_setupState);
+	}
+
+	// "Cache if not cached" / "Start cached" method.
+	// Used to experience these (now solved!) problems:
+	/*
+	 * - Asking for deletion permissions when you may not be caching is awkward,
+	 * - Structure. `cache == null`, `cache.getCache() == null` must result in the
+	 * same, but can't be grouped together logicaly, for optimization. This can be
+	 * fixed with the use of an "impl" method, but this class already has too many
+	 * similarly-named methods!
+	 * 
+	 * Another approach would be to call `SceneManager::cacheScene()` then query
+	 * `SceneManager::SCENE_CACHE`, but that sounds even slower. Even with the JIT!
+	 */
+
+	/**
+	 * Starts a {@code NerdScene}, and tells using the return value, whether it was
+	 * restored from cache or started again.
+	 */
+	public boolean startScene(final Class<? extends NerdScene> p_sceneClass) {
+		return this.startScene(p_sceneClass, null);
+	}
+
+	public boolean startScene(final Class<? extends NerdScene> p_sceneClass, final NerdSceneState p_setupState) {
+		if (p_sceneClass == null)
+			throw new NullPointerException("`SceneManager::startScene()` received `null`.");
+
+		if (this.hasCached(p_sceneClass)) {
+			this.setScene(this.SCENE_CACHE.get(p_sceneClass).cachedReference, p_setupState);
+			return true;
+		} else {
+			this.startSceneImpl(p_sceneClass, p_setupState);
+			return false;
+		}
+
+		/*
+		 * // This is where `HashSet`s shine more than `ArrayList`s!:
+		 * if (this.SCENE_CLASSES.add(p_sceneClass))
+		 * this.startSceneImpl(p_sceneClass);
+		 * else
+		 * throw new IllegalArgumentException("""
+		 * Use `SceneManager::restartScene()
+		 * to restart a `NerdScene` while it runs!""");
+		 */
+
+	}
+	// endregion
+
+	// region `private` `NerdScene` operations.
+	private boolean givenSceneRanPreload(final Class<? extends NerdScene> p_sceneClass) {
+		final NerdScene SCENE_CACHE = this.SCENE_CACHE
+				.get(p_sceneClass).cachedReference;
+
+		return SCENE_CACHE == null ? false : SCENE_CACHE.hasCompletedPreload();
+
+	}
+
+	private void loadSceneAssets(final NerdScene p_scene, final boolean p_forcibly) {
+		if (p_scene == null)
+			return;
+
+		// If forced to, do it:
+		if (p_forcibly) {
+			p_scene.runPreload();
+			return;
+		}
+
+		final Class<? extends NerdScene> SCENE_CLASS = p_scene.getClass();
+
+		// If this scene has never been loaded up before, preload the data!
+		if (this.getTimesSceneLoaded(SCENE_CLASS) == 0) {
+			// p_scene.ASSETS.clear(); // Not needed - this code will never have bugs. Hah!
+			p_scene.runPreload();
+			this.SCENE_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
+			return;
+		}
+
+		// region Preloads other than the first one.
+		// You're allowed to preload only once?
+		// Don't re-load, just use the cache!:
+		if (this.SETTINGS.ON_PRELOAD.preloadOnlyOnce) {
+			final NerdAssetManager man = this.SCENE_CACHE.get(SCENE_CLASS).ASSETS;
+			p_scene.ASSETS = man;
+		} else { // Else, since you're supposed to run `preload()` every time, do that!:
+			p_scene.ASSETS.clear();
+			p_scene.runPreload();
+			this.SCENE_CACHE.get(SCENE_CLASS).ASSETS = p_scene.ASSETS;
+		}
+		// endregion
+
+	}
+
+	// region (`private`) Caching operations.
+	@SuppressWarnings("unused")
+	private void ensureCache(final Class<? extends NerdScene> p_sceneClass) {
+		if (!this.hasCached(p_sceneClass))
+			this.cacheScene(p_sceneClass, false);
+	}
+
+	private boolean hasCached(final Class<? extends NerdScene> p_sceneClass) {
+		// If you haven't been asked to run the scene even once, you didn't cache it!
+		// Say you haven't!:
+		if (!this.SCENE_CACHE.containsKey(p_sceneClass))
+			return false;
+
+		// ...so you ran the scene? Great! ...BUT DO YOU HAVE THE SCENE OBJECT?!
+		return !this.SCENE_CACHE.get(p_sceneClass).cacheIsNull();
+
+		// Ugh, -_- this is cheating...:
+		// return !this.SCENE_CLASS_TO_CACHE.get(p_sceneClass).cachedReference != null;
+	}
+
+	private void cacheScene(final Class<? extends NerdScene> p_sceneClass, final boolean p_isDeletable) {
+		if (this.SCENE_CACHE.containsKey(p_sceneClass))
+			return;
+
+		final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
+
+		final NerdScene toCache = this.constructScene(sceneConstructor);
+
+		if (toCache == null)
+			throw new RuntimeException("The scene could not be constructed.");
+	}
+	// endregion
+
+	// region `private` construction-and-setup operations!
+	private Constructor<? extends NerdScene> getSceneConstructor(final Class<? extends NerdScene> p_sceneClass) {
+		Constructor<? extends NerdScene> toRet = null;
+
+		try {
+			toRet = p_sceneClass.getConstructor();
+		} catch (final NoSuchMethodException e) {
+			System.err.println("""
+					Every subclass of `NerdScene` must be `public` with a `public` \"null-constructor\"
+						(constructor with no arguments), or no overriden constructors at all.""");
+			// e.printStackTrace();
+		}
+
+		return toRet;
+	}
+
+	private NerdScene constructScene(final Constructor<? extends NerdScene> p_sceneConstructor) {
+		NerdScene toRet = null;
+
+		// region Get an instance.
+		try {
+			toRet = (NerdScene) p_sceneConstructor.newInstance();
+		} catch (final InstantiationException e) {
+			e.printStackTrace();
+		} catch (final IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (final IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (final InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		// endregion
+
+		// region Initialize it!
+		final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
+		final NerdSceneManager.SceneCache SCENE_CACHE = this.SCENE_CACHE.get(SCENE_CLASS);
+
+		// Initialize fields as if this was a part of the construction.
+		if (toRet.MANAGER == null)
+			toRet.MANAGER = this;
+
+		if (toRet.SKETCH == null)
+			toRet.SKETCH = toRet.MANAGER.SKETCH;
+
+		if (toRet.INPUT == null)
+			toRet.INPUT = toRet.SKETCH.INPUT;
+
+		if (toRet.WINDOW == null)
+			toRet.WINDOW = toRet.SKETCH.WINDOW;
+
+		if (toRet.DISPLAYS == null)
+			toRet.DISPLAYS = toRet.SKETCH.DISPLAYS;
+
+		if (toRet.CAMERA == null)
+			toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
+
+		if (toRet.ASSETS == null)
+			toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?
+
+		// Set up the ECS:
+		if (toRet.ECS == null) {
+			NerdEcsSystem<?>[] systems = this.SETTINGS.orderOfEcsSystems;
+
+			if (systems == null)
+				systems = NerdEcsManager.DEFAULT_ECS_SYSTEMS_ORDER;
+
+			toRet.ECS = new NerdBridgedEcsManager(this.SKETCH, systems);
+		}
+
+		// If this is the first time we're constructing this scene, ensure it has a
+		// cache and a saved state!
+		if (SCENE_CACHE == null) {
+			toRet.STATE = new NerdSceneState();
+			this.SCENE_CACHE.put(SCENE_CLASS,
+					new NerdSceneManager.SceneCache(p_sceneConstructor, toRet));
+		} else
+			toRet.STATE = SCENE_CACHE.STATE;
+		// endregion
+
+		return toRet;
+	}
+
+	// Yes, this checks for errors.
+	private void startSceneImpl(final Class<? extends NerdScene> p_sceneClass, final NerdSceneState p_state) {
+		final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
+
+		final NerdScene toStart = this.constructScene(sceneConstructor);
+
+		if (toStart == null)
+			throw new RuntimeException("The scene could not be constructed.");
+
+		this.setScene(toStart, p_state);
+	}
+
+	// The scene-deleter!!!
+	private void setScene(final NerdScene p_currentScene, final NerdSceneState p_state) {
+		this.SKETCH.WINDOW.cursorVisible = true;
+		this.SKETCH.WINDOW.cursorConfined = false;
+
+		// region `this.SETTINGS.ON_SWITCH` tasks.
+		if (this.SETTINGS.ON_SWITCH.doClear) {
+			if (this.SETTINGS.ON_SWITCH.clearColor == -1)
+				this.SKETCH.clear();
+			else
+				this.SKETCH.background(this.SETTINGS.ON_SWITCH.clearColor);
+		}
+
+		if (this.SETTINGS.ON_SWITCH.resetSceneLayerCallbackOrder) {
+			this.SETTINGS.preFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.SCENE;
+			this.SETTINGS.drawFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+			this.SETTINGS.postFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+		}
+		// endregion
+
+		this.prevSceneClass = this.currSceneClass;
+		if (this.prevSceneClass != null) {
+			// Exit the scene, and nullify the cache.
+			this.currScene.runSceneChanged();
+
+			// Do not clear! Theyr're cached!
+			// if (!this.hasCached(this.currSceneClass))
+			// this.currScene.ASSETS.clear();
+
+			final NerdSceneManager.SceneCache cache = this.SCENE_CACHE.get(this.currSceneClass);
+			cache.nullifyCache();
+
+			// What `deleteCacheIfCan()` did, I guess (or used to do)!:
+			/*
+			 * // Delete the scene reference if needed:
+			 * SceneManager.SceneCache oldSceneManager.SceneCache =
+			 * this.SCENE_CACHE.get(this.previousSceneClass);
+			 * if (!oldSceneManager.SceneCache.doNotDelete)
+			 * oldSceneManager.SceneCache.deleteCache();
+			 * // If this was the only reference to the scene object, the scene gets GCed!
+			 * System.gc();
+			 */
+
+		}
+
+		this.currSceneClass = p_currentScene.getClass();
+		this.currScene = p_currentScene;
+		this.setupCurrentScene(p_state);
+	}
+
+	// Set the time, *then* call `SceneManager::runSetup()`.
+	private void setupCurrentScene(final NerdSceneState p_state) {
+		this.sceneSwitchOccured = true;
+		this.loadSceneAssets(this.currScene, false);
+
+		final boolean prevSceneClassNotNull = this.prevSceneClass != null;
+
+		// Helps in resetting style and transformation info across scenes! YAY!:
+		if (prevSceneClassNotNull)
+			this.SKETCH.pop();
+
+		this.SKETCH.push();
+
+		this.SKETCH.textFont(this.SKETCH.getDefaultFont());
+
+		this.SCENE_CHANGE_LISTENERS.removeAll(this.SCENE_CHANGE_LISTENERS_TO_REMOVE);
+
+		this.currScene.runSetup(p_state);
+	}
+	// endregion
+	// endregion
+	// endregion
 
 }

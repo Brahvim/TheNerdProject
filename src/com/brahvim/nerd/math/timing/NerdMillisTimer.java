@@ -2,37 +2,37 @@ package com.brahvim.nerd.math.timing;
 
 public class NerdMillisTimer {
 
-    private boolean active;
-    private long startTime, endTime;
+	private boolean active;
+	private long startTime, endTime;
 
-    public NerdMillisTimer() {
-        this.restart();
-    }
+	public NerdMillisTimer() {
+		this.restart();
+	}
 
-    // region State manipulation!
-    public void stop() {
-        this.active = false;
-        this.endTime = System.currentTimeMillis();
-    }
+	// region State manipulation!
+	public void stop() {
+		this.active = false;
+		this.endTime = System.currentTimeMillis();
+	}
 
-    public void restart() {
-        this.active = true;
-        this.startTime = System.currentTimeMillis();
-    }
-    // endregion
+	public void restart() {
+		this.active = true;
+		this.startTime = System.currentTimeMillis();
+	}
+	// endregion
 
-    // region Duration getters.
-    public long get() {
-        return this.active ? System.currentTimeMillis() - this.startTime : this.endTime - this.startTime;
-    }
+	// region Duration getters.
+	public long get() {
+		return this.active ? System.currentTimeMillis() - this.startTime : this.endTime - this.startTime;
+	}
 
-    public int getInt() {
-        return (int) this.get();
-    }
+	public int getInt() {
+		return (int) this.get();
+	}
 
-    public float getFloat() {
-        return (float) this.get();
-    }
-    // endregion
+	public float getFloat() {
+		return (float) this.get();
+	}
+	// endregion
 
 }

@@ -4,7 +4,7 @@ import com.brahvim.nerd.framework.ecs.NerdEcsComponent;
 
 public class EcsDemoComponent extends NerdEcsComponent {
 
-    public String message = """
-            ...So you see, Nerd has an ECS!""";
+	public String message = """
+			...So you see, Nerd has an ECS!""";
 
 }

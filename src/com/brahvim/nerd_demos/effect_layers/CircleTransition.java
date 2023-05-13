@@ -4,12 +4,12 @@ import com.brahvim.nerd.framework.scenes.NerdLayer;
 
 public class CircleTransition extends NerdLayer {
 
-    @Override
-    protected void draw() {
-        SKETCH.begin2d();
-        SKETCH.fill(0);
+	@Override
+	protected void draw() {
+		SKETCH.begin2d();
+		SKETCH.fill(0);
 
-        SKETCH.end2d();
-    }
+		SKETCH.end2d();
+	}
 
 }

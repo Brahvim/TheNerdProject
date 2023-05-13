@@ -10,31 +10,31 @@ import processing.core.PApplet;
 
 public class Java2dDemoScene extends NerdScene {
 
-    private AlSource rubberDuckSource;
+	private AlSource rubberDuckSource;
 
-    @Override
-    protected synchronized void preload() {
-        ASSETS.add(new OggBufferDataAsset(), "data/RUBBER DUCK.ogg");
-    }
+	@Override
+	protected synchronized void preload() {
+		ASSETS.add(new OggBufferDataAsset(), "data/RUBBER DUCK.ogg");
+	}
 
-    @Override
-    protected void setup(NerdSceneState p_state) {
-        App.OPENAL.unitSize = 1;
-        this.rubberDuckSource = new AlSource(App.OPENAL, ASSETS.get("RUBBER DUCK").getData());
-    }
+	@Override
+	protected void setup(NerdSceneState p_state) {
+		App.OPENAL.unitSize = 1;
+		this.rubberDuckSource = new AlSource(App.OPENAL, ASSETS.get("RUBBER DUCK").getData());
+	}
 
-    @Override
-    protected void draw() {
-        App.OPENAL.setListenerPosition(WINDOW.cx, WINDOW.cy, 0);
-    }
+	@Override
+	protected void draw() {
+		App.OPENAL.setListenerPosition(WINDOW.cx, WINDOW.cy, 0);
+	}
 
-    @Override
-    public void mouseClicked() {
-        this.rubberDuckSource.setPosition(
-                PApplet.map(INPUT.mouseX, 0, WINDOW.width, WINDOW.qx, WINDOW.q3x),
-                PApplet.map(INPUT.mouseY, 0, WINDOW.height, WINDOW.qy, WINDOW.q3y), 0);
-        System.out.println(this.rubberDuckSource.getPosition());
-        this.rubberDuckSource.play();
-    }
+	@Override
+	public void mouseClicked() {
+		this.rubberDuckSource.setPosition(
+				PApplet.map(INPUT.mouseX, 0, WINDOW.width, WINDOW.qx, WINDOW.q3x),
+				PApplet.map(INPUT.mouseY, 0, WINDOW.height, WINDOW.qy, WINDOW.q3y), 0);
+		System.out.println(this.rubberDuckSource.getPosition());
+		this.rubberDuckSource.play();
+	}
 
 }

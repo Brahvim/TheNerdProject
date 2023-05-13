@@ -15,46 +15,46 @@ import processing.core.PConstants;
 
 /* `package` */ class NerdSketchBuilderSettings {
 
-    public Class<? extends NerdScene> firstScene;
-    public NerdEcsSystem<?>[] ecsSystemOrder = null;
-    public SceneManagerSettings sceneManagerSettings;
-    public int width = 400, height = 400, antiAliasing;
-    public AlContext.AlContextSettings alContextSettings;
-    public HashMap<String, Object> nerdExtensions = new HashMap<>();
-    public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
-    public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
-    public NerdSceneManager.SceneManagerSettings.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
+	public Class<? extends NerdScene> firstScene;
+	public NerdEcsSystem<?>[] ecsSystemOrder = null;
+	public SceneManagerSettings sceneManagerSettings;
+	public int width = 400, height = 400, antiAliasing;
+	public AlContext.AlContextSettings alContextSettings;
+	public HashMap<String, Object> nerdExtensions = new HashMap<>();
+	public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
+	public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
+	public NerdSceneManager.SceneManagerSettings.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
-    // region Listeners.
-    public LinkedHashSet<Consumer<NerdSketch>> sketchConstructedListeners,
-            settingsListeners, setupListeners, exitListeners, disposalListeners;
+	// region Listeners.
+	public LinkedHashSet<Consumer<NerdSketch>> sketchConstructedListeners,
+			settingsListeners, setupListeners, exitListeners, disposalListeners;
 
-    // Initializing the listeners:
-    {
-        this.exitListeners = new LinkedHashSet<>();
-        this.setupListeners = new LinkedHashSet<>();
-        this.settingsListeners = new LinkedHashSet<>();
-        this.disposalListeners = new LinkedHashSet<>();
-        this.sceneChangeListeners = new LinkedHashSet<>();
-        this.sketchConstructedListeners = new LinkedHashSet<>();
-    }
+	// Initializing the listeners:
+	{
+		this.exitListeners = new LinkedHashSet<>();
+		this.setupListeners = new LinkedHashSet<>();
+		this.settingsListeners = new LinkedHashSet<>();
+		this.disposalListeners = new LinkedHashSet<>();
+		this.sceneChangeListeners = new LinkedHashSet<>();
+		this.sketchConstructedListeners = new LinkedHashSet<>();
+	}
 
-    public LinkedHashSet<NerdSceneManager.SceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
+	public LinkedHashSet<NerdSceneManager.SceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
 
-    public LinkedHashSet<Consumer<NerdSketch>> preListeners, postListeners,
-            drawListeners, preDrawListeners, postDrawListeners;
+	public LinkedHashSet<Consumer<NerdSketch>> preListeners, postListeners,
+			drawListeners, preDrawListeners, postDrawListeners;
 
-    // Intializing these listeners as well, haha:
-    {
-        this.preListeners = new LinkedHashSet<>();
-        this.postListeners = new LinkedHashSet<>();
-        this.drawListeners = new LinkedHashSet<>();
-        this.preDrawListeners = new LinkedHashSet<>();
-        this.postDrawListeners = new LinkedHashSet<>();
-    }
-    // endregion
+	// Intializing these listeners as well, haha:
+	{
+		this.preListeners = new LinkedHashSet<>();
+		this.postListeners = new LinkedHashSet<>();
+		this.drawListeners = new LinkedHashSet<>();
+		this.preDrawListeners = new LinkedHashSet<>();
+		this.postDrawListeners = new LinkedHashSet<>();
+	}
+	// endregion
 
-    public boolean dontCloseOnEscape, startedFullscreen, canResize,
-            cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
+	public boolean dontCloseOnEscape, startedFullscreen, canResize,
+			cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 
 }

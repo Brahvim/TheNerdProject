@@ -7,19 +7,19 @@ import com.brahvim.nerd.framework.scenes.NerdSceneState;
 
 public class EcsDemoScene extends NerdScene {
 
-    private NerdEcsEntity entity;
+	private NerdEcsEntity entity;
 
-    @Override
-    protected void setup(NerdSceneState p_state) {
-        this.ECS.setSystemsOrder(new NerdEcsSystem<?>[] { new EcsDemoSystem() });
-        this.entity = ECS.createEntity();
+	@Override
+	protected void setup(NerdSceneState p_state) {
+		this.ECS.setSystemsOrder(new NerdEcsSystem<?>[] { new EcsDemoSystem() });
+		this.entity = ECS.createEntity();
 
-        // // final EcsDemoComponent demoComponent =
-        this.entity.attachComponent(EcsDemoComponent.class)
+		// // final EcsDemoComponent demoComponent =
+		this.entity.attachComponent(EcsDemoComponent.class)
 
-        // .message = "Yo! This message didn't need"
-        // + "to be changed but I did it anyway, haha."
-        ;
-    }
+		// .message = "Yo! This message didn't need"
+		// + "to be changed but I did it anyway, haha."
+		;
+	}
 
 }
