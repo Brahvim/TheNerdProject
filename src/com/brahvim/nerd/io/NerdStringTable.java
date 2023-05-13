@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PApplet;
 import processing.data.JSONArray;

@@ -3,7 +3,7 @@ package com.brahvim.nerd.framework.scenes;
 import com.brahvim.nerd.framework.ecs.NerdEcsEntity;
 import com.brahvim.nerd.framework.ecs.NerdEcsManager;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdBridgedEcsManager extends NerdEcsManager {
 

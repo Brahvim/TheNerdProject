@@ -1,6 +1,6 @@
 package com.brahvim.nerd_demos.scenes.scene3;
 
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PVector;
 

@@ -1,8 +1,8 @@
 package com.brahvim.nerd.math.easings.built_in_easings;
 
 import com.brahvim.nerd.math.easings.NerdEasingFunctions;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.math.easings.NerdEasingFunction;
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 public class NerdQuadraticEase extends NerdEasingFunction {
 

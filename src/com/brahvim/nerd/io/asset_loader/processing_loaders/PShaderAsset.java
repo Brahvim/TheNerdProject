@@ -1,8 +1,8 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 import processing.core.PApplet;
 import processing.opengl.PShader;

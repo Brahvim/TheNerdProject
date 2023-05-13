@@ -14,10 +14,10 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
-import com.brahvim.nerd.papplet_wrapper.NerdDisplayManager;
-import com.brahvim.nerd.papplet_wrapper.NerdInputManager;
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
-import com.brahvim.nerd.papplet_wrapper.NerdWindowManager;
+import com.brahvim.nerd.processing_wrapper.NerdDisplayManager;
+import com.brahvim.nerd.processing_wrapper.NerdInputManager;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
 
 /**
  * <h2>Do not use as an anonymous class!</h2>

@@ -3,7 +3,7 @@ package com.brahvim.nerd.framework.cameras;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

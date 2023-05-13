@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.brahvim.nerd.framework.scenes.NerdScene;
 import com.brahvim.nerd.openal.AlBuffer;
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PConstants;
 import processing.core.PShape;

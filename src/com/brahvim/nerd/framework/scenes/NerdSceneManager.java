@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import com.brahvim.nerd.framework.ecs.NerdEcsManager;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdSceneManager {
 

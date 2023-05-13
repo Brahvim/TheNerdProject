@@ -3,7 +3,7 @@ package com.brahvim.nerd.io.asset_loader;
 import java.io.File;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdAsset {
 

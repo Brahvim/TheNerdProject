@@ -1,6 +1,6 @@
 package com.brahvim.nerd.math.easings;
 
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 // It is better to extend this class than to have `java.util.Function`s in it.
 // How else would we have stuff like `SineEase::freqMult`, then?!

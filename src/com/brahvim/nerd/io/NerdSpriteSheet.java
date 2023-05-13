@@ -2,7 +2,7 @@ package com.brahvim.nerd.io;
 
 import java.util.ArrayList;
 
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PImage;
 

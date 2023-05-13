@@ -1,6 +1,6 @@
 package com.brahvim.nerd.io.asset_loader;
 
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 // Keeping this outside saves typing!:
 public abstract class NerdAssetLoader<AssetT> {

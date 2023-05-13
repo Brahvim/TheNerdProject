@@ -1,6 +1,6 @@
 package com.brahvim.nerd.framework.cameras;
 
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdFpsCamera extends NerdFlyCamera {
     private float height;

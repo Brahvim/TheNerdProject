@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
-import com.brahvim.nerd.papplet_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PVector;
 
