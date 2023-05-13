@@ -18,6 +18,7 @@ public class App {
 
 	/*
 	 * // TODO: "`LayerState`"? :D?
+	 * // TODO: Put `NerdGraphics` to use!
 	 * // TODO: ECS wrapper for Processing!
 	 * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
 	 * // TODO: Dyn4j ECS wrapper. ...or A (Javacpp) LiquidFun ECS wrapper!
