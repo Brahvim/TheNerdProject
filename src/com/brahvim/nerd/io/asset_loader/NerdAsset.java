@@ -62,6 +62,7 @@ public class NerdAsset {
     // ...will cause a surge in CPU usage! Careful!...
     public NerdAsset completeLoad() throws InterruptedException {
         while (!this.loaded) {
+            // TODO: Count number of load failure before crashing.
             System.out.println("Waiting for `" + this.NAME + "` to load...");
             try {
                 Thread.sleep(50);
@@ -96,6 +97,7 @@ public class NerdAsset {
                 p_sketch.removePostListener(this);
             }
         };
+
         this.SKETCH.addPostListener(whenLoaded);
         this.SKETCH.removePostListener(postCallback);
     }
@@ -133,7 +135,7 @@ public class NerdAsset {
      * <br>
      * Usage example:<br>
      * <br>
-     * {@code PImage image = SCENE.ASSETS.get("my_image").getData();}
+     * {@code PImage image = SCENE.ASSETS.get("my_image.png").getData();}
      */
     @SuppressWarnings("unchecked")
     public <RetT> RetT getData() {

@@ -235,8 +235,7 @@ public class NerdSceneManager {
     private Class<? extends NerdScene> currSceneClass, prevSceneClass;
     // endregion
 
-    public NerdSceneManager(final NerdSketch p_sketch,
-            final NerdSceneManager.SceneManagerSettings p_settings,
+    public NerdSceneManager(final NerdSketch p_sketch, final NerdSceneManager.SceneManagerSettings p_settings,
             final LinkedHashSet<NerdSceneManager.SceneChangeListener> p_listeners,
             final NerdEcsSystem<?>[] p_ecsSystems) {
         this.SKETCH = p_sketch;
@@ -848,7 +847,7 @@ public class NerdSceneManager {
             if (systems == null)
                 systems = NerdEcsManager.DEFAULT_ECS_SYSTEMS_ORDER;
 
-            toRet.ECS = new NerdEcsManager(this.SKETCH, systems);
+            toRet.ECS = new NerdBridgedEcsManager(this.SKETCH, systems);
         }
 
         // If this is the first time we're constructing this scene, ensure it has a

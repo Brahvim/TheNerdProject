@@ -3,7 +3,11 @@ package com.brahvim.nerd.framework.ecs;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
+import com.brahvim.nerd.framework.TriConsumer;
+import com.brahvim.nerd.framework.scenes.NerdSceneState;
 import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 
 public class NerdEcsManager {
@@ -35,8 +39,64 @@ public class NerdEcsManager {
         this.setSystemsOrder(p_systems);
     }
 
+    // region `callOnAllSystems()` overloads.
     @SuppressWarnings("all")
-    protected void runUpdates() {
+    protected void callOnAllSystems(final BiConsumer<NerdEcsSystem, HashSet<? extends NerdEcsComponent>> p_methodRef) {
+        if (p_methodRef != null)
+            for (final NerdEcsSystem s : this.systems)
+                p_methodRef.accept(s, this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+    }
+
+    @SuppressWarnings("all")
+    protected <OtherArgT> void callOnAllSystems(
+            final TriConsumer<NerdEcsSystem, OtherArgT, HashSet<? extends NerdEcsComponent>> p_methodRef,
+            OtherArgT p_otherArg) {
+        if (p_methodRef != null)
+            for (final NerdEcsSystem s : this.systems)
+                p_methodRef.accept(s, p_otherArg,
+                        this.COMPONENTS_TO_CLASSES_MAP
+                                .get(s.getComponentTypeClass()));
+    }
+
+    @SuppressWarnings("all")
+    protected <OtherArgT> void callOnAllSystems(
+            final BiConsumer<NerdEcsSystem, OtherArgT> p_methodRef, OtherArgT p_otherArg) {
+        if (p_methodRef != null)
+            for (final NerdEcsSystem s : this.systems)
+                p_methodRef.accept(s, p_otherArg);
+    }
+
+    @SuppressWarnings("all")
+    protected void callOnAllSystems(final Consumer<NerdEcsSystem> p_method) {
+        if (p_method != null)
+            for (final NerdEcsSystem<?> s : this.systems)
+                p_method.accept(s);
+    }
+    // endregion
+
+    // region Sketch workflow callbacks (declared as `protected`).
+    @SuppressWarnings("all")
+    protected synchronized void preload() {
+        this.callOnAllSystems(NerdEcsSystem::preload);
+    }
+
+    @SuppressWarnings("all")
+    protected void sceneChanged() {
+        this.callOnAllSystems(NerdEcsSystem::sceneChanged);
+    }
+
+    @SuppressWarnings("all")
+    protected void setup(final NerdSceneState p_state) {
+        this.callOnAllSystems(NerdEcsSystem::setup, p_state);
+    }
+
+    @SuppressWarnings("all")
+    protected void pre() {
+        this.callOnAllSystems(NerdEcsSystem::pre);
+    }
+
+    @SuppressWarnings("all")
+    protected void draw() {
         this.ENTITIES.removeAll(this.ENTITIES_TO_REMOVE);
         this.COMPONENTS.removeAll(this.COMPONENTS_TO_REMOVE);
 
@@ -48,9 +108,24 @@ public class NerdEcsManager {
         this.ENTITIES_TO_REMOVE.clear();
         this.COMPONENTS_TO_REMOVE.clear();
 
-        for (final NerdEcsSystem s : this.systems)
-            s.update(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::draw);
     }
+
+    @SuppressWarnings("all")
+    protected void post() {
+        this.callOnAllSystems(NerdEcsSystem::post);
+    }
+
+    @SuppressWarnings("all")
+    protected void exit() {
+        this.callOnAllSystems(NerdEcsSystem::exit);
+    }
+
+    @SuppressWarnings("all")
+    protected void dispose() {
+        this.callOnAllSystems(NerdEcsSystem::dispose);
+    }
+    // endregion
 
     // region Public API!
     public NerdEcsEntity createEntity() {
@@ -85,7 +160,7 @@ public class NerdEcsManager {
     }
     // endregion
 
-    protected void addComponent(final NerdEcsComponent p_component) {
+    protected final void addComponent(final NerdEcsComponent p_component) {
         this.COMPONENTS_TO_ADD.add(p_component);
 
         // Check if we've ever used this exact subclass of `NerdEcsComponent`.
@@ -98,7 +173,7 @@ public class NerdEcsManager {
             this.COMPONENTS_TO_CLASSES_MAP.get(componentClass).add(p_component);
     }
 
-    protected void removeComponent(final NerdEcsComponent p_component) {
+    protected final void removeComponent(final NerdEcsComponent p_component) {
         this.COMPONENTS_TO_REMOVE.add(p_component);
 
         // Check if we've ever used this exact subclass of `NerdEcsComponent`.
@@ -112,116 +187,93 @@ public class NerdEcsManager {
     // region Mouse events.
     @SuppressWarnings("all")
     public void mousePressed() {
-        for (final NerdEcsSystem s : this.systems)
-            s.mousePressed(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::mousePressed);
     }
 
     @SuppressWarnings("all")
     public void mouseReleased() {
-        for (final NerdEcsSystem s : this.systems)
-            s.mouseReleased(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::mouseReleased);
     }
 
     @SuppressWarnings("all")
     public void mouseMoved() {
-        for (final NerdEcsSystem s : this.systems)
-            s.mouseMoved(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::mouseMoved);
     }
 
     @SuppressWarnings("all")
     public void mouseClicked() {
-        for (final NerdEcsSystem s : this.systems)
-            s.mouseClicked(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::mouseClicked);
     }
 
     @SuppressWarnings("all")
     public void mouseDragged() {
-        for (final NerdEcsSystem s : this.systems)
-            s.mouseDragged(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::mouseDragged);
     }
 
     @SuppressWarnings(/* { */ "all" /* , unused } */)
     public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
-        for (final NerdEcsSystem s : this.systems)
-            s.mouseWheel(p_mouseEvent, this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::mouseWheel, p_mouseEvent);
     }
     // endregion
 
     // region Keyboard events.
     @SuppressWarnings("all")
     public void keyTyped() {
-        for (final NerdEcsSystem s : this.systems)
-            s.keyTyped(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::keyTyped);
     }
 
     @SuppressWarnings("all")
     public void keyPressed() {
-        for (final NerdEcsSystem s : this.systems)
-            s.keyPressed(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::keyPressed);
     }
 
     @SuppressWarnings("all")
     public void keyReleased() {
-        for (final NerdEcsSystem s : this.systems)
-            s.keyReleased(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::keyReleased);
     }
     // endregion
 
     // region Touch events.
     @SuppressWarnings("all")
     public void touchStarted() {
-        for (final NerdEcsSystem s : this.systems)
-            s.touchStarted(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::touchStarted);
     }
 
     @SuppressWarnings("all")
     public void touchMoved() {
-        for (final NerdEcsSystem s : this.systems)
-            s.touchMoved(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::touchMoved);
     }
 
     @SuppressWarnings("all")
     public void touchEnded() {
-        for (final NerdEcsSystem s : this.systems)
-            s.touchEnded(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::touchEnded);
     }
     // endregion
 
     // region Window focus event
     @SuppressWarnings("all")
     public void focusLost() {
-        for (final NerdEcsSystem s : this.systems)
-            s.focusLost(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
-    }
-
-    @SuppressWarnings("all")
-    public void exit() {
-        for (final NerdEcsSystem s : this.systems)
-            s.exit(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::focusLost);
     }
 
     @SuppressWarnings("all")
     public void resized() {
-        for (final NerdEcsSystem s : this.systems)
-            s.resized(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::resized);
     }
 
     @SuppressWarnings("all")
     public void focusGained() {
-        for (final NerdEcsSystem s : this.systems)
-            s.focusGained(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::focusGained);
     }
 
     @SuppressWarnings("all")
     public void monitorChanged() {
-        for (final NerdEcsSystem s : this.systems)
-            s.monitorChanged(this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::monitorChanged);
     }
 
     @SuppressWarnings("all")
     public void fullscreenChanged(final boolean p_state) {
-        for (final NerdEcsSystem s : this.systems)
-            s.fullscreenChanged(p_state, this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+        this.callOnAllSystems(NerdEcsSystem::fullscreenChanged, p_state);
     }
     // endregion
     // endregion

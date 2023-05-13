@@ -7,6 +7,7 @@ import com.brahvim.nerd.papplet_wrapper.NerdSketch;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.papplet_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd_demos.scenes.ecs_demo_scene.EcsDemoScene;
+import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;

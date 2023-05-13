@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
-import com.brahvim.nerd.framework.ecs.NerdEcsManager;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.papplet_wrapper.NerdDisplayManager;
@@ -34,13 +33,13 @@ public class NerdScene {
   // Forgive me for breaking naming conventions here.
   // Forgive me. Please!
   protected NerdSketch SKETCH;
-  protected NerdEcsManager ECS;
   protected NerdSceneState STATE;
   protected NerdInputManager INPUT;
   protected NerdAssetManager ASSETS;
   protected NerdSceneManager MANAGER;
   protected NerdWindowManager WINDOW;
   protected NerdAbstractCamera CAMERA;
+  protected NerdBridgedEcsManager ECS;
   protected NerdDisplayManager DISPLAYS;
   // endregion
 
@@ -434,12 +433,14 @@ public class NerdScene {
 
   /* `package` */ void runSetup(final NerdSceneState p_state) {
     this.startMillis = this.SKETCH.millis();
+    this.ECS.setup(p_state);
     this.setup(p_state);
 
     // `NerdLayer`s don't get to respond to this `setup()`.
   }
 
   /* `package` */ synchronized void runPreload() {
+    this.ECS.preload();
     this.preload();
     this.ASSETS.forceLoading();
 
@@ -469,6 +470,7 @@ public class NerdScene {
   }
 
   /* `package` */ void runSceneChanged() {
+    this.ECS.sceneChanged();
     this.sceneChanged();
   }
 
@@ -556,12 +558,15 @@ public class NerdScene {
    */
 
   /* `package` */ void runDispose() {
+    this.ECS.dispose();
     this.dispose();
   }
 
   /* `package` */ void runDraw() {
     if (this.MANAGER.SETTINGS.drawFirstCaller == null)
       this.MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+
+    this.ECS.draw();
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
@@ -602,6 +607,8 @@ public class NerdScene {
     if (this.MANAGER.SETTINGS.postFirstCaller == null)
       this.MANAGER.SETTINGS.postFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
 
+    this.ECS.post();
+
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.
 
@@ -632,12 +639,15 @@ public class NerdScene {
         if (l.isActive())
           l.exit();
 
+    this.ECS.exit();
     this.exit();
   }
 
   /* `package` */ void runPre() {
     if (this.MANAGER.SETTINGS.preFirstCaller == null)
       this.MANAGER.SETTINGS.preFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.SCENE;
+
+    this.ECS.pre();
 
     // To avoid asynchronous changes from causing repetition, we put both parts in
     // `if` and `else` block.

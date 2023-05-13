@@ -2,7 +2,6 @@ package com.brahvim.nerd.framework.ecs;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.HashSet;
 
 import com.brahvim.nerd.framework.scenes.NerdSceneState;
@@ -33,32 +32,29 @@ public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> 
         return this.COMPONENT_TYPE_CLASS;
     }
 
-    protected void update(final Collection<SystemComponentsT> p_components) {
-    }
-
     // region Sketch workflow callbacks.
-    protected synchronized void preload() {
+    protected synchronized void preload(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    protected void sceneChanged() {
+    protected void sceneChanged(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    protected void setup(final NerdSceneState p_state) {
+    protected void setup(final NerdSceneState p_state, /* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    protected void pre() {
+    protected void pre(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    protected void draw() {
+    protected void draw(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    protected void post() {
+    protected void post(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    protected void exit() {
+    public void exit(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
-    protected void dispose() {
+    protected void dispose(/* final */ HashSet<SystemComponentsT> p_components) {
     }
     // endregion
 
@@ -109,9 +105,6 @@ public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> 
 
     // region Window focus events.
     public void focusLost(/* final */ HashSet<SystemComponentsT> p_components) {
-    }
-
-    public void exit(/* final */ HashSet<SystemComponentsT> p_components) {
     }
 
     public void resized(/* final */ HashSet<SystemComponentsT> p_components) {

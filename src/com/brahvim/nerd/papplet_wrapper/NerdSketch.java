@@ -41,6 +41,7 @@ import com.brahvim.nerd.framework.scenes.NerdScene;
 import com.brahvim.nerd.framework.scenes.NerdSceneManager;
 import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
+import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.math.NerdUnprojector;
 import com.jogamp.newt.opengl.GLWindow;
@@ -356,7 +357,22 @@ public class NerdSketch extends PApplet {
 
 		// region Non-key settings.
 		this.UNPROJECTOR = new NerdUnprojector();
-		this.ASSETS = new NerdAssetManager(this);
+		this.ASSETS = new NerdAssetManager(this) {
+			@Override
+			public <AssetT> NerdAsset add(final NerdAssetLoader<AssetT> p_type, final String p_path) {
+				final NerdAsset toRet = super.add(p_type, p_path);
+				toRet.startLoading();
+				return toRet;
+			}
+
+			@Override
+			public <AssetT> NerdAsset add(final NerdAssetLoader<AssetT> p_type, final String p_path,
+					final Runnable p_onLoad) {
+				final NerdAsset toRet = super.add(p_type, p_path, p_onLoad);
+				toRet.startLoading();
+				return toRet;
+			}
+		};
 		this.DISPLAYS = new NerdDisplayManager(this);
 		this.WINDOW = NerdWindowManager.createWindowMan(this);
 		this.INPUT = new NerdInputManager(SKETCH, this.keysHeld);

@@ -23,20 +23,20 @@ public class NerdAssetManager {
     }
 
     // region `NerdAsset`-operations!
-    public <T> NerdAsset makeAsset(final NerdAssetLoader<T> p_type, final String p_path) {
+    public <AssetT> NerdAsset makeAsset(final NerdAssetLoader<AssetT> p_type, final String p_path) {
         if (p_type == null || p_path == null)
             throw new IllegalArgumentException("`NerdAsset`s need data!");
         return new NerdAsset(this.SKETCH, p_type, p_path);
     }
 
     // region `add()` overloads.
-    public <T> NerdAsset add(final NerdAssetLoader<T> p_type, final String p_path, final Runnable p_onLoad) {
+    public <AssetT> NerdAsset add(final NerdAssetLoader<AssetT> p_type, final String p_path, final Runnable p_onLoad) {
         final var toRet = this.makeAsset(p_type, p_path);
         this.ASSETS.add(toRet);
         return toRet;
     }
 
-    public <T> NerdAsset add(final NerdAssetLoader<T> p_type, final String p_path) {
+    public <AssetT> NerdAsset add(final NerdAssetLoader<AssetT> p_type, final String p_path) {
         final var toRet = this.makeAsset(p_type, p_path);
         this.ASSETS.add(toRet);
         return toRet;
