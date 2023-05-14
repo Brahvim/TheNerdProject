@@ -1,4 +1,4 @@
-package com.brahvim.nerd.framework.scenes;
+package com.brahvim.nerd.framework.scene_api;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;

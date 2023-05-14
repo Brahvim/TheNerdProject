@@ -3,7 +3,7 @@ package com.brahvim.nerd.processing_wrapper;
 import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
-import com.brahvim.nerd.framework.scenes.NerdSceneManager;
+import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 
 public class NerdBridgedSceneManager extends NerdSceneManager {
 

@@ -2,8 +2,8 @@ package com.brahvim.nerd_demos.scenes.ecs_demo_scene;
 
 import com.brahvim.nerd.framework.ecs.NerdEcsEntity;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
-import com.brahvim.nerd.framework.scenes.NerdScene;
-import com.brahvim.nerd.framework.scenes.NerdSceneState;
+import com.brahvim.nerd.framework.scene_api.NerdScene;
+import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 
 public class EcsDemoScene extends NerdScene {
 

@@ -1,6 +1,6 @@
 package com.brahvim.nerd_demos.scenes.scene3;
 
-import com.brahvim.nerd.framework.scenes.NerdScene;
+import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd_demos.App;

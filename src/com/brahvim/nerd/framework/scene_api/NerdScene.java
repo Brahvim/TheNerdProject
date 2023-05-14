@@ -1,4 +1,4 @@
-package com.brahvim.nerd.framework.scenes;
+package com.brahvim.nerd.framework.scene_api;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -49,7 +49,7 @@ public abstract class NerdScene {
 	// Start at `0`. "Who needs layers anyway?"
 	private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0);
 	// Worth remembering: `LinkedHashSet`s allow duplicate objects, store everything
-	// in *in order*, but have no `indexOf()` method!
+	// in *insertion order*, but have no `indexOf()` method!
 
 	private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
 	// ////////////////////////////////////////////////////////////////////////////////
@@ -473,89 +473,6 @@ public abstract class NerdScene {
 		this.sceneChanged();
 	}
 
-	// SUPER expensive for how little they will be used (need `push()` an `pop()`)!:
-	/*
-	 * void runPostDraw() {
-	 * if (this.MANAGER.SETTINGS.drawFirstCaller == null)
-	 * this.MANAGER.SETTINGS.drawFirstCaller =
-	 * NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
-	 * 
-	 * // To avoid asynchronous changes from causing repetition, we put both parts
-	 * in
-	 * // `if` and `else` block.
-	 * 
-	 * switch (this.MANAGER.SETTINGS.drawFirstCaller) {
-	 * case SCENE -> {
-	 * this.SKETCH.push();
-	 * this.postDraw();
-	 * this.SKETCH.pop();
-	 * 
-	 * for (final NerdLayer l : this.LAYERS)
-	 * if (l != null)
-	 * if (l.isActive()) {
-	 * this.SKETCH.push();
-	 * l.postDraw();
-	 * this.SKETCH.pop();
-	 * }
-	 * }
-	 * 
-	 * case LAYER -> {
-	 * for (final NerdLayer l : this.LAYERS)
-	 * if (l != null)
-	 * if (l.isActive()) {
-	 * this.SKETCH.push();
-	 * l.postDraw();
-	 * this.SKETCH.pop();
-	 * }
-	 * 
-	 * this.SKETCH.push();
-	 * this.postDraw();
-	 * this.SKETCH.pop();
-	 * }
-	 * }
-	 * }
-	 * 
-	 * void runPreDraw() {
-	 * if (this.MANAGER.SETTINGS.drawFirstCaller == null)
-	 * this.MANAGER.SETTINGS.drawFirstCaller =
-	 * NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
-	 * 
-	 * // To avoid asynchronous changes from causing repetition, we put both parts
-	 * in
-	 * // `if` and `else` block.
-	 * 
-	 * switch (this.MANAGER.SETTINGS.drawFirstCaller) {
-	 * case SCENE -> {
-	 * this.SKETCH.push();
-	 * this.preDraw();
-	 * this.SKETCH.pop();
-	 * 
-	 * for (final NerdLayer l : this.LAYERS)
-	 * if (l != null)
-	 * if (l.isActive()) {
-	 * this.SKETCH.push();
-	 * l.preDraw();
-	 * this.SKETCH.pop();
-	 * }
-	 * }
-	 * 
-	 * case LAYER -> {
-	 * for (final NerdLayer l : this.LAYERS)
-	 * if (l != null)
-	 * if (l.isActive()) {
-	 * this.SKETCH.push();
-	 * l.preDraw();
-	 * this.SKETCH.pop();
-	 * }
-	 * 
-	 * this.SKETCH.push();
-	 * this.preDraw();
-	 * this.SKETCH.pop();
-	 * }
-	 * }
-	 * }
-	 */
-
 	/* `package` */ void runDispose() {
 		this.ECS.dispose();
 		this.dispose();
@@ -633,12 +550,13 @@ public abstract class NerdScene {
 	}
 
 	/* `package` */ void runExit() {
+		this.ECS.exit();
+
 		for (final NerdLayer l : this.LAYERS)
 			if (l != null)
 				if (l.isActive())
 					l.exit();
 
-		this.ECS.exit();
 		this.exit();
 	}
 

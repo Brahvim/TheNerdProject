@@ -1,7 +1,7 @@
 package com.brahvim.nerd_demos.scenes;
 
-import com.brahvim.nerd.framework.scenes.NerdScene;
-import com.brahvim.nerd.framework.scenes.NerdSceneState;
+import com.brahvim.nerd.framework.scene_api.NerdScene;
+import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 

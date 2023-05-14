@@ -7,7 +7,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.TriConsumer;
-import com.brahvim.nerd.framework.scenes.NerdSceneState;
+import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdEcsManager {

@@ -4,7 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 
-import com.brahvim.nerd.framework.scenes.NerdSceneState;
+import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 
 public abstract class NerdEcsSystem<SystemComponentsT extends NerdEcsComponent> {
 

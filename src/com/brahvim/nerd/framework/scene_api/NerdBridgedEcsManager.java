@@ -1,4 +1,4 @@
-package com.brahvim.nerd.framework.scenes;
+package com.brahvim.nerd.framework.scene_api;
 
 import com.brahvim.nerd.framework.ecs.NerdEcsEntity;
 import com.brahvim.nerd.framework.ecs.NerdEcsManager;

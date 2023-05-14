@@ -1,6 +1,6 @@
 package com.brahvim.nerd_demos.scenes.scene1;
 
-import com.brahvim.nerd.framework.scenes.NerdLayer;
+import com.brahvim.nerd.framework.scene_api.NerdLayer;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 
 import processing.core.PApplet;
@@ -36,6 +36,11 @@ public class BoxAnimationLayer extends NerdLayer {
 		SKETCH.rotateX(SKETCH.millis() * 0.001f);
 		SKETCH.rotateY(SKETCH.millis() * 0.001f);
 		SKETCH.box(45);
+	}
+
+	@Override
+	public void mousePressed() {
+		System.out.println("`BoxAnimationLayer::mousePressed()`");
 	}
 
 }

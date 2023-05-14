@@ -6,9 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
-import com.brahvim.nerd.framework.scenes.NerdScene;
-import com.brahvim.nerd.framework.scenes.NerdSceneManager;
-import com.brahvim.nerd.framework.scenes.NerdSceneManager.SceneManagerSettings;
+import com.brahvim.nerd.framework.scene_api.NerdScene;
+import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
+import com.brahvim.nerd.framework.scene_api.NerdSceneManager.SceneManagerSettings;
 import com.brahvim.nerd.openal.AlContext;
 
 import processing.core.PConstants;

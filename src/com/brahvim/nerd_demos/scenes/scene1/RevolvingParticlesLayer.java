@@ -1,6 +1,6 @@
 package com.brahvim.nerd_demos.scenes.scene1;
 
-import com.brahvim.nerd.framework.scenes.NerdLayer;
+import com.brahvim.nerd.framework.scene_api.NerdLayer;
 import com.brahvim.nerd_demos.App;
 
 import processing.core.PApplet;

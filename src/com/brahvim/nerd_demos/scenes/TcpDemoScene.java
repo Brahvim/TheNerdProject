@@ -2,8 +2,8 @@ package com.brahvim.nerd_demos.scenes;
 
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.framework.scenes.NerdScene;
-import com.brahvim.nerd.framework.scenes.NerdSceneState;
+import com.brahvim.nerd.framework.scene_api.NerdScene;
+import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.NerdByteSerial;
 import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;

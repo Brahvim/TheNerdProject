@@ -1,10 +1,12 @@
-package com.brahvim.nerd.framework.scenes;
+package com.brahvim.nerd.framework.scene_api;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.ecs.NerdEcsManager;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
@@ -286,90 +288,89 @@ public class NerdSceneManager {
 	 */
 	// endregion
 
-	// region Event callbacks. Passed to the scene first, THEN the ECS!
+	// region Event callbacks. Passed to the ECS first, THEN the scene!
+	protected void callOnCurrSceneActiveLayers(final Consumer<NerdLayer> p_eventCallbackMethod) {
+		if (p_eventCallbackMethod != null)
+			for (final NerdLayer l : this.currScene.getLayers())
+				if (l != null)
+					if (l.isActive())
+						p_eventCallbackMethod.accept(l);
+	}
+
+	protected <OtherArgT> void callOnCurrSceneActiveLayers(
+			final BiConsumer<NerdLayer, OtherArgT> p_eventCallbackMethod, OtherArgT p_otherArg) {
+		if (p_eventCallbackMethod != null)
+			for (final NerdLayer l : this.currScene.getLayers())
+				if (l != null)
+					if (l.isActive())
+						p_eventCallbackMethod.accept(l, p_otherArg);
+	}
+
 	// region Mouse event callbacks.
 	protected void mousePressed() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.mousePressed();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.mousePressed();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.mousePressed();
+
+		this.currScene.mousePressed();
+		this.callOnCurrSceneActiveLayers(NerdLayer::mousePressed);
 	}
 
 	protected void mouseReleased() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.mouseReleased();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.mouseReleased();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.mouseReleased();
+
+		this.currScene.mouseReleased();
+		this.callOnCurrSceneActiveLayers(NerdLayer::mouseReleased);
 	}
 
 	protected void mouseMoved() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.mouseMoved();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.mouseMoved();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.mouseMoved();
+
+		this.currScene.mouseMoved();
+		this.callOnCurrSceneActiveLayers(NerdLayer::mouseMoved);
 	}
 
 	protected void mouseClicked() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.mouseClicked();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.mouseClicked();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.mouseClicked();
+
+		this.currScene.mouseClicked();
+		this.callOnCurrSceneActiveLayers(NerdLayer::mouseClicked);
 	}
 
 	protected void mouseDragged() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.mouseDragged();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.mouseDragged();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.mouseDragged();
+
+		this.currScene.mouseDragged();
+		this.callOnCurrSceneActiveLayers(NerdLayer::mouseDragged);
 	}
 
 	protected void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.mouseWheel(p_mouseEvent);
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.mouseWheel(p_mouseEvent);
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.mouseWheel(p_mouseEvent);
+
+		this.currScene.mouseWheel(p_mouseEvent);
+		this.callOnCurrSceneActiveLayers(NerdLayer::mouseWheel, p_mouseEvent);
 	}
 	// endregion
 
@@ -378,42 +379,33 @@ public class NerdSceneManager {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.touchStarted();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.touchStarted();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.touchStarted();
+
+		this.currScene.touchStarted();
+		this.callOnCurrSceneActiveLayers(NerdLayer::touchStarted);
 	}
 
 	protected void touchMoved() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.touchMoved();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.touchMoved();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.touchMoved();
+
+		this.currScene.touchMoved();
+		this.callOnCurrSceneActiveLayers(NerdLayer::touchMoved);
 	}
 
 	protected void touchEnded() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.touchEnded();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.touchEnded();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.touchEnded();
+
+		this.currScene.touchEnded();
+		this.callOnCurrSceneActiveLayers(NerdLayer::touchEnded);
 	}
 	// endregion
 
@@ -422,70 +414,55 @@ public class NerdSceneManager {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.resized();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.resized();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.resized();
+
+		this.currScene.resized();
+		this.callOnCurrSceneActiveLayers(NerdLayer::resized);
 	}
 
 	protected void focusLost() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.focusLost();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.focusLost();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.focusLost();
+
+		this.currScene.focusLost();
+		this.callOnCurrSceneActiveLayers(NerdLayer::focusLost);
 	}
 
 	protected void focusGained() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.focusGained();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.focusGained();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.focusGained();
+
+		this.currScene.focusGained();
+		this.callOnCurrSceneActiveLayers(NerdLayer::focusGained);
 	}
 
 	protected void monitorChanged() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.monitorChanged();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.monitorChanged();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.monitorChanged();
+
+		this.currScene.monitorChanged();
+		this.callOnCurrSceneActiveLayers(NerdLayer::monitorChanged);
 	}
 
 	protected void fullscreenChanged(final boolean p_state) {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.fullscreenChanged(p_state);
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.fullscreenChanged(p_state);
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.fullscreenChanged(p_state);
+
+		this.currScene.fullscreenChanged(p_state);
+		this.callOnCurrSceneActiveLayers(NerdLayer::fullscreenChanged, p_state);
 	}
 	// endregion
 
@@ -494,42 +471,33 @@ public class NerdSceneManager {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.keyTyped();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.keyTyped();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.keyTyped();
+
+		this.currScene.keyTyped();
+		this.callOnCurrSceneActiveLayers(NerdLayer::keyTyped);
 	}
 
 	protected void keyPressed() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.keyPressed();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.keyPressed();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.keyPressed();
+
+		this.currScene.keyPressed();
+		this.callOnCurrSceneActiveLayers(NerdLayer::keyPressed);
 	}
 
 	protected void keyReleased() {
 		if (this.currScene == null)
 			return;
 
-		this.currScene.keyReleased();
-
 		if (this.currScene.ECS != null)
 			this.currScene.ECS.keyReleased();
-		for (final NerdLayer l : this.currScene.getLayers())
-			if (l != null)
-				if (l.isActive())
-					l.keyReleased();
+
+		this.currScene.keyReleased();
+		this.callOnCurrSceneActiveLayers(NerdLayer::keyReleased);
 	}
 	// endregion
 	// endregion

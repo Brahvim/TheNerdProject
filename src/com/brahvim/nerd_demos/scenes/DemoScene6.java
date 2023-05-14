@@ -3,8 +3,8 @@ package com.brahvim.nerd_demos.scenes;
 import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.framework.cameras.NerdFpsCamera;
-import com.brahvim.nerd.framework.scenes.NerdScene;
-import com.brahvim.nerd.framework.scenes.NerdSceneState;
+import com.brahvim.nerd.framework.scene_api.NerdScene;
+import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
