@@ -154,9 +154,9 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		if (this.holdMouse) {
 			super.SKETCH.ROBOT.mouseMove(mouseLockPos.x, mouseLockPos.y);
 			this.yaw += this.mouseSensitivity
-					* (super.SKETCH.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
+					* (super.SKETCH.INPUT.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
 			this.pitch += this.mouseSensitivity
-					* (super.SKETCH.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
+					* (super.SKETCH.INPUT.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
 		} else if (super.SKETCH.mousePressed) {
 			this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
 			this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);

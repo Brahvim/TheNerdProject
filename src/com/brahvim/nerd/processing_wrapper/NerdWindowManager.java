@@ -17,6 +17,7 @@ public abstract class NerdWindowManager {
 	/** Position of the window relative to the monitor. */
 	public final PVector WINDOW_POSITION = new PVector(), PREV_WINDOW_POSITION = new PVector();
 
+	public boolean pfocused, focused;
 	public boolean fullscreen, pfullscreen;
 	public boolean cursorConfined, cursorVisible = true;
 	public boolean pcursorConfined, pcursorVisible = true;
@@ -48,7 +49,7 @@ public abstract class NerdWindowManager {
 	// endregion
 
 	/**
-	 * Feel free not to use this method and call constructors yourself!
+	 * (Feel free not to use this method and call constructors yourself if needed!)
 	 */
 	public static NerdWindowManager createWindowMan(final NerdSketch p_sketch) {
 		return switch (p_sketch.RENDERER) {
@@ -147,10 +148,12 @@ public abstract class NerdWindowManager {
 		// Previous state:
 		this.pwidth = this.width;
 		this.pheight = this.height;
+		this.pfocused = this.focused;
 
 		// Current state:
 		this.width = this.SKETCH.width;
 		this.height = this.SKETCH.height;
+		// this.focused = this.SKETCH.focused; // Better received in the callbacks!
 
 		this.PREV_WINDOW_POSITION.set(this.WINDOW_POSITION);
 		this.WINDOW_POSITION.set(this.getPosition());
@@ -181,6 +184,16 @@ public abstract class NerdWindowManager {
 		this.pfullscreen = this.fullscreen;
 		this.pcursorVisible = this.cursorVisible;
 		this.pcursorConfined = this.cursorConfined;
+	}
+
+	protected void focusGained() {
+		// Copying, because the sketch performs a decision here.
+		this.focused = this.SKETCH.focused;
+	}
+
+	protected void focusLost() {
+		// Copying, because the sketch performs a decision here.
+		this.focused = this.SKETCH.focused;
 	}
 
 	protected abstract void postCallbackImpl();

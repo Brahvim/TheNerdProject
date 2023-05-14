@@ -15,6 +15,7 @@ import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.processing_wrapper.NerdDisplayManager;
+import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdInputManager;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
@@ -33,13 +34,14 @@ public abstract class NerdScene {
 	// Forgive me. Please!
 	protected NerdSketch SKETCH;
 	protected NerdSceneState STATE;
+	protected NerdGraphics GRAPHICS;
 	protected NerdInputManager INPUT;
 	protected NerdAssetManager ASSETS;
 	protected NerdSceneManager MANAGER;
 	protected NerdWindowManager WINDOW;
 	protected NerdAbstractCamera CAMERA;
 	protected NerdBridgedEcsManager ECS;
-	protected NerdDisplayManager DISPLAYS;
+	protected NerdDisplayManager DISPLAY;
 	// endregion
 
 	// region `private` fields.
@@ -405,7 +407,7 @@ public abstract class NerdScene {
 		toRet.WINDOW = toRet.SCENE.WINDOW;
 		toRet.CAMERA = toRet.SCENE.CAMERA;
 		toRet.MANAGER = toRet.SCENE.MANAGER;
-		toRet.DISPLAYS = toRet.SCENE.DISPLAYS;
+		toRet.DISPLAYS = toRet.SCENE.DISPLAY;
 
 		return toRet;
 	}
@@ -480,7 +482,7 @@ public abstract class NerdScene {
 
 	/* `package` */ void runDraw() {
 		if (this.MANAGER.SETTINGS.drawFirstCaller == null)
-			this.MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+			this.MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.LAYER;
 
 		this.ECS.draw();
 
@@ -521,7 +523,7 @@ public abstract class NerdScene {
 
 	/* `package` */ void runPost() {
 		if (this.MANAGER.SETTINGS.postFirstCaller == null)
-			this.MANAGER.SETTINGS.postFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.LAYER;
+			this.MANAGER.SETTINGS.postFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.LAYER;
 
 		this.ECS.post();
 
@@ -562,7 +564,7 @@ public abstract class NerdScene {
 
 	/* `package` */ void runPre() {
 		if (this.MANAGER.SETTINGS.preFirstCaller == null)
-			this.MANAGER.SETTINGS.preFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.SCENE;
+			this.MANAGER.SETTINGS.preFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.SCENE;
 
 		this.ECS.pre();
 

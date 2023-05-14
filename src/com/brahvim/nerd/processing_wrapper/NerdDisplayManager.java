@@ -106,7 +106,7 @@ public class NerdDisplayManager {
 		}
 
 		if (this.SKETCH.focused)
-			this.currentMonitor = this.getGraphicsDeviceAt(this.SKETCH.GLOBAL_MOUSE_POINT);
+			this.currentMonitor = this.getGraphicsDeviceAt(this.SKETCH.INPUT.GLOBAL_MOUSE_POINT);
 
 		// Update `this.SKETCH.displayWidth` and `this.SKETCH.displayHeight`:
 		if (this.currentMonitor != null) {

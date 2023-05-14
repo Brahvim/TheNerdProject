@@ -231,14 +231,6 @@ public class NerdSketch extends PApplet {
 	public final int INIT_WIDTH_HALF, INIT_HEIGHT_HALF;
 	public final int INIT_WIDTH_QUART, INIT_HEIGHT_QUART;
 
-	/** Position of the mouse relative to the monitor. */
-	public final Point GLOBAL_MOUSE_POINT = new Point(),
-			PREV_GLOBAL_MOUSE_POINT = new Point();
-
-	/** Position of the mouse relative to the monitor. */
-	public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
-	public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
-
 	/** Certain setting for the sketch. */
 	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
 			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
@@ -248,25 +240,6 @@ public class NerdSketch extends PApplet {
 	public final NerdWindowManager WINDOW;
 	public final NerdInputManager INPUT;
 	// endregion
-	// endregion
-
-	// region Frame-wise states, Processing style (thus mutable).
-	// ...yeah, these ain't mutable, are they?:
-	public final ArrayList<PVector> UNPROJ_TOUCHES = new ArrayList<>(10);
-	public final ArrayList<PVector> PREV_UNPROJ_TOUCHES = new ArrayList<>(10);
-
-	public PVector mouseAsVec = new PVector();
-	public float mouseScroll, mouseScrollDelta;
-	public boolean mouseLeft, mouseMid, mouseRight;
-
-	// Previous fraaaaame!...
-	public char pkey;
-	public boolean pfocused;
-	public int pmouseButton, pkeyCode;
-	public boolean pkeyPressed, pmousePressed;
-	public PVector pmouseAsVec = new PVector();
-	public float pmouseScroll, pmouseScrollDelta;
-	public boolean pmouseLeft, pmouseMid, pmouseRight;
 	// endregion
 
 	// Time (`millis()` returns `int`!):
@@ -289,7 +262,7 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	protected final int ANTI_ALIASING;
-	protected final NerdBridgedSceneManager SCENES;
+	protected final NerdBridgedSceneManager SCENES; // This is a bridged object, thus, `protected`.
 
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
 	protected final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
@@ -297,12 +270,11 @@ public class NerdSketch extends PApplet {
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	protected NerdBasicCamera defaultCamera;
 	protected PImage iconImage;
-	protected NerdScene currentScene;
 	protected PFont defaultFont;
 
 	// region Callback listeners,
 	// LAMBDAS ARE EXPENSIVVVVVE! Allocate only this!:
-	protected final Consumer<Consumer<NerdSketch>> DEF_CALLBACK_COLLECTION_ITR_LAMBDA = l -> l.accept(this);
+	protected final Consumer<Consumer<NerdSketch>> DEFAULT_CALLBACK_ITR_LAMBDA = l -> l.accept(this);
 
 	protected final LinkedHashSet<NerdSketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<NerdSketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
@@ -442,7 +414,7 @@ public class NerdSketch extends PApplet {
 				this.SETTINGS_LISTENERS, this.SETUP_LISTENERS, this.EXIT_LISTENERS, this.DISPOSAL_LISTENERS,
 				this.PRE_LISTENERS, this.POST_LISTENERS, };
 
-		p_key.sketchConstructedListeners.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		p_key.sketchConstructedListeners.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 	}
 
 	@Override
@@ -491,7 +463,7 @@ public class NerdSketch extends PApplet {
 		switch (this.RENDERER) {
 			case PConstants.P2D, PConstants.P3D -> {
 				this.glWindow = (GLWindow) this.WINDOW.getNativeObject();
-				this.glGraphics = (PGraphicsOpenGL) super.g;
+				this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
 				this.gl = this.glWindow.getGL();
 				this.glu = new GLU();
 
@@ -517,7 +489,7 @@ public class NerdSketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		this.SETUP_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.SETUP_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 	}
 
 	public void pre() {
@@ -528,13 +500,13 @@ public class NerdSketch extends PApplet {
 
 		if (this.USES_OPENGL)
 			this.pgl = super.beginPGL();
-		this.currentScene = this.SCENES.getCurrentScene();
 
 		this.WINDOW.preCallback(this.WINDOW_LISTENERS);
 		this.DISPLAYS.preCallback(this.WINDOW_LISTENERS);
 
-		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll;
-		this.PRE_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		// this.INPUT.framelyMouseScrollDelta = this.INPUT.totalMouseScroll -
+		// this.INPUT.pframeTotalMouseScroll;
+		this.PRE_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runPre();
 	}
 
@@ -544,20 +516,20 @@ public class NerdSketch extends PApplet {
 		this.frameTime = this.frameStartTime - this.pframeTime;
 		this.pframeTime = this.frameStartTime;
 
+		this.INPUT.framelyMouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
+		this.INPUT.framelyMouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
+		this.INPUT.framelyMouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
+
 		// Call all pre-render listeners:
-		this.PRE_DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.PRE_DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 
 		// region Update frame-ly mouse settings.
-		this.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
-		this.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
-		this.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
-
 		// region "`GLOBAL_MOUSE`".
-		this.PREV_GLOBAL_MOUSE_POINT.setLocation(this.GLOBAL_MOUSE_POINT);
-		this.PREV_GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_VECTOR);
+		this.INPUT.PREV_GLOBAL_MOUSE_POINT.setLocation(this.INPUT.GLOBAL_MOUSE_POINT);
+		this.INPUT.PREV_GLOBAL_MOUSE_VECTOR.set(this.INPUT.GLOBAL_MOUSE_VECTOR);
 
-		this.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
-		this.GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_POINT.x, this.GLOBAL_MOUSE_POINT.y);
+		this.INPUT.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
+		this.INPUT.GLOBAL_MOUSE_VECTOR.set(this.INPUT.GLOBAL_MOUSE_POINT.x, this.INPUT.GLOBAL_MOUSE_POINT.y);
 		// endregion
 		// endregion
 
@@ -578,62 +550,47 @@ public class NerdSketch extends PApplet {
 		// endregion
 
 		// Call all draw listeners:
-		this.DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runDraw();
 
 		// region If it doesn't yet exist, construct the scene!
-		if (super.frameCount == 1 && this.currentScene == null) {
+		if (super.frameCount == 1 && this.SCENES.getCurrentScene() == null) {
 			if (this.FIRST_SCENE_CLASS == null)
-				System.err.println("There is no first `NerdScene`! It's `null`!");
+				System.err.println("There is no initial `NerdScene`! It's `null`!");
 			else
 				this.SCENES.startScene(this.FIRST_SCENE_CLASS);
 		}
 		// endregion
 
 		// Call all post-render listeners:
-		this.POST_DRAW_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.POST_DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 	}
 
 	public void post() {
-		this.POST_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
-
-		if (this.USES_OPENGL)
-			super.endPGL();
-
-		this.WINDOW.postCallback(this.WINDOW_LISTENERS);
-
-		// region Previous state updates!!!
-		for (final PVector v : this.UNPROJ_TOUCHES)
-			this.PREV_UNPROJ_TOUCHES.add(v);
-
-		this.pkey = super.key;
-		this.pfocused = this.focused;
-		this.pkeyCode = this.keyCode;
-		this.pmouseMid = this.mouseMid;
-		this.pmouseLeft = this.mouseLeft;
-		this.pmouseRight = this.mouseRight;
-		this.pkeyPressed = super.keyPressed;
-		this.pmouseButton = this.mouseButton;
-		this.pmouseScroll = this.mouseScroll;
-		this.pmouseAsVec.set(this.mouseAsVec);
-		this.pmousePressed = super.mousePressed;
 		this.previousCamera = this.currentCamera;
-		this.pmouseScrollDelta = this.mouseScrollDelta;
-		// endregion
+
+		// These help complete background work:
+		this.INPUT.postCallback();
+		this.WINDOW.postCallback(this.WINDOW_LISTENERS);
+		this.POST_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 
 		this.SCENES.runPost();
+
+		// ...Because apparently Processing allows rendering here!:
+		if (this.USES_OPENGL)
+			super.endPGL();
 	}
 
 	@Override
 	public void exit() {
-		this.EXIT_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.EXIT_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runExit();
 		super.exit();
 	}
 
 	@Override
 	public void dispose() {
-		this.DISPOSAL_LISTENERS.forEach(this.DEF_CALLBACK_COLLECTION_ITR_LAMBDA);
+		this.DISPOSAL_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runDispose();
 		super.dispose();
 	}
@@ -643,6 +600,11 @@ public class NerdSketch extends PApplet {
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
+		this.INPUT.mouseButton = super.mouseButton;
+		this.INPUT.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
+		this.INPUT.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
+		this.INPUT.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
+
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mousePressed();
 
@@ -651,6 +613,11 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseReleased() {
+		this.INPUT.mouseButton = super.mouseButton;
+		this.INPUT.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
+		this.INPUT.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
+		this.INPUT.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
+
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseReleased();
 
@@ -659,12 +626,15 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseMoved() {
+		// this.INPUT.MOUSE_CENTER_OFFSET.set( super.mouseX);
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseMoved();
 
 		this.SCENES.mouseMoved();
 	}
 
+	// JUST SO YOU KNOW!: On Android, `mouseClicked()` has been left unused.
+	// JUST SO YOU KNOW!: On PC, it's called after `mousePressed()`. ...Maybe.
 	@Override
 	public void mouseClicked() {
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
@@ -683,7 +653,9 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
-		this.mouseScroll += p_mouseEvent.getCount();
+		// this.INPUT.mouseScroll = p_mouseEvent.getCount();
+		// this.INPUT.lastMouseScroll = this.INPUT.mouseScroll;
+		// this.INPUT.totalMouseScroll += p_mouseEvent.getCount();
 
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseWheel(p_mouseEvent);
@@ -796,6 +768,7 @@ public class NerdSketch extends PApplet {
 		// For compatibility with newer versions of Processing, I guess:
 		super.focusGained();
 		super.focused = true;
+		this.WINDOW.focusGained();
 
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
@@ -811,6 +784,7 @@ public class NerdSketch extends PApplet {
 		// For compatibility with newer versions of Processing, I guess:
 		super.focusLost();
 		super.focused = false;
+		this.WINDOW.focusLost();
 
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
@@ -2044,7 +2018,7 @@ public class NerdSketch extends PApplet {
 	public PVector worldVec(final float p_x, final float p_y, final float p_z) {
 		final PVector toRet = new PVector();
 		// Unproject:
-		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) super.g);
+		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) super.getGraphics());
 		this.UNPROJECTOR.gluUnProject(
 				p_x, super.height - p_y,
 				// `0.9f`: at the near clipping plane.

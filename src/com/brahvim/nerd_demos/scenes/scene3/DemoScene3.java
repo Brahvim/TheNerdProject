@@ -34,7 +34,7 @@ public class DemoScene3 extends NerdScene {
 
 	@Override
 	protected void setup(final NerdSceneState p_state) {
-		MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.SceneManagerSettings.CallbackOrder.SCENE;
+		MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.SCENE;
 		// SCENE.addLayers(CinematicBars.class);
 
 		CAMERA = new SmoothCamera(SKETCH);
@@ -63,34 +63,33 @@ public class DemoScene3 extends NerdScene {
 	@Override
 	protected void draw() {
 		// SKETCH.tint(255, 180);
-		SKETCH.background(this.bgImage);
+		GRAPHICS.background(this.bgImage);
 
 		// Faster in `draw()`:
-		if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
+		if (INPUT.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
 			this.cubeMan.removeAll(); // REALLY helps the GC out!
 			System.gc(); // Surprisingly, this is a useful hint to the GC.
 
 			// SKETCH.tint(255);
-			SKETCH.background(this.bgImage);
+			GRAPHICS.background(this.bgImage);
 
 			MANAGER.restartScene();
 		}
 
-		SKETCH.lights();
+		GRAPHICS.lights();
 		this.light.apply();
 		this.cubeMan.draw();
 
-		SKETCH.begin2d();
-		SKETCH.textSize(42);
-		SKETCH.centeredText(Float.toString(SKETCH.frameRate));
-		// SKETCH.text(Float.toString(SKETCH.frameRate), 0, 0);
-		SKETCH.end2d();
+		GRAPHICS.begin2d();
+		GRAPHICS.textSize(42);
+		GRAPHICS.centeredText(Float.toString(SKETCH.frameRate));
+		// GRAPHICS.text(Float.toString(SKETCH.frameRate), 0, 0);
+		GRAPHICS.end2d();
 	}
 
-	// region My method[s] :)
 	private PImage createBackgroundImage() {
 		final int color1 = SKETCH.color(224, 152, 27), color2 = SKETCH.color(232, 81, 194);
-		final PImage toRet = SKETCH.createImage(256, 256, PConstants.RGB);
+		final PImage toRet = SKETCH.createImage(DISPLAY.displayWidth, DISPLAY.displayHeight, PConstants.RGB);
 
 		for (int y = 0; y < toRet.height; y++)
 			for (int x = 0; x < toRet.width; x++)
@@ -99,12 +98,11 @@ public class DemoScene3 extends NerdScene {
 
 		return toRet;
 	}
-	// endregion
 
 	// region Event callbacks.
 	@Override
 	public void mouseClicked() {
-		switch (SKETCH.mouseButton) {
+		switch (INPUT.mouseButton) {
 			case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
 			case PConstants.CENTER -> CAMERA.setRoll(0);
 			case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
@@ -113,7 +111,7 @@ public class DemoScene3 extends NerdScene {
 
 	@Override
 	public void keyPressed() {
-		if (SKETCH.keyIsPressed(KeyEvent.VK_F)) {
+		if (INPUT.keyIsPressed(KeyEvent.VK_F)) {
 			WINDOW.cursorVisible = !WINDOW.cursorVisible;
 			CAMERA.holdMouse = !CAMERA.holdMouse;
 		}

@@ -1,5 +1,7 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 import processing.core.PApplet;
@@ -10,22 +12,49 @@ import processing.opengl.PGraphics3D;
 public class NerdInputManager {
 
 	// region Fields.
-	public char key;
-	public int keyCode;
-	public boolean keyPressed;
+	/** Position of the mouse relative to the monitor. */
+	public final Point GLOBAL_MOUSE_POINT = new Point(),
+			PREV_GLOBAL_MOUSE_POINT = new Point();
 
-	public int mouseButton;
-	public boolean mousePressed;
-	public float mouseX, mouseY;
-	public float pmouseX, pmouseY;
+	/** Position of the mouse relative to the monitor. */
+	public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
+	public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
+
+	// region Frame-wise states, Processing style (thus mutable).
+	// ...yeah, *these* ain't mutable, are they?:
+	// TODO: Make all 4 of these non-framely!:
+	public final ArrayList<PVector> UNPROJ_TOUCHES = new ArrayList<>(10);
+	public final ArrayList<PVector> PREV_UNPROJ_TOUCHES = new ArrayList<>(10);
+
+	public final PVector MOUSE_VEC = new PVector(), MOUSE_CENTER_OFFSET = new PVector();
+	public final PVector PREV_MOUSE_VEC = new PVector(), PREV_MOUSE_CENTER_OFFSET = new PVector();
+
+	public char key, pkey;
+	public int keyCode, pkeyCode;
+	public boolean keyPressed, pkeyPressed;
+	public boolean mousePressed, pmousePressed;
+	public float mouseX, mouseY, pmouseX, pmouseY;
+	public int mouseButton, framelyMouseButton, pmouseButton, pframelyMouseButton;
+
+	/** Updated each time the event callbacks are called. */
+	public boolean mouseLeft, mouseMid, mouseRight,
+			pmouseLeft, pmouseMid, pmouseRight;
+
+	/** Updated framely! Generally, don't use this (look at the name!). */
+	public boolean framelyMouseLeft, framelyMouseMid, framelyMouseRight,
+			pframelyMouseLeft, pframelyMouseMid, pframelyMouseRight;
+
+	// public float framelyMouseScrollDelta, pframelyMouseScrollDelta;
+	/** Updated in `NerdSketch::mouseWheel()`. */
+	// public float lastMouseScroll, totalMouseScroll, pframeTotalMouseScroll;
 
 	private final NerdSketch SKETCH;
-	private final LinkedHashSet<Integer> keysHeld;
+	private final LinkedHashSet<Integer> KEYS_HELD;
 	// endregion
 
 	public NerdInputManager(final NerdSketch p_sketch, final LinkedHashSet<Integer> p_keysHeldListRef) {
 		this.SKETCH = p_sketch;
-		this.keysHeld = p_keysHeldListRef;
+		this.KEYS_HELD = p_keysHeldListRef;
 	}
 
 	protected void preDraw() {
@@ -38,6 +67,23 @@ public class NerdInputManager {
 		this.keyPressed = this.SKETCH.keyPressed;
 		this.mouseButton = this.SKETCH.mouseButton;
 		this.mousePressed = this.SKETCH.mousePressed;
+	}
+
+	protected void postCallback() {
+		for (final PVector v : this.UNPROJ_TOUCHES)
+			this.PREV_UNPROJ_TOUCHES.add(v);
+
+		this.pkey = this.SKETCH.key;
+		this.pkeyCode = this.SKETCH.keyCode;
+		this.PREV_MOUSE_VEC.set(this.MOUSE_VEC);
+		this.pkeyPressed = this.SKETCH.keyPressed;
+		this.pframelyMouseMid = this.framelyMouseMid;
+		this.pmousePressed = this.SKETCH.mousePressed;
+		// this.pframeTotalMouseScroll = this.totalMouseScroll;
+		this.pframelyMouseLeft = this.framelyMouseLeft;
+		this.pframelyMouseRight = this.framelyMouseRight;
+		this.pframelyMouseButton = this.SKETCH.mouseButton;
+		// this.pframelyMouseScrollDelta = this.framelyMouseScrollDelta;
 	}
 
 	// region Mouse and coordinate conversion utilities.
@@ -288,17 +334,17 @@ public class NerdInputManager {
 
 	// region Keyboard utilities!
 	public boolean onlyKeyPressedIs(final int p_keyCode) {
-		return this.keysHeld.size() == 1 && this.keysHeld.contains(p_keyCode);
+		return this.KEYS_HELD.size() == 1 && this.KEYS_HELD.contains(p_keyCode);
 	}
 
 	public boolean onlyKeysPressedAre(final int... p_keyCodes) {
-		boolean toRet = this.keysHeld.size() == p_keyCodes.length;
+		boolean toRet = this.KEYS_HELD.size() == p_keyCodes.length;
 
 		if (!toRet)
 			return false;
 
 		for (final int i : p_keyCodes)
-			toRet &= this.keysHeld.contains(i);
+			toRet &= this.KEYS_HELD.contains(i);
 
 		return toRet;
 	}
@@ -308,7 +354,7 @@ public class NerdInputManager {
 		// :O
 
 		for (final int i : p_keyCodes)
-			if (!this.keysHeld.contains(i))
+			if (!this.KEYS_HELD.contains(i))
 				return false;
 		return true;
 
@@ -323,12 +369,12 @@ public class NerdInputManager {
 	}
 
 	public boolean keyIsPressed(final int p_keyCode) {
-		return this.keysHeld.contains(p_keyCode);
+		return this.KEYS_HELD.contains(p_keyCode);
 	}
 
 	public boolean anyGivenKeyIsPressed(final int... p_keyCodes) {
 		for (final int i : p_keyCodes)
-			if (this.keysHeld.contains(i))
+			if (this.KEYS_HELD.contains(i))
 				return true;
 		return false;
 	}

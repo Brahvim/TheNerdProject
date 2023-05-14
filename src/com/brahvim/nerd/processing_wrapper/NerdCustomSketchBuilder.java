@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
-import com.brahvim.nerd.framework.scene_api.NerdSceneManager.SceneManagerSettings;
+import com.brahvim.nerd.framework.scene_api.NerdSceneManager.NerdSceneManagerSettings;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -182,8 +182,8 @@ public abstract class NerdCustomSketchBuilder {
 		return this;
 	}
 
-	public NerdCustomSketchBuilder setSceneManagerSettings(final Consumer<SceneManagerSettings> p_settingsBuilder) {
-		final var toPass = new NerdSceneManager.SceneManagerSettings();
+	public NerdCustomSketchBuilder setSceneManagerSettings(final Consumer<NerdSceneManagerSettings> p_settingsBuilder) {
+		final var toPass = new NerdSceneManager.NerdSceneManagerSettings();
 
 		if (p_settingsBuilder != null)
 			p_settingsBuilder.accept(toPass);
@@ -192,7 +192,7 @@ public abstract class NerdCustomSketchBuilder {
 		return this;
 	}
 
-	public NerdCustomSketchBuilder setSceneManagerSettings(final SceneManagerSettings p_settings) {
+	public NerdCustomSketchBuilder setSceneManagerSettings(final NerdSceneManagerSettings p_settings) {
 		if (p_settings != null)
 			this.SKETCH_KEY.sceneManagerSettings = p_settings;
 		return this;
@@ -216,17 +216,17 @@ public abstract class NerdCustomSketchBuilder {
 	}
 
 	// region Setting `NerdSceneManager.SceneManagerSettings.CallbackOrder`.
-	public NerdCustomSketchBuilder setPreCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
+	public NerdCustomSketchBuilder setPreCallOrder(final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
 		this.SKETCH_KEY.preCallOrder = p_order;
 		return this;
 	}
 
-	public NerdCustomSketchBuilder setDrawCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
+	public NerdCustomSketchBuilder setDrawCallOrder(final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
 		this.SKETCH_KEY.drawCallOrder = p_order;
 		return this;
 	}
 
-	public NerdCustomSketchBuilder setPostCallOrder(final NerdSceneManager.SceneManagerSettings.CallbackOrder p_order) {
+	public NerdCustomSketchBuilder setPostCallOrder(final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
 		this.SKETCH_KEY.postCallOrder = p_order;
 		return this;
 	}
