@@ -57,18 +57,22 @@ public class DemoScene3 extends NerdScene {
 		);
 
 		this.bgImage = this.createBackgroundImage();
-		SKETCH.background(this.bgImage);
+		// SKETCH.background(this.bgImage);
 	}
 
 	@Override
 	protected void draw() {
-		SKETCH.tint(255, 100);
+		// SKETCH.tint(255, 180);
 		SKETCH.background(this.bgImage);
 
 		// Faster in `draw()`:
 		if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
 			this.cubeMan.removeAll(); // REALLY helps the GC out!
 			System.gc(); // Surprisingly, this is a useful hint to the GC.
+
+			// SKETCH.tint(255);
+			SKETCH.background(this.bgImage);
+
 			MANAGER.restartScene();
 		}
 

@@ -38,9 +38,4 @@ public class BoxAnimationLayer extends NerdLayer {
 		SKETCH.box(45);
 	}
 
-	@Override
-	public void mousePressed() {
-		System.out.println("`BoxAnimationLayer::mousePressed()`");
-	}
-
 }
