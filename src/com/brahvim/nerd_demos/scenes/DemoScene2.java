@@ -28,7 +28,7 @@ public class DemoScene2 extends NerdScene {
 		// if (SKETCH.frameCount % 150 == 0)
 		// System.out.println(SKETCH.frameRate);
 
-		SKETCH.translate(SKETCH.mouseAsVec.x, SKETCH.mouseAsVec.y);
+		SKETCH.translate(INPUT.MOUSE_VECTOR);
 		SKETCH.translate(WINDOW.cx, WINDOW.cy);
 		SKETCH.text("Scene `2`!", 0, 0);
 

@@ -4,335 +4,222 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
-import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
-import processing.opengl.PGraphics3D;
+import processing.event.MouseEvent;
 
 public class NerdInputManager {
 
 	// region Fields.
 	/** Position of the mouse relative to the monitor. */
 	public final Point GLOBAL_MOUSE_POINT = new Point(),
-			PREV_GLOBAL_MOUSE_POINT = new Point();
+			PREV_FRAME_GLOBAL_MOUSE_POINT = new Point();
 
 	/** Position of the mouse relative to the monitor. */
-	public final PVector GLOBAL_MOUSE_VECTOR = new PVector();
-	public final PVector PREV_GLOBAL_MOUSE_VECTOR = new PVector();
+	public final PVector GLOBAL_MOUSE_VECTOR = new PVector(),
+			PREV_FRAME_GLOBAL_MOUSE_VECTOR = new PVector();
 
 	// region Frame-wise states, Processing style (thus mutable).
 	// ...yeah, *these* ain't mutable, are they?:
-	// TODO: Make all 4 of these non-framely!:
-	public final ArrayList<PVector> UNPROJ_TOUCHES = new ArrayList<>(10);
-	public final ArrayList<PVector> PREV_UNPROJ_TOUCHES = new ArrayList<>(10);
+	public final ArrayList<PVector> UNPROJ_TOUCHES = new ArrayList<>(10),
+			PREV_UNPROJ_TOUCHES = new ArrayList<>(10),
+			PREV_FRAME_UNPROJ_TOUCHES = new ArrayList<>(10);
 
-	public final PVector MOUSE_VEC = new PVector(), MOUSE_CENTER_OFFSET = new PVector();
-	public final PVector PREV_MOUSE_VEC = new PVector(), PREV_MOUSE_CENTER_OFFSET = new PVector();
+	/** Updated each time events changing this variable occur. */
+	public final PVector MOUSE_VECTOR = new PVector(),
+			PREV_MOUSE_VECTOR = new PVector(),
+			MOUSE_CENTER_OFFSET = new PVector(),
+			PREV_MOUSE_CENTER_OFFSET = new PVector();
+	/** Updated framely! Generally, don't use this (look at that long name!). */
+	public final PVector CURR_FRAME_MOUSE_VECTOR = new PVector(),
+			PREV_FRAME_MOUSE_VECTOR = new PVector(),
+			CURR_FRAME_MOUSE_CENTER_OFFSET = new PVector(),
+			PREV_FRAME_MOUSE_CENTER_OFFSET = new PVector();
 
+	/** Updated each time events changing this variable occur. */
 	public char key, pkey;
+	/** Updated framely! Generally, don't use this (look at that long name!). */
+	public char currFrameKey, prevFrameKey;
+
+	/** Updated each time events changing this variable occur. */
 	public int keyCode, pkeyCode;
+	/** Updated framely! Generally, don't use this (look at that long name!). */
+	public int currFrameKeyCode, prevFrameKeyCode;
+
+	/** Updated each time events changing this variable occur. */
+	public int mouseButton, pmouseButton;
+	/** Updated framely! Generally, don't use this (look at that long name!). */
+	public int currFrameMouseButton, prevFrameMouseButton;
+
+	/** Updated each time events changing this variable occur. */
 	public boolean keyPressed, pkeyPressed;
+	/** Updated framely! Generally, don't use this (look at that long name!). */
+	public boolean currFrameKeyPressed, prevFrameKeyPressed;
+
+	/** Updated each time events changing this variable occur. */
 	public boolean mousePressed, pmousePressed;
+	/** Updated framely! Generally, don't use this (look at that long name!). */
+	public boolean currFrameMousePressed, prevFrameMousePressed;
+
+	/** Updated each time events changing this variable occur. */
 	public float mouseX, mouseY, pmouseX, pmouseY;
-	public int mouseButton, framelyMouseButton, pmouseButton, pframelyMouseButton;
+	/** Updated framely! Generally, don't use this (look at that long name!). */
+	public float currFrameMouseX, currFrameMouseY, prevFrameMouseX, prevFrameMouseY;
 
-	/** Updated each time the event callbacks are called. */
-	public boolean mouseLeft, mouseMid, mouseRight,
-			pmouseLeft, pmouseMid, pmouseRight;
+	/** Updated each time events changing this variable occur. */
+	public boolean mouseLeft, mouseMid, mouseRight, pmouseLeft, pmouseMid, pmouseRight;
+	/** Updated framely! Generally, don't use this (look at that long name!). */
+	public boolean currFrameMouseLeft, currFrameMouseMid, currFrameMouseRight,
+			prevFrameMouseLeft, prevFrameMouseMid, prevFrameMouseRight;
 
-	/** Updated framely! Generally, don't use this (look at the name!). */
-	public boolean framelyMouseLeft, framelyMouseMid, framelyMouseRight,
-			pframelyMouseLeft, pframelyMouseMid, pframelyMouseRight;
+	/** Updated each time events changing this variable occur. */
+	public float mouseScroll, pmouseScroll,
+			mouseScrollDelta, pmouseScrollDelta,
+			totalMouseScroll, ptotalMouseScroll;
 
-	// public float framelyMouseScrollDelta, pframelyMouseScrollDelta;
-	/** Updated in `NerdSketch::mouseWheel()`. */
-	// public float lastMouseScroll, totalMouseScroll, pframeTotalMouseScroll;
+	/** Updated framely! Generally, don't use this (look at that long name!). */
+	public float prevFrameMouseScroll, prevFrameTotalMouseScroll, prevFrameMouseScrollDelta;
 
-	private final NerdSketch SKETCH;
-	private final LinkedHashSet<Integer> KEYS_HELD;
+	protected final LinkedHashSet<Integer> KEYS_HELD = new LinkedHashSet<>(5);
 	// endregion
 
-	public NerdInputManager(final NerdSketch p_sketch, final LinkedHashSet<Integer> p_keysHeldListRef) {
+	private final NerdSketch SKETCH; // ...It's best to keep this `private`.
+	// endregion
+
+	public NerdInputManager(final NerdSketch p_sketch) {
 		this.SKETCH = p_sketch;
-		this.KEYS_HELD = p_keysHeldListRef;
 	}
 
-	protected void preDraw() {
+	/* `package` */ void preCallback() {
+		this.CURR_FRAME_MOUSE_CENTER_OFFSET.set(
+				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
+				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
+		this.CURR_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
+
+		this.currFrameKey = this.SKETCH.key;
+		this.currFrameMouseX = this.SKETCH.mouseX;
+		this.currFrameMouseY = this.SKETCH.mouseY;
+		this.currFrameKeyCode = this.SKETCH.keyCode;
+
+		this.currFrameKeyPressed = this.SKETCH.keyPressed;
+		this.currFrameMouseButton = this.SKETCH.mouseButton;
+		this.currFrameMousePressed = this.SKETCH.mousePressed;
+
+		this.currFrameMouseLeft = this.SKETCH.mouseButton == PConstants.LEFT;
+		this.currFrameMouseMid = this.SKETCH.mouseButton == PConstants.CENTER;
+		this.currFrameMouseRight = this.SKETCH.mouseButton == PConstants.RIGHT;
+	}
+
+	/* `package` */ void postCallback() {
+		this.PREV_FRAME_MOUSE_CENTER_OFFSET.set(
+				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
+				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
+		this.PREV_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
+
+		this.prevFrameKey = this.SKETCH.key;
+		this.prevFrameMouseX = this.SKETCH.mouseX;
+		this.prevFrameMouseY = this.SKETCH.mouseY;
+		this.prevFrameKeyCode = this.SKETCH.keyCode;
+
+		this.prevFrameKeyPressed = this.SKETCH.keyPressed;
+		this.prevFrameMouseButton = this.SKETCH.mouseButton;
+		this.prevFrameMousePressed = this.SKETCH.mousePressed;
+
+		this.prevFrameMouseLeft = this.SKETCH.mouseButton == PConstants.LEFT;
+		this.prevFrameMouseMid = this.SKETCH.mouseButton == PConstants.CENTER;
+		this.prevFrameMouseRight = this.SKETCH.mouseButton == PConstants.RIGHT;
+	}
+
+	// region Input event callbacks from Processing.
+	/* `package` */ void keyTyped() {
+		this.pmouseButton = this.mouseButton;
+
 		this.key = this.SKETCH.key;
-		this.mouseX = this.SKETCH.mouseX;
-		this.mouseY = this.SKETCH.mouseY;
-		this.pmouseX = this.SKETCH.pmouseX;
-		this.pmouseY = this.SKETCH.pmouseY;
 		this.keyCode = this.SKETCH.keyCode;
 		this.keyPressed = this.SKETCH.keyPressed;
+	}
+
+	/* `package` */ void keyPressed() {
+		this.pmouseButton = this.mouseButton;
+
+		this.key = this.SKETCH.key;
+		this.keyCode = this.SKETCH.keyCode;
+		this.keyPressed = this.SKETCH.keyPressed;
+	}
+
+	/* `package` */ void keyReleased() {
+		this.pmouseButton = this.mouseButton;
+
+		this.key = this.SKETCH.key;
+		this.keyCode = this.SKETCH.keyCode;
+		this.keyPressed = this.SKETCH.keyPressed;
+	}
+
+	/* `package` */ void mousePressed() {
+		this.pmouseButton = this.mouseButton;
+		this.pmousePressed = this.mousePressed;
+
 		this.mouseButton = this.SKETCH.mouseButton;
 		this.mousePressed = this.SKETCH.mousePressed;
 	}
 
-	protected void postCallback() {
-		for (final PVector v : this.UNPROJ_TOUCHES)
-			this.PREV_UNPROJ_TOUCHES.add(v);
+	/* `package` */ void mouseReleased() {
+		this.pmouseButton = this.mouseButton;
+		this.pmousePressed = this.mousePressed;
 
-		this.pkey = this.SKETCH.key;
-		this.pkeyCode = this.SKETCH.keyCode;
-		this.PREV_MOUSE_VEC.set(this.MOUSE_VEC);
-		this.pkeyPressed = this.SKETCH.keyPressed;
-		this.pframelyMouseMid = this.framelyMouseMid;
-		this.pmousePressed = this.SKETCH.mousePressed;
-		// this.pframeTotalMouseScroll = this.totalMouseScroll;
-		this.pframelyMouseLeft = this.framelyMouseLeft;
-		this.pframelyMouseRight = this.framelyMouseRight;
-		this.pframelyMouseButton = this.SKETCH.mouseButton;
-		// this.pframelyMouseScrollDelta = this.framelyMouseScrollDelta;
+		this.mouseButton = this.SKETCH.mouseButton;
+		this.mousePressed = this.SKETCH.mousePressed;
 	}
 
-	// region Mouse and coordinate conversion utilities.
-	// region Sketch overloads for `screen*()`.
-	public void screenX(final float p_x, final float p_y, final float p_z) {
-		this.SKETCH.screenX(p_x, p_y, p_z);
+	/* `package` */ void mouseClicked() {
+		this.pmouseButton = this.mouseButton;
+		this.pmousePressed = this.mousePressed;
+
+		this.mouseButton = this.SKETCH.mouseButton;
+		this.mousePressed = this.SKETCH.mousePressed;
 	}
 
-	public void screenY(final float p_x, final float p_y, final float p_z) {
-		this.SKETCH.screenY(p_x, p_y, p_z);
+	/* `package` */ void mouseMoved() {
+		this.pmouseX = this.mouseX;
+		this.pmouseY = this.mouseY;
+
+		this.PREV_MOUSE_VECTOR.set(this.MOUSE_VECTOR);
+		this.PREV_MOUSE_CENTER_OFFSET.set(this.MOUSE_CENTER_OFFSET);
+
+		this.mouseX = this.SKETCH.mouseX;
+		this.mouseY = this.SKETCH.mouseY;
+		this.MOUSE_VECTOR.set(this.mouseX, this.mouseY);
+		this.MOUSE_CENTER_OFFSET.set(
+				this.SKETCH.mouseX - this.SKETCH.WINDOW.cx,
+				this.SKETCH.mouseY - this.SKETCH.WINDOW.cy);
 	}
 
-	public void screenZ(final float p_x, final float p_y, final float p_z) {
-		this.SKETCH.screenZ(p_x, p_y, p_z);
-	}
-	// endregion
+	/* `package` */ void mouseDragged() {
+		this.pmouseX = this.mouseX;
+		this.pmouseY = this.mouseY;
+		this.pmouseButton = this.mouseButton;
 
-	// region `modelVec()` and `screenVec()`.
-	public PVector modelVec() {
-		return new PVector(
-				// "I passed these `0`s in myself, yeah. Let's not rely on the JIT too much!"
-				// - Me before re-thinking that.
-				this.modelX(),
-				this.modelY(),
-				this.modelZ());
+		this.mouseX = this.SKETCH.mouseX;
+		this.mouseY = this.SKETCH.mouseY;
+		this.mouseButton = this.SKETCH.mouseButton;
 	}
 
-	public PVector modelVec(final PVector p_vec) {
-		return new PVector(
-				this.SKETCH.modelX(p_vec.x, p_vec.y, p_vec.z),
-				this.SKETCH.modelY(p_vec.x, p_vec.y, p_vec.z),
-				this.SKETCH.modelZ(p_vec.x, p_vec.y, p_vec.z));
+	/* `package` */ void mouseWheel(final MouseEvent p_event) {
+		this.pmouseScroll = this.mouseScroll;
+		this.ptotalMouseScroll = this.totalMouseScroll;
+		this.pmouseScrollDelta = this.mouseScrollDelta;
+
+		this.mouseScroll = p_event.getCount(); // Fetch the latest and greatest!
+		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll; // Delta!~
+		this.totalMouseScroll += this.mouseScrollDelta; // ...Then we add it in.
 	}
-
-	public PVector modelVec(final float p_x, final float p_y, final float p_z) {
-		return new PVector(
-				this.SKETCH.modelX(p_x, p_y, p_z),
-				this.SKETCH.modelY(p_x, p_y, p_z),
-				this.SKETCH.modelZ(p_x, p_y, p_z));
-	}
-
-	public PVector screenVec() {
-		return new PVector(
-				this.screenX(),
-				this.screenY(),
-				this.screenZ());
-	}
-
-	public PVector screenVec(final PVector p_vec) {
-		return new PVector(
-				this.SKETCH.screenX(p_vec.x, p_vec.y, p_vec.z),
-				this.SKETCH.screenY(p_vec.x, p_vec.y, p_vec.z),
-				this.SKETCH.screenZ(p_vec.x, p_vec.y, p_vec.z));
-	}
-
-	public PVector screenVec(final float p_x, final float p_y, final float p_z) {
-		return new PVector(
-				this.SKETCH.screenX(p_x, p_y, p_z),
-				this.SKETCH.screenY(p_x, p_y, p_z),
-				this.SKETCH.screenZ(p_x, p_y, p_z));
-	}
-	// endregion
-
-	// region `modelX()`-`modelY()`-`modelZ()` `PVector` and no-parameter overloads.
-	// region Parameterless overloads.
-	public float modelX() {
-		return this.SKETCH.modelX(0, 0, 0);
-	}
-
-	public float modelY() {
-		return this.SKETCH.modelY(0, 0, 0);
-	}
-
-	public float modelZ() {
-		return this.SKETCH.modelZ(0, 0, 0);
-	}
-	// endregion
-
-	// region `p_vec`?
-	// ...how about `p_modelMatInvMulter`? :rofl:!
-	public float modelX(final PVector p_vec) {
-		return this.SKETCH.modelX(p_vec.x, p_vec.y, p_vec.z);
-	}
-
-	public float modelY(final PVector p) {
-		return this.SKETCH.modelY(p.x, p.y, p.z);
-	}
-
-	public float modelZ(final PVector p) {
-		return this.SKETCH.modelZ(p.x, p.y, p.z);
-	}
-	// endregion
-	// endregion
-
-	// region `screenX()`-`screenY()`-`screenZ()`, `PVector`, plus no-arg overloads.
-	// "Oh! And when the `z` is `-1`, you just add this and sub that. Optimization!"
-	// - That ONE Mathematician.
-
-	// region Parameterless overloads.
-	public float screenX() {
-		return this.SKETCH.screenX(0, 0, 0);
-	}
-
-	public float screenY() {
-		return this.SKETCH.screenY(0, 0, 0);
-	}
-
-	public float screenZ() {
-		return this.SKETCH.screenY(0, 0, 0);
-	}
-	// endregion
-
-	// region `p_vec`!
-	// The following two were going to disclude the `z` if it was `0`.
-	// And later, I felt this was risky.
-	// This two-`float` overload ain't in the docs, that scares me!
-
-	// ...ACTUALLY,
-	// https://github.com/processing/processing/blob/459853d0dcdf1e1648b1049d3fdbb4bf233fded8/core/src/processing/opengl/PGraphicsOpenGL.java#L4611
-	// ..."they rely on the JIT too!" (no, they don't optimize this at all. They
-	// just put the `0` themselves, LOL.) :joy:
-
-	public float screenX(final PVector p_vec) {
-		return this.SKETCH.screenX(p_vec.x, p_vec.y, p_vec.z);
-
-		// return p_vec.z == 0
-		// ? this.SKETCH.screenX(p_vec.x, p_vec.y)
-		// : this.SKETCH.screenX(p_vec.x, p_vec.y, p_vec.z);
-	}
-
-	public float screenY(final PVector p_vec) {
-		return this.SKETCH.screenY(p_vec.x, p_vec.y, p_vec.z);
-
-		// return p_vec.z == 0
-		// ? this.SKETCH.screenY(p_vec.x, p_vec.y)
-		// : this.SKETCH.screenY(p_vec.x, p_vec.y, p_vec.z);
-	}
-
-	public float screenZ(final PVector p_vec) {
-		// Hmmm...
-		// ..so `z` cannot be `0` here.
-		// ..and `x` and `y` cannot be ignored!
-		// "No room for optimization here!"
-		return this.SKETCH.screenZ(p_vec.x, p_vec.y, p_vec.z);
-	}
-	// endregion
-	// endregion
-
-	// region Unprojection via `world*()` and `getMouseInWorld*()`!
-	// region 2D versions!
-	public float worldX(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0).x;
-	}
-
-	public float worldY(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0).y;
-	}
-
-	public float worldZ(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0).z;
-	}
-	// endregion
-
-	// region 3D versions (should use!).
-	public float worldX(final float p_x, final float p_y, final float p_z) {
-		return this.worldVec(p_x, p_y, p_z).x;
-	}
-
-	public float worldY(final float p_x, final float p_y, final float p_z) {
-		return this.worldVec(p_x, p_y, p_z).y;
-	}
-
-	public float worldZ(final float p_x, final float p_y, final float p_z) {
-		return this.worldVec(p_x, p_y, p_z).z;
-	}
-	// endregion
-
-	// region `worldVec()`!
-	public PVector worldVec(final PVector p_vec) {
-		return this.worldVec(p_vec.x, p_vec.y, p_vec.z);
-	}
-
-	public PVector worldVec(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0);
-	}
-
-	public PVector worldVec(final float p_x, final float p_y, final float p_z) {
-		final PVector toRet = new PVector();
-		// Unproject:
-		this.SKETCH.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.SKETCH.getGraphics());
-		this.SKETCH.UNPROJECTOR.gluUnProject(
-				p_x, this.SKETCH.height - p_y,
-				// `0.9f`: at the near clipping plane.
-				// `0.9999f`: at the far clipping plane. (NO! Calculate EPSILON first! *Then-*)
-				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
-				PApplet.map(p_z, this.SKETCH.getCamera().near, this.SKETCH.getCamera().far, 0, 1),
-				toRet);
-
-		return toRet;
-	}
-	// endregion
-
-	// region Mouse!
-	/**
-	 * Caching this vector never works. Call this method everytime!~
-	 * People recalculate things framely in computer graphics anyway! :joy:
-	 */
-	public PVector getMouseInWorld() {
-		return this.getMouseInWorldFromFarPlane(this.SKETCH.getCamera().mouseZ);
-	}
-
-	public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
-		return this.worldVec(this.mouseX, this.mouseY,
-				this.SKETCH.getCamera().far - p_distanceFromFarPlane + this.SKETCH.getCamera().near);
-	}
-
-	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
-		return this.worldVec(this.mouseX, this.mouseY, p_distanceFromCamera);
-	}
-	// endregion
-
-	// region Touches.
-	// /**
-	// * Caching this vector never works. Call this method everytime!~
-	// * People recalculate things framely in computer graphics anyway! :joy:
-	// */
-	// public PVector getTouchInWorld(final int p_touchId) {
-	// return this.getTouchInWorldFromFarPlane(p_touchId,
-	// this.SKETCH.getCamera().mouseZ);
-	// }
-
-	// public PVector getTouchInWorldFromFarPlane(final float p_touchId, final float
-	// p_distanceFromFarPlane) {
-	// final TouchEvent.Pointer touch = super.touches[p_touchId];
-	// return this.worldVec(touch.x, touch.y,
-	// this.SKETCH.getCamera().far - p_distanceFromFarPlane +
-	// this.SKETCH.getCamera().near);
-	// }
-
-	// public PVector getTouchInWorldAtZ(final int p_touchId, final float
-	// p_distanceFromCamera) {
-	// final TouchEvent.Pointer touch = super.touches[p_touchId];
-	// return this.worldVec(touch.x, touch.y, p_distanceFromCamera);
-	// }
-	// endregion
-	// endregion
 	// endregion
 
 	// region Keyboard utilities!
+	public Integer[] getHeldKeys() {
+		return (Integer[]) this.KEYS_HELD.toArray();
+	}
+
 	public boolean onlyKeyPressedIs(final int p_keyCode) {
 		return this.KEYS_HELD.size() == 1 && this.KEYS_HELD.contains(p_keyCode);
 	}

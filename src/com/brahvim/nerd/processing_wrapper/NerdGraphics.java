@@ -20,9 +20,12 @@ import processing.core.PStyle;
 import processing.core.PSurface;
 import processing.core.PVector;
 import processing.opengl.PGL;
+import processing.opengl.PGraphics3D;
 import processing.opengl.PShader;
 
 public class NerdGraphics {
+
+	public NerdAbstractCamera CAMERA;
 
 	private final NerdSketch SKETCH;
 	private final PGraphics GRAPHICS;
@@ -30,9 +33,14 @@ public class NerdGraphics {
 	public NerdGraphics(final NerdSketch p_sketch, final PGraphics p_graphics) {
 		this.SKETCH = p_sketch;
 		this.GRAPHICS = p_graphics;
+		this.CAMERA = this.SKETCH.getCamera();
 	}
 
 	// region Rendering utilities!
+	public final PGraphics getUnderlyingBuffer() {
+		return this.GRAPHICS;
+	}
+
 	// region From `PGraphics`.
 	// region Shapes.
 	// region `drawShape()` overloads.
@@ -534,15 +542,11 @@ public class NerdGraphics {
 	public void background(final PImage p_bgImage) {
 		Objects.requireNonNull(p_bgImage);
 
-		this.GRAPHICS.pushMatrix();
-		this.GRAPHICS.hint(PConstants.DISABLE_DEPTH_TEST);
-		this.GRAPHICS.perspective();
-		this.GRAPHICS.camera();
+		this.begin2d();
 		this.GRAPHICS.image(p_bgImage,
 				this.SKETCH.WINDOW.cx, this.SKETCH.WINDOW.cy,
 				this.SKETCH.WINDOW.width, this.SKETCH.WINDOW.height);
-		this.GRAPHICS.hint(PConstants.ENABLE_DEPTH_TEST);
-		this.GRAPHICS.popMatrix();
+		this.end2d();
 	}
 
 	// region Transformations!
@@ -753,6 +757,105 @@ public class NerdGraphics {
 	}
 	// endregion
 
+	// region Unprojection functions.
+	// region 2D versions!
+	public float worldX(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0).x;
+	}
+
+	public float worldY(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0).y;
+	}
+
+	public float worldZ(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0).z;
+	}
+	// endregion
+
+	// region 3D versions (should use!).
+	public float worldX(final float p_x, final float p_y, final float p_z) {
+		return this.worldVec(p_x, p_y, p_z).x;
+	}
+
+	public float worldY(final float p_x, final float p_y, final float p_z) {
+		return this.worldVec(p_x, p_y, p_z).y;
+	}
+
+	public float worldZ(final float p_x, final float p_y, final float p_z) {
+		return this.worldVec(p_x, p_y, p_z).z;
+	}
+	// endregion
+
+	// region `worldVec()`!
+	public PVector worldVec(final PVector p_vec) {
+		return this.worldVec(p_vec.x, p_vec.y, p_vec.z);
+	}
+
+	public PVector worldVec(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0);
+	}
+
+	public PVector worldVec(final float p_x, final float p_y, final float p_z) {
+		final PVector toRet = new PVector();
+		// Unproject:
+		this.SKETCH.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.GRAPHICS);
+		this.SKETCH.UNPROJECTOR.gluUnProject(
+				p_x, this.SKETCH.height - p_y,
+				// `0.9f`: at the near clipping plane.
+				// `0.9999f`: at the far clipping plane. (NO! Calculate EPSILON first! *Then-*)
+				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
+				PApplet.map(p_z, this.SKETCH.getCamera().near, this.SKETCH.getCamera().far, 0, 1),
+				toRet);
+
+		return toRet;
+	}
+	// endregion
+
+	// region Mouse!
+	/**
+	 * Caching this vector never works. Call this method everytime!~
+	 * People recalculate things framely in computer graphics anyway! :joy:
+	 */
+	public PVector getMouseInWorld() {
+		return this.getMouseInWorldFromFarPlane(this.SKETCH.getCamera().mouseZ);
+	}
+
+	public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
+		return this.worldVec(this.SKETCH.INPUT.mouseX, this.SKETCH.INPUT.mouseY,
+				this.SKETCH.getCamera().far - p_distanceFromFarPlane + this.SKETCH.getCamera().near);
+	}
+
+	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
+		return this.worldVec(this.SKETCH.INPUT.mouseX, this.SKETCH.INPUT.mouseY, p_distanceFromCamera);
+	}
+	// endregion
+
+	// region Touches.
+	// /**
+	// * Caching this vector never works. Call this method everytime!~
+	// * People recalculate things framely in computer graphics anyway! :joy:
+	// */
+	// public PVector getTouchInWorld(final int p_touchId) {
+	// return this.getTouchInWorldFromFarPlane(p_touchId,
+	// this.SKETCH.getCamera().mouseZ);
+	// }
+
+	// public PVector getTouchInWorldFromFarPlane(final float p_touchId, final float
+	// p_distanceFromFarPlane) {
+	// final TouchEvent.Pointer touch = this.SKETCH.touches[p_touchId];
+	// return this.worldVec(touch.x, touch.y,
+	// this.SKETCH.getCamera().far - p_distanceFromFarPlane +
+	// this.SKETCH.getCamera().near);
+	// }
+
+	// public PVector getTouchInWorldAtZ(final int p_touchId, final float
+	// p_distanceFromCamera) {
+	// final TouchEvent.Pointer touch = this.SKETCH.touches[p_touchId];
+	// return this.worldVec(touch.x, touch.y, p_distanceFromCamera);
+	// }
+	// endregion
+	// endregion
+
 	// region The billion `image()` overloads. Help me make "standards"?
 	// region For `PImage`s.
 	public void image(final PImage p_image) {
@@ -855,7 +958,9 @@ public class NerdGraphics {
 	 * @see PApplet#textWidth(String)
 	 */
 	public void centeredText(final String p_text) {
-		this.GRAPHICS.text(p_text, this.GRAPHICS.textWidth(p_text) * 0.5f, this.textHeight() * 0.5f);
+		this.GRAPHICS.text(p_text,
+				this.GRAPHICS.textWidth(p_text) * 0.5f,
+				this.textHeight() * 0.5f);
 	}
 
 	// region 2D rendering.
@@ -864,28 +969,19 @@ public class NerdGraphics {
 	 * transformations (they're restored by a call to `Sketch::pop()` later!).
 	 */
 	public void begin2d() {
+		this.push();
 		this.GRAPHICS.hint(PConstants.DISABLE_DEPTH_TEST);
-		this.push(); // #JIT_FTW!
-		this.GRAPHICS.resetMatrix();
-
-		// Either call `this.GRAPHICS.ortho()` + translate by `-cy`, or this! (thank
-		// ChatGPT!):
-		this.GRAPHICS.ortho(0, this.GRAPHICS.width, this.GRAPHICS.height, 0, -1, 1);
-		// this.GRAPHICS.translate(this.SKETCH.WINDOW.cx, -this.height);
-		// this.GRAPHICS.translate(0, 0);
-		this.GRAPHICS.scale(1, -1);
-		// this.GRAPHICS.translate(0, -this.height);
-
-		// this.GRAPHICS.ortho();
-		// this.GRAPHICS.translate(0, -this.SKETCH.WINDOW.cy);
+		this.GRAPHICS.perspective();
+		this.GRAPHICS.camera();
 	}
 
 	/**
 	 * Pops back transformations and enables depth testing.
 	 */
 	public void end2d() {
-		this.pop(); // #JIT_FTW!
+		this.pop();
 		this.GRAPHICS.hint(PConstants.ENABLE_DEPTH_TEST);
+		this.SKETCH.getCamera().applyMatrix();
 	}
 
 	/**
@@ -944,110 +1040,6 @@ public class NerdGraphics {
 		this.GRAPHICS.rect(0, 0, this.GRAPHICS.width, this.GRAPHICS.height);
 		this.end2d();
 	}
-	// endregion
-	// endregion
-
-	// region Camera and unprojection.
-	// region Unprojection via `world*()` and `getMouseInWorld*()`!
-	// region 2D versions!
-	public float worldX(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0).x;
-	}
-
-	public float worldY(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0).y;
-	}
-
-	public float worldZ(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0).z;
-	}
-	// endregion
-
-	// region 3D versions (should use!).
-	public float worldX(final float p_x, final float p_y, final float p_z) {
-		return this.worldVec(p_x, p_y, p_z).x;
-	}
-
-	public float worldY(final float p_x, final float p_y, final float p_z) {
-		return this.worldVec(p_x, p_y, p_z).y;
-	}
-
-	public float worldZ(final float p_x, final float p_y, final float p_z) {
-		return this.worldVec(p_x, p_y, p_z).z;
-	}
-	// endregion
-
-	// region `worldVec()`!
-	public PVector worldVec(final PVector p_vec) {
-		return this.worldVec(p_vec.x, p_vec.y, p_vec.z);
-	}
-
-	public PVector worldVec(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0);
-	}
-
-	public PVector worldVec(final float p_x, final float p_y, final float p_z) {
-		final PVector toRet = new PVector();
-		// Unproject:
-		// this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.GRAPHICS.g);
-		// this.UNPROJECTOR.gluUnProject(
-		// p_x, this.GRAPHICS.height - p_y,
-		// // `0.9f`: at the near clipping plane.
-		// // `0.9999f`: at the far clipping plane. (NO! Calculate EPSILON first!
-		// *Then-*)
-		// // 0.9f + map(mouseY, height, 0, 0, 0.1f),
-		// this.GRAPHICS.map(p_z, this.currentCamera.near, this.currentCamera.far, 0,
-		// 1),
-		// toRet);
-
-		return toRet;
-	}
-	// endregion
-
-	// region Mouse!
-	/**
-	 * Caching this vector never works. Call this method everytime!~
-	 * People recalculate things framely in computer graphics anyway! :joy:
-	 */
-	// public PVector getMouseInWorld() {
-	// return this.getMouseInWorldFromFarPlane(this.currentCamera.mouseZ);
-	// }
-
-	// public PVector getMouseInWorldFromFarPlane(final float
-	// p_distanceFromFarPlane) {
-	// return this.worldVec(this.GRAPHICS.mouseX, this.GRAPHICS.mouseY,
-	// this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
-	// }
-
-	// public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
-	// return this.worldVec(this.GRAPHICS.mouseX, this.GRAPHICS.mouseY,
-	// p_distanceFromCamera);
-	// }
-	// endregion
-
-	// region Touches.
-	// /**
-	// * Caching this vector never works. Call this method everytime!~
-	// * People recalculate things framely in computer graphics anyway! :joy:
-	// */
-	// public PVector getTouchInWorld(final int p_touchId) {
-	// return this.getTouchInWorldFromFarPlane(p_touchId,
-	// this.currentCamera.mouseZ);
-	// }
-
-	// public PVector getTouchInWorldFromFarPlane(final float p_touchId, final float
-	// p_distanceFromFarPlane) {
-	// final TouchEvent.Pointer touch = this.GRAPHICS.touches[p_touchId];
-	// return this.worldVec(touch.x, touch.y,
-	// this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
-	// }
-
-	// public PVector getTouchInWorldAtZ(final int p_touchId, final float
-	// p_distanceFromCamera) {
-	// final TouchEvent.Pointer touch = this.GRAPHICS.touches[p_touchId];
-	// return this.worldVec(touch.x, touch.y, p_distanceFromCamera);
-	// }
-	// endregion
 	// endregion
 	// endregion
 

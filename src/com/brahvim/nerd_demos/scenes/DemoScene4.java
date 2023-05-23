@@ -70,10 +70,9 @@ public class DemoScene4 extends NerdScene {
 			App.OPENAL.setListenerPosition(0, 0, 500);
 			App.OPENAL.setListenerOrientation(0, 1, 0);
 
-			// for (int i = 0; i < 50; i++) // I literally told OpenAL to do this 50 TIMES.
 			this.rubberDuck.setPosition(
-					5 * (SKETCH.mouseX - WINDOW.cx), 0,
-					5 * (SKETCH.mouseY - WINDOW.cy));
+					5 * (INPUT.mouseX - WINDOW.cx), 0,
+					5 * (INPUT.mouseY - WINDOW.cy));
 
 			App.OPENAL.unitSize = 1;
 			// System.out.println(CAMERA.pos);
@@ -86,9 +85,9 @@ public class DemoScene4 extends NerdScene {
 		this.nerd = ASSETS.get("sunglass_nerd").getData();
 		this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
-		SKETCH.noStroke();
+		GRAPHICS.noStroke();
 		SKETCH.getCamera().getPos().z = 500;
-		SKETCH.textureWrap(PConstants.REPEAT);
+		GRAPHICS.textureWrap(PConstants.REPEAT);
 
 		this.ncx = this.nerd.width * 0.5f;
 		this.ncy = this.nerd.height * 0.5f;
@@ -96,15 +95,15 @@ public class DemoScene4 extends NerdScene {
 
 	@Override
 	protected void draw() {
-		SKETCH.clear();
-		SKETCH.translate(-WINDOW.cx, -WINDOW.cy);
+		GRAPHICS.clear();
+		GRAPHICS.translate(-WINDOW.cx, -WINDOW.cy);
 
-		this.magScrollVel += (this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC);
-		this.magScroll += (this.magScrollVel *= this.MAG_SCROLL_DECAY_VEL);
+		this.magScrollVel += this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC;
+		this.magScroll += this.magScrollVel *= this.MAG_SCROLL_DECAY_VEL;
 		CAMERA.getPos().z += this.magScrollVel;
 
 		// region Draw the nerds!!!
-		SKETCH.beginShape();
+		GRAPHICS.beginShape();
 
 		this.nerdGraphics.beginDraw();
 		this.nerdGraphics.imageMode(PConstants.CENTER);
@@ -115,29 +114,29 @@ public class DemoScene4 extends NerdScene {
 				this.nerd.height * this.magScroll);
 		this.nerdGraphics.endDraw();
 
-		SKETCH.texture(this.nerdGraphics);
+		GRAPHICS.texture(this.nerdGraphics);
 
 		// For just infinite tiles (no scrolling!):
 
-		// SKETCH.vertex(0, 0, 0, 0);
-		// SKETCH.vertex(SKETCH.width, 0, SKETCH.width, 0);
-		// SKETCH.vertex(SKETCH.width, SKETCH.height, SKETCH.width, SKETCH.height);
-		// SKETCH.vertex(0, SKETCH.height, 0, SKETCH.height);
+		// GRAPHICS.vertex(0, 0, 0, 0);
+		// GRAPHICS.vertex(WINDOW.width, 0, WINDOW.width, 0);
+		// GRAPHICS.vertex(WINDOW.width, WINDOW.height, WINDOW.width, WINDOW.height);
+		// GRAPHICS.vertex(0, WINDOW.height, 0, WINDOW.height);
 
-		SKETCH.vertex(0, 0, this.nerdRotTime(), this.nerdRotTime());
-		SKETCH.vertex(SKETCH.width, 0, this.nerdRotTime() + SKETCH.width,
+		GRAPHICS.vertex(0, 0, this.nerdRotTime(), this.nerdRotTime());
+		GRAPHICS.vertex(WINDOW.width, 0, this.nerdRotTime() + WINDOW.width,
 				this.nerdRotTime());
-		SKETCH.vertex(SKETCH.width, SKETCH.height,
-				this.nerdRotTime() + SKETCH.width, this.nerdRotTime() + SKETCH.height);
-		SKETCH.vertex(0, SKETCH.height, this.nerdRotTime(), this.nerdRotTime() +
-				SKETCH.height);
+		GRAPHICS.vertex(WINDOW.width, WINDOW.height,
+				this.nerdRotTime() + WINDOW.width, this.nerdRotTime() + WINDOW.height);
+		GRAPHICS.vertex(0, WINDOW.height, this.nerdRotTime(), this.nerdRotTime() +
+				WINDOW.height);
 
-		SKETCH.endShape();
+		GRAPHICS.endShape();
 		// endregion
 
-		SKETCH.in2d(() -> {
-			SKETCH.translate(INPUT.getMouseInWorld());
-			SKETCH.circle(0, 0, 20);
+		GRAPHICS.in2d(() -> {
+			GRAPHICS.translate(GRAPHICS.getMouseInWorld());
+			GRAPHICS.circle(0, 0, 200);
 		});
 
 	}
@@ -149,7 +148,7 @@ public class DemoScene4 extends NerdScene {
 	// region Events.
 	@Override
 	public void mouseClicked() {
-		switch (SKETCH.mouseButton) {
+		switch (INPUT.mouseButton) {
 			case PConstants.LEFT -> MANAGER.restartScene();
 			case PConstants.RIGHT -> MANAGER.startScene(DemoScene3.class);
 		}

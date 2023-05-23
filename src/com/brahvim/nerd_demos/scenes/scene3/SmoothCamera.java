@@ -55,40 +55,43 @@ public class SmoothCamera extends NerdFlyCamera {
 		// Increase speed when holding `Ctrl`:
 		final float accMultiplier;
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_CONTROL))
 			accMultiplier = this.fastSpeed;
-		else if (SKETCH.keyIsPressed(KeyEvent.VK_ALT))
+		else if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_ALT))
 			accMultiplier = this.slowSpeed;
 		else
 			accMultiplier = this.normalSpeed;
 
 		// region Roll.
-		if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
-			super.getUp().x += this.normalSpeed * 0.1f;
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_Z))
+			super.up.x += this.normalSpeed * 0.1f;
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_C))
-			super.getUp().x += -this.normalSpeed * 0.1f;
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_C))
+			super.up.x += -this.normalSpeed * 0.1f;
+
+		// if (super.up.x > PConstants.TAU || super.up.x < -PConstants.TAU)
+		// super.up.x -= super.up.x;
 		// endregion
 
 		// region Elevation.
-		if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_SPACE))
 			this.accVec.y += -accMultiplier;
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_SHIFT))
 			this.accVec.y += accMultiplier;
 		// endregion
 
 		// region `W`-`A`-`S`-`D` controls.
-		if (SKETCH.keyIsPressed(KeyEvent.VK_W))
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_W))
 			this.accVec.z += -accMultiplier;
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_A))
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_A))
 			this.accVec.x += -accMultiplier;
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_S))
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_S))
 			this.accVec.z += accMultiplier;
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_D))
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_D))
 			this.accVec.x += accMultiplier;
 
 		this.accVec.mult(this.accFrict);

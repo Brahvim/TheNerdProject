@@ -14,6 +14,8 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
+import processing.core.PConstants;
+
 public class NerdSceneManager {
 
 	// region Inner classes.

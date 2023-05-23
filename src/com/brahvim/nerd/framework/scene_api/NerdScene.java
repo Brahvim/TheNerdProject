@@ -28,8 +28,9 @@ import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
  */
 public abstract class NerdScene {
 
-	// region `public` fields.
 	public final NerdScene SCENE = this;
+
+	// region `protected` fields.
 	// Forgive me for breaking naming conventions here.
 	// Forgive me. Please!
 	protected NerdSketch SKETCH;
@@ -83,12 +84,16 @@ public abstract class NerdScene {
 	}
 
 	// region Queries.
+	public int getTimesLoaded() {
+		return this.MANAGER.getTimesSceneLoaded(this.getClass());
+	}
+
 	public NerdSketch getSketch() {
 		return this.SKETCH;
 	}
 
-	public int getTimesLoaded() {
-		return this.MANAGER.getTimesSceneLoaded(this.getClass());
+	public NerdGraphics getGraphics() {
+		return this.GRAPHICS;
 	}
 
 	public boolean hasCompletedPreload() {
@@ -303,19 +308,24 @@ public abstract class NerdScene {
 	// endregion
 
 	// region `NerdLayer` state-management.
-	@SafeVarargs // I'm not willing to limit your freedom, but this method HAS to be `final`...
-	public final NerdLayer[] addLayers(final Class<? extends NerdLayer>... p_layerClasses) {
-		final NerdLayer[] toRet = new NerdLayer[p_layerClasses.length];
 
-		for (int i = 0; i < p_layerClasses.length; i++) {
-			final Class<? extends NerdLayer> c = p_layerClasses[i];
-			toRet[i] = this.addLayers(c);
-		}
+	/*
+	 * @SafeVarargs // I'm not willing to limit your freedom, but this method HAS to
+	 * be `final`...
+	 * public final NerdLayer[] addLayers(final Class<? extends NerdLayer>...
+	 * p_layerClasses) {
+	 * final NerdLayer[] toRet = new NerdLayer[p_layerClasses.length];
+	 * 
+	 * for (int i = 0; i < p_layerClasses.length; i++) {
+	 * final Class<? extends NerdLayer> c = p_layerClasses[i];
+	 * toRet[i] = this.addLayers(c);
+	 * }
+	 * 
+	 * return toRet;
+	 * }
+	 */
 
-		return toRet;
-	}
-
-	public <RetT extends NerdLayer> RetT addLayers(final Class<RetT> p_layerClass) {
+	public <RetT extends NerdLayer> RetT addLayer(final Class<RetT> p_layerClass) {
 		if (p_layerClass == null)
 			throw new NullPointerException(
 					"You weren't supposed to pass `null` into `NerdScene::startLayer()`.");
@@ -347,7 +357,7 @@ public abstract class NerdScene {
 					"No instance of `NerdLayer` `%s` exists. Making one...\n",
 					LAYER_CLASS.getSimpleName());
 
-			this.addLayers(LAYER_CLASS);
+			this.addLayer(LAYER_CLASS);
 			return;
 		}
 
@@ -407,7 +417,8 @@ public abstract class NerdScene {
 		toRet.WINDOW = toRet.SCENE.WINDOW;
 		toRet.CAMERA = toRet.SCENE.CAMERA;
 		toRet.MANAGER = toRet.SCENE.MANAGER;
-		toRet.DISPLAYS = toRet.SCENE.DISPLAY;
+		toRet.DISPLAY = toRet.SCENE.DISPLAY;
+		toRet.GRAPHICS = toRet.SCENE.GRAPHICS;
 
 		return toRet;
 	}
@@ -433,9 +444,13 @@ public abstract class NerdScene {
 	 */
 
 	/* `package` */ void runSetup(final NerdSceneState p_state) {
+		// this.GRAPHICS.beginDraw();
+
 		this.startMillis = this.SKETCH.millis();
 		this.ECS.setup(p_state);
 		this.setup(p_state);
+
+		// this.GRAPHICS.endDraw();
 
 		// `NerdLayer`s don't get to respond to this `setup()`.
 	}
@@ -491,16 +506,16 @@ public abstract class NerdScene {
 
 		switch (this.MANAGER.SETTINGS.drawFirstCaller) {
 			case SCENE -> {
-				this.SKETCH.push();
+				this.GRAPHICS.push();
 				this.draw();
-				this.SKETCH.pop();
+				this.GRAPHICS.pop();
 
 				for (final NerdLayer l : this.LAYERS)
 					if (l != null)
 						if (l.isActive()) {
-							this.SKETCH.push();
+							this.GRAPHICS.push();
 							l.draw();
-							this.SKETCH.pop();
+							this.GRAPHICS.pop();
 						}
 			}
 
@@ -508,14 +523,14 @@ public abstract class NerdScene {
 				for (final NerdLayer l : this.LAYERS)
 					if (l != null)
 						if (l.isActive()) {
-							this.SKETCH.push();
+							this.GRAPHICS.push();
 							l.draw();
-							this.SKETCH.pop();
+							this.GRAPHICS.pop();
 						}
 
-				this.SKETCH.push();
+				this.GRAPHICS.push();
 				this.draw();
-				this.SKETCH.pop();
+				this.GRAPHICS.pop();
 			}
 		}
 
@@ -608,6 +623,10 @@ public abstract class NerdScene {
 	protected synchronized void preload() {
 	}
 
+	/**
+	 * Callback for when the scene changes. Calling certain methods from
+	 * {@code MANAGER} will cause crashes here!
+	 */
 	protected void sceneChanged() {
 	}
 

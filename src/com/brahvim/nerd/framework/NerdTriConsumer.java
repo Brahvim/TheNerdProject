@@ -20,7 +20,7 @@ import java.util.Objects;
  * @see BiConsumer
  */
 @FunctionalInterface
-public interface TriConsumer<T, U, V> {
+public interface NerdTriConsumer<T, U, V> {
 
 	/**
 	 * Performs this operation on the given arguments.
@@ -43,7 +43,7 @@ public interface TriConsumer<T, U, V> {
 	 *         operation followed by the {@code p_after} operation
 	 * @throws NullPointerException if {@code p_after} is null
 	 */
-	default TriConsumer<T, U, V> andThen(TriConsumer<? super T, ? super U, ? super V> p_after) {
+	default NerdTriConsumer<T, U, V> andThen(NerdTriConsumer<? super T, ? super U, ? super V> p_after) {
 		Objects.requireNonNull(p_after);
 
 		return (l, c, r) -> {

@@ -21,7 +21,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.brahvim.nerd.framework.NerdCallUtils;
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
@@ -48,6 +48,7 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
 
+import jogamp.opengl.util.pngj.chunks.PngChunkICCP;
 import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -83,7 +84,7 @@ public class NerdSketch extends PApplet {
 	public class NerdSketchMouseListener {
 
 		public NerdSketchMouseListener() {
-			NerdSketch.this.SKETCH.MOUSE_LISTENERS.add(this);
+			NerdSketch.this.MOUSE_LISTENERS.add(this);
 		}
 
 		// region Mouse events.
@@ -111,7 +112,7 @@ public class NerdSketch extends PApplet {
 	public class NerdSketchTouchListener {
 
 		public NerdSketchTouchListener() {
-			NerdSketch.this.SKETCH.TOUCH_LISTENERS.add(this);
+			NerdSketch.this.TOUCH_LISTENERS.add(this);
 		}
 
 		// region Touch events.
@@ -130,7 +131,7 @@ public class NerdSketch extends PApplet {
 	public class NerdSketchWindowListener {
 
 		public NerdSketchWindowListener() {
-			NerdSketch.this.SKETCH.WINDOW_LISTENERS.add(this);
+			NerdSketch.this.WINDOW_LISTENERS.add(this);
 		}
 
 		// region Window focus events.
@@ -157,7 +158,7 @@ public class NerdSketch extends PApplet {
 	public class NerdSketchKeyboardListener {
 
 		public NerdSketchKeyboardListener() {
-			NerdSketch.this.SKETCH.KEYBOARD_LISTENERS.add(this);
+			NerdSketch.this.KEYBOARD_LISTENERS.add(this);
 		}
 
 		// region Keyboard events.
@@ -247,7 +248,8 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// region `protected` fields.
-	protected final NerdSketch SKETCH = this; // "Ti's just a pointer, bro".
+	@SuppressWarnings("unused")
+	private final NerdSketch SKETCH = this; // "Ti's just a pointer, bro".
 
 	// region Window object and native renderer references ("hacky stuff").
 	// ("Why check for `null` at all? You know what renderer you used!")
@@ -265,10 +267,10 @@ public class NerdSketch extends PApplet {
 	protected final NerdBridgedSceneManager SCENES; // This is a bridged object, thus, `protected`.
 
 	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
-	protected final LinkedHashSet<Integer> keysHeld = new LinkedHashSet<>(5); // `final` to avoid concurrency issues.
 
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	protected NerdBasicCamera defaultCamera;
+	protected NerdGraphics sceneGraphics;
 	protected PImage iconImage;
 	protected PFont defaultFont;
 
@@ -330,6 +332,7 @@ public class NerdSketch extends PApplet {
 		// endregion
 
 		// region Non-key settings.
+		this.INPUT = new NerdInputManager(this);
 		this.UNPROJECTOR = new NerdUnprojector();
 		this.ASSETS = new NerdAssetManager(this) {
 			@Override
@@ -349,10 +352,9 @@ public class NerdSketch extends PApplet {
 		};
 		this.DISPLAYS = new NerdDisplayManager(this);
 		this.WINDOW = NerdWindowManager.createWindowMan(this);
-		this.INPUT = new NerdInputManager(SKETCH, this.keysHeld);
 		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
-		this.SCENES = new NerdBridgedSceneManager(this, p_key.sceneManagerSettings,
-				p_key.sceneChangeListeners, p_key.ecsSystemOrder);
+		this.SCENES = new NerdBridgedSceneManager(
+				this, p_key.sceneManagerSettings, p_key.sceneChangeListeners, p_key.ecsSystemOrder);
 		// endregion
 
 		// region Setting OpenGL renderer icons.
@@ -479,8 +481,6 @@ public class NerdSketch extends PApplet {
 
 			case PConstants.JAVA2D -> {
 				this.sketchFrame = (JFrame) this.WINDOW.getNativeObject();
-				// "Loose" image loading is usually not a good idea, but I guess it's here...
-				// super.surface.setIcon(super.loadImage(this.iconPath));
 			}
 		}
 
@@ -489,10 +489,20 @@ public class NerdSketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
+		this.sceneGraphics = new NerdGraphics(this, this.createGraphics());
+
+		this.sceneGraphics.textFont(this.defaultFont);
+		this.sceneGraphics.rectMode(PConstants.CENTER);
+		this.sceneGraphics.imageMode(PConstants.CENTER);
+		this.sceneGraphics.textAlign(PConstants.CENTER, PConstants.CENTER);
+
 		this.SETUP_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 	}
 
 	public void pre() {
+		// this.sceneGraphics.beginDraw();
+		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::beginDraw);
+
 		// Cheap removal strategy, LOL. I'm fed with boilerplate!:
 		for (final Collection<?> c : this.LIST_OF_CALLBACK_LISTS)
 			// ..Don't use `HashSet::contains()` to check here. Ugh.
@@ -508,6 +518,8 @@ public class NerdSketch extends PApplet {
 		// this.INPUT.pframeTotalMouseScroll;
 		this.PRE_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runPre();
+
+		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::endDraw);
 	}
 
 	@Override
@@ -516,22 +528,24 @@ public class NerdSketch extends PApplet {
 		this.frameTime = this.frameStartTime - this.pframeTime;
 		this.pframeTime = this.frameStartTime;
 
-		this.INPUT.framelyMouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
-		this.INPUT.framelyMouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
-		this.INPUT.framelyMouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
+		this.INPUT.currFrameMouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
+		this.INPUT.currFrameMouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
+		this.INPUT.currFrameMouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
 
 		// Call all pre-render listeners:
 		this.PRE_DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 
 		// region Update frame-ly mouse settings.
 		// region "`GLOBAL_MOUSE`".
-		this.INPUT.PREV_GLOBAL_MOUSE_POINT.setLocation(this.INPUT.GLOBAL_MOUSE_POINT);
-		this.INPUT.PREV_GLOBAL_MOUSE_VECTOR.set(this.INPUT.GLOBAL_MOUSE_VECTOR);
+		this.INPUT.PREV_FRAME_GLOBAL_MOUSE_POINT.setLocation(this.INPUT.GLOBAL_MOUSE_POINT);
+		this.INPUT.PREV_FRAME_GLOBAL_MOUSE_VECTOR.set(this.INPUT.GLOBAL_MOUSE_VECTOR);
 
 		this.INPUT.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
 		this.INPUT.GLOBAL_MOUSE_VECTOR.set(this.INPUT.GLOBAL_MOUSE_POINT.x, this.INPUT.GLOBAL_MOUSE_POINT.y);
 		// endregion
 		// endregion
+
+		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::beginDraw);
 
 		// region Apply the camera when using OpenGL!
 		if (this.USES_OPENGL) {
@@ -553,6 +567,8 @@ public class NerdSketch extends PApplet {
 		this.DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runDraw();
 
+		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::endDraw);
+
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.SCENES.getCurrentScene() == null) {
 			if (this.FIRST_SCENE_CLASS == null)
@@ -568,13 +584,17 @@ public class NerdSketch extends PApplet {
 
 	public void post() {
 		this.previousCamera = this.currentCamera;
+		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::beginDraw);
 
 		// These help complete background work:
 		this.INPUT.postCallback();
 		this.WINDOW.postCallback(this.WINDOW_LISTENERS);
 		this.POST_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
-
 		this.SCENES.runPost();
+
+		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::endDraw);
+
+		this.image(this.sceneGraphics.getUnderlyingBuffer());
 
 		// ...Because apparently Processing allows rendering here!:
 		if (this.USES_OPENGL)
@@ -600,7 +620,9 @@ public class NerdSketch extends PApplet {
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
+		// Again, copying's better since we don't know what decisions the caller makes!:
 		this.INPUT.mouseButton = super.mouseButton;
+		this.INPUT.mousePressed = super.mousePressed;
 		this.INPUT.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
 		this.INPUT.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
 		this.INPUT.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
@@ -613,7 +635,9 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseReleased() {
+		// Again, copying's better since we don't know what decisions the caller makes!:
 		this.INPUT.mouseButton = super.mouseButton;
+		this.INPUT.mousePressed = super.mousePressed;
 		this.INPUT.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
 		this.INPUT.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
 		this.INPUT.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
@@ -626,17 +650,20 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseMoved() {
-		// this.INPUT.MOUSE_CENTER_OFFSET.set( super.mouseX);
+		this.INPUT.mouseMoved();
+
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseMoved();
 
 		this.SCENES.mouseMoved();
 	}
 
-	// JUST SO YOU KNOW!: On Android, `mouseClicked()` has been left unused.
-	// JUST SO YOU KNOW!: On PC, it's called after `mousePressed()`. ...Maybe.
+	// JUST SO YA' KNOW!: On Android, `mouseClicked()` has been left unused.
+	// AND, AND, ALSO!: On PC, it's called after `mouseReleased()`, AWT docs say.
 	@Override
 	public void mouseClicked() {
+		this.INPUT.mouseClicked();
+
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseClicked();
 
@@ -645,6 +672,8 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseDragged() {
+		this.INPUT.mouseDragged();
+
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseDragged();
 
@@ -653,9 +682,7 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
-		// this.INPUT.mouseScroll = p_mouseEvent.getCount();
-		// this.INPUT.lastMouseScroll = this.INPUT.mouseScroll;
-		// this.INPUT.totalMouseScroll += p_mouseEvent.getCount();
+		this.INPUT.mouseWheel(p_mouseEvent);
 
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mouseWheel(p_mouseEvent);
@@ -713,9 +740,19 @@ public class NerdSketch extends PApplet {
 			}
 		}
 
-		synchronized (this.keysHeld) {
-			this.keysHeld.add(super.keyCode);
+		synchronized (this.INPUT.KEYS_HELD) {
+			this.INPUT.KEYS_HELD.add(super.keyCode);
 		}
+
+		// Set the previous states,
+		this.INPUT.pkey = this.INPUT.key;
+		this.INPUT.pkeyCode = this.INPUT.keyCode;
+		this.INPUT.pkeyPressed = this.INPUT.keyPressed;
+
+		// ...And get the latest states!:
+		this.INPUT.key = super.key;
+		this.INPUT.keyCode = super.keyCode;
+		this.INPUT.keyPressed = super.keyPressed;
 
 		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
 			l.keyPressed();
@@ -726,8 +763,8 @@ public class NerdSketch extends PApplet {
 	@Override
 	public void keyReleased() {
 		try {
-			synchronized (this.keysHeld) {
-				this.keysHeld.remove(super.keyCode);
+			synchronized (this.INPUT.KEYS_HELD) {
+				this.INPUT.KEYS_HELD.remove(super.keyCode);
 			}
 		} catch (final IndexOutOfBoundsException e) {
 		}
@@ -897,12 +934,17 @@ public class NerdSketch extends PApplet {
 
 	// region Utilities!~
 	// region Ah yes, GETTERS AND SETTERS. Even here!:
+	public PImage getIconImage() {
+		return this.iconImage;
+	}
+
 	public PFont getDefaultFont() {
 		return this.defaultFont;
 	}
 
-	public PImage getIconImage() {
-		return this.iconImage;
+	public NerdGraphics getSceneGraphics() {
+		return this.sceneGraphics;
+		// return new NerdGraphics(this, super.getGraphics());
 	}
 
 	public NerdSceneManager getSceneManager() {
@@ -916,6 +958,11 @@ public class NerdSketch extends PApplet {
 	public NerdDisplayManager getDisplayManager() {
 		return this.DISPLAYS;
 	}
+
+	public void setSceneGraphics(final NerdGraphics p_graphics) {
+		Objects.requireNonNull(p_graphics);
+		this.sceneGraphics = p_graphics;
+	}
 	// endregion
 
 	// region Rendering utilities!
@@ -926,34 +973,34 @@ public class NerdSketch extends PApplet {
 			final Runnable p_shapingFxn) {
 		super.pushMatrix();
 		this.translate(p_x, p_y, p_z);
-		SKETCH.beginShape(p_shapeType);
+		super.beginShape(p_shapeType);
 		p_shapingFxn.run();
-		SKETCH.endShape(PConstants.CLOSE);
+		super.endShape(PConstants.CLOSE);
 		super.popMatrix();
 	}
 
 	public void drawShape(final float p_x, final float p_y, final int p_shapeType, final Runnable p_shapingFxn) {
 		super.pushMatrix();
 		this.translate(p_x, p_y);
-		SKETCH.beginShape(p_shapeType);
+		super.beginShape(p_shapeType);
 		p_shapingFxn.run();
-		SKETCH.endShape(PConstants.CLOSE);
+		super.endShape(PConstants.CLOSE);
 		super.popMatrix();
 	}
 
 	public void drawShape(final PVector p_pos, final int p_shapeType, final Runnable p_shapingFxn) {
 		super.pushMatrix();
 		this.translate(p_pos);
-		SKETCH.beginShape(p_shapeType);
+		super.beginShape(p_shapeType);
 		p_shapingFxn.run();
-		SKETCH.endShape(PConstants.CLOSE);
+		super.endShape(PConstants.CLOSE);
 		super.popMatrix();
 	}
 
 	public void drawShape(final int p_shapeType, final Runnable p_shapingFxn) {
-		SKETCH.beginShape(p_shapeType);
+		super.beginShape(p_shapeType);
 		p_shapingFxn.run();
-		SKETCH.endShape(PConstants.CLOSE);
+		super.endShape(PConstants.CLOSE);
 	}
 	// endregion
 
@@ -962,34 +1009,34 @@ public class NerdSketch extends PApplet {
 			final Runnable p_shapingFxn) {
 		super.pushMatrix();
 		this.translate(p_x, p_y, p_z);
-		SKETCH.beginShape(p_shapeType);
+		super.beginShape(p_shapeType);
 		p_shapingFxn.run();
-		SKETCH.endShape();
+		super.endShape();
 		super.popMatrix();
 	}
 
 	public void drawOpenShape(final float p_x, final float p_y, final int p_shapeType, final Runnable p_shapingFxn) {
 		super.pushMatrix();
 		this.translate(p_x, p_y);
-		SKETCH.beginShape(p_shapeType);
+		super.beginShape(p_shapeType);
 		p_shapingFxn.run();
-		SKETCH.endShape();
+		super.endShape();
 		super.popMatrix();
 	}
 
 	public void drawOpenShape(final PVector p_pos, final int p_shapeType, final Runnable p_shapingFxn) {
 		super.pushMatrix();
 		this.translate(p_pos);
-		SKETCH.beginShape(p_shapeType);
+		super.beginShape(p_shapeType);
 		p_shapingFxn.run();
-		SKETCH.endShape();
+		super.endShape();
 		super.popMatrix();
 	}
 
 	public void drawOpenShape(final int p_shapeType, final Runnable p_shapingFxn) {
-		SKETCH.beginShape(p_shapeType);
+		super.beginShape(p_shapeType);
 		p_shapingFxn.run();
-		SKETCH.endShape();
+		super.endShape();
 	}
 	// endregion
 
@@ -1810,27 +1857,18 @@ public class NerdSketch extends PApplet {
 	 * transformations (they're restored by a call to `Sketch::pop()` later!).
 	 */
 	public void begin2d() {
+		this.push();
 		super.hint(PConstants.DISABLE_DEPTH_TEST);
-		this.push(); // #JIT_FTW!
-		super.resetMatrix();
-
-		// Either call `super.ortho()` + translate by `-cy`, or this! (thank ChatGPT!):
-		super.ortho(0, super.width, super.height, 0, -1, 1);
-		// super.translate(this.WINDOW.cx, -this.height);
-		// super.translate(0, 0);
-		super.scale(1, -1);
-		// super.translate(0, -this.height);
-
-		// super.ortho();
-		// super.translate(0, -this.WINDOW.cy);
+		super.perspective();
+		super.camera();
 	}
 
 	/**
 	 * Pops back transformations and enables depth testing.
 	 */
 	public void end2d() {
-		this.pop(); // #JIT_FTW!
 		super.hint(PConstants.ENABLE_DEPTH_TEST);
+		this.pop(); // #JIT_FTW!
 	}
 
 	/**
@@ -2078,26 +2116,27 @@ public class NerdSketch extends PApplet {
 
 	// region Key-press and key-type helper methods.
 	public boolean onlyKeyPressedIs(final int p_keyCode) {
-		return this.keysHeld.size() == 1 && this.keysHeld.contains(p_keyCode);
+		return this.INPUT.KEYS_HELD.size() == 1 && this.INPUT.KEYS_HELD.contains(p_keyCode);
 	}
 
 	public boolean onlyKeysPressedAre(final int... p_keyCodes) {
-		boolean toRet = this.keysHeld.size() == p_keyCodes.length;
+		boolean toRet = this.INPUT.KEYS_HELD.size() == p_keyCodes.length;
 
 		if (!toRet)
 			return false;
 
 		for (final int i : p_keyCodes)
-			toRet &= this.keysHeld.contains(i);
+			toRet &= this.INPUT.KEYS_HELD.contains(i);
 
 		return toRet;
 	}
 
 	public boolean keysPressed(final int... p_keyCodes) {
-		// this.keysHeld.contains(p_keyCodes); // Causes a totally unique error :O
+		// this.INPUT.KEYS_HELD.contains(p_keyCodes); // Causes a totally unique error
+		// :O
 
 		for (final int i : p_keyCodes)
-			if (!this.keysHeld.contains(i))
+			if (!this.INPUT.KEYS_HELD.contains(i))
 				return false;
 		return true;
 
@@ -2105,19 +2144,19 @@ public class NerdSketch extends PApplet {
 		/*
 		 * boolean flag = true;
 		 * for (int i : p_keyCodes)
-		 * flag &= this.keysHeld.contains(i); // ...yeah, `|=` and not `&=`...
+		 * flag &= this.INPUT.KEYS_HELD.contains(i); // ...yeah, `|=` and not `&=`...
 		 * return flag;
 		 */
 		// An article once said: `boolean` flags are bad.
 	}
 
 	public boolean keyIsPressed(final int p_keyCode) {
-		return this.keysHeld.contains(p_keyCode);
+		return this.INPUT.KEYS_HELD.contains(p_keyCode);
 	}
 
 	public boolean anyGivenKeyIsPressed(final int... p_keyCodes) {
 		for (final int i : p_keyCodes)
-			if (this.keysHeld.contains(i))
+			if (this.INPUT.KEYS_HELD.contains(i))
 				return true;
 		return false;
 	}

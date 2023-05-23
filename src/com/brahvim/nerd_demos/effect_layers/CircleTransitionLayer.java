@@ -2,7 +2,7 @@ package com.brahvim.nerd_demos.effect_layers;
 
 import com.brahvim.nerd.framework.scene_api.NerdLayer;
 
-public class CircleTransition extends NerdLayer {
+public class CircleTransitionLayer extends NerdLayer {
 
 	@Override
 	protected void draw() {

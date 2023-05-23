@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.framework.TriConsumer;
+import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
@@ -49,7 +49,7 @@ public class NerdEcsManager {
 
 	@SuppressWarnings("all")
 	protected <OtherArgT> void callOnAllSystems(
-			final TriConsumer<NerdEcsSystem, OtherArgT, HashSet<? extends NerdEcsComponent>> p_methodRef,
+			final NerdTriConsumer<NerdEcsSystem, OtherArgT, HashSet<? extends NerdEcsComponent>> p_methodRef,
 			OtherArgT p_otherArg) {
 		if (p_methodRef != null)
 			for (final NerdEcsSystem s : this.systems)

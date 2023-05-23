@@ -13,16 +13,18 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	// Mathematics, thanks to https://learnopengl.com/Getting-started/Camera!
 
 	// region Fields.
-	public static final float DEFAULT_MOUSE_SENSITIVITY = 0.2f;
+	public static final float DEFAULT_MOUSE_SENSITIVITY = 0.18f;
 
 	public float yaw, zoom, pitch;
+	public boolean holdMouse = true;
 	public boolean shouldConstrainPitch = true;
-	public boolean holdMouse = true, pholdMouse;
-	public float mouseSensitivity = NerdFlyCamera.DEFAULT_MOUSE_SENSITIVITY;
 	public PVector front = new PVector(), defaultCamFront = new PVector();
+	public float mouseSensitivity = NerdFlyCamera.DEFAULT_MOUSE_SENSITIVITY;
 
-	private final NerdWindowManager WINDOW;
-	private final NerdDisplayManager DISPLAYS;
+	protected final NerdWindowManager WINDOW;
+	protected final NerdDisplayManager DISPLAYS;
+
+	private boolean pholdMouse;
 	// endregion
 
 	// region Construction.
@@ -114,6 +116,10 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	// endregion
 
 	// region Methods specific to `FlyCamera`.
+	public boolean wasHoldingMouseLastFrame() {
+		return this.pholdMouse;
+	}
+
 	public void moveX(final float p_velX) {
 		super.pos.add(
 				PVector.mult(

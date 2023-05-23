@@ -7,6 +7,7 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
+import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
@@ -27,7 +28,7 @@ public class App {
 	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
 			// Use directly in `setFirstSceneClass()` below!:
 			// LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-			DemoScene1.class;
+			DemoScene3.class;
 
 	// region `App`'s *other* fields.
 	public static final int BPM = 100,
@@ -68,7 +69,7 @@ public class App {
 
 		// Build the sketch and collect build artifacts:
 		final NerdSketchBuildArtifacts artifacts = builder.build(p_args);
-		App.OPENAL = (NerdAl) artifacts.getExtObject("OpenAL");
+		App.OPENAL = artifacts.getExtObject("OpenAL");
 		// endregion
 
 		App.startTickThread();

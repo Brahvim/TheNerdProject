@@ -1,14 +1,18 @@
 package com.brahvim.nerd_demos.scenes.scene3;
 
 import java.awt.event.KeyEvent;
+import java.nio.channels.spi.AbstractSelectionKey;
 
 import com.brahvim.nerd.framework.lights.NerdAmbiLight;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
-import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.AlBuffer;
+import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
+import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd_demos.App;
+import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
+import com.brahvim.nerd_demos.effect_layers.CinematicBarsLayer;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
 import processing.core.PApplet;
@@ -35,7 +39,8 @@ public class DemoScene3 extends NerdScene {
 	@Override
 	protected void setup(final NerdSceneState p_state) {
 		MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.SCENE;
-		// SCENE.addLayers(CinematicBars.class);
+		SCENE.addLayer(CinematicBarsLayer.class);
+		SCENE.addLayer(DebugFpsGizmoLayer.class);
 
 		CAMERA = new SmoothCamera(SKETCH);
 		CAMERA.fov = PApplet.radians(75);
@@ -50,41 +55,35 @@ public class DemoScene3 extends NerdScene {
 		this.light = new NerdAmbiLight(
 				SKETCH,
 				new PVector(0, 0, 0),
-				// new PVector(255, 255, 0) // Yellow.
-				// new PVector(224, 152, 27) // The orange at the top.
-				// new PVector(228, 117, 111) // The color in the middle.
+				// new PVector(255, 255, 0), // Yellow.
+				// new PVector(224, 152, 27), // The orange at the top.
+				// new PVector(228, 117, 111), // The color in the middle.
 				new PVector(232, 81, 194) // The pink at the bottom.
 		);
 
 		this.bgImage = this.createBackgroundImage();
-		// SKETCH.background(this.bgImage);
+		// GRAPHICS.background(this.bgImage);
 	}
 
 	@Override
 	protected void draw() {
-		// SKETCH.tint(255, 180);
+		// GRAPHICS.tint(255, 100);
 		GRAPHICS.background(this.bgImage);
 
 		// Faster in `draw()`:
-		if (INPUT.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
-			this.cubeMan.removeAll(); // REALLY helps the GC out!
-			System.gc(); // Surprisingly, this is a useful hint to the GC.
-
-			// SKETCH.tint(255);
-			GRAPHICS.background(this.bgImage);
-
+		if (INPUT.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
 			MANAGER.restartScene();
-		}
 
 		GRAPHICS.lights();
 		this.light.apply();
 		this.cubeMan.draw();
 
-		GRAPHICS.begin2d();
-		GRAPHICS.textSize(42);
-		GRAPHICS.centeredText(Float.toString(SKETCH.frameRate));
-		// GRAPHICS.text(Float.toString(SKETCH.frameRate), 0, 0);
-		GRAPHICS.end2d();
+		// GRAPHICS.in2d(() -> {
+		GRAPHICS.fill(255);
+		GRAPHICS.rect(WINDOW.q3x, WINDOW.q3y, WINDOW.qx, WINDOW.qy);
+		GRAPHICS.image(GRAPHICS.getUnderlyingBuffer(), WINDOW.q3x, WINDOW.q3y, WINDOW.qx, WINDOW.qy);
+		// });
+
 	}
 
 	private PImage createBackgroundImage() {
@@ -103,8 +102,8 @@ public class DemoScene3 extends NerdScene {
 	@Override
 	public void mouseClicked() {
 		switch (INPUT.mouseButton) {
-			case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
 			case PConstants.CENTER -> CAMERA.setRoll(0);
+			case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
 			case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
 		}
 	}
@@ -126,6 +125,17 @@ public class DemoScene3 extends NerdScene {
 	@Override
 	public void fullscreenChanged(final boolean p_state) {
 		System.out.printf("`DemoScene3::fullscreenChanged()`: `%s`.\n", p_state);
+	}
+
+	@Override
+	protected void sceneChanged() {
+		this.cubeMan.removeAll(); // REALLY helps the GC out!
+		System.gc(); // Surprisingly, this is a useful hint to the GC.
+
+		// GRAPHICS.tint(255);
+		// GRAPHICS.background(this.bgImage);
+
+		System.gc();
 	}
 	// endregion
 

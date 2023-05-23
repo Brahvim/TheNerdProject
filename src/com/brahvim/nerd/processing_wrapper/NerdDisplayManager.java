@@ -11,6 +11,7 @@ public class NerdDisplayManager {
 
 	protected final NerdSketch SKETCH;
 	protected final NerdWindowManager WINDOW;
+
 	protected GraphicsDevice previousMonitor, currentMonitor;
 
 	// region Display properties.

@@ -45,7 +45,7 @@ public class DemoScene6 extends NerdScene {
 
 	@Override
 	protected void draw() {
-		CAMERA.fov = PConstants.PI / 3 + 0.01f * SKETCH.mouseScroll;
+		CAMERA.fov = PConstants.PI / 3 + 0.01f * INPUT.mouseScroll;
 		CAMERA.getPos().y = PApplet.sin(SKETCH.millis() * 0.001f) * 25;
 		this.controlCamera();
 
@@ -69,12 +69,12 @@ public class DemoScene6 extends NerdScene {
 
 	@Override
 	public void keyPressed() {
-		if (SKETCH.keyIsPressed(KeyEvent.VK_F)) {
+		if (INPUT.keyIsPressed(KeyEvent.VK_F)) {
 			WINDOW.cursorVisible = !WINDOW.cursorVisible;
 			CAMERA.holdMouse = !CAMERA.holdMouse;
 		}
 
-		if (SKETCH.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
+		if (INPUT.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
 			CAMERA.completeReset();
 			STATE.set("Camera", CAMERA);
 			MANAGER.restartScene(STATE);
@@ -94,36 +94,36 @@ public class DemoScene6 extends NerdScene {
 		// Increase speed when holding `Ctrl`:
 		/* final */ float velMultiplier = 1;
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_CONTROL))
+		if (INPUT.keyIsPressed(KeyEvent.VK_CONTROL))
 			velMultiplier = 2;
 
 		// region Roll.
-		if (SKETCH.keyIsPressed(KeyEvent.VK_Z))
+		if (INPUT.keyIsPressed(KeyEvent.VK_Z))
 			CAMERA.getUp().x += velMultiplier * 0.01f;
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_C))
+		if (INPUT.keyIsPressed(KeyEvent.VK_C))
 			CAMERA.getUp().x += -velMultiplier * 0.01f;
 		// endregion
 
 		// region Elevation.
-		if (SKETCH.keyIsPressed(KeyEvent.VK_SPACE))
+		if (INPUT.keyIsPressed(KeyEvent.VK_SPACE))
 			CAMERA.moveY(this.GRAVITY * velMultiplier * -this.playerVel.y);
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_SHIFT))
+		if (INPUT.keyIsPressed(KeyEvent.VK_SHIFT))
 			CAMERA.moveY(velMultiplier * this.playerVel.y);
 		// endregion
 
 		// region `W`-`A`-`S`-`D` controls.
-		if (SKETCH.keyIsPressed(KeyEvent.VK_W))
+		if (INPUT.keyIsPressed(KeyEvent.VK_W))
 			CAMERA.moveZ(velMultiplier * -this.playerVel.z);
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_A))
+		if (INPUT.keyIsPressed(KeyEvent.VK_A))
 			CAMERA.moveX(velMultiplier * -this.playerVel.x);
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_S))
+		if (INPUT.keyIsPressed(KeyEvent.VK_S))
 			CAMERA.moveZ(velMultiplier * this.playerVel.z);
 
-		if (SKETCH.keyIsPressed(KeyEvent.VK_D))
+		if (INPUT.keyIsPressed(KeyEvent.VK_D))
 			CAMERA.moveX(velMultiplier * this.playerVel.x);
 		// endregion
 		// endregion
