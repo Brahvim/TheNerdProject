@@ -18,6 +18,8 @@ public class App {
 
 	/*
 	 * // TODO: ECS wrapper for Processing!
+	 * // TODO: On-demand rendering, layering...
+	 * // TODO: Let scenes load assets from their packages.
 	 * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
 	 * // TODO: Dyn4j ECS wrapper. ...or A (Javacpp) LiquidFun ECS wrapper!
 	 */
