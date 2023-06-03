@@ -106,7 +106,11 @@ public class AnimatedCube extends TestEulerBody {
 		// this.popSrc.setPosition(super.pos.array());
 		// this.popSrc.setPosition(PVector.mult(super.pos, 0.001f).array());
 		this.visible = true;
-		this.popSrc.setPosition(PVector.mult(super.pos, 0.0001f).array());
+		this.popSrc.setPosition(
+				PVector.mult(super.pos, 0.0001f)
+						// super.pos
+						.array());
+
 		this.popSrc.playThenDispose();
 
 		this.plopWave.freqMult = 0.015f;
@@ -136,6 +140,13 @@ public class AnimatedCube extends TestEulerBody {
 	public void draw(final PShape p_shape) {
 		if (!this.visible)
 			return;
+
+		if (!this.popSrc.isDisposed())
+			this.popSrc.setPosition(
+					// PVector.mult(super.pos, 0.0001f)
+					PVector.div(super.pos, App.OPENAL.unitSize)
+							// super.pos
+							.array());
 
 		super.integrate();
 		super.SKETCH.push();

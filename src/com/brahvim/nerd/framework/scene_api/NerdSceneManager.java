@@ -14,8 +14,6 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.core.PConstants;
-
 public class NerdSceneManager {
 
 	// region Inner classes.
@@ -787,12 +785,15 @@ public class NerdSceneManager {
 		// endregion
 
 		// region Initialize it!
-		final Class<? extends NerdScene> SCENE_CLASS = p_sceneConstructor.getDeclaringClass();
-		final NerdSceneManager.NerdSceneCache SCENE_CACHE = this.SCENE_CACHE.get(SCENE_CLASS);
+		final Class<? extends NerdScene> sceneClass = p_sceneConstructor.getDeclaringClass();
+		final NerdSceneManager.NerdSceneCache sceneCache = this.SCENE_CACHE.get(sceneClass);
 
-		// Initialize fields as if this was a part of the construction.
+		// Initialize fields as if this was a part of the construction
+		// (done here instead so your subclass doesn't have to write one!):
 		toRet.MANAGER = this;
 		toRet.SKETCH = toRet.MANAGER.SKETCH;
+
+		// Now, we copy all managers from `toRet.SKETCH`:
 		toRet.INPUT = toRet.SKETCH.INPUT;
 		toRet.WINDOW = toRet.SKETCH.WINDOW;
 		toRet.DISPLAY = toRet.SKETCH.DISPLAYS;
@@ -812,12 +813,12 @@ public class NerdSceneManager {
 
 		// If this is the first time we're constructing this scene, ensure it has a
 		// cache and a saved state!
-		if (SCENE_CACHE == null) {
+		if (sceneCache == null) {
 			toRet.STATE = new NerdSceneState();
-			this.SCENE_CACHE.put(SCENE_CLASS,
+			this.SCENE_CACHE.put(sceneClass,
 					new NerdSceneManager.NerdSceneCache(p_sceneConstructor, toRet));
 		} else
-			toRet.STATE = SCENE_CACHE.STATE;
+			toRet.STATE = sceneCache.STATE;
 		// endregion
 
 		return toRet;

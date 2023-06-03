@@ -14,7 +14,7 @@ public class Java2dDemoScene extends NerdScene {
 
 	@Override
 	protected synchronized void preload() {
-		ASSETS.add(new OggBufferDataAsset(), "data/RUBBER DUCK.ogg");
+		ASSETS.addAsset(new OggBufferDataAsset("data/RUBBER DUCK.ogg"));
 	}
 
 	@Override

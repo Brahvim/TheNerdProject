@@ -13,15 +13,15 @@ import processing.core.PShape;
 public class CubeManager {
 
 	// region Fields.
-	public int CUBES_PER_CLICK = 7;
-	public int CUBES_ADDED_EVERY_FRAME = 2;
+	public int cubesPerClick = 7,
+			cubesPerFrame = 2;
 
 	private final ArrayList<AnimatedCube> CUBES = new ArrayList<>();
-	private final NerdScene SCENE;
 	private final NerdSketch SKETCH;
+	private final NerdScene SCENE;
 
 	private AlBuffer<?>[] popAudios;
-	private PShape CUBE_SHAPE;
+	private PShape cubeShape;
 	private int cubesToAdd;
 	// endregion
 
@@ -30,14 +30,14 @@ public class CubeManager {
 		this.SCENE = Objects.requireNonNull(p_scene);
 		SKETCH = this.SCENE.getSketch();
 
-		this.CUBE_SHAPE = SKETCH.createShape(PConstants.BOX, 1);
-		this.CUBE_SHAPE.setStrokeWeight(0.28f);
+		this.cubeShape = SKETCH.createShape(PConstants.BOX, 1);
+		this.cubeShape.setStrokeWeight(0.28f);
 	}
 
 	public CubeManager(final NerdScene p_scene, final PShape p_cubeShape) {
 		this.SCENE = Objects.requireNonNull(p_scene);
 		SKETCH = this.SCENE.getSketch();
-		this.CUBE_SHAPE = p_cubeShape;
+		this.cubeShape = p_cubeShape;
 	}
 
 	public CubeManager(final NerdScene p_scene, final AlBuffer<?>[] p_buffers) {
@@ -45,22 +45,22 @@ public class CubeManager {
 		SKETCH = this.SCENE.getSketch();
 		this.popAudios = p_buffers;
 
-		this.CUBE_SHAPE = SKETCH.createShape(PConstants.BOX, 1);
-		this.CUBE_SHAPE.setStrokeWeight(0.28f);
+		this.cubeShape = SKETCH.createShape(PConstants.BOX, 1);
+		this.cubeShape.setStrokeWeight(0.28f);
 	}
 
 	public CubeManager(final NerdScene p_scene,
 			final PShape p_cubeShape, final AlBuffer<?>[] p_buffers) {
 		this.SCENE = Objects.requireNonNull(p_scene);
 		SKETCH = this.SCENE.getSketch();
-		this.CUBE_SHAPE = p_cubeShape;
+		this.cubeShape = p_cubeShape;
 		this.popAudios = p_buffers;
 	}
 	// endregion
 
 	public void draw() {
 		if (this.cubesToAdd != 0)
-			for (int i = 0; i != this.CUBES_ADDED_EVERY_FRAME; i++) {
+			for (int i = 0; i != this.cubesPerFrame; i++) {
 				if (--this.cubesToAdd == 0)
 					break;
 
@@ -99,8 +99,18 @@ public class CubeManager {
 		// }
 
 		// for (final AnimatedCube c : this.CUBES)
-		for (int i = this.CUBES.size() - 1; i != -1; i--)
-			this.CUBES.get(i).draw(this.CUBE_SHAPE);
+		// c.draw(this.CUBE_SHAPE);
+
+		for (int i = this.CUBES.size() - 1; i != -1; i--) {
+			final AnimatedCube cube = this.CUBES.get(i);
+			// System.out.printf(
+			// "Listener position: `[ %f, %f, %f ]`. Cube position:`%s`.\n",
+			// App.OPENAL.getListenerPosition()[0],
+			// App.OPENAL.getListenerPosition()[1],
+			// App.OPENAL.getListenerPosition()[2],
+			// cube.getPos());
+			cube.draw(this.cubeShape);
+		}
 	}
 
 	public void emitCubes(final int p_howMany) {
@@ -112,8 +122,12 @@ public class CubeManager {
 		// this.cubesToRemove = this.CUBES.size() - 1; // I dunno how to do this.
 	}
 
+	public int numCubes() {
+		return this.CUBES.size();
+	}
+
 	public void setShape(final PShape p_cubeShape) {
-		this.CUBE_SHAPE = Objects.requireNonNull(p_cubeShape);
+		this.cubeShape = Objects.requireNonNull(p_cubeShape);
 	}
 
 }

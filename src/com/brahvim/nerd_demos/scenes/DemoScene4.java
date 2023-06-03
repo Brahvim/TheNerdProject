@@ -2,7 +2,6 @@ package com.brahvim.nerd_demos.scenes;
 
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
-import com.brahvim.nerd.io.asset_loader.processing_loaders.PImageAsset;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd_demos.App;
@@ -29,8 +28,7 @@ public class DemoScene4 extends NerdScene {
 
 	@Override
 	protected void preload() {
-		ASSETS.add(new PImageAsset(), SKETCH.ICON_PATH);
-		ASSETS.add(new OggBufferDataAsset(), "data/RUBBER DUCK.ogg");
+		ASSETS.addAsset(new OggBufferDataAsset("data/RUBBER DUCK.ogg"));
 		// System.out.println("`DemoScene4` asset preload completed!");
 	}
 
@@ -82,7 +80,7 @@ public class DemoScene4 extends NerdScene {
 				this.rubberDuck.play();
 		}
 
-		this.nerd = ASSETS.get("sunglass_nerd").getData();
+		this.nerd = SKETCH.getIconImage();
 		this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
 		GRAPHICS.noStroke();

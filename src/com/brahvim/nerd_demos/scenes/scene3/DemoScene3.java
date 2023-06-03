@@ -1,7 +1,6 @@
 package com.brahvim.nerd_demos.scenes.scene3;
 
 import java.awt.event.KeyEvent;
-import java.nio.channels.spi.AbstractSelectionKey;
 
 import com.brahvim.nerd.framework.lights.NerdAmbiLight;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
@@ -9,8 +8,6 @@ import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.openal.AlBuffer;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
-import com.brahvim.nerd.processing_wrapper.NerdGraphics;
-import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
 import com.brahvim.nerd_demos.effect_layers.CinematicBarsLayer;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
@@ -33,7 +30,7 @@ public class DemoScene3 extends NerdScene {
 	@Override
 	protected synchronized void preload() {
 		for (int i = 1; i != 5; i++)
-			ASSETS.add(new OggBufferDataAsset(), "data/Pops/Pop" + i + ".ogg");
+			ASSETS.addAsset(new OggBufferDataAsset("data/Pops/Pop" + i + ".ogg"));
 	}
 
 	@Override
@@ -47,7 +44,7 @@ public class DemoScene3 extends NerdScene {
 		SKETCH.setCamera(this.CAMERA);
 
 		final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
-		App.OPENAL.unitSize = Float.MAX_VALUE;
+		// App.OPENAL.unitSize = 1; // Float.MAX_VALUE;
 		for (int i = 1; i != 5; i++)
 			alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
 
@@ -78,11 +75,12 @@ public class DemoScene3 extends NerdScene {
 		this.light.apply();
 		this.cubeMan.draw();
 
-		// GRAPHICS.in2d(() -> {
-		GRAPHICS.fill(255);
-		GRAPHICS.rect(WINDOW.q3x, WINDOW.q3y, WINDOW.qx, WINDOW.qy);
-		GRAPHICS.image(GRAPHICS.getUnderlyingBuffer(), WINDOW.q3x, WINDOW.q3y, WINDOW.qx, WINDOW.qy);
-		// });
+		// GRAPHICS.in2d(() ->
+		GRAPHICS.image(
+				GRAPHICS.getUnderlyingBuffer(),
+				WINDOW.q3x, WINDOW.q3y,
+				WINDOW.qx, WINDOW.qy);
+		// );
 
 	}
 
@@ -104,7 +102,11 @@ public class DemoScene3 extends NerdScene {
 		switch (INPUT.mouseButton) {
 			case PConstants.CENTER -> CAMERA.setRoll(0);
 			case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
-			case PConstants.LEFT -> this.cubeMan.emitCubes(this.cubeMan.CUBES_PER_CLICK);
+			case PConstants.LEFT -> {
+				this.cubeMan.emitCubes(this.cubeMan.cubesPerClick);
+				// if (this.cubeMan.numCubes() < 2)
+				// // this.cubeMan.emitCubes(1);
+			}
 		}
 	}
 

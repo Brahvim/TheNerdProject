@@ -32,7 +32,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import com.brahvim.nerd.framework.NerdCallUtils;
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
@@ -48,7 +47,6 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
 
-import jogamp.opengl.util.pngj.chunks.PngChunkICCP;
 import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -270,7 +268,6 @@ public class NerdSketch extends PApplet {
 
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	protected NerdBasicCamera defaultCamera;
-	protected NerdGraphics sceneGraphics;
 	protected PImage iconImage;
 	protected PFont defaultFont;
 
@@ -336,16 +333,15 @@ public class NerdSketch extends PApplet {
 		this.UNPROJECTOR = new NerdUnprojector();
 		this.ASSETS = new NerdAssetManager(this) {
 			@Override
-			public <AssetT> NerdAsset add(final NerdAssetLoader<AssetT> p_type, final String p_path) {
-				final NerdAsset toRet = super.add(p_type, p_path);
+			public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type) {
+				final NerdAsset toRet = super.addAsset(p_type);
 				toRet.startLoading();
 				return toRet;
 			}
 
 			@Override
-			public <AssetT> NerdAsset add(final NerdAssetLoader<AssetT> p_type, final String p_path,
-					final Runnable p_onLoad) {
-				final NerdAsset toRet = super.add(p_type, p_path, p_onLoad);
+			public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type, final Runnable p_onLoad) {
+				final NerdAsset toRet = super.addAsset(p_type, p_onLoad);
 				toRet.startLoading();
 				return toRet;
 			}
@@ -489,20 +485,10 @@ public class NerdSketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		this.sceneGraphics = new NerdGraphics(this, this.createGraphics());
-
-		this.sceneGraphics.textFont(this.defaultFont);
-		this.sceneGraphics.rectMode(PConstants.CENTER);
-		this.sceneGraphics.imageMode(PConstants.CENTER);
-		this.sceneGraphics.textAlign(PConstants.CENTER, PConstants.CENTER);
-
 		this.SETUP_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 	}
 
 	public void pre() {
-		// this.sceneGraphics.beginDraw();
-		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::beginDraw);
-
 		// Cheap removal strategy, LOL. I'm fed with boilerplate!:
 		for (final Collection<?> c : this.LIST_OF_CALLBACK_LISTS)
 			// ..Don't use `HashSet::contains()` to check here. Ugh.
@@ -518,8 +504,6 @@ public class NerdSketch extends PApplet {
 		// this.INPUT.pframeTotalMouseScroll;
 		this.PRE_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runPre();
-
-		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::endDraw);
 	}
 
 	@Override
@@ -545,8 +529,6 @@ public class NerdSketch extends PApplet {
 		// endregion
 		// endregion
 
-		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::beginDraw);
-
 		// region Apply the camera when using OpenGL!
 		if (this.USES_OPENGL) {
 			if (this.currentCamera != null)
@@ -567,8 +549,6 @@ public class NerdSketch extends PApplet {
 		this.DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runDraw();
 
-		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::endDraw);
-
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.SCENES.getCurrentScene() == null) {
 			if (this.FIRST_SCENE_CLASS == null)
@@ -584,17 +564,12 @@ public class NerdSketch extends PApplet {
 
 	public void post() {
 		this.previousCamera = this.currentCamera;
-		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::beginDraw);
 
 		// These help complete background work:
 		this.INPUT.postCallback();
 		this.WINDOW.postCallback(this.WINDOW_LISTENERS);
 		this.POST_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runPost();
-
-		NerdCallUtils.callIfNotNull(this.sceneGraphics, NerdGraphics::endDraw);
-
-		this.image(this.sceneGraphics.getUnderlyingBuffer());
 
 		// ...Because apparently Processing allows rendering here!:
 		if (this.USES_OPENGL)
@@ -837,7 +812,7 @@ public class NerdSketch extends PApplet {
 	// region Persistent asset operations.
 	public void reloadGivenPersistentAsset(final NerdAsset p_asset) {
 		this.ASSETS.remove(p_asset);
-		this.ASSETS.add(p_asset.getLoader(), p_asset.getPath());
+		this.ASSETS.addAsset(p_asset.getLoader());
 	}
 
 	public void reloadPersistentAssets() {
@@ -845,7 +820,7 @@ public class NerdSketch extends PApplet {
 		this.ASSETS.clear();
 
 		for (final NerdAsset a : assets)
-			this.ASSETS.add(a.getLoader(), a.getPath());
+			this.ASSETS.addAsset(a.getLoader());
 	}
 	// endregion
 
@@ -942,11 +917,6 @@ public class NerdSketch extends PApplet {
 		return this.defaultFont;
 	}
 
-	public NerdGraphics getSceneGraphics() {
-		return this.sceneGraphics;
-		// return new NerdGraphics(this, super.getGraphics());
-	}
-
 	public NerdSceneManager getSceneManager() {
 		return this.SCENES; // Actually a `NerdBridgedSceneManager`!
 	}
@@ -957,11 +927,6 @@ public class NerdSketch extends PApplet {
 
 	public NerdDisplayManager getDisplayManager() {
 		return this.DISPLAYS;
-	}
-
-	public void setSceneGraphics(final NerdGraphics p_graphics) {
-		Objects.requireNonNull(p_graphics);
-		this.sceneGraphics = p_graphics;
 	}
 	// endregion
 

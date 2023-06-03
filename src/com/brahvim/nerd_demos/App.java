@@ -6,7 +6,6 @@ import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
-import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
@@ -18,8 +17,6 @@ import processing.opengl.PGraphicsOpenGL;
 public class App {
 
 	/*
-	 * // TODO: "`LayerState`"? :D?
-	 * // TODO: Put `NerdGraphics` to use!
 	 * // TODO: ECS wrapper for Processing!
 	 * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
 	 * // TODO: Dyn4j ECS wrapper. ...or A (Javacpp) LiquidFun ECS wrapper!

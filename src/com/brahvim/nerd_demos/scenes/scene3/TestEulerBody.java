@@ -8,7 +8,7 @@ public class TestEulerBody {
 
 	// region Fields.
 	protected final NerdSketch SKETCH;
-	protected float frict = 1, rotFrict = 1, dtMult = 0.1f;
+	protected float frict = 1, rotFrict = 1, dtCoef = 0.1f;
 	protected PVector pos = new PVector(), vel = new PVector(), acc = new PVector();
 	protected PVector rot = new PVector(), rotVel = new PVector(), rotAcc = new PVector();
 	// endregion
@@ -18,7 +18,7 @@ public class TestEulerBody {
 	}
 
 	public void integrate() {
-		final float deltaTime = SKETCH.frameTime * this.dtMult;
+		final float deltaTime = SKETCH.frameTime * this.dtCoef;
 
 		this.vel.add(this.acc);
 		this.rotVel.add(this.rotAcc);

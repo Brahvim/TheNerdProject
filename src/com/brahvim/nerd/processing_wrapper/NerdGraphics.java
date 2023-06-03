@@ -25,16 +25,13 @@ import processing.opengl.PShader;
 
 public class NerdGraphics {
 
-	public NerdAbstractCamera CAMERA;
-
 	private final NerdSketch SKETCH;
 	private final PGraphics GRAPHICS;
 
 	public NerdGraphics(final NerdSketch p_sketch, final PGraphics p_graphics) {
 		this.SKETCH = p_sketch;
 		this.GRAPHICS = p_graphics;
-		this.CAMERA = this.SKETCH.getCamera();
-	}
+	};
 
 	// region Rendering utilities!
 	public final PGraphics getUnderlyingBuffer() {

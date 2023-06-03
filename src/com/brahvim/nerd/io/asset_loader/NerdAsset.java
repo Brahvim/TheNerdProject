@@ -1,6 +1,5 @@
 package com.brahvim.nerd.io.asset_loader;
 
-import java.io.File;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -10,7 +9,6 @@ public class NerdAsset {
 	// region Fields!
 	public final String NAME;
 
-	private final String PATH;
 	private final NerdSketch SKETCH;
 	private final NerdAssetLoader<?> LOADER;
 
@@ -22,34 +20,18 @@ public class NerdAsset {
 	// endregion
 
 	// region Construction.
-	public NerdAsset(final NerdSketch p_sketch, final NerdAssetLoader<?> p_type, final String p_path) {
-		if (p_type == null || p_path == null)
-			throw new IllegalArgumentException("`NerdAsset`s need data!");
+	/* `package` */ NerdAsset(final NerdSketch p_sketch, final NerdAssetLoader<?> p_type) {
+		if (p_type == null)
+			throw new IllegalArgumentException("`NerdAsset`s need to know their type!");
 
-		// this.KEY = p_key;
-		this.PATH = p_path;
 		this.LOADER = p_type;
 		this.SKETCH = p_sketch;
-		this.NAME = this.findName();
+		this.NAME = this.LOADER.getAssetName();
 	}
 
-	public NerdAsset(final NerdSketch p_sketch, final NerdAssetLoader<?> p_type, final String p_path,
-			final Runnable p_onLoad) {
-		this(p_sketch, p_type, p_path);
+	public NerdAsset(final NerdSketch p_sketch, final NerdAssetLoader<?> p_type, final Runnable p_onLoad) {
+		this(p_sketch, p_type);
 		this.onLoad = p_onLoad;
-	}
-
-	private String findName() {
-		String toRet = new File(this.PATH).getName(); // Parses wth `/`s too!
-		// Paths.get("").getFileName().toString(); // Parses with `File.separator`.
-
-		int lastCharId = toRet.lastIndexOf('.');
-
-		if (lastCharId == -1)
-			lastCharId = toRet.length();
-
-		toRet = toRet.substring(0, lastCharId);
-		return toRet;
 	}
 	// endregion
 
@@ -117,10 +99,6 @@ public class NerdAsset {
 	// endregion
 
 	// region Getters.
-	public String getPath() {
-		return this.PATH;
-	}
-
 	public int getLoadFrame() {
 		return this.frame;
 	}
@@ -156,7 +134,7 @@ public class NerdAsset {
 
 	private void fetchData() {
 		try {
-			this.data = this.LOADER.fetchData(this.SKETCH, this.PATH);
+			this.data = this.LOADER.fetchData(this.SKETCH);
 			this.millis = this.SKETCH.millis();
 			this.frame = this.SKETCH.frameCount;
 		} catch (final NerdAssetLoaderException e) {

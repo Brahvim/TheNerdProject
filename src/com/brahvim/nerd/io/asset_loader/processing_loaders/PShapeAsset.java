@@ -1,17 +1,21 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
+import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 
 import processing.core.PShape;
 
-public class PShapeAsset extends NerdAssetLoader<PShape> {
+public class PShapeAsset extends NerdSinglePathAssetLoader<PShape> {
+
+		public PShapeAsset(final String p_path) {
+		super(p_path);
+	}
 
 	@Override
-	public PShape fetchData(final NerdSketch p_sketch, final String p_path)
+	protected PShape fetchData(final NerdSketch p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
-		final PShape shape = p_sketch.loadShape(p_path);
+		final PShape shape = p_sketch.loadShape(super.path);
 
 		if (shape == null)
 			throw new NerdAssetLoaderException();

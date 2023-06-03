@@ -24,8 +24,8 @@ public class DemoScene1 extends NerdScene {
 
 	@Override
 	protected synchronized void preload() {
-		SKETCH.ASSETS.add(new PFontAsset(), "data/Arial-Black-48.vlw");
-		ASSETS.add(new OggBufferDataAsset(), "data/SceneOne.ogg");
+		SKETCH.ASSETS.addAsset(new PFontAsset("data/Arial-Black-48.vlw"));
+		ASSETS.addAsset(new OggBufferDataAsset("data/SceneOne.ogg"));
 	}
 
 	@Override

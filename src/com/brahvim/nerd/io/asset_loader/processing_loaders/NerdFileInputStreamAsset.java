@@ -5,16 +5,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
+import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 
-public class NerdFileInputStreamAsset extends NerdAssetLoader<FileInputStream> {
+public class NerdFileInputStreamAsset extends NerdSinglePathAssetLoader<FileInputStream> {
+
+	public NerdFileInputStreamAsset(final String p_path) {
+		super(p_path);
+	}
 
 	@Override
-	public FileInputStream fetchData(final NerdSketch p_sketch, final String p_path)
+	protected FileInputStream fetchData(final NerdSketch p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		try {
-			return new FileInputStream(new File(p_path));
+			return new FileInputStream(new File(super.path));
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 			throw new NerdAssetLoaderException();

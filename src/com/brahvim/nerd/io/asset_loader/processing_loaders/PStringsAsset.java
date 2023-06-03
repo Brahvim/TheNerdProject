@@ -1,15 +1,19 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
+import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 
-public class PStringsAsset extends NerdAssetLoader<String[]> {
+public class PStringsAsset extends NerdSinglePathAssetLoader<String[]> {
+
+		public PStringsAsset(final String p_path) {
+		super(p_path);
+	}
 
 	@Override
-	public String[] fetchData(final NerdSketch p_sketch, final String p_path)
+	protected String[] fetchData(final NerdSketch p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
-		final String[] strings = p_sketch.loadStrings(p_path);
+		final String[] strings = p_sketch.loadStrings(super.path);
 
 		if (strings == null)
 			throw new NerdAssetLoaderException();

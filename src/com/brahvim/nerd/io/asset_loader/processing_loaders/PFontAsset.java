@@ -1,17 +1,21 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
+import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 
 import processing.core.PFont;
 
-public class PFontAsset extends NerdAssetLoader<PFont> {
+public class PFontAsset extends NerdSinglePathAssetLoader<PFont> {
+
+	public PFontAsset(final String p_path) {
+		super(p_path);
+	}
 
 	@Override
-	public PFont fetchData(final NerdSketch p_sketch, final String p_path)
+	protected PFont fetchData(final NerdSketch p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
-		final PFont font = p_sketch.loadFont(p_path);
+		final PFont font = p_sketch.loadFont(super.path);
 
 		if (font == null)
 			throw new NerdAssetLoaderException();
