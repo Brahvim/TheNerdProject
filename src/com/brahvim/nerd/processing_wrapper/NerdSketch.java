@@ -268,8 +268,9 @@ public class NerdSketch extends PApplet {
 
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	protected NerdBasicCamera defaultCamera;
-	protected PImage iconImage;
+	protected NerdGraphics sceneGraphics;
 	protected PFont defaultFont;
+	protected PImage iconImage;
 
 	// region Callback listeners,
 	// LAMBDAS ARE EXPENSIVVVVVE! Allocate only this!:
@@ -451,6 +452,7 @@ public class NerdSketch extends PApplet {
 		super.registerMethod("post", this);
 		super.frameRate(this.DEFAULT_REFRESH_RATE);
 
+		this.sceneGraphics = new NerdGraphics(this, this.createGraphics());
 		this.defaultFont = super.createFont("SansSerif", this.WINDOW.scr * 72);
 
 		// I should make a super slow "convenience" method to perform this
@@ -485,17 +487,26 @@ public class NerdSketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
+		this.sceneGraphics.beginDraw();
+		this.sceneGraphics.textFont(this.defaultFont);
+		this.sceneGraphics.rectMode(PConstants.CENTER);
+		this.sceneGraphics.imageMode(PConstants.CENTER);
+		this.sceneGraphics.textAlign(PConstants.CENTER, PConstants.CENTER);
+		this.sceneGraphics.endDraw();
+
 		this.SETUP_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 	}
 
 	public void pre() {
-		// Cheap removal strategy, LOL. I'm fed with boilerplate!:
+		if (this.USES_OPENGL)
+			this.pgl = super.beginPGL();
+
+		// this.sceneGraphics.beginDraw();
+
+		// Cheap removal strategy, LOL. I'm fed of boilerplate!:
 		for (final Collection<?> c : this.LIST_OF_CALLBACK_LISTS)
 			// ..Don't use `HashSet::contains()` to check here. Ugh.
 			c.removeAll(this.CALLBACK_LISTENERS_TO_REMOVE);
-
-		if (this.USES_OPENGL)
-			this.pgl = super.beginPGL();
 
 		this.WINDOW.preCallback(this.WINDOW_LISTENERS);
 		this.DISPLAYS.preCallback(this.WINDOW_LISTENERS);
@@ -508,9 +519,9 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void draw() {
+		this.pframeTime = this.frameStartTime;
 		this.frameStartTime = super.millis(); // Timestamp.
 		this.frameTime = this.frameStartTime - this.pframeTime;
-		this.pframeTime = this.frameStartTime;
 
 		this.INPUT.currFrameMouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
 		this.INPUT.currFrameMouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
@@ -570,6 +581,15 @@ public class NerdSketch extends PApplet {
 		this.WINDOW.postCallback(this.WINDOW_LISTENERS);
 		this.POST_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runPost();
+
+		// THIS ACTUALLY WORKED! How does the JVM interpret pointers?:
+		// this.image(this.sceneGraphics);
+
+		this.sceneGraphics.endDraw();
+		super.clear();
+		// if (this.sceneGraphics.hasRendered())
+		this.image(this.sceneGraphics.getUnderlyingBuffer());
+		this.sceneGraphics.beginDraw();
 
 		// ...Because apparently Processing allows rendering here!:
 		if (this.USES_OPENGL)
@@ -915,6 +935,10 @@ public class NerdSketch extends PApplet {
 
 	public PFont getDefaultFont() {
 		return this.defaultFont;
+	}
+
+	public NerdGraphics getSceneGraphics() {
+		return this.sceneGraphics;
 	}
 
 	public NerdSceneManager getSceneManager() {
@@ -1781,13 +1805,14 @@ public class NerdSketch extends PApplet {
 	// region `createGraphics()` overrides and overloads.
 	// region Actual overrides.
 	@Override
-	public PGraphics createGraphics(final int w, final int h, final String renderer, final String path) {
-		return super.makeGraphics(w, h, renderer, path, false);
+	public PGraphics createGraphics(
+			final int p_width, final int p_height, final String p_renderer, final String p_path) {
+		return super.makeGraphics(p_width, p_height, p_renderer, p_path, false);
 	}
 
 	@Override
-	public PGraphics createGraphics(final int w, final int h, final String renderer) {
-		return this.createGraphics(w, h, renderer, NerdSketch.EXEC_DIR_PATH);
+	public PGraphics createGraphics(final int p_width, final int p_height, final String p_renderer) {
+		return this.createGraphics(p_width, p_height, p_renderer, NerdSketch.EXEC_DIR_PATH);
 	}
 
 	@Override

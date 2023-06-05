@@ -798,8 +798,9 @@ public class NerdSceneManager {
 		toRet.WINDOW = toRet.SKETCH.WINDOW;
 		toRet.DISPLAY = toRet.SKETCH.DISPLAYS;
 		toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
+		toRet.GRAPHICS = toRet.SKETCH.getSceneGraphics();
 		toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?
-		toRet.GRAPHICS = new NerdGraphics(toRet.SKETCH, toRet.SKETCH.getGraphics());
+		// toRet.GRAPHICS = new NerdGraphics(toRet.SKETCH, toRet.SKETCH.getGraphics());
 
 		// Set up the ECS:
 		if (toRet.ECS == null) {
@@ -815,8 +816,7 @@ public class NerdSceneManager {
 		// cache and a saved state!
 		if (sceneCache == null) {
 			toRet.STATE = new NerdSceneState();
-			this.SCENE_CACHE.put(sceneClass,
-					new NerdSceneManager.NerdSceneCache(p_sceneConstructor, toRet));
+			this.SCENE_CACHE.put(sceneClass, new NerdSceneManager.NerdSceneCache(p_sceneConstructor, toRet));
 		} else
 			toRet.STATE = sceneCache.STATE;
 		// endregion

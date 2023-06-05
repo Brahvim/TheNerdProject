@@ -154,6 +154,7 @@ public abstract class NerdWindowManager {
 		this.width = this.SKETCH.width;
 		this.height = this.SKETCH.height;
 		// this.focused = this.SKETCH.focused; // Better received in the callbacks!
+		this.SKETCH.sceneGraphics.resize(this.width, this.height);
 
 		this.PREV_WINDOW_POSITION.set(this.WINDOW_POSITION);
 		this.WINDOW_POSITION.set(this.getPosition());

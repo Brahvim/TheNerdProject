@@ -2,7 +2,7 @@ package com.brahvim.nerd_demos.scenes.scene3;
 
 import java.awt.event.KeyEvent;
 
-import com.brahvim.nerd.framework.lights.NerdAmbiLight;
+import com.brahvim.nerd.framework.lights.NerdAmbientLight;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
@@ -24,7 +24,7 @@ public class DemoScene3 extends NerdScene {
 	private PImage bgImage;
 	private SmoothCamera CAMERA;
 	private CubeManager cubeMan;
-	private NerdAmbiLight light;
+	private NerdAmbientLight light;
 	// endregion
 
 	@Override
@@ -49,9 +49,8 @@ public class DemoScene3 extends NerdScene {
 			alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
 
 		this.cubeMan = new CubeManager(this, alBuffers);
-		this.light = new NerdAmbiLight(
-				SKETCH,
-				new PVector(0, 0, 0),
+		this.light = new NerdAmbientLight(
+				GRAPHICS, new PVector(0, 0, 0),
 				// new PVector(255, 255, 0), // Yellow.
 				// new PVector(224, 152, 27), // The orange at the top.
 				// new PVector(228, 117, 111), // The color in the middle.

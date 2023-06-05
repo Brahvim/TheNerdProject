@@ -1,42 +1,69 @@
 package com.brahvim.nerd.framework.lights;
 
-import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 
 import processing.core.PVector;
+import processing.opengl.PGraphics3D;
 
 public class NerdSpotLight extends NerdLight {
 
-	public float angle, conc = 4000;
 	public PVector dir;
+	public float angle, conc = 4000;
+
+	private final PVector PDIR = new PVector();
 
 	// region Constructors.
-	public NerdSpotLight(final NerdSketch p_sketch) {
-		super(p_sketch);
-		this.dir = new PVector();
+	public NerdSpotLight(PGraphics3D p_buffer) {
+		super(p_buffer);
+		this.dir = new PVector(0, 1, 0);
 	}
 
-	public NerdSpotLight(final NerdSketch p_sketch, final PVector p_pos) {
-		super(p_sketch, p_pos);
-		this.dir = new PVector();
+	public NerdSpotLight(final PGraphics3D p_buffer, final PVector p_pos) {
+		super(p_buffer, p_pos);
+		this.dir = new PVector(0, 1, 0);
 	}
 
-	public NerdSpotLight(final NerdSketch p_sketch, final PVector p_pos, final PVector p_color) {
-		super(p_sketch, p_pos, p_color);
-		this.dir = new PVector();
+	public NerdSpotLight(final NerdGraphics p_buffer, final PVector p_pos) {
+		super(p_buffer, p_pos);
 	}
 
-	public NerdSpotLight(final NerdSketch p_sketch, final PVector p_pos, final PVector p_color, final PVector p_dir) {
-		super(p_sketch, p_pos, p_color);
-		this.dir = p_dir.copy();
+	public NerdSpotLight(final PGraphics3D p_buffer, final PVector p_pos, final PVector p_color) {
+		super(p_buffer, p_pos, p_color);
+		this.dir = new PVector(0, 1, 0);
+	}
+
+	public NerdSpotLight(final NerdGraphics p_buffer, final PVector p_pos, final PVector p_color) {
+		super(p_buffer, p_pos, p_color);
+	}
+
+	public NerdSpotLight(final PGraphics3D p_buffer, final PVector p_pos, final PVector p_color, final PVector p_dir) {
+		super(p_buffer, p_pos, p_color);
+		this.dir = p_dir;
+	}
+
+	public NerdSpotLight(final NerdGraphics p_buffer, final PVector p_pos, final PVector p_color, final PVector p_dir) {
+		super(p_buffer, p_pos, p_color);
+		this.dir = p_dir;
 	}
 	// endregion
 
+	public PVector getDirectionInPreviousFrame() {
+		return this.PDIR;
+	}
+
 	@Override
 	protected void applyImpl() {
-		super.SKETCH.spotLight(
+		PVector toUse = this.dir;
+
+		if (this.dir != null)
+			this.PDIR.set(this.dir);
+
+		toUse = this.PDIR;
+
+		super.GRAPHICS.spotLight(
 				super.color.x, super.color.y, super.color.z,
 				super.pos.x, super.pos.y, super.pos.z,
-				this.dir.x, this.dir.y, this.dir.z,
+				toUse.x, toUse.y, toUse.z,
 				this.angle, this.conc);
 	}
 
