@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.framework.ecs.NerdEcsManager;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
-import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdSceneManager {
@@ -797,10 +796,9 @@ public class NerdSceneManager {
 		toRet.INPUT = toRet.SKETCH.INPUT;
 		toRet.WINDOW = toRet.SKETCH.WINDOW;
 		toRet.DISPLAY = toRet.SKETCH.DISPLAYS;
+		toRet.GRAPHICS = toRet.SKETCH.getNerdGraphics();
 		toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
-		toRet.GRAPHICS = toRet.SKETCH.getSceneGraphics();
 		toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?
-		// toRet.GRAPHICS = new NerdGraphics(toRet.SKETCH, toRet.SKETCH.getGraphics());
 
 		// Set up the ECS:
 		if (toRet.ECS == null) {

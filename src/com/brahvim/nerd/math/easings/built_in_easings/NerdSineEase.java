@@ -11,7 +11,7 @@ public class NerdSineEase extends NerdEasingFunction {
 	/**
 	 * @apiNote {@code 0.001f} by default.
 	 */
-	public float freqMult = 0.001f;
+	public float parameterCoef = 0.001f;
 
 	/**
 	 * Makes {@code SineEase::get()} output its absolute value. This may make
@@ -32,7 +32,7 @@ public class NerdSineEase extends NerdEasingFunction {
 
 	public NerdSineEase(final NerdSketch p_parentSketch, final float p_freqMult) {
 		super(p_parentSketch);
-		this.freqMult = p_freqMult;
+		this.parameterCoef = p_freqMult;
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class NerdSineEase extends NerdEasingFunction {
 	 */
 	public NerdSineEase(final NerdSketch p_parentSketch, final float p_freqMult, final float p_angleOffset) {
 		super(p_parentSketch);
-		this.freqMult = p_freqMult;
+		this.parameterCoef = p_freqMult;
 		super.parameterOffset = p_angleOffset;
 		// super.parameterOffset = Math.abs((float) Math.toRadians(p_angleOffset));
 	}
@@ -65,7 +65,7 @@ public class NerdSineEase extends NerdEasingFunction {
 		// ...totally didn't forget to convert to radians or something!
 
 		p_angle = PApplet.radians(PApplet.abs(p_angle));
-		super.endTime = super.aliveTime + (p_angle - super.parameterOffset) / this.freqMult;
+		super.endTime = super.aliveTime + (p_angle - super.parameterOffset) / this.parameterCoef;
 
 		// "Debug Laag":
 		// System.out.printf("Alive-time: `%f`, end-time: `%f`, angle: `%f`.\n",
@@ -79,7 +79,7 @@ public class NerdSineEase extends NerdEasingFunction {
 	 */
 	public NerdSineEase endWhenAngleIncrementsToWithin(float p_angle, final float p_before) {
 		p_angle = PApplet.radians(PApplet.abs(p_angle));
-		this.freqMult = (p_angle - super.parameterOffset) / p_before;
+		this.parameterCoef = (p_angle - super.parameterOffset) / p_before;
 		return this;
 
 		// if (super.endTime < super.aliveTime + p_before) {
@@ -99,7 +99,7 @@ public class NerdSineEase extends NerdEasingFunction {
 
 	@Override
 	protected float apply() {
-		return PApplet.sin(super.aliveTime * this.freqMult + super.parameterOffset);
+		return PApplet.sin(super.aliveTime * this.parameterCoef + super.parameterOffset);
 	}
 
 }

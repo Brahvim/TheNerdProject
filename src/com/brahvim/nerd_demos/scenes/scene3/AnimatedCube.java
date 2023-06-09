@@ -113,13 +113,13 @@ public class AnimatedCube extends TestEulerBody {
 
 		this.popSrc.playThenDispose();
 
-		this.plopWave.freqMult = 0.015f;
+		this.plopWave.parameterCoef = 0.015f;
 		this.plopWave.endWhenAngleIncrementsBy(90).start();
 		return this;
 	}
 
 	public AnimatedCube plopOut(final Runnable p_runnable) {
-		this.plopWave.freqMult = 0.00001f;
+		this.plopWave.parameterCoef = 0.00001f;
 		this.plopWave.endWhenAngleIncrementsBy(90)
 				.start(270, () -> {
 					p_runnable.run();

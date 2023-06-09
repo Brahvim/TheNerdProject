@@ -246,8 +246,7 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// region `protected` fields.
-	@SuppressWarnings("unused")
-	private final NerdSketch SKETCH = this; // "Ti's just a pointer, bro".
+	protected final NerdSketch SKETCH = this;
 
 	// region Window object and native renderer references ("hacky stuff").
 	// ("Why check for `null` at all? You know what renderer you used!")
@@ -268,7 +267,7 @@ public class NerdSketch extends PApplet {
 
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	protected NerdBasicCamera defaultCamera;
-	protected NerdGraphics sceneGraphics;
+	protected NerdGraphics nerdGraphics;
 	protected PFont defaultFont;
 	protected PImage iconImage;
 
@@ -287,10 +286,10 @@ public class NerdSketch extends PApplet {
 	protected final Collection<?>[] LIST_OF_CALLBACK_LISTS;
 	// See the end of the constructor!
 
-	protected LinkedHashSet<Consumer<NerdSketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
-	protected LinkedHashSet<Consumer<NerdSketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
-	protected LinkedHashSet<Consumer<NerdSketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
-	protected LinkedHashSet<Consumer<NerdSketch>> PRE_LISTENERS, POST_LISTENERS;
+	protected final LinkedHashSet<Consumer<NerdSketch>> DRAW_LISTENERS, PRE_DRAW_LISTENERS, POST_DRAW_LISTENERS;
+	protected final LinkedHashSet<Consumer<NerdSketch>> SETTINGS_LISTENERS, SETUP_LISTENERS;
+	protected final LinkedHashSet<Consumer<NerdSketch>> EXIT_LISTENERS, DISPOSAL_LISTENERS;
+	protected final LinkedHashSet<Consumer<NerdSketch>> PRE_LISTENERS, POST_LISTENERS;
 	// endregion
 	// endregion
 
@@ -452,7 +451,7 @@ public class NerdSketch extends PApplet {
 		super.registerMethod("post", this);
 		super.frameRate(this.DEFAULT_REFRESH_RATE);
 
-		this.sceneGraphics = new NerdGraphics(this, this.createGraphics());
+		this.nerdGraphics = new NerdGraphics(this, super.getGraphics());
 		this.defaultFont = super.createFont("SansSerif", this.WINDOW.scr * 72);
 
 		// I should make a super slow "convenience" method to perform this
@@ -480,6 +479,7 @@ public class NerdSketch extends PApplet {
 			case PConstants.JAVA2D -> {
 				this.sketchFrame = (JFrame) this.WINDOW.getNativeObject();
 			}
+
 		}
 
 		super.textFont(this.defaultFont);
@@ -487,21 +487,12 @@ public class NerdSketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		this.sceneGraphics.beginDraw();
-		this.sceneGraphics.textFont(this.defaultFont);
-		this.sceneGraphics.rectMode(PConstants.CENTER);
-		this.sceneGraphics.imageMode(PConstants.CENTER);
-		this.sceneGraphics.textAlign(PConstants.CENTER, PConstants.CENTER);
-		this.sceneGraphics.endDraw();
-
 		this.SETUP_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 	}
 
 	public void pre() {
 		if (this.USES_OPENGL)
 			this.pgl = super.beginPGL();
-
-		// this.sceneGraphics.beginDraw();
 
 		// Cheap removal strategy, LOL. I'm fed of boilerplate!:
 		for (final Collection<?> c : this.LIST_OF_CALLBACK_LISTS)
@@ -543,9 +534,9 @@ public class NerdSketch extends PApplet {
 		// region Apply the camera when using OpenGL!
 		if (this.USES_OPENGL) {
 			if (this.currentCamera != null)
-				this.currentCamera.apply(); // Do all three tasks using the current camera.
+				this.currentCamera.apply(super.getGraphics()); // Do all three tasks using the current camera.
 			else { // ..."Here we go again."
-				this.defaultCamera.apply();
+				this.defaultCamera.apply(super.getGraphics());
 
 				// If `this.currentCamera` is `null`, but wasn't,
 				if (this.currentCamera != this.previousCamera)
@@ -576,6 +567,11 @@ public class NerdSketch extends PApplet {
 	public void post() {
 		this.previousCamera = this.currentCamera;
 
+		// this.sceneGraphics.endDraw();
+		// // if (this.sceneGraphics.hasRendered())
+		// this.image(this.sceneGraphics.getUnderlyingBuffer());
+		// this.sceneGraphics.beginDraw();
+
 		// These help complete background work:
 		this.INPUT.postCallback();
 		this.WINDOW.postCallback(this.WINDOW_LISTENERS);
@@ -584,12 +580,6 @@ public class NerdSketch extends PApplet {
 
 		// THIS ACTUALLY WORKED! How does the JVM interpret pointers?:
 		// this.image(this.sceneGraphics);
-
-		this.sceneGraphics.endDraw();
-		super.clear();
-		// if (this.sceneGraphics.hasRendered())
-		this.image(this.sceneGraphics.getUnderlyingBuffer());
-		this.sceneGraphics.beginDraw();
 
 		// ...Because apparently Processing allows rendering here!:
 		if (this.USES_OPENGL)
@@ -937,8 +927,8 @@ public class NerdSketch extends PApplet {
 		return this.defaultFont;
 	}
 
-	public NerdGraphics getSceneGraphics() {
-		return this.sceneGraphics;
+	public NerdGraphics getNerdGraphics() {
+		return this.nerdGraphics;
 	}
 
 	public NerdSceneManager getSceneManager() {

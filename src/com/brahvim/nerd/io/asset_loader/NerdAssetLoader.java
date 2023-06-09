@@ -16,7 +16,7 @@ public abstract class NerdAssetLoader<AssetT> {
 
 	/**
 	 * This method tells the wrapping {@code NerdAsset} the name to use. Usually
-	 * just <code> return super.findNameFromPath(this.PATH); </code>
+	 * just <code>return super.findNameFromPath(this.PATH);</code>
 	 * 
 	 * @return
 	 */

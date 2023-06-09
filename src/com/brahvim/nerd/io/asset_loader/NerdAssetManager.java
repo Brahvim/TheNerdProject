@@ -23,23 +23,22 @@ public class NerdAssetManager {
 	}
 
 	// region `NerdAsset`-operations!
-	public <AssetT> NerdAsset makeAsset(final NerdAssetLoader<AssetT> p_type) {
+	private <AssetT> NerdAsset makeAsset(final NerdAssetLoader<AssetT> p_type) {
 		return new NerdAsset(this.SKETCH, p_type);
 	}
 
 	// region `add()` overloads.
 	public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type) {
-		final var toRet = this.makeAsset(p_type);
+		final NerdAsset toRet = this.makeAsset(p_type);
 		this.ASSETS.add(toRet);
 		return toRet;
 	}
 
 	public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type, final Runnable p_onLoad) {
-		final var toRet = this.makeAsset(p_type);
-		this.ASSETS.add(toRet);
+		final NerdAsset toRet = this.addAsset(p_type);
+		toRet.setLoadCallback(p_onLoad);
 		return toRet;
 	}
-
 	// endregion
 
 	/**

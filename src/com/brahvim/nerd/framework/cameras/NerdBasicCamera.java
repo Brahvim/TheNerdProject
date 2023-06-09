@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
+import processing.core.PGraphics;
 import processing.core.PVector;
 
 /**
@@ -30,10 +31,10 @@ public class NerdBasicCamera extends NerdAbstractCamera {
 	}
 
 	@Override
-	public void applyMatrix() {
-		super.applyProjection();
+	public void applyMatrix(final PGraphics p_graphics) {
+		super.applyProjection(p_graphics);
 
-		this.SKETCH.camera(
+		p_graphics.camera(
 				this.pos.x, this.pos.y, this.pos.z,
 				this.center.x, this.center.y, this.center.z,
 				this.up.x, this.up.y, this.up.z);

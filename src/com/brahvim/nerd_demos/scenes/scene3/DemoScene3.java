@@ -74,13 +74,7 @@ public class DemoScene3 extends NerdScene {
 		this.light.apply();
 		this.cubeMan.draw();
 
-		// GRAPHICS.in2d(() ->
-		GRAPHICS.image(
-				GRAPHICS.getUnderlyingBuffer(),
-				WINDOW.q3x, WINDOW.q3y,
-				WINDOW.qx, WINDOW.qy);
-		// );
-
+		// GRAPHICS.image(SKETCH.getGraphics(), 1000, 1000);
 	}
 
 	private PImage createBackgroundImage() {
@@ -135,8 +129,6 @@ public class DemoScene3 extends NerdScene {
 
 		// GRAPHICS.tint(255);
 		// GRAPHICS.background(this.bgImage);
-
-		System.gc();
 	}
 	// endregion
 

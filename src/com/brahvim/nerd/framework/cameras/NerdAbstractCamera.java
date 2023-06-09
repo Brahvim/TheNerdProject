@@ -3,10 +3,12 @@ package com.brahvim.nerd.framework.cameras;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.core.PVector;
 
 // `abstract` because it is supposed to be extended everytime.
@@ -38,9 +40,17 @@ public abstract class NerdAbstractCamera {
 		this.SKETCH = p_sketch;
 	}
 
-	public abstract void applyMatrix();
+	public void applyMatrix(final NerdGraphics p_graphics) {
+		this.applyMatrix(p_graphics.getUnderlyingBuffer());
+	}
 
-	public void applyProjection() {
+	public abstract void applyMatrix(final PGraphics p_graphics);
+
+	public void applyProjection(final NerdGraphics p_graphics) {
+		this.applyProjection(p_graphics.getUnderlyingBuffer());
+	}
+
+	public void applyProjection(final PGraphics p_graphics) {
 		if (this.SKETCH.RENDERER != PConstants.P3D)
 			return;
 
@@ -53,10 +63,10 @@ public abstract class NerdAbstractCamera {
 
 		// Apply projection:
 		switch (this.projection) {
-			case PConstants.PERSPECTIVE -> this.SKETCH.perspective(
+			case PConstants.PERSPECTIVE -> p_graphics.perspective(
 					this.fov, this.aspect, this.near, this.far);
 
-			case PConstants.ORTHOGRAPHIC -> this.SKETCH.ortho(
+			case PConstants.ORTHOGRAPHIC -> p_graphics.ortho(
 					-this.SKETCH.WINDOW.cx, this.SKETCH.WINDOW.cx,
 					-this.SKETCH.WINDOW.cy, this.SKETCH.WINDOW.cy,
 					this.near, this.far);
@@ -86,15 +96,19 @@ public abstract class NerdAbstractCamera {
 	}
 	// endregion
 
-	public void apply() {
-		// #JIT_FTW!:
-
-		this.clear();
-		this.runScript();
-		this.applyMatrix();
+	public void apply(final NerdGraphics p_graphics) {
+		this.apply(p_graphics.getUnderlyingBuffer());
 	}
 
-	public void clear() {
+	public void apply(final PGraphics p_graphics) {
+		// #JIT_FTW!:
+
+		this.clear(p_graphics);
+		this.runScript();
+		this.applyMatrix(p_graphics);
+	}
+
+	public void clear(final PGraphics p_graphics) {
 		this.SKETCH.alphaBg(
 				this.clearColorParam1, this.clearColorParam2,
 				this.clearColorParam3, this.clearColorParamAlpha);

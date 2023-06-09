@@ -2,6 +2,8 @@ package com.brahvim.nerd.framework.cameras;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
+import processing.core.PGraphics;
+
 public class NerdFpsCamera extends NerdFlyCamera {
 	private float height;
 
@@ -10,9 +12,9 @@ public class NerdFpsCamera extends NerdFlyCamera {
 	}
 
 	@Override
-	public void applyMatrix() {
+	public void applyMatrix(final PGraphics p_graphics) {
 		super.pos.y = this.height;
-		super.applyMatrix();
+		super.applyMatrix(p_graphics);
 	}
 
 	@Override

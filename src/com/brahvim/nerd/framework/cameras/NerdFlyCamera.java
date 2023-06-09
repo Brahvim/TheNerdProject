@@ -7,6 +7,7 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.core.PVector;
 
 public class NerdFlyCamera extends NerdAbstractCamera {
@@ -51,8 +52,8 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 
 	// region From `NerdCamera`.
 	@Override
-	public void apply() {
-		super.apply();
+	public void apply(final PGraphics p_graphics) {
+		super.apply(p_graphics);
 
 		if (super.SKETCH.focused)
 			this.mouseTransform();
@@ -87,11 +88,11 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	}
 
 	@Override
-	public void applyMatrix() {
-		super.applyProjection();
+	public void applyMatrix(final PGraphics p_graphics) {
+		super.applyProjection(p_graphics);
 
 		// Apply the camera matrix:
-		super.SKETCH.camera(
+		p_graphics.camera(
 				super.pos.x, super.pos.y, super.pos.z,
 
 				// Camera center point:
@@ -150,8 +151,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	}
 
 	protected void mouseTransform() {
-		if (!this.holdMouse && this.pholdMouse
-				|| this.holdMouse && !this.pholdMouse)
+		if (!this.holdMouse && this.pholdMouse || this.holdMouse && !this.pholdMouse)
 			return;
 
 		// region Update `yaw` and `pitch`, and perform the mouse-lock:
@@ -190,7 +190,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		// endregion
 	}
 
-	private Point calculateMouseLockPos() {
+	protected Point calculateMouseLockPos() {
 		if (this.WINDOW.fullscreen) {
 			// this.DISPLAYS.updateDisplayRatios();
 			return new Point(this.DISPLAYS.displayWidthHalf, this.DISPLAYS.displayHeightHalf);

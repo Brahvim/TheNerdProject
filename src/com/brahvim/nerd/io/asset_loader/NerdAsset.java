@@ -46,6 +46,8 @@ public class NerdAsset {
 		while (!this.loaded) {
 			// TODO: Count number of load failure before crashing.
 			System.out.println("Waiting for `" + this.NAME + "` to load...");
+
+			// Don't let the CPU go crazy!:
 			try {
 				Thread.sleep(50);
 			} catch (final InterruptedException e) {

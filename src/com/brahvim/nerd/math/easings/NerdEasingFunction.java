@@ -172,7 +172,7 @@ public abstract class NerdEasingFunction {
 
 		if (this.active)
 			this.aliveTime += this.SKETCH.frameTime;
-		// ^^^ `frameTime` comes from "the Engine" by the way. (Hey - that's "Nerd"!)
+		// ^^^ `frameTime` comes from "the engine" by the way. (Hey - that's "Nerd"!)
 		else { // If no longer active,
 			if (this.pactive)
 				if (this.onEnd != null)

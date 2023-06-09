@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
+import processing.core.PGraphics;
 import processing.core.PVector;
 
 public class SmoothCamera extends NerdFlyCamera {
@@ -46,9 +47,9 @@ public class SmoothCamera extends NerdFlyCamera {
 	// endregion
 
 	@Override
-	public void apply() {
+	public void apply(final PGraphics p_graphics) {
 		this.controlCamera();
-		super.apply();
+		super.apply(p_graphics);
 	}
 
 	private void controlCamera() {

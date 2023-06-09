@@ -154,7 +154,6 @@ public abstract class NerdWindowManager {
 		this.width = this.SKETCH.width;
 		this.height = this.SKETCH.height;
 		// this.focused = this.SKETCH.focused; // Better received in the callbacks!
-		this.SKETCH.sceneGraphics.resize(this.width, this.height);
 
 		this.PREV_WINDOW_POSITION.set(this.WINDOW_POSITION);
 		this.WINDOW_POSITION.set(this.getPosition());
@@ -162,6 +161,8 @@ public abstract class NerdWindowManager {
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == this.width || this.pheight == this.height)) {
 			this.updateWindowRatios();
+
+			// this.SKETCH.sceneGraphics.setSize(this.width, this.height);
 
 			for (final NerdSketch.NerdSketchWindowListener l : Objects.requireNonNull(
 					p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
