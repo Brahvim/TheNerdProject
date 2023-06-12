@@ -20,7 +20,6 @@ public class App {
 	 * // TODO: ECS wrapper for Processing!
 	 * // TODO: Let scenes load assets from their packages.
 	 * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
-	 * // TODO: `NerdEasingFunction` should cache the value for `get()`.
 	 * // TODO: Dyn4j ECS wrapper. ...or A (Javacpp) LiquidFun ECS wrapper!
 	 */
 

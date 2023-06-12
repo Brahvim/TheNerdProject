@@ -55,9 +55,10 @@ public abstract class NerdEasingFunction {
 
 	protected final NerdSketch SKETCH;
 
-	protected boolean pactive = false;
-	protected float lastValue;
 	protected Runnable onEnd;
+	protected int lastValueFrameCount;
+	protected float lastValue;
+	protected boolean pactive = false;
 	// endregion
 
 	protected NerdEasingFunction(final NerdSketch p_parentSketch) {
@@ -164,6 +165,18 @@ public abstract class NerdEasingFunction {
 		return this.pactive;
 	}
 
+	public float getFramely() {
+		// If we've already calculated this value,
+		return this.SKETCH.frameCount == this.lastValueFrameCount
+				// ...We just return it! (`this.lastValue` does not store the absolute value
+				// version so users can turn that setting off and we can still use this cache!):
+				? this.absoluteValue
+						? Math.abs(this.lastValue)
+						: this.lastValue
+				// ...Else we fetch and cache a new value for this frame:
+				: this.get();
+	}
+
 	public float get() {
 		this.pactive = this.active;
 
@@ -182,6 +195,7 @@ public abstract class NerdEasingFunction {
 		}
 
 		this.lastValue = this.apply();
+		this.lastValueFrameCount = this.SKETCH.frameCount;
 		return this.absoluteValue ? Math.abs(this.lastValue) : this.lastValue;
 	}
 	// endregion
