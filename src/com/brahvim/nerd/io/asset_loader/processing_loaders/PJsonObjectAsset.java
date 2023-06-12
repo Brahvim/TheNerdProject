@@ -8,7 +8,7 @@ import processing.data.JSONObject;
 
 public class PJsonObjectAsset extends NerdSinglePathAssetLoader<JSONObject> {
 
-		public PJsonObjectAsset(final String p_path) {
+	public PJsonObjectAsset(final String p_path) {
 		super(p_path);
 	}
 

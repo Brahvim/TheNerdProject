@@ -6,7 +6,7 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class PStringsAsset extends NerdSinglePathAssetLoader<String[]> {
 
-		public PStringsAsset(final String p_path) {
+	public PStringsAsset(final String p_path) {
 		super(p_path);
 	}
 

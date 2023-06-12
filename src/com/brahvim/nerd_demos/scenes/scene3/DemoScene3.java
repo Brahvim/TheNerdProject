@@ -74,11 +74,12 @@ public class DemoScene3 extends NerdScene {
 		this.light.apply();
 		this.cubeMan.draw();
 
-		// GRAPHICS.image(SKETCH.getGraphics(), 1000, 1000);
+		GRAPHICS.image(SKETCH.getGraphics(), 1000, 1000);
 	}
 
 	private PImage createBackgroundImage() {
-		final int color1 = SKETCH.color(224, 152, 27), color2 = SKETCH.color(232, 81, 194);
+		final int color1 = SKETCH.color(224, 152, 27),
+				color2 = SKETCH.color(232, 81, 194);
 		final PImage toRet = SKETCH.createImage(DISPLAY.displayWidth, DISPLAY.displayHeight, PConstants.RGB);
 
 		for (int y = 0; y < toRet.height; y++)
@@ -119,7 +120,7 @@ public class DemoScene3 extends NerdScene {
 
 	@Override
 	public void fullscreenChanged(final boolean p_state) {
-		System.out.printf("`DemoScene3::fullscreenChanged()`: `%s`.\n", p_state);
+		System.out.printf("`DemoScene3::fullscreenChanged()`: `%b`.%n", p_state);
 	}
 
 	@Override

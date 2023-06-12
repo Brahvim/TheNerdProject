@@ -8,7 +8,7 @@ import processing.core.PShape;
 
 public class PShapeAsset extends NerdSinglePathAssetLoader<PShape> {
 
-		public PShapeAsset(final String p_path) {
+	public PShapeAsset(final String p_path) {
 		super(p_path);
 	}
 

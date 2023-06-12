@@ -8,7 +8,7 @@ import processing.data.XML;
 
 public class PXmlAsset extends NerdSinglePathAssetLoader<XML> {
 
-		public PXmlAsset(final String p_path) {
+	public PXmlAsset(final String p_path) {
 		super(p_path);
 	}
 

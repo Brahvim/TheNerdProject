@@ -8,7 +8,7 @@ import processing.core.PImage;
 
 public class PImageAsset extends NerdSinglePathAssetLoader<PImage> {
 
-		public PImageAsset(final String p_path) {
+	public PImageAsset(final String p_path) {
 		super(p_path);
 	}
 

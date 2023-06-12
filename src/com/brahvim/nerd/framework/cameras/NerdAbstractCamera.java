@@ -11,7 +11,7 @@ import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
-// `abstract` because it is supposed to be extended everytime.
+// Declared as abstract because it is supposed to be extended everytime.
 public abstract class NerdAbstractCamera {
 
 	// region Fields.
@@ -36,7 +36,7 @@ public abstract class NerdAbstractCamera {
 	public boolean doScript = true, doAutoClear = true, doAutoAspect = true;
 	// endregion
 
-	public NerdAbstractCamera(final NerdSketch p_sketch) {
+	protected NerdAbstractCamera(final NerdSketch p_sketch) {
 		this.SKETCH = p_sketch;
 	}
 
@@ -51,7 +51,7 @@ public abstract class NerdAbstractCamera {
 	}
 
 	public void applyProjection(final PGraphics p_graphics) {
-		if (this.SKETCH.RENDERER != PConstants.P3D)
+		if (!PConstants.P3D.equals(this.SKETCH.RENDERER))
 			return;
 
 		if (this.doAutoAspect)
@@ -136,10 +136,10 @@ public abstract class NerdAbstractCamera {
 		this.projection = PConstants.PERSPECTIVE;
 		this.doScript = true;
 		this.doAutoClear = true;
-		this.far = NerdBasicCamera.DEFAULT_CAM_FAR;
-		this.fov = NerdBasicCamera.DEFAULT_CAM_FOV;
-		this.near = NerdBasicCamera.DEFAULT_CAM_NEAR;
-		this.mouseZ = NerdBasicCamera.DEFAULT_CAM_MOUSE_Z;
+		this.far = NerdAbstractCamera.DEFAULT_CAM_FAR;
+		this.fov = NerdAbstractCamera.DEFAULT_CAM_FOV;
+		this.near = NerdAbstractCamera.DEFAULT_CAM_NEAR;
+		this.mouseZ = NerdAbstractCamera.DEFAULT_CAM_MOUSE_Z;
 		// endregion
 	}
 

@@ -62,7 +62,7 @@ public class NerdAssetManager {
 	public NerdAsset get(final String p_fileName) {
 		for (final NerdAsset a : this.ASSETS)
 			if (a.NAME.equals(p_fileName))
-				return (NerdAsset) a;
+				return a;
 		return null;
 	}
 

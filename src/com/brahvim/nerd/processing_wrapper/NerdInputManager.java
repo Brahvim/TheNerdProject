@@ -140,7 +140,7 @@ public class NerdInputManager {
 	}
 
 	/* `package` */ void keyPressed() {
-		this.pmouseButton = this.mouseButton;
+		this.pkey = 0; // TODO
 
 		this.key = this.SKETCH.key;
 		this.keyCode = this.SKETCH.keyCode;

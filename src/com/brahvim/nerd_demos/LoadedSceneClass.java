@@ -18,7 +18,7 @@ public enum LoadedSceneClass {
 		this.SCENE_CLASS_LOADER = new NerdSceneClassLoader(p_urlString, p_fullyQualifiedName);
 	}
 
-	public Class<? extends NerdScene> getSCENE_CLASS_LOADER() {
+	public Class<? extends NerdScene> getSceneClassLoader() {
 		return this.SCENE_CLASS_LOADER.getLoadedClass();
 	}
 	// endregion

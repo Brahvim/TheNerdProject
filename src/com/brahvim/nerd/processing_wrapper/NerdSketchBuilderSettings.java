@@ -25,36 +25,35 @@ import processing.core.PConstants;
 	public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
 	public NerdSceneManager.NerdSceneManagerSettings.CallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
-	// region Listeners.
+	// region Listeners!!!
 	public LinkedHashSet<Consumer<NerdSketch>> sketchConstructedListeners,
 			settingsListeners, setupListeners, exitListeners, disposalListeners;
-
-	// Initializing the listeners:
-	{
-		this.exitListeners = new LinkedHashSet<>();
-		this.setupListeners = new LinkedHashSet<>();
-		this.settingsListeners = new LinkedHashSet<>();
-		this.disposalListeners = new LinkedHashSet<>();
-		this.sceneChangeListeners = new LinkedHashSet<>();
-		this.sketchConstructedListeners = new LinkedHashSet<>();
-	}
 
 	public LinkedHashSet<NerdSceneManager.NerdSceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
 
 	public LinkedHashSet<Consumer<NerdSketch>> preListeners, postListeners,
 			drawListeners, preDrawListeners, postDrawListeners;
 
-	// Intializing these listeners as well, haha:
-	{
+	public boolean preventCloseOnEscape, startedFullscreen, canResize,
+			cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
+	// endregion
+
+	public NerdSketchBuilderSettings() {
+		// Intializing these listeners:
 		this.preListeners = new LinkedHashSet<>();
 		this.postListeners = new LinkedHashSet<>();
 		this.drawListeners = new LinkedHashSet<>();
 		this.preDrawListeners = new LinkedHashSet<>();
 		this.postDrawListeners = new LinkedHashSet<>();
-	}
-	// endregion
 
-	public boolean dontCloseOnEscape, startedFullscreen, canResize,
-			cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
+		// Intializing these listeners as well, haha!:
+		this.exitListeners = new LinkedHashSet<>();
+		this.setupListeners = new LinkedHashSet<>();
+		this.settingsListeners = new LinkedHashSet<>();
+		this.disposalListeners = new LinkedHashSet<>();
+		this.sceneChangeListeners = new LinkedHashSet<>();
+		this.sketchConstructedListeners = new LinkedHashSet<>();
+
+	}
 
 }

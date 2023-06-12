@@ -44,7 +44,6 @@ public class NerdAsset {
 	// ...will cause a surge in CPU usage! Careful!...
 	public NerdAsset completeLoad() throws InterruptedException {
 		while (!this.loaded) {
-			// TODO: Count number of load failure before crashing.
 			System.out.println("Waiting for `" + this.NAME + "` to load...");
 
 			// Don't let the CPU go crazy!:
@@ -73,11 +72,10 @@ public class NerdAsset {
 		// However, we need to update `ploaded` for one last frame.
 		// To do so, we add a "self-removing" callback!:
 
-		final NerdAsset ASSET = this;
 		final Consumer<NerdSketch> whenLoaded = new Consumer<NerdSketch>() {
 			@Override
 			public void accept(final NerdSketch p_sketch) {
-				ASSET.ploaded = true;
+				NerdAsset.this.ploaded = true;
 				p_sketch.removePostListener(this);
 			}
 		};

@@ -32,12 +32,12 @@ public class App {
 	public static final int BPM = 100,
 			BPM_INT = (int) (App.BPM / 60_000.0f);
 
-	public static volatile GL GL;
-	public static volatile GLU GLU;
-	public static volatile PGL PGL;
-	public static volatile NerdAl OPENAL;
-	public static volatile GLWindow WINDOW;
-	public static volatile PGraphicsOpenGL GRAPHICS;
+	public static GL GL;
+	public static GLU GLU;
+	public static PGL PGL;
+	public static NerdAl OPENAL;
+	public static GLWindow WINDOW;
+	public static PGraphicsOpenGL GRAPHICS;
 
 	private static volatile int tickCount;
 	private static volatile boolean tick;

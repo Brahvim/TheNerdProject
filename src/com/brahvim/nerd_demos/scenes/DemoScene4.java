@@ -17,17 +17,16 @@ public class DemoScene4 extends NerdScene {
 	// region Fields!
 	private PImage nerd;
 	private float ncx, ncy;
-	private AlSource rubberDuck;
 	private PGraphics nerdGraphics;
 
-	private final float MAG_SCROLL_ACC_MOD = 0.001f,
+	private static final float MAG_SCROLL_ACC_MOD = 0.001f,
 			MAG_SCROLL_DECAY_ACC = 0.8f,
 			MAG_SCROLL_DECAY_VEL = 0.99f;
 	private float magScrollAcc, magScrollVel, magScroll = 1;
 	// endregion
 
 	@Override
-	protected void preload() {
+	protected synchronized void preload() {
 		ASSETS.addAsset(new OggBufferDataAsset("data/RUBBER DUCK.ogg"));
 		// System.out.println("`DemoScene4` asset preload completed!");
 	}
@@ -52,9 +51,9 @@ public class DemoScene4 extends NerdScene {
 		// filter.setLowpassGain(1);
 		// filter.setLowpassGainHf(0.1f);
 
-		this.rubberDuck = new AlSource(App.OPENAL, ASSETS.get("RUBBER DUCK").getData());
+		final AlSource rubberDuck = new AlSource(App.OPENAL, ASSETS.get("RUBBER DUCK").getData());
 		// this.rubberDuck.attachDirectFilter(filter);
-		this.rubberDuck.setGain(0.1f);
+		rubberDuck.setGain(0.1f);
 		// this.rubberDuck.setEffectSlot(slot);
 		// endregion
 
@@ -68,7 +67,7 @@ public class DemoScene4 extends NerdScene {
 			App.OPENAL.setListenerPosition(0, 0, 500);
 			App.OPENAL.setListenerOrientation(0, 1, 0);
 
-			this.rubberDuck.setPosition(
+			rubberDuck.setPosition(
 					5 * (INPUT.mouseX - WINDOW.cx), 0,
 					5 * (INPUT.mouseY - WINDOW.cy));
 
@@ -76,8 +75,8 @@ public class DemoScene4 extends NerdScene {
 			// System.out.println(CAMERA.pos);
 			// System.out.println(this.rubberDuck.getPosition());
 
-			if (!this.rubberDuck.isPlaying())
-				this.rubberDuck.play();
+			if (!rubberDuck.isPlaying())
+				rubberDuck.play();
 		}
 
 		this.nerd = SKETCH.getIconImage();
@@ -96,8 +95,8 @@ public class DemoScene4 extends NerdScene {
 		GRAPHICS.clear();
 		GRAPHICS.translate(-WINDOW.cx, -WINDOW.cy);
 
-		this.magScrollVel += this.magScrollAcc *= this.MAG_SCROLL_DECAY_ACC;
-		this.magScroll += this.magScrollVel *= this.MAG_SCROLL_DECAY_VEL;
+		this.magScrollVel += this.magScrollAcc *= DemoScene4.MAG_SCROLL_DECAY_ACC;
+		this.magScroll += this.magScrollVel *= DemoScene4.MAG_SCROLL_DECAY_VEL;
 		CAMERA.getPos().z += this.magScrollVel;
 
 		// region Draw the nerds!!!
@@ -154,7 +153,7 @@ public class DemoScene4 extends NerdScene {
 
 	@Override
 	public void mouseWheel(final MouseEvent p_mouseEvent) {
-		this.magScrollAcc += p_mouseEvent.getCount() * this.MAG_SCROLL_ACC_MOD;
+		this.magScrollAcc += p_mouseEvent.getCount() * DemoScene4.MAG_SCROLL_ACC_MOD;
 	}
 
 	@Override

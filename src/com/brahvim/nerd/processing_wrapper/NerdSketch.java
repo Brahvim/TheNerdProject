@@ -68,8 +68,7 @@ import processing.opengl.PJOGL;
 public class NerdSketch extends PApplet {
 
 	// region Abstract inner classes.
-	// Used ordinary classes instead of interfaces (or `abstract` ones) for these
-	// (two) reasons:
+	// Used abstract classes instead of interfaces for these (two) reasons:
 	/*
 	 * - No security for `ALL_REFERENCES` from the user! It'll be `public`!
 	 * - For registering the reference into the `ALL_REFERENCES` collection,
@@ -79,9 +78,9 @@ public class NerdSketch extends PApplet {
 	 */
 
 	// region Input listeners.
-	public class NerdSketchMouseListener {
+	public abstract class NerdSketchMouseListener {
 
-		public NerdSketchMouseListener() {
+		protected NerdSketchMouseListener() {
 			NerdSketch.this.MOUSE_LISTENERS.add(this);
 		}
 
@@ -107,7 +106,7 @@ public class NerdSketch extends PApplet {
 
 	}
 
-	public class NerdSketchTouchListener {
+	public abstract class NerdSketchTouchListener {
 
 		public NerdSketchTouchListener() {
 			NerdSketch.this.TOUCH_LISTENERS.add(this);
@@ -126,7 +125,7 @@ public class NerdSketch extends PApplet {
 
 	}
 
-	public class NerdSketchWindowListener {
+	public abstract class NerdSketchWindowListener {
 
 		public NerdSketchWindowListener() {
 			NerdSketch.this.WINDOW_LISTENERS.add(this);
@@ -153,7 +152,7 @@ public class NerdSketch extends PApplet {
 
 	}
 
-	public class NerdSketchKeyboardListener {
+	public abstract class NerdSketchKeyboardListener {
 
 		public NerdSketchKeyboardListener() {
 			NerdSketch.this.KEYBOARD_LISTENERS.add(this);
@@ -321,7 +320,7 @@ public class NerdSketch extends PApplet {
 		this.FIRST_SCENE_CLASS = p_key.firstScene;
 		this.INITIALLY_RESIZABLE = p_key.canResize;
 		this.CAN_FULLSCREEN = !p_key.cannotFullscreen;
-		this.CLOSE_ON_ESCAPE = !p_key.dontCloseOnEscape;
+		this.CLOSE_ON_ESCAPE = !p_key.preventCloseOnEscape;
 		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
 		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
 		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
@@ -752,6 +751,7 @@ public class NerdSketch extends PApplet {
 				this.INPUT.KEYS_HELD.remove(super.keyCode);
 			}
 		} catch (final IndexOutOfBoundsException e) {
+			e.printStackTrace();
 		}
 
 		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
@@ -1210,20 +1210,20 @@ public class NerdSketch extends PApplet {
 
 	// region `radialLine*d()`!
 	public void radialLine2d(final PVector p_from, final float p_angle) {
-		super.line(p_from.x, p_from.y, super.sin(p_angle), super.cos(p_angle));
+		super.line(p_from.x, p_from.y, PApplet.sin(p_angle), PApplet.cos(p_angle));
 	}
 
 	public void radialLine2d(final PVector p_from, final float p_x, final float p_y, final float p_length) {
 		super.line(p_from.x, p_from.y,
-				p_from.x + super.sin(p_x) * p_length,
-				p_from.y + super.cos(p_y) * p_length);
+				p_from.x + PApplet.sin(p_x) * p_length,
+				p_from.y + PApplet.cos(p_y) * p_length);
 	}
 
 	public void radialLine2d(final PVector p_from, final float p_x, final float p_y,
 			final float p_xLen, final float p_yLen) {
 		super.line(p_from.x, p_from.y,
-				p_from.x + super.sin(p_x) * p_xLen,
-				p_from.y + super.cos(p_y) * p_yLen);
+				p_from.x + PApplet.sin(p_x) * p_xLen,
+				p_from.y + PApplet.cos(p_y) * p_yLen);
 	}
 
 	public void radialLine2d(final PVector p_from, final PVector p_trigVals, final float p_size) {
@@ -1235,20 +1235,20 @@ public class NerdSketch extends PApplet {
 	}
 
 	public void radialLine3d(final PVector p_from, final float p_theta, final float p_phi, final float p_length) {
-		final float sineOfPitch = super.sin(p_theta);
+		final float sineOfPitch = PApplet.sin(p_theta);
 		super.line(p_from.x, p_from.y,
-				p_from.x + sineOfPitch * super.cos(p_phi) * p_length,
-				p_from.x + sineOfPitch * super.sin(p_phi) * p_length,
-				p_from.z, p_from.x + super.cos(p_theta) * p_length);
+				p_from.x + sineOfPitch * PApplet.cos(p_phi) * p_length,
+				p_from.x + sineOfPitch * PApplet.sin(p_phi) * p_length,
+				p_from.z, p_from.x + PApplet.cos(p_theta) * p_length);
 	}
 
 	public void radialLine3d(final PVector p_from, final float p_theta, final float p_phi,
 			final float p_xLen, final float p_yLen, final float p_zLen) {
-		final float sineOfPitch = super.sin(p_theta);
+		final float sineOfPitch = PApplet.sin(p_theta);
 		super.line(p_from.x, p_from.y,
-				p_from.x + sineOfPitch * super.cos(p_phi) * p_xLen,
-				p_from.x + sineOfPitch * super.sin(p_phi) * p_yLen,
-				p_from.z, p_from.x + super.cos(p_theta) * p_zLen);
+				p_from.x + sineOfPitch * PApplet.cos(p_phi) * p_xLen,
+				p_from.x + sineOfPitch * PApplet.sin(p_phi) * p_yLen,
+				p_from.z, p_from.x + PApplet.cos(p_theta) * p_zLen);
 	}
 	// endregion
 
@@ -1778,13 +1778,10 @@ public class NerdSketch extends PApplet {
 			throw new NullPointerException("`svgToImage(null , p_width, p_height)` won't work.");
 
 		final PGraphics buffer = super.createGraphics(
-				(int) PApplet.ceil(p_width),
-				(int) PApplet.ceil(p_height),
-				PConstants.P3D);
+				PApplet.ceil(p_width), PApplet.ceil(p_height), PConstants.P3D);
 
-		if (buffer == null) {
+		if (buffer == null)
 			throw new NullPointerException("`svgToImage()`'s `buffer` is `null`!");
-		}
 
 		buffer.beginDraw();
 		buffer.shape(p_shape, 0, 0, p_width, p_height);

@@ -216,17 +216,20 @@ public abstract class NerdCustomSketchBuilder {
 	}
 
 	// region Setting `NerdSceneManager.SceneManagerSettings.CallbackOrder`.
-	public NerdCustomSketchBuilder setPreCallOrder(final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
+	public NerdCustomSketchBuilder setPreCallOrder(
+			final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
 		this.SKETCH_KEY.preCallOrder = p_order;
 		return this;
 	}
 
-	public NerdCustomSketchBuilder setDrawCallOrder(final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
+	public NerdCustomSketchBuilder setDrawCallOrder(
+			final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
 		this.SKETCH_KEY.drawCallOrder = p_order;
 		return this;
 	}
 
-	public NerdCustomSketchBuilder setPostCallOrder(final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
+	public NerdCustomSketchBuilder setPostCallOrder(
+			final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
 		this.SKETCH_KEY.postCallOrder = p_order;
 		return this;
 	}
@@ -245,7 +248,7 @@ public abstract class NerdCustomSketchBuilder {
 	}
 
 	public NerdCustomSketchBuilder preventCloseOnEscape() {
-		this.SKETCH_KEY.dontCloseOnEscape = true;
+		this.SKETCH_KEY.preventCloseOnEscape = true;
 		return this;
 	}
 
