@@ -18,9 +18,11 @@ public class App {
 
 	/*
 	 * // TODO: ECS wrapper for Processing!
-	 * // TODO: Let scenes load assets from their packages.
+	 * // TODO: Let JAR assets be stored in the `data` folder.
 	 * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
+	 * // TODO: Stop screwing up with how to use `PGraphics`, cameras etc.
 	 * // TODO: Dyn4j ECS wrapper. ...or A (Javacpp) LiquidFun ECS wrapper!
+	 * // TODO: Move all `NerdSketch` callback code into `NerdInputManager`.
 	 */
 
 	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
@@ -32,12 +34,12 @@ public class App {
 	public static final int BPM = 100,
 			BPM_INT = (int) (App.BPM / 60_000.0f);
 
-	public static GL GL;
-	public static GLU GLU;
-	public static PGL PGL;
-	public static NerdAl OPENAL;
-	public static GLWindow WINDOW;
-	public static PGraphicsOpenGL GRAPHICS;
+	public static GL gl;
+	public static GLU glu;
+	public static PGL pgl;
+	public static NerdAl openAl;
+	public static GLWindow glWindow;
+	public static PGraphicsOpenGL pgGraphicsGl;
 
 	private static volatile int tickCount;
 	private static volatile boolean tick;
@@ -67,7 +69,7 @@ public class App {
 
 		// Build the sketch and collect build artifacts:
 		final NerdSketchBuildArtifacts artifacts = builder.build(p_args);
-		App.OPENAL = artifacts.getExtObject("OpenAL");
+		App.openAl = artifacts.getExtObject("OpenAL");
 		// endregion
 
 		App.startTickThread();

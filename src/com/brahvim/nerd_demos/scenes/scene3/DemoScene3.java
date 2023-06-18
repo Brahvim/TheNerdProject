@@ -8,6 +8,7 @@ import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.openal.AlBuffer;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
+import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
 import com.brahvim.nerd_demos.effect_layers.CinematicBarsLayer;
 import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
@@ -35,6 +36,7 @@ public class DemoScene3 extends NerdScene {
 
 	@Override
 	protected void setup(final NerdSceneState p_state) {
+		App.openAl.unitSize = 15;
 		MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.SCENE;
 		SCENE.addLayer(CinematicBarsLayer.class);
 		SCENE.addLayer(DebugFpsGizmoLayer.class);

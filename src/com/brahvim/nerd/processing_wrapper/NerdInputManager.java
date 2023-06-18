@@ -4,9 +4,14 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
+import com.brahvim.nerd.processing_wrapper.NerdSketch.NerdSketchKeyboardListener;
+
 import processing.core.PConstants;
 import processing.core.PVector;
 import processing.event.MouseEvent;
+
+// A (currently very messy) class to hold input event states from 
+// the previous frame and previous event encounters.
 
 public class NerdInputManager {
 
@@ -38,48 +43,31 @@ public class NerdInputManager {
 
 	/** Updated each time events changing this variable occur. */
 	public char key, pkey;
-	/** Updated framely! Generally, don't use this (look at that long name!). */
-	public char currFrameKey, prevFrameKey;
 
 	/** Updated each time events changing this variable occur. */
 	public int keyCode, pkeyCode;
-	/** Updated framely! Generally, don't use this (look at that long name!). */
-	public int currFrameKeyCode, prevFrameKeyCode;
 
 	/** Updated each time events changing this variable occur. */
 	public int mouseButton, pmouseButton;
-	/** Updated framely! Generally, don't use this (look at that long name!). */
-	public int currFrameMouseButton, prevFrameMouseButton;
 
 	/** Updated each time events changing this variable occur. */
 	public boolean keyPressed, pkeyPressed;
-	/** Updated framely! Generally, don't use this (look at that long name!). */
-	public boolean currFrameKeyPressed, prevFrameKeyPressed;
 
 	/** Updated each time events changing this variable occur. */
 	public boolean mousePressed, pmousePressed;
-	/** Updated framely! Generally, don't use this (look at that long name!). */
-	public boolean currFrameMousePressed, prevFrameMousePressed;
 
 	/** Updated each time events changing this variable occur. */
 	public float mouseX, mouseY, pmouseX, pmouseY;
-	/** Updated framely! Generally, don't use this (look at that long name!). */
-	public float currFrameMouseX, currFrameMouseY, prevFrameMouseX, prevFrameMouseY;
 
 	/** Updated each time events changing this variable occur. */
 	public boolean mouseLeft, mouseMid, mouseRight, pmouseLeft, pmouseMid, pmouseRight;
-	/** Updated framely! Generally, don't use this (look at that long name!). */
-	public boolean currFrameMouseLeft, currFrameMouseMid, currFrameMouseRight,
-			prevFrameMouseLeft, prevFrameMouseMid, prevFrameMouseRight;
 
 	/** Updated each time events changing this variable occur. */
 	public float mouseScroll, pmouseScroll,
 			mouseScrollDelta, pmouseScrollDelta,
 			totalMouseScroll, ptotalMouseScroll;
 
-	/** Updated framely! Generally, don't use this (look at that long name!). */
-	public float prevFrameMouseScroll, prevFrameTotalMouseScroll, prevFrameMouseScrollDelta;
-
+	protected final LinkedHashSet<NerdSketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<Integer> KEYS_HELD = new LinkedHashSet<>(5);
 	// endregion
 
@@ -95,19 +83,6 @@ public class NerdInputManager {
 				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
 				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
 		this.CURR_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
-
-		this.currFrameKey = this.SKETCH.key;
-		this.currFrameMouseX = this.SKETCH.mouseX;
-		this.currFrameMouseY = this.SKETCH.mouseY;
-		this.currFrameKeyCode = this.SKETCH.keyCode;
-
-		this.currFrameKeyPressed = this.SKETCH.keyPressed;
-		this.currFrameMouseButton = this.SKETCH.mouseButton;
-		this.currFrameMousePressed = this.SKETCH.mousePressed;
-
-		this.currFrameMouseLeft = this.SKETCH.mouseButton == PConstants.LEFT;
-		this.currFrameMouseMid = this.SKETCH.mouseButton == PConstants.CENTER;
-		this.currFrameMouseRight = this.SKETCH.mouseButton == PConstants.RIGHT;
 	}
 
 	/* `package` */ void postCallback() {
@@ -115,36 +90,25 @@ public class NerdInputManager {
 				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
 				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
 		this.PREV_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
-
-		this.prevFrameKey = this.SKETCH.key;
-		this.prevFrameMouseX = this.SKETCH.mouseX;
-		this.prevFrameMouseY = this.SKETCH.mouseY;
-		this.prevFrameKeyCode = this.SKETCH.keyCode;
-
-		this.prevFrameKeyPressed = this.SKETCH.keyPressed;
-		this.prevFrameMouseButton = this.SKETCH.mouseButton;
-		this.prevFrameMousePressed = this.SKETCH.mousePressed;
-
-		this.prevFrameMouseLeft = this.SKETCH.mouseButton == PConstants.LEFT;
-		this.prevFrameMouseMid = this.SKETCH.mouseButton == PConstants.CENTER;
-		this.prevFrameMouseRight = this.SKETCH.mouseButton == PConstants.RIGHT;
 	}
 
 	// region Input event callbacks from Processing.
 	/* `package` */ void keyTyped() {
-		this.pmouseButton = this.mouseButton;
-
 		this.key = this.SKETCH.key;
 		this.keyCode = this.SKETCH.keyCode;
 		this.keyPressed = this.SKETCH.keyPressed;
 	}
 
 	/* `package` */ void keyPressed() {
-		this.pkey = 0; // TODO
-
 		this.key = this.SKETCH.key;
 		this.keyCode = this.SKETCH.keyCode;
 		this.keyPressed = this.SKETCH.keyPressed;
+
+		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
+			l.keyPressed();
+
+		this.pkey = this.key;
+		this.pkeyCode = this.keyCode;
 	}
 
 	/* `package` */ void keyReleased() {
@@ -217,7 +181,7 @@ public class NerdInputManager {
 
 	// region Keyboard utilities!
 	public Integer[] getHeldKeys() {
-		return (Integer[]) this.KEYS_HELD.toArray();
+		return this.KEYS_HELD.toArray(new Integer[0]);
 	}
 
 	public boolean onlyKeyPressedIs(final int p_keyCode) {
@@ -317,14 +281,14 @@ public class NerdInputManager {
 
 	}
 
-	public void addTypedKeyTo(final String p_str) {
+	public String addTypedKeyTo(final String p_str) {
 		final char typedChar = this.getTypedKey();
 		final int strLen = p_str.length();
 
 		if (typedChar == '\b' && strLen > 0)
-			p_str.substring(strLen - 1, strLen);
+			return p_str.substring(strLen - 1, strLen);
 		else
-			p_str.concat(Character.toString(typedChar));
+			return p_str.concat(Character.toString(typedChar));
 	}
 
 	public void addTypedKeyTo(final StringBuilder p_str) {

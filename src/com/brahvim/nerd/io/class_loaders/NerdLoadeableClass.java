@@ -10,10 +10,10 @@ import java.util.ArrayList;
 public class NerdLoadeableClass<ClassT> {
 
 	// region Fields.
+	private static final ArrayList<NerdLoadeableClass<?>> ALL_LOADEABLE_CLASSES = new ArrayList<>();
+
 	public URL url;
 	public String qualifiedName;
-
-	private static final ArrayList<NerdLoadeableClass<?>> ALL_LOADEABLE_CLASSES = new ArrayList<>();
 
 	private Class<? extends ClassT> loadedClass;
 	// endregion
@@ -46,20 +46,17 @@ public class NerdLoadeableClass<ClassT> {
 		this.url = p_url;
 		this.qualifiedName = p_fullyQualifiedName;
 
-		final URLClassLoader LOADER = new URLClassLoader(
+		final URLClassLoader loader = new URLClassLoader(
 				this.qualifiedName, new URL[] { this.url },
 				ClassLoader.getSystemClassLoader());
 
-		try (LOADER) {
-			this.loadedClass = (Class<? extends ClassT>) LOADER.loadClass(this.qualifiedName);
-		} catch (final IOException e) {
-			e.printStackTrace();
-		} catch (final ClassNotFoundException e) {
+		try (loader) {
+			this.loadedClass = (Class<? extends ClassT>) loader.loadClass(this.qualifiedName);
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 
 		NerdLoadeableClass.ALL_LOADEABLE_CLASSES.add(this);
-
 	}
 
 	public Class<? extends ClassT> getLoadedClass() {

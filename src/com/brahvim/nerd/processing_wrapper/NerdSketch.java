@@ -108,7 +108,7 @@ public class NerdSketch extends PApplet {
 
 	public abstract class NerdSketchTouchListener {
 
-		public NerdSketchTouchListener() {
+		protected NerdSketchTouchListener() {
 			NerdSketch.this.TOUCH_LISTENERS.add(this);
 		}
 
@@ -127,7 +127,7 @@ public class NerdSketch extends PApplet {
 
 	public abstract class NerdSketchWindowListener {
 
-		public NerdSketchWindowListener() {
+		protected NerdSketchWindowListener() {
 			NerdSketch.this.WINDOW_LISTENERS.add(this);
 		}
 
@@ -154,8 +154,8 @@ public class NerdSketch extends PApplet {
 
 	public abstract class NerdSketchKeyboardListener {
 
-		public NerdSketchKeyboardListener() {
-			NerdSketch.this.KEYBOARD_LISTENERS.add(this);
+		protected NerdSketchKeyboardListener() {
+			NerdSketch.this.INPUT.KEYBOARD_LISTENERS.add(this);
 		}
 
 		// region Keyboard events.
@@ -277,7 +277,6 @@ public class NerdSketch extends PApplet {
 	protected final LinkedHashSet<NerdSketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<NerdSketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<NerdSketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<NerdSketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
 	// ...to remove!:
 	protected final HashSet<Consumer<NerdSketch>> CALLBACK_LISTENERS_TO_REMOVE = new HashSet<>(1);
 
@@ -345,15 +344,16 @@ public class NerdSketch extends PApplet {
 				return toRet;
 			}
 		};
+
 		this.DISPLAYS = new NerdDisplayManager(this);
 		this.WINDOW = NerdWindowManager.createWindowMan(this);
-		this.USES_OPENGL = this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D;
+		this.USES_OPENGL = PConstants.P2D.equals(this.RENDERER) || PConstants.P3D.equals(this.RENDERER);
 		this.SCENES = new NerdBridgedSceneManager(
 				this, p_key.sceneManagerSettings, p_key.sceneChangeListeners, p_key.ecsSystemOrder);
 		// endregion
 
 		// region Setting OpenGL renderer icons.
-		if (this.RENDERER == PConstants.P2D || this.RENDERER == PConstants.P3D)
+		if (PConstants.P2D.equals(this.RENDERER) || PConstants.P3D.equals(this.RENDERER))
 			PJOGL.setIcon(this.ICON_PATH);
 		// endregion
 
@@ -512,10 +512,6 @@ public class NerdSketch extends PApplet {
 		this.pframeTime = this.frameStartTime;
 		this.frameStartTime = super.millis(); // Timestamp.
 		this.frameTime = this.frameStartTime - this.pframeTime;
-
-		this.INPUT.currFrameMouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
-		this.INPUT.currFrameMouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
-		this.INPUT.currFrameMouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
 
 		// Call all pre-render listeners:
 		this.PRE_DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
@@ -678,7 +674,7 @@ public class NerdSketch extends PApplet {
 	// region Keyboard events.
 	@Override
 	public void keyTyped() {
-		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
+		for (final NerdSketchKeyboardListener l : this.INPUT.KEYBOARD_LISTENERS)
 			// ...could call that callback here directly, but I decided this!:
 			// "Filter these keys using the utility method[s]?"
 			//
@@ -691,21 +687,16 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void keyPressed() {
-		if (!this.CLOSE_ON_ESCAPE) {
-			if (super.keyCode == 27)
-				super.key = ' ';
-		}
+		if (!this.CLOSE_ON_ESCAPE && super.keyCode == 27)
+			super.key = ' ';
 
 		if (this.CAN_FULLSCREEN) {
-			if (this.ALT_ENTER_FULLSCREEN) {
-				if (super.keyCode == KeyEvent.VK_ENTER &&
-						this.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19 /* Same as `VK_PAUSE`. */)) {
-					this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
-					// System.out.println("`Alt`-`Enter` fullscreen!");
-				}
-			}
-
-			if (this.F11_FULLSCREEN) {
+			if (this.ALT_ENTER_FULLSCREEN
+					&& super.keyCode == KeyEvent.VK_ENTER
+					&& this.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19 /* Same as `KeyEvent.VK_PAUSE`. */ )) {
+				this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
+				// System.out.println("`Alt`-`Enter` fullscreen!");
+			} else if (this.F11_FULLSCREEN) {
 				switch (this.RENDERER) {
 					case PConstants.P2D, PConstants.P3D:
 						if (super.keyCode == 107) { // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
@@ -738,9 +729,7 @@ public class NerdSketch extends PApplet {
 		this.INPUT.keyCode = super.keyCode;
 		this.INPUT.keyPressed = super.keyPressed;
 
-		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
-			l.keyPressed();
-
+		this.INPUT.keyPressed();
 		this.SCENES.keyPressed();
 	}
 
@@ -754,7 +743,7 @@ public class NerdSketch extends PApplet {
 			e.printStackTrace();
 		}
 
-		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
+		for (final NerdSketchKeyboardListener l : this.INPUT.KEYBOARD_LISTENERS)
 			l.keyReleased();
 
 		this.SCENES.keyReleased();
