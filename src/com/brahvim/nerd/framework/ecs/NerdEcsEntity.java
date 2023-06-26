@@ -20,6 +20,9 @@ public class NerdEcsEntity implements Serializable {
 	// region Fields.
 	public static final long serialVersionUID = -84636463676L;
 
+	// Nope, no use in keeping the name here!
+	// If you want speed, let there be a `HashMap` in `NerdEcsManager`!
+
 	protected final transient NerdEcsManager MANAGER;
 	protected final transient NerdEcsEntity ENTITY = this;
 
@@ -204,7 +207,7 @@ public class NerdEcsEntity implements Serializable {
 	/**
 	 * @param <ComponentT>     The type of the component - any
 	 *                         {@link NerdEcsComponent}.
-	 * @param p_componentClass - the component's respective {@link Class}.
+	 * @param p_componentClass is the component's respective {@link Class}.
 	 * @return {@code null} if the component already exists.
 	 */
 	public <ComponentT extends NerdEcsComponent> ComponentT attachComponentIfAbsent(

@@ -19,12 +19,17 @@ public class EcsDemoScene extends NerdScene {
 
 	@Override
 	protected void setup(final NerdSceneState p_state) {
-		this.ECS.setSystemsOrder(new NerdEcsSystem<?>[] { new EcsDemoSystem() });
+		ECS.setSystemsOrder(new NerdEcsSystem<?>[] { new EcsDemoSystem() });
 
-		this.entity = ECS.createEntity();
+		this.entity = ECS.createEntity("Test!");
 		this.component = this.entity.attachComponent(EcsDemoComponent.class);
 		// this.component.message = "Yo! This message didn't need"
 		// + "to be changed but I did it anyway, haha.";
+
+		for (int i = 0; i < 5; i++)
+			ECS.createEntity();
+
+		ECS.forEachEntity(e -> System.out.println(ECS.getEntityName(e)));
 	}
 
 	@Override

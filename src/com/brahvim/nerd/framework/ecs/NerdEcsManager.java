@@ -5,9 +5,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.jar.Attributes.Name;
 
 import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
@@ -15,13 +17,6 @@ import com.brahvim.nerd.io.NerdByteSerial;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdEcsManager implements Serializable {
-
-	// public enum SerializationTactic {
-	// KEEP_FLAGS(),
-	// REMOVE_FLAGS(),
-	// FLAGS_EVALUATE_NEXT_FRAME(),
-	// FLAGS_EVALUATE_IMMEDIATELY(),
-	// }
 
 	// region Fields.
 	public static final long serialVersionUID = -6488574946L;
@@ -32,20 +27,13 @@ public class NerdEcsManager implements Serializable {
 
 	protected final LinkedList<NerdEcsEntity> ENTITIES = new LinkedList<>();
 	protected final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
-	protected final HashMap<String, NerdEcsEntity> ENTITY_TO_NAME_MAP = new HashMap<>();
-	protected final HashMap<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> COMPONENTS_TO_CLASSES_MAP = new HashMap<>();
+	protected final HashMap<String, NerdEcsEntity> NAME_TO_ENTITY_MAP = new HashMap<>();
+	protected final HashMap<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> CLASSES_TO_COMPONENTS_MAP = new HashMap<>();
 
-	protected NerdEcsSystem<?>[] systemsInOrder;
+	protected long numUnnamedEntities = 1;
+	protected NerdEcsSystem<?>[] systemsOrder;
 
 	private final transient NerdSketch SKETCH;
-
-	// private SerializationTactic serializationTactic;
-
-	// private HashSet<NerdEcsEntity> entitiesToAdd = new HashSet<>();
-	// private HashSet<NerdEcsEntity> entitiesToRemove = new HashSet<>();
-
-	// private HashSet<NerdEcsComponent> componentsToAdd = new HashSet<>();
-	// private HashSet<NerdEcsComponent> componentsToRemove = new HashSet<>();
 	// endregion
 
 	public NerdEcsManager(final NerdSketch p_sketch, final NerdEcsSystem<?>[] p_systems) {
@@ -57,8 +45,8 @@ public class NerdEcsManager implements Serializable {
 	@SuppressWarnings("all")
 	protected void callOnAllSystems(final BiConsumer<NerdEcsSystem, HashSet<? extends NerdEcsComponent>> p_methodRef) {
 		if (p_methodRef != null)
-			for (final NerdEcsSystem s : this.systemsInOrder)
-				p_methodRef.accept(s, this.COMPONENTS_TO_CLASSES_MAP.get(s.getComponentTypeClass()));
+			for (final NerdEcsSystem s : this.systemsOrder)
+				p_methodRef.accept(s, this.CLASSES_TO_COMPONENTS_MAP.get(s.getComponentTypeClass()));
 	}
 
 	@SuppressWarnings("all")
@@ -66,23 +54,23 @@ public class NerdEcsManager implements Serializable {
 			final NerdTriConsumer<NerdEcsSystem, OtherArgT, HashSet<? extends NerdEcsComponent>> p_methodRef,
 			final OtherArgT p_otherArg) {
 		if (p_methodRef != null)
-			for (final NerdEcsSystem<?> s : this.systemsInOrder)
+			for (final NerdEcsSystem<?> s : this.systemsOrder)
 				p_methodRef.accept(s, p_otherArg,
-						this.COMPONENTS_TO_CLASSES_MAP
+						this.CLASSES_TO_COMPONENTS_MAP
 								.get(s.getComponentTypeClass()));
 	}
 
 	protected <OtherArgT> void callOnAllSystems(
 			final BiConsumer<NerdEcsSystem<?>, OtherArgT> p_methodRef, final OtherArgT p_otherArg) {
 		if (p_methodRef != null)
-			for (final NerdEcsSystem<?> s : this.systemsInOrder)
+			for (final NerdEcsSystem<?> s : this.systemsOrder)
 				p_methodRef.accept(s, p_otherArg);
 	}
 
 	// @SuppressWarnings("unchecked")
 	protected void callOnAllSystems(final Consumer<NerdEcsSystem<?>> p_method) {
 		if (p_method != null)
-			for (final NerdEcsSystem<?> s : this.systemsInOrder)
+			for (final NerdEcsSystem<?> s : this.systemsOrder)
 				p_method.accept(s);
 	}
 	// endregion
@@ -142,19 +130,33 @@ public class NerdEcsManager implements Serializable {
 
 	// region Public API!
 	public NerdEcsEntity createEntity() {
+		return this.createEntity(null);
+	}
+
+	public NerdEcsSystem<?>[] getSystemsOrder() {
+		return this.systemsOrder;
+	}
+
+	public NerdEcsEntity createEntity(final String p_name) {
 		final NerdEcsEntity toRet = new NerdEcsEntity(this);
+		this.renameEntity(toRet, p_name);
 		// this.entitiesToAdd.add(toRet);
 		this.ENTITIES.add(toRet);
 		return toRet;
 	}
 
-	public NerdEcsSystem<?>[] getSystemsOrder() {
-		return this.systemsInOrder;
-	}
-
 	public void removeEntity(final NerdEcsEntity p_entity) {
 		// this.entitiesToRemove.add(p_entity);
 		this.ENTITIES.add(p_entity);
+	}
+
+	public String getEntityName(final NerdEcsEntity p_entity) {
+		for (final var e : this.NAME_TO_ENTITY_MAP.entrySet())
+			if (e.getValue() == p_entity)
+				return e.getKey();
+
+		// If the entity is not from another manager, this won't ever be returned.
+		return null;
 	}
 
 	public void setSystemsOrder(final NerdEcsSystem<?>[] p_ecsSystems) {
@@ -163,11 +165,36 @@ public class NerdEcsManager implements Serializable {
 		for (final NerdEcsSystem<?> s : p_ecsSystems) {
 			final Class<? extends NerdEcsComponent> systemComponentTypeClass = s.getComponentTypeClass();
 			// If `systemComponentTypeClass` does not exist in the map,
-			this.COMPONENTS_TO_CLASSES_MAP.computeIfAbsent(systemComponentTypeClass, k -> new HashSet<>());
+			this.CLASSES_TO_COMPONENTS_MAP.computeIfAbsent(systemComponentTypeClass, k -> new HashSet<>());
 			// ...then PUT IT THERE!
 		}
 
-		this.systemsInOrder = p_ecsSystems;
+		this.systemsOrder = p_ecsSystems;
+	}
+
+	/**
+	 * @apiNote Entity names parsable as positive {@code long}s are reserved.
+	 * 
+	 * @param p_entity is the entity you wish to rename, and
+	 * @param p_name   is the new name you wish to assign to it!
+	 */
+	public void renameEntity(final NerdEcsEntity p_entity, final String p_name) {
+		if (p_name == null || p_name.isBlank()) {
+			this.NAME_TO_ENTITY_MAP.put(Long.toString(this.numUnnamedEntities++), p_entity);
+			return;
+		}
+
+		if (p_name.charAt(0) != '-')
+			try {
+				Long.valueOf(p_name);
+			} catch (final NumberFormatException e) {
+				this.NAME_TO_ENTITY_MAP.put(p_name, p_entity);
+				return;
+			}
+
+		throw new UnsupportedOperationException(
+				"Entity names parsable as positive `long`s are reserved. Sorry.");
+
 	}
 	// endregion
 
@@ -180,10 +207,10 @@ public class NerdEcsManager implements Serializable {
 		// If not, give it a `HashSet<NerdEcsComponent>` of its own!
 		// ...Else, we go adding those components in!:
 		final Class<? extends NerdEcsComponent> componentClass = p_component.getClass();
-		if (!this.COMPONENTS_TO_CLASSES_MAP.keySet().contains(componentClass))
-			this.COMPONENTS_TO_CLASSES_MAP.put(componentClass, new HashSet<>());
+		if (!this.CLASSES_TO_COMPONENTS_MAP.keySet().contains(componentClass))
+			this.CLASSES_TO_COMPONENTS_MAP.put(componentClass, new HashSet<>());
 		else
-			this.COMPONENTS_TO_CLASSES_MAP.get(componentClass).add(p_component);
+			this.CLASSES_TO_COMPONENTS_MAP.get(componentClass).add(p_component);
 	}
 
 	protected final void removeComponent(final NerdEcsComponent p_component) {
@@ -193,91 +220,112 @@ public class NerdEcsManager implements Serializable {
 		// Check if we've ever used this exact subclass of `NerdEcsComponent`.
 		// ...If we do see if this component exists here and can be removed!:
 		final Class<? extends NerdEcsComponent> componentClass = p_component.getClass();
-		if (this.COMPONENTS_TO_CLASSES_MAP.keySet().contains(componentClass))
-			this.COMPONENTS_TO_CLASSES_MAP.get(componentClass).remove(p_component);
+		if (this.CLASSES_TO_COMPONENTS_MAP.keySet().contains(componentClass))
+			this.CLASSES_TO_COMPONENTS_MAP.get(componentClass).remove(p_component);
 	}
 	// endregion
 
-	// TODO: Region of code on iteration!
+	// region Iteration!
+	public void forEachEntity(final Consumer<? super NerdEcsEntity> p_action) {
+		if (p_action != null)
+			this.ENTITIES.forEach(p_action);
+	}
+
+	public void forEachComponent(final Consumer<? super NerdEcsComponent> p_action) {
+		if (p_action != null)
+			this.COMPONENTS.forEach(p_action);
+	}
+
+	public void forEachEntityWithName(final BiConsumer<String, NerdEcsEntity> p_action) {
+		if (p_action != null)
+			this.NAME_TO_ENTITY_MAP.forEach(p_action);
+
+		// Older method:
+		// for (final Map.Entry<String, NerdEcsEntity> e :
+		// this.ENTITY_TO_NAME_MAP.entrySet())
+		// p_action.accept(e.getKey(), e.getValue());
+	}
+
+	public void forEachEntityUnnamed(final Consumer<NerdEcsEntity> p_action) {
+		if (p_action != null)
+			for (final Map.Entry<String, NerdEcsEntity> entry : this.NAME_TO_ENTITY_MAP.entrySet()) {
+				final String name = entry.getKey();
+
+				try {
+					Long.valueOf(name);
+				} catch (final NumberFormatException e) {
+					p_action.accept(entry.getValue());
+				}
+			}
+	}
+
+	public void forEachComponentClassUsed(final Consumer<? super Class<? extends NerdEcsComponent>> p_action) {
+		// ...yeah, I borrowed that syntax with the generics. Thanks, VSCode!
+		if (p_action != null)
+			this.CLASSES_TO_COMPONENTS_MAP.keySet().forEach(p_action);
+	}
+	// endregion
 
 	// region Serialization.
 	// region Saving.
+	/**
+	 * You get this entire manager, serialized to bytes!
+	 * 
+	 * @return The bytes!
+	 * @see NerdEcsManager#saveState(File)
+	 */
 	public byte[] saveState() {
-		return this.saveState(/* true */);
+		return NerdByteSerial.toBytes(this);
 	}
 
-	/*
-	 * public byte[] saveState(final SerializationTactic p_serializationTactic) {
-	 * final byte[] toRet;
+	/**
+	 * This entire manager, serialized to a file as bytes!
 	 * 
-	 * if (p_serializationTactic == SerializationTactic.REMOVE_FLAGS) {
-	 * var a = this.entitiesToAdd;
-	 * var b = this.componentsToAdd;
-	 * var c = this.entitiesToRemove;
-	 * var d = this.componentsToRemove;
-	 * 
-	 * this.entitiesToAdd = new HashSet<>();
-	 * this.componentsToAdd = new HashSet<>();
-	 * this.entitiesToRemove = new HashSet<>();
-	 * this.componentsToRemove = new HashSet<>();
-	 * 
-	 * toRet = NerdByteSerial.toBytes(this);
-	 * 
-	 * this.entitiesToAdd = a;
-	 * this.componentsToAdd = b;
-	 * this.entitiesToRemove = c;
-	 * this.componentsToRemove = d;
-	 * } else
-	 * toRet = NerdByteSerial.toBytes(this);
-	 * 
-	 * return toRet;
-	 * }
+	 * @return Nothing! The file ate it all...
+	 * @see NerdEcsManager#saveState()
 	 */
-
-	public void saveState(final File p_file /* , final boolean p_keepAddAndRemoveFlags */) {
-		/*
-		 * if (p_keepAddAndRemoveFlags)
-		 * NerdByteSerial.toFile(this, p_file);
-		 * else {
-		 * var a = this.entitiesToAdd;
-		 * var b = this.componentsToAdd;
-		 * var c = this.entitiesToRemove;
-		 * var d = this.componentsToRemove;
-		 * 
-		 * this.entitiesToAdd = new HashSet<>();
-		 * this.componentsToAdd = new HashSet<>();
-		 * this.entitiesToRemove = new HashSet<>();
-		 * this.componentsToRemove = new HashSet<>();
-		 * 
-		 * NerdByteSerial.toFile(this, p_file);
-		 * 
-		 * this.entitiesToAdd = a;
-		 * this.componentsToAdd = b;
-		 * this.entitiesToRemove = c;
-		 * this.componentsToRemove = d;
-		 * }
-		 */
-
+	public void saveState(final File p_file) {
 		NerdByteSerial.toFile(this, p_file);
 	}
 	// endregion
 
 	// region Loading.
-	public void loadState(final byte[] p_serializedData) {
-		this.loadStateImpl(NerdByteSerial.fromBytes(p_serializedData));
-	}
-
+	/**
+	 * Ever called {@link NerdEcsManager#saveState(File)}? This reverses that.
+	 * 
+	 * @param p_file is the file in context.
+	 */
 	public void loadState(final File p_file) {
 		this.loadStateImpl(NerdByteSerial.fromFile(p_file));
 	}
 
+	/**
+	 * Ever called {@link NerdEcsManager#saveState()}? This reverses the bytes you
+	 * got from there, for free!
+	 * 
+	 * @param p_serializedData better have the bytes I talked about!
+	 */
+	public void loadState(final byte[] p_serializedData) {
+		this.loadStateImpl(NerdByteSerial.fromBytes(p_serializedData));
+	}
+
 	private void loadStateImpl(final NerdEcsManager p_deserialized) {
+		final var deserializedEntities = p_deserialized.ENTITIES;
+		final var deserializedComponents = p_deserialized.COMPONENTS;
+		final var deserializedNameToEntityMap = p_deserialized.NAME_TO_ENTITY_MAP;
+		final var deserializedClassToComponentsMap = p_deserialized.CLASSES_TO_COMPONENTS_MAP;
+
+		final var deserializedUnnamedEntities = p_deserialized.numUnnamedEntities;
+		final var deserializedSystemsOrder = p_deserialized.systemsOrder;
 
 	}
 	// endregion
 	// endregion
 
 	// region Networking.
+
+	
+	
 	// endregion
 
 	// region Events.

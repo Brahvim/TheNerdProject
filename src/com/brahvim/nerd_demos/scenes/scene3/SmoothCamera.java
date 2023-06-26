@@ -12,8 +12,10 @@ import processing.core.PVector;
 public class SmoothCamera extends NerdFlyCamera {
 
 	// region Fields.
-	public float accFrict = 0.9f, velFrict = 0.9f;
-	public float normalSpeed = 0.5f, fastSpeed = 2, slowSpeed = 0.125f;
+	public static final float DEFAULT_ACC_FRICT = 0.9f, DEFAULT_VEL_FRICT = 0.9f;
+	public static final float NORMAL_SPEED = 0.5f, FAST_SPEED = 2, SLOW_SPEED = 0.125f;
+
+	public float accFrict = SmoothCamera.DEFAULT_ACC_FRICT, velFrict = SmoothCamera.DEFAULT_VEL_FRICT;
 
 	private PVector accVec = new PVector(), velVec = new PVector();
 	// endregion
@@ -56,19 +58,24 @@ public class SmoothCamera extends NerdFlyCamera {
 		// Increase speed when holding `Ctrl`:
 		final float accMultiplier;
 
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_CONTROL))
-			accMultiplier = this.fastSpeed;
-		else if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_ALT))
-			accMultiplier = this.slowSpeed;
-		else
-			accMultiplier = this.normalSpeed;
+		this.accFrict = SmoothCamera.DEFAULT_ACC_FRICT;
+		this.velFrict = SmoothCamera.DEFAULT_VEL_FRICT;
+
+		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_CONTROL)) {
+			accMultiplier = SmoothCamera.FAST_SPEED;
+		} else if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_ALT)) {
+			accMultiplier = SmoothCamera.SLOW_SPEED;
+			this.accFrict = this.velFrict = 0.95f;
+		} else {
+			accMultiplier = SmoothCamera.NORMAL_SPEED;
+		}
 
 		// region Roll.
 		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_Z))
-			super.up.x += this.normalSpeed * 0.1f;
+			super.up.x += SmoothCamera.NORMAL_SPEED * 0.1f;
 
 		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_C))
-			super.up.x += -this.normalSpeed * 0.1f;
+			super.up.x += -SmoothCamera.NORMAL_SPEED * 0.1f;
 
 		// if (super.up.x > PConstants.TAU || super.up.x < -PConstants.TAU)
 		// super.up.x -= super.up.x;
