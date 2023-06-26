@@ -15,11 +15,14 @@ import java.util.Vector;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.brahvim.nerd.io.net.NerdServerSocket;
 import com.brahvim.nerd.io.net.NerdSocket;
 
 import processing.core.PApplet;
 
-public class NerdTcpServer implements NerdSocket {
+// TODO: Decide if this entire `NerdSocket`-`NerdServerSocket` hierarchy is useful.
+
+public class NerdTcpServer implements NerdServerSocket {
 
 	public class NerdClientSentTcpPacket extends NerdAbstractTcpPacket {
 

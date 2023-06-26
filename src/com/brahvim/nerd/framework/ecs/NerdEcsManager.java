@@ -14,9 +14,21 @@ import java.util.jar.Attributes.Name;
 import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.NerdByteSerial;
+import com.brahvim.nerd.io.net.NerdSocket;
+import com.brahvim.nerd.io.net.NerdUdpSocket;
+import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
+import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdEcsManager implements Serializable {
+
+	private class NerdEcsManagerSocket {
+
+		public NerdUdpSocket udpSocket;
+		public NerdTcpServer tcpServer;
+		public NerdTcpClient tcpClient;
+
+	}
 
 	// region Fields.
 	public static final long serialVersionUID = -6488574946L;
@@ -34,6 +46,7 @@ public class NerdEcsManager implements Serializable {
 	protected NerdEcsSystem<?>[] systemsOrder;
 
 	private final transient NerdSketch SKETCH;
+	private final transient NerdEcsManager.NerdEcsManagerSocket socketManager = new NerdEcsManagerSocket();
 	// endregion
 
 	public NerdEcsManager(final NerdSketch p_sketch, final NerdEcsSystem<?>[] p_systems) {
@@ -323,9 +336,18 @@ public class NerdEcsManager implements Serializable {
 	// endregion
 
 	// region Networking.
-	
+	public void setSocket(final NerdSocket p_socket) {
+		final Class<? extends NerdSocket> socketClass = p_socket.getClass();
 
-	
+		// if (socketClass.isAssignableFrom(NerdUdpSocket.class)) {
+		// } else if (socketClass.isAssignableFrom(NerdTcpServer.class)) {
+		// } else if (socketClass.isAssignableFrom(NerdTcpClient.class)) {
+		// } else
+		// throw new UnsupportedOperationException("`NerdEcsManager` does not support
+		// this type of socket, sorry!");
+
+	}
+
 	// endregion
 
 	// region Events.

@@ -26,7 +26,7 @@ import java.util.Set;
  * @author Brahvim Bhaktvatsal
  */
 
-public abstract class NerdUdpSocket implements NerdSocket {
+public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	// Concurrent stuff *haha:*
 	/**

@@ -17,6 +17,7 @@ import processing.core.PApplet;
 public class NerdTcpClient extends NerdAbstractTcpClient implements NerdSocket {
 
 	public class NerdServerSentTcpPacket extends NerdAbstractTcpPacket {
+
 		public NerdServerSentTcpPacket(final byte[] p_data) {
 			super(p_data);
 		}
