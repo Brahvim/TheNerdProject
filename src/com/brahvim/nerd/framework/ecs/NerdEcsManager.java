@@ -2,11 +2,13 @@ package com.brahvim.nerd.framework.ecs;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -322,15 +324,57 @@ public class NerdEcsManager implements Serializable {
 	}
 
 	private void loadStateImpl(final NerdEcsManager p_deserialized) {
-		final var deserializedEntities = p_deserialized.ENTITIES;
-		final var deserializedComponents = p_deserialized.COMPONENTS;
-		final var deserializedNameToEntityMap = p_deserialized.NAME_TO_ENTITY_MAP;
-		final var deserializedClassToComponentsMap = p_deserialized.CLASSES_TO_COMPONENTS_MAP;
 
-		final var deserializedSystemsOrder = p_deserialized.systemsOrder;
-		final var deserializedNumUnnamedEntities = p_deserialized.numUnnamedEntities;
+		this.systemsOrder = p_deserialized.systemsOrder;
+		this.numUnnamedEntities = p_deserialized.numUnnamedEntities;
 
+		this.CLASSES_TO_COMPONENTS_MAP.clear();
+		this.CLASSES_TO_COMPONENTS_MAP.putAll(p_deserialized.CLASSES_TO_COMPONENTS_MAP);
+
+		// region Reducing `LinkedList` elements, and modifying `NAME_TO_ENTITY_MAP`.
+		// Remove elements not available in the lists in the deserialized manager:
+		for (final Map.Entry<?, ?> e : Map.<LinkedList<?>, LinkedList<?>>of(
+				this.ENTITIES, p_deserialized.ENTITIES,
+				this.COMPONENTS, p_deserialized.COMPONENTS).entrySet()) {
+			final LinkedList<?> myList = (LinkedList<?>) e.getKey(), otherList = (LinkedList<?>) e.getValue();
+
+			for (int i = myList.size() - 1; i != 0; i--) {
+				final Object o = myList.get(i);
+				if (!otherList.contains(o))
+					myList.remove(o);
+			}
+		}
+
+		// Remove elements not available in the maps in the deserialized manager:
+		{
+			// There's nothing like `Set::get()`! Storing stuff to remove then removing it!:
+			final HashSet<String> toRemove = new HashSet<>();
+			final HashMap<String, NerdEcsEntity> myMap = this.NAME_TO_ENTITY_MAP,
+					otherMap = p_deserialized.NAME_TO_ENTITY_MAP;
+
+			for (final Map.Entry<String, NerdEcsEntity> e : myMap.entrySet()) {
+				final String key = e.getKey();
+				if (!otherMap.containsKey(key))
+					toRemove.add(key);
+			}
+
+			for (final String s : toRemove)
+				myMap.remove(s);
+
+			for (final Map.Entry<String, NerdEcsEntity> e : otherMap.entrySet())
+				myMap.putIfAbsent(e.getKey(), e.getValue());
+		}
+		// endregion
+
+		// region Copying components over:
+		final int iterations = this.COMPONENTS.size();
+		for (int i = 0; i < iterations; i++) {
+			final NerdEcsComponent orig = this.COMPONENTS.get(i), latest = p_deserialized.COMPONENTS.get(i);
+			orig.copyFieldsFrom(latest);
+		}
 	}
+	// endregion
+
 	// endregion
 	// endregion
 
@@ -415,8 +459,8 @@ public class NerdEcsManager implements Serializable {
 	 * }
 	 * </pre>
 	 *
-	 * @param <RetT> The type of socket returned. Don't set this! Look at the "see
-	 *               also" section!
+	 * @param <RetT> The type of socket returned. Don't set this! Look at the "See
+	 *               Also" section!
 	 * @return The socket!
 	 * @see NerdEcsManager#getUdpSocket()
 	 * @see NerdEcsManager#getTcpServer()

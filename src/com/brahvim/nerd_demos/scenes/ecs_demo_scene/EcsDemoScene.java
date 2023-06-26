@@ -42,29 +42,31 @@ public class EcsDemoScene extends NerdScene {
 
 	@Override
 	public void mouseClicked() {
-		switch (INPUT.mouseButton) {
-			case PConstants.LEFT -> {
-				// Add the component:
-				if (!this.entity.hasComponent(this.component)) {
-					this.component = this.entity.attachComponent(EcsDemoComponent.class);
-					System.out.println("Component added.");
-				}
-			}
-
-			case PConstants.RIGHT -> {
-				// Remove the component:
-				if (this.entity.hasComponent(this.component)) {
-					this.entity.removeComponent(this.component.getClass());
-					this.component = null;
-					System.out.println("Component removed.");
-				}
-			}
-		}
-
+		// Entity addition and removal test:
 		// switch (INPUT.mouseButton) {
-		// case PConstants.LEFT -> ECS.loadState(EcsDemoScene.SAVE_FILE);
-		// case PConstants.RIGHT -> ECS.saveState(EcsDemoScene.SAVE_FILE);
+		// case PConstants.LEFT -> {
+		// // Add the component:
+		// if (!this.entity.hasComponent(this.component)) {
+		// this.component = this.entity.attachComponent(EcsDemoComponent.class);
+		// System.out.println("Component added.");
 		// }
+		// }
+
+		// case PConstants.RIGHT -> {
+		// // Remove the component:
+		// if (this.entity.hasComponent(this.component)) {
+		// this.entity.removeComponent(this.component.getClass());
+		// this.component = null;
+		// System.out.println("Component removed.");
+		// }
+		// }
+		// }
+
+		// ECS serialization test:
+		switch (INPUT.mouseButton) {
+			case PConstants.LEFT -> ECS.loadState(EcsDemoScene.SAVE_FILE);
+			case PConstants.RIGHT -> ECS.saveState(EcsDemoScene.SAVE_FILE);
+		}
 	}
 
 	@Override

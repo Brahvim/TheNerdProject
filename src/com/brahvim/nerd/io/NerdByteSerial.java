@@ -154,6 +154,10 @@ public class NerdByteSerial {
 		}
 	}
 
+	/**
+	 * @deprecated Broken! Bummer...
+	 */
+	@Deprecated
 	public static void copyObjectFieldData(final Object p_from, final Object p_to) {
 		if (p_from.getClass().isAssignableFrom(p_to.getClass()))
 			throw new UnsupportedOperationException("Cannot copy fields of objects from different hierarchies!");
