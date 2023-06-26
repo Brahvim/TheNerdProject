@@ -35,16 +35,18 @@ public class NerdBridgedEcsManager extends NerdEcsManager {
 
 	// region Sketch workflow callbacks.
 	/**
-	 * Used by a {@code NerdScene} to load {@code NerdAsset}s
-	 * into their, or their {@code NerdSceneManager}'s {@code NerdAssetManager}.<br>
-	 * <br>
+	 * Used by a {@link NerdScene} to load {@link NerdAsset}s
+	 * into their, or their {@link NerdSceneManager}'s {@link NerdAssetManager}.
+	 *
+	 * <p>
 	 * Use this method for all asset-loading purposes that you would like to do in
-	 * the background. If {@code NerdSceneManager::preloadSceneAssets} or
-	 * {@code NerdSceneManager::loadSceneAsync} is called, this method is run
-	 * async, loading-in all {@code NerdAssets}!<br>
-	 * <br>
-	 * Since {@code NerdScene}s could be a part of the same `Sketch`, it is
-	 * important to ensure that this method is `synchronized`.
+	 * the background. If {@link NerdSceneManager#loadSceneAssets()} or
+	 * {@link NerdSceneManager#loadSceneAssetsAsync} is called, this method is run
+	 * async, loading-in all {@link NerdAsset}s!
+	 * 
+	 * <p>
+	 * Since {@link NerdScene}s could be a part of the same {@link NerdSketch}, it
+	 * is important to ensure that this method is {@code synchronized}.
 	 */
 	@Override
 	protected synchronized void preload() {
@@ -119,7 +121,7 @@ public class NerdBridgedEcsManager extends NerdEcsManager {
 	}
 
 	@Override
-	public void mouseWheel(processing.event.MouseEvent p_mouseEvent) {
+	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 		super.mouseWheel(p_mouseEvent);
 	}
 	// endregion
@@ -180,7 +182,7 @@ public class NerdBridgedEcsManager extends NerdEcsManager {
 	}
 
 	@Override
-	public void fullscreenChanged(boolean p_state) {
+	public void fullscreenChanged(final boolean p_state) {
 		super.fullscreenChanged(p_state);
 	}
 	// endregion

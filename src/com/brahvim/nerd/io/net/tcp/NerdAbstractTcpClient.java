@@ -3,13 +3,14 @@ package com.brahvim.nerd.io.net.tcp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
+
+import com.brahvim.nerd.io.net.NerdSocket;
 
 /**
  * ...Only I (Brahvim) want to be using this class. It's written in the hopes to
  * make the API I want to in Nerd.
  */
-public abstract class NerdAbstractTcpClient {
+public abstract class NerdAbstractTcpClient implements NerdSocket {
 
 	protected Socket socket;
 	protected boolean inMessageLoop, hasDisconnected;
@@ -18,8 +19,6 @@ public abstract class NerdAbstractTcpClient {
 	/* `package` */ NerdAbstractTcpClient(final String p_serverIp, final int p_myPort) {
 		try {
 			this.socket = new Socket(p_serverIp, p_myPort);
-		} catch (final UnknownHostException e) {
-			e.printStackTrace();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -28,8 +27,6 @@ public abstract class NerdAbstractTcpClient {
 	/* `package` */ NerdAbstractTcpClient(final int p_myPort) {
 		try {
 			this.socket = new Socket((String) null, p_myPort);
-		} catch (final UnknownHostException e) {
-			e.printStackTrace();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

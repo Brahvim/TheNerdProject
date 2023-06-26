@@ -14,7 +14,7 @@ import com.brahvim.nerd.io.net.NerdSocket;
 
 import processing.core.PApplet;
 
-public class NerdTcpClient extends NerdAbstractTcpClient implements NerdSocket {
+public class NerdTcpClient extends NerdAbstractTcpClient {
 
 	public class NerdServerSentTcpPacket extends NerdAbstractTcpPacket {
 

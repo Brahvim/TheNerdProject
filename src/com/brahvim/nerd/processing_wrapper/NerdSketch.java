@@ -1636,7 +1636,7 @@ public class NerdSketch extends PApplet {
 	}
 
 	/**
-	 * Expands to {@code PApplet::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
+	 * Expands to: {@code PApplet::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
 	 */
 	@Override
 	public void ortho(final float p_cx, final float p_cy, final float p_near, final float p_far) {
@@ -1896,11 +1896,11 @@ public class NerdSketch extends PApplet {
 
 	// region [DEPRECATED] Overloads for `getPathToRootFrom()`.
 	/**
-	 * @deprecated Ineffective when using with {@link PApplet}'s "{@code load()}"
-	 *             methods. Also, all of these methods have some method
-	 *             of accessing files from outside the sketch's data
-	 *             folder! <b>Please also see {@code PApplet}'s
-	 *             {@code static} methods</b>
+	 * @deprecated Ineffective when using with {@link PApplet}'s "{@code load*()}"
+	 *             methods. Also, all Processing-based assets can be
+	 *             loaded from files outside the sketch's data
+	 *             folder using <i>some</i> method! <b>Please also see
+	 *             {@link PApplet}'s {@code static} methods.</b>
 	 */
 	@Deprecated
 	public static String getPathToRootFrom(final File p_path) {
@@ -1908,11 +1908,11 @@ public class NerdSketch extends PApplet {
 	}
 
 	/**
-	 * @deprecated Ineffective when using with {@link PApplet}'s "{@code load()}"
-	 *             methods. Also, all of these methods have some method
-	 *             of accessing files from outside the sketch's data
-	 *             folder! <b>Please also see {@code PApplet}'s
-	 *             {@code static} methods</b>
+	 * @deprecated Ineffective when using with {@link PApplet}'s "{@code load*()}"
+	 *             methods. Also, all Processing-based assets can be
+	 *             loaded from files outside the sketch's data
+	 *             folder using <i>some</i> method! <b>Please also see
+	 *             {@link PApplet}'s {@code static} methods.</b>
 	 */
 	@Deprecated
 	public static String getPathToRootFrom(final String p_path) {

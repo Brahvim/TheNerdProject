@@ -1,22 +1,25 @@
 package com.brahvim.nerd.framework;
 
-import java.util.Objects;
-
 /**
  * Represents an operation that accepts three input arguments and returns no
  * result. This is the three-arity specialization of {@link Consumer}.
- * Unlike most other functional interfaces, {@code TriConsumer} is expected
+ * Unlike most other functional interfaces, {@link NerdTriConsumer} is expected
  * to operate via side-effects.
  *
  * <p>
- * This is a <a href="package-summary.html">functional interface</a>
- * whose functional method is {@link #accept(Object, Object)}.
+ * This is a
+ * {@link FunctionalInterface} whose functional method is
+ * {@link NerdTriConsumer#accept(Object, Object)}.
+ * 
+ * <!-- --- Not using this original anchor tag!: --- !-->
+ * <!-- <a href="package-summary.html">functional interface</a> !-->
+ * 
  *
  * @param <T> the type of the first argument to the operation
  * @param <U> the type of the second argument to the operation
  * @param <V> the type of the third argument to the operation
  *
- * @see @link Consumer
+ * @see Consumer
  * @see BiConsumer
  */
 @FunctionalInterface
@@ -29,22 +32,22 @@ public interface NerdTriConsumer<T, U, V> {
 	 * @param u the second input argument
 	 * @param v the third input argument
 	 */
-	void accept(T t, U u, V v);
+	public void accept(T t, U u, V v);
 
 	/**
-	 * Returns a composed {@code TriConsumer} that performs, in sequence, this
+	 * Returns a composed {@link NerdTriConsumer} that performs, in sequence, this
 	 * operation followed by the {@code p_after} operation. If performing either
 	 * operation throws an exception, it is relayed to the caller of the
 	 * composed operation. If performing this operation throws an exception,
 	 * the {@code p_after} operation will not be performed.
 	 *
 	 * @param p_after the operation to perform after this operation
-	 * @return a composed {@code TriConsumer} that performs in sequence this
+	 * @return a composed {@link NerdTriConsumer} that performs in sequence this
 	 *         operation followed by the {@code p_after} operation
-	 * @throws NullPointerException if {@code p_after} is null
+	 * @throws NullPointerException if {@code p_after} is {@code null}
 	 */
-	default NerdTriConsumer<T, U, V> andThen(NerdTriConsumer<? super T, ? super U, ? super V> p_after) {
-		Objects.requireNonNull(p_after);
+	default NerdTriConsumer<T, U, V> andThen(final NerdTriConsumer<? super T, ? super U, ? super V> p_after) {
+		java.util.Objects.requireNonNull(p_after);
 
 		return (l, c, r) -> {
 			this.accept(l, c, r);

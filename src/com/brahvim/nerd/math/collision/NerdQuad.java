@@ -3,7 +3,7 @@ package com.brahvim.nerd.math.collision;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-// Brought to you, *from* my other (currently supa'-duper secret, ";P!) project, "AGC"!:
+// Brought to you, *from* my other (currently supa'-dupa' secret, ";P!) project, "AGC"!:
 public class NerdQuad {
 
 	// region Fields.
@@ -56,9 +56,8 @@ public class NerdQuad {
 	}
 
 	/**
-	 * @return The (positive) length of the side of the quadrilateral, if it is a
-	 *         square.<br>
-	 *         <br>
+	 * @return The (positive) length of the quadrilateral's size, if it's a square.
+	 *         <p>
 	 *         {@code -1} if the quadrilateral isn't a square!
 	 */
 	public float getSideIfSquare() {

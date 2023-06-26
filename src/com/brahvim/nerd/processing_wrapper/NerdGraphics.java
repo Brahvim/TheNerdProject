@@ -752,7 +752,8 @@ public class NerdGraphics {
 	}
 
 	/**
-	 * Expands to {@code PApplet::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
+	 * Expands to:
+	 * {@code PGraphics::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
 	 */
 	public void ortho(final float p_cx, final float p_cy, final float p_near, final float p_far) {
 		this.graphics.ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far);

@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.jar.Attributes.Name;
 
 import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
@@ -46,7 +45,7 @@ public class NerdEcsManager implements Serializable {
 	protected NerdEcsSystem<?>[] systemsOrder;
 
 	private final transient NerdSketch SKETCH;
-	private final transient NerdEcsManager.NerdEcsManagerSocket socketManager = new NerdEcsManagerSocket();
+	private final transient NerdEcsManager.NerdEcsManagerSocket SOCKET_MANAGER = new NerdEcsManagerSocket();
 	// endregion
 
 	public NerdEcsManager(final NerdSketch p_sketch, final NerdEcsSystem<?>[] p_systems) {
@@ -328,26 +327,120 @@ public class NerdEcsManager implements Serializable {
 		final var deserializedNameToEntityMap = p_deserialized.NAME_TO_ENTITY_MAP;
 		final var deserializedClassToComponentsMap = p_deserialized.CLASSES_TO_COMPONENTS_MAP;
 
-		final var deserializedUnnamedEntities = p_deserialized.numUnnamedEntities;
 		final var deserializedSystemsOrder = p_deserialized.systemsOrder;
+		final var deserializedNumUnnamedEntities = p_deserialized.numUnnamedEntities;
 
 	}
 	// endregion
 	// endregion
 
 	// region Networking.
-	public void setSocket(final NerdSocket p_socket) {
-		final Class<? extends NerdSocket> socketClass = p_socket.getClass();
+	/**
+	 * Shuts down, all communication capabilities of the ECS!
+	 * Use if you wish to stop the communication.
+	 */
+	public void shutdownSocket() {
+		if (this.SOCKET_MANAGER.udpSocket != null)
+			this.SOCKET_MANAGER.udpSocket.close();
 
-		// if (socketClass.isAssignableFrom(NerdUdpSocket.class)) {
-		// } else if (socketClass.isAssignableFrom(NerdTcpServer.class)) {
-		// } else if (socketClass.isAssignableFrom(NerdTcpClient.class)) {
-		// } else
-		// throw new UnsupportedOperationException("`NerdEcsManager` does not support
-		// this type of socket, sorry!");
+		if (this.SOCKET_MANAGER.tcpServer != null)
+			this.SOCKET_MANAGER.tcpServer.shutdown();
 
+		if (this.SOCKET_MANAGER.tcpClient != null)
+			this.SOCKET_MANAGER.tcpClient.disconnect();
+
+		// Set all of these to `null`, ...aaaaand they'll get GCed!
+		this.SOCKET_MANAGER.udpSocket = null;
+		this.SOCKET_MANAGER.tcpServer = null;
+		this.SOCKET_MANAGER.tcpClient = null;
 	}
 
+	/**
+	 * <p>
+	 * A socket will be used <i>only</i> to <i>send</i> data! The socket provided
+	 * will be expected to handle receiving data and making connections itself.
+	 *
+	 * <p>
+	 * Said data will be sent according a strategy that the user may provide.
+	 * 
+	 * <ol>
+	 * <li>For TCP servers, the default plan-of-action is to send data to all
+	 * clients.
+	 * 
+	 * <li>For TCP clients, the default plan-of-action is to send data to all
+	 * clients, the ECS was given to send data to.<br>
+	 * 
+	 * <li>For UDP sockets, the default plan-of-action is to send data to all
+	 * sockets,
+	 * the ECS was given to send data to.<br>
+	 * </ol>
+	 *
+	 * <p>
+	 * Once you provide such a socket, communications automatically begin! You can
+	 * <i>sit back</i>, relax, and watch the ECS transfer over all of its data to
+	 * the other side! ...or not. I dunno, <i>your choice!~</i>
+	 * 
+	 * @param p_socket is the socket. Pass that in, and live your dreams!
+	 */
+	public void startSocket(final NerdSocket p_socket) {
+		// These three objects should be GC-able by final the time we're here!
+		// (Id est, their references should be set to `null`!)
+		this.shutdownSocket(); // This method call does exactly that.
+
+		if (p_socket instanceof final NerdUdpSocket socket) {
+			this.SOCKET_MANAGER.udpSocket = socket;
+		} else if (p_socket instanceof final NerdTcpServer socket) {
+			this.SOCKET_MANAGER.tcpServer = socket;
+		} else if (p_socket instanceof final NerdTcpClient socket) {
+			this.SOCKET_MANAGER.tcpClient = socket;
+		} else
+			throw new UnsupportedOperationException("`NerdEcsManager` does not support this type of socket, sorry!");
+	}
+
+	/**
+	 * Ambiguity over what type of socket you used?
+	 * This method is here to help!
+	 * Yep, you'll need to check the output, but don't worry, here's the code!:<br>
+	 * <br>
+	 * 
+	 * <pre>
+	 * if (p_socket == null) {
+	 * 	// Handle the `null`!
+	 * } else if (p_socket instanceof final NerdUdpSocket udpSocket) {
+	 * 	// Your turn!
+	 * } else if (p_socket instanceof final NerdTcpServer tcpServer) {
+	 * 	// Your turn!
+	 * } else if (p_socket instanceof final NerdTcpClient tcpClient) {
+	 * 	// Your turn!
+	 * }
+	 * </pre>
+	 *
+	 * @param <RetT> The type of socket returned. Don't set this! Look at the "see
+	 *               also" section!
+	 * @return The socket!
+	 * @see NerdEcsManager#getUdpSocket()
+	 * @see NerdEcsManager#getTcpServer()
+	 * @see NerdEcsManager#getTcpClient()
+	 */
+	@SuppressWarnings("unchecked")
+	public <RetT extends NerdSocket> RetT getUnderlyingNerdSocket() {
+		return (RetT) (this.SOCKET_MANAGER.udpSocket != null ? this.SOCKET_MANAGER.udpSocket
+				: this.SOCKET_MANAGER.tcpServer != null ? this.SOCKET_MANAGER.tcpServer
+						: this.SOCKET_MANAGER.tcpClient != null ? this.SOCKET_MANAGER.tcpClient
+								: null);
+	}
+
+	public NerdUdpSocket getUdpSocket() {
+		return this.SOCKET_MANAGER.udpSocket;
+	}
+
+	public NerdTcpServer getTcpServer() {
+		return this.SOCKET_MANAGER.tcpServer;
+	}
+
+	public NerdTcpClient getTcpClient() {
+		return this.SOCKET_MANAGER.tcpClient;
+	}
 	// endregion
 
 	// region Events.

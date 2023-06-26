@@ -18,8 +18,9 @@ import java.util.Set;
  * {@link NerdUdpSocket} helps two applications running on different machines
  * connect via networks following the "User Datagram Protocol" and let them
  * listen to each other on a different thread for easier asynchronous
- * multitasking.<br>
- * <br>
+ * multitasking.
+ * 
+ * <p>
  * Of course, it is based on classes from the
  * {@link java.net} package :)
  *
@@ -171,13 +172,15 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	/**
 	 * The internal {@link DatagramSocket} that takes care of
-	 * networking.<br>
-	 * <br>
+	 * networking.
+	 * 
+	 * <p>
 	 * If you need to change it, consider using the
 	 * {@link NerdUdpSocket#setSocket(DatagramSocket)}
 	 * method (it pauses the receiving thread, swaps the socket, and resumes
-	 * listening).<br>
-	 * <br>
+	 * listening).
+	 * 
+	 * <p>
 	 * {@link NerdUdpSocket#getSocket()} <b>should</b> be used for equality checks,
 	 * etcetera.
 	 */
@@ -300,10 +303,29 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	protected abstract void onStart();
 
 	/**
-	 * @param p_data Always of length {@code 65535}. No more, no less!
-	 *               If you wish to make a string out of it, use the constructor
-	 *               {@code new String(p_data, 0, p_data.length)}. The {@code 0} is
-	 *               the first character of the string.
+	 * @implNote
+	 *           If you wish to convert any part of the received packet to a
+	 *           {@link String}, use the constructor,
+	 *           {@code String(byte[] bytes, int offset, int length)}.
+	 * 
+	 *           Following is example code to convert a packet to a
+	 *           {@link String}:
+	 * 
+	 *           <pre>
+	 *           new String(p_data, 0, p_data.length);
+	 *           </pre>
+	 * 
+	 *           The last two arguments passed to this constructor specify a
+	 *           boundary, which you are free to adjust!
+	 *           <p>
+	 *           The byte at the position of the first argument <i>is</i> also
+	 *           decoded. So is also the case with the second argument, length.
+	 *           All bytes counted, are decoded.
+	 * 
+	 * @param p_data is a {@code byte[]} <i>always</i> of length {@code 65535}. No
+	 *               more, no less!
+	 * @param p_ip   is the IP address of the sender, as a {@link String}.
+	 * @param p_port is the port number this data packet was received on.
 	 */
 	protected abstract void onReceive(final byte[] p_data, final String p_ip, final int p_port);
 

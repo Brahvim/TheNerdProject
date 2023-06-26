@@ -15,10 +15,18 @@ public abstract class NerdAssetLoader<AssetT> {
 			throws NerdAssetLoaderException, IllegalArgumentException;
 
 	/**
-	 * This method tells the wrapping {@code NerdAsset} the name to use. Usually
-	 * just <code>return super.findNameFromPath(this.PATH);</code>
+	 * This method tells the wrapping {@link NerdAsset} the name to use. For most
+	 * implementations, just:
 	 * 
-	 * @return
+	 * <pre>
+	 * return super.findNameFromPath(this.PATH);
+	 * </pre>
+	 * 
+	 * ...will suffice!
+	 * 
+	 * @return The name of the {@link NerdAsset} <i>properly</i> derived from its
+	 *         file's name, perhaps by using the parsing algorithm provided by
+	 *         {@link NerdAssetLoader#findNameFromPath(String)}.
 	 */
 	protected abstract String getAssetName();
 

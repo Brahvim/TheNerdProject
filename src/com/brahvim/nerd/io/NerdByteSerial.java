@@ -15,22 +15,24 @@ import java.util.function.Consumer;
 
 import jogamp.newt.MonitorModeProps.Cache;
 
-// Brought to you, from my other (currently supa'-duper secret, ";P!) project, "AGC"!:
+// Brought to you, from my other (currently supa'-dupa' secret, ";P!) project, "AGC"!:
+// ...And yes, it got TOTALLY changed here! Woohoo!
 
-// ~~[* The "...using generics and casting!" methods take {@link Consumer<>} instances]~~
 /**
  * <h3>A serialization utility.</h3>
  *
  * Have data serialized to {@code byte[]}s and files, and also deserialized from
- * them!<br>
- * <br>
- * Many methods take {@link Consumer<>} instances as arguments simply because
- * overloading would not be allowed otherwise.
+ * them!
+ * <p>
+ * Many methods take {@link Consumer} instances as arguments to provide a way to
+ * handle exceptions. ...simply because overloading would not be allowed
+ * otherwise!
  */
 
 // Bite Cereal, ":D!
 // "Just add milk!"
-// ...Throw-away, all exceptions!~
+// ...Throw-away all exceptions!!!
+
 public class NerdByteSerial {
 
 	private NerdByteSerial() {

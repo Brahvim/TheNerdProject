@@ -19,7 +19,9 @@ public class NerdSpriteSheet {
 	private ArrayList<PImage> sprites = new ArrayList<>(2);
 	// If you literally have only one image, why're you even using a 'sheet'?!
 
-	/** Position of a sprite, as well as its ID in {@code NerdSpSheet::sprites}. */
+	/**
+	 * Position of a sprite, as well as its ID in {@link NerdSpriteSheet#sprites}.
+	 */
 	private ArrayList<SpritePos> poses = new ArrayList<>(2);
 	// endregion
 

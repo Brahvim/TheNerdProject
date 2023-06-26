@@ -313,7 +313,7 @@ public abstract class NerdScene {
 
 	/**
 	 * This method gives the user access to all {@link NerdLayer} instances being
-	 * used by this {@code NerdScene} along with rights such as changing layer
+	 * used by this {@link NerdScene} along with rights such as changing layer
 	 * rendering order.
 	 */
 	public ArrayList<NerdLayer> getLayers() {
@@ -623,23 +623,25 @@ public abstract class NerdScene {
 
 	// region Scene workflow callbacks.
 	/**
-	 * Used by a {@code NerdScene} to load {@code NerdAsset}s
-	 * into their, or their {@code NerdSceneManager}'s {@code NerdAssetManager}.<br>
-	 * <br>
+	 * Used by a {@link NerdScene} to load {@link NerdAsset}s
+	 * into their, or their {@link NerdSceneManager}'s {@link NerdAssetManager}.
+	 *
+	 * <p>
 	 * Use this method for all asset-loading purposes that you would like to do in
-	 * the background. If {@code NerdSceneManager::preloadSceneAssets} or
-	 * {@code NerdSceneManager::loadSceneAsync} is called, this method is run
-	 * async, loading-in all {@code NerdAssets}!<br>
-	 * <br>
-	 * Since {@code NerdScene}s could be a part of the same `Sketch`, it is
-	 * important to ensure that this method is `synchronized`.
+	 * the background. If {@link NerdSceneManager#loadSceneAssets()} or
+	 * {@link NerdSceneManager#loadSceneAssetsAsync} is called, this method is run
+	 * async, loading-in all {@link NerdAsset}s!
+	 * 
+	 * <p>
+	 * Since {@link NerdScene}s could be a part of the same {@link NerdSketch}, it
+	 * is important to ensure that this method is {@code synchronized}.
 	 */
 	protected synchronized void preload() {
 	}
 
 	/**
 	 * Callback for when the scene changes. Calling certain methods from
-	 * {@code MANAGER} will cause crashes here!
+	 * {@link NerdScene#MANAGER} <i><b>will</b></i> cause crashes here!
 	 */
 	protected void sceneChanged() {
 	}
@@ -650,8 +652,9 @@ public abstract class NerdScene {
 	 * {@link NerdSceneManager#restartScene(Class)}, or
 	 * {@link NerdSceneManager#startPreviousScene(Class)}
 	 * is called, after the {@link NerdScene} finishes executing
-	 * {@link NerdScene#preload()},<br>
-	 * <br>
+	 * {@link NerdScene#preload()},
+	 * 
+	 * <p>
 	 * {@link NerdLayer#setup()} is called <i>when a {@link NerdLayer} is set
 	 * active</i> using {@link NerdLayer#setActive(boolean)}.
 	 */

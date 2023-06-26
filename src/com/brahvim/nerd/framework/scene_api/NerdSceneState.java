@@ -90,10 +90,9 @@ public class NerdSceneState {
 	}
 
 	/**
-	 * If an object with the given key is already saved, it is updated.<br>
-	 * <br>
+	 * If an object with the given key is already saved, it is updated.
+	 * <p>
 	 * Else, a new key-value pair is created and saved.
-	 *
 	 */
 	public <T> NerdSceneState set(final String p_key, final T p_value) {
 		this.DATA.put(p_key, p_value);

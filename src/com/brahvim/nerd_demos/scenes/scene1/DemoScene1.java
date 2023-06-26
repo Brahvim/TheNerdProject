@@ -35,7 +35,7 @@ public class DemoScene1 extends NerdScene {
 			WINDOW.centerWindow();
 
 		this.font = SKETCH.ASSETS.get("Arial-Black-48").getData();
-		this.ease = new NerdSineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(90).start();
+		this.ease = new NerdSineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(PConstants.HALF_PI).start();
 
 		this.sceneOneAnnounce = new AlSource(App.openAl, ASSETS.get("SceneOne").getData());
 		this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(App.openAl)

@@ -37,7 +37,7 @@ public class NerdSceneManager {
 
 		private NerdScene cachedReference; // A `SceneManager` should delete this when the scene exits.
 		private NerdAssetManager ASSETS;
-		private int timesLoaded = 0;
+		private final int timesLoaded = 0;
 		// endregion
 
 		private NerdSceneCache(final Constructor<? extends NerdScene> p_constructor,
@@ -69,7 +69,8 @@ public class NerdSceneManager {
 		/**
 		 * Dictates to every {@link NerdSceneManager} instance, the order in which a
 		 * {@link NerdScene} or {@link NerdLayer} is allowed to call certain "workflow
-		 * events" ({@code pre()}, {@code draw()} and {@code post()}) from Processing
+		 * events" ({@link NerdScene#pre()}, {@link NerdScene#draw()} and
+		 * {@link NerdScene#post()}) from Processing.
 		 * 
 		 * @see {@link NerdSceneManager.NerdSceneManagerSettings#preFirstCaller} -
 		 *      {@link CallbackOrder#SCENE} by
@@ -118,8 +119,7 @@ public class NerdSceneManager {
 			/**
 			 * When {@code true}, {@link NerdScene#preload()} is run only the first time
 			 * the {@link NerdScene} is used. Turn to {@code false} to load scene assets
-			 * each time, so that assets are updated.<br>
-			 * </br>
+			 * each time, so that assets are updated.
 			 * 
 			 * @apiNote {@code true} by default!
 			 */
@@ -165,8 +165,7 @@ public class NerdSceneManager {
 
 			/**
 			 * Clears the screen according to
-			 * {@link NerdSceneManager.NerdSceneManagerSettings.OnSceneSwitch#clearColor}.<br>
-			 * <br>
+			 * {@link NerdSceneManager.NerdSceneManagerSettings.OnSceneSwitch#clearColor}.
 			 *
 			 * @apiNote {@code false} by default.
 			 */
@@ -196,16 +195,16 @@ public class NerdSceneManager {
 	protected NerdScene currScene;
 
 	/**
-	 * This {@code HashMap} contains cached data about each {@code NerdScene} class
-	 * any {@code NerdSceneManager} instance has cached or ran.<br>
-	 * <br>
+	 * This {@link HashMap} contains cached data about each {@link NerdScene} class
+	 * any {@link NerdSceneManager} instance has cached or ran.
 	 * 
-	 * Actual "caching" of a {@code NerdScene} is when its corresponding
-	 * {@code SceneManager.SceneCache}'s {@code cachedReference} is not
-	 * {@code null}.<br>
-	 * <br>
+	 * <p>
+	 * Actual "caching" of a {@link NerdScene} is when its corresponding
+	 * {@link NerdSceneManager.NerdSceneCache#cachedReference} is not
+	 * {@code null}.
 	 * 
-	 * The initial capacity here (`2`) is to aid performance, since, the JIT
+	 * <p>
+	 * The initial capacity here ({@code 2}) is to aid performance, since, the JIT
 	 * does no optimization till the first scene switch. All scene switches after
 	 * that the initial should be fast enough!
 	 */
@@ -287,7 +286,7 @@ public class NerdSceneManager {
 	}
 
 	protected <OtherArgT> void callOnCurrSceneActiveLayers(
-			final BiConsumer<NerdLayer, OtherArgT> p_eventCallbackMethod, OtherArgT p_otherArg) {
+			final BiConsumer<NerdLayer, OtherArgT> p_eventCallbackMethod, final OtherArgT p_otherArg) {
 		if (p_eventCallbackMethod != null)
 			for (final NerdLayer l : this.currScene.getLayers())
 				if (l != null)
@@ -629,7 +628,7 @@ public class NerdSceneManager {
 	 */
 
 	/**
-	 * Starts a {@code NerdScene}, and tells using the return value, whether it was
+	 * Starts a {@link NerdScene}, and tells using the return value, whether it was
 	 * restored from cache or started again.
 	 */
 	public boolean startScene(final Class<? extends NerdScene> p_sceneClass) {

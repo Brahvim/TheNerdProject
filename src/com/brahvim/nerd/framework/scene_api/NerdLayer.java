@@ -10,12 +10,12 @@ import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
 
 /**
  * Just like {@link NerdScene}s, {@link NerdLayer}s
- * are used by with inheritance, and not anonymous classes.
+ * are used via inheritance, and not anonymous classes.
+ * 
+ * <p>
  * To add a {@link NerdLayer} to a {@link NerdScene}, use the
- * {@code SceneClass::startLayer(LayerClass.class)}
- * method, where {@code LayerClass} and {@code SceneClass}
- * are any two classes extending the {@link NerdLayer}
- * and {@link NerdScene} classes, respectively.
+ * {@link NerdScene#addLayer(Class)}, passing in your {@link NerdLayer}
+ * subclass.
  *
  * @author Brahvim Bhaktvatsal
  */

@@ -2,7 +2,7 @@ package com.brahvim.nerd.math.collision;
 
 import processing.core.PVector;
 
-// Brought to you, *from* my other (currently supa'-duper secret, ";P!) project, "AGC"!:
+// Brought to you, *from* my other (currently supa'-dupa' secret, ";P!) project, "AGC"!:
 // Courtesy of https://github.com/bmoren/p5.collide2D
 public class NerdCollisionAlgorithms {
 

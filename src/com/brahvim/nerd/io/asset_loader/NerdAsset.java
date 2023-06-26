@@ -109,11 +109,14 @@ public class NerdAsset {
 
 	/**
 	 * Ensures that the asset has loaded, then returns its data,
-	 * given the name of a file (without the extension!).<br>
-	 * <br>
-	 * Usage example:<br>
-	 * <br>
-	 * {@code PImage image = SCENE.ASSETS.get("my_image.png").getData();}
+	 * given the name of a file (without the extension!).
+	 * 
+	 * <p>
+	 * Usage example!:
+	 * 
+	 * <pre>
+	 * final PImage image = ASSETS.get("my_sprite_image").getData();
+	 * </pre>
 	 */
 	@SuppressWarnings("unchecked")
 	public <RetT> RetT getData() {

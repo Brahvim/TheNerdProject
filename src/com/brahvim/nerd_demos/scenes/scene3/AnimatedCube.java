@@ -20,7 +20,7 @@ public class AnimatedCube extends TestEulerBody {
 	public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
 	private boolean visible = true;
-	private NerdSineEase plopWave;
+	private final NerdSineEase plopWave;
 	private AlSource popSrc;
 	// endregion
 
@@ -114,13 +114,13 @@ public class AnimatedCube extends TestEulerBody {
 		this.popSrc.playThenDispose();
 
 		this.plopWave.parameterCoef = 0.015f;
-		this.plopWave.endWhenAngleIncrementsBy(90).start();
+		this.plopWave.endWhenAngleIncrementsBy(PConstants.HALF_PI).start();
 		return this;
 	}
 
 	public AnimatedCube plopOut(final Runnable p_runnable) {
 		this.plopWave.parameterCoef = 0.00001f;
-		this.plopWave.endWhenAngleIncrementsBy(90)
+		this.plopWave.endWhenAngleIncrementsBy(PConstants.HALF_PI)
 				.start(270, () -> {
 					p_runnable.run();
 					this.visible = false;

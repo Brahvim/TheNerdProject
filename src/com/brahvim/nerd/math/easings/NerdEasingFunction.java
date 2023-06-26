@@ -8,8 +8,27 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 public abstract class NerdEasingFunction {
 
 	// region Fields.
-	public float endTime = -1, aliveTime;
-	public float parameter, parameterOffset;
+	/**
+	 * Time at which the internal timer used as a paramter to the underlying
+	 * function will be stopped!
+	 */
+	public float endTime = -1;
+
+	/**
+	 * Amount of time for which this function has been in calculation.
+	 */
+	public float aliveTime;
+
+	/**
+	 * The parameter to be passed to the underlying function to sample it.
+	 */
+	public float parameter;
+
+	/**
+	 * And offset value <i>added</i> to the parameter, after which it is passed to
+	 * the underlying function.
+	 */
+	public float parameterOffset;
 
 	/**
 	 * Returned by {@link NerdEasingFunction#get()} if
@@ -34,8 +53,8 @@ public abstract class NerdEasingFunction {
 	 * wave has ended - AKA, when {@link NerdEasingFunction#active} turns
 	 * {@code false}.
 	 *
-	 * @apiNote {@code true} by default. <br>
-	 *          <br>
+	 * @apiNote {@code true} by default.
+	 *          <p>
 	 *          {@link NerdEasingFunction#inactValue} is {@code 0}
 	 *          by default.
 	 */
@@ -43,11 +62,9 @@ public abstract class NerdEasingFunction {
 
 	/**
 	 * Makes {@link NerdEasingFunction#get()} output its absolute value. This may
-	 * make
-	 * the
-	 * wave behave as if it has doubled in frequency. Toggling this {@code boolean}
-	 * while the wave is active may show unwantedly large, sudden changes in the
-	 * value returned by {@link NerdEasingFunction#get()}.
+	 * make the function behave as if the periodicity of its parameter has doubled.
+	 * Toggling this {@code boolean} while the wave is active may show unwantedly
+	 * large, sudden changes in the value given by the function.
 	 *
 	 * @apiNote {@code false} by default.
 	 */
@@ -56,8 +73,8 @@ public abstract class NerdEasingFunction {
 	protected final NerdSketch SKETCH;
 
 	protected Runnable onEnd;
-	protected int lastValueFrameCount;
 	protected float lastValue;
+	protected int lastValueFrameCount;
 	protected boolean pactive = false;
 	// endregion
 
@@ -165,7 +182,12 @@ public abstract class NerdEasingFunction {
 		return this.pactive;
 	}
 
-	public float getFramely() {
+	/**
+	 * @return
+	 *         Returns a cached sample of the function at the time value recorded at
+	 *         the start of the frame.
+	 */
+	public float getFramelyValue() {
 		// If we've already calculated this value,
 		return this.SKETCH.frameCount == this.lastValueFrameCount
 				// ...We just return it! (`this.lastValue` does not store the absolute value
@@ -177,6 +199,11 @@ public abstract class NerdEasingFunction {
 				: this.get();
 	}
 
+	/**
+	 * @return
+	 *         Resamples the function at with the current time value to give you the
+	 *         latest value.
+	 */
 	public float get() {
 		this.pactive = this.active;
 
