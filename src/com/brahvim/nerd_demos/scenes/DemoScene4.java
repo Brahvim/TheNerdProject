@@ -33,7 +33,7 @@ public class DemoScene4 extends NerdScene {
 
 	@Override
 	protected void setup(final NerdSceneState p_state) {
-		// System.out.printf("`DemoScene4::setup()` here, I was called `%d` times!\n",
+		// System.out.printf("`DemoScene4::setup()` here, I was called `%d` times!%n",
 		// this.SCENE.getTimesLoaded());
 
 		// region OpenAL Test.

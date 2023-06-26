@@ -41,7 +41,7 @@ public abstract class NerdLayer {
 
   // region `private` fields.
   private int timesActivated;
-  private boolean active = true;
+  private boolean active;
   // endregion
 
   protected NerdLayer() {
@@ -53,9 +53,10 @@ public abstract class NerdLayer {
   }
 
   public void setActive(final boolean p_toggleState) {
+    final boolean previouslyActive = this.active; // RECORD!!!!
     this.active = p_toggleState;
 
-    if (this.active) {
+    if (this.active && !previouslyActive) {
       this.setup();
       this.timesActivated++;
     } else
@@ -84,7 +85,6 @@ public abstract class NerdLayer {
   public void mouseDragged() {
   }
 
-  // @SuppressWarnings("unused")
   public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
   }
   // endregion

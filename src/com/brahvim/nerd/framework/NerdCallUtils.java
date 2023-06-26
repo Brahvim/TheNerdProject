@@ -5,6 +5,12 @@ import java.util.function.Consumer;
 
 public class NerdCallUtils {
 
+    private NerdCallUtils() {
+        throw new Error("Sorry, but `"
+                + this.getClass().getCanonicalName()
+                + "` is an uninstantiable, helper class.");
+    }
+
     public static <ObjectT> void callIfNotNull(
             final ObjectT p_object, final Consumer<ObjectT> p_methodReference) {
         if (!(p_object == null || p_methodReference == null))

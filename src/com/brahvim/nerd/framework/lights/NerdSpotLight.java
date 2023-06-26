@@ -7,10 +7,12 @@ import processing.opengl.PGraphics3D;
 
 public class NerdSpotLight extends NerdLight {
 
+	// region Fields.
 	public PVector dir;
 	public float angle, conc = 4000;
 
 	private final PVector PDIR = new PVector();
+	// endregion
 
 	// region Constructors.
 	public NerdSpotLight(PGraphics3D p_buffer) {
@@ -53,18 +55,16 @@ public class NerdSpotLight extends NerdLight {
 
 	@Override
 	protected void applyImpl() {
-		PVector toUse = this.dir;
-
-		if (this.dir != null)
-			this.PDIR.set(this.dir);
-
-		toUse = this.PDIR;
+		final PVector toUse = this.dir == null ? this.PDIR : this.dir;
 
 		super.GRAPHICS.spotLight(
 				super.color.x, super.color.y, super.color.z,
 				super.pos.x, super.pos.y, super.pos.z,
 				toUse.x, toUse.y, toUse.z,
 				this.angle, this.conc);
+
+		if (this.dir != null)
+			this.PDIR.set(this.dir);
 	}
 
 }

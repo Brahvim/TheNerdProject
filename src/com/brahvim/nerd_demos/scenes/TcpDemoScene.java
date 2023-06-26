@@ -15,14 +15,14 @@ public class TcpDemoScene extends NerdScene {
 
 	// region Fields!
 	public final String MESSAGE = """
-			\n
+			%n
 			======================================================
 			Welcome to the `RestaurantApi` demo!
 			This demo showcases the ease of using Nerd's TCP API!
 			Pressing 'G' should start the demo and exit this program.
 			Please read the logs in the developer console upon its completion.
 			======================================================
-			\n""";
+			%n""";
 	// endregion
 
 	// region Message `enum`s.
@@ -42,7 +42,7 @@ public class TcpDemoScene extends NerdScene {
 		@Override
 		public void accept(final NerdClientSentTcpPacket p_packet) {
 			// Get the client's message:
-			final Query message = (Query) NerdByteSerial.fromBytes(p_packet.getData());
+			final Query message = NerdByteSerial.fromBytes(p_packet.getData());
 			final NerdTcpServer.NerdTcpServerClient client = p_packet.getSender();
 			Response response = null; // In here, we store our response!
 

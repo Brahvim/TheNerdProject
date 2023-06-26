@@ -16,6 +16,14 @@ import processing.event.MouseEvent;
 public class NerdInputManager {
 
 	// region Fields.
+
+	public static final char[] STANDARD_KEYBOARD_SYMBOLS = {
+			'\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
+			'%', '^', '&', '*', '(', ')', '{', '}', '[',
+			']', ';', ',', '.', '/', '\\', ':', '|', '<',
+			'>', '_', '+', '?'
+	};
+
 	/** Position of the mouse relative to the monitor. */
 	public final Point GLOBAL_MOUSE_POINT = new Point(),
 			PREV_FRAME_GLOBAL_MOUSE_POINT = new Point();
@@ -125,6 +133,10 @@ public class NerdInputManager {
 
 		this.mouseButton = this.SKETCH.mouseButton;
 		this.mousePressed = this.SKETCH.mousePressed;
+
+		this.mouseLeft = this.SKETCH.mouseButton == PConstants.LEFT && this.mousePressed;
+		this.mouseMid = this.SKETCH.mouseButton == PConstants.CENTER && this.mousePressed;
+		this.mouseRight = this.SKETCH.mouseButton == PConstants.RIGHT && this.mousePressed;
 	}
 
 	/* `package` */ void mouseReleased() {
@@ -232,7 +244,7 @@ public class NerdInputManager {
 
 	public static boolean isStandardKeyboardSymbol(final char p_char) {
 		// boolean is = false;
-		for (final char ch : NerdSketch.STANDARD_KEYBOARD_SYMBOLS)
+		for (final char ch : NerdInputManager.STANDARD_KEYBOARD_SYMBOLS)
 			// Can't use this!:
 			// return ch == p_char;
 			// What if the array being examined is empty?!
@@ -252,11 +264,11 @@ public class NerdInputManager {
 		return Character.isDigit(p_char) ||
 				Character.isLetter(p_char) ||
 				Character.isWhitespace(p_char) ||
-				NerdSketch.isStandardKeyboardSymbol(p_char);
+				NerdInputManager.isStandardKeyboardSymbol(p_char);
 	}
 
 	public char getTypedKey() {
-		if (NerdSketch.isTypeable(this.SKETCH.key))
+		if (NerdInputManager.isTypeable(this.SKETCH.key))
 			return this.SKETCH.key;
 
 		// New way to do this in Java!:
@@ -273,7 +285,7 @@ public class NerdInputManager {
 		 * if (keyCode == BACKSPACE)
 		 * return '\b';
 		 * else if (keyCode == retURN || keyCode == ENTER)
-		 * return '\n';
+		 * return '%n';
 		 * else if (isTypeable(key))
 		 * return key;
 		 * else return '\0';

@@ -121,14 +121,9 @@ public class DemoScene3 extends NerdScene {
 	}
 
 	@Override
-	public void fullscreenChanged(final boolean p_state) {
-		System.out.printf("`DemoScene3::fullscreenChanged()`: `%b`.%n", p_state);
-	}
-
-	@Override
 	protected void sceneChanged() {
 		this.cubeMan.removeAll(); // REALLY helps the GC out!
-		System.gc(); // Surprisingly, this is a useful hint to the GC.
+		System.gc(); // Surprisingly, this is an effective hint to the GC.
 
 		// GRAPHICS.tint(255);
 		// GRAPHICS.background(this.bgImage);

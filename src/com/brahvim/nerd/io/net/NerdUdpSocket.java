@@ -8,8 +8,11 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.SocketOption;
 import java.net.SocketTimeoutException;
+import java.nio.channels.DatagramChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 /**
  * {@link NerdUdpSocket} helps two applications running on different machines
@@ -18,12 +21,12 @@ import java.nio.charset.StandardCharsets;
  * multitasking.<br>
  * <br>
  * Of course, it is based on classes from the
- * {@code java.net} package :)
+ * {@link java.net} package :)
  *
  * @author Brahvim Bhaktvatsal
  */
 
-public class NerdUdpSocket {
+public abstract class NerdUdpSocket {
 
 	// Concurrent stuff *haha:*
 	/**
@@ -47,14 +50,14 @@ public class NerdUdpSocket {
 		public static final int PACKET_MAX_SIZE = 70_000;
 
 		/**
-		 * The {@code Thread} that handles the network's receive calls.
+		 * The {@link Thread} that handles the network's receive calls.
 		 *
 		 * @implSpec {@link NerdUdpSocket.ReceiverThread#start()}
 		 *           should set this to be a daemon thread.
 		 * @see NerdUdpSocket.ReceiverThread#start()
 		 * @see NerdUdpSocket.ReceiverThread#stop()
 		 */
-		private Thread thread; // Ti's but a daemon thread.
+		private final Thread thread; // Ti's but a daemon thread.
 
 		/**
 		 * Internal field holding data used by the receiver thread.
@@ -70,7 +73,7 @@ public class NerdUdpSocket {
 			this.byteData = new byte[ReceiverThread.PACKET_MAX_SIZE];
 
 			this.thread = new Thread(this::receiverTasks,
-					"UdpSocketReceiverOnPort" + NerdUdpSocket.this.getPort());
+					"UdpSocketReceiverOnPort" + NerdUdpSocket.this.getLocalPort());
 			this.thread.setDaemon(true); // The JVM can shut down without waiting for this thread to.
 			this.thread.start();
 		}
@@ -80,8 +83,8 @@ public class NerdUdpSocket {
 			while (!Thread.interrupted()) {
 				try {
 					NerdUdpSocket.this.in = new DatagramPacket(this.byteData, this.byteData.length);
-					if (NerdUdpSocket.this.sock != null)
-						NerdUdpSocket.this.sock.receive(NerdUdpSocket.this.in); // Fetch it well!
+					if (NerdUdpSocket.this.socket != null)
+						NerdUdpSocket.this.socket.receive(NerdUdpSocket.this.in); // Fetch it well!
 				} catch (final IOException e) {
 					if (e instanceof SocketTimeoutException) {
 						// ¯\_(ツ)_/¯
@@ -113,7 +116,6 @@ public class NerdUdpSocket {
 
 						// Don't worry, this won't crash. *I hope.*
 						System.arraycopy(this.byteData, 0, copy, 0, copy.length);
-
 						// Super slow `memset()`...
 						// for (int i = 0; i < byteData.length; i++)
 						// byteData[i] = 0;
@@ -129,8 +131,6 @@ public class NerdUdpSocket {
 								addr.toString().substring(1),
 								NerdUdpSocket.this.in.getPort());
 					} catch (final Exception e) {
-						e.printStackTrace();
-					} catch (final Error e) { // Also, ERRORS! ...if possible, that is.
 						e.printStackTrace();
 					}
 				} // End of `if (PARENT.in != null)`.
@@ -181,7 +181,7 @@ public class NerdUdpSocket {
 	 * {@link NerdUdpSocket#getSocket()} <b>should</b> be used for equality checks,
 	 * etcetera.
 	 */
-	private DatagramSocket sock;
+	private DatagramSocket socket;
 
 	/**
 	 * Holds the previous {@link DatagramPacket} that was sent.
@@ -203,7 +203,7 @@ public class NerdUdpSocket {
 	 *
 	 * @implSpec {@link NerdUdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
 	 */
-	public NerdUdpSocket() {
+	protected NerdUdpSocket() {
 		this(0, NerdUdpSocket.DEFAULT_TIMEOUT);
 	}
 
@@ -215,15 +215,25 @@ public class NerdUdpSocket {
 	 *
 	 * @implSpec {@link NerdUdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
 	 */
-	public NerdUdpSocket(final int p_port) {
+	protected NerdUdpSocket(final int p_port) {
 		this(p_port, NerdUdpSocket.DEFAULT_TIMEOUT);
 	}
 
 	/**
 	 * Constructs a {@link NerdUdpSocket} with the specified socket.
 	 */
-	public NerdUdpSocket(final DatagramSocket p_sock) {
-		this.sock = p_sock;
+	protected NerdUdpSocket(final DatagramSocket p_sock) {
+		if (p_sock == null)
+			throw new NullPointerException("Yo! That socket's `null`...");
+
+		try {
+			if (p_sock.getSoTimeout() == 0)
+				p_sock.setSoTimeout(NerdUdpSocket.DEFAULT_TIMEOUT);
+		} catch (final SocketException e) {
+			e.printStackTrace();
+		}
+
+		this.socket = p_sock;
 		this.receiver = new ReceiverThread();
 	}
 
@@ -237,15 +247,19 @@ public class NerdUdpSocket {
 	 *          {@link NerdUdpSocket#createSocketForcingPort(int, int)} and
 	 *          {@link NerdUdpSocket#UdpSocket(DatagramSocket)}.
 	 */
-	public NerdUdpSocket(final int p_port, final int p_timeout) {
+	protected NerdUdpSocket(final int p_port, final int p_timeout) {
+
+		DatagramSocket sock = null;
 		try {
-			this.sock = new DatagramSocket(p_port);
-			this.sock.setSoTimeout(p_timeout);
+			sock = new DatagramSocket(p_port);
+			sock.setSoTimeout(p_timeout);
 		} catch (final SocketException e) {
 			e.printStackTrace();
 		}
 
-		// System.out.printf("Socket port: `%d`.\n", this.sock.getLocalPort());
+		this.socket = sock;
+
+		// System.out.printf("Socket port: `%d`.%n", this.sock.getLocalPort());
 		// System.out.println(this.sock.getLocalAddress());
 
 		if (this.receiver == null)
@@ -283,34 +297,30 @@ public class NerdUdpSocket {
 	/**
 	 * Simply called by the constructor of {@link NerdUdpSocket}, really.
 	 */
-	protected void onStart() {
-	}
+	protected abstract void onStart();
 
 	/**
 	 * @param p_data Always of length {@code 65535}. No more, no less!
 	 *               If you wish to make a string out of it, use the constructor
 	 *               {@code new String(p_data, 0, p_data.length)}. The {@code 0} is
 	 *               the first character of the string.
-	 * @apiNote {@code public} so you can generate fake events ;)
 	 */
-	public void onReceive(final byte[] p_data, final String p_ip, final int p_port) {
-	}
+	protected abstract void onReceive(final byte[] p_data, final String p_ip, final int p_port);
 
 	/**
-	 * Called before {@code .close()} closes the thread and socket.
+	 * Called before {@link NerdUdpSocket#close()} closes the thread and socket.
 	 */
-	protected void onClose() {
-	}
+	protected abstract /* `synchronized` */ void onClose(); // AYO, NOBODY CALL THIS UNSYNCED!
 	// endregion
 
 	// region Getters and setters. They're all `public`.
 	public DatagramSocket getSocket() {
-		return this.sock;
+		return this.socket;
 	}
 
 	public void setSocket(final DatagramSocket p_sock) {
 		this.receiver.stop();
-		this.sock = p_sock;
+		this.socket = p_sock;
 		this.receiver = new ReceiverThread();
 	}
 
@@ -320,7 +330,7 @@ public class NerdUdpSocket {
 	 */
 	public int getTimeout() {
 		try {
-			return this.sock.getSoTimeout();
+			return this.socket.getSoTimeout();
 		} catch (final SocketException e) {
 			// Hope this never happens!:
 			e.printStackTrace();
@@ -330,14 +340,10 @@ public class NerdUdpSocket {
 
 	public void setTimeout(final int p_timeout) {
 		try {
-			this.sock.setSoTimeout(p_timeout);
+			this.socket.setSoTimeout(p_timeout);
 		} catch (final SocketException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public int getPort() {
-		return this.sock.getLocalPort();
 	}
 
 	/**
@@ -348,30 +354,29 @@ public class NerdUdpSocket {
 	 */
 	public void setPort(final int p_port) {
 		try {
-			final InetAddress previous = this.sock.getLocalAddress();
+			final InetAddress previous = this.socket.getLocalAddress();
 			final boolean receiverWasNull = this.receiver == null;
 			// ^^^ Used when the function is called from constructors.
 
 			if (!receiverWasNull)
 				this.receiver.stop();
-			this.sock.close();
-
-			this.sock = new DatagramSocket(p_port, previous);
-			this.sock.setReuseAddress(true);
+			this.socket.close();
+			this.socket = new DatagramSocket(p_port, previous);
+			this.socket.setReuseAddress(true);
 
 			if (receiverWasNull)
 				this.receiver = new ReceiverThread();
 
-			System.out.printf("Successfully forced the port to: `%d`.\n", this.sock.getLocalPort());
+			System.out.printf("Successfully forced the port to: `%d`.%n", this.socket.getLocalPort());
 		} catch (final SocketException e) {
-			System.out.printf("Setting the port to `%d` failed!\n", p_port);
-			System.out.printf("Had to revert to port `%d`...\n", this.sock.getLocalPort());
+			System.out.printf("Setting the port to `%d` failed!%n", p_port);
+			System.out.printf("Had to revert to port `%d`...%n", this.socket.getLocalPort());
 			e.printStackTrace();
 		}
 	}
 
 	public InetAddress getIp() {
-		return this.sock.getLocalAddress();
+		return this.socket.getLocalAddress();
 	}
 
 	// These allow concurrent modification - bad!:
@@ -385,27 +390,14 @@ public class NerdUdpSocket {
 	// endregion
 
 	// region Other `public` methods!:
-	// region UDP groups.
 	/**
-	 * Works the same as
-	 * {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)}.
-	 * 
-	 * @see UdpSocket#joinGroup(String, int, NetworkInterface)
-	 * @see UdpSocket#leaveGroup(String, int, NetworkInterface)
-	 * @see UdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+	 * Calls {@link NerdUdpSocket#onReceive()} to simulate fake message receival.
 	 */
-	/**
-	 * Works the same as
-	 * {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)}.
-	 * 
-	 * @see NerdUdpSocket#joinGroup(String, int, NetworkInterface)
-	 * @see NerdUdpSocket#leaveGroup(String, int, NetworkInterface)
-	 * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
-	 */
-	public void joinGroup(final SocketAddress p_sockAddr, final NetworkInterface p_netIf) throws IOException {
-		this.sock.joinGroup(p_sockAddr, p_netIf);
+	public void fakeReceive(final byte[] p_data, final String p_ip, final int p_port) {
+		this.onReceive(p_data, p_ip, p_port);
 	}
 
+	// region UDP group operations overloads.
 	/**
 	 * Calls {@link NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)} with
 	 * an
@@ -422,17 +414,6 @@ public class NerdUdpSocket {
 	}
 
 	/**
-	 * Works the same as
-	 * {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)}.
-	 * 
-	 * @see NerdUdpSocket#joinGroup(String, int, NetworkInterface)
-	 * @see NerdUdpSocket#leaveGroup(String, int, NetworkInterface)
-	 */
-	public void leaveGroup(final SocketAddress p_sockAddr, final NetworkInterface p_netIf) throws IOException {
-		this.sock.leaveGroup(p_sockAddr, p_netIf);
-	}
-
-	/**
 	 * Calls {@link NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)} with
 	 * an
 	 * instance of {@link InetSocketAddress} - effectively the same as
@@ -443,7 +424,7 @@ public class NerdUdpSocket {
 	 * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
 	 */
 	public void leaveGroup(final String p_ip, final int p_port, final NetworkInterface p_netIf) throws IOException {
-		this.sock.leaveGroup(new InetSocketAddress(p_ip, p_port), p_netIf);
+		this.socket.leaveGroup(new InetSocketAddress(p_ip, p_port), p_netIf);
 	}
 	// endregion
 
@@ -452,10 +433,12 @@ public class NerdUdpSocket {
 	 * Sends over a {@link DatagramPacket} using the internal
 	 * {@link DatagramSocket}.
 	 */
-	public void send(final DatagramPacket p_packet) {
+	public synchronized void send(final DatagramPacket p_packet) {
 		// System.out.println("The socket sent some data!");
 		try {
-			this.sock.send(this.out = p_packet);
+			// No worries here. Nobody can change the packet anymore!~
+			this.out = p_packet;
+			this.socket.send(p_packet);
 		} catch (final IOException e) {
 			// if (e instanceof UnknownHostException) {
 			e.printStackTrace();
@@ -468,11 +451,15 @@ public class NerdUdpSocket {
 	/**
 	 * Sends over a {@code byte[]} to the specified IP address and port.
 	 */
-	public void send(final byte[] p_data, final String p_ip, final int p_port) {
+	public synchronized void send(final byte[] p_data, final String p_ip, final int p_port) {
 		// System.out.println("The socket sent some data!");
 		try {
-			this.sock.send(this.out = new DatagramPacket(
-					p_data, p_data.length, InetAddress.getByName(p_ip), p_port));
+			// Okay, okay, look. These methods can be called over threads, so we better set
+			// `this.out` LATER!
+			final DatagramPacket toSend = new DatagramPacket(
+					p_data, p_data.length, InetAddress.getByName(p_ip), p_port);
+			this.socket.send(toSend);
+			this.out = toSend;
 		} catch (final IOException e) {
 			// if (e instanceof UnknownHostException) {
 			e.printStackTrace();
@@ -483,10 +470,10 @@ public class NerdUdpSocket {
 	}
 
 	/**
-	 * Sends over a {@code String} converted to a {@code byte[]} using the
+	 * Sends over a {@link String} converted to a {@code byte[]} using the
 	 * {@code UTF-8} character set to the specified IP address and port.
 	 */
-	public void send(final String p_message, final String p_ip, final int p_port) {
+	public synchronized void send(final String p_message, final String p_ip, final int p_port) {
 		this.send(p_message.getBytes(StandardCharsets.UTF_8), p_ip, p_port);
 
 		// VSCode, please allow comments without an
@@ -496,24 +483,136 @@ public class NerdUdpSocket {
 	// endregion
 
 	/**
-	 * Frees memory used by the Operating System handle and any other resources the
-	 * underlying {@code DatagramSocket} instance is using, prints the exception
+	 * Frees memory used by the operating system handle and any other resources the
+	 * underlying {@link DatagramSocket} instance is using, prints the exception
 	 * closing it results in (if it occurs), and stops the receiver thread.
 	 */
-	public void close() {
+	public synchronized void close() {
 		this.onClose();
 		this.setTimeout(0);
 		this.receiver.stop();
 
 		try {
-			this.sock.setReuseAddress(false);
-			this.sock.close();
+			this.socket.setReuseAddress(false);
+			this.socket.close();
 		} catch (final SocketException e) {
 			// That's basically re-printing the exception! NO!
 			// e.printStackTrace();
 		}
 
 		// System.out.println("Socket closed...");
+	}
+	// endregion
+
+	// region Stuff from `DatagramSocket`.
+	public boolean getBroadcast() throws SocketException {
+		return this.socket.getBroadcast();
+	}
+
+	public DatagramChannel getChannel() {
+		return this.socket.getChannel();
+	}
+
+	public InetAddress getInetAddress() {
+		return this.socket.getInetAddress();
+	}
+
+	public InetAddress getLocalAddress() {
+		return this.socket.getLocalAddress();
+	}
+
+	public int getLocalPort() {
+		return this.socket.getLocalPort();
+	}
+
+	public SocketAddress getLocalSocketAddress() {
+		return this.socket.getLocalSocketAddress();
+	}
+
+	public <T> T getOption(final SocketOption<T> p_socketOption) throws IOException {
+		return this.socket.getOption(p_socketOption);
+	}
+
+	public int getPort() {
+		return this.socket.getPort();
+	}
+
+	public int getReceiveBufferSize() throws SocketException {
+		return this.socket.getReceiveBufferSize();
+	}
+
+	public SocketAddress getRemoteSocketAddress() {
+		return this.socket.getRemoteSocketAddress();
+	}
+
+	public boolean getReuseAddress() throws SocketException {
+		return this.socket.getReuseAddress();
+	}
+
+	public int getSendBufferSize() throws SocketException {
+		return this.socket.getSendBufferSize();
+	}
+
+	public int getSoTimeout() throws SocketException {
+		return this.socket.getSoTimeout();
+	}
+
+	public int getTrafficClass() throws SocketException {
+		return this.socket.getTrafficClass();
+	}
+
+	public boolean isBound() {
+		return this.socket.isBound();
+	}
+
+	public boolean isClosed() {
+		return this.socket.isClosed();
+	}
+
+	public boolean isConnected() {
+		return this.socket.isConnected();
+	}
+
+	public void joinGroup(final SocketAddress p_address, final NetworkInterface p_networkInterface) throws IOException {
+		this.socket.joinGroup(p_address, p_networkInterface);
+	}
+
+	public void leaveGroup(final SocketAddress p_address, final NetworkInterface p_networkInterface)
+			throws IOException {
+		this.socket.leaveGroup(p_address, p_networkInterface);
+	}
+
+	public void setBroadcast(final boolean p_state) throws SocketException {
+		this.socket.setBroadcast(p_state);
+	}
+
+	public <T> DatagramSocket setOption(
+			final SocketOption<T> p_socketOption, final T p_value) throws IOException {
+		return this.socket.setOption(p_socketOption, p_value);
+	}
+
+	public void setReceiveBufferSize(final int p_size) throws SocketException {
+		this.socket.setReceiveBufferSize(p_size);
+	}
+
+	public void setReuseAddress(final boolean p_state) throws SocketException {
+		this.socket.setReuseAddress(p_state);
+	}
+
+	public void setSendBufferSize(final int p_size) throws SocketException {
+		this.socket.setSendBufferSize(p_size);
+	}
+
+	public void setSoTimeout(final int p_timeout) throws SocketException {
+		this.socket.setSoTimeout(p_timeout);
+	}
+
+	public void setTrafficClass(final int p_trafficClass) throws SocketException {
+		this.socket.setTrafficClass(p_trafficClass);
+	}
+
+	public Set<SocketOption<?>> supportedOptions() {
+		return this.socket.supportedOptions();
 	}
 	// endregion
 

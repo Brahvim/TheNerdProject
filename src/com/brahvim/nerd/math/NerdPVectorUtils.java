@@ -6,6 +6,9 @@ import processing.core.PVector;
 public final class NerdPVectorUtils {
 
 	private NerdPVectorUtils() {
+		throw new Error("Sorry, but `"
+				+ this.getClass().getCanonicalName()
+				+ "` is an uninstantiable, helper class.");
 	}
 
 	// region Conversions.

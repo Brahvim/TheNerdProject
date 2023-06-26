@@ -68,7 +68,7 @@ public class NerdSineEase extends NerdEasingFunction {
 		super.endTime = super.aliveTime + (p_angle - super.parameterOffset) / this.parameterCoef;
 
 		// "Debug Laag":
-		// System.out.printf("Alive-time: `%f`, end-time: `%f`, angle: `%f`.\n",
+		// System.out.printf("Alive-time: `%f`, end-time: `%f`, angle: `%f`.%n",
 		// super.aliveTime, super.endTime, PApplet.degrees(this.freq % PConstants.TAU));
 
 		return this;

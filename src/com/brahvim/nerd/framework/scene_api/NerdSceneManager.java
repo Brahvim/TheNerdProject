@@ -222,18 +222,6 @@ public class NerdSceneManager {
 	// region Sketch Event Listeners.
 	private final LinkedHashSet<NerdSceneChangeListener> SCENE_CHANGE_LISTENERS; // May get passed to constructor!
 	private final LinkedHashSet<NerdSceneChangeListener> SCENE_CHANGE_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0);
-
-	@SuppressWarnings("unused")
-	private NerdSketch.NerdSketchMouseListener mouseListener;
-
-	@SuppressWarnings("unused")
-	private NerdSketch.NerdSketchTouchListener touchListener;
-
-	@SuppressWarnings("unused")
-	private NerdSketch.NerdSketchWindowListener windowListener;
-
-	@SuppressWarnings("unused")
-	private NerdSketch.NerdSketchKeyboardListener keyboardListener;
 	// endregion
 	private Class<? extends NerdScene> currSceneClass, prevSceneClass;
 	// endregion
@@ -718,7 +706,6 @@ public class NerdSceneManager {
 	}
 
 	// region (`private`) Caching operations.
-	@SuppressWarnings("unused")
 	private void ensureCache(final Class<? extends NerdScene> p_sceneClass) {
 		if (!this.hasCached(p_sceneClass))
 			this.cacheScene(p_sceneClass, false);

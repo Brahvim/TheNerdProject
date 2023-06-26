@@ -6,6 +6,8 @@ import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
+import com.brahvim.nerd_demos.scenes.ecs_demo_scene.EcsDemoComponent;
+import com.brahvim.nerd_demos.scenes.ecs_demo_scene.EcsDemoScene;
 import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
@@ -28,7 +30,7 @@ public class App {
 	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
 			// Use directly in `setFirstSceneClass()` below!:
 			// LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-			DemoScene3.class;
+			EcsDemoScene.class;
 
 	// region `App`'s *other* fields.
 	public static final int BPM = 100,

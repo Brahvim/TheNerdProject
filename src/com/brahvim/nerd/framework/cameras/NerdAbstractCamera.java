@@ -108,6 +108,7 @@ public abstract class NerdAbstractCamera {
 		this.applyMatrix(p_graphics);
 	}
 
+	// TODO: Fix whatever this reminds you of. PAIN! x[
 	public void clear(final PGraphics p_graphics) {
 		this.SKETCH.alphaBg(
 				this.clearColorParam1, this.clearColorParam2,

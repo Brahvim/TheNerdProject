@@ -7,7 +7,7 @@ import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 public class EcsDemoSystem extends NerdEcsSystem<EcsDemoComponent> {
 
 	@Override
-	public void mouseClicked(HashSet<EcsDemoComponent> p_components) {
+	public void mouseClicked(final HashSet<EcsDemoComponent> p_components) {
 		for (final EcsDemoComponent c : p_components)
 			System.out.println(c.message);
 	}

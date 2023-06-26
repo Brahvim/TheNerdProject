@@ -155,6 +155,10 @@ public abstract class NerdScene {
 	@SuppressWarnings("unchecked")
 	public <T extends NerdLayer> void onInactiveLayersOfClass(
 			final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_notFoundTask) {
+		if (p_layerClass == null) {
+			p_notFoundTask.run();
+			return;
+		}
 
 		int i = 0;
 		final int LAYERS_SIZE = this.LAYERS.size();
@@ -163,10 +167,10 @@ public abstract class NerdScene {
 		for (; i != LAYERS_SIZE; i++) {
 			final NerdLayer l = this.LAYERS.get(i);
 
-			if (l != null)
-				if (l.getClass().equals(p_layerClass))
-					if (!l.isActive()) // ...if it's from the same class,
-						p_task.accept((T) l); // ...perform the given task!
+			if (l != null) // If it ain't `null`,
+				if (l.getClass().equals(p_layerClass)) // And it be from ma' class,
+					if (!l.isActive()) // ...if it ain't active,
+						p_task.accept((T) l); // ...perform the given task, brah!
 		}
 
 		// If no `NerdLayer`s were found, perform the other task!:
@@ -183,7 +187,11 @@ public abstract class NerdScene {
 
 	@SuppressWarnings("unchecked")
 	public <T extends NerdLayer> void onActiveLayersOfClass(
-			final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_notFoundTask) {
+			final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_noLayersFoundTask) {
+		if (p_layerClass == null) {
+			p_noLayersFoundTask.run();
+			return;
+		}
 
 		int i = 0;
 		final int LAYERS_SIZE = this.LAYERS.size();
@@ -192,15 +200,15 @@ public abstract class NerdScene {
 		for (; i != LAYERS_SIZE; i++) {
 			final NerdLayer l = this.LAYERS.get(i);
 
-			if (l != null)
-				if (l.getClass().equals(p_layerClass))
-					if (l.isActive()) // ...if it's from the same class,
-						p_task.accept((T) l); // ...perform the given task!
+			if (l != null) // If it ain't `null`,
+				if (l.getClass().equals(p_layerClass)) // And it be from ma' class,
+					if (l.isActive()) // ...if it is active,
+						p_task.accept((T) l); // ...perform the given task, brah!
 		}
 
 		// If no `NerdLayer`s were found, perform the other task!:
-		if (i == 0 && p_notFoundTask != null)
-			p_notFoundTask.run();
+		if (i == 0 && p_noLayersFoundTask != null)
+			p_noLayersFoundTask.run();
 	}
 	// endregion
 
@@ -222,7 +230,11 @@ public abstract class NerdScene {
 	// Actual implementation!:
 	@SuppressWarnings("unchecked")
 	public <T extends NerdLayer> void onLayersOfClass(
-			final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_notFoundTask) {
+			final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_noLayersFoundTask) {
+		if (p_layerClass == null) {
+			p_noLayersFoundTask.run();
+			return;
+		}
 
 		int i = 0;
 		final int LAYERS_SIZE = this.LAYERS.size();
@@ -230,14 +242,14 @@ public abstract class NerdScene {
 		// For every `NerdLayer`,
 		for (; i != LAYERS_SIZE; i++) {
 			final NerdLayer l = this.LAYERS.get(i);
-
-			if (l.getClass().equals(p_layerClass)) // ...if it's from the same class,
-				p_task.accept((T) l); // ...perform the given task!
+			if (l != null) // If it ain't `null`,
+				if (l.getClass().equals(p_layerClass)) // And it be from ma' class,
+					p_task.accept((T) l); // ...perform the given task, brah!
 		}
 
 		// If no `NerdLayer`s were found, perform the other task!:
-		if (i == 0 && p_notFoundTask != null)
-			p_notFoundTask.run();
+		if (i == 0 && p_noLayersFoundTask != null)
+			p_noLayersFoundTask.run();
 	}
 	// endregion
 	// endregion
@@ -256,12 +268,14 @@ public abstract class NerdScene {
 	 * subclass this {@link NerdScene} contains, which are <b>not</b> active.
 	 */
 	public ArrayList<NerdLayer> getInactiveLayers(final Class<? extends NerdLayer> p_layerClass) {
+		if (p_layerClass == null)
+			return new ArrayList<>();
+
 		final ArrayList<NerdLayer> toRet = new ArrayList<>();
 
 		for (final NerdLayer l : this.LAYERS)
-			if (l != null)
-				if (l.getClass().equals(p_layerClass) && !l.isActive())
-					toRet.add(l);
+			if (l != null && l.getClass().equals(p_layerClass) && !l.isActive())
+				toRet.add(l);
 
 		return toRet;
 	}
@@ -271,12 +285,14 @@ public abstract class NerdScene {
 	 * subclass this {@link NerdScene} contains, which are also active.
 	 */
 	public ArrayList<NerdLayer> getActiveLayers(final Class<? extends NerdLayer> p_layerClass) {
+		if (p_layerClass == null)
+			return new ArrayList<>();
+
 		final ArrayList<NerdLayer> toRet = new ArrayList<>();
 
 		for (final NerdLayer l : this.LAYERS)
-			if (l != null)
-				if (l.getClass().equals(p_layerClass) && l.isActive())
-					toRet.add(l);
+			if (l != null && l.getClass().equals(p_layerClass) && l.isActive())
+				toRet.add(l);
 
 		return toRet;
 	}
@@ -289,10 +305,8 @@ public abstract class NerdScene {
 		final ArrayList<NerdLayer> toRet = new ArrayList<>();
 
 		for (final NerdLayer l : this.LAYERS)
-			if (l != null)
-				if (l.getClass().equals(p_layerClass)) {
-					toRet.add(l);
-				}
+			if (l != null && l.getClass().equals(p_layerClass))
+				toRet.add(l);
 
 		return toRet;
 	}
@@ -334,7 +348,11 @@ public abstract class NerdScene {
 
 		final Constructor<? extends NerdLayer> layerConstructor = this.getLayerConstructor(p_layerClass);
 		final NerdLayer toRet = this.constructLayer(layerConstructor);
-		toRet.setActive(true); // Sets stuff up.
+
+		if (toRet == null)
+			throw new NullPointerException("Could not construct `NerdLayer`!");
+
+		toRet.setActive(true);
 		this.LAYERS.add(toRet);
 		return p_layerClass.cast(toRet);
 	}
@@ -354,7 +372,7 @@ public abstract class NerdScene {
 		// If an instance of this layer does not already exist,
 		if (!this.LAYERS.contains(p_layer)) {
 			System.out.printf(
-					"No instance of `NerdLayer` `%s` exists. Making one...\n",
+					"No instance of `%s` exists. Making one...%n",
 					LAYER_CLASS.getSimpleName());
 
 			this.addLayer(LAYER_CLASS);
@@ -363,7 +381,6 @@ public abstract class NerdScene {
 
 		final NerdLayer toStart = this.constructLayer(this.getLayerConstructor(LAYER_CLASS));
 		this.LAYERS.set(this.LAYERS.indexOf(p_layer), toStart);
-
 		p_layer.setActive(false);
 		toStart.setActive(true);
 	}
@@ -372,7 +389,6 @@ public abstract class NerdScene {
 	// region `NerdLayer` construction.
 	private Constructor<? extends NerdLayer> getLayerConstructor(final Class<? extends NerdLayer> p_layerClass) {
 		Constructor<? extends NerdLayer> toRet = this.LAYER_CONSTRUCTORS.get(p_layerClass);
-
 		if (toRet != null)
 			return toRet;
 
@@ -395,19 +411,17 @@ public abstract class NerdScene {
 
 		// region Construct `toRet`.
 		try {
-			toRet = (NerdLayer) p_layerConstructor.newInstance(
-			// new NerdScene.LayerKey(this, this.SKETCH, p_layerClass)
-			);
-		} catch (final InstantiationException e) {
-			e.printStackTrace();
-		} catch (final IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (final IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (final InvocationTargetException e) {
+			toRet = p_layerConstructor.newInstance();
+		} catch (final InstantiationException
+				| IllegalAccessException
+				| IllegalArgumentException
+				| InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		// endregion
+
+		if (toRet == null)
+			throw new NullPointerException("Could not construct `NerdLayer`!");
 
 		toRet.SCENE = this;
 		toRet.STATE = toRet.SCENE.STATE;
@@ -682,7 +696,6 @@ public abstract class NerdScene {
 	public void mouseDragged() {
 	}
 
-	// @SuppressWarnings("unused")
 	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 	}
 	// endregion

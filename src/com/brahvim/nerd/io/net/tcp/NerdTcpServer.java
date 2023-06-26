@@ -78,7 +78,7 @@ public class NerdTcpServer {
 						if (this.serverCommThread.isInterrupted())
 							return;
 
-						// System.out.printf("hasDisconnected: `%s`.\n", super.hasDisconnected);
+						// System.out.printf("hasDisconnected: `%s`.%n", super.hasDisconnected);
 						// System.out.println("`NerdTcpServer.NerdTcpServerClient::serverCommsThread::run()`");
 						stream.available();
 						// ^^^ This is literally gunna return `0`!

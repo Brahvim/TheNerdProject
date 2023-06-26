@@ -104,7 +104,7 @@ public class CubeManager {
 		for (int i = this.CUBES.size() - 1; i != -1; i--) {
 			final AnimatedCube cube = this.CUBES.get(i);
 			// System.out.printf(
-			// "Listener position: `[ %f, %f, %f ]`. Cube position:`%s`.\n",
+			// "Listener position: `[ %f, %f, %f ]`. Cube position:`%s`.%n",
 			// App.OPENAL.getListenerPosition()[0],
 			// App.OPENAL.getListenerPosition()[1],
 			// App.OPENAL.getListenerPosition()[2],

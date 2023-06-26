@@ -50,7 +50,7 @@ public class NerdLoadeableClass<ClassT> {
 				this.qualifiedName, new URL[] { this.url },
 				ClassLoader.getSystemClassLoader());
 
-		try (loader) {
+		try (loader) { // ...Not putting that huge statement in here, y'know? :P
 			this.loadedClass = (Class<? extends ClassT>) loader.loadClass(this.qualifiedName);
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();

@@ -181,13 +181,6 @@ public class NerdSketch extends PApplet {
 
 	public static final File DATA_DIR = new File("data");
 	public static final String DATA_DIR_PATH = NerdSketch.DATA_DIR.getAbsolutePath().concat(File.separator);
-
-	public static final char[] STANDARD_KEYBOARD_SYMBOLS = {
-			'\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
-			'%', '^', '&', '*', '(', ')', '{', '}', '[',
-			']', ';', ',', '.', '/', '\\', ':', '|', '<',
-			'>', '_', '+', '?'
-	};
 	// endregion
 
 	// region Instance constants.
@@ -271,7 +264,7 @@ public class NerdSketch extends PApplet {
 	protected PImage iconImage;
 
 	// region Callback listeners,
-	// LAMBDAS ARE EXPENSIVVVVVE! Allocate only this!:
+	// LAMBDAS ARE EXPENSIVVVVVE! Allocate only this one!:
 	protected final Consumer<Consumer<NerdSketch>> DEFAULT_CALLBACK_ITR_LAMBDA = l -> l.accept(this);
 
 	protected final LinkedHashSet<NerdSketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
@@ -601,11 +594,7 @@ public class NerdSketch extends PApplet {
 	@Override
 	public void mousePressed() {
 		// Again, copying's better since we don't know what decisions the caller makes!:
-		this.INPUT.mouseButton = super.mouseButton;
-		this.INPUT.mousePressed = super.mousePressed;
-		this.INPUT.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
-		this.INPUT.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
-		this.INPUT.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
+		this.INPUT.mousePressed();
 
 		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
 			l.mousePressed();
@@ -679,7 +668,7 @@ public class NerdSketch extends PApplet {
 			// "Filter these keys using the utility method[s]?"
 			//
 			// ...and thus-this check was born!:
-			if (NerdSketch.isTypeable(super.key))
+			if (NerdInputManager.isTypeable(super.key))
 				l.keyTyped();
 
 		this.SCENES.keyTyped();
@@ -693,7 +682,7 @@ public class NerdSketch extends PApplet {
 		if (this.CAN_FULLSCREEN) {
 			if (this.ALT_ENTER_FULLSCREEN
 					&& super.keyCode == KeyEvent.VK_ENTER
-					&& this.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19 /* Same as `KeyEvent.VK_PAUSE`. */ )) {
+					&& this.INPUT.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19 /* Same as `KeyEvent.VK_PAUSE`. */ )) {
 				this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
 				// System.out.println("`Alt`-`Enter` fullscreen!");
 			} else if (this.F11_FULLSCREEN) {
@@ -2078,160 +2067,6 @@ public class NerdSketch extends PApplet {
 	// }
 	// endregion
 	// endregion
-	// endregion
-
-	// region Key-press and key-type helper methods.
-	public boolean onlyKeyPressedIs(final int p_keyCode) {
-		return this.INPUT.KEYS_HELD.size() == 1 && this.INPUT.KEYS_HELD.contains(p_keyCode);
-	}
-
-	public boolean onlyKeysPressedAre(final int... p_keyCodes) {
-		boolean toRet = this.INPUT.KEYS_HELD.size() == p_keyCodes.length;
-
-		if (!toRet)
-			return false;
-
-		for (final int i : p_keyCodes)
-			toRet &= this.INPUT.KEYS_HELD.contains(i);
-
-		return toRet;
-	}
-
-	public boolean keysPressed(final int... p_keyCodes) {
-		// this.INPUT.KEYS_HELD.contains(p_keyCodes); // Causes a totally unique error
-		// :O
-
-		for (final int i : p_keyCodes)
-			if (!this.INPUT.KEYS_HELD.contains(i))
-				return false;
-		return true;
-
-		// I have no idea why Nerd still uses this. Didn't I change that..?:
-		/*
-		 * boolean flag = true;
-		 * for (int i : p_keyCodes)
-		 * flag &= this.INPUT.KEYS_HELD.contains(i); // ...yeah, `|=` and not `&=`...
-		 * return flag;
-		 */
-		// An article once said: `boolean` flags are bad.
-	}
-
-	public boolean keyIsPressed(final int p_keyCode) {
-		return this.INPUT.KEYS_HELD.contains(p_keyCode);
-	}
-
-	public boolean anyGivenKeyIsPressed(final int... p_keyCodes) {
-		for (final int i : p_keyCodes)
-			if (this.INPUT.KEYS_HELD.contains(i))
-				return true;
-		return false;
-	}
-
-	public static boolean isStandardKeyboardSymbol(final char p_char) {
-		// boolean is = false;
-		for (final char ch : NerdSketch.STANDARD_KEYBOARD_SYMBOLS)
-			// Can't use this!:
-			// return ch == p_char;
-			// What if the array being examined is empty?!
-
-			if (ch == p_char)
-				return true;
-
-		// These used to be in the loop:
-		// is = ch == p_char;
-		// is |= ch == p_char;
-		// return is;
-
-		return false;
-	}
-
-	public static boolean isTypeable(final char p_char) {
-		return Character.isDigit(p_char) ||
-				Character.isLetter(p_char) ||
-				Character.isWhitespace(p_char) ||
-				NerdSketch.isStandardKeyboardSymbol(p_char);
-	}
-
-	public char getTypedKey() {
-		if (NerdSketch.isTypeable(this.key))
-			return this.key;
-
-		// New way to do this in Java!:
-		// (...as seen in [`java.lang.`]`Long.class`, on line 217, in OpenJDK `17`!)
-		return switch (this.keyCode) {
-			case PConstants.BACKSPACE -> '\b';
-			case PConstants.RETURN -> '\n';
-			case PConstants.ENTER -> '\n';
-			default -> '\0';
-		};
-
-		// """"""""Slow"""""""":
-		/*
-		 * if (keyCode == BACKSPACE)
-		 * return '\b';
-		 * else if (keyCode == retURN || keyCode == ENTER)
-		 * return '\n';
-		 * else if (isTypeable(key))
-		 * return key;
-		 * else return '\0';
-		 */
-
-	}
-
-	public void addTypedKeyTo(final String p_str) {
-		final char typedChar = this.getTypedKey();
-		final int strLen = p_str.length();
-
-		if (typedChar == '\b' && strLen > 0)
-			p_str.substring(strLen - 1, strLen);
-		else
-			p_str.concat(Character.toString(typedChar));
-	}
-
-	public void addTypedKeyTo(final StringBuilder p_str) {
-		final char typedChar = this.getTypedKey();
-		final int strLen = p_str.length();
-
-		if (typedChar == '\b' && strLen > 0)
-			p_str.substring(strLen - 1, strLen);
-		else
-			p_str.append(Character.toString(typedChar));
-	}
-
-	public void addTypedKeyTo(final StringBuffer p_str) {
-		final char typedChar = this.getTypedKey();
-		final int strLen = p_str.length();
-
-		if (typedChar == '\b' && strLen > 0)
-			p_str.substring(strLen - 1, strLen);
-		else
-			p_str.append(Character.toString(typedChar));
-	}
-
-	// To be used for checking if a certain key can be typed:
-	public boolean isNotSpecialKey(final int p_keyCode) {
-		// I just didn't want to make an array :joy::
-		return !(
-		// For all function keys [regardless of whether `Shift` or `Ctrl` are pressed]:
-		p_keyCode > 96 && p_keyCode < 109 ||
-				p_keyCode == 0 || // `Fn`, plus a function key.
-				p_keyCode == 2 || // `Home`,
-				p_keyCode == 3 || // `End`,
-				p_keyCode == 8 || // `Backspace`,
-				p_keyCode == 10 || // Both `Enter`s/`return`s.
-				p_keyCode == 11 || // `PageDown`,
-				p_keyCode == 12 || // Resistered when a button is pressed on the numpad with `NumLock` off.
-				p_keyCode == 16 || // `PageUp`,
-				p_keyCode == 19 || // "`Alt`-Graph',
-				p_keyCode == 20 || // `CapsLock`,
-				p_keyCode == 23 || // `ScrollLock`,
-				p_keyCode == 26 || // `Insert`,
-				p_keyCode == 147 || // Both `Delete` keys,
-				p_keyCode == 148 || // `Pause`/`Break` and also `NumLock`,
-				p_keyCode == 153 || // `Menu`/`Application` AKA "RightClick" key.
-				p_keyCode == 157 // "Meta", AKA the "OS key".
-		);
-	}
 	// endregion
 
 	// region Start a `JAVA2D` sketch with an undecorated window.
