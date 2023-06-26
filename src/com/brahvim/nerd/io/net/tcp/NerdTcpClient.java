@@ -10,9 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 import java.util.function.Consumer;
 
+import com.brahvim.nerd.io.net.NerdSocket;
+
 import processing.core.PApplet;
 
-public class NerdTcpClient extends NerdAbstractTcpClient {
+public class NerdTcpClient extends NerdAbstractTcpClient implements NerdSocket {
 
 	public class NerdServerSentTcpPacket extends NerdAbstractTcpPacket {
 		public NerdServerSentTcpPacket(final byte[] p_data) {
@@ -38,7 +40,8 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 		super(p_socket);
 	}
 
-	public NerdTcpClient(final Socket p_socket,
+	public NerdTcpClient(
+			final Socket p_socket,
 			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
 		this(p_socket);
 		this.startMessageThread(p_mesageCallback);

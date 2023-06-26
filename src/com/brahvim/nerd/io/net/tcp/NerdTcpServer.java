@@ -15,9 +15,11 @@ import java.util.Vector;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.brahvim.nerd.io.net.NerdSocket;
+
 import processing.core.PApplet;
 
-public class NerdTcpServer {
+public class NerdTcpServer implements NerdSocket {
 
 	public class NerdClientSentTcpPacket extends NerdAbstractTcpPacket {
 
