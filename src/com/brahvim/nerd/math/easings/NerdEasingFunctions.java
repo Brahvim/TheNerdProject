@@ -4,6 +4,12 @@ package com.brahvim.nerd.math.easings;
 
 public class NerdEasingFunctions {
 
+	private NerdEasingFunctions() {
+		throw new Error("Sorry, but `"
+				+ this.getClass().getCanonicalName()
+				+ "` is an uninstantiable, helper class.");
+	}
+
 	public static float cubic(final float x) {
 		return 1.0f - (float) Math.pow(1 - x, 3);
 	}

@@ -17,7 +17,7 @@ public class RevolvingParticlesLayer extends NerdLayer {
 		final PGraphics g = SKETCH.createGraphics(this.PARTICLE_SIZE);
 		g.beginDraw();
 		g.noStroke();
-		g.fill(235, 174, 52, 255 / this.PARTICLE_CONC * 1.15f);
+		g.fill(235, 174, 52, 255.0f / this.PARTICLE_CONC * 1.15f);
 
 		for (int i = 0; i != this.PARTICLE_CONC; i++)
 			g.circle(this.PARTICLE_SIZE_HALF, this.PARTICLE_SIZE_HALF,

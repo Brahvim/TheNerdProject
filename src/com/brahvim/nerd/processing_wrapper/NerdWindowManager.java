@@ -34,7 +34,7 @@ public abstract class NerdWindowManager {
 	// endregion
 
 	// region Construction and initialization.
-	public NerdWindowManager(final NerdSketch p_sketch) {
+	protected NerdWindowManager(final NerdSketch p_sketch) {
 		this.SKETCH = p_sketch;
 		this.fullscreen = this.SKETCH.STARTED_FULLSCREEN;
 	}
@@ -52,7 +52,7 @@ public abstract class NerdWindowManager {
 	 * (Feel free not to use this method and call constructors yourself if needed!)
 	 */
 	public static NerdWindowManager createWindowMan(final NerdSketch p_sketch) {
-		return switch (p_sketch.RENDERER) {
+		return switch (p_sketch.RENDERER_NAME) {
 			case PConstants.P2D, PConstants.P3D -> new NerdGlWindowManager(p_sketch);
 			case PConstants.JAVA2D -> new NerdJava2dWindowManager(p_sketch);
 			default -> null;
@@ -80,8 +80,8 @@ public abstract class NerdWindowManager {
 
 	// region Updates!
 	public void updateWindowRatios() {
-		this.dbx = this.width * 2;
-		this.dby = this.height * 2;
+		this.dbx = this.width * 2.0f;
+		this.dby = this.height * 2.0f;
 
 		this.cx = this.width * 0.5f;
 		this.cy = this.height * 0.5f;

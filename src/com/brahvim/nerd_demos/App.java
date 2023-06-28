@@ -33,7 +33,6 @@ public class App {
 	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
 			// Use directly in `setFirstSceneClass()` below!:
 			// LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-			// TcpDemoScene.class;
 			DemoScene3.class;
 
 	// region `App`'s *other* fields.
@@ -55,22 +54,19 @@ public class App {
 		// region Building the `Sketch`!
 		final NerdSketchBuilder builder = new NerdSketchBuilder();
 		builder.setStringTablePath(NerdSketch.fromDataDir("Nerd_StringTable.json"))
-				.setIconPath("data/sunglass_nerd.png")
-				.setFirstScene(App.FIRST_SCENE_CLASS)
-				.setTitle("The Nerd Project")
+				.canResize()
+				// .startFullscreen()
 				.setAntiAliasing(4)
+				.setTitle("The Nerd Project")
+				.setFirstScene(App.FIRST_SCENE_CLASS)
+				.setIconPath("data/sunglass_nerd.png")
 				.addNerdExt(new NerdAlExt(s -> {
 					// ...for `DemoScene3`!!!:
 					s.monoSources = Integer.MAX_VALUE;
 					s.stereoSources = Integer.MAX_VALUE;
 				}))
-				// .preventCloseOnEscape()
-				// .startFullscreen()
-				.canResize()
-
 				.addSketchConstructionListener(
 						s -> System.out.println(s.STRINGS.get("Meta.onConstruct")))
-
 				.setSceneManagerSettings(s -> s.ON_PRELOAD.preloadOnlyOnce = false);
 
 		// Build the sketch and collect build artifacts:

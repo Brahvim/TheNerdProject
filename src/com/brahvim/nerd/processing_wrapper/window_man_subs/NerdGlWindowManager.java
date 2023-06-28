@@ -75,7 +75,7 @@ public class NerdGlWindowManager extends NerdWindowManager {
 	}
 
 	@Override
-	public NerdGlWindowManager setPosition(final int p_x, int p_y) {
+	public NerdGlWindowManager setPosition(final int p_x, final int p_y) {
 		this.window.setPosition(p_x, p_y);
 		return this;
 	}
@@ -100,14 +100,16 @@ public class NerdGlWindowManager extends NerdWindowManager {
 		if (this.pfullscreen != this.fullscreen) {
 			this.window.setFullscreen(this.fullscreen);
 
-			// Wait for the window to change its mode.
-			// Don't wait for more than `5000` milliseconds!:
-			// ...yes, that should crash the program :|
-			// (It didn't, during my tests, surprisingly :O
-			// The window just... waited there and didn't change states O_O
-			// ...and then Processing began rendering again :D
-			// Apparently `setFullscreen()` returns a `boolean`, meaning that it does
-			// error-checking! Quite kind of JogAmp!)
+			/*
+			 * Wait for the window to change its mode.
+			 * Don't wait for more than `5000` milliseconds!:
+			 * ...yes, that should crash the program :|
+			 * (It didn't, during my tests, surprisingly :O
+			 * The window just... waited there and didn't change states O_O
+			 * ...and then Processing began rendering again :D
+			 * Apparently `setFullscreen()` returns a `boolean`, meaning that it does
+			 * error-checking! Quite kind of JogAmp!)
+			 */
 
 			// region Older logic (no time checking!).
 			// while (this.fullscreen ? !this.window.isFullscreen() :

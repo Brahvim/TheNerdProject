@@ -31,7 +31,7 @@ public class NerdNanosTimer {
 	}
 
 	public float getFloat() {
-		return (float) this.get();
+		return this.get();
 	}
 	// endregion
 

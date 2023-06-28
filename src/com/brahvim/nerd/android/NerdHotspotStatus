@@ -68,9 +68,7 @@ public class HotspotStatus {
 		int ret = -1;
 		try {
 			ret = (Integer)this.method_getWifiApState.invoke(this.man, (Object[])null);
-		} catch (final IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (final InvocationTargetException e) {
+		} catch (final IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 

@@ -15,7 +15,7 @@ import processing.data.JSONObject;
  * {@link NerdSketch#STRINGS}, so you can access string table data across
  * scenes!
  */
-public class NerdStringTable implements Cloneable {
+public class NerdStringTable {
 
 	// region Fields.
 	private File file;
@@ -30,7 +30,7 @@ public class NerdStringTable implements Cloneable {
 		this.langauge = p_table.langauge;
 		this.json = new JSONObject();
 
-		Iterator<String> keysItr = (Iterator<String>) p_table.json.keyIterator();
+		final Iterator<String> keysItr = p_table.json.keyIterator();
 		while (keysItr.hasNext()) {
 			final String s = keysItr.next();
 			p_table.json.getJSONObject(s);
@@ -115,21 +115,21 @@ public class NerdStringTable implements Cloneable {
 
 	public String get(final String p_key, final String p_default) {
 		// Split all the keys!
-		final String[] KEYS = PApplet.split(p_key, '.');
+		final String[] keys = PApplet.split(p_key, '.');
 
 		// Index of second-last object in the JSON tree:
-		final int SECOND_LAST_OBJECT_ID = KEYS.length - 1;
+		final int secondLastObjectId = keys.length - 1;
 		JSONObject lastObject = null;
 
 		// Iterate till we see our query's second-last object,
-		for (int i = 0; i != SECOND_LAST_OBJECT_ID; i++) {
+		for (int i = 0; i != secondLastObjectId; i++)
 			synchronized (this.json) {
-				lastObject = this.json.getJSONObject(KEYS[i]);
+				lastObject = this.json.getJSONObject(keys[i]);
 			}
-		}
 
 		// Get the very last object from here:
-		lastObject = lastObject.getJSONObject(KEYS[SECOND_LAST_OBJECT_ID]);
+		if (lastObject != null)
+			lastObject = lastObject.getJSONObject(keys[secondLastObjectId]);
 		// Oh - and yes, I too, have ***no*** idea why we can get the "last object" only
 		// from outside the loop!
 
@@ -156,21 +156,21 @@ public class NerdStringTable implements Cloneable {
 
 	public String fromArray(final String p_key, final int p_id, final String p_default) {
 		// Split all the keys!
-		final String[] KEYS = PApplet.split(p_key, '.');
+		final String[] keys = PApplet.split(p_key, '.');
 
 		// Index of second-last object in the JSON tree:
-		final int SECOND_LAST_OBJECT_ID = KEYS.length - 1;
+		final int secondLastObjectId = keys.length - 1;
 		JSONObject lastObject = null;
 
 		// Iterate till we see our query's second-last object,
-		for (int i = 0; i != SECOND_LAST_OBJECT_ID; i++) {
+		for (int i = 0; i != secondLastObjectId; i++) {
 			synchronized (this.json) {
-				lastObject = this.json.getJSONObject(KEYS[i]);
+				lastObject = this.json.getJSONObject(keys[i]);
 			}
 		}
 
 		// Get the very last object from here:
-		lastObject = lastObject.getJSONObject(KEYS[SECOND_LAST_OBJECT_ID]);
+		lastObject = lastObject.getJSONObject(keys[secondLastObjectId]);
 		// Oh - and yes, I too, have ***no*** idea why we can get the "last object" only
 		// from outside the loop!
 
@@ -213,21 +213,20 @@ public class NerdStringTable implements Cloneable {
 
 	public String randomFromArray(final String p_key, final String p_default) {
 		// Split all the keys!
-		final String[] KEYS = PApplet.split(p_key, '.');
+		final String[] keys = PApplet.split(p_key, '.');
 
 		// Index of second-last object in the JSON tree:
-		final int SECOND_LAST_OBJECT_ID = KEYS.length - 1;
+		final int secondLastObjectId = keys.length - 1;
 		JSONObject lastObject = null;
 
 		// Iterate till we see our query's second-last object,
-		for (int i = 0; i != SECOND_LAST_OBJECT_ID; i++) {
+		for (int i = 0; i != secondLastObjectId; i++)
 			synchronized (this.json) {
-				lastObject = this.json.getJSONObject(KEYS[i]);
+				lastObject = this.json.getJSONObject(keys[i]);
 			}
-		}
 
 		// Get the very last object from here:
-		lastObject = lastObject.getJSONObject(KEYS[SECOND_LAST_OBJECT_ID]);
+		lastObject = lastObject.getJSONObject(keys[secondLastObjectId]);
 		// Oh - and yes, I too, have ***no*** idea why we can get the "last object" only
 		// from outside the loop!
 

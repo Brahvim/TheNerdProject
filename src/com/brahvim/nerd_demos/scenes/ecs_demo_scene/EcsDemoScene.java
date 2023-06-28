@@ -8,7 +8,6 @@ import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 
 import processing.core.PConstants;
-import processing.core.PVector;
 import processing.event.MouseEvent;
 
 public class EcsDemoScene extends NerdScene {

@@ -186,9 +186,9 @@ public class NerdSketch extends PApplet {
 	// region Instance constants.
 	public final Robot ROBOT;
 	public final String NAME;
-	public final String RENDERER;
 	public final String ICON_PATH;
 	public final boolean USES_OPENGL;
+	public final String RENDERER_NAME;
 	public final NerdStringTable STRINGS;
 	public final NerdAssetManager ASSETS;
 	public final NerdUnprojector UNPROJECTOR;
@@ -308,7 +308,7 @@ public class NerdSketch extends PApplet {
 		this.DISPOSAL_LISTENERS = p_key.disposalListeners;
 		// endregion
 
-		this.RENDERER = p_key.renderer;
+		this.RENDERER_NAME = p_key.renderer;
 		this.ICON_PATH = p_key.iconPath;
 		this.EXTENSIONS = p_key.nerdExtensions;
 		this.ANTI_ALIASING = p_key.antiAliasing;
@@ -343,13 +343,13 @@ public class NerdSketch extends PApplet {
 
 		this.DISPLAYS = new NerdDisplayManager(this);
 		this.WINDOW = NerdWindowManager.createWindowMan(this);
-		this.USES_OPENGL = PConstants.P2D.equals(this.RENDERER) || PConstants.P3D.equals(this.RENDERER);
+		this.USES_OPENGL = PConstants.P2D.equals(this.RENDERER_NAME) || PConstants.P3D.equals(this.RENDERER_NAME);
 		this.SCENES = new NerdBridgedSceneManager(
 				this, p_key.sceneManagerSettings, p_key.sceneChangeListeners, p_key.ecsSystemOrder);
 		// endregion
 
 		// region Setting OpenGL renderer icons.
-		if (PConstants.P2D.equals(this.RENDERER) || PConstants.P3D.equals(this.RENDERER))
+		if (PConstants.P2D.equals(this.RENDERER_NAME) || PConstants.P3D.equals(this.RENDERER_NAME))
 			PJOGL.setIcon(this.ICON_PATH);
 		// endregion
 
@@ -418,7 +418,7 @@ public class NerdSketch extends PApplet {
 		// else
 
 		super.smooth(this.ANTI_ALIASING);
-		super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER);
+		super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER_NAME);
 
 		for (final Consumer<NerdSketch> c : this.SETTINGS_LISTENERS)
 			if (c != null)
@@ -454,7 +454,7 @@ public class NerdSketch extends PApplet {
 		// :joy:!
 
 		// Renderer-specific object initialization and settings!:
-		switch (this.RENDERER) {
+		switch (this.RENDERER_NAME) {
 			case PConstants.P2D, PConstants.P3D -> {
 				this.glWindow = (GLWindow) this.WINDOW.getNativeObject();
 				this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
@@ -657,32 +657,26 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void keyPressed() {
-		if (!this.CLOSE_ON_ESCAPE && super.keyCode == 27)
-			super.key = ' ';
+		if (!this.CLOSE_ON_ESCAPE && this.keyCode == 27)
+			this.key = '\0'; // Processing checks this to know what key was pressed.
+		// By setting it to `\0`, we disallow exiting.
 
 		if (this.CAN_FULLSCREEN) {
 			if (this.ALT_ENTER_FULLSCREEN
 					&& super.keyCode == KeyEvent.VK_ENTER
-					&& this.INPUT.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19 /* Same as `KeyEvent.VK_PAUSE`. */ )) {
+					&& this.INPUT.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
 				this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
-				// System.out.println("`Alt`-`Enter` fullscreen!");
-			} else if (this.F11_FULLSCREEN) {
-				switch (this.RENDERER) {
-					case PConstants.P2D, PConstants.P3D:
-						if (super.keyCode == 107) { // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
+			else if (this.F11_FULLSCREEN)
+				switch (this.RENDERER_NAME) {
+					case PConstants.P2D, PConstants.P3D -> {
+						if (super.keyCode == 107) // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
 							this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
-							// System.out.println("`F11` fullscreen!");
-						}
-						break;
-
-					case PConstants.JAVA2D:
-						if (super.keyCode == KeyEvent.VK_F11) {
+					}
+					case PConstants.JAVA2D -> {
+						if (super.keyCode == KeyEvent.VK_F11)
 							this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
-							// System.out.println("`F11` fullscreen!");
-						}
-						break;
+					}
 				}
-			}
 		}
 
 		this.INPUT.keyPressed();
@@ -691,17 +685,8 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void keyReleased() {
-		try {
-			synchronized (this.INPUT.KEYS_HELD) {
-				this.INPUT.KEYS_HELD.remove(super.keyCode);
-			}
-		} catch (final IndexOutOfBoundsException e) {
-			e.printStackTrace();
-		}
-
-		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
-			l.keyReleased();
-
+		this.INPUT.keyReleased();
+		this.KEYBOARD_LISTENERS.forEach(NerdSketch.NerdSketchKeyboardListener::keyReleased);
 		this.SCENES.keyReleased();
 	}
 	// endregion
@@ -740,8 +725,7 @@ public class NerdSketch extends PApplet {
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
-			for (final NerdSketchWindowListener l : this.WINDOW_LISTENERS)
-				l.focusGained();
+			this.WINDOW_LISTENERS.forEach(NerdSketch.NerdSketchWindowListener::focusGained);
 
 		this.SCENES.focusGained();
 	}
@@ -756,8 +740,7 @@ public class NerdSketch extends PApplet {
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
-			for (final NerdSketchWindowListener l : this.WINDOW_LISTENERS)
-				l.focusLost();
+			this.WINDOW_LISTENERS.forEach(NerdSketch.NerdSketchWindowListener::focusLost);
 
 		this.SCENES.focusLost();
 	}

@@ -3,8 +3,7 @@ package com.brahvim.nerd.processing_wrapper;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-
-import com.brahvim.nerd.processing_wrapper.NerdSketch.NerdSketchKeyboardListener;
+import java.util.List;
 
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -16,12 +15,11 @@ import processing.event.MouseEvent;
 public class NerdInputManager {
 
 	// region Fields.
-	public static final char[] STANDARD_KEYBOARD_SYMBOLS = {
+	public static final List<Character> STANDARD_KEYBOARD_SYMBOLS = List.of(
 			'\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
 			'%', '^', '&', '*', '(', ')', '{', '}', '[',
 			']', ';', ',', '.', '/', '\\', ':', '|', '<',
-			'>', '_', '+', '?'
-	};
+			'>', '_', '+', '?');
 
 	/** Position of the mouse relative to the monitor. */
 	public final Point GLOBAL_MOUSE_POINT = new Point(),
@@ -45,8 +43,8 @@ public class NerdInputManager {
 	/** Updated framely! Generally, don't use this (look at that long name!). */
 	public final PVector CURR_FRAME_MOUSE_VECTOR = new PVector(),
 			PREV_FRAME_MOUSE_VECTOR = new PVector(),
-			CURR_FRAME_MOUSE_CENTER_OFFSET = new PVector(),
-			PREV_FRAME_MOUSE_CENTER_OFFSET = new PVector();
+			CURR_FRAME_MOUSE_CENTER_OFFSET_VECTOR = new PVector(),
+			PREV_FRAME_MOUSE_CENTER_OFFSET_VECTOR = new PVector();
 
 	/** Updated each time events changing this variable occur. */
 	public char key, pkey;
@@ -85,14 +83,14 @@ public class NerdInputManager {
 	}
 
 	/* `package` */ void preCallback() {
-		this.CURR_FRAME_MOUSE_CENTER_OFFSET.set(
+		this.CURR_FRAME_MOUSE_CENTER_OFFSET_VECTOR.set(
 				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
 				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
 		this.CURR_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
 	}
 
 	/* `package` */ void postCallback() {
-		this.PREV_FRAME_MOUSE_CENTER_OFFSET.set(
+		this.PREV_FRAME_MOUSE_CENTER_OFFSET_VECTOR.set(
 				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
 				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
 		this.PREV_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
@@ -100,8 +98,9 @@ public class NerdInputManager {
 
 	// region Input event callbacks from Processing.
 	// Copying is better since we don't know what decisions the caller makes!
-	// This is why these methods attempt to mostly *copy* fields from `NerdSketch`.
+	// This is why methods here only *copy* fields from `NerdSketch`.
 
+	// region Keyboard events.
 	/* `package` */ void keyTyped() {
 		this.key = this.SKETCH.key;
 		this.keyCode = this.SKETCH.keyCode;
@@ -130,42 +129,40 @@ public class NerdInputManager {
 		this.key = this.SKETCH.key;
 		this.keyCode = this.SKETCH.keyCode;
 		this.keyPressed = this.SKETCH.keyPressed;
+
+		try {
+			synchronized (this.KEYS_HELD) {
+				this.KEYS_HELD.remove(this.keyCode);
+			}
+		} catch (final IndexOutOfBoundsException e) {
+			e.printStackTrace();
+		}
+	}
+	// endregion
+
+	// region Mouse events.
+	private void literallyEveryMouseButtonCallback() {
+		this.pmouseButton = this.mouseButton;
+		this.pmousePressed = this.mousePressed;
+
+		this.mouseButton = this.SKETCH.mouseButton;
+		this.mousePressed = this.SKETCH.mousePressed;
+
+		this.mouseLeft = this.mouseButton == PConstants.LEFT && this.mousePressed;
+		this.mouseMid = this.mouseButton == PConstants.CENTER && this.mousePressed;
+		this.mouseRight = this.mouseButton == PConstants.RIGHT && this.mousePressed;
 	}
 
 	/* `package` */ void mousePressed() {
-		this.pmouseButton = this.mouseButton;
-		this.pmousePressed = this.mousePressed;
-
-		this.mouseButton = this.SKETCH.mouseButton;
-		this.mousePressed = this.SKETCH.mousePressed;
-
-		this.mouseLeft = this.mouseButton == PConstants.LEFT && this.mousePressed;
-		this.mouseMid = this.mouseButton == PConstants.CENTER && this.mousePressed;
-		this.mouseRight = this.mouseButton == PConstants.RIGHT && this.mousePressed;
+		this.literallyEveryMouseButtonCallback();
 	}
 
 	/* `package` */ void mouseReleased() {
-		this.pmouseButton = this.mouseButton;
-		this.pmousePressed = this.mousePressed;
-
-		this.mouseButton = this.SKETCH.mouseButton;
-		this.mousePressed = this.SKETCH.mousePressed;
-
-		this.mouseLeft = this.mouseButton == PConstants.LEFT && this.mousePressed;
-		this.mouseMid = this.mouseButton == PConstants.CENTER && this.mousePressed;
-		this.mouseRight = this.mouseButton == PConstants.RIGHT && this.mousePressed;
+		this.literallyEveryMouseButtonCallback();
 	}
 
 	/* `package` */ void mouseClicked() {
-		this.pmouseButton = this.mouseButton;
-		this.pmousePressed = this.mousePressed;
-
-		this.mouseButton = this.SKETCH.mouseButton;
-		this.mousePressed = this.SKETCH.mousePressed;
-
-		this.mouseLeft = this.mouseButton == PConstants.LEFT && this.mousePressed;
-		this.mouseMid = this.mouseButton == PConstants.CENTER && this.mousePressed;
-		this.mouseRight = this.mouseButton == PConstants.RIGHT && this.mousePressed;
+		this.literallyEveryMouseButtonCallback();
 	}
 
 	/* `package` */ void mouseMoved() {
@@ -203,6 +200,7 @@ public class NerdInputManager {
 		this.mouseScrollDelta = this.mouseScroll - this.pmouseScroll; // Delta!~
 		this.totalMouseScroll += this.mouseScrollDelta; // ...Then we add it in.
 	}
+	// endregion
 	// endregion
 
 	// region Keyboard utilities!

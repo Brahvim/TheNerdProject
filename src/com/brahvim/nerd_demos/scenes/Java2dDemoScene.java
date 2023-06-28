@@ -18,7 +18,7 @@ public class Java2dDemoScene extends NerdScene {
 	}
 
 	@Override
-	protected void setup(NerdSceneState p_state) {
+	protected void setup(final NerdSceneState p_state) {
 		App.openAl.unitSize = 1;
 		this.rubberDuckSource = new AlSource(App.openAl, ASSETS.get("RUBBER DUCK").getData());
 	}

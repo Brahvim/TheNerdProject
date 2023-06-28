@@ -8,7 +8,6 @@ import java.util.LinkedHashSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.framework.ecs.NerdEcsManager;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -588,11 +587,12 @@ public class NerdSceneManager {
 
 		final NerdSceneManager.NerdSceneManagerSceneCache sceneCache = this.SCENE_CACHE.get(p_sceneClass);
 
-		if (sceneCache != null)
+		if (sceneCache != null) {
 			if (sceneCache.cachedReference.hasCompletedPreload())
 				return;
 
-		this.loadSceneAssets(sceneCache.cachedReference, p_forcibly);
+			this.loadSceneAssets(sceneCache.cachedReference, p_forcibly);
+		}
 	}
 	// endregion
 
@@ -605,9 +605,6 @@ public class NerdSceneManager {
 		if (this.currSceneClass == null)
 			return;
 
-		// SceneManager.SceneCache data =
-		// this.SCENE_CLASS_TO_CACHE.get(this.currSceneClass);
-		// NerdScene toUse = this.constructAndCacheScene(data.CONSTRUCTOR);
 		this.startSceneImpl(this.currSceneClass, p_setupState);
 	}
 
@@ -619,10 +616,10 @@ public class NerdSceneManager {
 		if (this.prevSceneClass == null)
 			return;
 
-		final NerdSceneManager.NerdSceneManagerSceneCache sceneCache = this.SCENE_CACHE.get(this.prevSceneClass);
-		final NerdScene toUse = this.constructScene(sceneCache.CONSTRUCTOR);
+		final NerdScene toUse = this.constructScene(this.SCENE_CACHE.get(this.prevSceneClass).CONSTRUCTOR);
 
-		this.setScene(toUse, p_setupState);
+		if (toUse != null)
+			this.setScene(toUse, p_setupState);
 	}
 
 	// "Cache if not cached" / "Start cached" method.
@@ -717,11 +714,6 @@ public class NerdSceneManager {
 	}
 
 	// region (`private`) Caching operations.
-	private void ensureCache(final Class<? extends NerdScene> p_sceneClass) {
-		if (!this.hasCached(p_sceneClass))
-			this.cacheScene(p_sceneClass);
-	}
-
 	private boolean hasCached(final Class<? extends NerdScene> p_sceneClass) {
 		// If you haven't been asked to run the scene even once, you didn't cache it!
 		// Say you haven't!:
@@ -739,40 +731,36 @@ public class NerdSceneManager {
 		if (this.SCENE_CACHE.containsKey(p_sceneClass))
 			return;
 
-		final Constructor<? extends NerdScene> sceneConstructor = this.getSceneConstructor(p_sceneClass);
-
-		final NerdScene toCache = this.constructScene(sceneConstructor);
-
-		if (toCache == null)
+		if (this.constructScene(this.getSceneConstructor(p_sceneClass)) == null)
 			throw new RuntimeException("The scene could not be constructed for caching.");
 	}
 	// endregion
 
 	// region `private` construction-and-setup operations!
 	private Constructor<? extends NerdScene> getSceneConstructor(final Class<? extends NerdScene> p_sceneClass) {
-		Constructor<? extends NerdScene> toRet = null;
-
 		try {
-			toRet = p_sceneClass.getConstructor();
+			return p_sceneClass.getConstructor();
 		} catch (final NoSuchMethodException e) {
 			System.err.println("""
 					Every subclass of `NerdScene` must be `public` with a `public` \"null-constructor\"
 					(constructor with no arguments), or no overriden constructors at all.""");
-			// e.printStackTrace();
+			return null;
 		}
-
-		return toRet;
 	}
 
 	private NerdScene constructScene(final Constructor<? extends NerdScene> p_sceneConstructor) {
+		if (p_sceneConstructor == null)
+			return null;
+
 		NerdScene toRet = null;
 
-		// region Get an instance.
+		// region Get an instance if possible!
 		try {
 			toRet = p_sceneConstructor.newInstance();
 		} catch (final InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
+			return null;
 		}
 		// endregion
 
@@ -813,10 +801,10 @@ public class NerdSceneManager {
 
 		final NerdScene toStart = this.constructScene(sceneConstructor);
 
-		if (toStart == null)
+		if (toStart != null)
+			this.setScene(toStart, p_state);
+		else
 			throw new RuntimeException("The scene could not be constructed.");
-
-		this.setScene(toStart, p_state);
 	}
 
 	// The scene-deleter!!!
@@ -886,7 +874,11 @@ public class NerdSceneManager {
 
 		this.SCENE_CHANGE_LISTENERS.removeAll(this.SCENE_CHANGE_LISTENERS_TO_REMOVE);
 
-		this.currScene.runSetup(p_state);
+		// This is `null` in SO MANY PLACES!:
+		if (p_state == null)
+			this.currScene.runSetup(new NerdSceneState());
+		else
+			this.currScene.runSetup(p_state);
 	}
 	// endregion
 	// endregion

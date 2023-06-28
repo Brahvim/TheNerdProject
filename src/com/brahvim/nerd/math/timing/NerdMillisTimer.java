@@ -31,7 +31,7 @@ public class NerdMillisTimer {
 	}
 
 	public float getFloat() {
-		return (float) this.get();
+		return this.get();
 	}
 	// endregion
 

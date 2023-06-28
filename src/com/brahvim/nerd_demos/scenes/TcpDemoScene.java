@@ -14,7 +14,7 @@ public class TcpDemoScene extends NerdScene {
 	// Thanks to Processing, however, you can (the `processing.data` package)!
 
 	// region Fields!
-	public final String MESSAGE = """
+	public static final String MESSAGE = """
 			======================================================
 			Welcome to the `RestaurantApi` demo!
 			This demo showcases the ease of using Nerd's TCP API!
@@ -66,7 +66,7 @@ public class TcpDemoScene extends NerdScene {
 	@Override
 	protected void draw() {
 		SKETCH.background(0);
-		SKETCH.text(this.MESSAGE, 0, 0);
+		SKETCH.text(TcpDemoScene.MESSAGE, 0, 0);
 	}
 
 	@Override

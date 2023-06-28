@@ -15,7 +15,7 @@ public class NerdSpotLight extends NerdLight {
 	// endregion
 
 	// region Constructors.
-	public NerdSpotLight(PGraphics3D p_buffer) {
+	public NerdSpotLight(final PGraphics3D p_buffer) {
 		super(p_buffer);
 		this.dir = new PVector(0, 1, 0);
 	}

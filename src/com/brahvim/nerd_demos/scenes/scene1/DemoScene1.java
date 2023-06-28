@@ -34,6 +34,8 @@ public class DemoScene1 extends NerdScene {
 		if (this.SCENE.getTimesLoaded() == 0)
 			WINDOW.centerWindow();
 
+		CAMERA.setClearColor(0x006699);
+
 		this.font = SKETCH.ASSETS.get("Arial-Black-48").getData();
 		this.ease = new NerdSineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(PConstants.HALF_PI).start();
 
@@ -49,7 +51,6 @@ public class DemoScene1 extends NerdScene {
 
 		this.sceneOneAnnounce.setGain(0.25f);
 
-		SCENE.addLayer(BackgroundLayer.class);
 		SCENE.addLayer(BoxAnimationLayer.class);
 		SCENE.addLayer(RevolvingParticlesLayer.class);
 

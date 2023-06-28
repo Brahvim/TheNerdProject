@@ -44,7 +44,7 @@ public abstract class NerdCustomSketchBuilder {
 
 		final NerdSketchBuildArtifacts toRet = new NerdSketchBuildArtifacts(constructedSketch);
 
-		switch (constructedSketch.RENDERER) {
+		switch (constructedSketch.RENDERER_NAME) {
 			case PConstants.JAVA2D -> toRet.addExtObject(
 					"JFrame", constructedSketch.sketchFrame);
 

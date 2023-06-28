@@ -8,7 +8,8 @@ import processing.opengl.PShader;
 
 public class PShaderAsset extends NerdAssetLoader<PShader> {
 
-	private String vertPath, fragPath;
+	private String vertPath;
+	private final String fragPath;
 
 	// region Constructors.
 	public PShaderAsset(final String p_fragPath) {

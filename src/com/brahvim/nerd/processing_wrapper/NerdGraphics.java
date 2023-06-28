@@ -957,7 +957,7 @@ public class NerdGraphics {
 	}
 
 	public void image(final NerdGraphics p_graphics, final float p_x, final float p_y) {
-		this.image((PImage) p_graphics.getUnderlyingBuffer(), p_x, p_y);
+		this.image(p_graphics.getUnderlyingBuffer(), p_x, p_y);
 	}
 
 	public void image(final NerdGraphics p_graphics, final PVector p_pos, final float p_scale) {
