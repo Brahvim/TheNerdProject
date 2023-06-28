@@ -16,7 +16,6 @@ import processing.event.MouseEvent;
 public class NerdInputManager {
 
 	// region Fields.
-
 	public static final char[] STANDARD_KEYBOARD_SYMBOLS = {
 			'\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
 			'%', '^', '&', '*', '(', ')', '{', '}', '[',
@@ -75,7 +74,6 @@ public class NerdInputManager {
 			mouseScrollDelta, pmouseScrollDelta,
 			totalMouseScroll, ptotalMouseScroll;
 
-	protected final LinkedHashSet<NerdSketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
 	protected final LinkedHashSet<Integer> KEYS_HELD = new LinkedHashSet<>(5);
 	// endregion
 
@@ -101,6 +99,9 @@ public class NerdInputManager {
 	}
 
 	// region Input event callbacks from Processing.
+	// Copying is better since we don't know what decisions the caller makes!
+	// This is why these methods attempt to mostly *copy* fields from `NerdSketch`.
+
 	/* `package` */ void keyTyped() {
 		this.key = this.SKETCH.key;
 		this.keyCode = this.SKETCH.keyCode;
@@ -108,15 +109,19 @@ public class NerdInputManager {
 	}
 
 	/* `package` */ void keyPressed() {
+		// Set the previous states,
+		this.pkey = this.key;
+		this.pkeyCode = this.keyCode;
+		this.pkeyPressed = this.keyPressed;
+
+		// ...And get the latest states!:
 		this.key = this.SKETCH.key;
 		this.keyCode = this.SKETCH.keyCode;
 		this.keyPressed = this.SKETCH.keyPressed;
 
-		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
-			l.keyPressed();
-
-		this.pkey = this.key;
-		this.pkeyCode = this.keyCode;
+		synchronized (this.KEYS_HELD) {
+			this.KEYS_HELD.add(this.keyCode);
+		}
 	}
 
 	/* `package` */ void keyReleased() {
@@ -134,9 +139,9 @@ public class NerdInputManager {
 		this.mouseButton = this.SKETCH.mouseButton;
 		this.mousePressed = this.SKETCH.mousePressed;
 
-		this.mouseLeft = this.SKETCH.mouseButton == PConstants.LEFT && this.mousePressed;
-		this.mouseMid = this.SKETCH.mouseButton == PConstants.CENTER && this.mousePressed;
-		this.mouseRight = this.SKETCH.mouseButton == PConstants.RIGHT && this.mousePressed;
+		this.mouseLeft = this.mouseButton == PConstants.LEFT && this.mousePressed;
+		this.mouseMid = this.mouseButton == PConstants.CENTER && this.mousePressed;
+		this.mouseRight = this.mouseButton == PConstants.RIGHT && this.mousePressed;
 	}
 
 	/* `package` */ void mouseReleased() {
@@ -145,6 +150,10 @@ public class NerdInputManager {
 
 		this.mouseButton = this.SKETCH.mouseButton;
 		this.mousePressed = this.SKETCH.mousePressed;
+
+		this.mouseLeft = this.mouseButton == PConstants.LEFT && this.mousePressed;
+		this.mouseMid = this.mouseButton == PConstants.CENTER && this.mousePressed;
+		this.mouseRight = this.mouseButton == PConstants.RIGHT && this.mousePressed;
 	}
 
 	/* `package` */ void mouseClicked() {
@@ -153,6 +162,10 @@ public class NerdInputManager {
 
 		this.mouseButton = this.SKETCH.mouseButton;
 		this.mousePressed = this.SKETCH.mousePressed;
+
+		this.mouseLeft = this.mouseButton == PConstants.LEFT && this.mousePressed;
+		this.mouseMid = this.mouseButton == PConstants.CENTER && this.mousePressed;
+		this.mouseRight = this.mouseButton == PConstants.RIGHT && this.mousePressed;
 	}
 
 	/* `package` */ void mouseMoved() {
@@ -164,6 +177,7 @@ public class NerdInputManager {
 
 		this.mouseX = this.SKETCH.mouseX;
 		this.mouseY = this.SKETCH.mouseY;
+
 		this.MOUSE_VECTOR.set(this.mouseX, this.mouseY);
 		this.MOUSE_CENTER_OFFSET.set(
 				this.SKETCH.mouseX - this.SKETCH.WINDOW.cx,
@@ -171,13 +185,13 @@ public class NerdInputManager {
 	}
 
 	/* `package` */ void mouseDragged() {
-		this.pmouseX = this.mouseX;
-		this.pmouseY = this.mouseY;
+		// Should've included stuff from `NerdInputManaer::mouseMoved()`, but hey - if
+		// the mouse is dragged, it also moves, right?!
 		this.pmouseButton = this.mouseButton;
-
-		this.mouseX = this.SKETCH.mouseX;
-		this.mouseY = this.SKETCH.mouseY;
 		this.mouseButton = this.SKETCH.mouseButton;
+
+		// this.pmouseX = this.mouseX; this.pmouseY = this.mouseY;
+		// this.mouseX = this.SKETCH.mouseX; this.mouseY = this.SKETCH.mouseY;
 	}
 
 	/* `package` */ void mouseWheel(final MouseEvent p_event) {

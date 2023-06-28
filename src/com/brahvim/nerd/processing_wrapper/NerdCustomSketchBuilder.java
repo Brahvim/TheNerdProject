@@ -64,35 +64,21 @@ public abstract class NerdCustomSketchBuilder {
 	// endregion
 
 	// region Renderer selection.
-	public NerdCustomSketchBuilder usesJavaRenderer() {
+	// Do we actually need to have this renderer around?
+	// I have seen computers too old for OpenGL `3.0`!
+	// I guess it's okay for 2D games...?
+	public NerdCustomSketchBuilder useJavaRenderer() {
 		this.SKETCH_KEY.renderer = PConstants.JAVA2D;
 		return this;
 	}
 
-	public NerdCustomSketchBuilder usesOpenGlRenderer() {
-		this.SKETCH_KEY.renderer = PConstants.P3D;
-		return this;
-	}
-
-	public NerdCustomSketchBuilder usesJavaFxRenderer() {
-		this.SKETCH_KEY.renderer = PConstants.FX2D;
-		return this;
-	}
-
-	public NerdCustomSketchBuilder usesPdfRenderer() {
-		this.SKETCH_KEY.renderer = PConstants.PDF;
-		return this;
-	}
-
-	public NerdCustomSketchBuilder usesSvgRenderer() {
-		this.SKETCH_KEY.renderer = PConstants.SVG;
-		return this;
-	}
-
-	public NerdCustomSketchBuilder usesDxfRenderer() {
-		this.SKETCH_KEY.renderer = PConstants.DXF;
-		return this;
-	}
+	// I won't be working with this UI framework any day...?
+	/*
+	 * public NerdCustomSketchBuilder usesJavaFxRenderer() {
+	 * this.SKETCH_KEY.renderer = PConstants.FX2D;
+	 * return this;
+	 * }
+	 */
 	// endregion
 
 	// region Adding listeners.

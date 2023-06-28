@@ -155,7 +155,7 @@ public class NerdSketch extends PApplet {
 	public abstract class NerdSketchKeyboardListener {
 
 		protected NerdSketchKeyboardListener() {
-			NerdSketch.this.INPUT.KEYBOARD_LISTENERS.add(this);
+			NerdSketch.this.KEYBOARD_LISTENERS.add(this);
 		}
 
 		// region Keyboard events.
@@ -269,9 +269,10 @@ public class NerdSketch extends PApplet {
 	// LAMBDAS ARE EXPENSIVVVVVE! Allocate only this one!:
 	protected final Consumer<Consumer<NerdSketch>> DEFAULT_CALLBACK_ITR_LAMBDA = l -> l.accept(this);
 
-	protected final LinkedHashSet<NerdSketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<NerdSketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
-	protected final LinkedHashSet<NerdSketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<NerdSketch.NerdSketchMouseListener> MOUSE_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<NerdSketch.NerdSketchTouchListener> TOUCH_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<NerdSketch.NerdSketchWindowListener> WINDOW_LISTENERS = new LinkedHashSet<>(1);
+	protected final LinkedHashSet<NerdSketch.NerdSketchKeyboardListener> KEYBOARD_LISTENERS = new LinkedHashSet<>(1);
 	// ...to remove!:
 	protected final HashSet<Consumer<NerdSketch>> CALLBACK_LISTENERS_TO_REMOVE = new HashSet<>(1);
 
@@ -595,37 +596,22 @@ public class NerdSketch extends PApplet {
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
-		// Again, copying's better since we don't know what decisions the caller makes!:
 		this.INPUT.mousePressed();
-
-		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
-			l.mousePressed();
-
+		this.MOUSE_LISTENERS.forEach(NerdSketch.NerdSketchMouseListener::mousePressed);
 		this.SCENES.mousePressed();
 	}
 
 	@Override
 	public void mouseReleased() {
-		// Again, copying's better since we don't know what decisions the caller makes!:
-		this.INPUT.mouseButton = super.mouseButton;
-		this.INPUT.mousePressed = super.mousePressed;
-		this.INPUT.mouseLeft = super.mouseButton == PConstants.LEFT && super.mousePressed;
-		this.INPUT.mouseMid = super.mouseButton == PConstants.CENTER && super.mousePressed;
-		this.INPUT.mouseRight = super.mouseButton == PConstants.RIGHT && super.mousePressed;
-
-		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
-			l.mouseReleased();
-
+		this.INPUT.mouseReleased();
+		this.MOUSE_LISTENERS.forEach(NerdSketch.NerdSketchMouseListener::mouseReleased);
 		this.SCENES.mouseReleased();
 	}
 
 	@Override
 	public void mouseMoved() {
 		this.INPUT.mouseMoved();
-
-		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
-			l.mouseMoved();
-
+		this.MOUSE_LISTENERS.forEach(NerdSketch.NerdSketchMouseListener::mouseMoved);
 		this.SCENES.mouseMoved();
 	}
 
@@ -634,30 +620,21 @@ public class NerdSketch extends PApplet {
 	@Override
 	public void mouseClicked() {
 		this.INPUT.mouseClicked();
-
-		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
-			l.mouseClicked();
-
+		this.MOUSE_LISTENERS.forEach(NerdSketch.NerdSketchMouseListener::mouseClicked);
 		this.SCENES.mouseClicked();
 	}
 
 	@Override
 	public void mouseDragged() {
 		this.INPUT.mouseDragged();
-
-		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
-			l.mouseDragged();
-
+		this.MOUSE_LISTENERS.forEach(NerdSketch.NerdSketchMouseListener::mouseDragged);
 		this.SCENES.mouseDragged();
 	}
 
 	@Override
 	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 		this.INPUT.mouseWheel(p_mouseEvent);
-
-		for (final NerdSketchMouseListener l : this.MOUSE_LISTENERS)
-			l.mouseWheel(p_mouseEvent);
-
+		this.MOUSE_LISTENERS.forEach(l -> l.mouseWheel(p_mouseEvent));
 		this.SCENES.mouseWheel(p_mouseEvent);
 	}
 	// endregion
@@ -665,7 +642,9 @@ public class NerdSketch extends PApplet {
 	// region Keyboard events.
 	@Override
 	public void keyTyped() {
-		for (final NerdSketchKeyboardListener l : this.INPUT.KEYBOARD_LISTENERS)
+		this.INPUT.keyTyped();
+
+		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
 			// ...could call that callback here directly, but I decided this!:
 			// "Filter these keys using the utility method[s]?"
 			//
@@ -706,20 +685,6 @@ public class NerdSketch extends PApplet {
 			}
 		}
 
-		synchronized (this.INPUT.KEYS_HELD) {
-			this.INPUT.KEYS_HELD.add(super.keyCode);
-		}
-
-		// Set the previous states,
-		this.INPUT.pkey = this.INPUT.key;
-		this.INPUT.pkeyCode = this.INPUT.keyCode;
-		this.INPUT.pkeyPressed = this.INPUT.keyPressed;
-
-		// ...And get the latest states!:
-		this.INPUT.key = super.key;
-		this.INPUT.keyCode = super.keyCode;
-		this.INPUT.keyPressed = super.keyPressed;
-
 		this.INPUT.keyPressed();
 		this.SCENES.keyPressed();
 	}
@@ -734,7 +699,7 @@ public class NerdSketch extends PApplet {
 			e.printStackTrace();
 		}
 
-		for (final NerdSketchKeyboardListener l : this.INPUT.KEYBOARD_LISTENERS)
+		for (final NerdSketchKeyboardListener l : this.KEYBOARD_LISTENERS)
 			l.keyReleased();
 
 		this.SCENES.keyReleased();
