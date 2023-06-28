@@ -129,7 +129,7 @@ public abstract class NerdScene {
 	// Actual implementation!:
 	public <T extends NerdLayer> void onFirstLayerOfClass(
 			final Class<T> p_layerClass, final Consumer<T> p_onFoundTask, final Runnable p_notFoundTask) {
-		final T instance = (T) this.getFirstLayerOfClass(p_layerClass);
+		final T instance = this.getFirstLayerOfClass(p_layerClass);
 
 		// Check if we have any such layers:
 		if (instance != null) {
@@ -477,9 +477,8 @@ public abstract class NerdScene {
 		if (this.MANAGER.SETTINGS.ON_PRELOAD.useExecutors) {
 			final ThreadPoolExecutor executor = new ThreadPoolExecutor(
 					0, this.MANAGER.SETTINGS.ON_PRELOAD.maxExecutorThreads,
-					10L, TimeUnit.SECONDS, new SynchronousQueue<>(), r -> {
-						return new Thread(r, "NerdAssetPreloader_" + this.getClass().getSimpleName());
-					});
+					10L, TimeUnit.SECONDS, new SynchronousQueue<>(),
+					r -> new Thread(r, "NerdAssetPreloader_" + this.getClass().getSimpleName()));
 
 			final HashSet<Future<?>> futures = new HashSet<>(this.ASSETS.size());
 			this.ASSETS.forEach(a -> futures.add(executor.submit(a::startLoading)));
@@ -511,7 +510,7 @@ public abstract class NerdScene {
 
 	/* `package` */ void runDraw() {
 		if (this.MANAGER.SETTINGS.drawFirstCaller == null)
-			this.MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.LAYER;
+			this.MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder.LAYER;
 
 		this.ECS.draw();
 
@@ -552,7 +551,7 @@ public abstract class NerdScene {
 
 	/* `package` */ void runPost() {
 		if (this.MANAGER.SETTINGS.postFirstCaller == null)
-			this.MANAGER.SETTINGS.postFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.LAYER;
+			this.MANAGER.SETTINGS.postFirstCaller = NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder.LAYER;
 
 		this.ECS.post();
 
@@ -593,7 +592,7 @@ public abstract class NerdScene {
 
 	/* `package` */ void runPre() {
 		if (this.MANAGER.SETTINGS.preFirstCaller == null)
-			this.MANAGER.SETTINGS.preFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.SCENE;
+			this.MANAGER.SETTINGS.preFirstCaller = NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder.SCENE;
 
 		this.ECS.pre();
 

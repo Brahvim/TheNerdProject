@@ -22,6 +22,8 @@ import processing.core.PConstants;
 public abstract class NerdCustomSketchBuilder {
 
 	// region Field*[s]*, constructor, building...
+	protected static final String NULL_ERR_MSG = "A listener passed to `NerdSketchKey` cannot be `null`";
+
 	protected final NerdSketchBuilderSettings SKETCH_KEY;
 
 	protected NerdCustomSketchBuilder() {
@@ -96,55 +98,55 @@ public abstract class NerdCustomSketchBuilder {
 	// region Adding listeners.
 	public NerdCustomSketchBuilder addSketchConstructionListener(final Consumer<NerdSketch> p_listener) {
 		this.SKETCH_KEY.sketchConstructedListeners.add(Objects.requireNonNull(
-				p_listener, "A listener passed to `SketchKey` cannot be `null`"));
+				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
 		return this;
 	}
 
 	public NerdCustomSketchBuilder addSketchDisposalListener(final Consumer<NerdSketch> p_listener) {
 		this.SKETCH_KEY.disposalListeners.add(Objects.requireNonNull(
-				p_listener, "A listener passed to `SketchKey` cannot be `null`"));
+				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
 		return this;
 	}
 
 	public NerdCustomSketchBuilder addSketchSetupListener(final Consumer<NerdSketch> p_listener) {
 		this.SKETCH_KEY.setupListeners.add(Objects.requireNonNull(
-				p_listener, "A listener passed to `SketchKey` cannot be `null`"));
+				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
 		return this;
 	}
 
 	public NerdCustomSketchBuilder addPreListener(final Consumer<NerdSketch> p_listener) {
 		this.SKETCH_KEY.preListeners.add(Objects.requireNonNull(
-				p_listener, "A listener passed to `SketchKey` cannot be `null`"));
+				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
 		return this;
 	}
 
 	public NerdCustomSketchBuilder addPostListener(final Consumer<NerdSketch> p_listener) {
 		this.SKETCH_KEY.postListeners.add(Objects.requireNonNull(
-				p_listener, "A listener passed to `SketchKey` cannot be `null`"));
+				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
 		return this;
 	}
 
 	public NerdCustomSketchBuilder addPreDrawListener(final Consumer<NerdSketch> p_listener) {
 		this.SKETCH_KEY.preDrawListeners.add(Objects.requireNonNull(
-				p_listener, "A listener passed to `SketchKey` cannot be `null`"));
+				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
 		return this;
 	}
 
 	public NerdCustomSketchBuilder addDrawListener(final Consumer<NerdSketch> p_listener) {
 		this.SKETCH_KEY.drawListeners.add(Objects.requireNonNull(
-				p_listener, "A listener passed to `SketchKey` cannot be `null`"));
+				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
 		return this;
 	}
 
 	public NerdCustomSketchBuilder addPostDrawListener(final Consumer<NerdSketch> p_listener) {
 		this.SKETCH_KEY.postDrawListeners.add(Objects.requireNonNull(
-				p_listener, "A listener passed to `SketchKey` cannot be `null`"));
+				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
 		return this;
 	}
 
 	public NerdCustomSketchBuilder addSketchExitListener(final Consumer<NerdSketch> p_listener) {
 		this.SKETCH_KEY.exitListeners.add(Objects.requireNonNull(
-				p_listener, "A listener passed to `SketchKey` cannot be `null`"));
+				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
 		return this;
 	}
 	// endregion
@@ -217,19 +219,19 @@ public abstract class NerdCustomSketchBuilder {
 
 	// region Setting `NerdSceneManager.SceneManagerSettings.CallbackOrder`.
 	public NerdCustomSketchBuilder setPreCallOrder(
-			final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
+			final NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder p_order) {
 		this.SKETCH_KEY.preCallOrder = p_order;
 		return this;
 	}
 
 	public NerdCustomSketchBuilder setDrawCallOrder(
-			final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
+			final NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder p_order) {
 		this.SKETCH_KEY.drawCallOrder = p_order;
 		return this;
 	}
 
 	public NerdCustomSketchBuilder setPostCallOrder(
-			final NerdSceneManager.NerdSceneManagerSettings.CallbackOrder p_order) {
+			final NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder p_order) {
 		this.SKETCH_KEY.postCallOrder = p_order;
 		return this;
 	}

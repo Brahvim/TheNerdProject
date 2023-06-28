@@ -16,11 +16,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.brahvim.nerd.io.net.NerdServerSocket;
-import com.brahvim.nerd.io.net.NerdSocket;
 
 import processing.core.PApplet;
-
-// TODO: Decide if this entire `NerdSocket`-`NerdServerSocket` hierarchy is useful.
 
 public class NerdTcpServer implements NerdServerSocket {
 
@@ -74,7 +71,7 @@ public class NerdTcpServer implements NerdServerSocket {
 				try {
 					stream = new DataInputStream(this.socket.getInputStream());
 				} catch (final IOException e) {
-					e.printStackTrace();
+					// e.printStackTrace();
 				}
 
 				while (true)
@@ -216,18 +213,19 @@ public class NerdTcpServer implements NerdServerSocket {
 	// region Fields.
 	// Concurrency is huge:
 	private final Vector<NerdTcpServer.NerdTcpServerClient> CLIENTS = new Vector<>(1);
+	private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> NEW_CONNECTION_CALLBACKS = new Vector<>(1);
 
 	private Thread connsThread;
 	private ServerSocket socket;
 	private boolean startedShutdown;
-	private Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> connectionCallback;
+	private Function<NerdAbstractTcpClient, Boolean> invitationCallback;
 	// endregion
 
 	// region Construction.
 	// region Constructors.
 	public NerdTcpServer(final int p_port,
-			final Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> p_connectionCallback) {
-		this.connectionCallback = p_connectionCallback;
+			final Function<NerdAbstractTcpClient, Boolean> p_invitationCallback) {
+		this.invitationCallback = p_invitationCallback;
 
 		try {
 			this.socket = new ServerSocket(p_port);
@@ -249,8 +247,8 @@ public class NerdTcpServer implements NerdServerSocket {
 	}
 
 	public NerdTcpServer(final int p_port, final int p_maxConnReqsAtOnce,
-			final Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> p_connectionCallback) {
-		this.connectionCallback = p_connectionCallback;
+			final Function<NerdAbstractTcpClient, Boolean> p_connectionCallback) {
+		this.invitationCallback = p_connectionCallback;
 
 		try {
 			this.socket = new ServerSocket(p_port, p_maxConnReqsAtOnce);
@@ -280,27 +278,29 @@ public class NerdTcpServer implements NerdServerSocket {
 		}
 
 		this.connsThread = new Thread(() -> {
-			while (!this.startedShutdown)
+			while (!Thread.interrupted())
 				try { // Loop, or try-catch block first?
 						// System.out.println("`NerdTcpServer::connsThread::run()`");
-
 					final var client = new NerdTcpServer.NerdTcpServerClient(this.socket.accept());
 
 					synchronized (NerdTcpServer.this.CLIENTS) {
 						this.CLIENTS.add(client);
 					}
 
-					if (this.connectionCallback == null)
-						continue;
+					if (this.invitationCallback != null) {
+						final Boolean check = this.invitationCallback.apply(client);
 
-					final var callback = this.connectionCallback.apply(client);
+						// if (!(check == null || !check)) {
+						if (check != null && check) {
 
-					if (callback != null) {
-						client.addMessageCallback(callback);
-						client.startMessageThread();
-					} else {
-						client.disconnect();
+							for (final var c : NerdTcpServer.this.NEW_CONNECTION_CALLBACKS)
+								client.addMessageCallback(c);
+
+							client.startMessageThread();
+						}
 					}
+
+					client.disconnect();
 				} catch (final IOException e) {
 					if (!(e instanceof SocketTimeoutException))
 						e.printStackTrace();
@@ -312,9 +312,39 @@ public class NerdTcpServer implements NerdServerSocket {
 	}
 	// endregion
 
-	public NerdTcpServer onNewConnection(
-			final Function<NerdAbstractTcpClient, Consumer<NerdTcpServer.NerdClientSentTcpPacket>> p_callback) {
-		this.connectionCallback = Objects.requireNonNull(p_callback);
+	public NerdTcpServer setClientInvitationCallback(
+			final Function<NerdAbstractTcpClient, Boolean> p_callback) {
+		this.invitationCallback = Objects.requireNonNull(p_callback);
+		return this;
+	}
+
+	public Function<NerdAbstractTcpClient, Boolean> getClientInvitationCallback() {
+		return this.invitationCallback;
+	}
+
+	/**
+	 * When a new client connects to this {@link NerdTcpServer}, callbacks
+	 * registered via this method, are called.
+	 * 
+	 * @param p_callback is a callback providing the new client a message callback!
+	 * @return The {@link NerdTcpServer} instance this method was called on.
+	 */
+	public NerdTcpServer addMessageReceivedCallback(
+			final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
+		this.NEW_CONNECTION_CALLBACKS.add(Objects.requireNonNull(p_callback));
+		return this;
+	}
+
+	/**
+	 * Removes a callback registered via the method,
+	 * {@link NerdTcpServer#addMessageReceivedCallback(Consumer)}.
+	 * 
+	 * @param p_callback is a callback providing the new client a message callback!
+	 * @return The {@link NerdTcpServer} instance this method was called on.
+	 */
+	public NerdTcpServer removeMessageReceivedCallback(
+			final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
+		this.NEW_CONNECTION_CALLBACKS.remove(Objects.requireNonNull(p_callback));
 		return this;
 	}
 
@@ -330,6 +360,7 @@ public class NerdTcpServer implements NerdServerSocket {
 		// System.out.println("`NerdTcpServer::shutdown()` disconnected all clients.");
 
 		try {
+			this.connsThread.interrupt();
 			this.connsThread.join();
 		} catch (final InterruptedException e) {
 			e.printStackTrace();

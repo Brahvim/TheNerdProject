@@ -10,8 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.io.net.NerdSocket;
-
 import processing.core.PApplet;
 
 public class NerdTcpClient extends NerdAbstractTcpClient {

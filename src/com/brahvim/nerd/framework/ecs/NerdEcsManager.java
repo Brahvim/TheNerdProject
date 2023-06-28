@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
-import com.brahvim.nerd.io.NerdByteSerial;
+import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.net.NerdSocket;
 import com.brahvim.nerd.io.net.NerdUdpSocket;
 import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
@@ -23,11 +23,15 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdEcsManager implements Serializable {
 
-	private class NerdEcsManagerSocket {
+	private class NerdEcsManagerSocketManager {
 
 		public NerdUdpSocket udpSocket;
 		public NerdTcpServer tcpServer;
 		public NerdTcpClient tcpClient;
+
+		public boolean isActive() {
+			return !(this.udpSocket == null || this.tcpServer == null || this.tcpClient == null);
+		}
 
 	}
 
@@ -47,7 +51,8 @@ public class NerdEcsManager implements Serializable {
 	protected NerdEcsSystem<?>[] systemsOrder;
 
 	private final transient NerdSketch SKETCH;
-	private final transient NerdEcsManager.NerdEcsManagerSocket SOCKET_MANAGER = new NerdEcsManagerSocket();
+
+	private transient NerdEcsManager.NerdEcsManagerSocketManager sockMan;
 	// endregion
 
 	public NerdEcsManager(final NerdSketch p_sketch, final NerdEcsSystem<?>[] p_systems) {
@@ -112,22 +117,13 @@ public class NerdEcsManager implements Serializable {
 
 	@SuppressWarnings("all")
 	protected void draw() {
-		// this.ENTITIES.removeAll(this.entitiesToRemove);
-		// this.COMPONENTS.removeAll(this.componentsToRemove);
-
-		// this.ENTITIES.addAll(this.entitiesToAdd);
-		// this.COMPONENTS.addAll(this.componentsToAdd);
-
-		// this.entitiesToAdd.clear();
-		// this.componentsToAdd.clear();
-		// this.entitiesToRemove.clear();
-		// this.componentsToRemove.clear();
-
 		this.callOnAllSystems(NerdEcsSystem::draw);
 	}
 
 	@SuppressWarnings("all")
 	protected void post() {
+		if (this.sockMan != null) {
+		}
 		this.callOnAllSystems(NerdEcsSystem::post);
 	}
 
@@ -289,7 +285,7 @@ public class NerdEcsManager implements Serializable {
 	 * @see NerdEcsManager#saveState(File)
 	 */
 	public byte[] saveState() {
-		return NerdByteSerial.toBytes(this);
+		return NerdByteSerialUtils.toBytes(this);
 	}
 
 	/**
@@ -299,7 +295,7 @@ public class NerdEcsManager implements Serializable {
 	 * @see NerdEcsManager#saveState()
 	 */
 	public void saveState(final File p_file) {
-		NerdByteSerial.toFile(this, p_file);
+		NerdByteSerialUtils.toFile(this, p_file);
 	}
 	// endregion
 
@@ -310,7 +306,7 @@ public class NerdEcsManager implements Serializable {
 	 * @param p_file is the file in context.
 	 */
 	public void loadState(final File p_file) {
-		this.loadStateImpl(NerdByteSerial.fromFile(p_file));
+		this.loadStateImpl(NerdByteSerialUtils.fromFile(p_file));
 	}
 
 	/**
@@ -320,11 +316,10 @@ public class NerdEcsManager implements Serializable {
 	 * @param p_serializedData better have the bytes I talked about!
 	 */
 	public void loadState(final byte[] p_serializedData) {
-		this.loadStateImpl(NerdByteSerial.fromBytes(p_serializedData));
+		this.loadStateImpl(NerdByteSerialUtils.fromBytes(p_serializedData));
 	}
 
 	private void loadStateImpl(final NerdEcsManager p_deserialized) {
-
 		this.systemsOrder = p_deserialized.systemsOrder;
 		this.numUnnamedEntities = p_deserialized.numUnnamedEntities;
 
@@ -345,36 +340,35 @@ public class NerdEcsManager implements Serializable {
 			}
 		}
 
-		// Remove elements not available in the maps in the deserialized manager:
-		{
-			// There's nothing like `Set::get()`! Storing stuff to remove then removing it!:
-			final HashSet<String> toRemove = new HashSet<>();
-			final HashMap<String, NerdEcsEntity> myMap = this.NAME_TO_ENTITY_MAP,
-					otherMap = p_deserialized.NAME_TO_ENTITY_MAP;
+		// region Remove elements not available in the maps in the deserialized manager.
 
-			for (final Map.Entry<String, NerdEcsEntity> e : myMap.entrySet()) {
-				final String key = e.getKey();
-				if (!otherMap.containsKey(key))
-					toRemove.add(key);
-			}
+		// There's nothing like `Set::get()`! Storing stuff to remove then removing it!:
+		final HashSet<String> toRemove = new HashSet<>();
+		final HashMap<String, NerdEcsEntity> myMap = this.NAME_TO_ENTITY_MAP,
+				otherMap = p_deserialized.NAME_TO_ENTITY_MAP;
 
-			for (final String s : toRemove)
-				myMap.remove(s);
-
-			for (final Map.Entry<String, NerdEcsEntity> e : otherMap.entrySet())
-				myMap.putIfAbsent(e.getKey(), e.getValue());
+		for (final Map.Entry<String, NerdEcsEntity> e : myMap.entrySet()) {
+			final String key = e.getKey();
+			if (!otherMap.containsKey(key))
+				toRemove.add(key);
 		}
+
+		for (final String s : toRemove)
+			myMap.remove(s);
+
+		for (final Map.Entry<String, NerdEcsEntity> e : otherMap.entrySet())
+			myMap.putIfAbsent(e.getKey(), e.getValue());
+		// endregion
 		// endregion
 
-		// region Copying components over:
+		// region Copying components over.
 		final int iterations = this.COMPONENTS.size();
 		for (int i = 0; i < iterations; i++) {
 			final NerdEcsComponent orig = this.COMPONENTS.get(i), latest = p_deserialized.COMPONENTS.get(i);
 			orig.copyFieldsFrom(latest);
 		}
+		// endregion
 	}
-	// endregion
-
 	// endregion
 	// endregion
 
@@ -384,19 +378,19 @@ public class NerdEcsManager implements Serializable {
 	 * Use if you wish to stop the communication.
 	 */
 	public void shutdownSocket() {
-		if (this.SOCKET_MANAGER.udpSocket != null)
-			this.SOCKET_MANAGER.udpSocket.close();
+		if (this.sockMan.udpSocket != null)
+			this.sockMan.udpSocket.close();
 
-		if (this.SOCKET_MANAGER.tcpServer != null)
-			this.SOCKET_MANAGER.tcpServer.shutdown();
+		if (this.sockMan.tcpServer != null)
+			this.sockMan.tcpServer.shutdown();
 
-		if (this.SOCKET_MANAGER.tcpClient != null)
-			this.SOCKET_MANAGER.tcpClient.disconnect();
+		if (this.sockMan.tcpClient != null)
+			this.sockMan.tcpClient.disconnect();
 
 		// Set all of these to `null`, ...aaaaand they'll get GCed!
-		this.SOCKET_MANAGER.udpSocket = null;
-		this.SOCKET_MANAGER.tcpServer = null;
-		this.SOCKET_MANAGER.tcpClient = null;
+		this.sockMan.udpSocket = null;
+		this.sockMan.tcpServer = null;
+		this.sockMan.tcpClient = null;
 	}
 
 	/**
@@ -427,16 +421,16 @@ public class NerdEcsManager implements Serializable {
 	 * @param p_socket is the socket. Pass that in, and live your dreams!
 	 */
 	public void startSocket(final NerdSocket p_socket) {
-		// These three objects should be GC-able by final the time we're here!
+		// The three socket objects should be GC-able by final the time we're here!
 		// (Id est, their references should be set to `null`!)
 		this.shutdownSocket(); // This method call does exactly that.
 
 		if (p_socket instanceof final NerdUdpSocket socket) {
-			this.SOCKET_MANAGER.udpSocket = socket;
+			this.sockMan.udpSocket = socket;
 		} else if (p_socket instanceof final NerdTcpServer socket) {
-			this.SOCKET_MANAGER.tcpServer = socket;
+			this.sockMan.tcpServer = socket;
 		} else if (p_socket instanceof final NerdTcpClient socket) {
-			this.SOCKET_MANAGER.tcpClient = socket;
+			this.sockMan.tcpClient = socket;
 		} else
 			throw new UnsupportedOperationException("`NerdEcsManager` does not support this type of socket, sorry!");
 	}
@@ -468,22 +462,11 @@ public class NerdEcsManager implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public <RetT extends NerdSocket> RetT getUnderlyingNerdSocket() {
-		return (RetT) (this.SOCKET_MANAGER.udpSocket != null ? this.SOCKET_MANAGER.udpSocket
-				: this.SOCKET_MANAGER.tcpServer != null ? this.SOCKET_MANAGER.tcpServer
-						: this.SOCKET_MANAGER.tcpClient != null ? this.SOCKET_MANAGER.tcpClient
+		// Return whatever is not null`. If everything is `null`, run with the `null`!:
+		return (RetT) (this.sockMan.udpSocket != null ? this.sockMan.udpSocket
+				: this.sockMan.tcpServer != null ? this.sockMan.tcpServer
+						: this.sockMan.tcpClient != null ? this.sockMan.tcpClient
 								: null);
-	}
-
-	public NerdUdpSocket getUdpSocket() {
-		return this.SOCKET_MANAGER.udpSocket;
-	}
-
-	public NerdTcpServer getTcpServer() {
-		return this.SOCKET_MANAGER.tcpServer;
-	}
-
-	public NerdTcpClient getTcpClient() {
-		return this.SOCKET_MANAGER.tcpClient;
 	}
 	// endregion
 

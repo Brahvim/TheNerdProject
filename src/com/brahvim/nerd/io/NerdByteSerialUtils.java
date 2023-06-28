@@ -33,9 +33,9 @@ import jogamp.newt.MonitorModeProps.Cache;
 // "Just add milk!"
 // ...Throw-away all exceptions!!!
 
-public class NerdByteSerial {
+public class NerdByteSerialUtils {
 
-	private NerdByteSerial() {
+	private NerdByteSerialUtils() {
 		throw new Error("Sorry, but `"
 				+ this.getClass().getCanonicalName()
 				+ "` is an uninstantiable, helper class.");
@@ -59,106 +59,11 @@ public class NerdByteSerial {
 		return null;
 	}
 
-	// region From bytes!
-	@SuppressWarnings("unchecked")
-	public static <T> T fromBytes(final byte[] p_data) {
-		try {
-			return (T) NerdByteSerial.fromBytesImpl(p_data);
-		} catch (final ClassNotFoundException | ClassCastException | IOException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T fromBytes(
-			final byte[] p_data,
-			final Consumer<IOException> p_onIo) {
-		try {
-			return (T) NerdByteSerial.fromBytesImpl(p_data);
-		} catch (final IOException e) {
-			if (p_onIo == null)
-				e.printStackTrace();
-			else
-				p_onIo.accept(e);
-		} catch (final ClassCastException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T fromBytes(
-			final byte[] p_data,
-			final Consumer<IOException> p_onIo,
-			final Consumer<ClassCastException> p_onClassCast) {
-		try {
-			return (T) NerdByteSerial.fromBytesImpl(p_data);
-		} catch (final IOException e) {
-			if (p_onIo == null)
-				e.printStackTrace();
-			else
-				p_onIo.accept(e);
-		} catch (final ClassCastException e) {
-			if (p_onClassCast == null)
-				e.printStackTrace();
-			else
-				p_onClassCast.accept(e);
-		} catch (final ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T fromBytes(
-			final byte[] p_data,
-			final Consumer<ClassNotFoundException> p_onClassNotFound,
-			final Consumer<ClassCastException> p_onClassCast,
-			final Consumer<IOException> p_onIo) {
-		try {
-			return (T) NerdByteSerial.fromBytesImpl(p_data);
-		} catch (final IOException e) {
-			if (p_onIo == null)
-				e.printStackTrace();
-			else
-				p_onIo.accept(e);
-		} catch (final ClassCastException e) {
-			if (p_onClassCast == null)
-				e.printStackTrace();
-			else
-				p_onClassCast.accept(e);
-		} catch (final ClassNotFoundException e) {
-			if (p_onClassNotFound == null)
-				e.printStackTrace();
-			else
-				p_onClassNotFound.accept(e);
-		}
-		return null;
-	}
-
-	/**
-	 * Deserialize an object from bytes, then edit a given one to match the
-	 * deserialized one. Only you can guarantee the equality of their types!
-	 * 
-	 * @param p_data   the bytes to deserialize back to an object.
-	 * @param p_object the object to transform into the from the bytes!
-	 */
-	public static void fromBytesAssigning(final byte[] p_data, final Object p_object) {
-		try { // Deserialize the object:
-			final Object deserialized = NerdByteSerial.fromBytesImpl(p_data);
-			NerdByteSerial.copyObjectFieldData(p_object, deserialized);
-		} catch (final IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * @deprecated Broken! Bummer...
 	 */
 	@Deprecated
-	public static void copyObjectFieldData(final Object p_from, final Object p_to) {
+	public static void copyFieldValues(final Object p_from, final Object p_to) {
 		if (p_from.getClass().isAssignableFrom(p_to.getClass()))
 			throw new UnsupportedOperationException("Cannot copy fields of objects from different hierarchies!");
 
@@ -190,6 +95,128 @@ public class NerdByteSerial {
 		}
 	}
 
+	/**
+	 * 
+	 * <p>
+	 * Suppose we have a class, {@code C}, which extends {@code B}, which extends
+	 * {@code A}. This method will therefore return {@code 3} when given an object
+	 * of class {@code C}.
+	 * 
+	 * @param p_object is the object whose class hierarchy depth is to be found.
+	 * @return Returns the depth of the hierarchy of the class of the given object.
+	 */
+	public static int getClassHierarchyDepthOf(final Object p_object) {
+		int depth = 0;
+		Class<?> currentClass = p_object.getClass();
+
+		while (currentClass.getSuperclass() != null) {
+			currentClass = currentClass.getSuperclass();
+			depth++;
+		}
+
+		return depth;
+	}
+
+	// region From bytes!
+	@SuppressWarnings("unchecked")
+	public static <T> T fromBytes(final byte[] p_data) {
+		try {
+			return (T) NerdByteSerialUtils.fromBytesImpl(p_data);
+		} catch (final ClassNotFoundException | ClassCastException | IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T fromBytes(
+			final byte[] p_data,
+			final Consumer<IOException> p_onIo) {
+		try {
+			return (T) NerdByteSerialUtils.fromBytesImpl(p_data);
+		} catch (final IOException e) {
+			if (p_onIo == null)
+				e.printStackTrace();
+			else
+				p_onIo.accept(e);
+		} catch (final ClassCastException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T fromBytes(
+			final byte[] p_data,
+			final Consumer<IOException> p_onIo,
+			final Consumer<ClassCastException> p_onClassCast) {
+		try {
+			return (T) NerdByteSerialUtils.fromBytesImpl(p_data);
+		} catch (final IOException e) {
+			if (p_onIo == null)
+				e.printStackTrace();
+			else
+				p_onIo.accept(e);
+		} catch (final ClassCastException e) {
+			if (p_onClassCast == null)
+				e.printStackTrace();
+			else
+				p_onClassCast.accept(e);
+		} catch (final ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T fromBytes(
+			final byte[] p_data,
+			final Consumer<ClassNotFoundException> p_onClassNotFound,
+			final Consumer<ClassCastException> p_onClassCast,
+			final Consumer<IOException> p_onIo) {
+		try {
+			return (T) NerdByteSerialUtils.fromBytesImpl(p_data);
+		} catch (final IOException e) {
+			if (p_onIo == null)
+				e.printStackTrace();
+			else
+				p_onIo.accept(e);
+		} catch (final ClassCastException e) {
+			if (p_onClassCast == null)
+				e.printStackTrace();
+			else
+				p_onClassCast.accept(e);
+		} catch (final ClassNotFoundException e) {
+			if (p_onClassNotFound == null)
+				e.printStackTrace();
+			else
+				p_onClassNotFound.accept(e);
+		}
+		return null;
+	}
+
+	/**
+	 * Deserialize an object from bytes, then edit a given one to match the
+	 * deserialized one. Only you can guarantee the equality of their types!
+	 * 
+	 * @deprecated since it uses
+	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)},
+	 *             which is itself deprecated.
+	 * 
+	 * @param p_data   the bytes to deserialize back to an object.
+	 * @param p_object the object to transform into the from the bytes!
+	 */
+	@Deprecated
+	public static void fromBytesAssigning(final byte[] p_data, final Object p_object) {
+		try { // Deserialize the object:
+			final Object deserialized = NerdByteSerialUtils.fromBytesImpl(p_data);
+			NerdByteSerialUtils.copyFieldValues(p_object, deserialized);
+		} catch (final IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private static Object fromBytesImpl(final byte[] p_data) throws IOException, ClassNotFoundException {
 		try (final ByteArrayInputStream bis = new ByteArrayInputStream(p_data);
 				final ObjectInputStream ois = new ObjectInputStream(bis)) {
@@ -204,13 +231,13 @@ public class NerdByteSerial {
 	@SuppressWarnings("unchecked")
 	public static <T> T fromFileCasted(final String p_filePath)
 			throws IOException, ClassNotFoundException, ClassCastException {
-		return (T) NerdByteSerial.fromFileImpl(new File(p_filePath));
+		return (T) NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T fromFileCasted(final String p_filePath, final Consumer<IOException> p_onIo) {
 		try {
-			return (T) NerdByteSerial.fromFileImpl(new File(p_filePath));
+			return (T) NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 		} catch (final ClassNotFoundException | ClassCastException e) {
 			e.printStackTrace();
 		} catch (final IOException e) {
@@ -227,7 +254,7 @@ public class NerdByteSerial {
 	public static <T> T fromFileCasted(final String p_filePath, final Consumer<IOException> p_onIo,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return (T) NerdByteSerial.fromFileImpl(new File(p_filePath));
+			return (T) NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -250,7 +277,7 @@ public class NerdByteSerial {
 			final Consumer<ClassCastException> p_onClassCast,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return (T) NerdByteSerial.fromFileImpl(new File(p_filePath));
+			return (T) NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -276,13 +303,13 @@ public class NerdByteSerial {
 	@SuppressWarnings("unchecked")
 	public static <T> T fromFileCasted(final File p_file)
 			throws IOException, ClassNotFoundException, ClassCastException {
-		return (T) NerdByteSerial.fromFileImpl(p_file);
+		return (T) NerdByteSerialUtils.fromFileImpl(p_file);
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T fromFileCasted(final File p_file, final Consumer<IOException> p_onIo) {
 		try {
-			return (T) NerdByteSerial.fromFileImpl(p_file);
+			return (T) NerdByteSerialUtils.fromFileImpl(p_file);
 		} catch (final ClassNotFoundException | ClassCastException e) {
 			e.printStackTrace();
 		} catch (final IOException e) {
@@ -299,7 +326,7 @@ public class NerdByteSerial {
 	public static <T> T fromFileCasted(final File p_file, final Consumer<IOException> p_onIo,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return (T) NerdByteSerial.fromFileImpl(p_file);
+			return (T) NerdByteSerialUtils.fromFileImpl(p_file);
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -322,7 +349,7 @@ public class NerdByteSerial {
 			final Consumer<ClassCastException> p_onClassCast,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return (T) NerdByteSerial.fromFileImpl(p_file);
+			return (T) NerdByteSerialUtils.fromFileImpl(p_file);
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -347,7 +374,7 @@ public class NerdByteSerial {
 
 	public static <T> T fromFile(final String p_filePath) {
 		try {
-			return NerdByteSerial.fromFileImpl(new File(p_filePath));
+			return NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 		} catch (final IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -357,7 +384,7 @@ public class NerdByteSerial {
 
 	public static <T> T fromFile(final String p_filePath, final Consumer<IOException> p_onIo) {
 		try {
-			return NerdByteSerial.fromFileImpl(new File(p_filePath));
+			return NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 		} catch (final IOException e) {
 			if (p_onIo == null)
 				e.printStackTrace();
@@ -373,7 +400,7 @@ public class NerdByteSerial {
 	public static <T> T fromFile(final String p_filePath, final Consumer<IOException> p_onIo,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return NerdByteSerial.fromFileImpl(new File(p_filePath));
+			return NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -391,7 +418,7 @@ public class NerdByteSerial {
 
 	public static <T> T fromFile(final File p_file) {
 		try {
-			return NerdByteSerial.fromFileImpl(p_file);
+			return NerdByteSerialUtils.fromFileImpl(p_file);
 		} catch (final IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -401,7 +428,7 @@ public class NerdByteSerial {
 
 	public static <T> T fromFile(final File p_file, final Consumer<IOException> p_onIo) {
 		try {
-			return NerdByteSerial.fromFileImpl(p_file);
+			return NerdByteSerialUtils.fromFileImpl(p_file);
 		} catch (final IOException e) {
 			if (p_onIo == null)
 				e.printStackTrace();
@@ -417,7 +444,7 @@ public class NerdByteSerial {
 	public static <T> T fromFile(final File p_file, final Consumer<IOException> p_onIo,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return NerdByteSerial.fromFileImpl(p_file);
+			return NerdByteSerialUtils.fromFileImpl(p_file);
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -437,13 +464,20 @@ public class NerdByteSerial {
 	 * Deserialize an object from a file, then edit a given one to match the
 	 * deserialized one. Only you can guarantee the equality of their types!
 	 * 
+	 * @deprecated since it uses
+	 *             {@link NerdByteSerialUtils#fromBytesAssigning(byte[], Object)},
+	 *             which is deprecated, since it uses
+	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)},
+	 *             which is also deprecated.
+	 * 
 	 * @param p_file   the file to deserialize an object from!
 	 * @param p_object the object to transform into the from the bytes!
 	 */
+	@Deprecated
 	public static void fromFileAssigning(final File p_file, final Object p_object) {
 		try (final FileInputStream fis = new FileInputStream(p_file);) {
 			final byte[] objectData = fis.readAllBytes();
-			NerdByteSerial.fromBytesAssigning(objectData, p_object);
+			NerdByteSerialUtils.fromBytesAssigning(objectData, p_object);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -460,16 +494,16 @@ public class NerdByteSerial {
 
 	// region ...TO files!
 	public static void toFile(final Serializable p_object, final String p_fileName) {
-		NerdByteSerial.toFile(p_object, new File(p_fileName));
+		NerdByteSerialUtils.toFile(p_object, new File(p_fileName));
 	}
 
 	public static void toFile(final Serializable p_object, final String p_fileName,
 			final Consumer<IOException> p_onIo) {
-		NerdByteSerial.toFile(p_object, new File(p_fileName), p_onIo);
+		NerdByteSerialUtils.toFile(p_object, new File(p_fileName), p_onIo);
 	}
 
 	public static void toFile(final Serializable p_object, final File p_file) {
-		NerdByteSerial.toFile(p_object, p_file, null);
+		NerdByteSerialUtils.toFile(p_object, p_file, null);
 	}
 
 	// The actual implementation:

@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-public class NerdEcsEntity implements Serializable {
+public final class NerdEcsEntity implements Serializable {
 
 	// region Fields.
 	public static final long serialVersionUID = -84636463676L;

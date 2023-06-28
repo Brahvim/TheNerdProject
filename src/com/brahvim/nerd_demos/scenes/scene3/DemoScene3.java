@@ -37,7 +37,7 @@ public class DemoScene3 extends NerdScene {
 	@Override
 	protected void setup(final NerdSceneState p_state) {
 		App.openAl.unitSize = 15;
-		MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.CallbackOrder.SCENE;
+		MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder.SCENE;
 		SCENE.addLayer(CinematicBarsLayer.class);
 		SCENE.addLayer(DebugFpsGizmoLayer.class);
 

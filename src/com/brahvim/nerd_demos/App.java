@@ -6,6 +6,7 @@ import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
+import com.brahvim.nerd_demos.scenes.TcpDemoScene;
 import com.brahvim.nerd_demos.scenes.ecs_demo_scene.EcsDemoScene;
 import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 import com.jogamp.newt.opengl.GLWindow;
@@ -18,18 +19,22 @@ import processing.opengl.PGraphicsOpenGL;
 public class App {
 
 	/*
-	 * // TODO: ECS wrapper for Processing!
-	 * // TODO: Let JAR assets be stored in the `data` folder.
-	 * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
-	 * // TODO: Stop screwing up with how to use `PGraphics`, cameras etc.
-	 * // TODO: Dyn4j ECS wrapper. ...or A (Javacpp) LiquidFun ECS wrapper!
 	 * // TODO: Move all `NerdSketch` callback code into `NerdInputManager`.
+	 * // TODO: Stop screwing up with how to use `PGraphics`, cameras etc.
+	 * // TODO: Let JAR assets be stored in the `data` folder.
+	 * // TODO: Complete the ECS's networking API.
+	 * 
+	 * // ...Long run tasks:
+	 * // TODO: ECS wrapper for Processing!
+	 * // TODO: Dyn4j ECS wrapper. ...or A (Javacpp) LiquidFun ECS wrapper!
+	 * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
 	 */
 
 	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
 			// Use directly in `setFirstSceneClass()` below!:
 			// LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-			EcsDemoScene.class; // DemoScene3.class;
+			// TcpDemoScene.class;
+			DemoScene3.class;
 
 	// region `App`'s *other* fields.
 	public static final int BPM = 100,

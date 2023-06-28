@@ -12,6 +12,14 @@ public class EcsDemoComponent extends NerdEcsComponent {
 		final EcsDemoComponent other = (EcsDemoComponent) p_other;
 		this.grey = other.grey;
 		this.message = other.message;
+
+		// try {
+		// final byte[] myBytecode = EcsDemoComponent.class.getClassLoader()
+		// .getResourceAsStream(EcsDemoComponent.class.getName().replace('.', '/') +
+		// ".class").readAllBytes();
+		// } catch (final IOException e) {
+		// e.printStackTrace();
+		// }
 	}
 
 }

@@ -238,6 +238,8 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// region `protected` fields.
+	protected static final String NULL_LISTENER_ERROR_MESSAGE = "An object passed to `Sketch::add*Listener()` cannot be `null`.";
+
 	protected final NerdSketch SKETCH = this;
 
 	// region Window object and native renderer references ("hacky stuff").
@@ -816,43 +818,43 @@ public class NerdSketch extends PApplet {
 	// region Adding listeners.
 	public NerdSketch addPreListener(final Consumer<NerdSketch> p_preListener) {
 		this.PRE_LISTENERS.add(Objects.requireNonNull(
-				p_preListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+				p_preListener, NerdSketch.NULL_LISTENER_ERROR_MESSAGE));
 		return this;
 	}
 
 	public NerdSketch addPostListener(final Consumer<NerdSketch> p_postListener) {
 		this.POST_LISTENERS.add(Objects.requireNonNull(
-				p_postListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+				p_postListener, NerdSketch.NULL_LISTENER_ERROR_MESSAGE));
 		return this;
 	}
 
 	public NerdSketch addPreDrawListener(final Consumer<NerdSketch> p_preDrawListener) {
 		this.PRE_DRAW_LISTENERS.add(Objects.requireNonNull(
-				p_preDrawListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+				p_preDrawListener, NerdSketch.NULL_LISTENER_ERROR_MESSAGE));
 		return this;
 	}
 
 	public NerdSketch addDrawListener(final Consumer<NerdSketch> p_drawListener) {
 		this.DRAW_LISTENERS.add(Objects.requireNonNull(
-				p_drawListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+				p_drawListener, NerdSketch.NULL_LISTENER_ERROR_MESSAGE));
 		return this;
 	}
 
 	public NerdSketch addPostDrawListener(final Consumer<NerdSketch> p_postDrawListener) {
 		this.POST_DRAW_LISTENERS.add(Objects.requireNonNull(
-				p_postDrawListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+				p_postDrawListener, NerdSketch.NULL_LISTENER_ERROR_MESSAGE));
 		return this;
 	}
 
 	public NerdSketch addSketchExitListener(final Consumer<NerdSketch> p_exitListener) {
 		this.EXIT_LISTENERS.add(Objects.requireNonNull(
-				p_exitListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+				p_exitListener, NerdSketch.NULL_LISTENER_ERROR_MESSAGE));
 		return this;
 	}
 
 	public NerdSketch addSketchDisposalListener(final Consumer<NerdSketch> p_disposalListener) {
 		this.DISPOSAL_LISTENERS.add(Objects.requireNonNull(
-				p_disposalListener, "An object passed to `Sketch::add*Listener()` cannot be `null`."));
+				p_disposalListener, NerdSketch.NULL_LISTENER_ERROR_MESSAGE));
 		return this;
 	}
 	// endregion
@@ -1205,7 +1207,7 @@ public class NerdSketch extends PApplet {
 	}
 
 	public void radialLine2d(final PVector p_from, final PVector p_trigVals, final float p_size) {
-		this.line(p_from.x, p_from.y, p_trigVals.x, p_trigVals.y);
+		this.line(p_from.x, p_from.y, p_trigVals.x * p_size, p_trigVals.y * p_size);
 	}
 
 	public void radialLine2d(final PVector p_from, final PVector p_values) {
@@ -2017,7 +2019,7 @@ public class NerdSketch extends PApplet {
 				// `0.9f`: at the near clipping plane.
 				// `0.9999f`: at the far clipping plane. (NO! Calculate EPSILON first! *Then-*)
 				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
-				super.map(p_z, this.currentCamera.near, this.currentCamera.far, 0, 1),
+				PApplet.map(p_z, this.currentCamera.near, this.currentCamera.far, 0, 1),
 				toRet);
 
 		return toRet;
@@ -2103,7 +2105,7 @@ public class NerdSketch extends PApplet {
 		};
 
 		// Let the `JFrame` be visible and request for `OS` permissions:
-		((JFrame) toRet).setContentPane(panel); // This is the dummy variable from Processing.
+		toRet.setContentPane(panel); // This is the dummy variable from Processing.
 		panel.setFocusable(true);
 		panel.setFocusTraversalKeysEnabled(false);
 		panel.requestFocus();
@@ -2218,6 +2220,7 @@ public class NerdSketch extends PApplet {
 				p_sketch.keyCode = p_keyEvent.getKeyCode();
 				p_sketch.keyReleased();
 			}
+
 		});
 		// endregion
 		// endregion

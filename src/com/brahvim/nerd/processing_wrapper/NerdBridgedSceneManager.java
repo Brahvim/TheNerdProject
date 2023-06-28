@@ -7,8 +7,11 @@ import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 
 public class NerdBridgedSceneManager extends NerdSceneManager {
 
-	public NerdBridgedSceneManager(final NerdSketch p_sketch, final NerdSceneManagerSettings p_settings,
-			final LinkedHashSet<NerdSceneChangeListener> p_listeners, final NerdEcsSystem<?>[] p_ecsSystems) {
+	public NerdBridgedSceneManager(
+			final NerdSketch p_sketch,
+			final NerdSceneManagerSettings p_settings,
+			final LinkedHashSet<NerdSceneChangeListener> p_listeners,
+			final NerdEcsSystem<?>[] p_ecsSystems) {
 		super(p_sketch, p_settings, p_listeners, p_ecsSystems);
 	}
 

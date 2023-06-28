@@ -1,6 +1,6 @@
 package com.brahvim.nerd.io.asset_loader.processing_loaders;
 
-import com.brahvim.nerd.io.NerdByteSerial;
+import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
 import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -15,7 +15,7 @@ public class NerdSerializedAsset extends NerdSinglePathAssetLoader<Object> {
 	protected Object fetchData(final NerdSketch p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		try {
-			return NerdByteSerial.fromFile(super.path);
+			return NerdByteSerialUtils.fromFile(super.path);
 		} catch (final Exception e) {
 			throw new NerdAssetLoaderException();
 		}

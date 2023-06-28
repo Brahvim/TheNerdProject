@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
-import com.brahvim.nerd.io.NerdByteSerial;
+import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer.NerdClientSentTcpPacket;
@@ -15,14 +15,13 @@ public class TcpDemoScene extends NerdScene {
 
 	// region Fields!
 	public final String MESSAGE = """
-			%n
 			======================================================
 			Welcome to the `RestaurantApi` demo!
 			This demo showcases the ease of using Nerd's TCP API!
 			Pressing 'G' should start the demo and exit this program.
 			Please read the logs in the developer console upon its completion.
 			======================================================
-			%n""";
+			""";
 	// endregion
 
 	// region Message `enum`s.
@@ -42,7 +41,7 @@ public class TcpDemoScene extends NerdScene {
 		@Override
 		public void accept(final NerdClientSentTcpPacket p_packet) {
 			// Get the client's message:
-			final Query message = NerdByteSerial.fromBytes(p_packet.getData());
+			final Query message = NerdByteSerialUtils.fromBytes(p_packet.getData());
 			final NerdTcpServer.NerdTcpServerClient client = p_packet.getSender();
 			Response response = null; // In here, we store our response!
 
@@ -52,7 +51,7 @@ public class TcpDemoScene extends NerdScene {
 			}
 
 			// Send the response over!
-			client.send(NerdByteSerial.toBytes(response));
+			client.send(NerdByteSerialUtils.toBytes(response));
 		}
 
 	}
@@ -78,7 +77,10 @@ public class TcpDemoScene extends NerdScene {
 
 	private void netTest() {
 		// Start a TCP server on the given port and check for clients to join!:
-		final NerdTcpServer server = new NerdTcpServer(8080,
+		final NerdTcpServer server = new NerdTcpServer(8080);
+
+		server.setClientInvitationCallback(
+				// Yes, you can directly pass this lambda into the constructor!
 				// `c` holds the client object that wishes to join.
 				c -> {
 					// ...Let clients be rejected by chance:
@@ -86,7 +88,7 @@ public class TcpDemoScene extends NerdScene {
 
 					if (clientAccepted) {
 						// This client got accepted - hooray! Tell it!:
-						c.send(NerdByteSerial.toBytes(Response.ALLOWED));
+						c.send(NerdByteSerialUtils.toBytes(Response.ALLOWED));
 						System.out.println("Ayy! A new client joined! Info: "
 								+ c.getSocket().toString());
 					} else // Tell us that it got rejected otherwise.
@@ -94,8 +96,10 @@ public class TcpDemoScene extends NerdScene {
 
 					// Returning `null` or calling `c.disconnect()` should disconnect.
 					// If we accept this client, we return a listener to listen to its messages!:
-					return clientAccepted ? new RestaurantApi() : null;
+					return clientAccepted;
 				});
+
+		server.addMessageReceivedCallback(new RestaurantApi());
 
 		// Now, we start 5 clients to connect to the server!
 
@@ -104,7 +108,7 @@ public class TcpDemoScene extends NerdScene {
 					// `p` holds the packet of data received!:
 					p -> {
 						// Get the server's message,
-						final Response message = (Response) NerdByteSerial.fromBytes(p.getData());
+						final Response message = (Response) NerdByteSerialUtils.fromBytes(p.getData());
 						Query response = null; // We'll store our response here.
 
 						switch (message) {
@@ -119,7 +123,7 @@ public class TcpDemoScene extends NerdScene {
 						}
 
 						if (response != null)
-							p.getReceivingClient().send(NerdByteSerial.toBytes(response));
+							p.getReceivingClient().send(NerdByteSerialUtils.toBytes(response));
 					});
 
 		SKETCH.delay(50);
