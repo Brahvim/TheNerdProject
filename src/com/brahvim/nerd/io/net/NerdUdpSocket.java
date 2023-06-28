@@ -13,6 +13,9 @@ import java.net.SocketTimeoutException;
 import java.nio.channels.DatagramChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
+import java.util.Vector;
+
+import com.brahvim.nerd.framework.NerdTriConsumer;
 
 /**
  * {@link NerdUdpSocket} helps two applications running on different machines
@@ -168,7 +171,14 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	 * The internal, {@code private} {@link NerdUdpSocket.ReceiverThread} instance.
 	 * In abstract words, it handles threading for receiving messages.
 	 */
-	protected ReceiverThread receiver;
+	private ReceiverThread receiver;
+
+	/**
+	 * The internal, {@code private} and {@code final} {@link Vector} of
+	 * {@link NerdTriConsumer}s, that holds all callback objects that want
+	 * to listen to data received by this {@link NerdUdpSocket}.
+	 */
+	private final Vector<NerdTriConsumer<byte[], String, Integer>> receiveCallbacks = new Vector<>(1);
 
 	/**
 	 * The internal {@link DatagramSocket} that takes care of
@@ -272,13 +282,13 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	}
 	// endregion
 
-	// region `public` and `static` method[s]!
+	// region `public`, `static` method[s]!
 	/**
 	 * Tries to 'force' the OS into constructing a socket with the port specified
 	 * using {@link DatagramSocket#setReuseAddress()}.
 	 *
-	 * @param p_port    The port to use,
-	 * @param p_timeout The timeout for the port's receiving thread.
+	 * @param p_port    is the port to use,
+	 * @param p_timeout is the timeout for the port's receiving thread.
 	 * @return A {@link java.net.DatagramSocket}.
 	 */
 	public static DatagramSocket createSocketForcingPort(final int p_port, final int p_timeout) {
@@ -303,31 +313,12 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	protected abstract void onStart();
 
 	/**
-	 * @implNote
-	 *           If you wish to convert any part of the received packet to a
-	 *           {@link String}, use the constructor,
-	 *           {@code String(byte[] bytes, int offset, int length)}.
-	 * 
-	 *           Following is example code to convert a packet to a
-	 *           {@link String}:
-	 * 
-	 *           <pre>
-	 *           new String(p_data, 0, p_data.length);
-	 *           </pre>
-	 * 
-	 *           The last two arguments passed to this constructor specify a
-	 *           boundary, which you are free to adjust!
-	 *           <p>
-	 *           The byte at the position of the first argument <i>is</i> also
-	 *           decoded. So is also the case with the second argument, length.
-	 *           All bytes counted, are decoded.
-	 * 
-	 * @param p_data is a {@code byte[]} <i>always</i> of length {@code 65535}. No
-	 *               more, no less!
-	 * @param p_ip   is the IP address of the sender, as a {@link String}.
-	 * @param p_port is the port number this data packet was received on.
+	 * Internal callback method called when data is received.
+	 * It calls all callbacks registered with this {@link NerdUdpSocket}.
 	 */
-	protected abstract void onReceive(final byte[] p_data, final String p_ip, final int p_port);
+	private void onReceive(final byte[] p_data, final String p_ip, final int p_port) {
+		this.receiveCallbacks.forEach(c -> c.accept(p_data, p_ip, p_port));
+	}
 
 	/**
 	 * Called before {@link NerdUdpSocket#close()} closes the thread and socket.
@@ -412,11 +403,47 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	// endregion
 
 	// region Other `public` methods!:
+	public NerdUdpSocket addReceivingCallback(final NerdTriConsumer<byte[], String, Integer> p_callback) {
+		this.receiveCallbacks.add(p_callback);
+		return this;
+	}
+
+	public NerdUdpSocket removeReceivingCallback(final NerdTriConsumer<byte[], String, Integer> p_callback) {
+		this.receiveCallbacks.remove(p_callback);
+		return this;
+	}
+
 	/**
-	 * Calls {@link NerdUdpSocket#onReceive()} to simulate fake message receival.
+	 * Allows for virtual data-receiving events.
+	 * 
+	 * @param p_data is the data to simulate receiving,
+	 * @param p_ip   is the IP address it it coming from (usually
+	 *               {@code 127.0.0.1}),
+	 * @param p_port is the port it is coming from (usually {@code 8080},
+	 *               {@code 80}, or similar).
 	 */
-	public void fakeReceive(final byte[] p_data, final String p_ip, final int p_port) {
+	public void simulateReceiving(final byte[] p_data, final String p_ip, final int p_port) {
 		this.onReceive(p_data, p_ip, p_port);
+	}
+
+	/**
+	 * Allows for virtual data-receiving events on port {@code 8080}.
+	 * 
+	 * @param p_data is the data to simulate receiving,
+	 * @param p_ip   is the IP address it it coming from (usually
+	 *               {@code 127.0.0.1}),
+	 */
+	public void simulateReceiving(final byte[] p_data, final String p_ip) {
+		this.onReceive(p_data, p_ip, 8080);
+	}
+
+	/**
+	 * Allows for virtual data-receiving events from {@code 127.0.0.1:8080}.
+	 * 
+	 * @param p_data is the data to simulate receiving,
+	 */
+	public void simulateReceiving(final byte[] p_data) {
+		this.onReceive(p_data, "127.0.0.1", 8080);
 	}
 
 	// region UDP group operations overloads.
