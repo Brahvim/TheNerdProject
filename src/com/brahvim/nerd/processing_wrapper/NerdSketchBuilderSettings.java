@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 
+import com.brahvim.nerd.framework.ecs.NerdEcsComponent;
 import com.brahvim.nerd.framework.ecs.NerdEcsManager;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
@@ -23,7 +24,9 @@ import processing.core.PConstants;
 	public HashMap<String, Object> nerdExtensions = new HashMap<>();
 	public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
 	public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
-	public NerdEcsSystem<?>[] ecsSystemOrder = NerdEcsManager.DEFAULT_ECS_SYSTEMS_ORDER;
+	public Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] ecsSystemOrder =
+			// VSCode, you made the decision to tab this:
+			NerdEcsManager.getDefaultEcsSystemsOrder();
 	public NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
 	// region Listeners!!!

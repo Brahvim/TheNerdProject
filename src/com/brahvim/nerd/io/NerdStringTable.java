@@ -3,6 +3,7 @@ package com.brahvim.nerd.io;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
+import java.util.random.RandomGenerator;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
@@ -134,7 +135,7 @@ public class NerdStringTable {
 		// from outside the loop!
 
 		// ...get the string of the specified langauge!
-		final String toRet = lastObject.getString(this.langauge);
+		final String toRet = lastObject == null ? "" : lastObject.getString(this.langauge);
 		lastObject = null; // GC, do you wish to collect it? Please do it now!
 
 		if (toRet == null) {
@@ -170,14 +171,16 @@ public class NerdStringTable {
 		}
 
 		// Get the very last object from here:
-		lastObject = lastObject.getJSONObject(keys[secondLastObjectId]);
+		if (lastObject != null)
+			lastObject = lastObject.getJSONObject(keys[secondLastObjectId]);
 		// Oh - and yes, I too, have ***no*** idea why we can get the "last object" only
 		// from outside the loop!
 
-		JSONArray stringArray;
+		JSONArray stringArray = null;
 		// region Get the array, else return `p_default`.
 		try {
-			stringArray = lastObject.getJSONArray(this.langauge);
+			if (lastObject != null)
+				stringArray = lastObject.getJSONArray(this.langauge);
 			// ...get the string-array of the specified langauge!
 		} catch (final Exception e) {
 			System.err.printf("""
@@ -193,7 +196,7 @@ public class NerdStringTable {
 		String toRet = p_default;
 		// region Get the element if it is available.
 		try {
-			toRet = stringArray.getString(p_id);
+			toRet = stringArray == null ? "" : stringArray.getString(p_id);
 		} catch (final RuntimeException e) {
 			System.err.printf("""
 					`JSONArray` `%s` does not have any element at index `%d`!
@@ -226,14 +229,16 @@ public class NerdStringTable {
 			}
 
 		// Get the very last object from here:
-		lastObject = lastObject.getJSONObject(keys[secondLastObjectId]);
+		if (lastObject != null)
+			lastObject = lastObject.getJSONObject(keys[secondLastObjectId]);
 		// Oh - and yes, I too, have ***no*** idea why we can get the "last object" only
 		// from outside the loop!
 
-		JSONArray stringArray;
+		JSONArray stringArray = null;
 		// region Get the array, else return `p_default`.
 		try {
-			stringArray = lastObject.getJSONArray(this.langauge);
+			if (lastObject != null)
+				stringArray = lastObject.getJSONArray(this.langauge);
 			// ...get the string-array of the specified langauge!
 		} catch (final Exception e) {
 			System.err.printf("""
@@ -244,9 +249,11 @@ public class NerdStringTable {
 		}
 		// endregion
 
-		lastObject = null; // GC, do you wish to collect it? Please do it now!
+		// Probably a useless, extra instruction:
+		// lastObject = null; // GC, do you wish to collect it? Please do it now!
 
-		return stringArray.getString((int) (Math.random() * stringArray.size()));
+		return stringArray == null ? ""
+				: stringArray.getString(RandomGenerator.getDefault().nextInt(0, stringArray.size()));
 	}
 	// endregion
 

@@ -76,7 +76,7 @@ public class DemoScene3 extends NerdScene {
 		this.light.apply();
 		this.cubeMan.draw();
 
-		GRAPHICS.image(SKETCH.getGraphics(), 1000, 1000);
+		// GRAPHICS.image(SKETCH.getGraphics(), 1000, 1000);
 	}
 
 	private PImage createBackgroundImage() {

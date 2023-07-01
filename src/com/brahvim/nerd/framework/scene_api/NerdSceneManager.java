@@ -65,7 +65,7 @@ public class NerdSceneManager {
 
 	public static class NerdSceneManagerSettings {
 
-		public NerdEcsSystem<?>[] orderOfEcsSystems;
+		public Class<? extends NerdEcsSystem<?>>[] orderOfEcsSystems;
 
 		// region App workflow callbacks scene-or-layer order.
 		/**
@@ -236,7 +236,7 @@ public class NerdSceneManager {
 			final NerdSketch p_sketch,
 			final NerdSceneManager.NerdSceneManagerSettings p_settings,
 			final LinkedHashSet<NerdSceneManager.NerdSceneChangeListener> p_listeners,
-			final NerdEcsSystem<?>[] p_ecsSystems) {
+			final Class<? extends NerdEcsSystem<?>>[] p_ecsSystems) {
 		this.SKETCH = p_sketch;
 		this.SETTINGS = p_settings;
 		this.SCENE_CHANGE_LISTENERS = p_listeners;

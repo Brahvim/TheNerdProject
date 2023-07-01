@@ -13,8 +13,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.function.Consumer;
 
-import jogamp.newt.MonitorModeProps.Cache;
-
 // Brought to you, from my other (currently supa'-dupa' secret, ";P!) project, "AGC"!:
 // ...And yes, it got TOTALLY changed here! Woohoo!
 
@@ -41,12 +39,16 @@ public class NerdByteSerialUtils {
 				+ "` is an uninstantiable, helper class.");
 	}
 
+	/**
+	 * @param p_object is the object to convert to bytes.
+	 * @return A {@code byte[0]} if a serialization error occurs, or if
+	 *         {@code p_object} is {@code null}.
+	 */
 	public static byte[] toBytes(final Serializable p_object) {
 		if (p_object == null)
-			return null;
+			return new byte[0];
 
-		try (
-				final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try (final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				final ObjectOutputStream oos = new ObjectOutputStream(bos)) {
 			oos.writeObject(p_object);
 			oos.flush();
@@ -56,7 +58,7 @@ public class NerdByteSerialUtils {
 			e.printStackTrace();
 		}
 
-		return null;
+		return new byte[0];
 	}
 
 	/**

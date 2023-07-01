@@ -2,43 +2,29 @@ package com.brahvim.nerd.framework.ecs;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.NerdByteSerialUtils;
-import com.brahvim.nerd.io.net.NerdSocket;
-import com.brahvim.nerd.io.net.NerdUdpSocket;
-import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
-import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdEcsManager implements Serializable {
 
-	private class NerdEcsManagerSocketManager {
-
-		public NerdUdpSocket udpSocket;
-		public NerdTcpServer tcpServer;
-		public NerdTcpClient tcpClient;
-
-		public boolean isActive() {
-			return !(this.udpSocket == null || this.tcpServer == null || this.tcpClient == null);
-		}
-
-	}
-
 	// region Fields.
 	public static final long serialVersionUID = -6488574946L;
 
-	public static final transient NerdEcsSystem<?>[] DEFAULT_ECS_SYSTEMS_ORDER = {
-			// ...Will fill this in logically, as Nerd gets more ECS wrappers!
-	};
+	private static final transient Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] DEFAULT_ECS_SYSTEMS_ORDER = null;
+	// // Loooooooooong declaration!:
+	// (Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[]) Set
+	// .<Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>>of(null, null,
+	// null).toArray();
 
 	protected final LinkedList<NerdEcsEntity> ENTITIES = new LinkedList<>();
 	protected final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
@@ -46,14 +32,13 @@ public class NerdEcsManager implements Serializable {
 	protected final HashMap<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> CLASSES_TO_COMPONENTS_MAP = new HashMap<>();
 
 	protected long numUnnamedEntities = 1;
-	protected NerdEcsSystem<?>[] systemsOrder;
+	protected NerdEcsSystem<?>[] ecsSystems;
 
 	private final transient NerdSketch SKETCH;
-
-	private transient NerdEcsManager.NerdEcsManagerSocketManager sockMan;
 	// endregion
 
-	public NerdEcsManager(final NerdSketch p_sketch, final NerdEcsSystem<?>[] p_systems) {
+	@SafeVarargs
+	public NerdEcsManager(final NerdSketch p_sketch, final Class<? extends NerdEcsSystem<?>>... p_systems) {
 		this.SKETCH = p_sketch;
 		this.setSystemsOrder(p_systems);
 	}
@@ -61,34 +46,37 @@ public class NerdEcsManager implements Serializable {
 	// region `callOnAllSystems()` overloads.
 	@SuppressWarnings("all")
 	protected void callOnAllSystems(final BiConsumer<NerdEcsSystem, HashSet<? extends NerdEcsComponent>> p_methodRef) {
-		if (p_methodRef != null)
-			for (final NerdEcsSystem s : this.systemsOrder)
-				p_methodRef.accept(s, this.CLASSES_TO_COMPONENTS_MAP.get(s.getComponentTypeClass()));
+		if (!(p_methodRef == null || this.ecsSystems == null))
+			for (final NerdEcsSystem<?> s : this.ecsSystems)
+				if (s != null)
+					p_methodRef.accept(s, this.CLASSES_TO_COMPONENTS_MAP.get(s.getComponentTypeClass()));
 	}
 
 	@SuppressWarnings("all")
 	protected <OtherArgT> void callOnAllSystems(
 			final NerdTriConsumer<NerdEcsSystem, OtherArgT, HashSet<? extends NerdEcsComponent>> p_methodRef,
 			final OtherArgT p_otherArg) {
-		if (p_methodRef != null)
-			for (final NerdEcsSystem<?> s : this.systemsOrder)
-				p_methodRef.accept(s, p_otherArg,
-						this.CLASSES_TO_COMPONENTS_MAP
-								.get(s.getComponentTypeClass()));
+		if (!(p_methodRef == null || this.ecsSystems == null))
+			for (final NerdEcsSystem<?> s : this.ecsSystems)
+				if (s != null)
+					p_methodRef.accept(s, p_otherArg, this.CLASSES_TO_COMPONENTS_MAP.get(s.getComponentTypeClass()));
 	}
 
+	@SuppressWarnings("all")
 	protected <OtherArgT> void callOnAllSystems(
 			final BiConsumer<NerdEcsSystem<?>, OtherArgT> p_methodRef, final OtherArgT p_otherArg) {
-		if (p_methodRef != null)
-			for (final NerdEcsSystem<?> s : this.systemsOrder)
-				p_methodRef.accept(s, p_otherArg);
+		if (!(p_methodRef == null || this.ecsSystems == null))
+			for (final NerdEcsSystem<?> s : this.ecsSystems)
+				if (s != null)
+					p_methodRef.accept(s, p_otherArg);
 	}
 
 	// @SuppressWarnings("unchecked")
-	protected void callOnAllSystems(final Consumer<NerdEcsSystem<?>> p_method) {
-		if (p_method != null)
-			for (final NerdEcsSystem<?> s : this.systemsOrder)
-				p_method.accept(s);
+	protected void callOnAllSystems(final Consumer<NerdEcsSystem<?>> p_methodRef) {
+		if (!(p_methodRef == null || this.ecsSystems == null))
+			for (final NerdEcsSystem<?> s : this.ecsSystems)
+				if (s != null)
+					p_methodRef.accept(s);
 	}
 	// endregion
 
@@ -120,8 +108,6 @@ public class NerdEcsManager implements Serializable {
 
 	@SuppressWarnings("all")
 	protected void post() {
-		if (this.sockMan != null) {
-		}
 		this.callOnAllSystems(NerdEcsSystem::post);
 	}
 
@@ -137,12 +123,16 @@ public class NerdEcsManager implements Serializable {
 	// endregion
 
 	// region Public API!
+	public static Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] getDefaultEcsSystemsOrder() {
+		return NerdEcsManager.DEFAULT_ECS_SYSTEMS_ORDER;
+	}
+
 	public NerdEcsEntity createEntity() {
 		return this.createEntity(null);
 	}
 
-	public NerdEcsSystem<?>[] getSystemsOrder() {
-		return this.systemsOrder;
+	public NerdEcsSystem<?>[] getEcsSystems() {
+		return this.ecsSystems;
 	}
 
 	public NerdEcsEntity createEntity(final String p_name) {
@@ -167,17 +157,38 @@ public class NerdEcsManager implements Serializable {
 		return null;
 	}
 
-	public void setSystemsOrder(final NerdEcsSystem<?>[] p_ecsSystems) {
-		Objects.requireNonNull(p_ecsSystems, "That can't be `null`! Come on...");
+	@SafeVarargs
+	public final void setSystemsOrder(final Class<? extends NerdEcsSystem<?>>... p_ecsSystems) {
+		if (p_ecsSystems == null) {
+			this.ecsSystems = null;
+			return;
+		}
 
-		for (final NerdEcsSystem<?> s : p_ecsSystems) {
-			final Class<? extends NerdEcsComponent> systemComponentTypeClass = s.getComponentTypeClass();
+		// Objects.requireNonNull(p_ecsSystems, "`NerdEcsManager::setSystemsOrder()`
+		// can't take `null`! Come on...");
+
+		this.ecsSystems = new NerdEcsSystem<?>[p_ecsSystems.length];
+
+		for (int i = 0; i < this.ecsSystems.length; i++) {
+			final Class<? extends NerdEcsSystem<?>> systemClass = p_ecsSystems[i];
+
+			NerdEcsSystem<? extends NerdEcsComponent> system = null;
+			try {
+				system = systemClass.getConstructor().newInstance();
+			} catch (final InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}
+
+			if (system == null)
+				return;
+
+			this.ecsSystems[i] = system;
+			final Class<? extends NerdEcsComponent> systemComponentTypeClass = system.getComponentTypeClass();
 			// If `systemComponentTypeClass` does not exist in the map,
 			this.CLASSES_TO_COMPONENTS_MAP.computeIfAbsent(systemComponentTypeClass, k -> new HashSet<>());
 			// ...then PUT IT THERE!
 		}
-
-		this.systemsOrder = p_ecsSystems;
 	}
 
 	/**
@@ -318,7 +329,7 @@ public class NerdEcsManager implements Serializable {
 	}
 
 	private void loadStateImpl(final NerdEcsManager p_deserialized) {
-		this.systemsOrder = p_deserialized.systemsOrder;
+		this.ecsSystems = p_deserialized.ecsSystems;
 		this.numUnnamedEntities = p_deserialized.numUnnamedEntities;
 
 		this.CLASSES_TO_COMPONENTS_MAP.clear();
@@ -368,104 +379,6 @@ public class NerdEcsManager implements Serializable {
 		// endregion
 	}
 	// endregion
-	// endregion
-
-	// region Networking.
-	/**
-	 * Shuts down, all communication capabilities of the ECS!
-	 * Use if you wish to stop the communication.
-	 */
-	public void shutdownSocket() {
-		if (this.sockMan.udpSocket != null)
-			this.sockMan.udpSocket.close();
-
-		if (this.sockMan.tcpServer != null)
-			this.sockMan.tcpServer.shutdown();
-
-		if (this.sockMan.tcpClient != null)
-			this.sockMan.tcpClient.disconnect();
-
-		// Set all of these to `null`, ...aaaaand they'll get GCed!
-		this.sockMan.udpSocket = null;
-		this.sockMan.tcpServer = null;
-		this.sockMan.tcpClient = null;
-	}
-
-	/**
-	 * <p>
-	 * A socket will be used <i>only</i> to <i>send</i> data! The socket provided
-	 * will be expected to handle receiving data and making connections itself.
-	 *
-	 * <p>
-	 * Said data will be sent according a strategy that the user may provide.
-	 * 
-	 * <ol>
-	 * <li>For TCP servers, the default plan-of-action is to send data to all
-	 * clients.
-	 * 
-	 * <li>For TCP clients, the default plan-of-action is to send data to all
-	 * clients, the ECS was given to send data to.<br>
-	 * 
-	 * <li>For UDP sockets, the default plan-of-action is to send data to all
-	 * sockets,
-	 * the ECS was given to send data to.<br>
-	 * </ol>
-	 *
-	 * <p>
-	 * Once you provide such a socket, communications automatically begin! You can
-	 * <i>sit back</i>, relax, and watch the ECS transfer over all of its data to
-	 * the other side! ...or not. I dunno, <i>your choice!~</i>
-	 * 
-	 * @param p_socket is the socket. Pass that in, and live your dreams!
-	 */
-	public void startSocket(final NerdSocket p_socket) {
-		// The three socket objects should be GC-able by final the time we're here!
-		// (Id est, their references should be set to `null`!)
-		this.shutdownSocket(); // This method call does exactly that.
-
-		if (p_socket instanceof final NerdUdpSocket socket) {
-			this.sockMan.udpSocket = socket;
-		} else if (p_socket instanceof final NerdTcpServer socket) {
-			this.sockMan.tcpServer = socket;
-		} else if (p_socket instanceof final NerdTcpClient socket) {
-			this.sockMan.tcpClient = socket;
-		} else
-			throw new UnsupportedOperationException("`NerdEcsManager` does not support this type of socket, sorry!");
-	}
-
-	/**
-	 * Ambiguity over what type of socket you used?
-	 * This method is here to help!
-	 * Yep, you'll need to check the output, but don't worry, here's the code!:<br>
-	 * <br>
-	 * 
-	 * <pre>
-	 * if (p_socket == null) {
-	 * 	// Handle the `null`!
-	 * } else if (p_socket instanceof final NerdUdpSocket udpSocket) {
-	 * 	// Your turn!
-	 * } else if (p_socket instanceof final NerdTcpServer tcpServer) {
-	 * 	// Your turn!
-	 * } else if (p_socket instanceof final NerdTcpClient tcpClient) {
-	 * 	// Your turn!
-	 * }
-	 * </pre>
-	 *
-	 * @param <RetT> The type of socket returned. Don't set this! Look at the "See
-	 *               Also" section!
-	 * @return The socket!
-	 * @see NerdEcsManager#getUdpSocket()
-	 * @see NerdEcsManager#getTcpServer()
-	 * @see NerdEcsManager#getTcpClient()
-	 */
-	@SuppressWarnings("unchecked")
-	public <RetT extends NerdSocket> RetT getUnderlyingNerdSocket() {
-		// Return whatever is not null`. If everything is `null`, run with the `null`!:
-		return (RetT) (this.sockMan.udpSocket != null ? this.sockMan.udpSocket
-				: this.sockMan.tcpServer != null ? this.sockMan.tcpServer
-						: this.sockMan.tcpClient != null ? this.sockMan.tcpClient
-								: null);
-	}
 	// endregion
 
 	// region Events.

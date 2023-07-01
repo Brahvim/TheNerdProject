@@ -18,22 +18,27 @@ import processing.opengl.PGraphicsOpenGL;
 
 public class App {
 
+	// Big TODOs!:
 	/*
-	 * // TODO: Move all `NerdSketch` callback code into `NerdInputManager`.
-	 * // TODO: Stop screwing up with how to use `PGraphics`, cameras etc.
-	 * // TODO: Let JAR assets be stored in the `data` folder.
-	 * // TODO: Complete the ECS's networking API.
+	 * - OpenAL *enumerated* wrapper!
+	 * - The `NerdEasingFunction` rewrite.
+	 * - Eliminate `NerdScene::draw()`. ECS-only updates.
+	 * - Versioned serialization packets containing ECS components.
 	 * 
-	 * // ...Long run tasks:
-	 * // TODO: ECS wrapper for Processing!
-	 * // TODO: Dyn4j ECS wrapper. ...or A (Javacpp) LiquidFun ECS wrapper!
-	 * // TODO: Android port with OpenAL (OpenAL Javacpp wrapper?).
+	 * - Complete the ECS's networking API.
+	 * - Stop screwing up with how to use `PGraphics`, cameras etc.
+	 * - Let JAR assets be in the `data` folder (each JAR carries a folder).
+	 * 
+	 * Longer tasks:
+	 * - Android port!
+	 * - ECS wrapper for Processing!
+	 * - Dyn4j / Javacpp LiquidFun ECS wrapper!
 	 */
 
 	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
 			// Use directly in `setFirstSceneClass()` below!:
 			// LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-			DemoScene3.class;
+			EcsDemoScene.class;
 
 	// region `App`'s *other* fields.
 	public static final int BPM = 100,

@@ -3,7 +3,6 @@ package com.brahvim.nerd_demos.scenes.ecs_demo_scene;
 import java.io.File;
 
 import com.brahvim.nerd.framework.ecs.NerdEcsEntity;
-import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 
@@ -12,13 +11,13 @@ import processing.event.MouseEvent;
 
 public class EcsDemoScene extends NerdScene {
 
-	private static final File SAVE_FILE = new File("Nerd EcsDemoScene Serial Data.sav");
+	private static final File SAVE_FILE = new File("data/Nerd EcsDemoScene Serial Data.sav");
 	private EcsDemoComponent component;
 	private NerdEcsEntity entity;
 
 	@Override
 	protected void setup(final NerdSceneState p_state) {
-		ECS.setSystemsOrder(new NerdEcsSystem<?>[] { new EcsDemoSystem() });
+		ECS.setSystemsOrder(EcsDemoSystem.class);
 
 		this.entity = ECS.createEntity("Test!");
 		this.component = this.entity.attachComponent(EcsDemoComponent.class);

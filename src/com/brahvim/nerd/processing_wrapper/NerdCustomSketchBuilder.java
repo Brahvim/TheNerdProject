@@ -3,6 +3,7 @@ package com.brahvim.nerd.processing_wrapper;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import com.brahvim.nerd.framework.ecs.NerdEcsComponent;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
@@ -165,7 +166,8 @@ public abstract class NerdCustomSketchBuilder {
 	}
 	// endregion
 
-	public NerdCustomSketchBuilder setEcsSystemOrder(final NerdEcsSystem<?>[] p_ecsSystems) {
+	public NerdCustomSketchBuilder setEcsSystemOrder(
+			final Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] p_ecsSystems) {
 		this.SKETCH_KEY.ecsSystemOrder = p_ecsSystems;
 		return this;
 	}
