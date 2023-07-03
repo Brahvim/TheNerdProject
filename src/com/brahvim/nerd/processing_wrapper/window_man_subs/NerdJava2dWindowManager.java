@@ -110,7 +110,7 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
 		this.canvas = (PSurfaceAWT.SmoothCanvas) super.surface.getNative();
 		this.window = (JFrame) canvas.getFrame();
 
-		if (super.SKETCH.INITIALLY_RESIZABLE)
+		if (super.SKETCH.SKETCH_SETTINGS.INITIALLY_RESIZABLE)
 			this.window.setResizable(true);
 	}
 
@@ -141,7 +141,8 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
 				this.window.setUndecorated(true);
 			} else {
 				this.centerWindow();
-				this.window.setSize(super.SKETCH.INIT_WIDTH, super.SKETCH.INIT_HEIGHT);
+				this.window.setSize(super.SKETCH.SKETCH_SETTINGS.INIT_WIDTH,
+						super.SKETCH.SKETCH_SETTINGS.INIT_HEIGHT);
 				this.window.setUndecorated(false);
 			}
 
