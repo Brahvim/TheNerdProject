@@ -773,7 +773,7 @@ public class NerdSceneManager {
 		toRet.INPUT = toRet.SKETCH.INPUT;
 		toRet.WINDOW = toRet.SKETCH.WINDOW;
 		toRet.DISPLAY = toRet.SKETCH.DISPLAYS;
-		toRet.ECS = this.ECS_INSTANCE.clearAllData();
+		toRet.ECS = this.ECS_INSTANCE.clearAllData(); // Method's in `NerdBridgedEcsManager`.
 		toRet.GRAPHICS = toRet.SKETCH.getNerdGraphics();
 		toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
 		toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?

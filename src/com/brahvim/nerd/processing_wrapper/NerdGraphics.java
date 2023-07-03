@@ -90,10 +90,6 @@ public class NerdGraphics {
 		return this.GRAPHICS;
 	}
 
-	// public final PGraphics setUnderlyingBuffer(final PGraphics p_graphics) {
-	// return this.graphics = p_graphics;
-	// }
-
 	// region From `PGraphics`.
 	// region Shapes.
 	// region `drawShape()` overloads.
@@ -375,9 +371,8 @@ public class NerdGraphics {
 				p_from.y + PApplet.cos(p_y) * p_yLen);
 	}
 
-	// TODO: Fix `NerdGraphics::radialLine2d(PVector, PVector, float)`.
 	public void radialLine2d(final PVector p_from, final PVector p_trigVals, final float p_size) {
-		this.line(p_from.x, p_from.y, p_trigVals.x, p_trigVals.y);
+		this.line(p_from.x, p_from.y, p_trigVals.x * p_size, p_trigVals.y * p_size);
 	}
 
 	public void radialLine2d(final PVector p_from, final PVector p_values) {
