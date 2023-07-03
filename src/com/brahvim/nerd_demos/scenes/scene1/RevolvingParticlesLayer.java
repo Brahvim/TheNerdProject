@@ -27,10 +27,8 @@ public class RevolvingParticlesLayer extends NerdLayer {
 		 * for (int i = 0; i < this.PARTICLE_CONC; i++) {
 		 * g.fill(235, 174, 52, 255 * Easings.exponential(
 		 * (float) i / (float) this.PARTICLE_CONC));
-		 * 
 		 * // Linearly interpolated fill:
 		 * // g.fill(235, 174, 52, PApplet.map(i, 0, this.PARTICLE_CONC, 0, 1));
-		 * 
 		 * // Squares when using `Easings.exponential(PConstants.PI *
 		 * // ((float) i / (float) this.PARTICLE_CONC));` for the size!!!
 		 * g.circle(this.PARTICLE_SIZE_HALF, this.PARTICLE_SIZE_HALF,

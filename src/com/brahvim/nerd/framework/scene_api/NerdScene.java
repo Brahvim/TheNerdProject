@@ -23,8 +23,6 @@ import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
 /**
  * <h2>Do not use as an anonymous class!</h2>
  * <i>Always extend!</i>
- *
- * @author Brahvim Bhaktvatsal
  */
 public abstract class NerdScene {
 
@@ -329,12 +327,10 @@ public abstract class NerdScene {
 	 * public final NerdLayer[] addLayers(final Class<? extends NerdLayer>...
 	 * p_layerClasses) {
 	 * final NerdLayer[] toRet = new NerdLayer[p_layerClasses.length];
-	 * 
 	 * for (int i = 0; i < p_layerClasses.length; i++) {
 	 * final Class<? extends NerdLayer> c = p_layerClasses[i];
 	 * toRet[i] = this.addLayers(c);
 	 * }
-	 * 
 	 * return toRet;
 	 * }
 	 */
@@ -441,13 +437,11 @@ public abstract class NerdScene {
 
 	// region Anything callback-related, LOL.
 	/*
-	 * 
 	 * private void verifyKey(SceneManager.SceneKey p_key) {
 	 * if (p_key == null) {
 	 * throw new IllegalArgumentException(
 	 * "`NerdScene`s should only be accessed by a `NerdSceneManager`!");
 	 * }
-	 * 
 	 * Class<? extends NerdScene> myClass = this.getClass();
 	 * if (!p_key.isFor(myClass)) {
 	 * throw new IllegalArgumentException(
@@ -630,7 +624,6 @@ public abstract class NerdScene {
 	 * the background. If {@link NerdSceneManager#loadSceneAssets()} or
 	 * {@link NerdSceneManager#loadSceneAssetsAsync} is called, this method is run
 	 * async, loading-in all {@link NerdAsset}s!
-	 * 
 	 * <p>
 	 * Since {@link NerdScene}s could be a part of the same {@link NerdSketch}, it
 	 * is important to ensure that this method is {@code synchronized}.
@@ -652,7 +645,6 @@ public abstract class NerdScene {
 	 * {@link NerdSceneManager#startPreviousScene(Class)}
 	 * is called, after the {@link NerdScene} finishes executing
 	 * {@link NerdScene#preload()},
-	 * 
 	 * <p>
 	 * {@link NerdLayer#setup()} is called <i>when a {@link NerdLayer} is set
 	 * active</i> using {@link NerdLayer#setActive(boolean)}.

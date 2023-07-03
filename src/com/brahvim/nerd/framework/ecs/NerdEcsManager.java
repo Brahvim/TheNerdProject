@@ -193,7 +193,6 @@ public class NerdEcsManager implements Serializable {
 
 	/**
 	 * @apiNote Entity names parsable as positive {@code long}s are reserved.
-	 * 
 	 * @param p_entity is the entity you wish to rename, and
 	 * @param p_name   is the new name you wish to assign to it!
 	 */

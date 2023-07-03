@@ -98,7 +98,6 @@ public class NerdByteSerialUtils {
 	}
 
 	/**
-	 * 
 	 * <p>
 	 * Suppose we have a class, {@code C}, which extends {@code B}, which extends
 	 * {@code A}. This method will therefore return {@code 3} when given an object
@@ -205,7 +204,6 @@ public class NerdByteSerialUtils {
 	 * @deprecated since it uses
 	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)},
 	 *             which is itself deprecated.
-	 * 
 	 * @param p_data   the bytes to deserialize back to an object.
 	 * @param p_object the object to transform into the from the bytes!
 	 */
@@ -471,7 +469,6 @@ public class NerdByteSerialUtils {
 	 *             which is deprecated, since it uses
 	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)},
 	 *             which is also deprecated.
-	 * 
 	 * @param p_file   the file to deserialize an object from!
 	 * @param p_object the object to transform into the from the bytes!
 	 */

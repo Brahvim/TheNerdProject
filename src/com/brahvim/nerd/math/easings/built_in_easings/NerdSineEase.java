@@ -63,7 +63,6 @@ public class NerdSineEase extends NerdEasingFunction {
 	 * By calling this method, you can make this {@link NerdSineEase} instance
 	 * deactivate automatically, when the angle parameter <i>(passed to the
 	 * sine-based function)</i>, would've been incremented by what you've passed in.
-	 * 
 	 * <p>
 	 * Yes, the <i>angle parameter</i> in context is actually just a time value,
 	 * tracked internally.
@@ -90,7 +89,6 @@ public class NerdSineEase extends NerdEasingFunction {
 	 * deactivate automatically, when the angle parameter <i>(passed to the
 	 * sine-based function)</i>, would've been incremented by what you've passed in,
 	 * <i><b>within</i></b> the amount of time you provided.
-	 * 
 	 * <p>
 	 * Yes, the <i>angle parameter</i> in context is actually just a time value,
 	 * tracked internally.

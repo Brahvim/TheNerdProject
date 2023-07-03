@@ -11,21 +11,17 @@ public class NerdCollisionAlgorithms {
 		/*
 		 * p5.prototype.collidePointPoly = function(p_x, p_y, vertices) {
 		 * var collision = false;
-		 * 
 		 * // go through each of the vertices, plus the next vertex in the list
 		 * var next = 0;
 		 * for (var current = 0; current < vertices.length; current++) {
-		 * 
 		 * // get next vertex in list if we've hit the end, wrap around to 0
 		 * next = current + 1;
 		 * if (next == = vertices.length) next = 0;
-		 * 
 		 * // get the PVectors at our current position this makes our if statement a
 		 * little
 		 * // cleaner
 		 * var vc = vertices[current]; // c for "current"
 		 * var vn = vertices[next]; // n for "next"
-		 * 
 		 * // compare position, flip 'collision' variable back and forth
 		 * if (((vc.y >= p_y && vn.y < p_y) || (vc.y < p_y && vn.y >= p_y)) &&
 		 * (p_x < (vn.x - vc.x) * (p_y - vc.y) / (vn.y - vc.y) + vc.x)) {

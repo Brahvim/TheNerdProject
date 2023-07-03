@@ -1,5 +1,6 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -83,6 +84,9 @@ public class NerdInputManager {
 	}
 
 	/* `package` */ void preCallback() {
+		this.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
+		this.GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_POINT.x, this.GLOBAL_MOUSE_POINT.y);
+
 		this.CURR_FRAME_MOUSE_CENTER_OFFSET_VECTOR.set(
 				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
 				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
@@ -90,6 +94,9 @@ public class NerdInputManager {
 	}
 
 	/* `package` */ void postCallback() {
+		this.PREV_FRAME_GLOBAL_MOUSE_POINT.setLocation(this.GLOBAL_MOUSE_POINT);
+		this.PREV_FRAME_GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_VECTOR);
+
 		this.PREV_FRAME_MOUSE_CENTER_OFFSET_VECTOR.set(
 				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
 				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
@@ -161,8 +168,9 @@ public class NerdInputManager {
 		this.literallyEveryMouseButtonCallback();
 	}
 
+	// Not called on Android!:
 	/* `package` */ void mouseClicked() {
-		this.literallyEveryMouseButtonCallback();
+		// this.literallyEveryMouseButtonCallback();
 	}
 
 	/* `package` */ void mouseMoved() {
@@ -182,10 +190,9 @@ public class NerdInputManager {
 	}
 
 	/* `package` */ void mouseDragged() {
-		// Should've included stuff from `NerdInputManaer::mouseMoved()`, but hey - if
+		// Should've included stuff from `NerdInputManager::mouseMoved()`, but hey - if
 		// the mouse is dragged, it also moves, right?!
-		this.pmouseButton = this.mouseButton;
-		this.mouseButton = this.SKETCH.mouseButton;
+		this.literallyEveryMouseButtonCallback();
 
 		// this.pmouseX = this.mouseX; this.pmouseY = this.mouseY;
 		// this.mouseX = this.SKETCH.mouseX; this.mouseY = this.SKETCH.mouseY;

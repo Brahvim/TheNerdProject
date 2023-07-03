@@ -62,8 +62,6 @@ import processing.opengl.PJOGL;
 
 /**
  * <h1>¯\_(ツ)_/¯</h1>
- * 
- * @author Brahvim Bhaktvatsal
  */
 public class NerdSketch extends PApplet {
 
@@ -494,11 +492,10 @@ public class NerdSketch extends PApplet {
 			// ..Don't use `HashSet::contains()` to check here. Ugh.
 			c.removeAll(this.CALLBACK_LISTENERS_TO_REMOVE);
 
+		this.INPUT.preCallback();
 		this.WINDOW.preCallback(this.WINDOW_LISTENERS);
 		this.DISPLAYS.preCallback(this.WINDOW_LISTENERS);
 
-		// this.INPUT.framelyMouseScrollDelta = this.INPUT.totalMouseScroll -
-		// this.INPUT.pframeTotalMouseScroll;
 		this.PRE_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runPre();
 	}
@@ -512,16 +509,6 @@ public class NerdSketch extends PApplet {
 		// Call all pre-render listeners:
 		this.PRE_DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 
-		// region Update frame-ly mouse settings.
-		// region "`GLOBAL_MOUSE`".
-		this.INPUT.PREV_FRAME_GLOBAL_MOUSE_POINT.setLocation(this.INPUT.GLOBAL_MOUSE_POINT);
-		this.INPUT.PREV_FRAME_GLOBAL_MOUSE_VECTOR.set(this.INPUT.GLOBAL_MOUSE_VECTOR);
-
-		this.INPUT.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
-		this.INPUT.GLOBAL_MOUSE_VECTOR.set(this.INPUT.GLOBAL_MOUSE_POINT.x, this.INPUT.GLOBAL_MOUSE_POINT.y);
-		// endregion
-		// endregion
-
 		// region Apply the camera when using OpenGL!
 		if (this.USES_OPENGL) {
 			if (this.currentCamera != null)
@@ -531,9 +518,7 @@ public class NerdSketch extends PApplet {
 
 				// If `this.currentCamera` is `null`, but wasn't,
 				if (this.currentCamera != this.previousCamera)
-					System.out.printf(
-							"Sketch \"%s\" has no camera! Consider adding one...?",
-							this.NAME);
+					System.out.printf("Sketch \"%s\" has no camera! Consider adding one...?", this.NAME);
 			}
 		}
 		// endregion

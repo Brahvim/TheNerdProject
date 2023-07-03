@@ -203,12 +203,10 @@ public class NerdSceneManager {
 	/**
 	 * This {@link HashMap} contains cached data about each {@link NerdScene} class
 	 * any {@link NerdSceneManager} instance has cached or ran.
-	 * 
 	 * <p>
 	 * Actual "caching" of a {@link NerdScene} is when its corresponding
 	 * {@link NerdSceneManager.NerdSceneManagerSceneCache#cachedReference} is not
 	 * {@code null}.
-	 * 
 	 * <p>
 	 * The initial capacity here ({@code 2}) is to aid performance, since, the JIT
 	 * does no optimization till the first scene switch. All scene switches after
@@ -278,7 +276,6 @@ public class NerdSceneManager {
 	 * if (this.currScene != null)
 	 * this.currScene.runPreDraw();
 	 * }
-	 * 
 	 * protected void runPostDraw() {
 	 * if (this.currScene != null)
 	 * this.currScene.runPostDraw();
@@ -630,7 +627,6 @@ public class NerdSceneManager {
 	 * same, but can't be grouped together logicaly, for optimization. This can be
 	 * fixed with the use of an "impl" method, but this class already has too many
 	 * similarly-named methods!
-	 * 
 	 * Another approach would be to call `SceneManager::cacheScene()` then query
 	 * `SceneManager::SCENE_CACHE`, but that sounds even slower. Even with the JIT!
 	 */

@@ -26,8 +26,6 @@ import com.brahvim.nerd.framework.NerdTriConsumer;
  * <p>
  * Of course, it is based on classes from the
  * {@link java.net} package :)
- *
- * @author Brahvim Bhaktvatsal
  */
 
 public abstract class NerdUdpSocket implements NerdServerSocket {
@@ -40,8 +38,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	 * a separate thread, aiding with application performance and modern
 	 * hardware programming practices. It may NOT, be useful on systems like
 	 * Android, where ALL networking tasks must be done asynchronously.
-	 *
-	 * @author Brahvim Bhaktvatsal
+	 * 
 	 * @see NerdUdpSocket
 	 */
 	public class ReceiverThread {
@@ -183,13 +180,11 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	/**
 	 * The internal {@link DatagramSocket} that takes care of
 	 * networking.
-	 * 
 	 * <p>
 	 * If you need to change it, consider using the
 	 * {@link NerdUdpSocket#setSocket(DatagramSocket)}
 	 * method (it pauses the receiving thread, swaps the socket, and resumes
 	 * listening).
-	 * 
 	 * <p>
 	 * {@link NerdUdpSocket#getSocket()} <b>should</b> be used for equality checks,
 	 * etcetera.

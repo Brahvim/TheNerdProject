@@ -144,7 +144,7 @@ public abstract class NerdWindowManager {
 	// endregion
 
 	// region Callbacks.
-	public void preCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
+	protected void preCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
 		// Previous state:
 		this.pwidth = this.width;
 		this.pheight = this.height;
@@ -172,7 +172,7 @@ public abstract class NerdWindowManager {
 		}
 	}
 
-	public void postCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
+	protected void postCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
 		this.postCallbackImpl();
 
 		if (this.pfullscreen != this.fullscreen) {

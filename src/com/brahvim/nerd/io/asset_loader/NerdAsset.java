@@ -110,7 +110,6 @@ public class NerdAsset {
 	/**
 	 * Ensures that the asset has loaded, then returns its data,
 	 * given the name of a file (without the extension!).
-	 * 
 	 * <p>
 	 * Usage example!:
 	 * 

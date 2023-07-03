@@ -16,8 +16,6 @@ import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
  * To add a {@link NerdLayer} to a {@link NerdScene}, use the
  * {@link NerdScene#addLayer(Class)}, passing in your {@link NerdLayer}
  * subclass.
- *
- * @author Brahvim Bhaktvatsal
  */
 public abstract class NerdLayer {
 

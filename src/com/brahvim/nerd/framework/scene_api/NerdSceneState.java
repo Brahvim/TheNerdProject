@@ -110,10 +110,8 @@ public class NerdSceneState {
 	/*
 	 * You nest calls to "`queueGet()`", and at last, call "`getQueue()`", which
 	 * gives the all objects requested as an array or `ArrayList`.
-	 * 
 	 * For this, the class will need to store a `HashSet` of `Queue`s for each
 	 * thread using these getter methods.
-	 * 
 	 * ...another idea, would be to offer an iterator instead.
 	 */
 
