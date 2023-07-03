@@ -3,11 +3,10 @@ package com.brahvim.nerd.framework.cameras;
 import java.awt.Point;
 
 import com.brahvim.nerd.processing_wrapper.NerdDisplayManager;
-import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
 
 import processing.core.PApplet;
-import processing.core.PGraphics;
 import processing.core.PVector;
 
 public class NerdFlyCamera extends NerdAbstractCamera {
@@ -29,8 +28,9 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	// endregion
 
 	// region Construction.
-	public NerdFlyCamera(final NerdSketch p_sketch) {
-		super(p_sketch);
+	// Nope! Can't merge the two o' these:
+	public NerdFlyCamera(final NerdGraphics p_graphics) {
+		super(p_graphics);
 		this.front = super.pos.copy();
 		this.WINDOW = super.SKETCH.WINDOW;
 		this.DISPLAYS = super.SKETCH.DISPLAYS;
@@ -39,8 +39,8 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		this.defaultCamFront = this.front.copy();
 	}
 
-	public NerdFlyCamera(final NerdSketch p_sketch, final PVector p_defaultFront) {
-		super(p_sketch);
+	public NerdFlyCamera(final NerdGraphics p_graphics, final PVector p_defaultFront) {
+		super(p_graphics);
 		this.front.set(p_defaultFront);
 		this.WINDOW = super.SKETCH.WINDOW;
 		this.DISPLAYS = super.SKETCH.DISPLAYS;
@@ -52,8 +52,8 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 
 	// region From `NerdCamera`.
 	@Override
-	public void apply(final PGraphics p_graphics) {
-		super.apply(p_graphics);
+	public void apply() {
+		super.apply();
 
 		if (super.SKETCH.focused)
 			this.mouseTransform();
@@ -63,7 +63,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 
 	@Override
 	public NerdFlyCamera clone() {
-		final NerdFlyCamera toRet = new NerdFlyCamera(super.SKETCH);
+		final NerdFlyCamera toRet = new NerdFlyCamera(super.GRAPHICS);
 
 		// region Copying settings over to `toRet`.
 		toRet.up = new PVector(super.up.x, super.up.x, super.up.z);
@@ -88,11 +88,11 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	}
 
 	@Override
-	public void applyMatrix(final PGraphics p_graphics) {
-		super.applyProjection(p_graphics);
+	public void applyMatrix() {
+		super.applyProjection();
 
 		// Apply the camera matrix:
-		p_graphics.camera(
+		super.GRAPHICS.camera(
 				super.pos.x, super.pos.y, super.pos.z,
 
 				// Camera center point:

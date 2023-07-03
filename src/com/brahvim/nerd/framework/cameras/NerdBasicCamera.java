@@ -2,9 +2,8 @@ package com.brahvim.nerd.framework.cameras;
 
 import java.util.Objects;
 
-import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 
-import processing.core.PGraphics;
 import processing.core.PVector;
 
 /**
@@ -15,9 +14,9 @@ public class NerdBasicCamera extends NerdAbstractCamera {
 
 	protected PVector center, defaultCamCenter;
 
-	protected NerdBasicCamera(final NerdSketch p_sketch) {
-		super(p_sketch);
-		this.center = new PVector(); // super.SKETCH.cx, super.SKETCH.cy);
+	protected NerdBasicCamera(final NerdGraphics p_graphics) {
+		super(p_graphics);
+		this.center = new PVector();
 	}
 
 	@Override
@@ -31,10 +30,10 @@ public class NerdBasicCamera extends NerdAbstractCamera {
 	}
 
 	@Override
-	public void applyMatrix(final PGraphics p_graphics) {
-		super.applyProjection(p_graphics);
+	public void applyMatrix() {
+		super.applyProjection();
 
-		p_graphics.camera(
+		super.GRAPHICS.camera(
 				this.pos.x, this.pos.y, this.pos.z,
 				this.center.x, this.center.y, this.center.z,
 				this.up.x, this.up.y, this.up.z);
@@ -65,7 +64,7 @@ public class NerdBasicCamera extends NerdAbstractCamera {
 
 	@Override
 	public NerdBasicCamera clone() {
-		final NerdBasicCamera toRet = new NerdBasicCamera(this.SKETCH);
+		final NerdBasicCamera toRet = new NerdBasicCamera(super.GRAPHICS);
 
 		// region Copying camera parameters.
 		toRet.up.set(this.up);
