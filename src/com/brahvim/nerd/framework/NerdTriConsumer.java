@@ -10,10 +10,10 @@ package com.brahvim.nerd.framework;
  * This is a
  * {@link FunctionalInterface} whose functional method is
  * {@link NerdTriConsumer#accept(Object, Object)}.
- * 
+ *
  * <!-- --- Not using this original anchor tag!: --- !-->
  * <!-- <a href="package-summary.html">functional interface</a> !-->
- * 
+ *
  *
  * @param <T> the type of the first argument to the operation
  * @param <U> the type of the second argument to the operation

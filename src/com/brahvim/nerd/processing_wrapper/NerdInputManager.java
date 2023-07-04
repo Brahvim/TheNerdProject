@@ -10,7 +10,7 @@ import processing.core.PConstants;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
-// A (currently very messy) class to hold input event states from 
+// A (currently very messy) class to hold input event states from
 // the previous frame and previous event encounters.
 
 public class NerdInputManager {
@@ -62,8 +62,11 @@ public class NerdInputManager {
 	/** Updated each time events changing this variable occur. */
 	public boolean mousePressed, pmousePressed;
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated framely. */
 	public float mouseX, mouseY, pmouseX, pmouseY;
+
+	/** Updated each time events changing this variable occur. */
+	public float evMouseX, evMouseY, evPmouseX, evPmouseY;
 
 	/** Updated each time events changing this variable occur. */
 	public boolean mouseLeft, mouseMid, mouseRight, pmouseLeft, pmouseMid, pmouseRight;
@@ -91,6 +94,13 @@ public class NerdInputManager {
 				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
 				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
 		this.CURR_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
+
+		// TODO: Rename the `ev*` mouse paramters back to these, and remove this update:
+		this.pmouseX = this.mouseX;
+		this.pmouseY = this.mouseY;
+
+		this.pmouseX = this.SKETCH.mouseX;
+		this.pmouseY = this.SKETCH.mouseY;
 	}
 
 	/* `package` */ void postCallback() {
@@ -174,16 +184,16 @@ public class NerdInputManager {
 	}
 
 	/* `package` */ void mouseMoved() {
-		this.pmouseX = this.mouseX;
-		this.pmouseY = this.mouseY;
+		this.evPmouseX = this.evMouseX;
+		this.evPmouseY = this.evMouseY;
 
 		this.PREV_MOUSE_VECTOR.set(this.MOUSE_VECTOR);
 		this.PREV_MOUSE_CENTER_OFFSET.set(this.MOUSE_CENTER_OFFSET);
 
-		this.mouseX = this.SKETCH.mouseX;
-		this.mouseY = this.SKETCH.mouseY;
+		this.evMouseX = this.SKETCH.mouseX;
+		this.evMouseY = this.SKETCH.mouseY;
 
-		this.MOUSE_VECTOR.set(this.mouseX, this.mouseY);
+		this.MOUSE_VECTOR.set(this.evMouseX, this.evMouseY);
 		this.MOUSE_CENTER_OFFSET.set(
 				this.SKETCH.mouseX - this.SKETCH.WINDOW.cx,
 				this.SKETCH.mouseY - this.SKETCH.WINDOW.cy);

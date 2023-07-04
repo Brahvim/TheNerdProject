@@ -195,7 +195,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 			// this.DISPLAYS.updateDisplayRatios();
 			return new Point(this.DISPLAYS.displayWidthHalf, this.DISPLAYS.displayHeightHalf);
 		} else {
-			final PVector position = this.WINDOW.getPosition();
+			final PVector position = this.WINDOW.getPositionAsPVector();
 			return new Point(
 					(int) (position.x + this.WINDOW.cx),
 					(int) (position.y + this.WINDOW.cy));

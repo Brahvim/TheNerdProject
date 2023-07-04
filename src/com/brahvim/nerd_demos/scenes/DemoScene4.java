@@ -58,7 +58,7 @@ public class DemoScene4 extends NerdScene {
 		// endregion
 
 		// Loaded this scene for the first time? Do this!:
-		if (App.FIRST_SCENE_CLASS == DemoScene4.class && this.SCENE.getTimesLoaded() == 0) {
+		if (App.FIRST_SCENE_CLASS == DemoScene4.class && this.SCENE.getTimesLoaded() == 1) {
 			WINDOW.fullscreen = false;
 			WINDOW.setSize(1600, 900);
 			WINDOW.centerWindow();
@@ -68,12 +68,8 @@ public class DemoScene4 extends NerdScene {
 			App.openAl.setListenerOrientation(0, 1, 0);
 
 			rubberDuck.setPosition(
-					5 * (INPUT.mouseX - WINDOW.cx), 0,
-					5 * (INPUT.mouseY - WINDOW.cy));
-
-			App.openAl.unitSize = 1;
-			// System.out.println(CAMERA.pos);
-			// System.out.println(this.rubberDuck.getPosition());
+					5 * (INPUT.evMouseX - WINDOW.cx), 0,
+					5 * (INPUT.evMouseY - WINDOW.cy));
 
 			if (!rubberDuck.isPlaying())
 				rubberDuck.play();
@@ -83,7 +79,7 @@ public class DemoScene4 extends NerdScene {
 		this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
 		GRAPHICS.noStroke();
-		SKETCH.getCamera().getPos().z = 500;
+		GRAPHICS.currentCamera.getPos().z = 500;
 		GRAPHICS.textureWrap(PConstants.REPEAT);
 
 		this.ncx = this.nerd.width * 0.5f;

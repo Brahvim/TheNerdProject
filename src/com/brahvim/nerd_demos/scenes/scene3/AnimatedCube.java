@@ -31,13 +31,12 @@ public class AnimatedCube extends TestEulerBody {
 		this.startTime = SKETCH.millis();
 		this.lifetime = this.startTime + AnimatedCube.DEFAULT_LIFETIME;
 
+		final PVector cameraPos = super.SKETCH.getNerdGraphics().currentCamera.getPos();
+
 		super.pos.set(
-				super.SKETCH.getCamera().getPos().x
-						+ super.SKETCH.random(-super.SKETCH.WINDOW.cx, super.SKETCH.WINDOW.cx),
-				super.SKETCH.getCamera().getPos().y
-						+ super.SKETCH.random(-super.SKETCH.WINDOW.cy, super.SKETCH.WINDOW.cy),
-				super.SKETCH.getCamera().getPos().z
-						+ super.SKETCH.random(-600, 600));
+				cameraPos.x + super.SKETCH.random(-super.SKETCH.WINDOW.cx, super.SKETCH.WINDOW.cx),
+				cameraPos.y + super.SKETCH.random(-super.SKETCH.WINDOW.cy, super.SKETCH.WINDOW.cy),
+				cameraPos.z + super.SKETCH.random(-600, 600));
 
 		super.acc.set(
 				super.SKETCH.random(-0.01f, 0.01f),
@@ -101,19 +100,18 @@ public class AnimatedCube extends TestEulerBody {
 	// endregion
 
 	public AnimatedCube plopIn(final AlBuffer<?> p_popAudioBuffer) {
-		if (p_popAudioBuffer != null)
-			this.popSrc = new AlSource(App.openAl, p_popAudioBuffer);
+		if (p_popAudioBuffer == null)
+			return this;
 
-		// this.popSrc.setPosition(super.pos.array());
-		// this.popSrc.setPosition(PVector.mult(super.pos, 0.001f).array());
-		this.visible = true;
-		this.popSrc.setPosition(
-				PVector.mult(super.pos, 0.0001f)
-						// super.pos
-						.array());
-
+		this.popSrc = new AlSource(App.openAl, p_popAudioBuffer);
+		this.popSrc.setPosition(super.pos.array());
 		this.popSrc.playThenDispose();
 
+		return this.plopIn();
+	}
+
+	public AnimatedCube plopIn() {
+		this.visible = true;
 		this.plopWave.parameterCoef = 0.015f;
 		this.plopWave.endWhenAngleIncrementsBy(PConstants.HALF_PI).start();
 		return this;
@@ -143,11 +141,7 @@ public class AnimatedCube extends TestEulerBody {
 			return;
 
 		if (!this.popSrc.isDisposed())
-			this.popSrc.setPosition(
-					// PVector.mult(super.pos, 0.0001f)
-					PVector.div(super.pos, App.openAl.unitSize)
-							// super.pos
-							.array());
+			this.popSrc.setPosition(super.pos.array());
 
 		final NerdGraphics g = super.SKETCH.getNerdGraphics();
 

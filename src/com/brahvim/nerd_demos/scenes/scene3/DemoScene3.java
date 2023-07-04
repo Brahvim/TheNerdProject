@@ -8,10 +8,8 @@ import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.openal.AlBuffer;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
-import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
 import com.brahvim.nerd_demos.effect_layers.CinematicBarsLayer;
-import com.brahvim.nerd_demos.scenes.scene1.DemoScene1;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -36,14 +34,13 @@ public class DemoScene3 extends NerdScene {
 
 	@Override
 	protected void setup(final NerdSceneState p_state) {
-		App.openAl.unitSize = 15;
 		MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder.SCENE;
 		SCENE.addLayer(CinematicBarsLayer.class);
 		SCENE.addLayer(DebugFpsGizmoLayer.class);
 
-		CAMERA = new SmoothCamera(SKETCH);
+		CAMERA = new SmoothCamera(GRAPHICS);
 		CAMERA.fov = PApplet.radians(75);
-		SKETCH.setCamera(this.CAMERA);
+		GRAPHICS.currentCamera = this.CAMERA;
 
 		final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
 		// App.OPENAL.unitSize = 1; // Float.MAX_VALUE;
@@ -97,7 +94,7 @@ public class DemoScene3 extends NerdScene {
 	public void mouseClicked() {
 		switch (INPUT.mouseButton) {
 			case PConstants.CENTER -> CAMERA.setRoll(0);
-			case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
+			// case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
 			case PConstants.LEFT -> {
 				this.cubeMan.emitCubes(this.cubeMan.cubesPerClick);
 				// if (this.cubeMan.numCubes() < 2)

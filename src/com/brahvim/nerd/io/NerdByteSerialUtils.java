@@ -102,7 +102,7 @@ public class NerdByteSerialUtils {
 	 * Suppose we have a class, {@code C}, which extends {@code B}, which extends
 	 * {@code A}. This method will therefore return {@code 3} when given an object
 	 * of class {@code C}.
-	 * 
+	 *
 	 * @param p_object is the object whose class hierarchy depth is to be found.
 	 * @return Returns the depth of the hierarchy of the class of the given object.
 	 */
@@ -200,7 +200,7 @@ public class NerdByteSerialUtils {
 	/**
 	 * Deserialize an object from bytes, then edit a given one to match the
 	 * deserialized one. Only you can guarantee the equality of their types!
-	 * 
+	 *
 	 * @deprecated since it uses
 	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)},
 	 *             which is itself deprecated.
@@ -463,7 +463,7 @@ public class NerdByteSerialUtils {
 	/**
 	 * Deserialize an object from a file, then edit a given one to match the
 	 * deserialized one. Only you can guarantee the equality of their types!
-	 * 
+	 *
 	 * @deprecated since it uses
 	 *             {@link NerdByteSerialUtils#fromBytesAssigning(byte[], Object)},
 	 *             which is deprecated, since it uses

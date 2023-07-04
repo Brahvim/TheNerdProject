@@ -112,7 +112,7 @@ public class NerdAsset {
 	 * given the name of a file (without the extension!).
 	 * <p>
 	 * Usage example!:
-	 * 
+	 *
 	 * <pre>
 	 * final PImage image = ASSETS.get("my_sprite_image").getData();
 	 * </pre>

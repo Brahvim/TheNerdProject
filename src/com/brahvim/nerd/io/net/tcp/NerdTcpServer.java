@@ -325,7 +325,7 @@ public class NerdTcpServer implements NerdServerSocket {
 	/**
 	 * When a new client connects to this {@link NerdTcpServer}, callbacks
 	 * registered via this method, are called.
-	 * 
+	 *
 	 * @param p_callback is a callback providing the new client a message callback!
 	 * @return The {@link NerdTcpServer} instance this method was called on.
 	 */
@@ -338,7 +338,7 @@ public class NerdTcpServer implements NerdServerSocket {
 	/**
 	 * Removes a callback registered via the method,
 	 * {@link NerdTcpServer#addMessageReceivedCallback(Consumer)}.
-	 * 
+	 *
 	 * @param p_callback is a callback providing the new client a message callback!
 	 * @return The {@link NerdTcpServer} instance this method was called on.
 	 */

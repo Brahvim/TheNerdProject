@@ -4,9 +4,8 @@ import java.awt.event.KeyEvent;
 import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
-import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 
-import processing.core.PGraphics;
 import processing.core.PVector;
 
 public class SmoothCamera extends NerdFlyCamera {
@@ -21,12 +20,12 @@ public class SmoothCamera extends NerdFlyCamera {
 	// endregion
 
 	// region Construction.
-	public SmoothCamera(final NerdSketch p_sketch) {
-		super(p_sketch);
+	public SmoothCamera(final NerdGraphics p_graphics) {
+		super(p_graphics);
 	}
 
-	public SmoothCamera(final NerdSketch p_sketch, final PVector p_defaultFront) {
-		super(p_sketch, p_defaultFront);
+	public SmoothCamera(final NerdGraphics p_graphics, final PVector p_defaultFront) {
+		super(p_graphics, p_defaultFront);
 	}
 	// endregion
 
@@ -49,9 +48,9 @@ public class SmoothCamera extends NerdFlyCamera {
 	// endregion
 
 	@Override
-	public void apply(final PGraphics p_graphics) {
+	public void apply() {
 		this.controlCamera();
-		super.apply(p_graphics);
+		super.apply();
 	}
 
 	private void controlCamera() {
