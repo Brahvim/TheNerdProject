@@ -871,12 +871,12 @@ public class NerdGraphics {
 	}
 
 	public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
-		return this.worldVec(this.SKETCH.INPUT.mouseX, this.SKETCH.INPUT.mouseY,
+		return this.worldVec(this.SKETCH.INPUT.evMouseX, this.SKETCH.INPUT.evMouseY,
 				this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
 	}
 
 	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
-		return this.worldVec(this.SKETCH.INPUT.mouseX, this.SKETCH.INPUT.mouseY, p_distanceFromCamera);
+		return this.worldVec(this.SKETCH.INPUT.evMouseX, this.SKETCH.INPUT.evMouseY, p_distanceFromCamera);
 	}
 	// endregion
 
@@ -1048,7 +1048,7 @@ public class NerdGraphics {
 	/**
 	 * Translates by the width of {@code p_text} halved, and the current text
 	 * height, halved, before actually rendering the text.
-	 * 
+	 *
 	 * @see NerdSketch#textHeight()
 	 * @see PApplet#textWidth(String)
 	 */
@@ -1083,7 +1083,7 @@ public class NerdGraphics {
 	 * Pushes the graphics buffer, disables depth testing, resets all current
 	 * transformations, calls your {@link Runnable} {@code p_toDraw}, and
 	 * finally, pops back the transformations and enables depth testing!
-	 * 
+	 *
 	 * @see {@link NerdSketch#end2d()}
 	 * @see {@link NerdSketch#begin2d()}
 	 */

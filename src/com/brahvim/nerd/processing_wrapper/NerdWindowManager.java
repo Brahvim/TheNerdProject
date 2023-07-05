@@ -1,6 +1,6 @@
 package com.brahvim.nerd.processing_wrapper;
 
-import java.awt.DisplayMode;
+import java.awt.Point;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
@@ -35,6 +35,7 @@ public abstract class NerdWindowManager {
 
 	// region Construction and initialization.
 	protected NerdWindowManager(final NerdSketch p_sketch) {
+		this
 		this.SKETCH = p_sketch;
 		this.fullscreen = this.SKETCH.SKETCH_SETTINGS.STARTED_FULLSCREEN;
 	}
@@ -63,23 +64,23 @@ public abstract class NerdWindowManager {
 	public void centerWindow() {
 		// You called this function when the window changed its size or position, right?
 		// Remember: Computers with multiple displays exist! We shouldn't cache this:
-		this.updateWindowRatios();
-
-		final DisplayMode CURRENT_DISPLAY_MODE = this.displays.getCurrentMonitor() == null
-				? this.SKETCH.DEFAULT_JAVA_SCREEN_MODE
-				: this.displays.getCurrentMonitor().getDisplayMode();
-
-		this.centerWindowImpl(CURRENT_DISPLAY_MODE.getWidth(), CURRENT_DISPLAY_MODE.getHeight());
+		this.updateWindowParameters();
+		this.centerWindowImpl();
 
 		// this.surface.setLocation(winX, winY);
 		// (Well, changing the display does NOT effect those variables in any way :|)
 	}
 
-	protected abstract void centerWindowImpl(final float p_displayWidth, final float p_displayHeight);
+	protected abstract void centerWindowImpl();
 	// endregion
 
 	// region Updates!
-	public void updateWindowRatios() {
+	public void updateWindowParameters() {
+		this.recordCurrentWindowParameters();
+
+		this.width = this.getWidth();
+		this.height = this.getHeight();
+
 		this.dbx = this.width * 2.0f;
 		this.dby = this.height * 2.0f;
 
@@ -95,7 +96,7 @@ public abstract class NerdWindowManager {
 		this.scr = (float) this.width / (float) this.height;
 	}
 
-	public void recordCurrentWindowRatios() {
+	private void recordCurrentWindowParameters() {
 		this.pdbx = this.dbx;
 		this.pdby = this.dby;
 
@@ -119,9 +120,21 @@ public abstract class NerdWindowManager {
 
 	public abstract String getName();
 
-	public abstract PVector getSize();
+	public abstract int getX();
 
-	public abstract PVector getPosition();
+	public abstract int getY();
+
+	public abstract int getWidth();
+
+	public abstract int getHeight();
+
+	public abstract Point getSize();
+
+	public abstract PVector getSizeAsPVector();
+
+	public abstract Point getPosition();
+
+	public abstract PVector getPositionAsPVector();
 
 	public abstract Object getNativeObject();
 
@@ -138,9 +151,13 @@ public abstract class NerdWindowManager {
 
 	public abstract NerdWindowManager setSize(final int p_x, final int p_y);
 
+	public abstract NerdWindowManager setSize(final float p_x, final float p_y);
+
 	public abstract NerdWindowManager setPosition(final PVector p_position);
 
 	public abstract NerdWindowManager setPosition(final int p_x, final int p_y);
+
+	public abstract NerdWindowManager setPosition(final float p_x, final float p_y);
 	// endregion
 
 	// region Callbacks.
@@ -156,11 +173,11 @@ public abstract class NerdWindowManager {
 		// this.focused = this.SKETCH.focused; // Better received in the callbacks!
 
 		this.PREV_WINDOW_POSITION.set(this.WINDOW_POSITION);
-		this.WINDOW_POSITION.set(this.getPosition());
+		this.WINDOW_POSITION.set(this.getPositionAsPVector());
 
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == this.width || this.pheight == this.height)) {
-			this.updateWindowRatios();
+			this.updateWindowParameters();
 
 			// this.SKETCH.sceneGraphics.setSize(this.width, this.height);
 

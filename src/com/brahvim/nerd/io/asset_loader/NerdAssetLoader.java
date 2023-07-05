@@ -17,13 +17,13 @@ public abstract class NerdAssetLoader<AssetT> {
 	/**
 	 * This method tells the wrapping {@link NerdAsset} the name to use. For most
 	 * implementations, just:
-	 * 
+	 *
 	 * <pre>
 	 * return super.findNameFromPath(this.PATH);
 	 * </pre>
-	 * 
+	 *
 	 * ...will suffice!
-	 * 
+	 *
 	 * @return The name of the {@link NerdAsset} <i>properly</i> derived from its
 	 *         file's name, perhaps by using the parsing algorithm provided by
 	 *         {@link NerdAssetLoader#findNameFromPath(String)}.

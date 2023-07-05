@@ -32,7 +32,7 @@ public final class NerdEcsEntity implements Serializable {
 	// region Dynamic component list queries. (PLEASE! No variadic overloads...)
 	/**
 	 * Checks if a given {@link NerdEcsComponent} exists. As simple as that!
-	 * 
+	 *
 	 * @return ..if this exact component was held by this entity.
 	 */
 	public boolean hasComponent(final NerdEcsComponent p_component) {
@@ -46,7 +46,7 @@ public final class NerdEcsEntity implements Serializable {
 	/**
 	 * Checks if a given {@link NerdEcsComponent} exists, and calls the given
 	 * callback, if so.
-	 * 
+	 *
 	 * @param p_component   is the component to find. Duh.
 	 * @param p_taskIfFound is the task performed if the component is found.
 	 * @return ..if this exact component was held by this entity.
@@ -66,7 +66,7 @@ public final class NerdEcsEntity implements Serializable {
 	/**
 	 * Checks if a given {@link NerdEcsComponent} exists. No matter it does or not,
 	 * your callbacks are always called with the one you submitted!
-	 * 
+	 *
 	 * @param p_component      is the component to find. Duh.
 	 * @param p_taskIfFound    is the task performed if the component is found.
 	 * @param p_taskIfNotFound is the task performed if the component is not found.
@@ -90,7 +90,7 @@ public final class NerdEcsEntity implements Serializable {
 	/**
 	 * Tells if <i>absolutely <b>any</b></i> instance of the provided subclass of
 	 * {@link NerdEcsComponent} is held by this entity.
-	 * 
+	 *
 	 * @param p_componentClass is the {@link Class} you need to pass!
 	 *                         (Usually {@code ClassName.class}
 	 *                         or {@code someObject.getClass()})
@@ -107,7 +107,7 @@ public final class NerdEcsEntity implements Serializable {
 	/**
 	 * Tells if <i>absolutely <b>any</b></i> instance of the provided subclass of
 	 * {@link NerdEcsComponent} is held by this entity.
-	 * 
+	 *
 	 * @param p_componentClass is the {@link Class} you need to pass!
 	 *                         (Usually {@code ClassName.class}
 	 *                         or {@code someObject.getClass()})
@@ -130,7 +130,7 @@ public final class NerdEcsEntity implements Serializable {
 	/**
 	 * Tells if <i>absolutely <b>any</b></i> instance of the provided subclass of
 	 * {@link NerdEcsComponent} is held by this entity.
-	 * 
+	 *
 	 * @param p_componentClass is the {@link Class} you need to pass!
 	 *                         (Usually {@code ClassName.class}
 	 *                         or {@code someObject.getClass()})

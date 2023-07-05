@@ -3,7 +3,7 @@ package com.brahvim.nerd.math.easings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 // It is better to extend this class than to have `java.util.Function`s in it.
-// How else would we have stuff like `SineEase::freqMult`, then?!
+// How else would we have stuff like `NerdSineEase::freqMult`, then?!
 
 public abstract class NerdEasingFunction {
 
@@ -40,7 +40,7 @@ public abstract class NerdEasingFunction {
 	/**
 	 * Determines if an {@link NerdEasingFunction} object is doing calculations or
 	 * not.
-	 * 
+	 *
 	 * @apiNote {@code false} by default. Call {@link NerdEasingFunction#start()} to
 	 *          make the function actively processing again.
 	 */

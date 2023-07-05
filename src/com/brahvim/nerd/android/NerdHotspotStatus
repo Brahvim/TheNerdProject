@@ -96,5 +96,5 @@ public class HotspotStatus {
 		return HotspotStatus.INSTANCE.query() == HotspotStatus.AP_STATE_DISABLING;
 	}
 	// endregion
-	
+
 }

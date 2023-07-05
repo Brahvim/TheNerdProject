@@ -48,7 +48,7 @@ public class NerdBridgedSceneManager extends NerdSceneManager {
 	 * protected void runPreDraw() {
 	 * super.runPreDraw();
 	 * }
-	 * 
+	 *
 	 * @Override
 	 * protected void runPostDraw() {
 	 * super.runPostDraw();

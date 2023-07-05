@@ -31,7 +31,7 @@ public class NerdSceneManager {
 	private static class NerdSceneManagerSceneCache {
 
 		// region Fields.
-		private final int timesLoaded = 0;
+		private int timesLoaded = 0;
 		private final NerdSceneState STATE;
 		private final Constructor<? extends NerdScene> CONSTRUCTOR;
 
@@ -73,7 +73,7 @@ public class NerdSceneManager {
 		 * {@link NerdScene} or {@link NerdLayer} is allowed to call certain "workflow
 		 * events" ({@link NerdScene#pre()}, {@link NerdScene#draw()} and
 		 * {@link NerdScene#post()}) from Processing.
-		 * 
+		 *
 		 * @see {@link NerdSceneManager.NerdSceneManagerSettings#preFirstCaller} -
 		 *      {@link NerdSketchCallbackOrder#SCENE} by
 		 *      default.
@@ -125,7 +125,7 @@ public class NerdSceneManager {
 			 * When {@code true}, {@link NerdScene#preload()} is run only the first time
 			 * the {@link NerdScene} is used. Turn to {@code false} to load scene assets
 			 * each time, so that assets are updated.
-			 * 
+			 *
 			 * @apiNote {@code true} by default!
 			 */
 			public volatile boolean preloadOnlyOnce = true;
@@ -136,7 +136,7 @@ public class NerdSceneManager {
 			 * {@link NerdSceneManager.NerdSceneManagerSettings.OnScenePreload#completeWithinPreloadCall}
 			 * is {@code false}, the asset loading is not guaranteed to finish within
 			 * {@link NerdScene#preload()}.
-			 * 
+			 *
 			 * @apiNote {@code true} by default!
 			 * @implNote Actually, it's {@link NerdScene#runPreload()}.
 			 */
@@ -150,7 +150,7 @@ public class NerdSceneManager {
 			/**
 			 * The maximum number of threads multithreaded asset loading started
 			 * in {@link NerdScene#preload()} can use.
-			 * 
+			 *
 			 * @apiNote {@code 6} by default!
 			 */
 			public volatile int maxExecutorThreads = 6;
@@ -857,16 +857,15 @@ public class NerdSceneManager {
 	private void setupCurrentScene(final NerdSceneState p_state) {
 		this.sceneSwitchOccured = true;
 		this.loadSceneAssets(this.currScene, false);
-
-		final boolean prevSceneClassNotNull = this.prevSceneClass != null;
+		this.SCENE_CACHE.get(this.currSceneClass).timesLoaded++;
 
 		// Helps in resetting style and transformation info across scenes! YAY!:
-		if (prevSceneClassNotNull)
+		if (this.prevSceneClass != null)
 			this.SKETCH.pop();
 
+		// We push and pop the style and transforms to auto-reset. Hah!:
 		this.SKETCH.push();
-
-		this.SKETCH.textFont(this.SKETCH.getDefaultFont());
+		this.SKETCH.textFont(this.SKETCH.getDefaultFont()); // ...Also reset the font. Thanks!
 
 		this.SCENE_CHANGE_LISTENERS.removeAll(this.SCENE_CHANGE_LISTENERS_TO_REMOVE);
 
