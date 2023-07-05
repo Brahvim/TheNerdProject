@@ -775,7 +775,7 @@ public class NerdSceneManager {
 		toRet.DISPLAY = toRet.SKETCH.DISPLAYS;
 		toRet.ECS = this.ECS_INSTANCE.clearAllData();
 		toRet.GRAPHICS = toRet.SKETCH.getNerdGraphics();
-		toRet.CAMERA = toRet.SKETCH.setCameraToDefault();
+		toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
 		toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?
 
 		// If this is the first time we're constructing this scene,
