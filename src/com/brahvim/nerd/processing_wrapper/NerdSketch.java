@@ -2,23 +2,10 @@ package com.brahvim.nerd.processing_wrapper;
 
 import java.awt.AWTException;
 import java.awt.DisplayMode;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.MouseInfo;
-import java.awt.Point;
 import java.awt.Robot;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collection;
@@ -29,8 +16,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
@@ -43,7 +28,6 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
 
-import processing.awt.PSurfaceAWT;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -1047,175 +1031,6 @@ public class NerdSketch extends PApplet {
 		return toRetBuilder.toString();
 	}
 	// endregion
-	// endregion
-	// endregion
-
-	// region Start a `JAVA2D` sketch with an undecorated window.
-	public JFrame createSketchPanel(final Runnable p_exitTask, final NerdSketch p_sketch,
-			final PGraphics p_sketchGraphics) {
-		// This is what `PApplet::frame` used to contain:
-		super.frame = null;
-		final JFrame toRet = (JFrame) ((PSurfaceAWT.SmoothCanvas) p_sketch
-				.getSurface().getNative()).getFrame();
-
-		// region More stuff wth the `JFrame` (such as adding a `JPanel`!).
-		toRet.removeNotify();
-		toRet.setUndecorated(true);
-		toRet.setLayout(null);
-		toRet.addNotify();
-
-		toRet.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(final WindowEvent p_event) {
-				System.out.println("Window closing...");
-				p_sketch.exit();
-			}
-		});
-
-		// region The `JPanel`, and input-event handling.
-		final JPanel panel = new JPanel() {
-			@Override
-			protected void paintComponent(final Graphics p_javaGaphics) {
-				if (p_javaGaphics instanceof Graphics2D) {
-					((Graphics2D) p_javaGaphics).drawImage(
-							p_sketchGraphics.image, 0, 0, null);
-				}
-			}
-		};
-
-		// Let the `JFrame` be visible and request for `OS` permissions:
-		toRet.setContentPane(panel); // This is the dummy variable from Processing.
-		panel.setFocusable(true);
-		panel.setFocusTraversalKeysEnabled(false);
-		panel.requestFocus();
-		panel.requestFocusInWindow();
-
-		// region Listeners for handling events :+1::
-		// Listener for `PApplet::mousePressed()`, `PApplet::mouseReleased()`
-		// and `PApplet::mouseClicked()`:
-		panel.addMouseListener(new MouseListener() {
-			@Override
-			public void mousePressed(final MouseEvent p_mouseEvent) {
-				p_sketch.updateSketchMouse();
-				p_sketch.mousePressed = true;
-				p_sketch.mouseButton = p_mouseEvent.getButton();
-				p_sketch.mousePressed();
-			}
-
-			@Override
-			public void mouseReleased(final MouseEvent p_mouseEvent) {
-				p_sketch.updateSketchMouse();
-				p_sketch.mousePressed = false;
-				p_sketch.mouseButton = p_mouseEvent.getButton();
-				p_sketch.mouseReleased();
-			}
-
-			@Override
-			public void mouseClicked(final MouseEvent p_mouseEvent) {
-				p_sketch.updateSketchMouse();
-				p_sketch.mouseButton = p_mouseEvent.getButton();
-				p_sketch.mouseClicked();
-			}
-
-			@Override
-			public void mouseEntered(final MouseEvent p_mouseEvent) {
-				p_sketch.focused = true;
-			}
-
-			@Override
-			public void mouseExited(final MouseEvent p_mouseEvent) {
-				p_sketch.focused = false;
-			}
-		});
-
-		// Listener for `PApplet::mouseDragged()` and `PApplet::mouseMoved()`:
-		panel.addMouseMotionListener(new MouseMotionListener() {
-			@Override
-			public void mouseDragged(final MouseEvent p_mouseEvent) {
-				p_sketch.updateSketchMouse();
-				p_sketch.mouseDragged();
-			}
-
-			@Override
-			public void mouseMoved(final MouseEvent p_mouseEvent) {
-				p_sketch.updateSketchMouse();
-				p_sketch.mouseMoved();
-			}
-		});
-
-		// Listener for `PApplet::mouseWheel()`:
-		panel.addMouseWheelListener(new MouseWheelListener() {
-			@Override
-			@SuppressWarnings("deprecation") // `deprecation` and not `deprecated`!
-			public void mouseWheelMoved(final MouseWheelEvent p_mouseEvent) {
-				p_sketch.mouseEvent = new processing.event.MouseEvent(
-						p_mouseEvent, System.currentTimeMillis(),
-						processing.event.MouseEvent.CLICK,
-						p_mouseEvent.getModifiersEx(),
-						p_mouseEvent.getX(),
-						p_mouseEvent.getY(),
-						p_mouseEvent.getButton(),
-						p_mouseEvent.getClickCount());
-				p_sketch.mouseWheel(p_sketch.mouseEvent);
-			}
-		});
-
-		// Listener for `PApplet::keyPressed()`, `PApplet::keyReleased()`
-		// and `PApplet::keyTyped()`:
-		panel.addKeyListener(new KeyAdapter() {
-			protected boolean sketchExited;
-
-			@Override
-			public void keyTyped(final KeyEvent p_keyEvent) {
-				p_sketch.key = p_keyEvent.getKeyChar();
-				p_sketch.keyCode = p_keyEvent.getKeyCode();
-				p_sketch.keyTyped();
-			}
-
-			@Override
-			public void keyPressed(final KeyEvent p_keyEvent) {
-				// Handle `Alt + F4` closes ourselves!:
-
-				if (!(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.ALT_DOWN_MASK) == null
-						&& p_sketch.exitCalled())
-						&& p_keyEvent.getKeyCode() == KeyEvent.VK_F4) {
-					if (!p_sketch.exitCalled()) {
-						if (!this.sketchExited)
-							p_exitTask.run();
-						this.sketchExited = true;
-						p_keyEvent.consume();
-					}
-				}
-
-				p_sketch.key = p_keyEvent.getKeyChar();
-				p_sketch.keyCode = p_keyEvent.getKeyCode();
-				// System.out.println("Heard a keypress!");
-				p_sketch.keyPressed();
-			}
-
-			@Override
-			public void keyReleased(final KeyEvent p_keyEvent) {
-				p_sketch.key = p_keyEvent.getKeyChar();
-				p_sketch.keyCode = p_keyEvent.getKeyCode();
-				p_sketch.keyReleased();
-			}
-
-		});
-		// endregion
-		// endregion
-		// endregion
-
-		return toRet;
-	}
-
-	// Used by `Sketch::createSketchPanel()`:
-	// ~~Should've made a method-class for this.~~
-	protected void updateSketchMouse() {
-		final Point mousePoint = MouseInfo.getPointerInfo().getLocation(),
-				sketchFramePoint = this.sketchFrame.getLocation();
-		super.mouseX = mousePoint.x - sketchFramePoint.x;
-		super.mouseY = mousePoint.y - sketchFramePoint.y;
-	}
 	// endregion
 	// endregion
 
