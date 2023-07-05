@@ -45,7 +45,7 @@ public abstract class NerdCustomSketchBuilder {
 
 		final NerdSketchBuildArtifacts toRet = new NerdSketchBuildArtifacts(constructedSketch);
 
-		switch (constructedSketch.SKETCH_SETTINGS.RENDERER_NAME) {
+		switch (constructedSketch.RENDERER_NAME) {
 			case PConstants.JAVA2D -> toRet.addExtObject(
 					"JFrame", constructedSketch.sketchFrame);
 
@@ -196,7 +196,7 @@ public abstract class NerdCustomSketchBuilder {
 	public NerdCustomSketchBuilder setFirstScene(final Class<? extends NerdScene> p_firstScene) {
 		// Objects.requireNonNull(p_firstScene, "The first scene needs to be set, and
 		// cannot be `null`!");
-		this.SKETCH_KEY.firstSceneClass = p_firstScene;
+		this.SKETCH_KEY.firstScene = p_firstScene;
 		return this;
 	}
 

@@ -17,7 +17,7 @@ import processing.core.PConstants;
 
 /* `package` */ class NerdSketchBuilderSettings {
 
-	public Class<? extends NerdScene> firstSceneClass;
+	public Class<? extends NerdScene> firstScene;
 	public int width = 400, height = 400, antiAliasing;
 	public NerdSceneManagerSettings sceneManagerSettings;
 	public AlContext.AlContextSettings alContextSettings;

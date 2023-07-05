@@ -3,7 +3,6 @@ package com.brahvim.nerd_demos.scenes.scene3;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd.openal.AlSource;
-import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd.openal.AlBuffer;
 
@@ -149,13 +148,11 @@ public class AnimatedCube extends TestEulerBody {
 							// super.pos
 							.array());
 
-		final NerdGraphics g = super.SKETCH.getNerdGraphics();
-
 		super.integrate();
-		g.push();
-		g.translate(super.pos);
-		g.rotate(super.rot);
-		g.scale(this.size * this.plopWave.get());
+		super.SKETCH.push();
+		super.SKETCH.translate(super.pos);
+		super.SKETCH.rotate(super.rot);
+		super.SKETCH.scale(this.size * this.plopWave.get());
 
 		// Performance drop + doesn't work!:
 		// for (int i = 0; i < p_shape.getVertexCount(); i++)

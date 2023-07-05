@@ -35,6 +35,7 @@ import javax.swing.KeyStroke;
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
+import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 import com.brahvim.nerd.io.NerdStringTable;
@@ -64,19 +65,14 @@ import processing.opengl.PJOGL;
  */
 public class NerdSketch extends PApplet {
 
-	// region Inner classes.
+	// region Abstract inner classes.
 	// Used abstract classes instead of interfaces for these (two) reasons:
 	/*
-	 * - No security for a `static` field containing a collection of all references
-	 * from the user! It'll be `public`!
-	 *
-	 * - For registering a reference into the collection of all of them,
-	 * a default method may be used, since interfaces do not have them. However,
-	 * even default methods are overrideable, meaning that the registering code
-	 * becomes modifiable, letting the user change what they weren't supposed to!
-	 *
-	 * Abstract classes do not do so. Their constructors are called by the
-	 * implementing subclass regardless of being overriden.
+	 * - No security for `ALL_REFERENCES` from the user! It'll be `public`!
+	 * - For registering the reference into the `ALL_REFERENCES` collection,
+	 * a `default` method may be used. However, the method is overrideable,
+	 * meaning that registering code becomes modifiable, letting the user
+	 * change what they weren't supposed to!
 	 */
 
 	// region Input listeners.
@@ -173,65 +169,6 @@ public class NerdSketch extends PApplet {
 
 	}
 	// endregion
-
-	/** Certain setting for the parent {@link NerdSketch}. */
-	public class NerdSketchSettings {
-
-		public final String NAME;
-		public final String ICON_PATH;
-		public final int ANTI_ALIASING;
-		public final boolean USES_OPENGL;
-		public final String RENDERER_NAME;
-		public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
-
-		// Dimensions of the inital size of the window:
-		public final float INIT_SCR;
-		public final int INIT_WIDTH, INIT_HEIGHT;
-		public final int INIT_WIDTH_HALF, INIT_HEIGHT_HALF;
-		public final int INIT_WIDTH_QUART, INIT_HEIGHT_QUART;
-
-		public final boolean INITIALLY_RESIZABLE, STARTED_FULLSCREEN;
-
-		public boolean closeOnEscape, canFullscreen, f11Fullscreen, altEnterFullscreen;
-
-		protected NerdSketchSettings(final NerdSketchBuilderSettings p_settings) {
-			this.ICON_PATH = p_settings.iconPath;
-			this.ANTI_ALIASING = p_settings.antiAliasing;
-			this.INITIALLY_RESIZABLE = p_settings.canResize;
-			this.FIRST_SCENE_CLASS = p_settings.firstSceneClass;
-			this.STARTED_FULLSCREEN = p_settings.startedFullscreen;
-			this.NAME = p_settings.name == null ? "TheNerdProject" : p_settings.name;
-
-			this.canFullscreen = !p_settings.cannotFullscreen;
-			this.f11Fullscreen = !p_settings.cannotF11Fullscreen;
-			this.closeOnEscape = !p_settings.preventCloseOnEscape;
-			this.closeOnEscape = !p_settings.preventCloseOnEscape;
-			this.altEnterFullscreen = !p_settings.cannotAltEnterFullscreen;
-
-			this.RENDERER_NAME = p_settings.renderer;
-			this.USES_OPENGL = PConstants.P3D.equals(this.RENDERER_NAME);
-
-			// region Non-fullscreen window's dimensions when starting fullscreen.
-			if (this.STARTED_FULLSCREEN) {
-				this.INIT_WIDTH = 800;
-				this.INIT_HEIGHT = 600;
-			} else {
-				this.INIT_WIDTH = p_settings.width;
-				this.INIT_HEIGHT = p_settings.height;
-			}
-
-			// `INIT_WIDTH` ratios:
-			this.INIT_WIDTH_HALF = this.INIT_WIDTH / 2;
-			this.INIT_WIDTH_QUART = this.INIT_WIDTH / 2;
-
-			this.INIT_HEIGHT_QUART = this.INIT_WIDTH / 4;
-			this.INIT_HEIGHT_HALF = this.INIT_WIDTH / 4;
-
-			this.INIT_SCR = (float) this.INIT_WIDTH / (float) this.INIT_HEIGHT;
-			// endregion
-		}
-
-	}
 	// endregion
 
 	// region `public` fields.
@@ -246,11 +183,14 @@ public class NerdSketch extends PApplet {
 
 	// region Instance constants.
 	public final Robot ROBOT;
+	public final String NAME;
+	public final String ICON_PATH;
+	public final boolean USES_OPENGL;
+	public final String RENDERER_NAME;
 	public final NerdStringTable STRINGS;
 	public final NerdAssetManager ASSETS;
 	public final NerdUnprojector UNPROJECTOR;
 	public final HashMap<String, Object> EXTENSIONS;
-	public final NerdSketch.NerdSketchSettings SKETCH_SETTINGS;
 	// `Object`s instead of a custom interface because you can't do
 	// that to libraries you didn't write! (...or you'd be writing subclasses of the
 	// library classes. Manual work. Uhh...)
@@ -272,6 +212,18 @@ public class NerdSketch extends PApplet {
 			.getRefreshRate();
 	// endregion
 
+	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
+
+	// Dimensions of the inital size of the window:
+	public final float INIT_SCR;
+	public final int INIT_WIDTH, INIT_HEIGHT;
+	public final int INIT_WIDTH_HALF, INIT_HEIGHT_HALF;
+	public final int INIT_WIDTH_QUART, INIT_HEIGHT_QUART;
+
+	/** Certain setting for the sketch. */
+	public final boolean CLOSE_ON_ESCAPE, STARTED_FULLSCREEN, INITIALLY_RESIZABLE,
+			CAN_FULLSCREEN, F11_FULLSCREEN, ALT_ENTER_FULLSCREEN;
+
 	// `NerdSceneManager` is a `protected` field.
 	public final NerdDisplayManager DISPLAYS;
 	public final NerdWindowManager WINDOW;
@@ -280,7 +232,7 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// Time (`millis()` returns `int`!):
-	protected int frameStartTime, pframeTime, frameTime;
+	public int frameStartTime, pframeTime, frameTime;
 	// endregion
 
 	// region `protected` fields.
@@ -300,7 +252,10 @@ public class NerdSketch extends PApplet {
 	protected PGraphicsOpenGL glGraphics;
 	// endregion
 
+	protected final int ANTI_ALIASING;
 	protected final NerdBridgedSceneManager SCENES; // This is a bridged object, thus, `protected`.
+
+	// `LinkedHashSet`s preserve order (and also disallow element repetition)!
 
 	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
 	protected NerdBasicCamera defaultCamera;
@@ -351,8 +306,18 @@ public class NerdSketch extends PApplet {
 		this.DISPOSAL_LISTENERS = p_key.disposalListeners;
 		// endregion
 
+		this.RENDERER_NAME = p_key.renderer;
+		this.ICON_PATH = p_key.iconPath;
 		this.EXTENSIONS = p_key.nerdExtensions;
-		this.SKETCH_SETTINGS = new NerdSketch.NerdSketchSettings(p_key);
+		this.ANTI_ALIASING = p_key.antiAliasing;
+		this.FIRST_SCENE_CLASS = p_key.firstScene;
+		this.INITIALLY_RESIZABLE = p_key.canResize;
+		this.CAN_FULLSCREEN = !p_key.cannotFullscreen;
+		this.CLOSE_ON_ESCAPE = !p_key.preventCloseOnEscape;
+		this.F11_FULLSCREEN = !p_key.cannotF11Fullscreen;
+		this.STARTED_FULLSCREEN = p_key.startedFullscreen;
+		this.ALT_ENTER_FULLSCREEN = !p_key.cannotAltEnterFullscreen;
+		this.NAME = p_key.name == null ? "TheNerdProject" : p_key.name;
 		// endregion
 
 		// region Non-key settings.
@@ -376,14 +341,14 @@ public class NerdSketch extends PApplet {
 
 		this.DISPLAYS = new NerdDisplayManager(this);
 		this.WINDOW = NerdWindowManager.createWindowMan(this);
+		this.USES_OPENGL = PConstants.P2D.equals(this.RENDERER_NAME) || PConstants.P3D.equals(this.RENDERER_NAME);
 		this.SCENES = new NerdBridgedSceneManager(
 				this, p_key.sceneManagerSettings, p_key.sceneChangeListeners, p_key.ecsSystemOrder);
 		// endregion
 
 		// region Setting OpenGL renderer icons.
-		if (PConstants.P2D.equals(this.SKETCH_SETTINGS.RENDERER_NAME)
-				|| PConstants.P3D.equals(this.SKETCH_SETTINGS.RENDERER_NAME))
-			PJOGL.setIcon(this.SKETCH_SETTINGS.ICON_PATH);
+		if (PConstants.P2D.equals(this.RENDERER_NAME) || PConstants.P3D.equals(this.RENDERER_NAME))
+			PJOGL.setIcon(this.ICON_PATH);
 		// endregion
 
 		// region Loading the string table.
@@ -401,6 +366,25 @@ public class NerdSketch extends PApplet {
 		// region Preloading assets from scenes we want to!
 		for (final Class<? extends NerdScene> c : p_key.scenesToPreload)
 			this.SCENES.loadSceneAssetsAsync(c);
+		// endregion
+
+		// region Non-fullscreen window's dimensions when starting fullscreen.
+		if (this.STARTED_FULLSCREEN) {
+			this.INIT_WIDTH = 800;
+			this.INIT_HEIGHT = 600;
+		} else {
+			this.INIT_WIDTH = p_key.width;
+			this.INIT_HEIGHT = p_key.height;
+		}
+
+		// `INIT_WIDTH` ratios:
+		this.INIT_WIDTH_HALF = this.INIT_WIDTH / 2;
+		this.INIT_WIDTH_QUART = this.INIT_WIDTH / 2;
+
+		this.INIT_HEIGHT_QUART = this.INIT_WIDTH / 4;
+		this.INIT_HEIGHT_HALF = this.INIT_WIDTH / 4;
+
+		this.INIT_SCR = (float) this.INIT_WIDTH / (float) this.INIT_HEIGHT;
 		// endregion
 
 		// region Setting up `this.ROBOT`.
@@ -431,9 +415,8 @@ public class NerdSketch extends PApplet {
 		// super.fullScreen(this.RENDERER);
 		// else
 
-		super.smooth(this.SKETCH_SETTINGS.ANTI_ALIASING);
-		super.size(this.SKETCH_SETTINGS.INIT_WIDTH, this.SKETCH_SETTINGS.INIT_HEIGHT,
-				this.SKETCH_SETTINGS.RENDERER_NAME);
+		super.smooth(this.ANTI_ALIASING);
+		super.size(this.INIT_WIDTH, this.INIT_HEIGHT, this.RENDERER_NAME);
 
 		for (final Consumer<NerdSketch> c : this.SETTINGS_LISTENERS)
 			if (c != null)
@@ -444,7 +427,7 @@ public class NerdSketch extends PApplet {
 	// region Processing sketch workflow.
 	@Override
 	public void setup() {
-		this.iconImage = super.loadImage(this.SKETCH_SETTINGS.ICON_PATH);
+		this.iconImage = super.loadImage(this.ICON_PATH);
 
 		this.WINDOW.width = super.width;
 		this.WINDOW.height = super.height;
@@ -456,17 +439,20 @@ public class NerdSketch extends PApplet {
 		this.WINDOW.updateWindowRatios();
 		this.WINDOW.init();
 
-		super.surface.setTitle(this.SKETCH_SETTINGS.NAME);
+		super.surface.setTitle(this.NAME);
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
 		super.frameRate(this.DEFAULT_REFRESH_RATE);
+
+		this.nerdGraphics = new NerdGraphics(this, super.getGraphics());
+		this.defaultFont = super.createFont("SansSerif", this.WINDOW.scr * 72);
 
 		// I should make a super slow "convenience" method to perform this
 		// `switch (this.RENDERER)` using `Runnable`s!
 		// :joy:!
 
 		// Renderer-specific object initialization and settings!:
-		switch (this.SKETCH_SETTINGS.RENDERER_NAME) {
+		switch (this.RENDERER_NAME) {
 			case PConstants.P2D, PConstants.P3D -> {
 				this.glWindow = (GLWindow) this.WINDOW.getNativeObject();
 				this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
@@ -476,7 +462,7 @@ public class NerdSketch extends PApplet {
 				this.defaultCamera = new NerdBasicCameraBuilder(this).build();
 				this.currentCamera = this.defaultCamera;
 
-				if (this.SKETCH_SETTINGS.INITIALLY_RESIZABLE)
+				if (this.INITIALLY_RESIZABLE)
 					this.glWindow.setResizable(true);
 
 				// Done in the constructor! `setup()`'s too late for this!:
@@ -486,12 +472,9 @@ public class NerdSketch extends PApplet {
 			case PConstants.JAVA2D -> {
 				this.sketchFrame = (JFrame) this.WINDOW.getNativeObject();
 			}
+
 		}
 
-		this.nerdGraphics = new NerdGraphics(this, super.getGraphics());
-		this.defaultFont = super.createFont("SansSerif", this.WINDOW.scr * 72);
-
-		// ...Also makes these changes to `NerdSketch::nerdGraphics`, haha:
 		super.textFont(this.defaultFont);
 		super.rectMode(PConstants.CENTER);
 		super.imageMode(PConstants.CENTER);
@@ -501,7 +484,7 @@ public class NerdSketch extends PApplet {
 	}
 
 	public void pre() {
-		if (this.SKETCH_SETTINGS.USES_OPENGL)
+		if (this.USES_OPENGL)
 			this.pgl = super.beginPGL();
 
 		// Cheap removal strategy, LOL. I'm fed of boilerplate!:
@@ -527,7 +510,7 @@ public class NerdSketch extends PApplet {
 		this.PRE_DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 
 		// region Apply the camera when using OpenGL!
-		if (this.SKETCH_SETTINGS.USES_OPENGL) {
+		if (this.USES_OPENGL) {
 			if (this.currentCamera != null)
 				this.currentCamera.apply(super.getGraphics()); // Do all three tasks using the current camera.
 			else { // ..."Here we go again."
@@ -535,8 +518,7 @@ public class NerdSketch extends PApplet {
 
 				// If `this.currentCamera` is `null`, but wasn't,
 				if (this.currentCamera != this.previousCamera)
-					System.out.printf("Sketch \"%s\" has no camera! Consider adding one...?",
-							this.SKETCH_SETTINGS.NAME);
+					System.out.printf("Sketch \"%s\" has no camera! Consider adding one...?", this.NAME);
 			}
 		}
 		// endregion
@@ -547,10 +529,10 @@ public class NerdSketch extends PApplet {
 
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.SCENES.getCurrentScene() == null) {
-			if (this.SKETCH_SETTINGS.FIRST_SCENE_CLASS == null)
+			if (this.FIRST_SCENE_CLASS == null)
 				System.err.println("There is no initial `NerdScene`! It's `null`!");
 			else
-				this.SCENES.startScene(this.SKETCH_SETTINGS.FIRST_SCENE_CLASS);
+				this.SCENES.startScene(this.FIRST_SCENE_CLASS);
 		}
 		// endregion
 
@@ -576,7 +558,7 @@ public class NerdSketch extends PApplet {
 		// this.image(this.sceneGraphics);
 
 		// ...Because apparently Processing allows rendering here!:
-		if (this.SKETCH_SETTINGS.USES_OPENGL)
+		if (this.USES_OPENGL)
 			super.endPGL();
 	}
 
@@ -660,17 +642,17 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void keyPressed() {
-		if (!this.SKETCH_SETTINGS.closeOnEscape && this.keyCode == 27)
+		if (!this.CLOSE_ON_ESCAPE && this.keyCode == 27)
 			this.key = '\0'; // Processing checks this to know what key was pressed.
 		// By setting it to `\0`, we disallow exiting.
 
-		if (this.SKETCH_SETTINGS.canFullscreen) {
-			if (this.SKETCH_SETTINGS.altEnterFullscreen
+		if (this.CAN_FULLSCREEN) {
+			if (this.ALT_ENTER_FULLSCREEN
 					&& super.keyCode == KeyEvent.VK_ENTER
 					&& this.INPUT.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
 				this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
-			else if (this.SKETCH_SETTINGS.f11Fullscreen)
-				switch (this.SKETCH_SETTINGS.RENDERER_NAME) {
+			else if (this.F11_FULLSCREEN)
+				switch (this.RENDERER_NAME) {
 					case PConstants.P2D, PConstants.P3D -> {
 						if (super.keyCode == 107) // `KeyEvent.VK_ADD` is `107`, but here, it's `F11`!
 							this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
@@ -850,18 +832,6 @@ public class NerdSketch extends PApplet {
 
 	// region Utilities!~
 	// region Ah yes, GETTERS AND SETTERS. Even here!:
-	public int getFrameStartTime() {
-		return this.frameStartTime;
-	}
-
-	public int getFrameTime() {
-		return this.frameTime;
-	}
-
-	public int getPframeTime() {
-		return this.pframeTime;
-	}
-
 	public PImage getIconImage() {
 		return this.iconImage;
 	}
@@ -888,6 +858,834 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// region Rendering utilities!
+	// region From `PGraphics`.
+	// region Shapes.
+	// region `drawShape()` overloads.
+	public void drawShape(final float p_x, final float p_y, final float p_z, final int p_shapeType,
+			final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		super.endShape(PConstants.CLOSE);
+		super.popMatrix();
+	}
+
+	public void drawShape(final float p_x, final float p_y, final int p_shapeType, final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_x, p_y);
+		super.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		super.endShape(PConstants.CLOSE);
+		super.popMatrix();
+	}
+
+	public void drawShape(final PVector p_pos, final int p_shapeType, final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		super.endShape(PConstants.CLOSE);
+		super.popMatrix();
+	}
+
+	public void drawShape(final int p_shapeType, final Runnable p_shapingFxn) {
+		super.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		super.endShape(PConstants.CLOSE);
+	}
+	// endregion
+
+	// region `drawOpenShape()` overloads.
+	public void drawOpenShape(final float p_x, final float p_y, final float p_z, final int p_shapeType,
+			final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		super.endShape();
+		super.popMatrix();
+	}
+
+	public void drawOpenShape(final float p_x, final float p_y, final int p_shapeType, final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_x, p_y);
+		super.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		super.endShape();
+		super.popMatrix();
+	}
+
+	public void drawOpenShape(final PVector p_pos, final int p_shapeType, final Runnable p_shapingFxn) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		super.endShape();
+		super.popMatrix();
+	}
+
+	public void drawOpenShape(final int p_shapeType, final Runnable p_shapingFxn) {
+		super.beginShape(p_shapeType);
+		p_shapingFxn.run();
+		super.endShape();
+	}
+	// endregion
+
+	public void drawContour(final Runnable p_countouringFxn) {
+		super.beginContour();
+		p_countouringFxn.run();
+		super.endContour();
+	}
+
+	// region `PVector` overloads.
+	// region 3D shapes.
+	// region `box()` overloads.
+	public void box(final float p_x, final float p_y, final float p_z,
+			final float p_width, final float p_height, final float p_depth) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.box(p_width, p_height, p_depth);
+		super.popMatrix();
+	}
+
+	public void box(final PVector p_pos, final float p_width, final float p_height, final float p_depth) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.box(p_width, p_height, p_depth);
+		super.popMatrix();
+	}
+
+	public void box(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.box(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+		super.popMatrix();
+	}
+
+	public void box(final float p_x, final float p_y, final float p_z, final float p_size) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.box(p_size);
+		super.popMatrix();
+	}
+
+	public void box(final PVector p_pos, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.box(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+		super.popMatrix();
+	}
+
+	public void box(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.box(p_size);
+		super.popMatrix();
+	}
+	// endregion
+
+	// region `sphere()` overloads (just a copy of the `box()` ones, hehehe.).
+	public void sphere(final float p_x, final float p_y, final float p_z,
+			final float p_width, final float p_height, final float p_depth) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.scale(p_width, p_height, p_depth);
+		super.sphere(1);
+		super.popMatrix();
+	}
+
+	public void sphere(final PVector p_pos, final float p_width, final float p_height, final float p_depth) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.scale(p_width, p_height, p_depth);
+		super.sphere(1);
+		super.popMatrix();
+	}
+
+	public void sphere(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.scale(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+		super.sphere(1);
+		super.popMatrix();
+	}
+
+	public void sphere(final float p_x, final float p_y, final float p_z, final float p_size) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.sphere(p_size);
+		super.popMatrix();
+	}
+
+	public void sphere(final PVector p_pos, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.scale(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+		super.sphere(1);
+		super.popMatrix();
+	}
+
+	public void sphere(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.sphere(p_size);
+		super.popMatrix();
+	}
+	// endregion
+	// endregion
+
+	public void arc(final PVector p_translation, final PVector p_size,
+			final float p_startAngle, final float p_endAngle) {
+		super.pushMatrix();
+		this.translate(p_translation);
+		super.arc(0, 0, p_size.x, p_size.y, p_startAngle, p_endAngle);
+		super.popMatrix();
+	}
+
+	// Perhaps I should figure out the default arc mode and make the upper one call
+	// this one?:
+	public void arc(final PVector p_translation, final PVector p_size,
+			final float p_startAngle, final float p_endAngle, final int p_mode) {
+		super.pushMatrix();
+		this.translate(p_translation);
+		super.arc(0, 0, p_size.x, p_size.y, p_startAngle, p_endAngle, p_mode);
+		super.popMatrix();
+	}
+
+	public void circle(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.circle(0, 0, p_size);
+		super.popMatrix();
+	}
+
+	// region E L L I P S E S.
+	// ...For when you want to use an ellipse like a circle:
+	public void ellipse(final float p_x, final float p_y, final PVector p_dimensions) {
+		super.ellipse(p_x, p_y, p_dimensions.x, p_dimensions.y);
+	}
+
+	public void ellipse(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.ellipse(0, 0, p_width, p_height);
+		super.popMatrix();
+	}
+
+	public void ellipse(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.ellipse(0, 0, p_dimensions.x, p_dimensions.y);
+		super.popMatrix();
+	}
+
+	public void ellipse(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.ellipse(0, 0, p_size, p_size);
+		super.popMatrix();
+	}
+
+	public void ellipse(final PVector p_pos, final float p_width, final float p_height) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.ellipse(0, 0, p_width, p_height);
+		super.popMatrix();
+	}
+
+	public void ellipse(final PVector p_pos, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.ellipse(0, 0, p_dimensions.x, p_dimensions.y);
+		super.popMatrix();
+	}
+	// endregion
+
+	public void line(final PVector p_from, final PVector p_to) {
+		// `z`-coordinate of first and THEN the second point!:
+		super.line(p_from.x, p_from.y, p_to.x, p_to.y, p_from.z, p_to.y);
+	}
+
+	public void lineInDir/* `lineInDirOfLength` */(
+			final PVector p_start, final PVector p_dir, final float p_length) {
+		// `z`-coordinate of first and THEN the second point!:
+		super.line(p_start.x, p_start.y,
+				p_start.x + p_dir.x * p_length,
+				p_start.y + p_dir.y * p_length,
+				// `z` stuff!:
+				p_start.z, p_start.z + p_dir.z * p_length);
+	}
+
+	public void line2d(final PVector p_from, final PVector p_to) {
+		super.line(p_from.x, p_from.y, p_to.x, p_to.y);
+	}
+
+	// region `radialLine*d()`!
+	public void radialLine2d(final PVector p_from, final float p_angle) {
+		super.line(p_from.x, p_from.y, PApplet.sin(p_angle), PApplet.cos(p_angle));
+	}
+
+	public void radialLine2d(final PVector p_from, final float p_x, final float p_y, final float p_length) {
+		super.line(p_from.x, p_from.y,
+				p_from.x + PApplet.sin(p_x) * p_length,
+				p_from.y + PApplet.cos(p_y) * p_length);
+	}
+
+	public void radialLine2d(final PVector p_from, final float p_x, final float p_y,
+			final float p_xLen, final float p_yLen) {
+		super.line(p_from.x, p_from.y,
+				p_from.x + PApplet.sin(p_x) * p_xLen,
+				p_from.y + PApplet.cos(p_y) * p_yLen);
+	}
+
+	public void radialLine2d(final PVector p_from, final PVector p_trigVals, final float p_size) {
+		this.line(p_from.x, p_from.y, p_trigVals.x * p_size, p_trigVals.y * p_size);
+	}
+
+	public void radialLine2d(final PVector p_from, final PVector p_values) {
+		this.radialLine2d(p_from, p_values, p_values.z);
+	}
+
+	public void radialLine3d(final PVector p_from, final float p_theta, final float p_phi, final float p_length) {
+		final float sineOfPitch = PApplet.sin(p_theta);
+		super.line(p_from.x, p_from.y,
+				p_from.x + sineOfPitch * PApplet.cos(p_phi) * p_length,
+				p_from.x + sineOfPitch * PApplet.sin(p_phi) * p_length,
+				p_from.z, p_from.x + PApplet.cos(p_theta) * p_length);
+	}
+
+	public void radialLine3d(final PVector p_from, final float p_theta, final float p_phi,
+			final float p_xLen, final float p_yLen, final float p_zLen) {
+		final float sineOfPitch = PApplet.sin(p_theta);
+		super.line(p_from.x, p_from.y,
+				p_from.x + sineOfPitch * PApplet.cos(p_phi) * p_xLen,
+				p_from.x + sineOfPitch * PApplet.sin(p_phi) * p_yLen,
+				p_from.z, p_from.x + PApplet.cos(p_theta) * p_zLen);
+	}
+	// endregion
+
+	public void point(final PVector p_pos) {
+		super.point(p_pos.x, p_pos.y, p_pos.z);
+	}
+
+	public void point2d(final PVector p_pos) {
+		super.point(p_pos.x, p_pos.y, 0);
+	}
+
+	public void quad(final PVector p_first, final PVector p_second, final PVector p_third, final PVector p_fourth) {
+		super.quad(
+				p_first.x, p_first.y,
+				p_second.x, p_second.y,
+				p_third.x, p_third.y,
+				p_fourth.x, p_first.y);
+	}
+
+	// region `rect()` overloads, ;)!
+	@Override
+	public void rect(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.rect(0, 0, p_width, p_height);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height,
+			final float p_radius) {
+		super.pushMatrix();
+		this.translate(p_x, p_y, p_z);
+		super.rect(0, 0, p_width, p_height, p_radius);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z,
+			final float p_width, final float p_height,
+			final float p_topLeftRadius, final float p_topRightRadius,
+			final float p_bottomRightRadius, final float p_bottomLeftRadius) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.rect(0, 0, p_width, p_height,
+				p_topLeftRadius, p_topRightRadius,
+				p_bottomRightRadius, p_bottomLeftRadius);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height,
+			final PVector p_topRadii, final PVector p_bottomRadii) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.rect(0, 0, p_width, p_height,
+				p_topRadii.x, p_topRadii.y,
+				p_bottomRadii.x, p_bottomRadii.y);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final PVector p_dimensions) {
+		super.rect(p_x, p_y, p_dimensions.x, p_dimensions.y);
+	}
+
+	public void rect(final float p_x, final float p_y, final PVector p_dimensions, final float p_radius) {
+		super.rect(p_x, p_y, p_dimensions.x, p_dimensions.y, p_radius);
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z, final PVector p_dimensions,
+			final float p_topLeftRadius, final float p_topRightRadius,
+			final float p_bottomRightRadius, final float p_bottomLeftRadius) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.rect(0, 0,
+				p_dimensions.x, p_dimensions.y,
+				p_topLeftRadius, p_topRightRadius,
+				p_bottomRightRadius, p_bottomLeftRadius);
+		super.popMatrix();
+	}
+
+	public void rect(final float p_x, final float p_y, final float p_z, final PVector p_dimensions,
+			final PVector p_topRadii, final PVector p_bottomRadii) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.rect(0, 0,
+				p_dimensions.x, p_dimensions.y,
+				p_topRadii.x, p_topRadii.y,
+				p_bottomRadii.x, p_bottomRadii.y);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final float p_width, final float p_height) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_width, p_height);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final float p_width, final float p_height, final float p_radius) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_width, p_height, p_radius);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final float p_width, final float p_height,
+			final float p_topLeftRadius, final float p_topRightRadius,
+			final float p_bottomRightRadius, final float p_bottomLeftRadius) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_width, p_height,
+				p_topLeftRadius, p_topRightRadius,
+				p_bottomRightRadius, p_bottomLeftRadius);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final float p_width, final float p_height,
+			final PVector p_topRadii, final PVector p_bottomRadii) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_width, p_height,
+				p_topRadii.x, p_topRadii.y,
+				p_bottomRadii.x, p_bottomRadii.y);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final PVector p_dimensions) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_dimensions.x, p_dimensions.y);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final PVector p_dimensions, final float p_radius) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_dimensions.x, p_dimensions.y, p_radius);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final PVector p_dimensions,
+			final float p_topLeftRadius, final float p_topRightRadius,
+			final float p_bottomRightRadius, final float p_bottomLeftRadius) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_dimensions.x, p_dimensions.y,
+				p_topLeftRadius, p_topRightRadius,
+				p_bottomRightRadius, p_bottomLeftRadius);
+		super.popMatrix();
+	}
+
+	public void rect(final PVector p_pos, final PVector p_dimensions,
+			final PVector p_topRadii, final PVector p_bottomRadii) {
+		super.pushMatrix();
+		this.translate(p_pos);
+		super.rect(0, 0, p_dimensions.x, p_dimensions.y,
+				p_topRadii.x, p_topRadii.y,
+				p_bottomRadii.x, p_bottomRadii.y);
+		super.popMatrix();
+	}
+	// endregion
+
+	public void square(final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		super.translate(p_pos.x, p_pos.y, p_pos.z);
+		super.square(0, 0, p_size);
+		super.popMatrix();
+	}
+
+	// region `triangle()` overload!
+	// region ...Thoughts about the-uhh, `triangle()` overloads!
+	// I wanted to go crazy, writing out (BY HAND!) versions like...
+	// (shown here without the `final` keyword, of course!):
+	// `triangle(PVector p_v1, float x2, float y2, float x3, float y3)`
+	// `triangle(float x1, float y1, PVector p_v2, float x3, float y3)`
+	// ...
+	// ...AND EVEN:
+	// `triangle(PVector p_v2, float x2, float y2, PVector v3)`.
+	// ...Yeah. You get the point. I'm crazy ;)
+	// Yes, I was going to use more generator code (JavaScript!) for this.
+	// I might be crazy, but am also lazy! :joy:
+	// endregion
+
+	public void triangle(final PVector p_v1, final PVector p_v2, final PVector p_v3) {
+		super.triangle(
+				p_v1.x, p_v1.y,
+				p_v2.x, p_v2.y,
+				p_v3.x, p_v3.y);
+	}
+	// endregion
+	// endregion
+	// endregion
+
+	/**
+	 * Draws the {@code p_bgImage} as if it was a background. You may even choose to
+	 * call one of the {@link PApplet#tint()} overloads before calling this!
+	 */
+	@Override
+	public void background(final PImage p_bgImage) {
+		Objects.requireNonNull(p_bgImage);
+
+		super.pushMatrix();
+		super.hint(PConstants.DISABLE_DEPTH_TEST);
+		super.perspective();
+		super.camera();
+		super.image(p_bgImage,
+				this.WINDOW.cx, this.WINDOW.cy,
+				this.WINDOW.width, this.WINDOW.height);
+		super.hint(PConstants.ENABLE_DEPTH_TEST);
+		super.popMatrix();
+	}
+
+	// region Transformations!
+	// "Hah! Gott'em with the name alignment!"
+	public void translate(final PVector p_vec) {
+		super.translate(p_vec.x, p_vec.y, p_vec.z);
+	}
+
+	public void scale(final PVector p_scaling) {
+		super.scale(p_scaling.x, p_scaling.y, p_scaling.z);
+	}
+
+	public void rotate(final PVector p_rotVec) {
+		super.rotateX(p_rotVec.x);
+		super.rotateY(p_rotVec.y);
+		super.rotateZ(p_rotVec.z);
+	}
+
+	public void rotate(final float p_x, final float p_y, final float p_z) {
+		super.rotateX(p_x);
+		super.rotateY(p_y);
+		super.rotateZ(p_z);
+	}
+	// endregion
+
+	// region `modelVec()` and `screenVec()`.
+	public PVector modelVec() {
+		return new PVector(
+				// "I passed these `0`s in myself, yeah. Let's not rely on the JIT too much!"
+				// - Me before re-thinking that.
+				this.modelX(),
+				this.modelY(),
+				this.modelZ());
+	}
+
+	public PVector modelVec(final PVector p_vec) {
+		return new PVector(
+				super.modelX(p_vec.x, p_vec.y, p_vec.z),
+				super.modelY(p_vec.x, p_vec.y, p_vec.z),
+				super.modelZ(p_vec.x, p_vec.y, p_vec.z));
+	}
+
+	public PVector modelVec(final float p_x, final float p_y, final float p_z) {
+		return new PVector(
+				super.modelX(p_x, p_y, p_z),
+				super.modelY(p_x, p_y, p_z),
+				super.modelZ(p_x, p_y, p_z));
+	}
+
+	public PVector screenVec() {
+		return new PVector(
+				this.screenX(),
+				this.screenY(),
+				this.screenZ());
+	}
+
+	public PVector screenVec(final PVector p_vec) {
+		return new PVector(
+				this.screenX(p_vec.x, p_vec.y, p_vec.z),
+				this.screenY(p_vec.x, p_vec.y, p_vec.z),
+				this.screenZ(p_vec.x, p_vec.y, p_vec.z));
+	}
+
+	public PVector screenVec(final float p_x, final float p_y, final float p_z) {
+		return new PVector(
+				this.screenX(p_x, p_y, p_z),
+				this.screenY(p_x, p_y, p_z),
+				this.screenZ(p_x, p_y, p_z));
+	}
+	// endregion
+
+	// region `modelX()`-`modelY()`-`modelZ()` `PVector` and no-parameter overloads.
+	// region Parameterless overloads.
+	public float modelX() {
+		return super.modelX(0, 0, 0);
+	}
+
+	public float modelY() {
+		return super.modelY(0, 0, 0);
+	}
+
+	public float modelZ() {
+		return super.modelZ(0, 0, 0);
+	}
+	// endregion
+
+	// region `p_vec`?
+	// ...how about `p_modelMatInvMulter`? :rofl:!
+	public float modelX(final PVector p_vec) {
+		return super.modelX(p_vec.x, p_vec.y, p_vec.z);
+	}
+
+	public float modelY(final PVector p) {
+		return super.modelY(p.x, p.y, p.z);
+	}
+
+	public float modelZ(final PVector p) {
+		return super.modelZ(p.x, p.y, p.z);
+	}
+	// endregion
+	// endregion
+
+	// region `screenX()`-`screenY()`-`screenZ()`, `PVector`, plus no-arg overloads.
+	// "Oh! And when the `z` is `-1`, you just add this and sub that. Optimization!"
+	// - That ONE Mathematician.
+
+	// region Parameterless overloads.
+	public float screenX() {
+		return super.screenX(0, 0, 0);
+	}
+
+	public float screenY() {
+		return super.screenY(0, 0, 0);
+	}
+
+	public float screenZ() {
+		return super.screenY(0, 0, 0);
+	}
+	// endregion
+
+	// region `p_vec`!
+	// The following two were going to disclude the `z` if it was `0`.
+	// And later, I felt this was risky.
+	// This two-`float` overload ain't in the docs, that scares me!
+
+	// ...ACTUALLY,
+	// https://github.com/processing/processing/blob/459853d0dcdf1e1648b1049d3fdbb4bf233fded8/core/src/processing/opengl/PGraphicsOpenGL.java#L4611
+	// ..."they rely on the JIT too!" (no, they don't optimize this at all. They
+	// just put the `0` themselves, LOL.) :joy:
+
+	public float screenX(final PVector p_vec) {
+		return super.screenX(p_vec.x, p_vec.y, p_vec.z);
+
+		// return p_vec.z == 0
+		// ? super.screenX(p_vec.x, p_vec.y)
+		// : super.screenX(p_vec.x, p_vec.y, p_vec.z);
+	}
+
+	public float screenY(final PVector p_vec) {
+		return super.screenY(p_vec.x, p_vec.y, p_vec.z);
+
+		// return p_vec.z == 0
+		// ? super.screenY(p_vec.x, p_vec.y)
+		// : super.screenY(p_vec.x, p_vec.y, p_vec.z);
+	}
+
+	public float screenZ(final PVector p_vec) {
+		// Hmmm...
+		// ..so `z` cannot be `0` here.
+		// ..and `x` and `y` cannot be ignored!
+		// "No room for optimization here!"
+		return super.screenZ(p_vec.x, p_vec.y, p_vec.z);
+	}
+	// endregion
+	// endregion
+
+	// region Camera matrix configuration.
+	public void camera(final NerdBasicCamera p_cam) {
+		super.camera(
+				p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z,
+				p_cam.getCenter().x, p_cam.getCenter().y, p_cam.getCenter().z,
+				p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
+	}
+
+	public void camera(final NerdFlyCamera p_cam) {
+		super.camera(
+				p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z,
+
+				p_cam.getPos().x + p_cam.front.x,
+				p_cam.getPos().y + p_cam.front.y,
+				p_cam.getPos().z + p_cam.front.z,
+
+				p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
+	}
+
+	public void camera(final PVector p_pos, final PVector p_center, final PVector p_up) {
+		super.camera(
+				p_pos.x, p_pos.y, p_pos.z,
+				p_center.x, p_center.y, p_center.z,
+				p_up.x, p_up.y, p_up.z);
+	}
+	// endregion
+
+	// region Projection functions.
+	public void perspective(final NerdAbstractCamera p_cam) {
+		super.perspective(p_cam.fov, p_cam.aspect, p_cam.near, p_cam.far);
+	}
+
+	public void perspective(final float p_fov, final float p_near, final float p_far) {
+		super.perspective(p_fov, this.WINDOW.scr, p_near, p_far);
+	}
+
+	public void ortho(final NerdAbstractCamera p_cam) {
+		super.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy, this.WINDOW.cy, p_cam.near, p_cam.far);
+	}
+
+	public void ortho(final float p_near, final float p_far) {
+		super.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy, this.WINDOW.cy, p_near, p_far);
+	}
+
+	/**
+	 * Expands to: {@code PApplet::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
+	 */
+	@Override
+	public void ortho(final float p_cx, final float p_cy, final float p_near, final float p_far) {
+		super.ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far);
+	}
+	// endregion
+
+	// region The billion `image()` overloads. Help me make "standards"?
+	// region For `PImage`s.
+	public void image(final PImage p_image) {
+		// https://processing.org/reference/set_.html.
+		// Faster than `image()`!:
+		// `super.set(0, 0, p_image);`
+		// However, we also need to remember that it doesn't render the image on to a
+		// quad, meaning that transformations won't apply.
+		super.image(p_image, 0, 0);
+	}
+
+	/**
+	 * @param p_side The length of the side of the square.
+	 */
+	public void image(final PImage p_image, final float p_side) {
+		super.image(p_image, 0, 0, p_side, p_side);
+	}
+
+	public void image(final PImage p_image, final PVector p_pos) {
+		super.pushMatrix();
+		super.translate(p_pos.x, p_pos.y, p_pos.z);
+		super.image(p_image, 0, 0);
+		super.popMatrix();
+	}
+
+	public void image(final PImage p_image, final PVector p_pos, final float p_size) {
+		super.pushMatrix();
+		super.translate(p_pos.x, p_pos.y, p_pos.z);
+		this.image(p_image, p_pos.x, p_pos.y, p_size, p_size);
+		super.popMatrix();
+	}
+
+	public void image(final PImage p_image, final float p_x, final float p_y, final float p_z) {
+		super.pushMatrix();
+		super.translate(p_x, p_y, p_z);
+		super.image(p_image, 0, 0);
+		super.popMatrix();
+	}
+	// endregion
+
+	// region For `PGraphics`.
+	public void image(final PGraphics p_graphics) {
+		super.image(p_graphics, 0, 0);
+	}
+
+	public void image(final PGraphics p_graphics, final PVector p_pos) {
+		super.pushMatrix();
+		super.translate(p_pos.x, p_pos.y, p_pos.z);
+		super.image(p_graphics, 0, 0);
+		super.popMatrix();
+	}
+
+	public void image(final PGraphics p_graphics, final float p_scale) {
+		super.image(p_graphics, 0, 0, p_scale, p_scale);
+	}
+
+	public void image(final PGraphics p_graphics, final PVector p_pos, final float p_scale) {
+		super.pushMatrix();
+		super.translate(p_pos.x, p_pos.y, p_pos.z);
+		this.image(p_graphics, 0, 0, p_scale, p_scale);
+		super.popMatrix();
+	}
+
+	public void image(final PGraphics p_graphics, final float p_x, final float p_y, final float p_z) {
+		this.image((PImage) p_graphics, p_x, p_y, p_z);
+	}
+
+	public void image(final PGraphics p_graphics, final PVector p_pos, final float p_width, final float p_height) {
+		super.pushMatrix();
+		super.translate(p_pos.x, p_pos.y, p_pos.z);
+		this.image(p_graphics, p_pos.x, p_pos.y, p_width, p_height);
+		super.popMatrix();
+	}
+	// endregion
+	// endregion
+
+	// region `push()` and `pop()` simply don't work in `PApplet`,
+	// ...so I re-wrote them myself!
+	@Override
+	public void push() {
+		super.pushMatrix();
+		super.pushStyle();
+	}
+
+	@Override
+	public void pop() {
+		super.popStyle();
+		super.popMatrix();
+	}
+	// endregion
+	// endregion
+
+	public float textHeight() {
+		return super.textAscent() - super.textDescent();
+	}
+
+	/**
+	 * Translates by the width of {@code p_text} halved, and the current text
+	 * height, halved, before actually rendering the text.
+	 * 
+	 * @see NerdSketch#textHeight()
+	 * @see PApplet#textWidth(String)
+	 */
+	public void centeredText(final String p_text) {
+		super.text(p_text, super.textWidth(p_text) * 0.5f, this.textHeight() * 0.5f);
+	}
+
 	public PImage svgToImage(final PShape p_shape, final float p_width, final float p_height) {
 		if (p_shape == null)
 			throw new NullPointerException("`svgToImage(null , p_width, p_height)` won't work.");
@@ -1088,7 +1886,7 @@ public class NerdSketch extends PApplet {
 	}
 
 	public NerdAbstractCamera setCameraToDefault() {
-		if (!this.SKETCH_SETTINGS.USES_OPENGL)
+		if (!this.USES_OPENGL)
 			return null;
 
 		final NerdAbstractCamera toRet = this.getDefaultCameraClone();

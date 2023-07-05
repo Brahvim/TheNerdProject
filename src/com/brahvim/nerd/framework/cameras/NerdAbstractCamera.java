@@ -51,7 +51,7 @@ public abstract class NerdAbstractCamera {
 	}
 
 	public void applyProjection(final PGraphics p_graphics) {
-		if (!PConstants.P3D.equals(this.SKETCH.SKETCH_SETTINGS.RENDERER_NAME))
+		if (!PConstants.P3D.equals(this.SKETCH.RENDERER_NAME))
 			return;
 
 		if (this.doAutoAspect)

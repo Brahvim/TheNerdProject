@@ -6,12 +6,6 @@ import processing.core.PVector;
 // Courtesy of https://github.com/bmoren/p5.collide2D
 public class NerdCollisionAlgorithms {
 
-	private NerdCollisionAlgorithms() {
-		throw new Error("Sorry, but `"
-				+ this.getClass().getCanonicalName()
-				+ "` is an uninstantiable, helper class.");
-	}
-
 	public static boolean ptPoly(final float p_x, final float p_y, final PVector[] p_poly) {
 		// As seen on Sir Ben's GitHub!:
 		/*

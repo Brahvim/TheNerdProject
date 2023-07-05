@@ -28,9 +28,9 @@ public class DemoScene2 extends NerdScene {
 		// if (SKETCH.frameCount % 150 == 0)
 		// System.out.println(SKETCH.frameRate);
 
-		GRAPHICS.translate(INPUT.MOUSE_VECTOR);
-		GRAPHICS.translate(WINDOW.cx, WINDOW.cy);
-		GRAPHICS.text("Scene `2`!", 0, 0);
+		SKETCH.translate(INPUT.MOUSE_VECTOR);
+		SKETCH.translate(WINDOW.cx, WINDOW.cy);
+		SKETCH.text("Scene `2`!", 0, 0);
 
 		// region Translation.
 		// CAMERA.center.z = this.boxHorizWave.get() * SKETCH.qx -

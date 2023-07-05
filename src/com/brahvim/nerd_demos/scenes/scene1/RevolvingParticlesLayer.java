@@ -14,10 +14,6 @@ public class RevolvingParticlesLayer extends NerdLayer {
 
 	@Override
 	protected void setup() {
-		this.particleGraphics = createParticleGraphics();
-	}
-
-	private PGraphics createParticleGraphics() {
 		final PGraphics g = SKETCH.createGraphics(this.PARTICLE_SIZE);
 		g.beginDraw();
 		g.noStroke();
@@ -41,18 +37,18 @@ public class RevolvingParticlesLayer extends NerdLayer {
 		 */
 
 		g.endDraw();
-		return g;
+		this.particleGraphics = g;
 	}
 
 	@Override
 	protected void draw() {
-		GRAPHICS.noStroke();
+		SKETCH.noStroke();
 
 		for (int i = 0; i < 20; i++) {
 			// float angle = PConstants.TAU / i;
-			GRAPHICS.rotate(App.getTickCount());
+			SKETCH.rotate(App.getTickCount());
 
-			GRAPHICS.image(this.particleGraphics,
+			SKETCH.image(this.particleGraphics,
 					PApplet.cos(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * App.BPM) * i * 12,
 					PApplet.tan(3 * PConstants.TAU * SKETCH.millis() * 0.0000016f * App.BPM) * i * 12,
 					0.5f);
