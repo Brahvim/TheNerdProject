@@ -32,6 +32,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
+import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
+import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 import com.brahvim.nerd.io.NerdStringTable;
@@ -50,7 +53,9 @@ import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
+import processing.core.PVector;
 import processing.opengl.PGL;
+import processing.opengl.PGraphics3D;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
@@ -281,6 +286,8 @@ public class NerdSketch extends PApplet {
 	// region `protected` fields.
 	protected static final String NULL_LISTENER_ERROR_MESSAGE = "An object passed to `Sketch::add*Listener()` cannot be `null`.";
 
+	protected final NerdSketch SKETCH = this;
+
 	// region Window object and native renderer references ("hacky stuff").
 	// ("Why check for `null` at all? You know what renderer you used!")
 	protected JFrame sketchFrame;
@@ -295,6 +302,8 @@ public class NerdSketch extends PApplet {
 
 	protected final NerdBridgedSceneManager SCENES; // This is a bridged object, thus, `protected`.
 
+	protected NerdAbstractCamera previousCamera, currentCamera; // CAMERA! (wher lite?! wher accsunn?!)
+	protected NerdBasicCamera defaultCamera;
 	protected NerdGraphics nerdGraphics;
 	protected PFont defaultFont;
 	protected PImage iconImage;
@@ -452,17 +461,8 @@ public class NerdSketch extends PApplet {
 		super.registerMethod("post", this);
 		super.frameRate(this.DEFAULT_REFRESH_RATE);
 
-		this.nerdGraphics = new NerdGraphics(this, super.getGraphics());
-		this.defaultFont = super.createFont("SansSerif", this.WINDOW.scr * 72);
-
-		// ...Also makes these changes to `NerdSketch::nerdGraphics`, haha:
-		super.textFont(this.defaultFont);
-		super.rectMode(PConstants.CENTER);
-		super.imageMode(PConstants.CENTER);
-		super.textAlign(PConstants.CENTER, PConstants.CENTER);
-
 		// I should make a super slow "convenience" method to perform this
-		// `switch (this.SKETCH_SETTINGS.RENDeRER_NAME)` using `Runnable`s!
+		// `switch (this.RENDERER)` using `Runnable`s!
 		// :joy:!
 
 		// Renderer-specific object initialization and settings!:
@@ -473,6 +473,9 @@ public class NerdSketch extends PApplet {
 				this.gl = this.glWindow.getGL();
 				this.glu = new GLU();
 
+				this.defaultCamera = new NerdBasicCameraBuilder(this).build();
+				this.currentCamera = this.defaultCamera;
+
 				if (this.SKETCH_SETTINGS.INITIALLY_RESIZABLE)
 					this.glWindow.setResizable(true);
 
@@ -480,8 +483,19 @@ public class NerdSketch extends PApplet {
 				// PJOGL.setIcon(this.iconPath);
 			}
 
-			case PConstants.JAVA2D -> this.sketchFrame = (JFrame) this.WINDOW.getNativeObject();
+			case PConstants.JAVA2D -> {
+				this.sketchFrame = (JFrame) this.WINDOW.getNativeObject();
+			}
 		}
+
+		this.nerdGraphics = new NerdGraphics(this, super.getGraphics());
+		this.defaultFont = super.createFont("SansSerif", this.WINDOW.scr * 72);
+
+		// ...Also makes these changes to `NerdSketch::nerdGraphics`, haha:
+		super.textFont(this.defaultFont);
+		super.rectMode(PConstants.CENTER);
+		super.imageMode(PConstants.CENTER);
+		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
 		this.SETUP_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 	}
@@ -512,7 +526,20 @@ public class NerdSketch extends PApplet {
 		// Call all pre-render listeners:
 		this.PRE_DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 
-		this.nerdGraphics.applyCameraIfCan();
+		// region Apply the camera when using OpenGL!
+		if (this.SKETCH_SETTINGS.USES_OPENGL) {
+			if (this.currentCamera != null)
+				this.currentCamera.apply(super.getGraphics()); // Do all three tasks using the current camera.
+			else { // ..."Here we go again."
+				this.defaultCamera.apply(super.getGraphics());
+
+				// If `this.currentCamera` is `null`, but wasn't,
+				if (this.currentCamera != this.previousCamera)
+					System.out.printf("Sketch \"%s\" has no camera! Consider adding one...?",
+							this.SKETCH_SETTINGS.NAME);
+			}
+		}
+		// endregion
 
 		// Call all draw listeners:
 		this.DRAW_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
@@ -520,10 +547,9 @@ public class NerdSketch extends PApplet {
 
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.SCENES.getCurrentScene() == null) {
-			if (this.SKETCH_SETTINGS.FIRST_SCENE_CLASS == null) {
-				System.err.println("There is no initial `NerdScene` to show!");
-				// System.exit(0);
-			} else
+			if (this.SKETCH_SETTINGS.FIRST_SCENE_CLASS == null)
+				System.err.println("There is no initial `NerdScene`! It's `null`!");
+			else
 				this.SCENES.startScene(this.SKETCH_SETTINGS.FIRST_SCENE_CLASS);
 		}
 		// endregion
@@ -533,6 +559,8 @@ public class NerdSketch extends PApplet {
 	}
 
 	public void post() {
+		this.previousCamera = this.currentCamera;
+
 		// this.sceneGraphics.endDraw();
 		// // if (this.sceneGraphics.hasRendered())
 		// this.image(this.sceneGraphics.getUnderlyingBuffer());
@@ -822,10 +850,6 @@ public class NerdSketch extends PApplet {
 
 	// region Utilities!~
 	// region Ah yes, GETTERS AND SETTERS. Even here!:
-	// protected NerdBasicCamera getDefaultCameraByRef() {
-	// return this.defaultCamera;
-	// }
-
 	public int getFrameStartTime() {
 		return this.frameStartTime;
 	}
@@ -1046,6 +1070,138 @@ public class NerdSketch extends PApplet {
 
 		return toRetBuilder.toString();
 	}
+	// endregion
+	// endregion
+
+	// region Camera and unprojection.
+	// region Camera!
+	public NerdAbstractCamera getCamera() {
+		return this.currentCamera;
+	}
+
+	public NerdAbstractCamera getPreviousCamera() {
+		return this.previousCamera;
+	}
+
+	public NerdBasicCamera getDefaultCameraClone() {
+		return this.defaultCamera.clone();
+	}
+
+	public NerdAbstractCamera setCameraToDefault() {
+		if (!this.SKETCH_SETTINGS.USES_OPENGL)
+			return null;
+
+		final NerdAbstractCamera toRet = this.getDefaultCameraClone();
+		this.setCamera(toRet);
+		return toRet;
+	}
+
+	/**
+	 * @return The previous camera the {@link NerdSketch} had access to.
+	 */
+	public NerdAbstractCamera setCamera(final NerdAbstractCamera p_camera) {
+		final NerdAbstractCamera toRet = this.previousCamera;
+		this.previousCamera = this.currentCamera;
+		this.currentCamera = p_camera;
+		return toRet;
+	}
+	// endregion
+
+	// region Unprojection via `world*()` and `getMouseInWorld*()`!
+	// region 2D versions!
+	public float worldX(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0).x;
+	}
+
+	public float worldY(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0).y;
+	}
+
+	public float worldZ(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0).z;
+	}
+	// endregion
+
+	// region 3D versions (should use!).
+	public float worldX(final float p_x, final float p_y, final float p_z) {
+		return this.worldVec(p_x, p_y, p_z).x;
+	}
+
+	public float worldY(final float p_x, final float p_y, final float p_z) {
+		return this.worldVec(p_x, p_y, p_z).y;
+	}
+
+	public float worldZ(final float p_x, final float p_y, final float p_z) {
+		return this.worldVec(p_x, p_y, p_z).z;
+	}
+	// endregion
+
+	// region `worldVec()`!
+	public PVector worldVec(final PVector p_vec) {
+		return this.worldVec(p_vec.x, p_vec.y, p_vec.z);
+	}
+
+	public PVector worldVec(final float p_x, final float p_y) {
+		return this.worldVec(p_x, p_y, 0);
+	}
+
+	public PVector worldVec(final float p_x, final float p_y, final float p_z) {
+		final PVector toRet = new PVector();
+		// Unproject:
+		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) super.getGraphics());
+		this.UNPROJECTOR.gluUnProject(
+				p_x, super.height - p_y,
+				// `0.9f`: at the near clipping plane.
+				// `0.9999f`: at the far clipping plane. (NO! Calculate EPSILON first! *Then-*)
+				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
+				PApplet.map(p_z, this.currentCamera.near, this.currentCamera.far, 0, 1),
+				toRet);
+
+		return toRet;
+	}
+	// endregion
+
+	// region Mouse!
+	/**
+	 * Caching this vector never works. Call this method everytime!~
+	 * People recalculate things framely in computer graphics anyway! :joy:
+	 */
+	public PVector getMouseInWorld() {
+		return this.getMouseInWorldFromFarPlane(this.currentCamera.mouseZ);
+	}
+
+	public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
+		return this.worldVec(super.mouseX, super.mouseY,
+				this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
+	}
+
+	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
+		return this.worldVec(super.mouseX, super.mouseY, p_distanceFromCamera);
+	}
+	// endregion
+
+	// region Touches.
+	// /**
+	// * Caching this vector never works. Call this method everytime!~
+	// * People recalculate things framely in computer graphics anyway! :joy:
+	// */
+	// public PVector getTouchInWorld(final int p_touchId) {
+	// return this.getTouchInWorldFromFarPlane(p_touchId,
+	// this.currentCamera.mouseZ);
+	// }
+
+	// public PVector getTouchInWorldFromFarPlane(final float p_touchId, final float
+	// p_distanceFromFarPlane) {
+	// final TouchEvent.Pointer touch = super.touches[p_touchId];
+	// return this.worldVec(touch.x, touch.y,
+	// this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
+	// }
+
+	// public PVector getTouchInWorldAtZ(final int p_touchId, final float
+	// p_distanceFromCamera) {
+	// final TouchEvent.Pointer touch = super.touches[p_touchId];
+	// return this.worldVec(touch.x, touch.y, p_distanceFromCamera);
+	// }
 	// endregion
 	// endregion
 	// endregion

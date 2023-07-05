@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
-import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.math.NerdUnprojector;
 
@@ -27,63 +26,32 @@ import processing.opengl.PShader;
 
 public class NerdGraphics {
 
-	// region Fields.
-	public NerdAbstractCamera currentCamera; // CAMERA! wher lite?! wher accsunn?!
+	private final NerdSketch SKETCH;
+	private final PGraphics GRAPHICS;
+	private final NerdUnprojector UNPROJECTOR;
 
-	protected final NerdSketch SKETCH;
-	protected final PGraphics GRAPHICS;
-	protected final NerdUnprojector UNPROJECTOR;
-	protected final NerdAbstractCamera DEFAULT_CAMERA;
-
-	protected NerdAbstractCamera previousCamera;
-	// endregion
+	private NerdAbstractCamera camera;
 
 	public NerdGraphics(final NerdSketch p_sketch, final PGraphics p_graphics) {
 		this.SKETCH = p_sketch;
 		this.GRAPHICS = p_graphics;
 		this.UNPROJECTOR = new NerdUnprojector();
-		this.DEFAULT_CAMERA = new NerdBasicCameraBuilder(this).build();
 
-		this.currentCamera = this.DEFAULT_CAMERA;
+		this.camera = this.SKETCH.getDefaultCameraClone();
 	};
 
-	// region Novel ("new") stuff.
-	// Applies the camera as well.
 	public void beginDraw() {
 		this.GRAPHICS.beginDraw();
-		this.applyCameraIfCan();
+		this.camera.apply(this);
 	}
 
-	protected void applyCameraIfCan() {
-		if (!this.SKETCH.SKETCH_SETTINGS.USES_OPENGL)
-			return;
-
-		// If the current camera is `null`, use the default one instead:
-		if (this.currentCamera != null)
-			this.currentCamera.apply();
-		else {
-			this.DEFAULT_CAMERA.apply();
-
-			// If the current camera is null, but wasn't, notify!:
-			if (this.currentCamera != this.previousCamera)
-				System.out.printf("`%s` has no camera! Consider adding one...?", this);
-		}
+	public void setCamera(final NerdAbstractCamera p_camera) {
+		this.camera = p_camera == null ? this.SKETCH.getDefaultCameraClone() : p_camera;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <RetT extends NerdAbstractCamera> RetT getCurrentCamera() {
-		return (RetT) this.currentCamera;
+	public NerdAbstractCamera getCamera() {
+		return this.camera;
 	}
-
-	@SuppressWarnings("unchecked")
-	public <RetT extends NerdAbstractCamera> RetT getPreviousCamera() {
-		return (RetT) this.previousCamera;
-	}
-
-	public NerdSketch getCreatingSketch() {
-		return this.SKETCH;
-	}
-	// endregion
 
 	// region Rendering utilities!
 	public final PGraphics getUnderlyingBuffer() {
@@ -859,7 +827,7 @@ public class NerdGraphics {
 				// `0.9f`: at the near clipping plane.
 				// `0.9999f`: at the far clipping plane. (NO! Calculate EPSILON first! *Then-*)
 				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
-				PApplet.map(p_z, this.currentCamera.near, this.currentCamera.far, 0, 1),
+				PApplet.map(p_z, this.camera.near, this.camera.far, 0, 1),
 				toRet);
 
 		return toRet;
@@ -872,12 +840,12 @@ public class NerdGraphics {
 	 * People recalculate things framely in computer graphics anyway! :joy:
 	 */
 	public PVector getMouseInWorld() {
-		return this.getMouseInWorldFromFarPlane(this.currentCamera.mouseZ);
+		return this.getMouseInWorldFromFarPlane(this.camera.mouseZ);
 	}
 
 	public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
 		return this.worldVec(this.SKETCH.INPUT.mouseX, this.SKETCH.INPUT.mouseY,
-				this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
+				this.camera.far - p_distanceFromFarPlane + this.camera.near);
 	}
 
 	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
@@ -1081,7 +1049,7 @@ public class NerdGraphics {
 	public void end2d() {
 		this.pop();
 		this.GRAPHICS.hint(PConstants.ENABLE_DEPTH_TEST);
-		this.currentCamera.applyMatrix();
+		this.camera.applyMatrix(this.GRAPHICS);
 	}
 
 	/**

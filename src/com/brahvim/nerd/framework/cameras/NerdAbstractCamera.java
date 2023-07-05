@@ -18,11 +18,10 @@ public abstract class NerdAbstractCamera {
 	public static final float DEFAULT_CAM_FOV = PApplet.radians(60),
 			DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10_000, DEFAULT_CAM_MOUSE_Z = 1;
 
-	protected final NerdSketch SKETCH;
-	protected final NerdGraphics GRAPHICS;
+	public final NerdSketch SKETCH;
 	public Consumer<NerdAbstractCamera> script; // Smart users will write complete classes for these.
 
-	// ...yeah, for some reason `PApplet::color()` fails. No ARGB!
+	// ...yeah, for some reason `PApplet::color()` fails.
 	public float clearColorParam1, clearColorParam2, clearColorParam3, clearColorParamAlpha;
 	public float fov = NerdAbstractCamera.DEFAULT_CAM_FOV,
 			far = NerdAbstractCamera.DEFAULT_CAM_FAR,
@@ -37,19 +36,21 @@ public abstract class NerdAbstractCamera {
 	public boolean doScript = true, doAutoClear = true, doAutoAspect = true;
 	// endregion
 
-	protected NerdAbstractCamera(final NerdSketch p_sketch, final PGraphics p_graphics) {
+	protected NerdAbstractCamera(final NerdSketch p_sketch) {
 		this.SKETCH = p_sketch;
-		this.GRAPHICS = new NerdGraphics(this.SKETCH, p_graphics);
 	}
 
-	protected NerdAbstractCamera(final NerdGraphics p_graphics) {
-		this.GRAPHICS = p_graphics;
-		this.SKETCH = this.GRAPHICS.getCreatingSketch();
+	public void applyMatrix(final NerdGraphics p_graphics) {
+		this.applyMatrix(p_graphics.getUnderlyingBuffer());
 	}
 
-	public abstract void applyMatrix();
+	public abstract void applyMatrix(final PGraphics p_graphics);
 
-	public void applyProjection() {
+	public void applyProjection(final NerdGraphics p_graphics) {
+		this.applyProjection(p_graphics.getUnderlyingBuffer());
+	}
+
+	public void applyProjection(final PGraphics p_graphics) {
 		if (!PConstants.P3D.equals(this.SKETCH.SKETCH_SETTINGS.RENDERER_NAME))
 			return;
 
@@ -62,10 +63,10 @@ public abstract class NerdAbstractCamera {
 
 		// Apply projection:
 		switch (this.projection) {
-			case PConstants.PERSPECTIVE -> this.GRAPHICS.perspective(
+			case PConstants.PERSPECTIVE -> p_graphics.perspective(
 					this.fov, this.aspect, this.near, this.far);
 
-			case PConstants.ORTHOGRAPHIC -> this.GRAPHICS.ortho(
+			case PConstants.ORTHOGRAPHIC -> p_graphics.ortho(
 					-this.SKETCH.WINDOW.cx, this.SKETCH.WINDOW.cx,
 					-this.SKETCH.WINDOW.cy, this.SKETCH.WINDOW.cy,
 					this.near, this.far);
@@ -95,16 +96,21 @@ public abstract class NerdAbstractCamera {
 	}
 	// endregion
 
-	public void apply() {
-		// #JIT_FTW!:
-
-		this.clear();
-		this.runScript();
-		this.applyMatrix();
+	public void apply(final NerdGraphics p_graphics) {
+		this.apply(p_graphics.getUnderlyingBuffer());
 	}
 
-	public void clear() {
-		this.GRAPHICS.alphaBg(
+	public void apply(final PGraphics p_graphics) {
+		// #JIT_FTW!:
+
+		this.clear(p_graphics);
+		this.runScript();
+		this.applyMatrix(p_graphics);
+	}
+
+	// TODO: Fix whatever this reminds you of. PAIN! x[
+	public void clear(final PGraphics p_graphics) {
+		this.SKETCH.alphaBg(
 				this.clearColorParam1, this.clearColorParam2,
 				this.clearColorParam3, this.clearColorParamAlpha);
 	}
