@@ -35,7 +35,6 @@ public abstract class NerdWindowManager {
 
 	// region Construction and initialization.
 	protected NerdWindowManager(final NerdSketch p_sketch) {
-		this
 		this.SKETCH = p_sketch;
 		this.fullscreen = this.SKETCH.SKETCH_SETTINGS.STARTED_FULLSCREEN;
 	}
