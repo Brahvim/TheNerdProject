@@ -288,7 +288,7 @@ public class NerdEcsManager implements Serializable {
 	// region Saving.
 	/**
 	 * You get this entire manager, serialized to bytes!
-	 *
+	 * 
 	 * @return The bytes!
 	 * @see NerdEcsManager#saveState(File)
 	 */
@@ -298,7 +298,7 @@ public class NerdEcsManager implements Serializable {
 
 	/**
 	 * This entire manager, serialized to a file as bytes!
-	 *
+	 * 
 	 * @return Nothing! The file ate it all...
 	 * @see NerdEcsManager#saveState()
 	 */
@@ -310,7 +310,7 @@ public class NerdEcsManager implements Serializable {
 	// region Loading.
 	/**
 	 * Ever called {@link NerdEcsManager#saveState(File)}? This reverses that.
-	 *
+	 * 
 	 * @param p_file is the file in context.
 	 */
 	public void loadState(final File p_file) {
@@ -320,7 +320,7 @@ public class NerdEcsManager implements Serializable {
 	/**
 	 * Ever called {@link NerdEcsManager#saveState()}? This reverses the bytes you
 	 * got from there, for free!
-	 *
+	 * 
 	 * @param p_serializedData better have the bytes I talked about!
 	 */
 	public void loadState(final byte[] p_serializedData) {

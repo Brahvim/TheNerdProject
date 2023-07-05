@@ -421,11 +421,15 @@ public class NerdSketch extends PApplet {
 	public void setup() {
 		this.iconImage = super.loadImage(this.SKETCH_SETTINGS.ICON_PATH);
 
-		// `DISPLAYS` before `WINDOW`!
-		// The latter waits for the former!
-		this.DISPLAYS.updateDisplayParameters();
+		this.WINDOW.width = super.width;
+		this.WINDOW.height = super.height;
+
+		this.DISPLAYS.displayWidth = super.displayWidth;
+		this.DISPLAYS.displayHeight = super.displayHeight;
+
+		this.DISPLAYS.updateDisplayRatios();
+		this.WINDOW.updateWindowRatios();
 		this.WINDOW.init();
-		this.WINDOW.updateWindowParameters();
 
 		super.surface.setTitle(this.SKETCH_SETTINGS.NAME);
 		super.registerMethod("pre", this);
@@ -440,7 +444,6 @@ public class NerdSketch extends PApplet {
 		super.rectMode(PConstants.CENTER);
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
-		super.background(0); // ..This, instead of `NerdAbstractCamera::clear()`.
 
 		// I should make a super slow "convenience" method to perform this
 		// `switch (this.SKETCH_SETTINGS.RENDeRER_NAME)` using `Runnable`s!
@@ -464,7 +467,6 @@ public class NerdSketch extends PApplet {
 			case PConstants.JAVA2D -> this.sketchFrame = (JFrame) this.WINDOW.getNativeObject();
 		}
 
-		this.WINDOW.centerWindow();
 		this.SETUP_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 	}
 
@@ -925,7 +927,7 @@ public class NerdSketch extends PApplet {
 	 * Pushes the graphics buffer, disables depth testing, resets all current
 	 * transformations, calls your {@link Runnable} {@code p_toDraw}, and
 	 * finally, pops back the transformations and enables depth testing!
-	 *
+	 * 
 	 * @see {@link NerdSketch#end2d()}
 	 * @see {@link NerdSketch#begin2d()}
 	 */

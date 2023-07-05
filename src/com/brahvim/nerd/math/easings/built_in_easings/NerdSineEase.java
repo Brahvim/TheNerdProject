@@ -48,7 +48,7 @@ public class NerdSineEase extends NerdEasingFunction {
 	 * {@link NerdSineEase#endWhenAngleIncrementsBy(float)} and
 	 * {@link NerdSineEase#endWhenAngleIncrementsToWithin(float, float)} methods are
 	 * ignored, and the wave will no longer end at the angle you specified there.
-	 *
+	 * 
 	 * @param p_millis is the amount of time the angle parameter will be incremented
 	 *                 by, in terms of radians. <i>Yes, this internally tracked
 	 *                 'angle-parameter' is in terms of time. In milliseconds.</i>
@@ -66,7 +66,7 @@ public class NerdSineEase extends NerdEasingFunction {
 	 * <p>
 	 * Yes, the <i>angle parameter</i> in context is actually just a time value,
 	 * tracked internally.
-	 *
+	 * 
 	 * @param p_angle is the angle to increment the parameter by, in radians.
 	 */
 	public NerdSineEase endWhenAngleIncrementsBy(final float p_angle) {
@@ -92,7 +92,7 @@ public class NerdSineEase extends NerdEasingFunction {
 	 * <p>
 	 * Yes, the <i>angle parameter</i> in context is actually just a time value,
 	 * tracked internally.
-	 *
+	 * 
 	 * @param p_angle                  is the angle, <i>in radians,</i> that the
 	 *                                 wave will reach, and,
 	 * @param p_timeConstraintDistance is the amount of time this
@@ -120,13 +120,13 @@ public class NerdSineEase extends NerdEasingFunction {
 	 * {@link NerdSineEase} instance to deactivate automatically - by incrementing
 	 * the angle parameter <i>(passed to the sine-based function)</i>! Passing
 	 * negative numbers decreases it instead.
-	 *
+	 * 
 	 * @param p_angle is the angle to increment the parameter by, in radians.
 	 */
 	public NerdSineEase extendEndByAngle(final float p_angle) {
-		final float endTimeNew = this.endTime; // Benefits of using `this`!
+		final float endTime = this.endTime; // Benefits of using `this`!
 		this.endWhenAngleIncrementsBy(p_angle);
-		this.endTime += endTimeNew;
+		this.endTime += endTime;
 		return this;
 	}
 	// endregion

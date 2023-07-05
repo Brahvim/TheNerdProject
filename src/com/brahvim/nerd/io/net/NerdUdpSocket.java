@@ -22,7 +22,7 @@ import com.brahvim.nerd.framework.NerdTriConsumer;
  * connect via networks following the "User Datagram Protocol" and let them
  * listen to each other on a different thread for easier asynchronous
  * multitasking.
- *
+ * 
  * <p>
  * Of course, it is based on classes from the
  * {@link java.net} package :)
@@ -38,7 +38,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	 * a separate thread, aiding with application performance and modern
 	 * hardware programming practices. It may NOT, be useful on systems like
 	 * Android, where ALL networking tasks must be done asynchronously.
-	 *
+	 * 
 	 * @see NerdUdpSocket
 	 */
 	public class ReceiverThread {
@@ -357,7 +357,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	/**
 	 * Tries to force the socket to use the specified port. If the port is not
 	 * available, an address reuse request is performed.
-	 *
+	 * 
 	 * @param p_port The port number!
 	 */
 	public void setPort(final int p_port) {
@@ -410,7 +410,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	/**
 	 * Allows for virtual data-receiving events.
-	 *
+	 * 
 	 * @param p_data is the data to simulate receiving,
 	 * @param p_ip   is the IP address it it coming from (usually
 	 *               {@code 127.0.0.1}),
@@ -423,7 +423,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	/**
 	 * Allows for virtual data-receiving events on port {@code 8080}.
-	 *
+	 * 
 	 * @param p_data is the data to simulate receiving,
 	 * @param p_ip   is the IP address it it coming from (usually
 	 *               {@code 127.0.0.1}),
@@ -434,7 +434,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	/**
 	 * Allows for virtual data-receiving events from {@code 127.0.0.1:8080}.
-	 *
+	 * 
 	 * @param p_data is the data to simulate receiving,
 	 */
 	public void simulateReceiving(final byte[] p_data) {
@@ -448,7 +448,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	 * instance of {@link InetSocketAddress} - effectively the same as
 	 * calling {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)} on
 	 * the underlying {@link DatagramSocket}.
-	 *
+	 * 
 	 * @see NerdUdpSocket#leaveGroup(String, int, NetworkInterface)
 	 * @see NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
 	 * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
@@ -463,7 +463,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	 * instance of {@link InetSocketAddress} - effectively the same as
 	 * calling {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)} on
 	 * the underlying {@link DatagramSocket}.
-	 *
+	 * 
 	 * @see NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
 	 * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
 	 */

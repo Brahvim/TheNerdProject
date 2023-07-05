@@ -1,7 +1,5 @@
 package com.brahvim.nerd.processing_wrapper.window_man_subs;
 
-import java.awt.Point;
-
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
 import com.jogamp.newt.opengl.GLWindow;
@@ -37,42 +35,12 @@ public class NerdGlWindowManager extends NerdWindowManager {
 	}
 
 	@Override
-	public int getX() {
-		return this.window.getX();
-	}
-
-	@Override
-	public int getY() {
-		return this.window.getY();
-	}
-
-	@Override
-	public int getWidth() {
-		return this.window.getWidth();
-	}
-
-	@Override
-	public int getHeight() {
-		return this.window.getHeight();
-	}
-
-	@Override
-	public Point getSize() {
-		return new Point(this.window.getWidth(), this.window.getHeight());
-	}
-
-	@Override
-	public Point getPosition() {
-		return new Point(this.window.getX(), this.window.getY());
-	}
-
-	@Override
-	public PVector getSizeAsPVector() {
+	public PVector getSize() {
 		return new PVector(this.window.getWidth(), this.window.getHeight());
 	}
 
 	@Override
-	public PVector getPositionAsPVector() {
+	public PVector getPosition() {
 		return new PVector(this.window.getX(), this.window.getY());
 	}
 
@@ -103,18 +71,6 @@ public class NerdGlWindowManager extends NerdWindowManager {
 	@Override
 	public NerdGlWindowManager setSize(final int p_x, final int p_y) {
 		this.window.setSize(p_x, p_y);
-		return this;
-	}
-
-	@Override
-	public NerdGlWindowManager setSize(final float p_x, final float p_y) {
-		this.window.setSize((int) p_x, (int) p_y);
-		return this;
-	}
-
-	@Override
-	public NerdGlWindowManager setPosition(final float p_x, final float p_y) {
-		this.window.setPosition((int) p_x, (int) p_y);
 		return this;
 	}
 
@@ -185,11 +141,10 @@ public class NerdGlWindowManager extends NerdWindowManager {
 	}
 
 	@Override
-	protected void centerWindowImpl() {
-		final Point dimensions = super.displays.getCurrentMonitorDimensions();
+	protected void centerWindowImpl(final float p_displayWidth, final float p_displayHeight) {
 		this.window.setPosition(
-				(int) ((dimensions.x * 0.5f) - super.cx),
-				(int) ((dimensions.y * 0.5f) - super.cy));
+				(int) ((p_displayWidth * 0.5f) - super.cx),
+				(int) ((p_displayHeight * 0.5f) - super.cy));
 	}
 
 }

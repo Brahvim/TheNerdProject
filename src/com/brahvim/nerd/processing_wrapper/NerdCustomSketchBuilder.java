@@ -15,7 +15,7 @@ import processing.core.PConstants;
 /**
  * Want to hack into the {@link NerdSketch} class and control its inner workings
  * beyond just... using callbacks? Why not extend it!?
- *
+ * 
  * <p>
  * Override/Implement {@link NerdCustomSketchBuilder#build()}, and return an
  * instance of your own {@link NerdSketch} subclass!

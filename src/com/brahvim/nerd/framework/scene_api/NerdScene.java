@@ -363,23 +363,19 @@ public abstract class NerdScene {
 		if (p_layer == null)
 			return;
 
-		final Class<? extends NerdLayer> layerClass = p_layer.getClass();
+		final Class<? extends NerdLayer> LAYER_CLASS = p_layer.getClass();
 
 		// If an instance of this layer does not already exist,
 		if (!this.LAYERS.contains(p_layer)) {
 			System.out.printf(
 					"No instance of `%s` exists. Making one...%n",
-					layerClass.getSimpleName());
+					LAYER_CLASS.getSimpleName());
 
-			this.addLayer(layerClass);
+			this.addLayer(LAYER_CLASS);
 			return;
 		}
 
-		final NerdLayer toStart = this.constructLayer(this.getLayerConstructor(layerClass));
-
-		if (toStart == null)
-			throw new NullPointerException("You passed a `null` `NerdLayer` into `NerdScene::restartLayer()` :|");
-
+		final NerdLayer toStart = this.constructLayer(this.getLayerConstructor(LAYER_CLASS));
 		this.LAYERS.set(this.LAYERS.indexOf(p_layer), toStart);
 		p_layer.setActive(false);
 		toStart.setActive(true);
@@ -407,9 +403,6 @@ public abstract class NerdScene {
 	}
 
 	private NerdLayer constructLayer(final Constructor<? extends NerdLayer> p_layerConstructor) {
-		if (p_layerConstructor == null)
-			return null;
-
 		NerdLayer toRet = null;
 
 		// region Construct `toRet`.
@@ -423,18 +416,19 @@ public abstract class NerdScene {
 		}
 		// endregion
 
-		if (toRet != null) {
-			toRet.SCENE = this;
-			toRet.STATE = toRet.SCENE.STATE;
-			toRet.INPUT = toRet.SCENE.INPUT;
-			toRet.SKETCH = toRet.SCENE.SKETCH;
-			toRet.ASSETS = toRet.SCENE.ASSETS;
-			toRet.WINDOW = toRet.SCENE.WINDOW;
-			toRet.CAMERA = toRet.SCENE.CAMERA;
-			toRet.MANAGER = toRet.SCENE.MANAGER;
-			toRet.DISPLAY = toRet.SCENE.DISPLAY;
-			toRet.GRAPHICS = toRet.SCENE.GRAPHICS;
-		}
+		if (toRet == null)
+			throw new NullPointerException("Could not construct `NerdLayer`!");
+
+		toRet.SCENE = this;
+		toRet.STATE = toRet.SCENE.STATE;
+		toRet.INPUT = toRet.SCENE.INPUT;
+		toRet.SKETCH = toRet.SCENE.SKETCH;
+		toRet.ASSETS = toRet.SCENE.ASSETS;
+		toRet.WINDOW = toRet.SCENE.WINDOW;
+		toRet.CAMERA = toRet.SCENE.CAMERA;
+		toRet.MANAGER = toRet.SCENE.MANAGER;
+		toRet.DISPLAY = toRet.SCENE.DISPLAY;
+		toRet.GRAPHICS = toRet.SCENE.GRAPHICS;
 
 		return toRet;
 	}

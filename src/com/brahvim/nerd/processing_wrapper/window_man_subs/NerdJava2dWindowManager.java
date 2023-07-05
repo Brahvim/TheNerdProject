@@ -2,7 +2,6 @@ package com.brahvim.nerd.processing_wrapper.window_man_subs;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Point;
 
 import javax.swing.JFrame;
 
@@ -28,48 +27,17 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
 	}
 
 	@Override
-	public int getX() {
-		return this.window.getX();
-	}
-
-	@Override
-	public int getY() {
-		return this.window.getY();
-	}
-
-	@Override
-	public int getWidth() {
-		return this.window.getWidth();
-	}
-
-	@Override
-	public int getHeight() {
-		return this.window.getHeight();
-	}
-
-	@Override
-	public Point getSize() {
-		return new Point(this.window.getWidth(), this.window.getHeight());
-	}
-
-	@Override
-	public Point getPosition() {
-		// Faster!.... *wait, really?*
-		return this.window.getLocation();
-	}
-
-	@Override
-	public PVector getSizeAsPVector() {
+	public PVector getSize() {
 		final Dimension size = this.window.getSize();
 		return new PVector((float) size.getWidth(), (float) size.getHeight());
 	}
 
-	// public Image getIcon() {
-	// return this.window.getIconImage();
-	// }
+	public Image getIcon() {
+		return this.window.getIconImage();
+	}
 
 	@Override
-	public PVector getPositionAsPVector() {
+	public PVector getPosition() {
 		return new PVector(this.window.getX(), this.window.getY());
 	}
 
@@ -98,12 +66,6 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
 	}
 
 	@Override
-	public NerdJava2dWindowManager setSize(final float p_x, final float p_y) {
-		this.window.setSize((int) p_x, (int) p_y);
-		return this;
-	}
-
-	@Override
 	public NerdJava2dWindowManager setSize(final int p_x, final int p_y) {
 		this.window.setSize(p_x, p_y);
 		return this;
@@ -118,12 +80,6 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
 	@Override
 	public NerdJava2dWindowManager setPosition(final int p_x, final int p_y) {
 		this.window.setLocation(p_x, p_y);
-		return this;
-	}
-
-	@Override
-	public NerdJava2dWindowManager setPosition(final float p_x, final float p_y) {
-		this.window.setLocation((int) p_x, (int) p_y);
 		return this;
 	}
 
@@ -201,11 +157,10 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
 	}
 
 	@Override
-	protected void centerWindowImpl() {
-		final Point dimensions = super.displays.getCurrentMonitorDimensions();
-		super.surface.setLocation(
-				(int) (dimensions.x * 0.5f - super.width),
-				(int) (dimensions.y * 0.5f - super.q3y));
+	protected void centerWindowImpl(final float p_displayWidth, final float p_displayHeight) {
+		super.surface.setLocation( // this.window.setLocation(
+				(int) (p_displayWidth * 0.5f - super.width),
+				(int) (p_displayHeight * 0.5f - super.q3y));
 	}
 
 }
