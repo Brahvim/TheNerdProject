@@ -57,7 +57,6 @@ public class SmoothCamera extends NerdFlyCamera {
 		// Increase speed when holding `Ctrl`:
 		final float accMultiplier;
 
-		// Reset these so holding `ALT` changes them:
 		this.accFrict = SmoothCamera.DEFAULT_ACC_FRICT;
 		this.velFrict = SmoothCamera.DEFAULT_VEL_FRICT;
 
