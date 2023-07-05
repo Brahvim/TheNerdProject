@@ -383,6 +383,7 @@ public class NerdSketch extends PApplet {
 
 		try {
 			toAssign = new Robot();
+			toAssign.setAutoDelay(0);
 			toAssign.setAutoWaitForIdle(false);
 		} catch (final AWTException e) {
 			e.printStackTrace();

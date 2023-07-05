@@ -17,6 +17,20 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdEcsManager implements Serializable {
 
+	// region Inner-classes.
+	/* `package` */ class NerdEntitySerializationPacket implements Serializable {
+
+		private final String NAME;
+		private final NerdEcsEntity ENTITY;
+
+		public NerdEntitySerializationPacket(final String p_name, final NerdEcsEntity p_entity) {
+			this.NAME = p_name;
+			this.ENTITY = p_entity;
+		}
+
+	}
+	// endregion
+
 	// region Fields.
 	public static final long serialVersionUID = -6488574946L;
 
@@ -154,7 +168,7 @@ public class NerdEcsManager implements Serializable {
 				return e.getKey();
 
 		// If the entity is not from another manager, this won't ever be returned.
-		return null;
+		return "";
 	}
 
 	@SafeVarargs
@@ -286,6 +300,20 @@ public class NerdEcsManager implements Serializable {
 
 	// region Serialization.
 	// region Saving.
+	public byte[] serializeEntity(final NerdEcsEntity p_entity) {
+		final String name = this.getEntityName(p_entity);
+
+		if ("".equals(name))
+			return new byte[0];
+
+		return NerdByteSerialUtils
+				.toBytes(new NerdEntitySerializationPacket(name, p_entity));
+	}
+
+	public byte[] serializeComponent(final NerdEcsComponent p_component) {
+		return NerdByteSerialUtils.toBytes(p_component);
+	}
+
 	/**
 	 * You get this entire manager, serialized to bytes!
 	 *

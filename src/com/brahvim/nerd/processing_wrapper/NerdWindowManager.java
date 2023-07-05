@@ -5,7 +5,6 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 
 import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowManager;
-import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdJava2dWindowManager;
 
 import processing.core.PConstants;
 import processing.core.PSurface;
@@ -54,7 +53,7 @@ public abstract class NerdWindowManager {
 	public static NerdWindowManager createWindowMan(final NerdSketch p_sketch) {
 		return switch (p_sketch.SKETCH_SETTINGS.RENDERER_NAME) {
 			case PConstants.P2D, PConstants.P3D -> new NerdGlWindowManager(p_sketch);
-			case PConstants.JAVA2D -> new NerdJava2dWindowManager(p_sketch);
+			// case PConstants.JAVA2D -> new NerdJava2dWindowManager(p_sketch);
 			default -> null;
 		};
 	}

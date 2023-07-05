@@ -41,9 +41,9 @@ public class DemoScene3 extends NerdScene {
 		CAMERA = new SmoothCamera(GRAPHICS);
 		CAMERA.fov = PApplet.radians(75);
 		GRAPHICS.currentCamera = this.CAMERA;
+		// SKETCH.frameRate(90);
 
 		final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
-		// App.OPENAL.unitSize = 1; // Float.MAX_VALUE;
 		for (int i = 1; i != 5; i++)
 			alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
 

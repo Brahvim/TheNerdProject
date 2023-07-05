@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public final class NerdEcsEntity implements Serializable {
@@ -183,6 +183,26 @@ public final class NerdEcsEntity implements Serializable {
 		return toRet;
 	}
 
+	public void removeAllComponentsOfCondition(final Predicate<NerdEcsComponent> p_ifStatement) {
+		final LinkedList<NerdEcsComponent> toRemove = new LinkedList<>();
+
+		for (final NerdEcsComponent c : this.COMPONENTS)
+			if (p_ifStatement.test(c))
+				toRemove.add(c);
+
+		this.COMPONENTS.removeAll(toRemove);
+	}
+
+	public void removeAllComponentsTyped(final Class<? extends NerdEcsComponent> p_componentClass) {
+		final LinkedList<NerdEcsComponent> toRemove = new LinkedList<>();
+
+		for (final NerdEcsComponent c : this.COMPONENTS)
+			if (c.getClass().equals(p_componentClass))
+				toRemove.add(c);
+
+		this.COMPONENTS.removeAll(toRemove);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <ComponentT extends NerdEcsComponent> ComponentT removeComponent(final Class<ComponentT> p_componentClass) {
 		ComponentT toRet = null;
@@ -207,185 +227,82 @@ public final class NerdEcsEntity implements Serializable {
 	 */
 	public <ComponentT extends NerdEcsComponent> ComponentT attachComponentIfAbsent(
 			final Class<ComponentT> p_componentClass) {
-		if (!this.hasComponentOfClass(p_componentClass))
+		if (!(p_componentClass == null || this.hasComponentOfClass(p_componentClass)))
 			return this.attachComponent(p_componentClass);
 		else
 			return null;
 	}
+
 	// endregion
 
 	// region From `LinkedList`.
-	// public Iterator<NerdEcsComponent> descendingIterator() {
-	// return this.COMPONENTS.descendingIterator();
-	// }
-
-	public NerdEcsComponent element() {
-		return this.COMPONENTS.element();
+	public Iterator<NerdEcsComponent> getComponentsDescendingIterator() {
+		return this.COMPONENTS.descendingIterator();
 	}
 
-	public NerdEcsComponent get(final int p_index) {
+	public NerdEcsComponent getComponentFromIndex(final int p_index) {
 		return this.COMPONENTS.get(p_index);
 	}
 
-	public NerdEcsComponent getFirst() {
+	public NerdEcsComponent getFirstComponent() {
 		return this.COMPONENTS.getFirst();
 	}
 
-	public NerdEcsComponent getLast() {
+	public NerdEcsComponent getLastComponent() {
 		return this.COMPONENTS.getLast();
 	}
 
-	public int indexOf(final NerdEcsComponent p_component) {
+	public int getIndexOfComponent(final NerdEcsComponent p_component) {
 		return this.COMPONENTS.indexOf(p_component);
 	}
 
-	public int lastIndexOf(final NerdEcsComponent p_component) {
+	public int getLastIndexOfComponent(final NerdEcsComponent p_component) {
 		return this.COMPONENTS.lastIndexOf(p_component);
 	}
 
-	// public ListIterator<NerdEcsComponent> listIterator(final int index) {
-	// return this.COMPONENTS.listIterator(index);
-	// }
-
-	// public boolean offer(final NerdEcsComponent p_component) {
-	// return this.COMPONENTS.offer(p_component);
-	// }
-
-	// public boolean offerFirst(final NerdEcsComponent p_component) {
-	// return this.COMPONENTS.offerFirst(p_component);
-	// }
-
-	// public boolean offerLast(final NerdEcsComponent p_component) {
-	// return this.COMPONENTS.offerLast(p_component);
-	// }
-
-	public NerdEcsComponent peek() {
-		return this.COMPONENTS.peek();
-	}
-
-	public NerdEcsComponent peekFirst() {
-		return this.COMPONENTS.peekFirst();
-	}
-
-	public NerdEcsComponent peekLast() {
-		return this.COMPONENTS.peekLast();
-	}
-
-	// public NerdEcsComponent poll() {
-	// return this.COMPONENTS.poll();
-	// }
-
-	// public NerdEcsComponent pollFirst() {
-	// return this.COMPONENTS.pollFirst();
-	// }
-
-	// public NerdEcsComponent pollLast() {
-	// return this.COMPONENTS.pollLast();
-	// }
-
-	// public NerdEcsComponent pop() {
-	// return this.COMPONENTS.pop();
-	// }
-
-	// public void push(final NerdEcsComponent p_component) {
-	// this.COMPONENTS.push(p_component);
-	// }
-
-	// public NerdEcsComponent remove() {
-	// return this.COMPONENTS.remove();
-	// }
-
-	// public boolean remove(final NerdEcsComponent p_component) {
-	// return this.COMPONENTS.remove(p_component);
-	// }
-
-	// public NerdEcsComponent remove(final int p_index) {
-	// return this.COMPONENTS.remove(p_index);
-	// }
-
-	// public NerdEcsComponent removeFirst() {
-	// return this.COMPONENTS.removeFirst();
-	// }
-
-	// public boolean removeFirstOccurrence(final NerdEcsComponent p_component) {
-	// return this.COMPONENTS.removeFirstOccurrence(p_component);
-	// }
-
-	// public NerdEcsComponent removeLast() {
-	// return this.COMPONENTS.removeLast();
-	// }
-
-	// public boolean removeLastOccurrence(final NerdEcsComponent p_component) {
-	// return this.COMPONENTS.removeLastOccurrence(p_component);
-	// }
-
-	// public NerdEcsComponent set(final int index, final NerdEcsComponent element)
-	// {
-	// return this.COMPONENTS.set(index, element);
-	// }
-
-	public int size() {
+	public int getComponentCount() {
 		return this.COMPONENTS.size();
 	}
 
-	public Spliterator<NerdEcsComponent> spliterator() {
-		return this.COMPONENTS.spliterator();
-	}
-
-	public NerdEcsComponent[] toArray() {
-		return (NerdEcsComponent[]) this.COMPONENTS.toArray();
-	}
-
-	public <T> T[] toArray(final T[] p_array) {
+	public <T> T[] getComponentsArray(final T[] p_array) {
 		return this.COMPONENTS.toArray(p_array);
 	}
 
-	public Iterator<NerdEcsComponent> iterator() {
-		return this.COMPONENTS.iterator();
-	}
-
-	// public ListIterator<NerdEcsComponent> listIterator() {
-	// return this.COMPONENTS.listIterator();
-	// }
-
-	public List<NerdEcsComponent> subList(final int p_beginIndex, final int p_endIndex) {
+	public List<NerdEcsComponent> getComponentSubList(final int p_beginIndex, final int p_endIndex) {
 		return this.COMPONENTS.subList(p_beginIndex, p_endIndex);
 	}
 
-	public boolean containsAll(final Collection<?> p_collection) {
+	public boolean hasComponentsFrom(final Collection<?> p_collection) {
 		return this.COMPONENTS.containsAll(p_collection);
 	}
 
-	public boolean isEmpty() {
+	public boolean hasNoComponents() {
 		return this.COMPONENTS.isEmpty();
 	}
 
-	// public boolean removeAll(final Collection<?> p_collection) {
-	// return this.COMPONENTS.removeAll(p_collection);
-	// }
-
-	// public boolean retainAll(final Collection<?> p_collection) {
-	// return this.COMPONENTS.retainAll(p_collection);
-	// }
-
-	public Stream<NerdEcsComponent> parallelStream() {
+	public Stream<NerdEcsComponent> getComponentsParallelStream() {
 		return this.COMPONENTS.parallelStream();
 	}
 
-	// public boolean removeIf(final Predicate<? super NerdEcsComponent> p_filter) {
-	// return this.COMPONENTS.removeIf(p_filter);
-	// }
-
-	public Stream<NerdEcsComponent> stream() {
+	public Stream<NerdEcsComponent> getComponentStream() {
 		return this.COMPONENTS.stream();
 	}
 
-	public <T> T[] toArray(final IntFunction<T[]> p_generator) {
+	public <T> T[] getComponentsArray(final IntFunction<T[]> p_generator) {
 		return this.COMPONENTS.toArray(p_generator);
 	}
 
-	public void forEach(final Consumer<? super NerdEcsComponent> p_action) {
+	public NerdEcsComponent[] getComponentsArray() {
+		return this.COMPONENTS.toArray(new NerdEcsComponent[0]);
+	}
+
+	public void forEachComponent(final Consumer<? super NerdEcsComponent> p_action) {
 		this.COMPONENTS.forEach(p_action);
+	}
+
+	@SuppressWarnings("unchecked")
+	public LinkedList<NerdEcsComponent> getComponentsListClone() {
+		return (LinkedList<NerdEcsComponent>) this.COMPONENTS.clone();
 	}
 	// endregion
 

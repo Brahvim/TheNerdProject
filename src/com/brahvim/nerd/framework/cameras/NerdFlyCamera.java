@@ -5,6 +5,7 @@ import java.awt.Point;
 import com.brahvim.nerd.processing_wrapper.NerdDisplayManager;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
+import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -158,7 +159,12 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		final Point mouseLockPos = this.calculateMouseLockPos();
 
 		if (this.holdMouse) {
-			super.SKETCH.ROBOT.mouseMove(mouseLockPos.x, mouseLockPos.y);
+			final var window = (GLWindow) super.SKETCH.WINDOW.getNativeObject();
+			// window.warpPointer(mouseLockPos.x, mouseLockPos.y);
+			window.warpPointer(window.getSurfaceWidth() / 2, window.getSurfaceHeight() / 2);
+
+			// Should use our own `Robot` instance anyway!:
+			// super.SKETCH.ROBOT.mouseMove(mouseLockPos.x, mouseLockPos.y);
 			this.yaw += this.mouseSensitivity
 					* (super.SKETCH.INPUT.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
 			this.pitch += this.mouseSensitivity

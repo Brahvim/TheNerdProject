@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 import com.brahvim.nerd.io.NerdByteSerialUtils;
 
-public class NerdEcsComponentPacket implements Serializable {
+public class NerdEcsComponentSerialPacket implements Serializable {
 
     public static final long serialVersionUID = 8482347342466L;
 
     public final long versionNumber;
 
-    public NerdEcsComponentPacket() {
+    public NerdEcsComponentSerialPacket() {
         this.versionNumber = NerdByteSerialUtils.getClassHierarchyDepthOf(this.getClass());
 
         if (this.versionNumber == 0)

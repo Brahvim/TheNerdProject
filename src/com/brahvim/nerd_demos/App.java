@@ -6,7 +6,6 @@ import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
-import com.brahvim.nerd_demos.scenes.DemoScene4;
 import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
