@@ -1,10 +1,10 @@
 package com.brahvim.nerd.framework.ecs;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.HashSet;
+import java.util.Optional;
 
+import com.brahvim.nerd.framework.NerdReflectionUtils;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 
 public abstract class NerdEcsSystem<SystemComponentT extends NerdEcsComponent> implements Serializable {
@@ -15,19 +15,14 @@ public abstract class NerdEcsSystem<SystemComponentT extends NerdEcsComponent> i
 
 	@SuppressWarnings("unchecked")
 	protected NerdEcsSystem() {
-		// ...Trivial reflection tricks are where ChatGPT is my best friend ._.
-		final Type thatOneGenericSuperclass = this.getClass().getGenericSuperclass();
+		final Optional<Class<?>> optionalTypeArg = NerdReflectionUtils.getFirstTypeArg(this);
 
-		if (!(thatOneGenericSuperclass instanceof ParameterizedType)) {
-			throw new RuntimeException(String.format(
-					"Sorry, but not specifying the generic type argument in your"
-							+ "`NerdEcsSystem` subclass, `%s`, is illegal.",
+		if (!optionalTypeArg.isPresent())
+			throw new IllegalStateException(String.format(
+					"`%s`s should NEVER be able to come to this state! Who modified the source code?!",
 					this.getClass().getSimpleName()));
-		}
 
-		this.COMPONENT_TYPE_CLASS = (Class<SystemComponentT>)
-		// One, derive the actual type arguments. Two, cast back! ^^^
-		((ParameterizedType) thatOneGenericSuperclass).getActualTypeArguments()[0];
+		this.COMPONENT_TYPE_CLASS = (Class<SystemComponentT>) optionalTypeArg.get();
 	}
 
 	public final Class<SystemComponentT> getComponentTypeClass() {

@@ -26,12 +26,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 
 	}
 
-	// region Fields.
 	private final Vector<Consumer<NerdTcpClient.NerdServerSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
-
-	private Thread commsThread;
-	private boolean inMessageLoop;
-	// endregion
 
 	// region Construction.
 	// region Constructors.
@@ -60,7 +55,8 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 		super(p_port);
 	}
 
-	public NerdTcpClient(final int p_port,
+	public NerdTcpClient(
+			final int p_port,
 			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
 		this(p_port);
 		this.startMessageThread(p_mesageCallback);
@@ -68,15 +64,12 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 	// endregion
 
 	private void startMessageThread(final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
-		if (this.inMessageLoop)
+		// Shouldn't occur till somebody uses reflection!:
+		if (super.STOPPED.get())
 			return;
 
-		if (super.hasDisconnected)
-			return;
-
-		this.inMessageLoop = true;
 		this.MESSAGE_CALLBACKS.add(p_mesageCallback);
-		this.commsThread = new Thread(() -> {
+		final Thread commsThread = new Thread(() -> {
 			// No worries - the same stream is used till the socket shuts down.
 			DataInputStream stream = null;
 
@@ -87,11 +80,8 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 				e.printStackTrace();
 			}
 
-			while (true)
+			while (!super.STOPPED.get())
 				try {
-					if (this.commsThread.isInterrupted())
-						return;
-
 					stream.available();
 					// ^^^ This is literally gunna return `0`!
 					// ..I guess we use fixed sizes around here...
@@ -99,19 +89,20 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 					// ..Now read it:
 					final int packetSize = stream.readInt();
 					final byte[] packetData = new byte[packetSize];
-					stream.read(packetData); // It needs to know the length of the array!
-					final var packet = new NerdTcpClient.NerdServerSentTcpPacket(packetData);
+
+					// int bytesRead = 0; // We *are* relying on that `EOFException` down there...
+					// while (!(bytesRead == packetSize || bytesRead == -1))
+					/* bytesRead = */ stream.read(packetData); // It needs to know the length of the array!
+
+					final NerdServerSentTcpPacket packet = new NerdTcpClient.NerdServerSentTcpPacket(packetData);
 
 					// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
 					// have to reconstruct it every time, fearing that one of these callbacks might
 					// change the contents of the packet.
 
 					synchronized (this.MESSAGE_CALLBACKS) {
-						for (final var c : this.MESSAGE_CALLBACKS)
+						for (final Consumer<NerdServerSentTcpPacket> c : this.MESSAGE_CALLBACKS)
 							try {
-								// System.out.println("""
-								// `NerdTcpClient::serverCommThread::run()` \
-								// called a message callback.""");
 								c.accept(packet);
 							} catch (final Exception e) {
 								e.printStackTrace();
@@ -124,23 +115,24 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 						this.disconnect();
 					else if (e instanceof SocketException)
 						this.disconnect();
-					// e.printStackTrace(); // I have NO idea what to do!
 					else
-						e.printStackTrace();
+						e.printStackTrace(); // I have NO idea what to do, y'hear!
 				}
 		}, "NerdTcpServerListenerOnPort" + this.socket.getLocalPort());
 		// ^^^ It's faster to give the thread a name in this manner.
 
-		this.commsThread.setDaemon(true);
-		this.commsThread.start();
-
+		commsThread.setDaemon(true);
+		commsThread.start();
 	}
 	// endregion
 
+	public boolean isInMessageLoop() {
+		return super.STOPPED.get();
+	}
+
 	@Override
 	protected void disconnectImpl() {
-		if (this.commsThread != null)
-			this.commsThread.interrupt();
+		super.STOPPED.set(false);
 	}
 
 	// region Sending stuff.

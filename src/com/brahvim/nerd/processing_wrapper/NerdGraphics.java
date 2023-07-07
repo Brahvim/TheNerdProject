@@ -871,12 +871,12 @@ public class NerdGraphics {
 	}
 
 	public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
-		return this.worldVec(this.SKETCH.INPUT.evMouseX, this.SKETCH.INPUT.evMouseY,
+		return this.worldVec(this.SKETCH.INPUT.mouseX, this.SKETCH.INPUT.mouseY,
 				this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
 	}
 
 	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
-		return this.worldVec(this.SKETCH.INPUT.evMouseX, this.SKETCH.INPUT.evMouseY, p_distanceFromCamera);
+		return this.worldVec(this.SKETCH.INPUT.mouseX, this.SKETCH.INPUT.mouseY, p_distanceFromCamera);
 	}
 	// endregion
 

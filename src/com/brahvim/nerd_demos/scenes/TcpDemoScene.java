@@ -10,15 +10,16 @@ import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer.NerdClientSentTcpPacket;
 
 public class TcpDemoScene extends NerdScene {
+
 	// I'm not using JSON here, which is *the* standard for communication nowadays.
-	// Thanks to Processing, however, you can (the `processing.data` package)!
+	// Thanks to Processing, however, you can (using the `processing.data` package)!
 
 	// region Fields!
 	public static final String MESSAGE = """
 			======================================================
 			Welcome to the `RestaurantApi` demo!
 			This demo showcases the ease of using Nerd's TCP API!
-			Pressing 'G' should start the demo and exit this program.
+			Pressing `G` should start the demo and exit this program.
 			Please read the logs in the developer console upon its completion.
 			======================================================
 			""";
@@ -58,20 +59,20 @@ public class TcpDemoScene extends NerdScene {
 
 	@Override
 	protected void setup(final NerdSceneState p_state) {
-		SKETCH.textSize(25);
+		GRAPHICS.textSize(25);
 		WINDOW.fullscreen = true;
-		SKETCH.getCamera().getPos().z = 500;
+		GRAPHICS.currentCamera.getPos().z = 500;
 	}
 
 	@Override
 	protected void draw() {
-		SKETCH.background(0);
-		SKETCH.text(TcpDemoScene.MESSAGE, 0, 0);
+		GRAPHICS.background(0);
+		GRAPHICS.text(TcpDemoScene.MESSAGE, 0, 0);
 	}
 
 	@Override
 	public void keyPressed() {
-		if (SKETCH.key == 'g' || SKETCH.key == 'G')
+		if (INPUT.key == 'g' || INPUT.key == 'G')
 			this.netTest();
 	}
 

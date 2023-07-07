@@ -561,13 +561,8 @@ public class NerdSceneManager {
 		if (this.givenSceneRanPreload(p_sceneClass))
 			return;
 
-		final var manager = this;
-		new Thread("NerdAsyncAssetLoader_" + this.getClass().getSimpleName()) {
-			@Override
-			public void run() { // Lambdas perform horribly!
-				manager.loadSceneAssets(p_sceneClass, p_forcibly);
-			}
-		}.start();
+		new Thread(() -> this.loadSceneAssets(p_sceneClass, p_forcibly),
+				"NerdAsyncAssetLoader_" + this.getClass().getSimpleName()).start();
 	}
 
 	// Non-async versions:
@@ -625,10 +620,12 @@ public class NerdSceneManager {
 	 * - Asking for deletion permissions when you may not be caching is awkward,
 	 * - Structure. `cache == null`, `cache.getCache() == null` must result in the
 	 * same, but can't be grouped together logicaly, for optimization. This can be
-	 * fixed with the use of an "impl" method, but this class already has too many
-	 * similarly-named methods!
-	 * Another approach would be to call `SceneManager::cacheScene()` then query
-	 * `SceneManager::SCENE_CACHE`, but that sounds even slower. Even with the JIT!
+	 * fixed with the use of an implementation method, but this class already has
+	 * too many similarly-named methods!
+	 *
+	 * Another approach would be to call `NerdSceneManager::cacheScene()` then query
+	 * `NerdSceneManager::SCENE_CACHE`, but that sounds even slower.
+	 * Even with the JIT!
 	 */
 
 	/**

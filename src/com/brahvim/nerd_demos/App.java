@@ -6,7 +6,7 @@ import com.brahvim.nerd.openal.NerdAlExt;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuildArtifacts;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
-import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
+import com.brahvim.nerd_demos.scenes.UdpDemoScene;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
@@ -34,10 +34,9 @@ public class App {
 	 */
 
 	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS =
-			// Use directly in `setFirstSceneClass()` below!:
+			// Use directly in the `setFirstSceneClass()` call below!:
 			// LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
-			DemoScene3.class;
-	// null;
+			UdpDemoScene.class;
 
 	// region `App`'s *other* fields.
 	public static final int BPM = 100,
@@ -92,7 +91,7 @@ public class App {
 
 			App.tick = true;
 			App.tickCount++;
-		}).start();
+		}, "NerdDemoAppTickCounter").start();
 	}
 
 	public static boolean hasTick() {

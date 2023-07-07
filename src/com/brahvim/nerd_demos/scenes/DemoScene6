@@ -36,7 +36,7 @@ public class DemoScene6 extends NerdScene {
 
 		// Do not forget to do these!:
 		WINDOW.cursorVisible = false;
-		SKETCH.setCamera(CAMERA);
+		GRAPHICS.currentCamera = CAMERA;
 		// The camera won't be "auto-used" otherwise!!!
 
 		// Give us a "starting position"!:
@@ -50,19 +50,19 @@ public class DemoScene6 extends NerdScene {
 		this.controlCamera();
 
 		// region Actual rendering!
-		SKETCH.translate(0, 800);
+		GRAPHICS.translate(0, 800);
 
 		// Box in center:
-		SKETCH.pushMatrix();
-		SKETCH.translate(0, 165, 0);
-		SKETCH.box(50);
-		SKETCH.popMatrix();
+		GRAPHICS.pushMatrix();
+		GRAPHICS.translate(0, 165, 0);
+		GRAPHICS.box(50);
+		GRAPHICS.popMatrix();
 
 		// Ground:
-		SKETCH.pushMatrix();
-		SKETCH.translate(0, 200);
-		SKETCH.box(2000, 20, 2000);
-		SKETCH.popMatrix();
+		GRAPHICS.pushMatrix();
+		GRAPHICS.translate(0, 200);
+		GRAPHICS.box(2000, 20, 2000);
+		GRAPHICS.popMatrix();
 		// endregion
 
 	}

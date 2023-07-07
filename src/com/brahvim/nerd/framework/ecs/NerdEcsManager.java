@@ -13,6 +13,10 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.NerdByteSerialUtils;
+import com.brahvim.nerd.io.net.NerdUdpSocket;
+import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
+import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
+import com.brahvim.nerd.io.net.tcp.NerdTcpServer.NerdTcpServerClient;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdEcsManager implements Serializable {
@@ -163,7 +167,7 @@ public class NerdEcsManager implements Serializable {
 	}
 
 	public String getEntityName(final NerdEcsEntity p_entity) {
-		for (final var e : this.NAME_TO_ENTITY_MAP.entrySet())
+		for (final Map.Entry<String, NerdEcsEntity> e : this.NAME_TO_ENTITY_MAP.entrySet())
 			if (e.getValue() == p_entity)
 				return e.getKey();
 
@@ -406,6 +410,14 @@ public class NerdEcsManager implements Serializable {
 		// endregion
 	}
 	// endregion
+	// endregion
+
+	// region Networking.
+	public void startSocket(final Class<NerdTcpServer> p_socketType, final String p_ip, final int p_port) {
+	}
+
+	public void startSocket(final Class<NerdUdpSocket> p_socketType) {
+	}
 	// endregion
 
 	// region Events.

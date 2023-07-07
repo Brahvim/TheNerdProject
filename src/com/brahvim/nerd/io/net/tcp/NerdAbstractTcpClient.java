@@ -3,17 +3,18 @@ package com.brahvim.nerd.io.net.tcp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.brahvim.nerd.io.net.NerdSocket;
+import com.brahvim.nerd.io.net.NerdClientSocket;
 
 /**
  * ...Only I (Brahvim) want to be using this class. It's written in the hopes to
  * make the API I want to in Nerd.
  */
-public abstract class NerdAbstractTcpClient implements NerdSocket {
+public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 
 	protected Socket socket;
-	protected boolean inMessageLoop, hasDisconnected;
+	protected final AtomicBoolean STOPPED = new AtomicBoolean();
 
 	// region (`package`-level) Constructors.
 	/* `package` */ NerdAbstractTcpClient(final String p_serverIp, final int p_myPort) {
@@ -38,12 +39,12 @@ public abstract class NerdAbstractTcpClient implements NerdSocket {
 	// endregion
 
 	public void disconnect() {
-		if (this.hasDisconnected)
+		if (this.STOPPED.get())
 			return;
 
 		// System.out.println(
 		// "`NerdAbstractTcpClient::disconnect()` will now call `impl()`.");
-		this.hasDisconnected = true;
+		this.STOPPED.set(true);
 		this.disconnectImpl();
 
 		// System.out.println(

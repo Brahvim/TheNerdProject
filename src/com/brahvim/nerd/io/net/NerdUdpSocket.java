@@ -14,6 +14,7 @@ import java.nio.channels.DatagramChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.brahvim.nerd.framework.NerdTriConsumer;
 
@@ -81,7 +82,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 		private void receiverTasks() {
 			// We got some work?
-			while (!Thread.interrupted()) {
+			while (!NerdUdpSocket.this.STOPPED.get()) {
 				try {
 					NerdUdpSocket.this.in = new DatagramPacket(this.byteData, this.byteData.length);
 					if (NerdUdpSocket.this.socket != null)
@@ -91,10 +92,16 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 						// ¯\_(ツ)_/¯
 						// System.out.println("Timeout ended! Continuing...");
 					} else if (e instanceof SocketException) {
-						this.thread.interrupt();
+						this.stop();
 						return;
-					} else
-						e.printStackTrace(); // ¯\_(ツ)_/¯
+					} else {
+						synchronized (System.err) {
+							System.err.printf(
+									"`%s.ReceiverThread::receiverTasks()` encountered an:",
+									NerdUdpSocket.class.getSimpleName());
+							e.printStackTrace();
+						}
+					}
 				}
 
 				// Callback!:
@@ -144,7 +151,11 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 		}
 
 		public void stop() {
-			this.thread.interrupt();
+			if (NerdUdpSocket.this.STOPPED.get())
+				return;
+
+			NerdUdpSocket.this.STOPPED.set(true);
+
 			try {
 				this.thread.join();
 			} catch (final InterruptedException e) {
@@ -178,11 +189,16 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	private final Vector<NerdTriConsumer<byte[], String, Integer>> receiveCallbacks = new Vector<>(1);
 
 	/**
+	 * Internal field checked in the thread loop to stop the thread if needed.
+	 */
+	private final AtomicBoolean STOPPED = new AtomicBoolean();
+
+	/**
 	 * The internal {@link DatagramSocket} that takes care of
 	 * networking.
 	 * <p>
 	 * If you need to change it, consider using the
-	 * {@link NerdUdpSocket#setSocket(DatagramSocket)}
+	 * {@link NerdUdpSocket#setUnderlyingSocket(DatagramSocket)}
 	 * method (it pauses the receiving thread, swaps the socket, and resumes
 	 * listening).
 	 * <p>
@@ -270,9 +286,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 		// System.out.printf("Socket port: `%d`.%n", this.sock.getLocalPort());
 		// System.out.println(this.sock.getLocalAddress());
 
-		if (this.receiver == null)
-			this.receiver = new ReceiverThread();
-
+		this.receiver = new ReceiverThread();
 		this.onStart();
 	}
 	// endregion
@@ -316,7 +330,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	}
 
 	/**
-	 * Called before {@link NerdUdpSocket#close()} closes the thread and socket.
+	 * Called before {@link NerdUdpSocket#shutdown()} closes the thread and socket.
 	 */
 	protected abstract /* `synchronized` */ void onClose(); // AYO, NOBODY CALL THIS UNSYNCED!
 	// endregion
@@ -326,7 +340,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 		return this.socket;
 	}
 
-	public void setSocket(final DatagramSocket p_sock) {
+	public void setUnderlyingSocket(final DatagramSocket p_sock) {
 		this.receiver.stop();
 		this.socket = p_sock;
 		this.receiver = new ReceiverThread();
@@ -485,6 +499,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 			this.socket.send(p_packet);
 		} catch (final IOException e) {
 			// if (e instanceof UnknownHostException) {
+			System.err.printf("`%s::send(DatagramPacket)` encountered an:", this.getClass().getSimpleName());
 			e.printStackTrace();
 			// } else {
 			// e.printStackTrace();
@@ -504,8 +519,15 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 					p_data, p_data.length, InetAddress.getByName(p_ip), p_port);
 			this.socket.send(toSend);
 			this.out = toSend;
-		} catch (final IOException e) {
+		} catch (final Exception e) {
+			if (e instanceof IllegalArgumentException) {
+				System.err.printf("""
+						`%s::send(byte[], String, int)` encountered a `java.lang.IllegalArgumentException`!
+						Check the IP and port you passed in?%n""", NerdUdpSocket.class.getSimpleName());
+			}
+
 			// if (e instanceof UnknownHostException) {
+			System.err.printf("`%s::send(byte[], String, int)` encountered an:", NerdUdpSocket.class.getSimpleName());
 			e.printStackTrace();
 			// } else {
 			// e.printStackTrace();
@@ -531,7 +553,10 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	 * underlying {@link DatagramSocket} instance is using, prints the exception
 	 * closing it results in (if it occurs), and stops the receiver thread.
 	 */
-	public synchronized void close() {
+	public synchronized void shutdown() {
+		if (this.STOPPED.get())
+			return;
+
 		this.onClose();
 		this.setTimeout(0);
 		this.receiver.stop();

@@ -1,5 +1,8 @@
 package com.brahvim.nerd.framework;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -48,6 +51,27 @@ public class NerdReflectionUtils {
         } catch (final NoSuchMethodException e) {
             return false;
         }
+    }
+
+    public static Optional<Class<?>> getFirstTypeArg(final Object p_object) {
+        final Class<?>[] toRet = NerdReflectionUtils.getTypeArgs(p_object);
+        if (toRet.length == 0)
+            return Optional.empty();
+        return Optional.of(toRet[0]);
+    }
+
+    public static Class<?>[] getTypeArgs(final Object p_object) {
+        // ...Trivial reflection tricks are where ChatGPT is my best friend ._.
+        if (p_object == null)
+            return new Class<?>[0];
+
+        final Type genericSuperclass = p_object.getClass().getGenericSuperclass();
+
+        if (!(genericSuperclass instanceof ParameterizedType))
+            return new Class<?>[0];
+
+        // One, derive the actual type arguments. Two, cast back!:
+        return (Class<?>[]) ((ParameterizedType) genericSuperclass).getActualTypeArguments();
     }
 
 }

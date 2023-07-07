@@ -68,8 +68,8 @@ public class DemoScene4 extends NerdScene {
 			App.openAl.setListenerOrientation(0, 1, 0);
 
 			rubberDuck.setPosition(
-					5 * (INPUT.evMouseX - WINDOW.cx), 0,
-					5 * (INPUT.evMouseY - WINDOW.cy));
+					5 * (INPUT.mouseX - WINDOW.cx), 0,
+					5 * (INPUT.mouseY - WINDOW.cy));
 
 			if (!rubberDuck.isPlaying())
 				rubberDuck.play();

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -225,14 +226,13 @@ public final class NerdEcsEntity implements Serializable {
 	 * @param p_componentClass is the component's respective {@link Class}.
 	 * @return {@code null} if the component already exists.
 	 */
-	public <ComponentT extends NerdEcsComponent> ComponentT attachComponentIfAbsent(
+	public <ComponentT extends NerdEcsComponent> Optional<ComponentT> attachComponentIfAbsent(
 			final Class<ComponentT> p_componentClass) {
 		if (!(p_componentClass == null || this.hasComponentOfClass(p_componentClass)))
-			return this.attachComponent(p_componentClass);
+			return Optional.of(this.attachComponent(p_componentClass));
 		else
-			return null;
+			return Optional.empty();
 	}
-
 	// endregion
 
 	// region From `LinkedList`.

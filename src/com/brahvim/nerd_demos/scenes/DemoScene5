@@ -14,20 +14,20 @@ public class DemoScene5 extends NerdScene {
 	@Override
 	protected void setup(SceneState p_state) {
 		System.out.println(this.TEXT);
-		SKETCH.getCamera().pos.z = 500;
+		GRAPHICS.currentCamera.pos.z = 500;
 	}
 
 	@Override
 	protected void draw() {
-		SKETCH.background(0x006699, PApplet.sin(super.getMillisSinceStart()));
-		SKETCH.fill(233);
+		GRAPHICS.background(0x006699, PApplet.sin(super.getMillisSinceStart()));
+		GRAPHICS.fill(233);
 
-		SKETCH.pushMatrix();
-		SKETCH.scale(2);
-		SKETCH.text(this.TEXT, 0, 0);
-		SKETCH.popMatrix();
+		GRAPHICS.pushMatrix();
+		GRAPHICS.scale(2);
+		GRAPHICS.text(this.TEXT, 0, 0);
+		GRAPHICS.popMatrix();
 
-		SKETCH.circle(SKETCH.mouseX - WINDOW.cx, SKETCH.mouseY - WINDOW.cy, 20);
+		GRAPHICS.circle(GRAPHICS.mouseX - WINDOW.cx, GRAPHICS.mouseY - WINDOW.cy, 20);
 	}
 
 	@Override

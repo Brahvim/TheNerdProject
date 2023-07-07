@@ -173,7 +173,7 @@ public abstract class NerdCustomSketchBuilder {
 	}
 
 	public NerdCustomSketchBuilder setSceneManagerSettings(final Consumer<NerdSceneManagerSettings> p_settingsBuilder) {
-		final var toPass = new NerdSceneManager.NerdSceneManagerSettings();
+		final NerdSceneManager.NerdSceneManagerSettings toPass = new NerdSceneManager.NerdSceneManagerSettings();
 
 		if (p_settingsBuilder != null)
 			p_settingsBuilder.accept(toPass);

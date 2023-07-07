@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -21,6 +22,7 @@ import processing.core.PApplet;
 
 public class NerdTcpServer implements NerdServerSocket {
 
+	// region Inner classes.
 	public class NerdClientSentTcpPacket extends NerdAbstractTcpPacket {
 
 		private final NerdTcpServer.NerdTcpServerClient CLIENT;
@@ -56,29 +58,40 @@ public class NerdTcpServer implements NerdServerSocket {
 		// endregion
 
 		private void startMessageThread() {
-			if (this.inMessageLoop)
+			if (super.STOPPED.get())
 				return;
 
-			if (super.hasDisconnected)
-				return;
-
-			this.inMessageLoop = true;
 			this.serverCommThread = new Thread(() -> {
 				// No worries - the same stream is used till the socket shuts down.
 				DataInputStream stream = null;
 
 				// ...Get that stream!:
 				try {
-					stream = new DataInputStream(this.socket.getInputStream());
+					// synchronized (System.out) {
+					// System.out.printf(
+					// "`NerdTcpServer::startMessageThread()` socket info: `%s`. Is it closed?:
+					// `%s`!%n",
+					// this.socket, this.socket.isClosed());
+					// }
+
+					// This syncing could be a bit clearer, but anyway!:
+					// I could jut've make `socket` private, or put it into another class, where the
+					// only way to call methods on it is to provide a `Consumer`. to some
+					// `synchronized` method.
+					synchronized (this.socket) {
+						if (this.socket.isClosed())
+							return;
+						stream = new DataInputStream(this.socket.getInputStream());
+					}
 				} catch (final IOException e) {
-					// e.printStackTrace();
+					synchronized (System.err) {
+						e.printStackTrace();
+					}
 				}
 
-				while (true)
+				while (this.STOPPED.get())
 					try {
 						// System.out.println("NerdTcpServer.NerdTcpServerClient.startMessageThread()");
-						if (this.serverCommThread.isInterrupted())
-							return;
 
 						// System.out.printf("hasDisconnected: `%s`.%n", super.hasDisconnected);
 						// System.out.println("`NerdTcpServer.NerdTcpServerClient::serverCommsThread::run()`");
@@ -90,7 +103,8 @@ public class NerdTcpServer implements NerdServerSocket {
 						final int packetSize = stream.readInt();
 						final byte[] packetData = new byte[packetSize];
 						stream.read(packetData); // It needs to know the length of the array!
-						final var packet = new NerdTcpServer.NerdClientSentTcpPacket(this, packetData);
+						final NerdClientSentTcpPacket packet = new NerdTcpServer.NerdClientSentTcpPacket(
+								this, packetData);
 
 						// System.out.println("""
 						// `NerdTcpServer.NerdTcpServerClient\
@@ -105,7 +119,7 @@ public class NerdTcpServer implements NerdServerSocket {
 							// System.out.println("""
 							// `NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` \
 							// entered the synced block.""");
-							for (final var c : this.MESSAGE_CALLBACKS)
+							for (final Consumer<NerdClientSentTcpPacket> c : this.MESSAGE_CALLBACKS)
 								try {
 									// System.out.println("""
 									// `NerdTcpServer.NerdTcpServerClient\
@@ -200,8 +214,7 @@ public class NerdTcpServer implements NerdServerSocket {
 
 		@Override
 		protected void disconnectImpl() {
-			if (this.serverCommThread != null)
-				this.serverCommThread.interrupt();
+			this.STOPPED.set(false);
 
 			synchronized (NerdTcpServer.this.CLIENTS) {
 				NerdTcpServer.this.CLIENTS.remove(this);
@@ -209,22 +222,22 @@ public class NerdTcpServer implements NerdServerSocket {
 		}
 
 	}
+	// endregion
 
 	// region Fields.
 	// Concurrency is huge:
 	private final Vector<NerdTcpServer.NerdTcpServerClient> CLIENTS = new Vector<>(1);
 	private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> NEW_CONNECTION_CALLBACKS = new Vector<>(1);
 
-	private Thread connsThread;
+	private final Thread CONNS_THREAD;
 	private ServerSocket socket;
-	private boolean startedShutdown;
+	private final AtomicBoolean STOPPED = new AtomicBoolean();
 	private Function<NerdAbstractTcpClient, Boolean> invitationCallback;
 	// endregion
 
 	// region Construction.
 	// region Constructors.
-	public NerdTcpServer(final int p_port,
-			final Function<NerdAbstractTcpClient, Boolean> p_invitationCallback) {
+	public NerdTcpServer(final int p_port, final Function<NerdAbstractTcpClient, Boolean> p_invitationCallback) {
 		this.invitationCallback = p_invitationCallback;
 
 		try {
@@ -233,6 +246,7 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
+		this.CONNS_THREAD = new Thread(this::receiverTasks);
 		this.delegatedConstruction();
 	}
 
@@ -243,6 +257,7 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
+		this.CONNS_THREAD = new Thread(this::receiverTasks);
 		this.delegatedConstruction();
 	}
 
@@ -256,6 +271,7 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
+		this.CONNS_THREAD = new Thread(this::receiverTasks);
 		this.delegatedConstruction();
 	}
 
@@ -266,6 +282,7 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
+		this.CONNS_THREAD = new Thread(this::receiverTasks);
 		this.delegatedConstruction();
 	}
 	// endregion
@@ -277,38 +294,41 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
-		this.connsThread = new Thread(() -> {
-			while (!Thread.interrupted())
-				try { // Loop, or try-catch block first?
-						// System.out.println("`NerdTcpServer::connsThread::run()`");
-					final var client = new NerdTcpServer.NerdTcpServerClient(this.socket.accept());
+		this.CONNS_THREAD.setDaemon(true);
+		this.CONNS_THREAD.start();
+	}
 
-					synchronized (NerdTcpServer.this.CLIENTS) {
-						this.CLIENTS.add(client);
-					}
+	private void receiverTasks() {
+		// Loop, or try-catch block first?
+		while (!this.STOPPED.get())
+			try {
+				// System.out.println("Called `NerdTcpServer::CONNS_THREAD::run()`.");
+				final NerdTcpServerClient client = new NerdTcpServer.NerdTcpServerClient(this.socket.accept());
 
-					if (this.invitationCallback != null) {
-						final Boolean check = this.invitationCallback.apply(client);
-
-						// if (!(check == null || !check)) {
-						if (check != null && check) {
-
-							for (final var c : NerdTcpServer.this.NEW_CONNECTION_CALLBACKS)
-								client.addMessageCallback(c);
-
-							client.startMessageThread();
-						}
-					}
-
-					client.disconnect();
-				} catch (final IOException e) {
-					if (!(e instanceof SocketTimeoutException))
-						e.printStackTrace();
+				synchronized (NerdTcpServer.this.CLIENTS) {
+					this.CLIENTS.add(client);
 				}
-		});
 
-		this.connsThread.setDaemon(true);
-		this.connsThread.start();
+				if (this.invitationCallback != null) {
+					// What if `apply()` returns `null`...?!
+					final boolean check = Objects
+							.requireNonNullElseGet(this.invitationCallback.apply(client), () -> Boolean.FALSE);
+
+					// if (!(check == null || !check)) {
+					// if (check != null && check) {
+					if (check) {
+						for (final Consumer<NerdClientSentTcpPacket> c : NerdTcpServer.this.NEW_CONNECTION_CALLBACKS)
+							client.addMessageCallback(c);
+
+						client.startMessageThread();
+					}
+				}
+
+				client.disconnect();
+			} catch (final IOException e) {
+				if (!(e instanceof SocketTimeoutException))
+					e.printStackTrace();
+			}
 	}
 	// endregion
 
@@ -349,10 +369,10 @@ public class NerdTcpServer implements NerdServerSocket {
 	}
 
 	public void shutdown() {
-		if (this.startedShutdown)
+		if (this.STOPPED.get())
 			return;
 
-		this.startedShutdown = true;
+		this.STOPPED.set(true);
 		// System.out.println("`NerdTcpServer::shutdown()` has begun!");
 
 		this.disconnectAll();
@@ -360,8 +380,7 @@ public class NerdTcpServer implements NerdServerSocket {
 		// System.out.println("`NerdTcpServer::shutdown()` disconnected all clients.");
 
 		try {
-			this.connsThread.interrupt();
-			this.connsThread.join();
+			this.CONNS_THREAD.join();
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}

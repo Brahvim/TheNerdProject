@@ -6,10 +6,10 @@ public class CircleTransitionLayer extends NerdLayer {
 
 	@Override
 	protected void draw() {
-		SKETCH.begin2d();
-		SKETCH.fill(0);
+		GRAPHICS.begin2d();
+		GRAPHICS.fill(0);
 
-		SKETCH.end2d();
+		GRAPHICS.end2d();
 	}
 
 }
