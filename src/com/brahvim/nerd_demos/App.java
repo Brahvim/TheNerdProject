@@ -63,7 +63,7 @@ public class App {
 				.setTitle("The Nerd Project")
 				.setFirstScene(App.FIRST_SCENE_CLASS)
 				.setIconPath("data/sunglass_nerd.png")
-				.addNerdExt(new NerdAlExt(s -> {
+				.addNerdExt("OpenAL", new NerdAlExt(s -> {
 					// ...for `DemoScene3`!!!:
 					s.monoSources = Integer.MAX_VALUE;
 					s.stereoSources = Integer.MAX_VALUE;

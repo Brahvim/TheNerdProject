@@ -7,7 +7,9 @@ import java.awt.Point;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
-public class NerdDisplayManager {
+import processing.event.MouseEvent;
+
+public class NerdDisplayManager extends NerdEngineModule {
 
 	protected final NerdSketch SKETCH;
 	protected final NerdWindowManager WINDOW;
