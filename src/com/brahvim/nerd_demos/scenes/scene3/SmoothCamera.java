@@ -5,7 +5,10 @@ import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
+import com.brahvim.nerd.processing_wrapper.NerdInputManager;
 
+import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 
 public class SmoothCamera extends NerdFlyCamera {
@@ -16,16 +19,20 @@ public class SmoothCamera extends NerdFlyCamera {
 
 	public float accFrict = SmoothCamera.DEFAULT_ACC_FRICT, velFrict = SmoothCamera.DEFAULT_VEL_FRICT;
 
+	private final NerdInputManager INPUT;
 	private PVector accVec = new PVector(), velVec = new PVector();
+	private PVector circumAmbPos = new PVector();
 	// endregion
 
 	// region Construction.
 	public SmoothCamera(final NerdGraphics p_graphics) {
 		super(p_graphics);
+		this.INPUT = super.SKETCH.INPUT;
 	}
 
 	public SmoothCamera(final NerdGraphics p_graphics, final PVector p_defaultFront) {
 		super(p_graphics, p_defaultFront);
+		this.INPUT = super.SKETCH.INPUT;
 	}
 	// endregion
 
@@ -45,6 +52,14 @@ public class SmoothCamera extends NerdFlyCamera {
 	public PVector setAccVec(final PVector p_vec) {
 		return this.accVec = Objects.requireNonNull(p_vec);
 	}
+
+	public PVector getCircumAmbPos() {
+		return this.circumAmbPos;
+	}
+
+	public PVector setCircumAmbPos(final PVector p_vec) {
+		return this.circumAmbPos = p_vec;
+	}
 	// endregion
 
 	@Override
@@ -61,9 +76,9 @@ public class SmoothCamera extends NerdFlyCamera {
 		this.accFrict = SmoothCamera.DEFAULT_ACC_FRICT;
 		this.velFrict = SmoothCamera.DEFAULT_VEL_FRICT;
 
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_CONTROL)) {
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_CONTROL)) {
 			accMultiplier = SmoothCamera.FAST_SPEED;
-		} else if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_ALT)) {
+		} else if (this.INPUT.keyIsPressed(KeyEvent.VK_ALT)) {
 			accMultiplier = SmoothCamera.SLOW_SPEED;
 			this.accFrict = this.velFrict = 0.95f;
 		} else {
@@ -71,10 +86,10 @@ public class SmoothCamera extends NerdFlyCamera {
 		}
 
 		// region Roll.
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_Z))
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_Z))
 			super.up.x += SmoothCamera.NORMAL_SPEED * 0.1f;
 
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_C))
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_C))
 			super.up.x += -SmoothCamera.NORMAL_SPEED * 0.1f;
 
 		// if (super.up.x > PConstants.TAU || super.up.x < -PConstants.TAU)
@@ -82,24 +97,52 @@ public class SmoothCamera extends NerdFlyCamera {
 		// endregion
 
 		// region Elevation.
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_SPACE))
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_SPACE))
 			this.accVec.y += -accMultiplier;
 
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_SHIFT))
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_SHIFT))
 			this.accVec.y += accMultiplier;
 		// endregion
 
+		// region Circumambulation, id est "moving in circles".
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_Q)) {
+			if (!this.INPUT.keyWasPressed(KeyEvent.VK_Q))
+				this.circumAmbPos.set(super.front); // PVector.sub(super.front, super.pos));
+
+			// super.front.set(this.circumAmbPos);
+
+			super.pos.x += PApplet.sin(SKETCH.millis() * 0.01f * accMultiplier) * 50;
+			super.pos.z += PApplet.cos(SKETCH.millis() * 0.01f * accMultiplier) * 50;
+
+			super.front.x = PApplet.sin(-SKETCH.millis() * 0.01f * accMultiplier) * 50;
+			super.front.z = PApplet.cos(-SKETCH.millis() * 0.01f * accMultiplier) * 50;
+		}
+
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_E)) {
+			if (!this.INPUT.keyWasPressed(KeyEvent.VK_E))
+				this.circumAmbPos.set(super.front); // PVector.sub(super.front, super.pos));
+
+			// super.front.set(this.circumAmbPos);
+
+			super.pos.x += PApplet.sin(-SKETCH.millis() * 0.01f * accMultiplier) * 50;
+			super.pos.z += PApplet.cos(-SKETCH.millis() * 0.01f * accMultiplier) * 50;
+
+			super.front.x = PApplet.sin(-SKETCH.millis() * 0.01f * accMultiplier) * 50;
+			super.front.z = PApplet.cos(-SKETCH.millis() * 0.01f * accMultiplier) * 50;
+		}
+		// endregion
+
 		// region `W`-`A`-`S`-`D` controls.
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_W))
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_W))
 			this.accVec.z += -accMultiplier;
 
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_A))
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_A))
 			this.accVec.x += -accMultiplier;
 
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_S))
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_S))
 			this.accVec.z += accMultiplier;
 
-		if (SKETCH.INPUT.keyIsPressed(KeyEvent.VK_D))
+		if (this.INPUT.keyIsPressed(KeyEvent.VK_D))
 			this.accVec.x += accMultiplier;
 
 		this.accVec.mult(this.accFrict);

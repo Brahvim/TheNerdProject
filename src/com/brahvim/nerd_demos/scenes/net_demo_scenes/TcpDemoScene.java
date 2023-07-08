@@ -1,4 +1,4 @@
-package com.brahvim.nerd_demos.scenes;
+package com.brahvim.nerd_demos.scenes.net_demo_scenes;
 
 import java.util.function.Consumer;
 
@@ -15,14 +15,15 @@ public class TcpDemoScene extends NerdScene {
 	// Thanks to Processing, however, you can (using the `processing.data` package)!
 
 	// region Fields!
-	public static final String MESSAGE = """
-			======================================================
+	public static final String MESSAGE = String.format("""
+			====================================================================
 			Welcome to the `RestaurantApi` demo!
 			This demo showcases the ease of using Nerd's TCP API!
 			Pressing `G` should start the demo and exit this program.
 			Please read the logs in the developer console upon its completion.
-			======================================================
-			""";
+			Try modifying `%s::netTest()` to experiment with it and learn more!
+			====================================================================
+			""", TcpDemoScene.class.getSimpleName());
 	// endregion
 
 	// region Message `enum`s.

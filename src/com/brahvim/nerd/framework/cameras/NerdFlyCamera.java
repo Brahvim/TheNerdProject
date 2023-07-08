@@ -152,7 +152,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	}
 
 	protected void mouseTransform() {
-		if (!this.holdMouse && this.pholdMouse || this.holdMouse && !this.pholdMouse)
+		if (!this.holdMouse && this.pholdMouse) // || this.holdMouse && !this.pholdMouse)
 			return;
 
 		// region Update `yaw` and `pitch`, and perform the mouse-lock:

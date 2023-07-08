@@ -257,9 +257,6 @@ public class NerdSketch extends PApplet {
 	public final NerdInputManager INPUT;
 	// endregion
 	// endregion
-
-	// Time (`millis()` returns `int`!):
-	protected int frameStartTime, pframeTime, frameTime;
 	// endregion
 
 	// region `protected` fields.
@@ -279,6 +276,8 @@ public class NerdSketch extends PApplet {
 
 	protected final NerdBridgedSceneManager SCENES; // This is a bridged object, thus, `protected`.
 
+	// Timers! (`millis()` returns `int`s!):
+	protected int frameStartTime, pframeTime, frameTime;
 	protected NerdGraphics nerdGraphics;
 	protected PFont defaultFont;
 	protected PImage iconImage;
@@ -679,6 +678,7 @@ public class NerdSketch extends PApplet {
 		super.focusGained();
 		super.focused = true;
 		this.WINDOW.focusGained();
+		this.INPUT.focusGained();
 
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
@@ -694,6 +694,7 @@ public class NerdSketch extends PApplet {
 		super.focusLost();
 		super.focused = false;
 		this.WINDOW.focusLost();
+		this.INPUT.focusLost();
 
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:

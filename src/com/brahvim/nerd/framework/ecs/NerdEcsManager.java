@@ -14,9 +14,7 @@ import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.net.NerdUdpSocket;
-import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
-import com.brahvim.nerd.io.net.tcp.NerdTcpServer.NerdTcpServerClient;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdEcsManager implements Serializable {
@@ -426,6 +424,30 @@ public class NerdEcsManager implements Serializable {
 	public void mousePressed() {
 		this.callOnAllSystems(NerdEcsSystem::mousePressed);
 	}
+
+	// @SuppressWarnings("all")
+	// protected void mousePressed() {
+	// for (final NerdEcsSystem s : this.SYSTEMS) {
+	// if (s == null)
+	// continue;
+	// final int numComponents = this.COMPONENTS.size();
+	// final int numComponentsMinusTwo = this.COMPONENTS.size() - 2;
+	// for (final int i = 0; i < numComponents;) {
+	// final NerdEcsComponent c = this.COMPONENTS.get(i);
+	// // The logic/Math here needs improvement, sure...
+	// final NerdEcsComponent p = i < 0 ? null : this.COMPONENTS.get(i + 1);
+	// final NerdEcsComponent n = i > numComponentsMinusTwo ? null :
+	// this.COMPONENTS.get(i + 1);
+	// if (c == null)
+	// continue;
+	// if (c.getClass().equals(s.getComponentTypeClass())) {
+	// if (!s.mousePressed(i, p, c, n)) // Perhaps the methods also allow for
+	// breaking iteration?
+	// break;
+	// }
+	// }
+	// }
+	// }
 
 	@SuppressWarnings("all")
 	public void mouseReleased() {

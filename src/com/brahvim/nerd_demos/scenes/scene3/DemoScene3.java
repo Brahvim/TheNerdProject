@@ -7,6 +7,7 @@ import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.openal.AlBuffer;
+import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
 import com.brahvim.nerd_demos.effect_layers.CinematicBarsLayer;
@@ -66,7 +67,7 @@ public class DemoScene3 extends NerdScene {
 		GRAPHICS.background(this.bgImage);
 
 		// Faster in `draw()`:
-		if (INPUT.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
+		if (INPUT.keysPressedAreOrdered(KeyEvent.VK_CONTROL, KeyEvent.VK_R))
 			MANAGER.restartScene();
 
 		GRAPHICS.lights();
@@ -105,7 +106,7 @@ public class DemoScene3 extends NerdScene {
 
 	@Override
 	public void keyPressed() {
-		if (INPUT.keyIsPressed(KeyEvent.VK_F)) {
+		if (INPUT.keyCode == KeyEvent.VK_F) {
 			WINDOW.cursorVisible = !WINDOW.cursorVisible;
 			CAMERA.holdMouse = !CAMERA.holdMouse;
 		}

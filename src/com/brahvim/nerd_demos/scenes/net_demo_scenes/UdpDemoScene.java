@@ -1,4 +1,4 @@
-package com.brahvim.nerd_demos.scenes;
+package com.brahvim.nerd_demos.scenes.net_demo_scenes;
 
 import java.nio.charset.StandardCharsets;
 
@@ -9,14 +9,15 @@ import com.brahvim.nerd.io.net.NerdUdpSocket;
 public class UdpDemoScene extends NerdScene {
 
     // region Fields!
-    public static final String MESSAGE = """
-            ======================================================
+    public static final String MESSAGE = String.format("""
+            ====================================================================
             Welcome to the `UdpDemoScene`!
             This demo showcases the ease of using Nerd's UDP API!
             Pressing `G` should start the demo and exit this program.
             Please read the logs in the developer console upon its completion.
-            ======================================================
-            """;
+            Try modifying `%s::netTest()` to experiment with it and learn more!
+            ====================================================================
+            """, UdpDemoScene.class.getSimpleName());
     // endregion
 
     @Override
@@ -56,12 +57,12 @@ public class UdpDemoScene extends NerdScene {
 
             @Override
             protected void onStart() {
-                System.out.println("`Started `" + p_name + "`.");
+                System.out.println("Started `" + p_name + "`.");
             }
 
             @Override
             protected void onClose() {
-                System.out.println("`Closed `" + p_name + "`.");
+                System.out.println("Closed `" + p_name + "`.");
             }
 
         }.addReceivingCallback((d, a, p) -> // "dap" and not "dip" - 'a' is for "address" here!

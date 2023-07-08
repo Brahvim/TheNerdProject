@@ -7,11 +7,31 @@ public class EcsDemoComponent extends NerdEcsComponent {
 	public float grey = 127;
 	public String message = "...So you see, Nerd has an ECS!";
 
+	private enum SomeEnum {
+		ONE(1), TWO(2);
+
+		private int num;
+
+		private SomeEnum(final int a) {
+		}
+
+		public int getNum() {
+			return num;
+		}
+
+		public void setNum(final int num) {
+			this.num = num;
+		}
+
+	}
+
 	@Override
 	public void copyFieldsFrom(final NerdEcsComponent p_other) {
 		final EcsDemoComponent other = (EcsDemoComponent) p_other;
 		this.grey = other.grey;
 		this.message = other.message;
+
+		final SomeEnum a = SomeEnum.ONE;
 
 		// try {
 		// final byte[] myBytecode = EcsDemoComponent.class.getClassLoader()

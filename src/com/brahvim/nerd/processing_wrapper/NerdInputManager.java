@@ -2,8 +2,8 @@ package com.brahvim.nerd.processing_wrapper;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import processing.core.PConstants;
@@ -73,7 +73,7 @@ public class NerdInputManager {
 			mouseScrollDelta, pmouseScrollDelta,
 			totalMouseScroll, ptotalMouseScroll;
 
-	protected final LinkedHashSet<Integer> KEYS_HELD = new LinkedHashSet<>(5);
+	protected final ArrayList<Integer> KEYS_HELD = new ArrayList<>(5), PREV_FRAME_KEYS_HELD = new ArrayList<>(5);
 	// endregion
 
 	private final NerdSketch SKETCH; // ...It's best to keep this `private`.
@@ -101,6 +101,17 @@ public class NerdInputManager {
 				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
 				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
 		this.PREV_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
+
+		this.PREV_FRAME_KEYS_HELD.clear();
+		this.PREV_FRAME_KEYS_HELD.addAll(this.KEYS_HELD);
+	}
+
+	/* `package` */ void focusGained() {
+		this.KEYS_HELD.clear();
+	}
+
+	/* `package` */ void focusLost() {
+		this.KEYS_HELD.clear();
 	}
 
 	// region Input event callbacks from Processing.
@@ -139,10 +150,9 @@ public class NerdInputManager {
 
 		try {
 			synchronized (this.KEYS_HELD) {
-				this.KEYS_HELD.remove(this.keyCode);
+				this.KEYS_HELD.remove((Integer) this.keyCode);
 			}
 		} catch (final IndexOutOfBoundsException e) {
-			e.printStackTrace();
 		}
 	}
 	// endregion
@@ -211,12 +221,36 @@ public class NerdInputManager {
 	// endregion
 
 	// region Keyboard utilities!
-	public Integer[] getHeldKeys() {
+	public Integer[] getHeldKeysArray() {
 		return this.KEYS_HELD.toArray(new Integer[0]);
+	}
+
+	public String getHeldKeysDebugString() {
+		final int numStrings = this.KEYS_HELD.size();
+
+		if (numStrings == 0)
+			return "";
+
+		String toRet = "[ ";
+		final int iCheck = this.KEYS_HELD.size() - 1;
+
+		for (int i = 0; i < numStrings; i++)
+			toRet = toRet.concat(KeyEvent.getKeyText(this.KEYS_HELD.get(i)))
+					.concat(i == iCheck ? " ]" : ", ");
+
+		return toRet;
+	}
+
+	public String getLastFrameHeldKeysDebugString() {
+		return this.PREV_FRAME_KEYS_HELD.toString();
 	}
 
 	public boolean onlyKeyPressedIs(final int p_keyCode) {
 		return this.KEYS_HELD.size() == 1 && this.KEYS_HELD.contains(p_keyCode);
+	}
+
+	public boolean onlyKeyPressedWas(final int p_keyCode) {
+		return this.PREV_FRAME_KEYS_HELD.size() == 1 && this.PREV_FRAME_KEYS_HELD.contains(p_keyCode);
 	}
 
 	public boolean onlyKeysPressedAre(final int... p_keyCodes) {
@@ -229,6 +263,46 @@ public class NerdInputManager {
 			toRet &= this.KEYS_HELD.contains(i);
 
 		return toRet;
+	}
+
+	public boolean onlyKeysPressedWere(final int... p_keyCodes) {
+		boolean toRet = this.PREV_FRAME_KEYS_HELD.size() == p_keyCodes.length;
+
+		if (!toRet)
+			return false;
+
+		for (final int i : p_keyCodes)
+			toRet &= this.PREV_FRAME_KEYS_HELD.contains(i);
+
+		return toRet;
+	}
+
+	public boolean keysPressedAreOrdered(final int... p_keyCodes) {
+		final int paramArrLen = p_keyCodes.length;
+		final int ownArrLen = this.KEYS_HELD.size();
+
+		int paramArrId = 0;
+
+		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; i++) {
+			if (p_keyCodes[paramArrId] == this.KEYS_HELD.get(i))
+				paramArrId++;
+		}
+
+		return paramArrId == paramArrLen;
+	}
+
+	public boolean keysPressedWereOrdered(final int... p_keyCodes) {
+		final int paramArrLen = p_keyCodes.length;
+		final int ownArrLen = this.PREV_FRAME_KEYS_HELD.size();
+
+		int paramArrId = 0;
+
+		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; i++) {
+			if (p_keyCodes[paramArrId] == this.PREV_FRAME_KEYS_HELD.get(i))
+				paramArrId++;
+		}
+
+		return paramArrId == paramArrLen;
 	}
 
 	public boolean keysPressed(final int... p_keyCodes) {
@@ -250,13 +324,31 @@ public class NerdInputManager {
 		// An article once said: `boolean` flags are bad.
 	}
 
+	public boolean keysPressedLastFrame(final int... p_keyCodes) {
+		for (final int i : p_keyCodes)
+			if (!this.PREV_FRAME_KEYS_HELD.contains(i))
+				return false;
+		return true;
+	}
+
 	public boolean keyIsPressed(final int p_keyCode) {
 		return this.KEYS_HELD.contains(p_keyCode);
+	}
+
+	public boolean keyWasPressed(final int p_keyCode) {
+		return this.PREV_FRAME_KEYS_HELD.contains(p_keyCode);
 	}
 
 	public boolean anyGivenKeyIsPressed(final int... p_keyCodes) {
 		for (final int i : p_keyCodes)
 			if (this.KEYS_HELD.contains(i))
+				return true;
+		return false;
+	}
+
+	public boolean anyGivenKeyWasPressed(final int... p_keyCodes) {
+		for (final int i : p_keyCodes)
+			if (this.PREV_FRAME_KEYS_HELD.contains(i))
 				return true;
 		return false;
 	}
@@ -303,7 +395,7 @@ public class NerdInputManager {
 		/*
 		 * if (keyCode == BACKSPACE)
 		 * return '\b';
-		 * else if (keyCode == retURN || keyCode == ENTER)
+		 * else if (keyCode == RETURN || keyCode == ENTER)
 		 * return '%n';
 		 * else if (isTypeable(key))
 		 * return key;
