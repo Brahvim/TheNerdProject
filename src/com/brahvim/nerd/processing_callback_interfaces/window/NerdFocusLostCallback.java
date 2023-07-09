@@ -4,7 +4,6 @@ import com.brahvim.nerd.processing_callback_interfaces.NerdSketchHardwareCallbac
 
 public interface NerdFocusLostCallback extends NerdSketchHardwareCallback {
 
-	public default void focusLost() {
-	}
+	public void focusLost();
 
 }

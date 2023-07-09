@@ -479,7 +479,7 @@ public class NerdSketch extends PApplet {
 
 		this.INPUT.preCallback();
 		this.WINDOW.preCallback(this.WINDOW_LISTENERS);
-		this.DISPLAYS.preCallback(this.WINDOW_LISTENERS);
+		this.DISPLAYS.pre();
 
 		this.PRE_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runPre();

@@ -5,14 +5,12 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.Point;
 import java.util.LinkedHashSet;
-import java.util.Objects;
-
-import processing.event.MouseEvent;
 
 public class NerdDisplayManager extends NerdEngineModule {
 
 	protected final NerdSketch SKETCH;
 	protected final NerdWindowManager WINDOW;
+	protected final LinkedHashSet<NerdSketch.NerdSketchWindowListener> windowListeners = new LinkedHashSet<>();
 
 	protected GraphicsDevice previousMonitor, currentMonitor;
 
@@ -92,7 +90,8 @@ public class NerdDisplayManager extends NerdEngineModule {
 	}
 
 	// region Current and previous frame monitor settings, plus callback!
-	public void preCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
+	@Override
+	public void pre() {
 		this.recordPreviousDisplayParameters();
 		this.updateDisplayParameters();
 
@@ -106,8 +105,8 @@ public class NerdDisplayManager extends NerdEngineModule {
 		if (this.previousMonitor != this.currentMonitor) {
 			this.previousMonitor = this.currentMonitor;
 			this.updateDisplayParameters();
-			for (final NerdSketch.NerdSketchWindowListener l : Objects.requireNonNull(p_windowListeners,
-					"`NerdDisplayManager::preCallback()` received `null`!"))
+
+			for (final NerdSketch.NerdSketchWindowListener l : this.windowListeners)
 				l.monitorChanged();
 
 			this.SKETCH.SCENES.monitorChanged();

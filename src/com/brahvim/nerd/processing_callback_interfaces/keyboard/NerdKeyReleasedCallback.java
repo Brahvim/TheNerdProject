@@ -4,7 +4,6 @@ import com.brahvim.nerd.processing_callback_interfaces.NerdSketchHardwareCallbac
 
 public interface NerdKeyReleasedCallback extends NerdSketchHardwareCallback {
 
-	public default void keyReleased() {
-	}
+	public void keyReleased();
 
 }
