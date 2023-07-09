@@ -2,7 +2,7 @@ package com.brahvim.nerd.framework.cameras;
 
 import java.awt.Point;
 
-import com.brahvim.nerd.processing_wrapper.NerdDisplayManager;
+import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
 import com.jogamp.newt.opengl.GLWindow;
@@ -23,7 +23,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	public float mouseSensitivity = NerdFlyCamera.DEFAULT_MOUSE_SENSITIVITY;
 
 	protected final NerdWindowManager WINDOW;
-	protected final NerdDisplayManager DISPLAYS;
+	protected final NerdDisplayModule DISPLAYS;
 
 	private boolean pholdMouse;
 	// endregion

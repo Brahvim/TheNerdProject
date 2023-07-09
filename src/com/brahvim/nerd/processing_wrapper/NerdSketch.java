@@ -138,7 +138,7 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	public final NerdCallbacksModule CALLBACKS;
-	public final NerdDisplayManager DISPLAYS;
+	public final NerdDisplayModule DISPLAYS;
 	public final NerdWindowManager WINDOW;
 	public final NerdInputManager INPUT;
 	// endregion
@@ -166,8 +166,6 @@ public class NerdSketch extends PApplet {
 	protected int frameStartTime, pframeTime, frameTime;
 	protected NerdGraphics nerdGraphics;
 	protected PFont defaultFont;
-	protected PImage iconImage;
-
 	// endregion
 
 	// region Construction, `settings()`...
@@ -184,7 +182,7 @@ public class NerdSketch extends PApplet {
 		// region Non-key settings.
 		this.SCENES = this.getNerdModule(NerdScenesModule.class);
 		this.CALLBACKS = this.getNerdModule(NerdCallbacksModule.class);
-		this.DISPLAYS = this.getNerdModule(NerdDisplayManager.class);
+		this.DISPLAYS = this.getNerdModule(NerdDisplayModule.class);
 		this.WINDOW = this.getNerdModule(NerdWindowManager.class);
 		this.INPUT = this.getNerdModule(NerdInputManager.class);
 
@@ -265,13 +263,12 @@ public class NerdSketch extends PApplet {
 	// region Processing sketch workflow.
 	@Override
 	public void setup() {
-		this.iconImage = super.loadImage(this.SKETCH_SETTINGS.ICON_PATH);
-
 		// `DISPLAYS` before `WINDOW`!
 		// The latter waits for the former!
 		this.DISPLAYS.updateDisplayParameters();
 		this.WINDOW.init();
 		this.WINDOW.updateWindowParameters();
+		this.WINDOW.iconImage = super.loadImage(this.SKETCH_SETTINGS.ICON_PATH);
 
 		super.surface.setTitle(this.SKETCH_SETTINGS.NAME);
 		super.registerMethod("pre", this);
@@ -279,7 +276,7 @@ public class NerdSketch extends PApplet {
 		super.frameRate(this.DEFAULT_REFRESH_RATE);
 
 		this.nerdGraphics = new NerdGraphics(this, super.getGraphics());
-		this.defaultFont = super.createFont("SansSerif", this.WINDOW.scr * 72);
+		this.defaultFont = super.createFont("SansSerif", this.DISPLAYS.displayScr * 72);
 
 		// ...Also makes these changes to `NerdSketch::nerdGraphics`, haha:
 		super.textFont(this.defaultFont);
@@ -385,21 +382,18 @@ public class NerdSketch extends PApplet {
 	public void mousePressed() {
 		this.INPUT.mousePressed();
 		this.MODULES.values().forEach(NerdModule::mousePressed);
-		this.SCENES.mousePressed();
 	}
 
 	@Override
 	public void mouseReleased() {
 		this.INPUT.mouseReleased();
 		this.MODULES.values().forEach(NerdModule::mouseReleased);
-		this.SCENES.mouseReleased();
 	}
 
 	@Override
 	public void mouseMoved() {
 		this.INPUT.mouseMoved();
 		this.MODULES.values().forEach(NerdModule::mouseMoved);
-		this.SCENES.mouseMoved();
 	}
 
 	// JUST SO YA' KNOW!: On Android, `mouseClicked()` has been left unused.
@@ -408,21 +402,18 @@ public class NerdSketch extends PApplet {
 	public void mouseClicked() {
 		this.INPUT.mouseClicked();
 		this.MODULES.values().forEach(NerdModule::mouseClicked);
-		this.SCENES.mouseClicked();
 	}
 
 	@Override
 	public void mouseDragged() {
 		this.INPUT.mouseDragged();
 		this.MODULES.values().forEach(NerdModule::mouseDragged);
-		this.SCENES.mouseDragged();
 	}
 
 	@Override
 	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 		this.INPUT.mouseWheel(p_mouseEvent);
 		this.MODULES.values().forEach(m -> m.mouseWheel(p_mouseEvent));
-		this.SCENES.mouseWheel(p_mouseEvent);
 	}
 	// endregion
 
@@ -457,31 +448,26 @@ public class NerdSketch extends PApplet {
 		}
 
 		this.INPUT.keyPressed();
-		this.SCENES.keyPressed();
 	}
 
 	@Override
 	public void keyReleased() {
 		this.INPUT.keyReleased();
 		this.MODULES.values().forEach(NerdModule::keyReleased);
-		this.SCENES.keyReleased();
 	}
 	// endregion
 
 	// region Touch events.
 	public void touchStarted() {
 		this.MODULES.values().forEach(NerdModule::touchStarted);
-		this.SCENES.touchStarted();
 	}
 
 	public void touchMoved() {
 		this.MODULES.values().forEach(NerdModule::touchMoved);
-		this.SCENES.touchMoved();
 	}
 
 	public void touchEnded() {
 		this.MODULES.values().forEach(NerdModule::touchEnded);
-		this.SCENES.touchEnded();
 	}
 	// endregion
 
@@ -499,7 +485,6 @@ public class NerdSketch extends PApplet {
 		if (!super.isLooping())
 			this.MODULES.values().forEach(NerdModule::focusGained);
 
-		this.SCENES.focusGained();
 	}
 
 	@Override
@@ -515,7 +500,6 @@ public class NerdSketch extends PApplet {
 		if (!super.isLooping())
 			this.MODULES.values().forEach(NerdModule::focusLost);
 
-		this.SCENES.focusLost();
 	}
 	// endregion
 	// endregion
@@ -548,11 +532,6 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// region Utilities!~
-	// region Ah yes, GETTERS AND SETTERS. Even here!:
-	// protected NerdBasicCamera getDefaultCameraByRef() {
-	// return this.defaultCamera;
-	// }
-
 	public int getFrameStartTime() {
 		return this.frameStartTime;
 	}
@@ -565,10 +544,6 @@ public class NerdSketch extends PApplet {
 		return this.pframeTime;
 	}
 
-	public PImage getIconImage() {
-		return this.iconImage;
-	}
-
 	public PFont getDefaultFont() {
 		return this.defaultFont;
 	}
@@ -576,19 +551,6 @@ public class NerdSketch extends PApplet {
 	public NerdGraphics getNerdGraphics() {
 		return this.nerdGraphics;
 	}
-
-	public NerdScenesModule getSceneManager() {
-		return this.SCENES; // Actually a `NerdBridgedSceneManager`!
-	}
-
-	public NerdWindowManager getWindowManager() {
-		return this.WINDOW;
-	}
-
-	public NerdDisplayManager getDisplayManager() {
-		return this.DISPLAYS;
-	}
-	// endregion
 
 	// region Rendering utilities!
 	public PImage svgToImage(final PShape p_shape, final float p_width, final float p_height) {

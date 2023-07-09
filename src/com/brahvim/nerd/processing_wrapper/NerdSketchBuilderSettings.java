@@ -64,7 +64,7 @@ public class NerdSketchBuilderSettings {
 
 		this.moduleInstantiator = s -> {
 			final HashMap<Class<? extends NerdModule>, NerdModule> toRet = new HashMap<>();
-			toRet.put(NerdDisplayManager.class, new NerdDisplayManager(s));
+			toRet.put(NerdDisplayModule.class, new NerdDisplayModule(s));
 			toRet.put(NerdWindowManager.class,
 					switch (s.SKETCH_SETTINGS.RENDERER_NAME) {
 						case PConstants.P2D, PConstants.P3D -> new NerdGlWindowManager(s);

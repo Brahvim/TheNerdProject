@@ -28,7 +28,7 @@ import processing.opengl.PShader;
 public class NerdGraphics {
 
 	// region Fields.
-	public NerdAbstractCamera currentCamera; // CAMERA! wher lite?! wher accsunn?!
+	protected NerdAbstractCamera currentCamera; // CAMERA! wher lite?! wher accsunn?!
 
 	protected final NerdSketch SKETCH;
 	protected final PGraphics GRAPHICS;
@@ -68,6 +68,10 @@ public class NerdGraphics {
 			if (this.currentCamera != this.previousCamera)
 				System.out.printf("`%s` has no camera! Consider adding one...?", this);
 		}
+	}
+
+	public void setCurrentCamera(final NerdAbstractCamera p_camera) {
+		this.currentCamera = p_camera;
 	}
 
 	@SuppressWarnings("unchecked")

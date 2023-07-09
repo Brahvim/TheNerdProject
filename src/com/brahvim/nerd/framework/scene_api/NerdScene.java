@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
-import com.brahvim.nerd.processing_wrapper.NerdDisplayManager;
+import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdInputManager;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -41,7 +41,7 @@ public abstract class NerdScene {
 	protected NerdWindowManager WINDOW;
 	protected NerdAbstractCamera CAMERA;
 	protected NerdBridgedEcsModule ECS;
-	protected NerdDisplayManager DISPLAY;
+	protected NerdDisplayModule DISPLAY;
 	// endregion
 
 	// region `private` fields.

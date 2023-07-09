@@ -75,11 +75,11 @@ public class DemoScene4 extends NerdScene {
 				rubberDuck.play();
 		}
 
-		this.nerd = SKETCH.getIconImage();
+		this.nerd = WINDOW.getIconImage();
 		this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
 
 		GRAPHICS.noStroke();
-		GRAPHICS.currentCamera.getPos().z = 500;
+		GRAPHICS.getCurrentCamera().getPos().z = 500;
 		GRAPHICS.textureWrap(PConstants.REPEAT);
 
 		this.ncx = this.nerd.width * 0.5f;

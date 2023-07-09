@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.processing_callback_interfaces.window.NerdWindowListener;
 
-public class NerdDisplayManager extends NerdModule {
+public class NerdDisplayModule extends NerdModule {
 
 	protected final NerdWindowManager WINDOW;
 	protected final LinkedHashSet<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
@@ -38,7 +38,7 @@ public class NerdDisplayManager extends NerdModule {
 	public int pdisplayWidthThirdQuart, pdisplayHeightThirdQuart;
 	// endregion
 
-	public NerdDisplayManager(final NerdSketch p_sketch) {
+	public NerdDisplayModule(final NerdSketch p_sketch) {
 		super(p_sketch);
 		this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
 		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowManager.class);

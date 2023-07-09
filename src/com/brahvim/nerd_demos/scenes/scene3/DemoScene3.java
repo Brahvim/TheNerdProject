@@ -40,7 +40,7 @@ public class DemoScene3 extends NerdScene {
 
 		CAMERA = new SmoothCamera(GRAPHICS);
 		CAMERA.fov = PApplet.radians(75);
-		GRAPHICS.currentCamera = this.CAMERA;
+		GRAPHICS.setCurrentCamera(this.CAMERA);
 		// SKETCH.frameRate(90);
 
 		final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];

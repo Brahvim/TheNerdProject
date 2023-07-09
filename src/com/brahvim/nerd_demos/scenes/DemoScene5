@@ -14,7 +14,7 @@ public class DemoScene5 extends NerdScene {
 	@Override
 	protected void setup(SceneState p_state) {
 		System.out.println(this.TEXT);
-		GRAPHICS.currentCamera.pos.z = 500;
+		GRAPHICS.getCurrentCamera().pos.z = 500;
 	}
 
 	@Override

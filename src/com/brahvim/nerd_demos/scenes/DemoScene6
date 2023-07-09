@@ -36,7 +36,7 @@ public class DemoScene6 extends NerdScene {
 
 		// Do not forget to do these!:
 		WINDOW.cursorVisible = false;
-		GRAPHICS.currentCamera = CAMERA;
+		GRAPHICS.getCurrentCamera() = CAMERA;
 		// The camera won't be "auto-used" otherwise!!!
 
 		// Give us a "starting position"!:

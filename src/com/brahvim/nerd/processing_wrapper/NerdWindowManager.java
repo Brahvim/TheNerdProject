@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.processing_callback_interfaces.window.NerdWindowListener;
 
+import processing.core.PImage;
 import processing.core.PSurface;
 import processing.core.PVector;
 
@@ -27,7 +28,8 @@ public abstract class NerdWindowManager extends NerdModule {
 	protected final LinkedHashSet<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
 
 	protected PSurface surface;
-	protected NerdDisplayManager displays;
+	protected PImage iconImage;
+	protected NerdDisplayModule displays;
 	// endregion
 
 	// region Construction and initialization.
@@ -38,7 +40,7 @@ public abstract class NerdWindowManager extends NerdModule {
 
 	public void init() {
 		this.surface = super.SKETCH.getSurface();
-		this.displays = super.SKETCH.getDisplayManager();
+		this.displays = super.SKETCH.getNerdModule(NerdDisplayModule.class);
 		this.initImpl();
 	}
 
@@ -101,6 +103,10 @@ public abstract class NerdWindowManager extends NerdModule {
 	// region Getters.
 	public PSurface getSurface() {
 		return this.surface;
+	}
+
+	public PImage getIconImage() {
+		return this.iconImage;
 	}
 
 	public abstract String getName();
