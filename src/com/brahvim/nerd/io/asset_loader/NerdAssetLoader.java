@@ -31,6 +31,9 @@ public abstract class NerdAssetLoader<AssetT> {
 	protected abstract String getAssetName();
 
 	protected String findNameFromPath(final String p_path) {
+		if (p_path == null)
+			return "";
+
 		String toRet = new File(p_path).getName(); // Parses wth `/`s too!
 		// Paths.get("").getFileName().toString(); // Parses with `File.separator`.
 

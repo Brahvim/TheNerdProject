@@ -18,7 +18,7 @@ public class PFontAsset extends NerdSinglePathAssetLoader<PFont> {
 		final PFont font = p_sketch.loadFont(super.path);
 
 		if (font == null)
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 
 		return font;
 	}

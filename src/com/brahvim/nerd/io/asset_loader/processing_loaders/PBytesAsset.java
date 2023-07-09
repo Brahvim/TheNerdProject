@@ -16,7 +16,7 @@ public class PBytesAsset extends NerdSinglePathAssetLoader<byte[]> {
 		final byte[] bytes = p_sketch.loadBytes(super.path);
 
 		if (bytes == null)
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 
 		return bytes;
 	}

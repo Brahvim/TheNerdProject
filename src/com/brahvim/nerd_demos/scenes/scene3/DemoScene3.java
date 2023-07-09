@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 
 import com.brahvim.nerd.framework.lights.NerdAmbientLight;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
-import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
+import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.openal.AlBuffer;
 import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
@@ -34,7 +34,7 @@ public class DemoScene3 extends NerdScene {
 
 	@Override
 	protected void setup(final NerdSceneState p_state) {
-		MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder.SCENE;
+		MANAGER.SETTINGS.drawFirstCaller = NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder.SCENE;
 		SCENE.addLayer(CinematicBarsLayer.class);
 		SCENE.addLayer(DebugFpsGizmoLayer.class);
 

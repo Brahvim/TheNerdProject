@@ -19,136 +19,136 @@ import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
  */
 public abstract class NerdLayer {
 
-  // region `protected` fields.
-  // Seriously, why did I set these to be `protected`?
-  public final NerdLayer LAYER = this;
+	// region `protected` fields.
+	// Seriously, why did I set these to be `protected`?
+	public final NerdLayer LAYER = this;
 
-  protected NerdSketch SKETCH;
-  protected NerdSceneState STATE;
-  protected NerdGraphics GRAPHICS;
-  protected NerdInputManager INPUT;
-  protected NerdAssetManager ASSETS;
-  protected NerdSceneManager MANAGER;
-  protected NerdWindowManager WINDOW;
-  protected NerdAbstractCamera CAMERA;
-  protected NerdBridgedEcsManager ECS;
-  protected NerdDisplayManager DISPLAY;
+	protected NerdSketch SKETCH;
+	protected NerdSceneState STATE;
+	protected NerdGraphics GRAPHICS;
+	protected NerdInputManager INPUT;
+	protected NerdAssetManager ASSETS;
+	protected NerdScenesModule MANAGER;
+	protected NerdWindowManager WINDOW;
+	protected NerdAbstractCamera CAMERA;
+	protected NerdBridgedEcsModule ECS;
+	protected NerdDisplayManager DISPLAY;
 
-  protected NerdScene SCENE;
-  // endregion
+	protected NerdScene SCENE;
+	// endregion
 
-  // region `private` fields.
-  private int timesActivated;
-  private boolean active;
-  // endregion
+	// region `private` fields.
+	private int timesActivated;
+	private boolean active;
+	// endregion
 
-  protected NerdLayer() {
-  }
+	protected NerdLayer() {
+	}
 
-  // region Activity status.
-  public boolean isActive() {
-    return this.active;
-  }
+	// region Activity status.
+	public boolean isActive() {
+		return this.active;
+	}
 
-  public void setActive(final boolean p_toggleState) {
-    final boolean previouslyActive = this.active; // RECORD!!!!
-    this.active = p_toggleState;
+	public void setActive(final boolean p_toggleState) {
+		final boolean previouslyActive = this.active; // RECORD!!!!
+		this.active = p_toggleState;
 
-    if (this.active && !previouslyActive) {
-      this.setup();
-      this.timesActivated++;
-    } else
-      this.layerExit();
-  }
+		if (this.active && !previouslyActive) {
+			this.setup();
+			this.timesActivated++;
+		} else
+			this.layerExit();
+	}
 
-  public int getTimesActivated() {
-    return this.timesActivated;
-  }
-  // endregion
+	public int getTimesActivated() {
+		return this.timesActivated;
+	}
+	// endregion
 
-  // region Events.
-  // region Mouse events.
-  public void mousePressed() {
-  }
+	// region Events.
+	// region Mouse events.
+	public void mousePressed() {
+	}
 
-  public void mouseReleased() {
-  }
+	public void mouseReleased() {
+	}
 
-  public void mouseMoved() {
-  }
+	public void mouseMoved() {
+	}
 
-  public void mouseClicked() {
-  }
+	public void mouseClicked() {
+	}
 
-  public void mouseDragged() {
-  }
+	public void mouseDragged() {
+	}
 
-  public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
-  }
-  // endregion
+	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
+	}
+	// endregion
 
-  // region Keyboard events.
-  public void keyTyped() {
-  }
+	// region Keyboard events.
+	public void keyTyped() {
+	}
 
-  public void keyPressed() {
-  }
+	public void keyPressed() {
+	}
 
-  public void keyReleased() {
-  }
-  // endregion
+	public void keyReleased() {
+	}
+	// endregion
 
-  // region Touch events.
-  public void touchStarted() {
-  }
+	// region Touch events.
+	public void touchStarted() {
+	}
 
-  public void touchMoved() {
-  }
+	public void touchMoved() {
+	}
 
-  public void touchEnded() {
-  }
-  // endregion
+	public void touchEnded() {
+	}
+	// endregion
 
-  // region Window focus events.
-  public void focusLost() {
-  }
+	// region Window focus events.
+	public void focusLost() {
+	}
 
-  public void exit() {
-  }
+	public void exit() {
+	}
 
-  public void resized() {
-  }
+	public void resized() {
+	}
 
-  public void focusGained() {
-  }
+	public void focusGained() {
+	}
 
-  public void monitorChanged() {
-  }
+	public void monitorChanged() {
+	}
 
-  public void fullscreenChanged(final boolean p_state) {
-  }
-  // endregion
-  // endregion
+	public void fullscreenChanged(final boolean p_state) {
+	}
+	// endregion
+	// endregion
 
-  // region `protected` methods. Nobody can call them outside of this package!
-  // region `NerdLayer`-only (`protected`) callbacks!
-  protected void layerExit() {
-  }
-  // endregion
+	// region `protected` methods. Nobody can call them outside of this package!
+	// region `NerdLayer`-only (`protected`) callbacks!
+	protected void layerExit() {
+	}
+	// endregion
 
-  // region App workflow callbacks.
-  protected void setup() {
-  }
+	// region App workflow callbacks.
+	protected void setup() {
+	}
 
-  protected void pre() {
-  }
+	protected void pre() {
+	}
 
-  protected void draw() {
-  }
+	protected void draw() {
+	}
 
-  protected void post() {
-  }
-  // endregion
-  // endregion
+	protected void post() {
+	}
+	// endregion
+	// endregion
 
 }

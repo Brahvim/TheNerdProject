@@ -18,7 +18,7 @@ public class PJsonArrayAsset extends NerdSinglePathAssetLoader<JSONArray> {
 		try {
 			return p_sketch.loadJSONArray(super.path);
 		} catch (final NullPointerException e) {
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 		}
 	}
 

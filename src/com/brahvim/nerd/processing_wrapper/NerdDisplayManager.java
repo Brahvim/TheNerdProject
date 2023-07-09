@@ -6,11 +6,12 @@ import java.awt.GraphicsDevice;
 import java.awt.Point;
 import java.util.LinkedHashSet;
 
-public class NerdDisplayManager extends NerdEngineModule {
+import com.brahvim.nerd.processing_callback_interfaces.window.NerdWindowListener;
 
-	protected final NerdSketch SKETCH;
+public class NerdDisplayManager extends NerdModule {
+
 	protected final NerdWindowManager WINDOW;
-	protected final LinkedHashSet<NerdSketch.NerdSketchWindowListener> windowListeners = new LinkedHashSet<>();
+	protected final LinkedHashSet<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
 
 	protected GraphicsDevice previousMonitor, currentMonitor;
 
@@ -38,15 +39,15 @@ public class NerdDisplayManager extends NerdEngineModule {
 	// endregion
 
 	public NerdDisplayManager(final NerdSketch p_sketch) {
-		this.SKETCH = p_sketch;
-		this.WINDOW = this.SKETCH.WINDOW;
-		this.currentMonitor = this.SKETCH.DEFAULT_JAVA_SCREEN;
+		super(p_sketch);
+		this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
+		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowManager.class);
 	}
 
 	// Referenced in `NerdSketch::setup()` - only time it's been called out there.
 	public void updateDisplayParameters() {
-		this.displayWidth = this.SKETCH.displayWidth;
-		this.displayHeight = this.SKETCH.displayHeight;
+		this.displayWidth = super.SKETCH.displayWidth;
+		this.displayHeight = super.SKETCH.displayHeight;
 
 		this.displayWidthTwice = this.displayWidth * 2;
 		this.displayHeightTwice = this.displayHeight * 2;
@@ -90,37 +91,35 @@ public class NerdDisplayManager extends NerdEngineModule {
 	}
 
 	// region Current and previous frame monitor settings, plus callback!
-	public void preCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
+	@Override
+	public void pre() {
 		this.recordPreviousDisplayParameters();
 		this.updateDisplayParameters();
 
-		final GraphicsDevice[] updatedList = this.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
-		if (this.SKETCH.JAVA_SCREENS != updatedList) {
-			this.SKETCH.DEFAULT_JAVA_SCREEN = this.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
-			this.SKETCH.DEFAULT_JAVA_SCREEN_MODE = this.SKETCH.DEFAULT_JAVA_SCREEN.getDisplayMode();
-			this.SKETCH.DEFAULT_REFRESH_RATE = this.SKETCH.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
+		final GraphicsDevice[] updatedList = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
+		if (super.SKETCH.JAVA_SCREENS != updatedList) {
+			super.SKETCH.DEFAULT_JAVA_SCREEN = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
+			super.SKETCH.DEFAULT_JAVA_SCREEN_MODE = super.SKETCH.DEFAULT_JAVA_SCREEN.getDisplayMode();
+			super.SKETCH.DEFAULT_REFRESH_RATE = super.SKETCH.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
 		}
 
 		if (this.previousMonitor != this.currentMonitor) {
 			this.previousMonitor = this.currentMonitor;
 			this.updateDisplayParameters();
-
-			for (final NerdSketch.NerdSketchWindowListener l : p_windowListeners)
-				l.monitorChanged();
-
-			this.SKETCH.SCENES.monitorChanged();
+			this.windowListeners.forEach(NerdWindowListener::monitorChanged);
+			super.SKETCH.SCENES.monitorChanged();
 		}
 
-		if (this.SKETCH.focused)
-			this.currentMonitor = this.getGraphicsDeviceAt(this.SKETCH.INPUT.GLOBAL_MOUSE_POINT);
+		if (super.SKETCH.focused)
+			this.currentMonitor = this.getGraphicsDeviceAt(super.SKETCH.INPUT.GLOBAL_MOUSE_POINT);
 
 		if (this.currentMonitor == null)
-			this.currentMonitor = this.SKETCH.DEFAULT_JAVA_SCREEN;
+			this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
 
-		// Update `this.SKETCH.displayWidth` and `this.SKETCH.displayHeight`:
+		// Update `super.SKETCH.displayWidth` and `super.SKETCH.displayHeight`:
 		final DisplayMode currMonitorMode = this.currentMonitor.getDisplayMode();
-		this.SKETCH.displayWidth = currMonitorMode.getWidth();
-		this.SKETCH.displayHeight = currMonitorMode.getHeight();
+		super.SKETCH.displayWidth = currMonitorMode.getWidth();
+		super.SKETCH.displayHeight = currMonitorMode.getHeight();
 	}
 
 	// region Getters.
@@ -137,13 +136,13 @@ public class NerdDisplayManager extends NerdEngineModule {
 	// but https://stackoverflow.com/a/1248865/ was what worked.
 	// And yes, I modified it.
 	public GraphicsDevice getGraphicsDeviceAt(final Point p_pos) {
-		for (final GraphicsDevice d : this.SKETCH.JAVA_SCREENS)
+		for (final GraphicsDevice d : super.SKETCH.JAVA_SCREENS)
 			for (final GraphicsConfiguration c : d.getConfigurations())
 				if (c.getBounds().contains(p_pos))
 					return d;
 
 		// If the point is outside all monitors, default to the default monitor!:
-		return this.SKETCH.DEFAULT_JAVA_SCREEN;
+		return super.SKETCH.DEFAULT_JAVA_SCREEN;
 	}
 
 	public DisplayMode getCurrentMonitorDisplayMode() {

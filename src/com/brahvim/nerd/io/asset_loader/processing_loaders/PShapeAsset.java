@@ -18,7 +18,7 @@ public class PShapeAsset extends NerdSinglePathAssetLoader<PShape> {
 		final PShape shape = p_sketch.loadShape(super.path);
 
 		if (shape == null)
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 
 		return shape;
 	}

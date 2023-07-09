@@ -4,15 +4,17 @@ import com.brahvim.nerd.processing_callback_interfaces.NerdSketchCallbackCallee;
 
 public class NerdSketchProtectedWorkflowListener implements NerdSketchCallbackCallee {
 
+	protected void settings() {
+	}
+
+	protected void setup() {
+	}
+
 	protected void pre() {
 	}
 
-	// protected void preDraw() {}
-
 	protected void draw() {
 	}
-
-	// protected void postDraw() {}
 
 	protected void post() {
 	}

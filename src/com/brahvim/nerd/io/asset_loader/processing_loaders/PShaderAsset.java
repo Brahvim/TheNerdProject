@@ -8,12 +8,11 @@ import processing.opengl.PShader;
 
 public class PShaderAsset extends NerdAssetLoader<PShader> {
 
-	private String vertPath;
-	private final String fragPath;
+	private final String vertPath, fragPath;
 
 	// region Constructors.
 	public PShaderAsset(final String p_fragPath) {
-		this.fragPath = p_fragPath;
+		this(null, p_fragPath);
 	}
 
 	public PShaderAsset(final String p_vertPath, final String p_fragPath) {
@@ -30,7 +29,7 @@ public class PShaderAsset extends NerdAssetLoader<PShader> {
 				: p_sketch.loadShader(this.vertPath, this.fragPath);
 
 		if (shader == null)
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 
 		return shader;
 	}
@@ -38,6 +37,8 @@ public class PShaderAsset extends NerdAssetLoader<PShader> {
 	// region Getters.
 	@Override
 	protected String getAssetName() {
+		if (this.vertPath == null)
+			return super.findNameFromPath(this.fragPath);
 		return super.findNameFromPath(this.vertPath) + ":" + super.findNameFromPath(this.fragPath);
 	}
 

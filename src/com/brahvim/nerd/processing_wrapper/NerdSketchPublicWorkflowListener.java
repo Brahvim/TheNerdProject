@@ -1,25 +1,32 @@
 package com.brahvim.nerd.processing_wrapper;
 
-import com.brahvim.nerd.processing_callback_interfaces.NerdSketchCallbackCallee;
+public class NerdSketchPublicWorkflowListener extends NerdSketchProtectedWorkflowListener {
 
-public class NerdSketchPublicWorkflowListener implements NerdSketchCallbackCallee {
+	@Override
+	public void settings() {
+	}
 
+	@Override
+	public void setup() {
+	}
+
+	@Override
 	public void pre() {
 	}
 
-	// public void preDraw() {}
-
+	@Override
 	public void draw() {
 	}
 
-	// public void postDraw() {}
-
+	@Override
 	public void post() {
 	}
 
+	@Override
 	public void exit() {
 	}
 
+	@Override
 	public void dispose() {
 	}
 

@@ -17,7 +17,7 @@ public class NerdSerializedAsset extends NerdSinglePathAssetLoader<Object> {
 		try {
 			return NerdByteSerialUtils.fromFile(super.path);
 		} catch (final Exception e) {
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 		}
 	}
 

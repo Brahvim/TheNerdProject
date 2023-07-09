@@ -10,10 +10,7 @@ import processing.core.PConstants;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
-// A (currently very messy) class to hold input event states from
-// the previous frame and previous event encounters.
-
-public class NerdInputManager {
+public class NerdInputManager extends NerdModule {
 
 	// region Fields.
 	public static final List<Character> STANDARD_KEYBOARD_SYMBOLS = List.of(
@@ -75,15 +72,14 @@ public class NerdInputManager {
 
 	protected final ArrayList<Integer> KEYS_HELD = new ArrayList<>(5), PREV_FRAME_KEYS_HELD = new ArrayList<>(5);
 	// endregion
-
-	private final NerdSketch SKETCH; // ...It's best to keep this `private`.
 	// endregion
 
 	public NerdInputManager(final NerdSketch p_sketch) {
-		this.SKETCH = p_sketch;
+		super(p_sketch);
 	}
 
-	/* `package` */ void preCallback() {
+	@Override
+	protected void pre() {
 		this.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
 		this.GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_POINT.x, this.GLOBAL_MOUSE_POINT.y);
 
@@ -93,7 +89,8 @@ public class NerdInputManager {
 		this.CURR_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
 	}
 
-	/* `package` */ void postCallback() {
+	@Override
+	protected void post() {
 		this.PREV_FRAME_GLOBAL_MOUSE_POINT.setLocation(this.GLOBAL_MOUSE_POINT);
 		this.PREV_FRAME_GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_VECTOR);
 
@@ -106,11 +103,13 @@ public class NerdInputManager {
 		this.PREV_FRAME_KEYS_HELD.addAll(this.KEYS_HELD);
 	}
 
-	/* `package` */ void focusGained() {
+	@Override
+	public void focusGained() {
 		this.KEYS_HELD.clear();
 	}
 
-	/* `package` */ void focusLost() {
+	@Override
+	public void focusLost() {
 		this.KEYS_HELD.clear();
 	}
 
@@ -119,13 +118,15 @@ public class NerdInputManager {
 	// This is why methods here only *copy* fields from `NerdSketch`.
 
 	// region Keyboard events.
-	/* `package` */ void keyTyped() {
+	@Override
+	public void keyTyped() {
 		this.key = this.SKETCH.key;
 		this.keyCode = this.SKETCH.keyCode;
 		this.keyPressed = this.SKETCH.keyPressed;
 	}
 
-	/* `package` */ void keyPressed() {
+	@Override
+	public void keyPressed() {
 		// Set the previous states,
 		this.pkey = this.key;
 		this.pkeyCode = this.keyCode;
@@ -141,7 +142,8 @@ public class NerdInputManager {
 		}
 	}
 
-	/* `package` */ void keyReleased() {
+	@Override
+	public void keyReleased() {
 		this.pmouseButton = this.mouseButton;
 
 		this.key = this.SKETCH.key;
@@ -170,20 +172,24 @@ public class NerdInputManager {
 		this.mouseRight = this.mouseButton == PConstants.RIGHT && this.mousePressed;
 	}
 
-	/* `package` */ void mousePressed() {
+	@Override
+	public void mousePressed() {
 		this.literallyEveryMouseButtonCallback();
 	}
 
-	/* `package` */ void mouseReleased() {
+	@Override
+	public void mouseReleased() {
 		this.literallyEveryMouseButtonCallback();
 	}
 
 	// Not called on Android!:
-	/* `package` */ void mouseClicked() {
+	@Override
+	public void mouseClicked() {
 		// this.literallyEveryMouseButtonCallback();
 	}
 
-	/* `package` */ void mouseMoved() {
+	@Override
+	public void mouseMoved() {
 		this.pmouseX = this.mouseX;
 		this.pmouseY = this.mouseY;
 
@@ -199,7 +205,8 @@ public class NerdInputManager {
 				this.SKETCH.mouseY - this.SKETCH.WINDOW.cy);
 	}
 
-	/* `package` */ void mouseDragged() {
+	@Override
+	public void mouseDragged() {
 		// Should've included stuff from `NerdInputManager::mouseMoved()`, but hey - if
 		// the mouse is dragged, it also moves, right?!
 		this.literallyEveryMouseButtonCallback();
@@ -208,7 +215,8 @@ public class NerdInputManager {
 		// this.mouseX = this.SKETCH.mouseX; this.mouseY = this.SKETCH.mouseY;
 	}
 
-	/* `package` */ void mouseWheel(final MouseEvent p_event) {
+	@Override
+	public void mouseWheel(final MouseEvent p_event) {
 		this.pmouseScroll = this.mouseScroll;
 		this.ptotalMouseScroll = this.totalMouseScroll;
 		this.pmouseScrollDelta = this.mouseScrollDelta;

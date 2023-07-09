@@ -1,6 +1,9 @@
 package com.brahvim.nerd.processing_wrapper;
 
-public abstract class NerdExt {
+import com.brahvim.nerd.processing_callback_interfaces.NerdSketchHardwareListener;
+
+public abstract class NerdExt extends NerdSketchProtectedWorkflowListener
+		implements NerdSketchHardwareListener {
 
 	protected NerdExt() {
 	}

@@ -37,10 +37,10 @@ public abstract class NerdScene {
 	protected NerdGraphics GRAPHICS;
 	protected NerdInputManager INPUT;
 	protected NerdAssetManager ASSETS;
-	protected NerdSceneManager MANAGER;
+	protected NerdScenesModule MANAGER;
 	protected NerdWindowManager WINDOW;
 	protected NerdAbstractCamera CAMERA;
-	protected NerdBridgedEcsManager ECS;
+	protected NerdBridgedEcsModule ECS;
 	protected NerdDisplayManager DISPLAY;
 	// endregion
 
@@ -523,7 +523,7 @@ public abstract class NerdScene {
 
 	/* `package` */ void runDraw() {
 		if (this.MANAGER.SETTINGS.drawFirstCaller == null)
-			this.MANAGER.SETTINGS.drawFirstCaller = NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder.LAYER;
+			this.MANAGER.SETTINGS.drawFirstCaller = NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder.LAYER;
 
 		this.ECS.draw();
 
@@ -564,7 +564,7 @@ public abstract class NerdScene {
 
 	/* `package` */ void runPost() {
 		if (this.MANAGER.SETTINGS.postFirstCaller == null)
-			this.MANAGER.SETTINGS.postFirstCaller = NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder.LAYER;
+			this.MANAGER.SETTINGS.postFirstCaller = NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder.LAYER;
 
 		this.ECS.post();
 
@@ -605,7 +605,7 @@ public abstract class NerdScene {
 
 	/* `package` */ void runPre() {
 		if (this.MANAGER.SETTINGS.preFirstCaller == null)
-			this.MANAGER.SETTINGS.preFirstCaller = NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder.SCENE;
+			this.MANAGER.SETTINGS.preFirstCaller = NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder.SCENE;
 
 		this.ECS.pre();
 
@@ -636,12 +636,12 @@ public abstract class NerdScene {
 	// region Scene workflow callbacks.
 	/**
 	 * Used by a {@link NerdScene} to load {@link NerdAsset}s
-	 * into their, or their {@link NerdSceneManager}'s {@link NerdAssetManager}.
+	 * into their, or their {@link NerdScenesModule}'s {@link NerdAssetManager}.
 	 *
 	 * <p>
 	 * Use this method for all asset-loading purposes that you would like to do in
-	 * the background. If {@link NerdSceneManager#loadSceneAssets()} or
-	 * {@link NerdSceneManager#loadSceneAssetsAsync} is called, this method is run
+	 * the background. If {@link NerdScenesModule#loadSceneAssets()} or
+	 * {@link NerdScenesModule#loadSceneAssetsAsync} is called, this method is run
 	 * async, loading-in all {@link NerdAsset}s!
 	 * <p>
 	 * Since {@link NerdScene}s could be a part of the same {@link NerdSketch}, it
@@ -659,9 +659,9 @@ public abstract class NerdScene {
 
 	/**
 	 * {@link NerdScene#setup()} is called when one of
-	 * {@link NerdSceneManager#startScene(Class)},
-	 * {@link NerdSceneManager#restartScene(Class)}, or
-	 * {@link NerdSceneManager#startPreviousScene(Class)}
+	 * {@link NerdScenesModule#startScene(Class)},
+	 * {@link NerdScenesModule#restartScene(Class)}, or
+	 * {@link NerdScenesModule#startPreviousScene(Class)}
 	 * is called, after the {@link NerdScene} finishes executing
 	 * {@link NerdScene#preload()},
 	 * <p>

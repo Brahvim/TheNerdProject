@@ -6,19 +6,19 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.ecs.NerdEcsComponent;
-import com.brahvim.nerd.framework.ecs.NerdEcsManager;
+import com.brahvim.nerd.framework.ecs.NerdEcsModule;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-public class NerdBridgedEcsManager extends NerdEcsManager {
+public class NerdBridgedEcsModule extends NerdEcsModule {
 
 	@SafeVarargs
-	public NerdBridgedEcsManager(final NerdSketch p_sketch, final Class<? extends NerdEcsSystem<?>>... p_systems) {
+	public NerdBridgedEcsModule(final NerdSketch p_sketch, final Class<? extends NerdEcsSystem<?>>... p_systems) {
 		super(p_sketch, p_systems);
 	}
 
 	// region Custom methods.
-	protected NerdBridgedEcsManager clearAllData() {
+	protected NerdBridgedEcsModule clearAllData() {
 		super.ENTITIES.clear();
 		super.COMPONENTS.clear();
 		super.numUnnamedEntities = 0;

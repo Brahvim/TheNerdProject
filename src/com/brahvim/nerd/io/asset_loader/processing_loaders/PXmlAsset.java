@@ -17,7 +17,7 @@ public class PXmlAsset extends NerdSinglePathAssetLoader<XML> {
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		final XML markup = p_sketch.loadXML(super.path);
 		if (markup == null)
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 		return markup;
 	}
 

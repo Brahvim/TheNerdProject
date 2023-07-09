@@ -24,7 +24,7 @@ public class PImageAsset extends NerdSinglePathAssetLoader<PImage> {
 			failure = img.width == -1;
 
 		if (failure)
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 
 		return img;
 	}

@@ -15,9 +15,10 @@ import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.net.NerdUdpSocket;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
+import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-public class NerdEcsManager implements Serializable {
+public class NerdEcsModule extends NerdModule implements Serializable {
 
 	// region Inner-classes.
 	/* `package` */ class NerdEntitySerializationPacket implements Serializable {
@@ -49,13 +50,11 @@ public class NerdEcsManager implements Serializable {
 
 	protected long numUnnamedEntities = 1;
 	protected NerdEcsSystem<?>[] ecsSystems;
-
-	private final transient NerdSketch SKETCH;
 	// endregion
 
 	@SafeVarargs
-	public NerdEcsManager(final NerdSketch p_sketch, final Class<? extends NerdEcsSystem<?>>... p_systems) {
-		this.SKETCH = p_sketch;
+	public NerdEcsModule(final NerdSketch p_sketch, final Class<? extends NerdEcsSystem<?>>... p_systems) {
+		super(p_sketch);
 		this.setSystemsOrder(p_systems);
 	}
 
@@ -112,6 +111,7 @@ public class NerdEcsManager implements Serializable {
 		this.callOnAllSystems(NerdEcsSystem::setup, p_state);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void pre() {
 		this.callOnAllSystems(NerdEcsSystem::pre);
@@ -140,7 +140,7 @@ public class NerdEcsManager implements Serializable {
 
 	// region Public API!
 	public static Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] getDefaultEcsSystemsOrder() {
-		return NerdEcsManager.DEFAULT_ECS_SYSTEMS_ORDER;
+		return NerdEcsModule.DEFAULT_ECS_SYSTEMS_ORDER;
 	}
 
 	public NerdEcsEntity createEntity() {
@@ -320,7 +320,7 @@ public class NerdEcsManager implements Serializable {
 	 * You get this entire manager, serialized to bytes!
 	 *
 	 * @return The bytes!
-	 * @see NerdEcsManager#saveState(File)
+	 * @see NerdEcsModule#saveState(File)
 	 */
 	public byte[] saveState() {
 		return NerdByteSerialUtils.toBytes(this);
@@ -330,7 +330,7 @@ public class NerdEcsManager implements Serializable {
 	 * This entire manager, serialized to a file as bytes!
 	 *
 	 * @return Nothing! The file ate it all...
-	 * @see NerdEcsManager#saveState()
+	 * @see NerdEcsModule#saveState()
 	 */
 	public void saveState(final File p_file) {
 		NerdByteSerialUtils.toFile(this, p_file);
@@ -339,7 +339,7 @@ public class NerdEcsManager implements Serializable {
 
 	// region Loading.
 	/**
-	 * Ever called {@link NerdEcsManager#saveState(File)}? This reverses that.
+	 * Ever called {@link NerdEcsModule#saveState(File)}? This reverses that.
 	 *
 	 * @param p_file is the file in context.
 	 */
@@ -348,7 +348,7 @@ public class NerdEcsManager implements Serializable {
 	}
 
 	/**
-	 * Ever called {@link NerdEcsManager#saveState()}? This reverses the bytes you
+	 * Ever called {@link NerdEcsModule#saveState()}? This reverses the bytes you
 	 * got from there, for free!
 	 *
 	 * @param p_serializedData better have the bytes I talked about!
@@ -357,7 +357,7 @@ public class NerdEcsManager implements Serializable {
 		this.loadStateImpl(NerdByteSerialUtils.fromBytes(p_serializedData));
 	}
 
-	private void loadStateImpl(final NerdEcsManager p_deserialized) {
+	private void loadStateImpl(final NerdEcsModule p_deserialized) {
 		this.ecsSystems = p_deserialized.ecsSystems;
 		this.numUnnamedEntities = p_deserialized.numUnnamedEntities;
 

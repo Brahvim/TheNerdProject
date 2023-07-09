@@ -58,9 +58,10 @@ public class NerdAsset {
 	}
 
 	public void startLoading() {
+		// TODO: Replace these will callbacks inside `NerdAssetModule`!
 		// Adding callbacks for each asset since `AssetManager`s don't handle loading.
 		final Consumer<NerdSketch> postCallback = s -> this.ploaded = this.loaded;
-		this.SKETCH.addPostListener(postCallback);
+		this.SKETCH.CALLBACKS.addPostListener(postCallback);
 		this.fetchData();
 		this.loaded = true;
 
@@ -76,12 +77,12 @@ public class NerdAsset {
 			@Override
 			public void accept(final NerdSketch p_sketch) {
 				NerdAsset.this.ploaded = true;
-				p_sketch.removePostListener(this);
+				p_sketch.CALLBACKS.removePostListener(this);
 			}
 		};
 
-		this.SKETCH.addPostListener(whenLoaded);
-		this.SKETCH.removePostListener(postCallback);
+		this.SKETCH.CALLBACKS.addPostListener(whenLoaded);
+		this.SKETCH.CALLBACKS.removePostListener(postCallback);
 	}
 
 	// region "Yes/No" questions.

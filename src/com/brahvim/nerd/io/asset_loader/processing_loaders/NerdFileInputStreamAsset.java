@@ -21,7 +21,7 @@ public class NerdFileInputStreamAsset extends NerdSinglePathAssetLoader<FileInpu
 			return new FileInputStream(new File(super.path));
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 		}
 	}
 

@@ -20,13 +20,13 @@ public final class NerdEcsEntity implements Serializable {
 	// Nope, no use in keeping the name here!
 	// If you want speed, let there be a `HashMap` in `NerdEcsManager`!
 
-	protected final transient NerdEcsManager MANAGER;
+	protected final transient NerdEcsModule MANAGER;
 	protected final transient NerdEcsEntity ENTITY = this;
 
 	private final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
 	// endregion
 
-	protected NerdEcsEntity(final NerdEcsManager p_manager) {
+	protected NerdEcsEntity(final NerdEcsModule p_manager) {
 		this.MANAGER = p_manager;
 	}
 

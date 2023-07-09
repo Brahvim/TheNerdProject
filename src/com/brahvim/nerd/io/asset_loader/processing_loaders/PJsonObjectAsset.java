@@ -18,7 +18,7 @@ public class PJsonObjectAsset extends NerdSinglePathAssetLoader<JSONObject> {
 		try {
 			return p_sketch.loadJSONObject(super.path);
 		} catch (final NullPointerException e) {
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 		}
 	}
 

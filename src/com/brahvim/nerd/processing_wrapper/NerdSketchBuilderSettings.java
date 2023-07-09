@@ -4,14 +4,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.brahvim.nerd.framework.ecs.NerdEcsComponent;
-import com.brahvim.nerd.framework.ecs.NerdEcsManager;
+import com.brahvim.nerd.framework.ecs.NerdEcsModule;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
-import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
-import com.brahvim.nerd.framework.scene_api.NerdSceneManager.NerdSceneManagerSettings;
+import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
+import com.brahvim.nerd.framework.scene_api.NerdScenesModule.NerdSceneManagerSettings;
 import com.brahvim.nerd.openal.AlContext;
+import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowManager;
 
 import processing.core.PConstants;
 
@@ -26,15 +28,14 @@ public class NerdSketchBuilderSettings {
 	public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
 	public Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] ecsSystemOrder =
 			// VSCode, you made the decision to tab this all the way down HERE!:
-			NerdEcsManager.getDefaultEcsSystemsOrder();
-	public HashMap<Class<? extends NerdEngineModule>, NerdEngineModule> nerdModules = new HashMap<>();
-	public NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder preCallOrder, drawCallOrder, postCallOrder;
+			NerdEcsModule.getDefaultEcsSystemsOrder();
+	public NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
 	// region Listeners!!!
 	public LinkedHashSet<Consumer<NerdSketch>> sketchConstructedListeners,
 			settingsListeners, setupListeners, exitListeners, disposalListeners;
 
-	public LinkedHashSet<NerdSceneManager.NerdSceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
+	public LinkedHashSet<NerdScenesModule.NerdSceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
 
 	public LinkedHashSet<Consumer<NerdSketch>> preListeners, postListeners,
 			drawListeners, preDrawListeners, postDrawListeners;
@@ -42,6 +43,8 @@ public class NerdSketchBuilderSettings {
 	public boolean preventCloseOnEscape, startedFullscreen, canResize,
 			cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 	// endregion
+
+	protected Function<NerdSketch, HashMap<Class<? extends NerdModule>, NerdModule>> moduleInstantiator;
 
 	public NerdSketchBuilderSettings() {
 		// Intializing these listeners:
@@ -58,6 +61,22 @@ public class NerdSketchBuilderSettings {
 		this.disposalListeners = new LinkedHashSet<>();
 		this.sceneChangeListeners = new LinkedHashSet<>();
 		this.sketchConstructedListeners = new LinkedHashSet<>();
+
+		this.moduleInstantiator = s -> {
+			final HashMap<Class<? extends NerdModule>, NerdModule> toRet = new HashMap<>();
+			toRet.put(NerdDisplayManager.class, new NerdDisplayManager(s));
+			toRet.put(NerdWindowManager.class,
+					switch (s.SKETCH_SETTINGS.RENDERER_NAME) {
+						case PConstants.P2D, PConstants.P3D -> new NerdGlWindowManager(s);
+						// case PConstants.JAVA2D -> new NerdJava2dWindowManager(p_sketch);
+						default -> null;
+					});
+			toRet.put(NerdInputManager.class, new NerdInputManager(s));
+			toRet.put(NerdCallbacksModule.class, new NerdCallbacksModule(s, this));
+			toRet.put(NerdScenesModule.class, new NerdScenesModule(
+					s, this.ecsSystemOrder, this.sceneManagerSettings, this.sceneChangeListeners));
+			return toRet;
+		};
 	}
 
 }

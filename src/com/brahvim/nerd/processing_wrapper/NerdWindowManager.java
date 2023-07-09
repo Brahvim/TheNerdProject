@@ -2,15 +2,13 @@ package com.brahvim.nerd.processing_wrapper;
 
 import java.awt.Point;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 
-import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowManager;
+import com.brahvim.nerd.processing_callback_interfaces.window.NerdWindowListener;
 
-import processing.core.PConstants;
 import processing.core.PSurface;
 import processing.core.PVector;
 
-public abstract class NerdWindowManager {
+public abstract class NerdWindowManager extends NerdModule {
 
 	// region Fields.
 	/** Position of the window relative to the monitor. */
@@ -26,7 +24,7 @@ public abstract class NerdWindowManager {
 	public float dbx, dby, cx, cy, qx, qy, q3x, q3y, scr;
 	public int width, height, pwidth, pheight;
 
-	protected final NerdSketch SKETCH;
+	protected final LinkedHashSet<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
 
 	protected PSurface surface;
 	protected NerdDisplayManager displays;
@@ -34,29 +32,18 @@ public abstract class NerdWindowManager {
 
 	// region Construction and initialization.
 	protected NerdWindowManager(final NerdSketch p_sketch) {
-		this.SKETCH = p_sketch;
-		this.fullscreen = this.SKETCH.SKETCH_SETTINGS.STARTED_FULLSCREEN;
+		super(p_sketch);
+		this.fullscreen = super.SKETCH.SKETCH_SETTINGS.STARTED_FULLSCREEN;
 	}
 
 	public void init() {
-		this.surface = this.SKETCH.getSurface();
-		this.displays = this.SKETCH.getDisplayManager();
+		this.surface = super.SKETCH.getSurface();
+		this.displays = super.SKETCH.getDisplayManager();
 		this.initImpl();
 	}
 
 	protected abstract void initImpl();
 	// endregion
-
-	/**
-	 * (Feel free not to use this method and call constructors yourself if needed!)
-	 */
-	public static NerdWindowManager createWindowMan(final NerdSketch p_sketch) {
-		return switch (p_sketch.SKETCH_SETTINGS.RENDERER_NAME) {
-			case PConstants.P2D, PConstants.P3D -> new NerdGlWindowManager(p_sketch);
-			// case PConstants.JAVA2D -> new NerdJava2dWindowManager(p_sketch);
-			default -> null;
-		};
-	}
 
 	// region Taking the window to the center.
 	public void centerWindow() {
@@ -159,16 +146,17 @@ public abstract class NerdWindowManager {
 	// endregion
 
 	// region Callbacks.
-	protected void preCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
+	@Override
+	protected void pre() {
 		// Previous state:
 		this.pwidth = this.width;
 		this.pheight = this.height;
 		this.pfocused = this.focused;
 
 		// Current state:
-		this.width = this.SKETCH.width;
-		this.height = this.SKETCH.height;
-		// this.focused = this.SKETCH.focused; // Better received in the callbacks!
+		this.width = super.SKETCH.width;
+		this.height = super.SKETCH.height;
+		// this.focused = super.SKETCH.focused; // Better received in the callbacks!
 
 		this.PREV_WINDOW_POSITION.set(this.WINDOW_POSITION);
 		this.WINDOW_POSITION.set(this.getPositionAsPVector());
@@ -176,26 +164,18 @@ public abstract class NerdWindowManager {
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == this.width || this.pheight == this.height)) {
 			this.updateWindowParameters();
-
-			// this.SKETCH.sceneGraphics.setSize(this.width, this.height);
-
-			for (final NerdSketch.NerdSketchWindowListener l : Objects.requireNonNull(
-					p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
-				l.resized();
-
-			this.SKETCH.SCENES.resized();
+			this.windowListeners.forEach(NerdWindowListener::resized);
+			super.SKETCH.SCENES.resized();
 		}
 	}
 
-	protected void postCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
+	@Override
+	protected void post() {
 		this.postCallbackImpl();
 
 		if (this.pfullscreen != this.fullscreen) {
-			for (final NerdSketch.NerdSketchWindowListener l : Objects.requireNonNull(
-					p_windowListeners, "`NerdWindowManager::preCallback()` received `null`.)"))
-				l.fullscreenChanged(this.fullscreen);
-
-			this.SKETCH.SCENES.fullscreenChanged(this.fullscreen);
+			this.windowListeners.forEach(l -> l.fullscreenChanged(this.fullscreen));
+			super.SKETCH.SCENES.fullscreenChanged(this.fullscreen);
 		}
 
 		this.pfullscreen = this.fullscreen;
@@ -203,14 +183,16 @@ public abstract class NerdWindowManager {
 		this.pcursorConfined = this.cursorConfined;
 	}
 
-	protected void focusGained() {
+	@Override
+	public void focusGained() {
 		// Copying, because the sketch performs a decision here.
-		this.focused = this.SKETCH.focused;
+		this.focused = super.SKETCH.focused;
 	}
 
-	protected void focusLost() {
+	@Override
+	public void focusLost() {
 		// Copying, because the sketch performs a decision here.
-		this.focused = this.SKETCH.focused;
+		this.focused = super.SKETCH.focused;
 	}
 
 	protected abstract void postCallbackImpl();

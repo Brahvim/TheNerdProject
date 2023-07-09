@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 import com.brahvim.nerd.framework.ecs.NerdEcsComponent;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
-import com.brahvim.nerd.framework.scene_api.NerdSceneManager;
-import com.brahvim.nerd.framework.scene_api.NerdSceneManager.NerdSceneManagerSettings;
+import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
+import com.brahvim.nerd.framework.scene_api.NerdScenesModule.NerdSceneManagerSettings;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -170,7 +170,7 @@ public abstract class NerdCustomSketchBuilder {
 	}
 
 	public NerdCustomSketchBuilder setSceneManagerSettings(final Consumer<NerdSceneManagerSettings> p_settingsBuilder) {
-		final NerdSceneManager.NerdSceneManagerSettings toPass = new NerdSceneManager.NerdSceneManagerSettings();
+		final NerdScenesModule.NerdSceneManagerSettings toPass = new NerdScenesModule.NerdSceneManagerSettings();
 
 		if (p_settingsBuilder != null)
 			p_settingsBuilder.accept(toPass);
@@ -204,19 +204,19 @@ public abstract class NerdCustomSketchBuilder {
 
 	// region Setting `NerdSceneManager.SceneManagerSettings.CallbackOrder`.
 	public NerdCustomSketchBuilder setPreCallOrder(
-			final NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder p_order) {
+			final NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder p_order) {
 		this.SKETCH_KEY.preCallOrder = p_order;
 		return this;
 	}
 
 	public NerdCustomSketchBuilder setDrawCallOrder(
-			final NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder p_order) {
+			final NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder p_order) {
 		this.SKETCH_KEY.drawCallOrder = p_order;
 		return this;
 	}
 
 	public NerdCustomSketchBuilder setPostCallOrder(
-			final NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder p_order) {
+			final NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder p_order) {
 		this.SKETCH_KEY.postCallOrder = p_order;
 		return this;
 	}

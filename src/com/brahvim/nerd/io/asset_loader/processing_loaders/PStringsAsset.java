@@ -16,7 +16,7 @@ public class PStringsAsset extends NerdSinglePathAssetLoader<String[]> {
 		final String[] strings = p_sketch.loadStrings(super.path);
 
 		if (strings == null)
-			throw new NerdAssetLoaderException();
+			throw new NerdAssetLoaderException(this);
 
 		return strings;
 	}
