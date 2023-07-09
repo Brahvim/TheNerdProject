@@ -27,11 +27,11 @@ public class TcpDemoScene extends NerdScene {
 	// endregion
 
 	// region Message `enum`s.
-	private enum Query {
+	private enum ClientQuery {
 		ORDER_FOOD(),
 	}
 
-	private enum Response {
+	private enum ServerResponse {
 		ALLOWED(),
 		// REJECTED(),
 		SERVED_FOOD(),
@@ -43,13 +43,13 @@ public class TcpDemoScene extends NerdScene {
 		@Override
 		public void accept(final NerdClientSentTcpPacket p_packet) {
 			// Get the client's message:
-			final Query message = NerdByteSerialUtils.fromBytes(p_packet.getData());
+			final ClientQuery message = NerdByteSerialUtils.fromBytes(p_packet.getData());
 			final NerdTcpServer.NerdTcpServerClient client = p_packet.getSender();
-			Response response = null; // In here, we store our response!
+			ServerResponse response = null; // In here, we store our response!
 
 			switch (message) {
 				// If food is ordered, we serve.
-				case ORDER_FOOD -> response = Response.SERVED_FOOD;
+				case ORDER_FOOD -> response = ServerResponse.SERVED_FOOD;
 			}
 
 			// Send the response over!
@@ -81,45 +81,63 @@ public class TcpDemoScene extends NerdScene {
 		// Start a TCP server on the given port and check for clients to join!:
 		final NerdTcpServer server = new NerdTcpServer(8080);
 
+		// This callback is called when a client connects to the server:
 		server.setClientInvitationCallback(
-				// Yes, you can directly pass this lambda into the constructor!
-				// `c` holds the client object that wishes to join.
+				// You can directly pass this lambda into the constructor instead, too!:
+				// Here, `c` holds an object representing the TCP client that wishes to join.
 				c -> {
 					// ...Let clients be rejected by chance:
 					final boolean clientAccepted = SKETCH.random(1) < 0.5f;
 
 					if (clientAccepted) {
 						// This client got accepted - hooray! Tell it!:
-						c.send(NerdByteSerialUtils.toBytes(Response.ALLOWED));
-						System.out.println("Ayy! A new client joined! Info: "
-								+ c.getSocket().toString());
+						c.send(NerdByteSerialUtils.toBytes(ServerResponse.ALLOWED));
+						// In a real world scenario, however, you'd always have the 'message received'
+						// callback registered *before* sending anything, in order to be ready for a
+						// response from the client, of course.
+
+						System.out.println("Ayy! A new client joined! Client socket info: " + c.getSocket().toString());
 					} else // Tell us that it got rejected otherwise.
 						System.out.println("The server rejected a connection.");
 
-					// Returning `null` or calling `c.disconnect()` should disconnect.
-					// If we accept this client, we return a listener to listen to its messages!:
+					// Returning `false`, or `null`,
+					// or calling `c::disconnect()` directly
+					// should simply disconnect the client:
 					return clientAccepted;
+					// Of course, this is usually `true`, since we generally wish to ask clients a
+					// few questions first, and use our 'message received' callback to look at them
+					// and actually decide whether or not to keep the client here.
 				});
 
+		// This callback is called when a client sends a message to the server.
+		// You can assign many of these - one, single, set callback is not used
+		// Consider assigning these according to, the client's version of your API,
+		// which you can query in the invitation callback:
 		server.addMessageReceivedCallback(new RestaurantApi());
 
 		// Now, we start 5 clients to connect to the server!
+		// Each of these has a callback for receiving messages from the server:
 
 		for (int i = 0; i < 5; i++)
 			new NerdTcpClient("127.0.0.1", 8080,
 					// `p` holds the packet of data received!:
 					p -> {
 						// Get the server's message,
-						final Response message = (Response) NerdByteSerialUtils.fromBytes(p.getData());
-						Query response = null; // We'll store our response here.
+						final ServerResponse message = (ServerResponse) NerdByteSerialUtils.fromBytes(p.getData());
+						ClientQuery response = null; // ...and store our response here.
+
+						// If you didn't save the reference to your client object like I did above,
+						// and used a lambda instead of an anonymous class, here's how to get it!:
+						final NerdTcpClient receivingClient = p.getReceivingClient();
 
 						switch (message) {
 							case ALLOWED -> { // If the server happily allows us, we order!:
-								response = Query.ORDER_FOOD;
+								response = ClientQuery.ORDER_FOOD;
 								System.out.println("Asked the server for food!");
 							}
+
 							case SERVED_FOOD -> { // If we're served food, we happily take it and go!:
-								p.getReceivingClient().disconnect();
+								receivingClient.disconnect();
 								System.out.println("Received the food, disconnecting now!");
 							}
 						}

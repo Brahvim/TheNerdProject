@@ -28,6 +28,8 @@ import processing.core.PConstants;
 			// VSCode, you made the decision to tab this:
 			NerdEcsManager.getDefaultEcsSystemsOrder();
 	public NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder preCallOrder, drawCallOrder, postCallOrder;
+	public boolean preventCloseOnEscape, startedFullscreen, canResize,
+			cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 
 	// region Listeners!!!
 	public LinkedHashSet<Consumer<NerdSketch>> sketchConstructedListeners,
@@ -37,9 +39,6 @@ import processing.core.PConstants;
 
 	public LinkedHashSet<Consumer<NerdSketch>> preListeners, postListeners,
 			drawListeners, preDrawListeners, postDrawListeners;
-
-	public boolean preventCloseOnEscape, startedFullscreen, canResize,
-			cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 	// endregion
 
 	public NerdSketchBuilderSettings() {

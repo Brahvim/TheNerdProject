@@ -42,6 +42,7 @@ public class NerdTcpServer implements NerdServerSocket {
 	public class NerdTcpServerClient extends NerdAbstractTcpClient {
 
 		// region Fields.
+		// DO NOT use outside a `synchronized` block! Never!:
 		private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
 
 		private Thread serverCommThread;
@@ -75,8 +76,8 @@ public class NerdTcpServer implements NerdServerSocket {
 					// }
 
 					// This syncing could be a bit clearer, but anyway!:
-					// I could jut've make `socket` private, or put it into another class, where the
-					// only way to call methods on it is to provide a `Consumer`. to some
+					// I could just've make `socket` private, or put it into another class, where
+					// the only way to call methods on it is to provide a `Consumer` of it, to some
 					// `synchronized` method.
 					synchronized (this.socket) {
 						if (this.socket.isClosed())
@@ -140,6 +141,7 @@ public class NerdTcpServer implements NerdServerSocket {
 					}
 			}, "NerdTcpClientListenerOnPort" + this.socket.getLocalPort());
 			// ^^^ Yes, that's the thread's name.
+
 			this.serverCommThread.setDaemon(true);
 			this.serverCommThread.start();
 		}
@@ -172,6 +174,8 @@ public class NerdTcpServer implements NerdServerSocket {
 		// region Working with the message callbacks collection.
 		public NerdTcpServer.NerdTcpServerClient addMessageCallback(
 				final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
+			// These operations are also `synchronized` since we can't tell if they ever
+			// occur together. 😬!
 			synchronized (this.MESSAGE_CALLBACKS) {
 				this.MESSAGE_CALLBACKS.add(p_callback);
 			}
@@ -181,6 +185,8 @@ public class NerdTcpServer implements NerdServerSocket {
 		@SuppressWarnings("all")
 		public NerdTcpServer.NerdTcpServerClient removeMessageCallback(
 				final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
+			// These operations are also `synchronized` since we can't tell if they ever
+			// occur together. 😬!
 			synchronized (this.MESSAGE_CALLBACKS) {
 				this.MESSAGE_CALLBACKS.remove(p_callback);
 			}
@@ -193,6 +199,12 @@ public class NerdTcpServer implements NerdServerSocket {
 		public HashSet<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> getAllMessageCallbacks() {
 			synchronized (this.MESSAGE_CALLBACKS) {
 				return new HashSet<>(this.MESSAGE_CALLBACKS);
+			}
+		}
+
+		public void forEachMessageCallback(final Consumer<Consumer<NerdClientSentTcpPacket>> p_task) {
+			synchronized (this.MESSAGE_CALLBACKS) {
+				this.MESSAGE_CALLBACKS.forEach(p_task);
 			}
 		}
 
@@ -230,8 +242,9 @@ public class NerdTcpServer implements NerdServerSocket {
 	private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> NEW_CONNECTION_CALLBACKS = new Vector<>(1);
 
 	private final Thread CONNS_THREAD;
-	private ServerSocket socket;
 	private final AtomicBoolean STOPPED = new AtomicBoolean();
+
+	private ServerSocket socket;
 	private Function<NerdAbstractTcpClient, Boolean> invitationCallback;
 	// endregion
 
@@ -262,8 +275,8 @@ public class NerdTcpServer implements NerdServerSocket {
 	}
 
 	public NerdTcpServer(final int p_port, final int p_maxConnReqsAtOnce,
-			final Function<NerdAbstractTcpClient, Boolean> p_connectionCallback) {
-		this.invitationCallback = p_connectionCallback;
+			final Function<NerdAbstractTcpClient, Boolean> p_invitationCallback) {
+		this.invitationCallback = p_invitationCallback;
 
 		try {
 			this.socket = new ServerSocket(p_port, p_maxConnReqsAtOnce);
@@ -303,28 +316,40 @@ public class NerdTcpServer implements NerdServerSocket {
 		while (!this.STOPPED.get())
 			try {
 				// System.out.println("Called `NerdTcpServer::CONNS_THREAD::run()`.");
-				final NerdTcpServerClient client = new NerdTcpServer.NerdTcpServerClient(this.socket.accept());
+				final NerdTcpServer.NerdTcpServerClient client = new NerdTcpServer.NerdTcpServerClient(
+						this.socket.accept());
+
+				if (this.invitationCallback == null) {
+					client.disconnect();
+					return;
+				}
+
+				// What if `apply()` returns `null`...?!
+				final boolean check = Objects.requireNonNullElse(this.invitationCallback.apply(client), Boolean.FALSE);
+
+				// if (!(check == null || !check)) {
+				// if (check != null && check) {
+				if (!check) {
+					client.disconnect();
+					return;
+				}
 
 				synchronized (NerdTcpServer.this.CLIENTS) {
 					this.CLIENTS.add(client);
 				}
 
-				if (this.invitationCallback != null) {
-					// What if `apply()` returns `null`...?!
-					final boolean check = Objects
-							.requireNonNullElseGet(this.invitationCallback.apply(client), () -> Boolean.FALSE);
-
-					// if (!(check == null || !check)) {
-					// if (check != null && check) {
-					if (check) {
-						for (final Consumer<NerdClientSentTcpPacket> c : NerdTcpServer.this.NEW_CONNECTION_CALLBACKS)
+				// Add each callback from the server:
+				synchronized (NerdTcpServer.this.NEW_CONNECTION_CALLBACKS) {
+					for (final Consumer<NerdClientSentTcpPacket> c : NerdTcpServer.this.NEW_CONNECTION_CALLBACKS)
+						try {
 							client.addMessageCallback(c);
+						} catch (final Exception e) {
+							// if (e instanceof InterruptedException);
+							e.printStackTrace();
+						}
 
-						client.startMessageThread();
-					}
+					client.startMessageThread();
 				}
-
-				client.disconnect();
 			} catch (final IOException e) {
 				if (!(e instanceof SocketTimeoutException))
 					e.printStackTrace();
@@ -351,7 +376,9 @@ public class NerdTcpServer implements NerdServerSocket {
 	 */
 	public NerdTcpServer addMessageReceivedCallback(
 			final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
-		this.NEW_CONNECTION_CALLBACKS.add(Objects.requireNonNull(p_callback));
+		synchronized (this.NEW_CONNECTION_CALLBACKS) {
+			this.NEW_CONNECTION_CALLBACKS.add(Objects.requireNonNull(p_callback));
+		}
 		return this;
 	}
 
@@ -364,7 +391,9 @@ public class NerdTcpServer implements NerdServerSocket {
 	 */
 	public NerdTcpServer removeMessageReceivedCallback(
 			final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
-		this.NEW_CONNECTION_CALLBACKS.remove(Objects.requireNonNull(p_callback));
+		synchronized (this.NEW_CONNECTION_CALLBACKS) {
+			this.NEW_CONNECTION_CALLBACKS.remove(Objects.requireNonNull(p_callback));
+		}
 		return this;
 	}
 

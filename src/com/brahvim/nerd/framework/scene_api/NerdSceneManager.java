@@ -124,37 +124,47 @@ public class NerdSceneManager {
 
 			/**
 			 * When {@code true}, {@link NerdScene#preload()} is run only the first time
-			 * the {@link NerdScene} is used. Turn to {@code false} to load scene assets
-			 * each time, so that assets are updated.
+			 * a {@link NerdScene} class is used in the engine. Setting this to
+			 * {@code false} loads scene assets each time, so that assets are updated.
 			 *
 			 * @apiNote {@code true} by default!
 			 */
-			public volatile boolean preloadOnlyOnce = true;
+			public boolean preloadOnlyOnce = true;
 
 			/**
 			 * When {@code true}, {@link NerdScene#preload()} runs the loading process in
 			 * multiple threads using a {@link java.util.concurrent.ExecutorService}. If
-			 * {@link NerdSceneManager.NerdSceneManagerSettings.OnScenePreload#completeWithinPreloadCall}
-			 * is {@code false}, the asset loading is not guaranteed to finish within
+			 * {@link NerdSceneManager.NerdSceneManagerSettings.OnScenePreload#completeAssetLoadingWithinPreload}
+			 * is {@code true}, the asset loading is <i>guaranteed</i> to finish within
 			 * {@link NerdScene#preload()}.
 			 *
 			 * @apiNote {@code true} by default!
-			 * @implNote Actually, it's {@link NerdScene#runPreload()}.
 			 */
-			public volatile boolean useExecutors = true;
-
-			/**
-			 * @apiNote {@code true} by default!
-			 */
-			public volatile boolean completeWithinPreloadCall = true;
+			public boolean useExecutors = true;
 
 			/**
 			 * The maximum number of threads multithreaded asset loading started
-			 * in {@link NerdScene#preload()} can use.
+			 * in {@link NerdScene#preload()} can use. You may change whether that's the
+			 * case, by setting
+			 * {@link NerdSceneManager.NerdSceneManagerSettings.OnScenePreload#useExecutors}
+			 * to {@code true} or {@code false}!
 			 *
-			 * @apiNote {@code 6} by default!
+			 * @apiNote We use <b>{@code 6}</b> threads by default! Enough? Happy?
+			 *          I hope you are ":D!~
 			 */
-			public volatile int maxExecutorThreads = 6;
+			public int maxExecutorThreads = 6;
+
+			/**
+			 * If
+			 * {@link NerdSceneManager.NerdSceneManagerSettings.OnScenePreload#useExecutors}
+			 * is {@code true}, the asset loading process in {@link NerdScene#preload()} is
+			 * run using multiple threads. Setting <i>this</i> to {@code true}
+			 * <i>guarantees</i> that the asset loading will be finished within
+			 * {@link NerdScene#preload()}.
+			 *
+			 * @apiNote {@code true} by default!
+			 */
+			public boolean completeAssetLoadingWithinPreload = true;
 
 		}
 
@@ -167,7 +177,7 @@ public class NerdSceneManager {
 			 * If set to {@code -1}, will call {@link NerdSketch#clear()} and not
 			 * {@link NerdSketch#background()}. <b>This is the default behavior!</b>
 			 */
-			public volatile int clearColor = -1;
+			public int clearColor = -1;
 
 			/**
 			 * Clears the screen according to
@@ -175,7 +185,7 @@ public class NerdSceneManager {
 			 *
 			 * @apiNote {@code false} by default.
 			 */
-			public volatile boolean doClear = false;
+			public boolean doClear = false;
 
 			/**
 			 * Resets {@link NerdSceneManager.NerdSceneManagerSettings#preFirstCaller},
@@ -183,7 +193,7 @@ public class NerdSceneManager {
 			 * {@link NerdSceneManager.NerdSceneManagerSettings#postFirstCaller} to their
 			 * default values!
 			 */
-			public volatile boolean resetSceneLayerCallbackOrder = true;
+			public boolean resetSceneLayerCallbackOrder = true;
 
 		}
 

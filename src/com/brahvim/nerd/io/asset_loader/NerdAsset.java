@@ -1,5 +1,6 @@
 package com.brahvim.nerd.io.asset_loader;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -16,7 +17,9 @@ public class NerdAsset {
 	private Object data;
 	private Runnable onLoad;
 	private long millis = -1;
-	private boolean loaded, ploaded, failure;
+	private final AtomicBoolean LOADED = new AtomicBoolean(),
+			LOADED_PREV_FRAME = new AtomicBoolean(),
+			FAILURE = new AtomicBoolean();
 	// endregion
 
 	// region Construction.
@@ -43,7 +46,7 @@ public class NerdAsset {
 
 	// ...will cause a surge in CPU usage! Careful!...
 	public NerdAsset completeLoad() throws InterruptedException {
-		while (!this.loaded) {
+		while (!this.LOADED.get()) {
 			System.out.println("Waiting for `" + this.NAME + "` to load...");
 
 			// Don't let the CPU go crazy!:
@@ -59,10 +62,10 @@ public class NerdAsset {
 
 	public void startLoading() {
 		// Adding callbacks for each asset since `AssetManager`s don't handle loading.
-		final Consumer<NerdSketch> postCallback = s -> this.ploaded = this.loaded;
+		final Consumer<NerdSketch> postCallback = s -> this.LOADED_PREV_FRAME.set(this.LOADED.get());
 		this.SKETCH.addPostListener(postCallback);
 		this.fetchData();
-		this.loaded = true;
+		this.LOADED.set(true);
 
 		if (this.onLoad != null)
 			this.onLoad.run();
@@ -75,7 +78,7 @@ public class NerdAsset {
 		final Consumer<NerdSketch> whenLoaded = new Consumer<NerdSketch>() {
 			@Override
 			public void accept(final NerdSketch p_sketch) {
-				NerdAsset.this.ploaded = true;
+				NerdAsset.this.LOADED_PREV_FRAME.set(true);
 				p_sketch.removePostListener(this);
 			}
 		};
@@ -86,15 +89,15 @@ public class NerdAsset {
 
 	// region "Yes/No" questions.
 	public boolean wasLoaded() {
-		return this.ploaded;
+		return this.LOADED_PREV_FRAME.get();
 	}
 
 	public boolean hasLoaded() {
-		return this.loaded;
+		return this.LOADED.get();
 	}
 
 	public boolean hasFailed() {
-		return this.failure;
+		return this.FAILURE.get();
 	}
 	// endregion
 
@@ -141,7 +144,7 @@ public class NerdAsset {
 			this.frame = this.SKETCH.frameCount;
 		} catch (final NerdAssetLoaderException e) {
 			this.data = null;
-			this.failure = true;
+			this.FAILURE.set(true);
 			e.printStackTrace();
 		}
 	}
