@@ -474,7 +474,6 @@ public abstract class NerdScene {
 		this.preload();
 		this.ASSETS.forceLoading();
 
-		// This is for parallel asset-loading!:
 		if (this.MANAGER.SETTINGS.ON_PRELOAD.useExecutors) {
 			final ThreadPoolExecutor executor = new ThreadPoolExecutor(
 					0, this.MANAGER.SETTINGS.ON_PRELOAD.maxExecutorThreads,
@@ -486,7 +485,7 @@ public abstract class NerdScene {
 			executor.shutdown(); // This tells the executor to stop accepting new tasks.
 
 			// If you must complete within this function, do that:
-			if (this.MANAGER.SETTINGS.ON_PRELOAD.completeAssetLoadingWithinPreload)
+			if (this.MANAGER.SETTINGS.ON_PRELOAD.completeWithinPreloadCall)
 				try {
 					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS); // Keep going, keep going...
 					// Can't simply cheat the implementation to make it wait forever!

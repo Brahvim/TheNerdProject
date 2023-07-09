@@ -25,7 +25,7 @@ public class NerdSketchBuildArtifacts {
 		return (RetT) this.EXTENSIONS.get(p_extName);
 	}
 
-	protected void addExtObject(final String p_extName, final Object p_extObject) {
+	/* `package` */ void addExtObject(final String p_extName, final Object p_extObject) {
 		this.EXTENSIONS.put(p_extName, p_extObject);
 	}
 

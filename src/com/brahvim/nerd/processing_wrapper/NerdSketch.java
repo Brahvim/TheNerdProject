@@ -306,14 +306,7 @@ public class NerdSketch extends PApplet {
 
 	// region Construction, `settings()`...
 	public NerdSketch(final NerdSketchBuilderSettings p_key) {
-		Objects.requireNonNull(p_key,
-				"Please pass in a non-`null` `"
-						.concat(NerdSketchBuilderSettings.class.getSimpleName())
-						.concat("` or use some `")
-						.concat(NerdCustomSketchBuilder.class.getSimpleName())
-						.concat("such as `")
-						.concat(NerdSketchBuilder.class.getSimpleName())
-						.concat("` to make a `Sketch`!"));
+		Objects.requireNonNull(p_key, "Please use a `SketchKey` or `CustomSketchBuilder` to make a `Sketch`!");
 
 		// region Key settings.
 		// region Listeners!...
