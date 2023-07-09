@@ -15,7 +15,7 @@ import com.brahvim.nerd.openal.AlContext;
 
 import processing.core.PConstants;
 
-/* `package` */ class NerdSketchBuilderSettings {
+public class NerdSketchBuilderSettings {
 
 	public Class<? extends NerdScene> firstSceneClass;
 	public int width = 400, height = 400, antiAliasing;
@@ -25,8 +25,9 @@ import processing.core.PConstants;
 	public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
 	public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
 	public Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] ecsSystemOrder =
-			// VSCode, you made the decision to tab this:
+			// VSCode, you made the decision to tab this all the way down HERE!:
 			NerdEcsManager.getDefaultEcsSystemsOrder();
+	public HashMap<Class<? extends NerdEngineModule>, NerdEngineModule> nerdModules = new HashMap<>();
 	public NerdSceneManager.NerdSceneManagerSettings.NerdSketchCallbackOrder preCallOrder, drawCallOrder, postCallOrder;
 
 	// region Listeners!!!
@@ -57,7 +58,6 @@ import processing.core.PConstants;
 		this.disposalListeners = new LinkedHashSet<>();
 		this.sceneChangeListeners = new LinkedHashSet<>();
 		this.sketchConstructedListeners = new LinkedHashSet<>();
-
 	}
 
 }

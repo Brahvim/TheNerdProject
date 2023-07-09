@@ -90,8 +90,7 @@ public class NerdDisplayManager extends NerdEngineModule {
 	}
 
 	// region Current and previous frame monitor settings, plus callback!
-	@Override
-	public void pre() {
+	public void preCallback(final LinkedHashSet<NerdSketch.NerdSketchWindowListener> p_windowListeners) {
 		this.recordPreviousDisplayParameters();
 		this.updateDisplayParameters();
 
@@ -106,7 +105,7 @@ public class NerdDisplayManager extends NerdEngineModule {
 			this.previousMonitor = this.currentMonitor;
 			this.updateDisplayParameters();
 
-			for (final NerdSketch.NerdSketchWindowListener l : this.windowListeners)
+			for (final NerdSketch.NerdSketchWindowListener l : p_windowListeners)
 				l.monitorChanged();
 
 			this.SKETCH.SCENES.monitorChanged();

@@ -23,7 +23,6 @@ import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
-import com.brahvim.nerd.math.NerdUnprojector;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
@@ -227,9 +226,9 @@ public class NerdSketch extends PApplet {
 	public final Robot ROBOT;
 	public final NerdStringTable STRINGS;
 	public final NerdAssetManager ASSETS;
-	public final NerdUnprojector UNPROJECTOR;
 	public final HashMap<String, Object> EXTENSIONS;
 	public final NerdSketch.NerdSketchSettings SKETCH_SETTINGS;
+	public final HashMap<Class<? extends NerdEngineModule>, NerdEngineModule> MODULES;
 	// `Object`s instead of a custom interface because you can't do
 	// that to libraries you didn't write! (...or you'd be writing subclasses of the
 	// library classes. Manual work. Uhh...)
@@ -325,13 +324,13 @@ public class NerdSketch extends PApplet {
 		this.DISPOSAL_LISTENERS = p_key.disposalListeners;
 		// endregion
 
+		this.MODULES = p_key.nerdModules;
 		this.EXTENSIONS = p_key.nerdExtensions;
 		this.SKETCH_SETTINGS = new NerdSketch.NerdSketchSettings(p_key);
 		// endregion
 
 		// region Non-key settings.
 		this.INPUT = new NerdInputManager(this);
-		this.UNPROJECTOR = new NerdUnprojector();
 		this.ASSETS = new NerdAssetManager(this) {
 			@Override
 			public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type) {
@@ -479,7 +478,7 @@ public class NerdSketch extends PApplet {
 
 		this.INPUT.preCallback();
 		this.WINDOW.preCallback(this.WINDOW_LISTENERS);
-		this.DISPLAYS.pre();
+		this.DISPLAYS.preCallback(this.WINDOW_LISTENERS);
 
 		this.PRE_LISTENERS.forEach(this.DEFAULT_CALLBACK_ITR_LAMBDA);
 		this.SCENES.runPre();
@@ -721,8 +720,8 @@ public class NerdSketch extends PApplet {
 	}
 	// endregion
 
-	// region Callback and extension management.
-	// region Adding listeners.
+	// region Callback, extension and module management.
+	// region Adding calback listeners.
 	public NerdSketch addPreListener(final Consumer<NerdSketch> p_preListener) {
 		this.PRE_LISTENERS.add(Objects.requireNonNull(
 				p_preListener, NerdSketch.NULL_LISTENER_ERROR_MESSAGE));
@@ -766,7 +765,7 @@ public class NerdSketch extends PApplet {
 	}
 	// endregion
 
-	// region Removing listeners.
+	// region Removing callback listeners.
 	// Don't need all of these, but still will have them around in case internal
 	// workings change!
 	public void removePreListener(final Consumer<NerdSketch> p_listener) {
@@ -801,6 +800,11 @@ public class NerdSketch extends PApplet {
 	@SuppressWarnings("unchecked")
 	public <RetT> RetT getNerdExt(final String p_extName) {
 		return (RetT) this.EXTENSIONS.get(p_extName);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <RetT extends NerdEngineModule> RetT getNerdEngineModule(final Class<RetT> p_moduleClass) {
+		return (RetT) this.MODULES.get(p_moduleClass);
 	}
 	// endregion
 
