@@ -87,8 +87,8 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 			stream = new DataInputStream(this.socket.getInputStream());
 		} catch (final IOException e) {
 			e.printStackTrace();
-			this.disconnect();
-			return;
+			// this.disconnect();
+			// return;
 		}
 
 		while (!super.STOPPED.get())
