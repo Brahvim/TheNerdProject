@@ -87,8 +87,6 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 			stream = new DataInputStream(this.socket.getInputStream());
 		} catch (final IOException e) {
 			e.printStackTrace();
-			// this.disconnect();
-			// return;
 		}
 
 		while (!super.STOPPED.get())
@@ -121,9 +119,11 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 						}
 				}
 			} catch (final IOException e) {
-				// When the client disconnects, an `EOFException` is thrown by
+				// When the client disconnects, this exception is thrown by
 				// `*InputStream::read*()`:
-				if (e instanceof EOFException || e instanceof SocketException)
+				if (e instanceof EOFException)
+					this.disconnect();
+				else if (e instanceof SocketException)
 					this.disconnect();
 				else
 					e.printStackTrace(); // I have NO idea what to do, y'hear!
