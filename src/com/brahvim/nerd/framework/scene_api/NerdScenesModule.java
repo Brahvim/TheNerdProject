@@ -8,12 +8,14 @@ import java.util.LinkedHashSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.framework.ecs.NerdEcsModule;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
+import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
+import com.brahvim.nerd.processing_wrapper.NerdInputModule;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
+import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 
 public class NerdScenesModule extends NerdModule {
 
@@ -749,9 +751,9 @@ public class NerdScenesModule extends NerdModule {
 		toRet.SKETCH = toRet.MANAGER.SKETCH;
 
 		// Now, we copy all managers from `toRet.SKETCH`:
-		toRet.INPUT = toRet.SKETCH.input;
-		toRet.WINDOW = toRet.SKETCH.window;
-		toRet.DISPLAY = toRet.SKETCH.display;
+		toRet.INPUT = toRet.SKETCH.getNerdModule(NerdInputModule.class);
+		toRet.WINDOW = toRet.SKETCH.getNerdModule(NerdWindowModule.class);
+		toRet.DISPLAY = toRet.SKETCH.getNerdModule(NerdDisplayModule.class);
 		toRet.ECS = this.ECS_INSTANCE.clearAllData(); // Method's in `NerdBridgedEcsManager`.
 		toRet.GRAPHICS = toRet.SKETCH.getNerdGraphics();
 		toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
@@ -784,8 +786,9 @@ public class NerdScenesModule extends NerdModule {
 
 	// The scene-deleter!!!
 	private void setScene(final NerdScene p_currentScene, final NerdSceneState p_state) {
-		super.SKETCH.window.cursorVisible = true;
-		super.SKETCH.window.cursorConfined = false;
+		final NerdWindowModule window = super.SKETCH.getNerdModule(NerdWindowModule.class);
+		window.cursorVisible = true;
+		window.cursorConfined = false;
 
 		// region `this.SETTINGS.ON_SWITCH` tasks.
 		if (this.SETTINGS.ON_SWITCH.doClear) {

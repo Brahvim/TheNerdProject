@@ -4,6 +4,7 @@ import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
+import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd.openal.AlBuffer;
 
@@ -33,9 +34,11 @@ public class AnimatedCube extends TestEulerBody {
 
 		final PVector cameraPos = super.SKETCH.getNerdGraphics().getCurrentCamera().getPos();
 
+		final NerdWindowModule window = super.SKETCH.getNerdModule(NerdWindowModule.class);
+
 		super.pos.set(
-				cameraPos.x + super.SKETCH.random(-super.SKETCH.window.cx, super.SKETCH.window.cx),
-				cameraPos.y + super.SKETCH.random(-super.SKETCH.window.cy, super.SKETCH.window.cy),
+				cameraPos.x + super.SKETCH.random(-window.cx, window.cx),
+				cameraPos.y + super.SKETCH.random(-window.cy, window.cy),
 				cameraPos.z + super.SKETCH.random(-600, 600));
 
 		super.acc.set(

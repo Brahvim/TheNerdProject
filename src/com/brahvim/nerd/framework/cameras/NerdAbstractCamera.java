@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -61,13 +62,15 @@ public abstract class NerdAbstractCamera {
 			this.aspect = (float) this.SKETCH.width / (float) this.SKETCH.height;
 
 		// Apply projection:
+		final var window = this.SKETCH.getNerdModule(NerdWindowModule.class);
+
 		switch (this.projection) {
 			case PConstants.PERSPECTIVE -> this.GRAPHICS.perspective(
 					this.fov, this.aspect, this.near, this.far);
 
 			case PConstants.ORTHOGRAPHIC -> this.GRAPHICS.ortho(
-					-this.SKETCH.window.cx, this.SKETCH.window.cx,
-					-this.SKETCH.window.cy, this.SKETCH.window.cy,
+					-window.cx, window.cx,
+					-window.cy, window.cy,
 					this.near, this.far);
 
 			default -> throw new UnsupportedOperationException(

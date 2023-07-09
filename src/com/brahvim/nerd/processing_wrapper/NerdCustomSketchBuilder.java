@@ -43,9 +43,7 @@ public abstract class NerdCustomSketchBuilder {
 		else
 			PApplet.runSketch(PApplet.concat(args, p_javaMainArgs), constructedSketch);
 
-		final NerdSketchBuildArtifacts toRet = new NerdSketchBuildArtifacts(constructedSketch);
-
-		return toRet;
+		return new NerdSketchBuildArtifacts(constructedSketch);
 	}
 
 	protected abstract NerdSketch buildImpl(String[] p_javaMainArgs);

@@ -17,4 +17,8 @@ public abstract class NerdModule extends NerdSketchProtectedWorkflowListener
 		this.SKETCH = p_sketch;
 	}
 
+	public NerdSketch getSketch() {
+		return this.SKETCH;
+	}
+
 }

@@ -26,12 +26,12 @@ public class SmoothCamera extends NerdFlyCamera {
 	// region Construction.
 	public SmoothCamera(final NerdGraphics p_graphics) {
 		super(p_graphics);
-		this.INPUT = super.SKETCH.input;
+		this.INPUT = super.SKETCH.getNerdModule(NerdInputModule.class);
 	}
 
 	public SmoothCamera(final NerdGraphics p_graphics, final PVector p_defaultFront) {
 		super(p_graphics, p_defaultFront);
-		this.INPUT = super.SKETCH.input;
+		this.INPUT = super.SKETCH.getNerdModule(NerdInputModule.class);
 	}
 	// endregion
 

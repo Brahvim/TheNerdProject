@@ -24,7 +24,7 @@ public class NerdAssetsModule extends NerdModule {
 
 	// region `NerdAsset`-operations!
 	private <AssetT> NerdAsset makeAsset(final NerdAssetLoader<AssetT> p_type) {
-		return new NerdAsset(super.SKETCH, p_type);
+		return new NerdAsset(this, p_type);
 	}
 
 	// region `add()` overloads.
@@ -156,5 +156,10 @@ public class NerdAssetsModule extends NerdModule {
 		this.ASSETS.forEach(p_action);
 	}
 	// endregion
+
+	@Override
+	protected void post() {
+		this.ASSETS.forEach(a -> a.ploaded = a.loaded);
+	}
 
 }

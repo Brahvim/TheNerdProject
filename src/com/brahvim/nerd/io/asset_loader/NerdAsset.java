@@ -1,7 +1,5 @@
 package com.brahvim.nerd.io.asset_loader;
 
-import java.util.function.Consumer;
-
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdAsset {
@@ -10,27 +8,29 @@ public class NerdAsset {
 	public final String NAME;
 
 	private final NerdSketch SKETCH;
+	private final NerdAssetsModule ASSETS;
 	private final NerdAssetLoader<?> LOADER;
 
 	private int frame;
 	private Object data;
 	private Runnable onLoad;
 	private long millis = -1;
-	private boolean loaded, ploaded, failure;
+	protected boolean loaded, ploaded, failure;
 	// endregion
 
 	// region Construction.
-	/* `package` */ NerdAsset(final NerdSketch p_sketch, final NerdAssetLoader<?> p_type) {
+	/* `package` */ NerdAsset(final NerdAssetsModule p_sketch, final NerdAssetLoader<?> p_type) {
 		if (p_type == null)
 			throw new IllegalArgumentException("`NerdAsset`s need to know their type!");
 
 		this.LOADER = p_type;
-		this.SKETCH = p_sketch;
+		this.ASSETS = p_sketch;
+		this.SKETCH = this.ASSETS.getSketch();
 		this.NAME = this.LOADER.getAssetName();
 	}
 
-	public NerdAsset(final NerdSketch p_sketch, final NerdAssetLoader<?> p_type, final Runnable p_onLoad) {
-		this(p_sketch, p_type);
+	public NerdAsset(final NerdAssetsModule p_assetsModule, final NerdAssetLoader<?> p_type, final Runnable p_onLoad) {
+		this(p_assetsModule, p_type);
 		this.onLoad = p_onLoad;
 	}
 	// endregion
@@ -58,10 +58,9 @@ public class NerdAsset {
 	}
 
 	public void startLoading() {
-		// TODO: Replace these will callbacks inside `NerdAssetModule`!
 		// Adding callbacks for each asset since `AssetManager`s don't handle loading.
-		final Consumer<NerdSketch> postCallback = s -> this.ploaded = this.loaded;
-		this.SKETCH.callbacks.addPostListener(postCallback);
+		// final Consumer<NerdSketch> postCallback = s -> this.ploaded = this.loaded;
+		// this.SKETCH.callbacks.addPostListener(postCallback);
 		this.fetchData();
 		this.loaded = true;
 
@@ -73,16 +72,16 @@ public class NerdAsset {
 		// However, we need to update `ploaded` for one last frame.
 		// To do so, we add a "self-removing" callback!:
 
-		final Consumer<NerdSketch> whenLoaded = new Consumer<NerdSketch>() {
-			@Override
-			public void accept(final NerdSketch p_sketch) {
-				NerdAsset.this.ploaded = true;
-				p_sketch.callbacks.removePostListener(this);
-			}
-		};
+		// final Consumer<NerdSketch> whenLoaded = new Consumer<NerdSketch>() {
+		// @Override
+		// public void accept(final NerdSketch p_sketch) {
+		// NerdAsset.this.ploaded = true;
+		// // p_sketch.callbacks.removePostListener(this);
+		// }
+		// };
 
-		this.SKETCH.callbacks.addPostListener(whenLoaded);
-		this.SKETCH.callbacks.removePostListener(postCallback);
+		// this.SKETCH.callbacks.addPostListener(whenLoaded);
+		// this.SKETCH.callbacks.removePostListener(postCallback);
 	}
 
 	// region "Yes/No" questions.

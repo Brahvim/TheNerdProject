@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
+import com.brahvim.nerd.processing_wrapper.NerdInputModule;
 import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 
@@ -33,8 +34,8 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	public NerdFlyCamera(final NerdGraphics p_graphics) {
 		super(p_graphics);
 		this.front = super.pos.copy();
-		this.WINDOW = super.SKETCH.window;
-		this.DISPLAYS = super.SKETCH.display;
+		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowModule.class);
+		this.DISPLAYS = super.SKETCH.getNerdModule(NerdDisplayModule.class);
 
 		this.WINDOW.cursorVisible = false;
 		this.defaultCamFront = this.front.copy();
@@ -43,8 +44,8 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	public NerdFlyCamera(final NerdGraphics p_graphics, final PVector p_defaultFront) {
 		super(p_graphics);
 		this.front.set(p_defaultFront);
-		this.WINDOW = super.SKETCH.window;
-		this.DISPLAYS = super.SKETCH.display;
+		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowModule.class);
+		this.DISPLAYS = super.SKETCH.getNerdModule(NerdDisplayModule.class);
 
 		this.WINDOW.cursorVisible = false;
 		this.defaultCamFront.set(p_defaultFront);
@@ -160,16 +161,18 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 
 		if (this.holdMouse) {
 			// TODO: 😔 (Bring back `JAVA2D`!)
-			final GLWindow window = (GLWindow) super.SKETCH.window.getNativeObject();
+			final GLWindow window = (GLWindow) this.WINDOW.getNativeObject();
 			// window.warpPointer(mouseLockPos.x, mouseLockPos.y);
 			window.warpPointer(window.getSurfaceWidth() / 2, window.getSurfaceHeight() / 2);
+
+			final var input = super.SKETCH.getNerdModule(NerdInputModule.class);
 
 			// Should use our own `Robot` instance anyway!:
 			// super.SKETCH.ROBOT.mouseMove(mouseLockPos.x, mouseLockPos.y);
 			this.yaw += this.mouseSensitivity
-					* (super.SKETCH.input.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
+					* (input.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
 			this.pitch += this.mouseSensitivity
-					* (super.SKETCH.input.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
+					* (input.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
 		} else if (super.SKETCH.mousePressed) {
 			this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
 			this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
