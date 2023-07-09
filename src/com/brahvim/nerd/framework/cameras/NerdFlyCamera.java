@@ -33,8 +33,8 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	public NerdFlyCamera(final NerdGraphics p_graphics) {
 		super(p_graphics);
 		this.front = super.pos.copy();
-		this.WINDOW = super.SKETCH.WINDOW;
-		this.DISPLAYS = super.SKETCH.DISPLAYS;
+		this.WINDOW = super.SKETCH.window;
+		this.DISPLAYS = super.SKETCH.display;
 
 		this.WINDOW.cursorVisible = false;
 		this.defaultCamFront = this.front.copy();
@@ -43,8 +43,8 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	public NerdFlyCamera(final NerdGraphics p_graphics, final PVector p_defaultFront) {
 		super(p_graphics);
 		this.front.set(p_defaultFront);
-		this.WINDOW = super.SKETCH.WINDOW;
-		this.DISPLAYS = super.SKETCH.DISPLAYS;
+		this.WINDOW = super.SKETCH.window;
+		this.DISPLAYS = super.SKETCH.display;
 
 		this.WINDOW.cursorVisible = false;
 		this.defaultCamFront.set(p_defaultFront);
@@ -160,16 +160,16 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 
 		if (this.holdMouse) {
 			// TODO: 😔 (Bring back `JAVA2D`!)
-			final GLWindow window = (GLWindow) super.SKETCH.WINDOW.getNativeObject();
+			final GLWindow window = (GLWindow) super.SKETCH.window.getNativeObject();
 			// window.warpPointer(mouseLockPos.x, mouseLockPos.y);
 			window.warpPointer(window.getSurfaceWidth() / 2, window.getSurfaceHeight() / 2);
 
 			// Should use our own `Robot` instance anyway!:
 			// super.SKETCH.ROBOT.mouseMove(mouseLockPos.x, mouseLockPos.y);
 			this.yaw += this.mouseSensitivity
-					* (super.SKETCH.INPUT.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
+					* (super.SKETCH.input.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
 			this.pitch += this.mouseSensitivity
-					* (super.SKETCH.INPUT.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
+					* (super.SKETCH.input.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
 		} else if (super.SKETCH.mousePressed) {
 			this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
 			this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);

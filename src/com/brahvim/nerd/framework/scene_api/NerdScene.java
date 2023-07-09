@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
-import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
+import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdInputManager;
@@ -36,7 +36,7 @@ public abstract class NerdScene {
 	protected NerdSceneState STATE;
 	protected NerdGraphics GRAPHICS;
 	protected NerdInputManager INPUT;
-	protected NerdAssetManager ASSETS;
+	protected NerdAssetsModule ASSETS;
 	protected NerdScenesModule MANAGER;
 	protected NerdWindowManager WINDOW;
 	protected NerdAbstractCamera CAMERA;
@@ -636,7 +636,7 @@ public abstract class NerdScene {
 	// region Scene workflow callbacks.
 	/**
 	 * Used by a {@link NerdScene} to load {@link NerdAsset}s
-	 * into their, or their {@link NerdScenesModule}'s {@link NerdAssetManager}.
+	 * into their, or their {@link NerdScenesModule}'s {@link NerdAssetsModule}.
 	 *
 	 * <p>
 	 * Use this method for all asset-loading purposes that you would like to do in

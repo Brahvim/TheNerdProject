@@ -8,23 +8,23 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-public class NerdAssetManager {
+public class NerdAssetsModule extends NerdModule {
 
 	// region Fields.
-	private final NerdSketch SKETCH;
 	private final HashSet<NerdAsset> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
 	// Do we even *need* assets in any scene from the very beginning?
 	// endregion
 
-	public NerdAssetManager(final NerdSketch p_sketch) {
-		this.SKETCH = p_sketch;
+	public NerdAssetsModule(final NerdSketch p_sketch) {
+		super(p_sketch);
 	}
 
 	// region `NerdAsset`-operations!
 	private <AssetT> NerdAsset makeAsset(final NerdAssetLoader<AssetT> p_type) {
-		return new NerdAsset(this.SKETCH, p_type);
+		return new NerdAsset(super.SKETCH, p_type);
 	}
 
 	// region `add()` overloads.
@@ -42,10 +42,10 @@ public class NerdAssetManager {
 	// endregion
 
 	/**
-	 * @deprecated Since using {@link NerdAssetManager#get()} is better. In cases
+	 * @deprecated Since using {@link NerdAssetsModule#get()} is better. In cases
 	 *             where you'd want to check for the availability of an asset, you
 	 *             probably also a want a reference to it, in which case, it is much
-	 *             better to use {@link NerdAssetManager#get()} and check if the
+	 *             better to use {@link NerdAssetsModule#get()} and check if the
 	 *             return
 	 *             value is {@code null}.
 	 */

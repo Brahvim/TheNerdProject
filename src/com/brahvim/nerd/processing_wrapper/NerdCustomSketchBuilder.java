@@ -45,19 +45,6 @@ public abstract class NerdCustomSketchBuilder {
 
 		final NerdSketchBuildArtifacts toRet = new NerdSketchBuildArtifacts(constructedSketch);
 
-		switch (constructedSketch.SKETCH_SETTINGS.RENDERER_NAME) {
-			case PConstants.JAVA2D -> toRet.addExtObject(
-					"JFrame", constructedSketch.sketchFrame);
-
-			case PConstants.P2D, PConstants.P3D -> {
-				toRet.addExtObject("GL", constructedSketch.gl);
-				toRet.addExtObject("GLU", constructedSketch.glu);
-				toRet.addExtObject("PGL", constructedSketch.pgl);
-				toRet.addExtObject("GLWindow", constructedSketch.glWindow);
-				toRet.addExtObject("PGraphicsOpenGL", constructedSketch.glGraphics);
-			}
-		}
-
 		return toRet;
 	}
 

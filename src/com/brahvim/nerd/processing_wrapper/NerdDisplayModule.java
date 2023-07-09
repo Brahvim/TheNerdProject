@@ -107,11 +107,11 @@ public class NerdDisplayModule extends NerdModule {
 			this.previousMonitor = this.currentMonitor;
 			this.updateDisplayParameters();
 			this.windowListeners.forEach(NerdWindowListener::monitorChanged);
-			super.SKETCH.SCENES.monitorChanged();
+			super.SKETCH.scenes.monitorChanged();
 		}
 
 		if (super.SKETCH.focused)
-			this.currentMonitor = this.getGraphicsDeviceAt(super.SKETCH.INPUT.GLOBAL_MOUSE_POINT);
+			this.currentMonitor = this.getGraphicsDeviceAt(super.SKETCH.input.GLOBAL_MOUSE_POINT);
 
 		if (this.currentMonitor == null)
 			this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;

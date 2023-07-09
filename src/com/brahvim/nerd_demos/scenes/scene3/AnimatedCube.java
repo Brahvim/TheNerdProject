@@ -34,8 +34,8 @@ public class AnimatedCube extends TestEulerBody {
 		final PVector cameraPos = super.SKETCH.getNerdGraphics().getCurrentCamera().getPos();
 
 		super.pos.set(
-				cameraPos.x + super.SKETCH.random(-super.SKETCH.WINDOW.cx, super.SKETCH.WINDOW.cx),
-				cameraPos.y + super.SKETCH.random(-super.SKETCH.WINDOW.cy, super.SKETCH.WINDOW.cy),
+				cameraPos.x + super.SKETCH.random(-super.SKETCH.window.cx, super.SKETCH.window.cx),
+				cameraPos.y + super.SKETCH.random(-super.SKETCH.window.cy, super.SKETCH.window.cy),
 				cameraPos.z + super.SKETCH.random(-600, 600));
 
 		super.acc.set(

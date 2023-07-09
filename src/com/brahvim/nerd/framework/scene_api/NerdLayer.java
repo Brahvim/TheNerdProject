@@ -1,7 +1,7 @@
 package com.brahvim.nerd.framework.scene_api;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
-import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
+import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdInputManager;
@@ -27,7 +27,7 @@ public abstract class NerdLayer {
 	protected NerdSceneState STATE;
 	protected NerdGraphics GRAPHICS;
 	protected NerdInputManager INPUT;
-	protected NerdAssetManager ASSETS;
+	protected NerdAssetsModule ASSETS;
 	protected NerdScenesModule MANAGER;
 	protected NerdWindowManager WINDOW;
 	protected NerdAbstractCamera CAMERA;

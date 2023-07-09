@@ -201,8 +201,8 @@ public class NerdInputManager extends NerdModule {
 
 		this.MOUSE_VECTOR.set(this.mouseX, this.mouseY);
 		this.MOUSE_CENTER_OFFSET.set(
-				this.SKETCH.mouseX - this.SKETCH.WINDOW.cx,
-				this.SKETCH.mouseY - this.SKETCH.WINDOW.cy);
+				this.SKETCH.mouseX - this.SKETCH.window.cx,
+				this.SKETCH.mouseY - this.SKETCH.window.cy);
 	}
 
 	@Override

@@ -171,7 +171,7 @@ public abstract class NerdWindowManager extends NerdModule {
 		if (!(this.pwidth == this.width || this.pheight == this.height)) {
 			this.updateWindowParameters();
 			this.windowListeners.forEach(NerdWindowListener::resized);
-			super.SKETCH.SCENES.resized();
+			super.SKETCH.scenes.resized();
 		}
 	}
 
@@ -181,7 +181,7 @@ public abstract class NerdWindowManager extends NerdModule {
 
 		if (this.pfullscreen != this.fullscreen) {
 			this.windowListeners.forEach(l -> l.fullscreenChanged(this.fullscreen));
-			super.SKETCH.SCENES.fullscreenChanged(this.fullscreen);
+			super.SKETCH.scenes.fullscreenChanged(this.fullscreen);
 		}
 
 		this.pfullscreen = this.fullscreen;

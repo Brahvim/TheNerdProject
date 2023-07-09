@@ -10,9 +10,10 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.ecs.NerdEcsModule;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
-import com.brahvim.nerd.io.asset_loader.NerdAssetManager;
+import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 
 public class NerdScenesModule extends NerdModule {
 
@@ -21,7 +22,7 @@ public class NerdScenesModule extends NerdModule {
 	// class. I do this to aid reading and to prevent namespace pollution.
 
 	@FunctionalInterface
-	public interface NerdSceneChangeListener {
+	public interface NerdSceneChangedListener {
 		public void sceneChanged(NerdSketch sketch,
 				Class<? extends NerdScene> previous,
 				Class<? extends NerdScene> current);
@@ -41,7 +42,7 @@ public class NerdScenesModule extends NerdModule {
 		// they'll should get stuff serialized via `NerdEcsManager` and handle it...
 
 		private NerdScene cachedReference; // `NerdSceneManager` deletes this when the scene exits.
-		private NerdAssetManager cachedAssets;
+		private NerdAssetsModule cachedAssets;
 		// endregion
 
 		private NerdSceneManagerSceneCache(final Constructor<? extends NerdScene> p_constructor,
@@ -235,21 +236,19 @@ public class NerdScenesModule extends NerdModule {
 	 */
 
 	// region Sketch Event Listeners.
-	private final LinkedHashSet<NerdSceneChangeListener> SCENE_CHANGE_LISTENERS; // May get passed to constructor!
-	private final LinkedHashSet<NerdSceneChangeListener> SCENE_CHANGE_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0);
+	private final LinkedHashSet<NerdScenesModule.NerdSceneChangedListener> SCENE_CHANGED_LISTENERS;
+	private final LinkedHashSet<NerdScenesModule.NerdSceneChangedListener>
+	/*		*/ SCENE_CHANGED_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0);
 	// endregion
 	private Class<? extends NerdScene> currSceneClass, prevSceneClass;
 	// endregion
 
-	public NerdScenesModule(
-			final NerdSketch p_sketch,
-			final Class<? extends NerdEcsSystem<?>>[] p_ecsSystems,
-			final NerdScenesModule.NerdSceneManagerSettings p_sceneManSettings,
-			final LinkedHashSet<NerdScenesModule.NerdSceneChangeListener> p_listeners) {
+	public NerdScenesModule(final NerdSketch p_sketch, final NerdSketchBuilderSettings p_settings) {
 		super(p_sketch);
-		this.SETTINGS = p_sceneManSettings;
-		this.SCENE_CHANGE_LISTENERS = p_listeners;
-		this.SETTINGS.orderOfEcsSystems = p_ecsSystems;
+
+		this.SETTINGS = p_settings.sceneManagerSettings;
+		this.SETTINGS.orderOfEcsSystems = p_settings.ecsSystemOrder;
+		this.SCENE_CHANGED_LISTENERS = p_settings.sceneChangedListeners;
 		this.ECS_INSTANCE = new NerdBridgedEcsModule(super.SKETCH, this.SETTINGS.orderOfEcsSystems);
 	}
 
@@ -538,12 +537,12 @@ public class NerdScenesModule extends NerdModule {
 	// endregion
 
 	// region [`public`] Queries.
-	public final void addSceneChangeListener(final NerdScenesModule.NerdSceneChangeListener p_listener) {
-		this.SCENE_CHANGE_LISTENERS.add(p_listener);
+	public final void addSceneChangeListener(final NerdScenesModule.NerdSceneChangedListener p_listener) {
+		this.SCENE_CHANGED_LISTENERS.add(p_listener);
 	}
 
-	public final void removeSceneChangeListener(final NerdScenesModule.NerdSceneChangeListener p_listener) {
-		this.SCENE_CHANGE_LISTENERS_TO_REMOVE.add(p_listener);
+	public final void removeSceneChangeListener(final NerdScenesModule.NerdSceneChangedListener p_listener) {
+		this.SCENE_CHANGED_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
 	/**
@@ -709,7 +708,7 @@ public class NerdScenesModule extends NerdModule {
 		// You're allowed to preload only once?
 		// Don't re-load, just use the cache!:
 		if (this.SETTINGS.ON_PRELOAD.preloadOnlyOnce) {
-			final NerdAssetManager man = this.SCENE_CACHE.get(SCENE_CLASS).cachedAssets;
+			final NerdAssetsModule man = this.SCENE_CACHE.get(SCENE_CLASS).cachedAssets;
 			p_scene.ASSETS = man;
 		} else { // Else, since you're supposed to run `preload()` every time, do that!:
 			p_scene.ASSETS.clear();
@@ -781,13 +780,13 @@ public class NerdScenesModule extends NerdModule {
 		toRet.SKETCH = toRet.MANAGER.SKETCH;
 
 		// Now, we copy all managers from `toRet.SKETCH`:
-		toRet.INPUT = toRet.SKETCH.INPUT;
-		toRet.WINDOW = toRet.SKETCH.WINDOW;
-		toRet.DISPLAY = toRet.SKETCH.DISPLAYS;
+		toRet.INPUT = toRet.SKETCH.input;
+		toRet.WINDOW = toRet.SKETCH.window;
+		toRet.DISPLAY = toRet.SKETCH.display;
 		toRet.ECS = this.ECS_INSTANCE.clearAllData(); // Method's in `NerdBridgedEcsManager`.
 		toRet.GRAPHICS = toRet.SKETCH.getNerdGraphics();
 		toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
-		toRet.ASSETS = new NerdAssetManager(toRet.SKETCH); // Is this actually a good idea?
+		toRet.ASSETS = new NerdAssetsModule(toRet.SKETCH); // Is this actually a good idea?
 
 		// If this is the first time we're constructing this scene,
 		// ensure it has a cache and a saved state!
@@ -816,8 +815,8 @@ public class NerdScenesModule extends NerdModule {
 
 	// The scene-deleter!!!
 	private void setScene(final NerdScene p_currentScene, final NerdSceneState p_state) {
-		super.SKETCH.WINDOW.cursorVisible = true;
-		super.SKETCH.WINDOW.cursorConfined = false;
+		super.SKETCH.window.cursorVisible = true;
+		super.SKETCH.window.cursorConfined = false;
 
 		// region `this.SETTINGS.ON_SWITCH` tasks.
 		if (this.SETTINGS.ON_SWITCH.doClear) {
@@ -835,6 +834,9 @@ public class NerdScenesModule extends NerdModule {
 		// endregion
 
 		this.prevSceneClass = this.currSceneClass;
+		this.SCENE_CHANGED_LISTENERS.forEach(
+				l -> l.sceneChanged(super.SKETCH, this.prevSceneClass, this.currSceneClass));
+
 		if (this.prevSceneClass != null) {
 			// Exit the scene, and nullify the cache.
 			this.currScene.runSceneChanged();
@@ -845,8 +847,9 @@ public class NerdScenesModule extends NerdModule {
 
 			final NerdScenesModule.NerdSceneManagerSceneCache sceneCache = this.SCENE_CACHE.get(this.currSceneClass);
 			sceneCache.nullifyCache();
+			System.gc();
 
-			// What `deleteCacheIfCan()` did, I guess (or used to do)!:
+			// What `nullifyCache()` is supposed to do:
 			/*
 			 * // Delete the scene reference if needed:
 			 * SceneManager.SceneCache oldSceneManager.SceneCache =
@@ -854,9 +857,7 @@ public class NerdScenesModule extends NerdModule {
 			 * if (!oldSceneManager.SceneCache.doNotDelete)
 			 * oldSceneManager.SceneCache.deleteCache();
 			 * // If this was the only reference to the scene object, the scene gets GCed!
-			 * System.gc();
 			 */
-
 		}
 
 		this.currSceneClass = p_currentScene.getClass();
@@ -878,7 +879,7 @@ public class NerdScenesModule extends NerdModule {
 		super.SKETCH.push();
 		super.SKETCH.textFont(super.SKETCH.getDefaultFont()); // ...Also reset the font. Thanks!
 
-		this.SCENE_CHANGE_LISTENERS.removeAll(this.SCENE_CHANGE_LISTENERS_TO_REMOVE);
+		this.SCENE_CHANGED_LISTENERS.removeAll(this.SCENE_CHANGED_LISTENERS_TO_REMOVE);
 
 		// This is `null` in SO MANY PLACES!:
 		if (p_state == null)

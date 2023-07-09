@@ -36,21 +36,21 @@ public class NerdCallbacksModule extends NerdModule {
 	// See the end of the constructor!
 	// endregion
 
-	public NerdCallbacksModule(final NerdSketch p_sketch, final NerdSketchBuilderSettings p_key) {
+	public NerdCallbacksModule(final NerdSketch p_sketch, final NerdSketchBuilderSettings p_settings) {
 		super(p_sketch);
 
 		// Intializing these listeners:
-		this.PRE_LISTENERS = p_key.preListeners;
-		this.POST_LISTENERS = p_key.postListeners;
-		this.DRAW_LISTENERS = p_key.drawListeners;
-		this.PRE_DRAW_LISTENERS = p_key.preDrawListeners;
-		this.POST_DRAW_LISTENERS = p_key.postDrawListeners;
+		this.PRE_LISTENERS = p_settings.preListeners;
+		this.POST_LISTENERS = p_settings.postListeners;
+		this.DRAW_LISTENERS = p_settings.drawListeners;
+		this.PRE_DRAW_LISTENERS = p_settings.preDrawListeners;
+		this.POST_DRAW_LISTENERS = p_settings.postDrawListeners;
 
 		// Intializing these listeners as well, haha!:
-		this.EXIT_LISTENERS = p_key.exitListeners;
-		this.SETUP_LISTENERS = p_key.setupListeners;
-		this.SETTINGS_LISTENERS = p_key.settingsListeners;
-		this.DISPOSAL_LISTENERS = p_key.disposalListeners;
+		this.EXIT_LISTENERS = p_settings.exitListeners;
+		this.SETUP_LISTENERS = p_settings.setupListeners;
+		this.SETTINGS_LISTENERS = p_settings.settingsListeners;
+		this.DISPOSAL_LISTENERS = p_settings.disposalListeners;
 		// this. .addAll(this.sketchConstructedListeners);
 
 		this.LIST_OF_CALLBACK_LISTS = new LinkedHashSet<?>[] {

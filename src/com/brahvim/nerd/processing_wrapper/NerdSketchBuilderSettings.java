@@ -35,7 +35,7 @@ public class NerdSketchBuilderSettings {
 	public LinkedHashSet<Consumer<NerdSketch>> sketchConstructedListeners,
 			settingsListeners, setupListeners, exitListeners, disposalListeners;
 
-	public LinkedHashSet<NerdScenesModule.NerdSceneChangeListener> sceneChangeListeners = new LinkedHashSet<>();
+	public LinkedHashSet<NerdScenesModule.NerdSceneChangedListener> sceneChangedListeners = new LinkedHashSet<>();
 
 	public LinkedHashSet<Consumer<NerdSketch>> preListeners, postListeners,
 			drawListeners, preDrawListeners, postDrawListeners;
@@ -44,7 +44,7 @@ public class NerdSketchBuilderSettings {
 			cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 	// endregion
 
-	protected Function<NerdSketch, HashMap<Class<? extends NerdModule>, NerdModule>> moduleInstantiator;
+	protected Function<NerdSketch, HashMap<Class<? extends NerdModule>, NerdModule>> nerdModulesInstantiator;
 
 	public NerdSketchBuilderSettings() {
 		// Intializing these listeners:
@@ -59,22 +59,16 @@ public class NerdSketchBuilderSettings {
 		this.setupListeners = new LinkedHashSet<>();
 		this.settingsListeners = new LinkedHashSet<>();
 		this.disposalListeners = new LinkedHashSet<>();
-		this.sceneChangeListeners = new LinkedHashSet<>();
+		this.sceneChangedListeners = new LinkedHashSet<>();
 		this.sketchConstructedListeners = new LinkedHashSet<>();
 
-		this.moduleInstantiator = s -> {
+		this.nerdModulesInstantiator = s -> {
 			final HashMap<Class<? extends NerdModule>, NerdModule> toRet = new HashMap<>();
 			toRet.put(NerdDisplayModule.class, new NerdDisplayModule(s));
-			toRet.put(NerdWindowManager.class,
-					switch (s.SKETCH_SETTINGS.RENDERER_NAME) {
-						case PConstants.P2D, PConstants.P3D -> new NerdGlWindowManager(s);
-						// case PConstants.JAVA2D -> new NerdJava2dWindowManager(p_sketch);
-						default -> null;
-					});
+			toRet.put(NerdWindowManager.class, s.SKETCH_SETTINGS.USES_OPENGL ? new NerdGlWindowManager(s) : null);
 			toRet.put(NerdInputManager.class, new NerdInputManager(s));
 			toRet.put(NerdCallbacksModule.class, new NerdCallbacksModule(s, this));
-			toRet.put(NerdScenesModule.class, new NerdScenesModule(
-					s, this.ecsSystemOrder, this.sceneManagerSettings, this.sceneChangeListeners));
+			toRet.put(NerdScenesModule.class, new NerdScenesModule(s, this));
 			return toRet;
 		};
 	}

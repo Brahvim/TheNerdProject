@@ -66,8 +66,8 @@ public abstract class NerdAbstractCamera {
 					this.fov, this.aspect, this.near, this.far);
 
 			case PConstants.ORTHOGRAPHIC -> this.GRAPHICS.ortho(
-					-this.SKETCH.WINDOW.cx, this.SKETCH.WINDOW.cx,
-					-this.SKETCH.WINDOW.cy, this.SKETCH.WINDOW.cy,
+					-this.SKETCH.window.cx, this.SKETCH.window.cx,
+					-this.SKETCH.window.cy, this.SKETCH.window.cy,
 					this.near, this.far);
 
 			default -> throw new UnsupportedOperationException(
