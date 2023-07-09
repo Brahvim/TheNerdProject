@@ -138,11 +138,8 @@ public abstract class NerdCustomSketchBuilder {
 	}
 	// endregion
 
-	public NerdCustomSketchBuilder addNerdExt(final NerdExt p_extObj) {
-		this.SKETCH_KEY.nerdExtensions.put(
-				p_extObj.getExtName(),
-				p_extObj.init(this));
-
+	public NerdCustomSketchBuilder addNerdExt(final String p_extName, final NerdExt p_extObj) {
+		this.SKETCH_KEY.nerdExtensions.put(p_extName, p_extObj.init(this));
 		return this;
 	}
 
