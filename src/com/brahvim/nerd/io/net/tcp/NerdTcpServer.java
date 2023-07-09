@@ -42,6 +42,7 @@ public class NerdTcpServer implements NerdServerSocket {
 	public class NerdTcpServerClient extends NerdAbstractTcpClient {
 
 		// region Fields.
+		// DO NOT use outside a `synchronized` block! Never!:
 		private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
 
 		private Thread serverCommThread;
@@ -61,87 +62,89 @@ public class NerdTcpServer implements NerdServerSocket {
 			if (super.STOPPED.get())
 				return;
 
-			this.serverCommThread = new Thread(() -> {
-				// No worries - the same stream is used till the socket shuts down.
-				DataInputStream stream = null;
+			super.commsThread = new Thread(this::receiverTasks);
+			super.commsThread.setName(this.getClass().getSimpleName() + "_" + this.socket.getLocalPort());
+			super.commsThread.setDaemon(true);
+			super.commsThread.start();
+		}
 
-				// ...Get that stream!:
+		private void receiverTasks() {
+			// No worries - the same stream is used till the socket shuts down.
+			DataInputStream stream = null;
+
+			// ...Get that stream!:
+			try {
+				// synchronized (System.out) {
+				// System.out.printf(
+				// "`NerdTcpServer::startMessageThread()` socket info: `%s`. Is it closed?:
+				// `%s`!%n",
+				// this.socket, this.socket.isClosed());
+				// }
+
+				// This syncing could be a bit clearer, but anyway!:
+				// I could jut've make `socket` private, or put it into another class, where the
+				// only way to call methods on it is to provide a `Consumer`. to some
+				// `synchronized` method.
+				synchronized (this.socket) {
+					if (this.socket.isClosed())
+						return;
+					stream = new DataInputStream(this.socket.getInputStream());
+				}
+			} catch (final IOException e) {
+				synchronized (System.err) {
+					e.printStackTrace();
+				}
+			}
+
+			while (this.STOPPED.get())
 				try {
-					// synchronized (System.out) {
-					// System.out.printf(
-					// "`NerdTcpServer::startMessageThread()` socket info: `%s`. Is it closed?:
-					// `%s`!%n",
-					// this.socket, this.socket.isClosed());
-					// }
+					// System.out.println("NerdTcpServer.NerdTcpServerClient.startMessageThread()");
 
-					// This syncing could be a bit clearer, but anyway!:
-					// I could jut've make `socket` private, or put it into another class, where the
-					// only way to call methods on it is to provide a `Consumer`. to some
-					// `synchronized` method.
-					synchronized (this.socket) {
-						if (this.socket.isClosed())
-							return;
-						stream = new DataInputStream(this.socket.getInputStream());
+					// System.out.printf("hasDisconnected: `%s`.%n", super.hasDisconnected);
+					// System.out.println("`NerdTcpServer.NerdTcpServerClient::serverCommsThread::run()`");
+					stream.available();
+					// ^^^ This is literally gunna return `0`!
+					// ..I guess we use fixed sizes around here...
+
+					// ..Now read it:
+					final int packetSize = stream.readInt();
+					final byte[] packetData = new byte[packetSize];
+					stream.read(packetData); // It needs to know the length of the array!
+					final NerdClientSentTcpPacket packet = new NerdTcpServer.NerdClientSentTcpPacket(
+							this, packetData);
+
+					// System.out.println("""
+					// `NerdTcpServer.NerdTcpServerClient\
+					// ::serverCommThread::run()` read the \
+					// stream.""");
+
+					// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
+					// have to reconstruct it every time, fearing that one of these callbacks might
+					// change the contents of the packet.
+
+					synchronized (this.MESSAGE_CALLBACKS) {
+						// System.out.println("""
+						// `NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` \
+						// entered the synced block.""");
+						for (final Consumer<NerdClientSentTcpPacket> c : this.MESSAGE_CALLBACKS)
+							try {
+								// System.out.println("""
+								// `NerdTcpServer.NerdTcpServerClient\
+								// ::serverCommThread::run()` \
+								// called a message callback.""");
+								c.accept(packet);
+							} catch (final Exception e) {
+								e.printStackTrace();
+							}
 					}
 				} catch (final IOException e) {
-					synchronized (System.err) {
+					// When the client disconnects, this exception is thrown by
+					// `*InputStream::read*()`:
+					if (e instanceof EOFException)
+						this.disconnect();
+					else
 						e.printStackTrace();
-					}
 				}
-
-				while (this.STOPPED.get())
-					try {
-						// System.out.println("NerdTcpServer.NerdTcpServerClient.startMessageThread()");
-
-						// System.out.printf("hasDisconnected: `%s`.%n", super.hasDisconnected);
-						// System.out.println("`NerdTcpServer.NerdTcpServerClient::serverCommsThread::run()`");
-						stream.available();
-						// ^^^ This is literally gunna return `0`!
-						// ..I guess we use fixed sizes around here...
-
-						// ..Now read it:
-						final int packetSize = stream.readInt();
-						final byte[] packetData = new byte[packetSize];
-						stream.read(packetData); // It needs to know the length of the array!
-						final NerdClientSentTcpPacket packet = new NerdTcpServer.NerdClientSentTcpPacket(
-								this, packetData);
-
-						// System.out.println("""
-						// `NerdTcpServer.NerdTcpServerClient\
-						// ::serverCommThread::run()` read the \
-						// stream.""");
-
-						// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
-						// have to reconstruct it every time, fearing that one of these callbacks might
-						// change the contents of the packet.
-
-						synchronized (this.MESSAGE_CALLBACKS) {
-							// System.out.println("""
-							// `NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` \
-							// entered the synced block.""");
-							for (final Consumer<NerdClientSentTcpPacket> c : this.MESSAGE_CALLBACKS)
-								try {
-									// System.out.println("""
-									// `NerdTcpServer.NerdTcpServerClient\
-									// ::serverCommThread::run()` \
-									// called a message callback.""");
-									c.accept(packet);
-								} catch (final Exception e) {
-									e.printStackTrace();
-								}
-						}
-					} catch (final IOException e) {
-						// When the client disconnects, this exception is thrown by
-						// `*InputStream::read*()`:
-						if (e instanceof EOFException)
-							this.disconnect();
-						else
-							e.printStackTrace();
-					}
-			}, "NerdTcpClientListenerOnPort" + this.socket.getLocalPort());
-			// ^^^ Yes, that's the thread's name.
-			this.serverCommThread.setDaemon(true);
-			this.serverCommThread.start();
 		}
 
 		// region ...Sending or something, I dunno.
@@ -229,9 +232,10 @@ public class NerdTcpServer implements NerdServerSocket {
 	private final Vector<NerdTcpServer.NerdTcpServerClient> CLIENTS = new Vector<>(1);
 	private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> NEW_CONNECTION_CALLBACKS = new Vector<>(1);
 
-	private final Thread CONNS_THREAD;
-	private ServerSocket socket;
 	private final AtomicBoolean STOPPED = new AtomicBoolean();
+
+	private Thread connectionsThread;
+	private ServerSocket socket;
 	private Function<NerdAbstractTcpClient, Boolean> invitationCallback;
 	// endregion
 
@@ -246,7 +250,6 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
-		this.CONNS_THREAD = new Thread(this::receiverTasks);
 		this.delegatedConstruction();
 	}
 
@@ -257,7 +260,6 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
-		this.CONNS_THREAD = new Thread(this::receiverTasks);
 		this.delegatedConstruction();
 	}
 
@@ -271,7 +273,6 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
-		this.CONNS_THREAD = new Thread(this::receiverTasks);
 		this.delegatedConstruction();
 	}
 
@@ -282,7 +283,6 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
-		this.CONNS_THREAD = new Thread(this::receiverTasks);
 		this.delegatedConstruction();
 	}
 	// endregion
@@ -294,11 +294,17 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
-		this.CONNS_THREAD.setDaemon(true);
-		this.CONNS_THREAD.start();
+		this.startConnectionsThread();
 	}
 
-	private void receiverTasks() {
+	protected void startConnectionsThread() {
+		this.connectionsThread = new Thread(this::connectionTasks);
+		this.connectionsThread.setName(this.getClass().getSimpleName() + "OnPort:" + this.socket.getLocalPort());
+		this.connectionsThread.setDaemon(true);
+		this.connectionsThread.start();
+	}
+
+	private void connectionTasks() {
 		// Loop, or try-catch block first?
 		while (!this.STOPPED.get())
 			try {
@@ -380,7 +386,7 @@ public class NerdTcpServer implements NerdServerSocket {
 		// System.out.println("`NerdTcpServer::shutdown()` disconnected all clients.");
 
 		try {
-			this.CONNS_THREAD.join();
+			this.connectionsThread.join();
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -460,8 +466,6 @@ public class NerdTcpServer implements NerdServerSocket {
 	}
 	// endregion
 
-	public ServerSocket getSocket() {
-		return this.socket;
-	}
+	// public ServerSocket getSocket() { return this.socket; }
 
 }

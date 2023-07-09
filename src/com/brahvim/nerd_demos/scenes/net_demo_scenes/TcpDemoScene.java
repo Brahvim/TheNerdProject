@@ -33,7 +33,7 @@ public class TcpDemoScene extends NerdScene {
 
 	private enum Response {
 		ALLOWED(),
-		// REJECTED(),
+		// REFUSED(),
 		SERVED_FOOD(),
 	}
 	// endregion
@@ -85,7 +85,7 @@ public class TcpDemoScene extends NerdScene {
 				// Yes, you can directly pass this lambda into the constructor!
 				// `c` holds the client object that wishes to join.
 				c -> {
-					// ...Let clients be rejected by chance:
+					// ...Let clients be refused by chance:
 					final boolean clientAccepted = SKETCH.random(1) < 0.5f;
 
 					if (clientAccepted) {
@@ -93,8 +93,8 @@ public class TcpDemoScene extends NerdScene {
 						c.send(NerdByteSerialUtils.toBytes(Response.ALLOWED));
 						System.out.println("Ayy! A new client joined! Info: "
 								+ c.getSocket().toString());
-					} else // Tell us that it got rejected otherwise.
-						System.out.println("The server rejected a connection.");
+					} else // Tell us that it got refused otherwise.
+						System.out.println("The server refused a connection.");
 
 					// Returning `null` or calling `c.disconnect()` should disconnect.
 					// If we accept this client, we return a listener to listen to its messages!:

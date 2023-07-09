@@ -69,60 +69,74 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 			return;
 
 		this.MESSAGE_CALLBACKS.add(p_mesageCallback);
-		final Thread commsThread = new Thread(() -> {
-			// No worries - the same stream is used till the socket shuts down.
-			DataInputStream stream = null;
 
-			// ...Get that stream!:
-			try {
+		// It's faster to give the thread a name in this manner:
+		super.commsThread = new Thread(
+				this::receiverTasks,
+				this.getClass().getSimpleName() + "OnPort:" + this.socket.getLocalPort());
+		super.commsThread.setDaemon(true);
+		super.commsThread.start();
+	}
+
+	private void receiverTasks() {
+		// No worries - the same stream is used till the socket shuts down.
+		DataInputStream stream = null;
+
+		// ...Get that stream!:
+		try {
+			stream = new DataInputStream(this.socket.getInputStream());
+			synchronized (this.socket) {
+				if (this.socket.isClosed())
+					return;
 				stream = new DataInputStream(this.socket.getInputStream());
-			} catch (final IOException e) {
+			}
+		} catch (final IOException e) {
+			e.printStackTrace();
+			synchronized (System.err) {
 				e.printStackTrace();
 			}
+			this.disconnect();
+			return;
+		}
 
-			while (!super.STOPPED.get())
-				try {
-					stream.available();
-					// ^^^ This is literally gunna return `0`!
-					// ..I guess we use fixed sizes around here...
+		while (!super.STOPPED.get())
+			try {
+				stream.available();
+				// ^^^ This is literally gunna return `0`!
+				// ..I guess we use fixed sizes around here...
 
-					// ..Now read it:
-					final int packetSize = stream.readInt();
-					final byte[] packetData = new byte[packetSize];
+				// ..Now read it:
+				final int packetSize = stream.readInt();
+				final byte[] packetData = new byte[packetSize];
 
-					// int bytesRead = 0; // We *are* relying on that `EOFException` down there...
-					// while (!(bytesRead == packetSize || bytesRead == -1))
-					/* bytesRead = */ stream.read(packetData); // It needs to know the length of the array!
+				// int bytesRead = 0; // We *are* relying on that `EOFException` down there...
+				// while (!(bytesRead == packetSize || bytesRead == -1))
+				/* bytesRead = */ stream.read(packetData); // It needs to know the length of the array!
 
-					final NerdServerSentTcpPacket packet = new NerdTcpClient.NerdServerSentTcpPacket(packetData);
+				final NerdServerSentTcpPacket packet = new NerdTcpClient.NerdServerSentTcpPacket(packetData);
 
-					// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
-					// have to reconstruct it every time, fearing that one of these callbacks might
-					// change the contents of the packet.
+				// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
+				// have to reconstruct it every time, fearing that one of these callbacks might
+				// change the contents of the packet.
 
-					synchronized (this.MESSAGE_CALLBACKS) {
-						for (final Consumer<NerdServerSentTcpPacket> c : this.MESSAGE_CALLBACKS)
-							try {
-								c.accept(packet);
-							} catch (final Exception e) {
-								e.printStackTrace();
-							}
-					}
-				} catch (final IOException e) {
-					// When the client disconnects, this exception is thrown by
-					// `*InputStream::read*()`:
-					if (e instanceof EOFException)
-						this.disconnect();
-					else if (e instanceof SocketException)
-						this.disconnect();
-					else
-						e.printStackTrace(); // I have NO idea what to do, y'hear!
+				synchronized (this.MESSAGE_CALLBACKS) {
+					for (final Consumer<NerdServerSentTcpPacket> c : this.MESSAGE_CALLBACKS)
+						try {
+							c.accept(packet);
+						} catch (final Exception e) {
+							e.printStackTrace();
+						}
 				}
-		}, "NerdTcpServerListenerOnPort" + this.socket.getLocalPort());
-		// ^^^ It's faster to give the thread a name in this manner.
-
-		commsThread.setDaemon(true);
-		commsThread.start();
+			} catch (final IOException e) {
+				// When the client disconnects, this exception is thrown by
+				// `*InputStream::read*()`:
+				if (e instanceof EOFException)
+					this.disconnect();
+				else if (e instanceof SocketException)
+					this.disconnect();
+				else
+					e.printStackTrace(); // I have NO idea what to do, y'hear!
+			}
 	}
 	// endregion
 
@@ -132,7 +146,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 
 	@Override
 	protected void disconnectImpl() {
-		super.STOPPED.set(false);
+		// super.STOPPED.set(false);
 	}
 
 	// region Sending stuff.

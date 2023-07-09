@@ -13,8 +13,10 @@ import com.brahvim.nerd.io.net.NerdClientSocket;
  */
 public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 
-	protected Socket socket;
 	protected final AtomicBoolean STOPPED = new AtomicBoolean();
+
+	protected Socket socket;
+	protected Thread commsThread;
 
 	// region (`package`-level) Constructors.
 	/* `package` */ NerdAbstractTcpClient(final String p_serverIp, final int p_myPort) {
@@ -46,6 +48,12 @@ public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 		// "`NerdAbstractTcpClient::disconnect()` will now call `impl()`.");
 		this.STOPPED.set(true);
 		this.disconnectImpl();
+
+		if (this.commsThread != null)
+			try {
+				this.commsThread.join();
+			} catch (final InterruptedException e) {
+			}
 
 		// System.out.println(
 		// "`NerdAbstractTcpClient::disconnect()` will now close the socket.");
