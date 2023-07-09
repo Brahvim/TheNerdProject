@@ -17,9 +17,9 @@ import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
-import com.brahvim.nerd.processing_wrapper.NerdInputManager;
+import com.brahvim.nerd.processing_wrapper.NerdInputModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
+import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 
 /**
  * <h2>Do not use as an anonymous class!</h2>
@@ -35,10 +35,10 @@ public abstract class NerdScene {
 	protected NerdSketch SKETCH;
 	protected NerdSceneState STATE;
 	protected NerdGraphics GRAPHICS;
-	protected NerdInputManager INPUT;
+	protected NerdInputModule INPUT;
 	protected NerdAssetsModule ASSETS;
 	protected NerdScenesModule MANAGER;
-	protected NerdWindowManager WINDOW;
+	protected NerdWindowModule WINDOW;
 	protected NerdAbstractCamera CAMERA;
 	protected NerdBridgedEcsModule ECS;
 	protected NerdDisplayModule DISPLAY;

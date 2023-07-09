@@ -13,7 +13,7 @@ import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule.NerdSceneManagerSettings;
 import com.brahvim.nerd.openal.AlContext;
-import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowManager;
+import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowModule;
 
 import processing.core.PConstants;
 
@@ -65,8 +65,8 @@ public class NerdSketchBuilderSettings {
 		this.nerdModulesInstantiator = s -> {
 			final HashMap<Class<? extends NerdModule>, NerdModule> toRet = new HashMap<>();
 			toRet.put(NerdDisplayModule.class, new NerdDisplayModule(s));
-			toRet.put(NerdWindowManager.class, s.SKETCH_SETTINGS.USES_OPENGL ? new NerdGlWindowManager(s) : null);
-			toRet.put(NerdInputManager.class, new NerdInputManager(s));
+			toRet.put(NerdWindowModule.class, s.SKETCH_SETTINGS.USES_OPENGL ? new NerdGlWindowModule(s) : null);
+			toRet.put(NerdInputModule.class, new NerdInputModule(s));
 			toRet.put(NerdCallbacksModule.class, new NerdCallbacksModule(s, this));
 			toRet.put(NerdScenesModule.class, new NerdScenesModule(s, this));
 			return toRet;

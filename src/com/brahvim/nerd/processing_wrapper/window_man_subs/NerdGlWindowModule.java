@@ -3,17 +3,17 @@ package com.brahvim.nerd.processing_wrapper.window_man_subs;
 import java.awt.Point;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
+import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PVector;
 
-public class NerdGlWindowManager extends NerdWindowManager {
+public class NerdGlWindowModule extends NerdWindowModule {
 
 	protected GLWindow window;
 
 	// region Construction and initialization.
-	public NerdGlWindowManager(final NerdSketch p_sketch) {
+	public NerdGlWindowModule(final NerdSketch p_sketch) {
 		super(p_sketch);
 	}
 
@@ -85,47 +85,60 @@ public class NerdGlWindowManager extends NerdWindowManager {
 	public boolean getAlwaysOnTop() {
 		return this.window.isAlwaysOnTop();
 	}
+
+	@Override
+	public boolean isResizable() {
+		return this.window.isResizable();
+	}
 	// endregion
 
 	// region Setters.
 	@Override
-	public NerdGlWindowManager setName(final String p_name) {
+	public NerdGlWindowModule setName(final String p_name) {
 		this.window.setTitle(p_name);
 		return this;
 	}
 
 	@Override
-	public NerdGlWindowManager setSize(final PVector p_size) {
+	public NerdGlWindowModule setSize(final PVector p_size) {
 		this.window.setSize((int) p_size.x, (int) p_size.y);
 		return this;
 	}
 
 	@Override
-	public NerdGlWindowManager setSize(final int p_x, final int p_y) {
+	public NerdGlWindowModule setSize(final int p_x, final int p_y) {
 		this.window.setSize(p_x, p_y);
 		return this;
 	}
 
 	@Override
-	public NerdGlWindowManager setSize(final float p_x, final float p_y) {
+	public NerdGlWindowModule setResizable(final boolean p_state) {
+		while (this.window.isResizable() != p_state)
+			this.window.setResizable(p_state);
+
+		return this;
+	}
+
+	@Override
+	public NerdGlWindowModule setSize(final float p_x, final float p_y) {
 		this.window.setSize((int) p_x, (int) p_y);
 		return this;
 	}
 
 	@Override
-	public NerdGlWindowManager setPosition(final float p_x, final float p_y) {
+	public NerdGlWindowModule setPosition(final float p_x, final float p_y) {
 		this.window.setPosition((int) p_x, (int) p_y);
 		return this;
 	}
 
 	@Override
-	public NerdGlWindowManager setPosition(final int p_x, final int p_y) {
+	public NerdGlWindowModule setPosition(final int p_x, final int p_y) {
 		this.window.setPosition(p_x, p_y);
 		return this;
 	}
 
 	@Override
-	public NerdGlWindowManager setPosition(final PVector p_position) {
+	public NerdGlWindowModule setPosition(final PVector p_position) {
 		this.window.setPosition((int) p_position.x, (int) p_position.y);
 		return this;
 	}

@@ -10,7 +10,7 @@ import processing.core.PConstants;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
-public class NerdInputManager extends NerdModule {
+public class NerdInputModule extends NerdModule {
 
 	// region Fields.
 	public static final List<Character> STANDARD_KEYBOARD_SYMBOLS = List.of(
@@ -74,7 +74,7 @@ public class NerdInputManager extends NerdModule {
 	// endregion
 	// endregion
 
-	public NerdInputManager(final NerdSketch p_sketch) {
+	public NerdInputModule(final NerdSketch p_sketch) {
 		super(p_sketch);
 	}
 
@@ -363,7 +363,7 @@ public class NerdInputManager extends NerdModule {
 
 	public static boolean isStandardKeyboardSymbol(final char p_char) {
 		// boolean is = false;
-		for (final char ch : NerdInputManager.STANDARD_KEYBOARD_SYMBOLS)
+		for (final char ch : NerdInputModule.STANDARD_KEYBOARD_SYMBOLS)
 			// Can't use this!:
 			// return ch == p_char;
 			// What if the array being examined is empty?!
@@ -383,11 +383,11 @@ public class NerdInputManager extends NerdModule {
 		return Character.isDigit(p_char) ||
 				Character.isLetter(p_char) ||
 				Character.isWhitespace(p_char) ||
-				NerdInputManager.isStandardKeyboardSymbol(p_char);
+				NerdInputModule.isStandardKeyboardSymbol(p_char);
 	}
 
 	public char getTypedKey() {
-		if (NerdInputManager.isTypeable(this.SKETCH.key))
+		if (NerdInputModule.isTypeable(this.SKETCH.key))
 			return this.SKETCH.key;
 
 		// New way to do this in Java!:

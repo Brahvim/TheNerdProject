@@ -8,6 +8,7 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
@@ -21,6 +22,7 @@ import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
+import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
@@ -61,8 +63,8 @@ public class NerdSketch extends PApplet {
 
 		public boolean closeOnEscape, canFullscreen, f11Fullscreen, altEnterFullscreen;
 
-		protected final Function<NerdSketch, HashMap<Class<? extends NerdModule>, NerdModule>> NERD_MODULES_INSTANTIATOR;
 		protected final HashSet<Class<? extends NerdScene>> SCENES_TO_PRELOAD;
+		protected final Function<NerdSketch, HashMap<Class<? extends NerdModule>, NerdModule>> NERD_MODULES_INSTANTIATOR;
 
 		protected NerdSketchSettings(final NerdSketchBuilderSettings p_settings) {
 			this.ICON_PATH = p_settings.iconPath;
@@ -146,27 +148,21 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// region `protected` fields.
-	protected static final String NULL_LISTENER_ERROR_MESSAGE = "An object passed to `Sketch::add*Listener()` cannot be `null`.";
+	protected static final String NULL_LISTENER_ERROR_MESSAGE = "An object passed to `NerdSketch::add*Listener()` cannot be `null`.";
 
-	// region Window object and native renderer references ("hacky stuff").
-	// ("Why check for `null` at all? You know what renderer you used!")
-	protected JFrame sketchFrame;
-
-	// OpenGL context:
 	protected GL gl;
 	protected GLU glu;
 	protected PGL pgl;
-	protected GLWindow glWindow;
 	protected PGraphicsOpenGL glGraphics;
-	// endregion
 
-	protected NerdInputManager input;
+	protected NerdInputModule input;
 	protected NerdAssetsModule assets;
-	protected NerdScenesModule scenes; // This is a bridged object, thus, `protected`.
-	protected NerdWindowManager window;
+	protected NerdScenesModule scenes;
+	protected NerdWindowModule window;
 	protected NerdDisplayModule display;
 	protected NerdCallbacksModule callbacks;
-	protected HashMap<Class<? extends NerdModule>, NerdModule> modules;
+	protected Collection<NerdModule> nerdModules;
+	protected HashMap<Class<? extends NerdModule>, NerdModule> classToNerdModulesMap;
 
 	// Timers! (`millis()` returns `int`s!):
 	protected int frameStartTime, pframeTime, frameTime;
@@ -240,10 +236,10 @@ public class NerdSketch extends PApplet {
 	@Override
 	public void setup() {
 		// region Non-key settings.
-		this.modules = this.SKETCH_SETTINGS.NERD_MODULES_INSTANTIATOR.apply(this);
-		this.input = this.getNerdModule(NerdInputManager.class);
+		this.classToNerdModulesMap = this.SKETCH_SETTINGS.NERD_MODULES_INSTANTIATOR.apply(this);
+		this.input = this.getNerdModule(NerdInputModule.class);
 		this.scenes = this.getNerdModule(NerdScenesModule.class);
-		this.window = this.getNerdModule(NerdWindowManager.class);
+		this.window = this.getNerdModule(NerdWindowModule.class);
 		this.display = this.getNerdModule(NerdDisplayModule.class);
 		this.callbacks = this.getNerdModule(NerdCallbacksModule.class);
 
@@ -263,10 +259,18 @@ public class NerdSketch extends PApplet {
 			}
 		};
 
+		this.nerdModules = this.classToNerdModulesMap.values();
+
 		// Preloading assets from scenes the user wishes to, in advance:
 		for (final Class<? extends NerdScene> c : this.SKETCH_SETTINGS.SCENES_TO_PRELOAD)
 			this.scenes.loadSceneAssetsAsync(c);
 		// endregion
+
+		if (this.SKETCH_SETTINGS.USES_OPENGL) {
+			this.glu = new GLU();
+			this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
+			this.gl = ((GLWindow) this.window.getNativeObject()).getGL();
+		}
 
 		// `this.display` before `this.window`!
 		// The latter waits for the former!
@@ -294,31 +298,18 @@ public class NerdSketch extends PApplet {
 		// `switch (this.SKETCH_SETTINGS.RENDeRER_NAME)` using `Runnable`s!
 		// :joy:!
 
-		// Renderer-specific object initialization and settings!:
-		if (this.SKETCH_SETTINGS.USES_OPENGL) {
-			this.glWindow = (GLWindow) this.window.getNativeObject();
-			this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
-			this.gl = this.glWindow.getGL();
-			this.glu = new GLU();
-
-			if (this.SKETCH_SETTINGS.INITIALLY_RESIZABLE)
-				this.glWindow.setResizable(true);
-
-			// Done in the constructor! `setup()`'s too late for this!:
-			// PJOGL.setIcon(this.iconPath);
-		} else
-			this.sketchFrame = (JFrame) this.window.getNativeObject();
+		if (this.SKETCH_SETTINGS.INITIALLY_RESIZABLE)
+			this.window.setResizable(true);
 
 		this.window.centerWindow();
-		this.modules.values().forEach(NerdModule::setup);
-
+		this.nerdModules.forEach(NerdModule::setup);
 	}
 
 	public void pre() {
 		if (this.SKETCH_SETTINGS.USES_OPENGL)
 			this.pgl = super.beginPGL();
 
-		this.modules.values().forEach(NerdModule::pre);
+		this.nerdModules.forEach(NerdModule::pre);
 	}
 
 	@Override
@@ -328,12 +319,12 @@ public class NerdSketch extends PApplet {
 		this.frameTime = this.frameStartTime - this.pframeTime;
 
 		// Call all pre-render listeners:
-		// this.MODULES.values().forEach(NerdModule::preDraw);
+		// this.values.forEach(NerdModule::preDraw);
 
 		this.nerdGraphics.applyCameraIfCan();
 
 		// Call all draw listeners:
-		this.modules.values().forEach(NerdModule::draw);
+		this.nerdModules.forEach(NerdModule::draw);
 
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.scenes.getCurrentScene() == null) {
@@ -346,7 +337,7 @@ public class NerdSketch extends PApplet {
 		// endregion
 
 		// Call all post-render listeners:
-		// this.MODULES.values().forEach(NerdModule::postDraw);
+		// this.values.forEach(NerdModule::postDraw);
 	}
 
 	public void post() {
@@ -356,7 +347,7 @@ public class NerdSketch extends PApplet {
 		// this.sceneGraphics.beginDraw();
 
 		// These help complete background work:
-		this.modules.values().forEach(NerdModule::post);
+		this.nerdModules.forEach(NerdModule::post);
 
 		// THIS ACTUALLY WORKED! How does the JVM interpret pointers?:
 		// this.image(this.sceneGraphics);
@@ -368,13 +359,13 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void exit() {
-		this.modules.values().forEach(NerdModule::exit);
+		this.nerdModules.forEach(NerdModule::exit);
 		super.exit();
 	}
 
 	@Override
 	public void dispose() {
-		this.modules.values().forEach(NerdModule::dispose);
+		this.nerdModules.forEach(NerdModule::dispose);
 		super.dispose();
 	}
 	// endregion
@@ -383,41 +374,41 @@ public class NerdSketch extends PApplet {
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
-		this.modules.values().forEach(NerdModule::mousePressed);
+		this.nerdModules.forEach(NerdModule::mousePressed);
 	}
 
 	@Override
 	public void mouseReleased() {
-		this.modules.values().forEach(NerdModule::mouseReleased);
+		this.nerdModules.forEach(NerdModule::mouseReleased);
 	}
 
 	@Override
 	public void mouseMoved() {
-		this.modules.values().forEach(NerdModule::mouseMoved);
+		this.nerdModules.forEach(NerdModule::mouseMoved);
 	}
 
 	// JUST SO YA' KNOW!: On Android, `mouseClicked()` has been left unused.
 	// AND, AND, ALSO!: On PC, it's called after `mouseReleased()`, AWT docs say.
 	@Override
 	public void mouseClicked() {
-		this.modules.values().forEach(NerdModule::mouseClicked);
+		this.nerdModules.forEach(NerdModule::mouseClicked);
 	}
 
 	@Override
 	public void mouseDragged() {
-		this.modules.values().forEach(NerdModule::mouseDragged);
+		this.nerdModules.forEach(NerdModule::mouseDragged);
 	}
 
 	@Override
 	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
-		this.modules.values().forEach(m -> m.mouseWheel(p_mouseEvent));
+		this.nerdModules.forEach(m -> m.mouseWheel(p_mouseEvent));
 	}
 	// endregion
 
 	// region Keyboard events.
 	@Override
 	public void keyTyped() {
-		this.modules.values().forEach(NerdModule::keyTyped);
+		this.nerdModules.forEach(NerdModule::keyTyped);
 	}
 
 	@Override
@@ -442,21 +433,21 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void keyReleased() {
-		this.modules.values().forEach(NerdModule::keyReleased);
+		this.nerdModules.forEach(NerdModule::keyReleased);
 	}
 	// endregion
 
 	// region Touch events.
 	public void touchStarted() {
-		this.modules.values().forEach(NerdModule::touchStarted);
+		this.nerdModules.forEach(NerdModule::touchStarted);
 	}
 
 	public void touchMoved() {
-		this.modules.values().forEach(NerdModule::touchMoved);
+		this.nerdModules.forEach(NerdModule::touchMoved);
 	}
 
 	public void touchEnded() {
-		this.modules.values().forEach(NerdModule::touchEnded);
+		this.nerdModules.forEach(NerdModule::touchEnded);
 	}
 	// endregion
 
@@ -471,7 +462,7 @@ public class NerdSketch extends PApplet {
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
-			this.modules.values().forEach(NerdModule::focusGained);
+			this.nerdModules.forEach(NerdModule::focusGained);
 
 	}
 
@@ -485,7 +476,7 @@ public class NerdSketch extends PApplet {
 		// I guess this works because `looping` is `false` for sometime after
 		// `handleDraw()`, which is probably when events are handled:
 		if (!super.isLooping())
-			this.modules.values().forEach(NerdModule::focusLost);
+			this.nerdModules.forEach(NerdModule::focusLost);
 
 	}
 	// endregion
@@ -514,11 +505,23 @@ public class NerdSketch extends PApplet {
 
 	@SuppressWarnings("unchecked")
 	public <RetT extends NerdModule> RetT getNerdModule(final Class<RetT> p_moduleClass) {
-		return (RetT) this.modules.get(p_moduleClass);
+		return (RetT) this.classToNerdModulesMap.get(p_moduleClass);
 	}
 	// endregion
 
 	// region Utilities!~
+	public GL getGl() {
+		return this.gl;
+	}
+
+	public GLU getGlu() {
+		return this.glu;
+	}
+
+	public PGraphicsOpenGL getGlGraphics() {
+		return this.glGraphics;
+	}
+
 	public int getFrameStartTime() {
 		return this.frameStartTime;
 	}

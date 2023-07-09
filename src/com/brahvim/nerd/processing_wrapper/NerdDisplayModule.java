@@ -10,7 +10,7 @@ import com.brahvim.nerd.processing_callback_interfaces.window.NerdWindowListener
 
 public class NerdDisplayModule extends NerdModule {
 
-	protected final NerdWindowManager WINDOW;
+	protected final NerdWindowModule WINDOW;
 	protected final LinkedHashSet<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
 
 	protected GraphicsDevice previousMonitor, currentMonitor;
@@ -41,7 +41,7 @@ public class NerdDisplayModule extends NerdModule {
 	public NerdDisplayModule(final NerdSketch p_sketch) {
 		super(p_sketch);
 		this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
-		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowManager.class);
+		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
 	// Referenced in `NerdSketch::setup()` - only time it's been called out there.

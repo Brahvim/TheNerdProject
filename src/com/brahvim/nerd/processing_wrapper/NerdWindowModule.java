@@ -9,7 +9,7 @@ import processing.core.PImage;
 import processing.core.PSurface;
 import processing.core.PVector;
 
-public abstract class NerdWindowManager extends NerdModule {
+public abstract class NerdWindowModule extends NerdModule {
 
 	// region Fields.
 	/** Position of the window relative to the monitor. */
@@ -33,7 +33,7 @@ public abstract class NerdWindowManager extends NerdModule {
 	// endregion
 
 	// region Construction and initialization.
-	protected NerdWindowManager(final NerdSketch p_sketch) {
+	protected NerdWindowModule(final NerdSketch p_sketch) {
 		super(p_sketch);
 		this.fullscreen = super.SKETCH.SKETCH_SETTINGS.STARTED_FULLSCREEN;
 	}
@@ -129,6 +129,8 @@ public abstract class NerdWindowManager extends NerdModule {
 
 	public abstract Object getNativeObject();
 
+	public abstract boolean isResizable();
+
 	public abstract boolean getAlwaysOnTop();
 	// endregion
 
@@ -136,19 +138,21 @@ public abstract class NerdWindowManager extends NerdModule {
 	// Implementations return pointers of their own type, not `NerdWindowManager*`s,
 	public abstract boolean setAlwaysOnTop(final boolean p_name);
 
-	public abstract NerdWindowManager setName(final String p_name);
+	public abstract NerdWindowModule setName(final String p_name);
 
-	public abstract NerdWindowManager setSize(final PVector p_size);
+	public abstract NerdWindowModule setSize(final PVector p_size);
 
-	public abstract NerdWindowManager setSize(final int p_x, final int p_y);
+	public abstract NerdWindowModule setResizable(final boolean p_state);
 
-	public abstract NerdWindowManager setSize(final float p_x, final float p_y);
+	public abstract NerdWindowModule setSize(final int p_x, final int p_y);
 
-	public abstract NerdWindowManager setPosition(final PVector p_position);
+	public abstract NerdWindowModule setSize(final float p_x, final float p_y);
 
-	public abstract NerdWindowManager setPosition(final int p_x, final int p_y);
+	public abstract NerdWindowModule setPosition(final PVector p_position);
 
-	public abstract NerdWindowManager setPosition(final float p_x, final float p_y);
+	public abstract NerdWindowModule setPosition(final int p_x, final int p_y);
+
+	public abstract NerdWindowModule setPosition(final float p_x, final float p_y);
 	// endregion
 
 	// region Callbacks.

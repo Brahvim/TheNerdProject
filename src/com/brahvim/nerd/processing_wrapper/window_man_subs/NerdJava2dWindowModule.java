@@ -7,17 +7,17 @@ import java.awt.Point;
 import javax.swing.JFrame;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
+import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 
 import processing.awt.PSurfaceAWT;
 import processing.core.PVector;
 
-public class NerdJava2dWindowManager extends NerdWindowManager {
+public class NerdJava2dWindowModule extends NerdWindowModule {
 
 	protected JFrame window;
 	protected PSurfaceAWT.SmoothCanvas canvas;
 
-	public NerdJava2dWindowManager(final NerdSketch p_sketch) {
+	public NerdJava2dWindowModule(final NerdSketch p_sketch) {
 		super(p_sketch);
 	}
 
@@ -82,47 +82,58 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
 	public boolean getAlwaysOnTop() {
 		return this.window.isAlwaysOnTop();
 	}
+
+	@Override
+	public boolean isResizable() {
+		return this.window.isResizable();
+	}
 	// endregion
 
 	// region Setters.
 	@Override
-	public NerdJava2dWindowManager setName(final String p_name) {
+	public NerdJava2dWindowModule setName(final String p_name) {
 		this.window.setName(p_name);
 		return this;
 	}
 
 	@Override
-	public NerdJava2dWindowManager setSize(final PVector p_size) {
+	public NerdJava2dWindowModule setSize(final PVector p_size) {
 		this.window.setSize((int) p_size.x, (int) p_size.y);
 		return this;
 	}
 
 	@Override
-	public NerdJava2dWindowManager setSize(final float p_x, final float p_y) {
+	public NerdJava2dWindowModule setResizable(final boolean p_state) {
+		this.window.setResizable(p_state);
+		return this;
+	}
+
+	@Override
+	public NerdJava2dWindowModule setSize(final float p_x, final float p_y) {
 		this.window.setSize((int) p_x, (int) p_y);
 		return this;
 	}
 
 	@Override
-	public NerdJava2dWindowManager setSize(final int p_x, final int p_y) {
+	public NerdJava2dWindowModule setSize(final int p_x, final int p_y) {
 		this.window.setSize(p_x, p_y);
 		return this;
 	}
 
 	@Override
-	public NerdJava2dWindowManager setPosition(final PVector p_position) {
+	public NerdJava2dWindowModule setPosition(final PVector p_position) {
 		this.window.setLocation((int) p_position.x, (int) p_position.y);
 		return this;
 	}
 
 	@Override
-	public NerdJava2dWindowManager setPosition(final int p_x, final int p_y) {
+	public NerdJava2dWindowModule setPosition(final int p_x, final int p_y) {
 		this.window.setLocation(p_x, p_y);
 		return this;
 	}
 
 	@Override
-	public NerdJava2dWindowManager setPosition(final float p_x, final float p_y) {
+	public NerdJava2dWindowModule setPosition(final float p_x, final float p_y) {
 		this.window.setLocation((int) p_x, (int) p_y);
 		return this;
 	}
@@ -142,7 +153,7 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
 		return true;
 	}
 
-	public NerdJava2dWindowManager setIcon(final Image p_image) {
+	public NerdJava2dWindowModule setIcon(final Image p_image) {
 		this.window.setIconImage(p_image);
 		return this;
 	}
@@ -150,7 +161,7 @@ public class NerdJava2dWindowManager extends NerdWindowManager {
 
 	@Override
 	public void initImpl() {
-		super.surface.setIcon(super.SKETCH.getIconImage());
+		super.surface.setIcon(super.getIconImage());
 		this.canvas = (PSurfaceAWT.SmoothCanvas) super.surface.getNative();
 		this.window = (JFrame) canvas.getFrame();
 

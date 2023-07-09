@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
-import com.brahvim.nerd.processing_wrapper.NerdInputManager;
+import com.brahvim.nerd.processing_wrapper.NerdInputModule;
 
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -18,7 +18,7 @@ public class SmoothCamera extends NerdFlyCamera {
 
 	public float accFrict = SmoothCamera.DEFAULT_ACC_FRICT, velFrict = SmoothCamera.DEFAULT_VEL_FRICT;
 
-	private final NerdInputManager INPUT;
+	private final NerdInputModule INPUT;
 	private PVector accVec = new PVector(), velVec = new PVector();
 	private PVector circumAmbPos = new PVector();
 	// endregion

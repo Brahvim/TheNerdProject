@@ -4,7 +4,7 @@ import java.awt.Point;
 
 import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
-import com.brahvim.nerd.processing_wrapper.NerdWindowManager;
+import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PApplet;
@@ -22,7 +22,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	public PVector front = new PVector(), defaultCamFront = new PVector();
 	public float mouseSensitivity = NerdFlyCamera.DEFAULT_MOUSE_SENSITIVITY;
 
-	protected final NerdWindowManager WINDOW;
+	protected final NerdWindowModule WINDOW;
 	protected final NerdDisplayModule DISPLAYS;
 
 	private boolean pholdMouse;

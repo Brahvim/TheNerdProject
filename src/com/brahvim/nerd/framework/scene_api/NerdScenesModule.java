@@ -317,27 +317,12 @@ public class NerdScenesModule extends NerdModule {
 						p_eventCallbackMethod.accept(l, p_otherArg);
 	}
 
-	// ECS callers:
-	protected void callOnCurrSceneEcs(final Consumer<NerdEcsModule> p_eventCallbackMethod) {
-		if (p_eventCallbackMethod != null)
-			if (this.currScene.ECS != null)
-				p_eventCallbackMethod.accept(this.currScene.ECS);
-	}
-
-	protected <OtherArgT> void callOnCurrSceneEcs(
-			final BiConsumer<NerdEcsModule, OtherArgT> p_eventCallbackMethod, final OtherArgT p_otherArg) {
-		if (p_eventCallbackMethod != null)
-			if (this.currScene.ECS != null)
-				p_eventCallbackMethod.accept(this.currScene.ECS, p_otherArg);
-	}
-
 	// region Mouse event callbacks.
 	@Override
 	public void mousePressed() {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::mousePressed);
 		this.currScene.mousePressed();
 		this.callOnCurrSceneActiveLayers(NerdLayer::mousePressed);
 	}
@@ -347,7 +332,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::mouseReleased);
 		this.currScene.mouseReleased();
 		this.callOnCurrSceneActiveLayers(NerdLayer::mouseReleased);
 	}
@@ -357,7 +341,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::mouseMoved);
 		this.currScene.mouseMoved();
 		this.callOnCurrSceneActiveLayers(NerdLayer::mouseMoved);
 	}
@@ -367,7 +350,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::mouseClicked);
 		this.currScene.mouseClicked();
 		this.callOnCurrSceneActiveLayers(NerdLayer::mouseClicked);
 	}
@@ -377,7 +359,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::mouseDragged);
 		this.currScene.mouseDragged();
 		this.callOnCurrSceneActiveLayers(NerdLayer::mouseDragged);
 	}
@@ -387,7 +368,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::mouseWheel, p_mouseEvent);
 		this.currScene.mouseWheel(p_mouseEvent);
 		this.callOnCurrSceneActiveLayers(NerdLayer::mouseWheel, p_mouseEvent);
 	}
@@ -399,7 +379,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::touchStarted);
 		this.currScene.touchStarted();
 		this.callOnCurrSceneActiveLayers(NerdLayer::touchStarted);
 	}
@@ -409,7 +388,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::touchMoved);
 		this.currScene.touchMoved();
 		this.callOnCurrSceneActiveLayers(NerdLayer::touchMoved);
 	}
@@ -419,7 +397,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::touchEnded);
 		this.currScene.touchEnded();
 		this.callOnCurrSceneActiveLayers(NerdLayer::touchEnded);
 	}
@@ -431,7 +408,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::resized);
 		this.currScene.resized();
 		this.callOnCurrSceneActiveLayers(NerdLayer::resized);
 	}
@@ -441,7 +417,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::focusLost);
 		this.currScene.focusLost();
 		this.callOnCurrSceneActiveLayers(NerdLayer::focusLost);
 	}
@@ -451,7 +426,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::focusGained);
 		this.currScene.focusGained();
 		this.callOnCurrSceneActiveLayers(NerdLayer::focusGained);
 	}
@@ -461,7 +435,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::monitorChanged);
 		this.currScene.monitorChanged();
 		this.callOnCurrSceneActiveLayers(NerdLayer::monitorChanged);
 	}
@@ -471,7 +444,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::fullscreenChanged, p_state);
 		this.currScene.fullscreenChanged(p_state);
 		this.callOnCurrSceneActiveLayers(NerdLayer::fullscreenChanged, p_state);
 	}
@@ -483,7 +455,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::keyTyped);
 		this.currScene.keyTyped();
 		this.callOnCurrSceneActiveLayers(NerdLayer::keyTyped);
 	}
@@ -493,7 +464,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::keyPressed);
 		this.currScene.keyPressed();
 		this.callOnCurrSceneActiveLayers(NerdLayer::keyPressed);
 	}
@@ -503,7 +473,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currScene == null)
 			return;
 
-		this.callOnCurrSceneEcs(NerdEcsModule::keyReleased);
 		this.currScene.keyReleased();
 		this.callOnCurrSceneActiveLayers(NerdLayer::keyReleased);
 	}
