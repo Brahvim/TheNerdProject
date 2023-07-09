@@ -27,11 +27,11 @@ public class TcpDemoScene extends NerdScene {
 	// endregion
 
 	// region Message `enum`s.
-	private enum Query {
+	private enum ClientQuery {
 		ORDER_FOOD(),
 	}
 
-	private enum Response {
+	private enum ServerResponse {
 		ALLOWED(),
 		// REFUSED(),
 		SERVED_FOOD(),
@@ -43,13 +43,13 @@ public class TcpDemoScene extends NerdScene {
 		@Override
 		public void accept(final NerdClientSentTcpPacket p_packet) {
 			// Get the client's message:
-			final Query message = NerdByteSerialUtils.fromBytes(p_packet.getData());
+			final ClientQuery message = NerdByteSerialUtils.fromBytes(p_packet.getData());
 			final NerdTcpServer.NerdTcpServerClient client = p_packet.getSender();
-			Response response = null; // In here, we store our response!
+			ServerResponse response = null; // In here, we store our response!
 
 			switch (message) {
 				// If food is ordered, we serve.
-				case ORDER_FOOD -> response = Response.SERVED_FOOD;
+				case ORDER_FOOD -> response = ServerResponse.SERVED_FOOD;
 			}
 
 			// Send the response over!
@@ -90,7 +90,7 @@ public class TcpDemoScene extends NerdScene {
 
 					if (clientAccepted) {
 						// This client got accepted - hooray! Tell it!:
-						c.send(NerdByteSerialUtils.toBytes(Response.ALLOWED));
+						c.send(NerdByteSerialUtils.toBytes(ServerResponse.ALLOWED));
 						System.out.println("Ayy! A new client joined! Info: "
 								+ c.getSocket().toString());
 					} else // Tell us that it got refused otherwise.
@@ -106,16 +106,19 @@ public class TcpDemoScene extends NerdScene {
 		// Now, we start 5 clients to connect to the server!
 
 		for (int i = 0; i < 5; i++)
-			new NerdTcpClient("127.0.0.1", 8080,
+			new NerdTcpClient(
+					// Info on the server to connect to:
+					"127.0.0.1", 8080,
+					// Following, is a callback to receive messages from the server.
 					// `p` holds the packet of data received!:
 					p -> {
 						// Get the server's message,
-						final Response message = (Response) NerdByteSerialUtils.fromBytes(p.getData());
-						Query response = null; // We'll store our response here.
+						final ServerResponse message = (ServerResponse) NerdByteSerialUtils.fromBytes(p.getData());
+						ClientQuery response = null; // We'll store our response here.
 
 						switch (message) {
 							case ALLOWED -> { // If the server happily allows us, we order!:
-								response = Query.ORDER_FOOD;
+								response = ClientQuery.ORDER_FOOD;
 								System.out.println("Asked the server for food!");
 							}
 							case SERVED_FOOD -> { // If we're served food, we happily take it and go!:
