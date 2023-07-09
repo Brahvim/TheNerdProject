@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -478,14 +479,25 @@ public abstract class NerdScene {
 			final ThreadPoolExecutor executor = new ThreadPoolExecutor(
 					0, this.MANAGER.SETTINGS.ON_PRELOAD.maxExecutorThreads,
 					10L, TimeUnit.SECONDS, new SynchronousQueue<>(),
-					r -> new Thread(r, "NerdAssetPreloader_" + this.getClass().getSimpleName()));
+					new ThreadFactory() {
+						private static int threadCount = 1;
+
+						@Override
+						public Thread newThread(final Runnable p_threadTask) {
+							// Using `NerdScene.this` to get the name of exact class the API user wrote:
+							return new Thread(p_threadTask,
+									NerdScene.this.getClass().getSimpleName()
+											+ "ParallelAssetLoaderThread"
+											+ threadCount++);
+						}
+					});
 
 			final HashSet<Future<?>> futures = new HashSet<>(this.ASSETS.size());
 			this.ASSETS.forEach(a -> futures.add(executor.submit(a::startLoading)));
 			executor.shutdown(); // This tells the executor to stop accepting new tasks.
 
 			// If you must complete within this function, do that:
-			if (this.MANAGER.SETTINGS.ON_PRELOAD.completeWithinPreloadCall)
+			if (this.MANAGER.SETTINGS.ON_PRELOAD.completeAssetLoadingWithinPreload)
 				try {
 					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS); // Keep going, keep going...
 					// Can't simply cheat the implementation to make it wait forever!
@@ -496,6 +508,7 @@ public abstract class NerdScene {
 			this.ASSETS.forEach(NerdAsset::startLoading);
 
 		this.donePreloading = true;
+
 	}
 
 	/* `package` */ void runSceneChanged() {

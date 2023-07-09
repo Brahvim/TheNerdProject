@@ -44,8 +44,6 @@ public class NerdTcpServer implements NerdServerSocket {
 		// region Fields.
 		// DO NOT use outside a `synchronized` block! Never!:
 		private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
-
-		private Thread serverCommThread;
 		// endregion
 
 		// region Constructors.
@@ -58,7 +56,7 @@ public class NerdTcpServer implements NerdServerSocket {
 		}
 		// endregion
 
-		private void startMessageThread() {
+		private void startCommsThread() {
 			if (super.STOPPED.get())
 				return;
 
@@ -91,9 +89,8 @@ public class NerdTcpServer implements NerdServerSocket {
 					stream = new DataInputStream(this.socket.getInputStream());
 				}
 			} catch (final IOException e) {
-				synchronized (System.err) {
-					e.printStackTrace();
-				}
+				e.printStackTrace();
+				return;
 			}
 
 			while (this.STOPPED.get())
@@ -211,10 +208,6 @@ public class NerdTcpServer implements NerdServerSocket {
 		}
 		// endregion
 
-		public Thread getReceiverThread() {
-			return this.serverCommThread;
-		}
-
 		@Override
 		protected void disconnectImpl() {
 			this.STOPPED.set(false);
@@ -326,7 +319,7 @@ public class NerdTcpServer implements NerdServerSocket {
 						for (final Consumer<NerdClientSentTcpPacket> c : NerdTcpServer.this.NEW_CONNECTION_CALLBACKS)
 							client.addMessageCallback(c);
 
-						client.startMessageThread();
+						client.startCommsThread();
 					}
 				}
 
