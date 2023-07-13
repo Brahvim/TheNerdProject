@@ -2,7 +2,6 @@ package com.brahvim.nerd.framework.ecs;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Optional;
 
 import com.brahvim.nerd.framework.NerdReflectionUtils;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
@@ -15,14 +14,14 @@ public abstract class NerdEcsSystem<SystemComponentT extends NerdEcsComponent> i
 
 	@SuppressWarnings("unchecked")
 	protected NerdEcsSystem() {
-		final Optional<Class<?>> optionalTypeArg = NerdReflectionUtils.getFirstTypeArg(this);
+		final Class<?> typeArg = NerdReflectionUtils.getFirstTypeArg(this);
 
-		if (!optionalTypeArg.isPresent())
+		if (typeArg != null)
 			throw new IllegalStateException(String.format(
 					"`%s`s should NEVER be able to come to this state! Who modified the source code?!",
 					this.getClass().getSimpleName()));
 
-		this.COMPONENT_TYPE_CLASS = (Class<SystemComponentT>) optionalTypeArg.get();
+		this.COMPONENT_TYPE_CLASS = (Class<SystemComponentT>) typeArg;
 	}
 
 	public final Class<SystemComponentT> getComponentTypeClass() {
@@ -57,62 +56,62 @@ public abstract class NerdEcsSystem<SystemComponentT extends NerdEcsComponent> i
 
 	// region Events.
 	// region Mouse events.
-	public void mousePressed(final HashSet<SystemComponentT> p_components) {
+	protected void mousePressed(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void mouseReleased(final HashSet<SystemComponentT> p_components) {
+	protected void mouseReleased(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void mouseMoved(final HashSet<SystemComponentT> p_components) {
+	protected void mouseMoved(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void mouseClicked(final HashSet<SystemComponentT> p_components) {
+	protected void mouseClicked(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void mouseDragged(final HashSet<SystemComponentT> p_components) {
+	protected void mouseDragged(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent,
+	protected void mouseWheel(final processing.event.MouseEvent p_mouseEvent,
 			final HashSet<SystemComponentT> p_components) {
 	}
 	// endregion
 
 	// region Keyboard events.
-	public void keyTyped(final HashSet<SystemComponentT> p_components) {
+	protected void keyTyped(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void keyPressed(final HashSet<SystemComponentT> p_components) {
+	protected void keyPressed(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void keyReleased(final HashSet<SystemComponentT> p_components) {
+	protected void keyReleased(final HashSet<SystemComponentT> p_components) {
 	}
 	// endregion
 
 	// region Touch events.
-	public void touchStarted(final HashSet<SystemComponentT> p_components) {
+	protected void touchStarted(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void touchMoved(final HashSet<SystemComponentT> p_components) {
+	protected void touchMoved(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void touchEnded(final HashSet<SystemComponentT> p_components) {
+	protected void touchEnded(final HashSet<SystemComponentT> p_components) {
 	}
 	// endregion
 
 	// region Window focus events.
-	public void focusLost(final HashSet<SystemComponentT> p_components) {
+	protected void focusLost(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void resized(final HashSet<SystemComponentT> p_components) {
+	protected void resized(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void focusGained(final HashSet<SystemComponentT> p_components) {
+	protected void focusGained(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void monitorChanged(final HashSet<SystemComponentT> p_components) {
+	protected void monitorChanged(final HashSet<SystemComponentT> p_components) {
 	}
 
-	public void fullscreenChanged(final boolean p_state, final HashSet<SystemComponentT> p_components) {
+	protected void fullscreenChanged(final boolean p_state, final HashSet<SystemComponentT> p_components) {
 	}
 	// endregion
 	// endregion

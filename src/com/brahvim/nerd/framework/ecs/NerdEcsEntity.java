@@ -2,15 +2,10 @@ package com.brahvim.nerd.framework.ecs;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.IntFunction;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public final class NerdEcsEntity implements Serializable {
 
@@ -18,16 +13,16 @@ public final class NerdEcsEntity implements Serializable {
 	public static final long serialVersionUID = -84636463676L;
 
 	// Nope, no use in keeping the name here!
-	// If you want speed, let there be a `HashMap` in `NerdEcsManager`!
+	// If you want speed, let there be a `HashMap` in `NerdEcsModule`!
 
 	protected final transient NerdEcsModule MANAGER;
 	protected final transient NerdEcsEntity ENTITY = this;
 
-	private final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
+	private final LinkedHashSet<NerdEcsComponent> COMPONENTS = new LinkedHashSet<>();
 	// endregion
 
-	protected NerdEcsEntity(final NerdEcsModule p_manager) {
-		this.MANAGER = p_manager;
+	protected NerdEcsEntity(final NerdEcsModule p_module) {
+		this.MANAGER = p_module;
 	}
 
 	// region Dynamic component list queries. (PLEASE! No variadic overloads...)
@@ -185,7 +180,7 @@ public final class NerdEcsEntity implements Serializable {
 	}
 
 	public void removeAllComponentsOfCondition(final Predicate<NerdEcsComponent> p_ifStatement) {
-		final LinkedList<NerdEcsComponent> toRemove = new LinkedList<>();
+		final LinkedHashSet<NerdEcsComponent> toRemove = new LinkedHashSet<>();
 
 		for (final NerdEcsComponent c : this.COMPONENTS)
 			if (p_ifStatement.test(c))
@@ -195,7 +190,7 @@ public final class NerdEcsEntity implements Serializable {
 	}
 
 	public void removeAllComponentsTyped(final Class<? extends NerdEcsComponent> p_componentClass) {
-		final LinkedList<NerdEcsComponent> toRemove = new LinkedList<>();
+		final LinkedHashSet<NerdEcsComponent> toRemove = new LinkedHashSet<>();
 
 		for (final NerdEcsComponent c : this.COMPONENTS)
 			if (c.getClass().equals(p_componentClass))
@@ -232,77 +227,6 @@ public final class NerdEcsEntity implements Serializable {
 			return Optional.of(this.attachComponent(p_componentClass));
 		else
 			return Optional.empty();
-	}
-	// endregion
-
-	// region From `LinkedList`.
-	public Iterator<NerdEcsComponent> getComponentsDescendingIterator() {
-		return this.COMPONENTS.descendingIterator();
-	}
-
-	public NerdEcsComponent getComponentFromIndex(final int p_index) {
-		return this.COMPONENTS.get(p_index);
-	}
-
-	public NerdEcsComponent getFirstComponent() {
-		return this.COMPONENTS.getFirst();
-	}
-
-	public NerdEcsComponent getLastComponent() {
-		return this.COMPONENTS.getLast();
-	}
-
-	public int getIndexOfComponent(final NerdEcsComponent p_component) {
-		return this.COMPONENTS.indexOf(p_component);
-	}
-
-	public int getLastIndexOfComponent(final NerdEcsComponent p_component) {
-		return this.COMPONENTS.lastIndexOf(p_component);
-	}
-
-	public int getComponentCount() {
-		return this.COMPONENTS.size();
-	}
-
-	public <T> T[] getComponentsArray(final T[] p_array) {
-		return this.COMPONENTS.toArray(p_array);
-	}
-
-	public List<NerdEcsComponent> getComponentSubList(final int p_beginIndex, final int p_endIndex) {
-		return this.COMPONENTS.subList(p_beginIndex, p_endIndex);
-	}
-
-	public boolean hasComponentsFrom(final Collection<?> p_collection) {
-		return this.COMPONENTS.containsAll(p_collection);
-	}
-
-	public boolean hasNoComponents() {
-		return this.COMPONENTS.isEmpty();
-	}
-
-	public Stream<NerdEcsComponent> getComponentsParallelStream() {
-		return this.COMPONENTS.parallelStream();
-	}
-
-	public Stream<NerdEcsComponent> getComponentStream() {
-		return this.COMPONENTS.stream();
-	}
-
-	public <T> T[] getComponentsArray(final IntFunction<T[]> p_generator) {
-		return this.COMPONENTS.toArray(p_generator);
-	}
-
-	public NerdEcsComponent[] getComponentsArray() {
-		return this.COMPONENTS.toArray(new NerdEcsComponent[0]);
-	}
-
-	public void forEachComponent(final Consumer<? super NerdEcsComponent> p_action) {
-		this.COMPONENTS.forEach(p_action);
-	}
-
-	@SuppressWarnings("unchecked")
-	public LinkedList<NerdEcsComponent> getComponentsListClone() {
-		return (LinkedList<NerdEcsComponent>) this.COMPONENTS.clone();
 	}
 	// endregion
 

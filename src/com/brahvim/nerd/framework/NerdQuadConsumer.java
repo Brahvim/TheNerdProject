@@ -23,36 +23,36 @@ package com.brahvim.nerd.framework;
 @FunctionalInterface
 public interface NerdQuadConsumer<T, U, V, W> {
 
-    /**
-     * Performs this operation on the given arguments.
-     *
-     * @param t the first input argument
-     * @param u the second input argument
-     * @param v the third input argument
-     * @param w the fourth input argument
-     */
-    public void accept(T t, U u, V v, W w);
+	/**
+	 * Performs this operation on the given arguments.
+	 *
+	 * @param t the first input argument
+	 * @param u the second input argument
+	 * @param v the third input argument
+	 * @param w the fourth input argument
+	 */
+	public void accept(T t, U u, V v, W w);
 
-    /**
-     * Returns a composed {@link NerdQuadConsumer} that performs, in sequence, this
-     * operation followed by the {@code p_after} operation. If performing either
-     * operation throws an exception, it is relayed to the caller of the
-     * composed operation. If performing this operation throws an exception,
-     * the {@code p_after} operation will not be performed.
-     *
-     * @param p_after the operation to perform after this operation
-     * @return a composed {@link NerdQuadConsumer} that performs in sequence this
-     *         operation followed by the {@code p_after} operation
-     * @throws NullPointerException if {@code p_after} is {@code null}
-     */
-    default NerdQuadConsumer<T, U, V, W> andThen(
-            final NerdQuadConsumer<? super T, ? super U, ? super V, ? super W> p_after) {
-        java.util.Objects.requireNonNull(p_after);
+	/**
+	 * Returns a composed {@link NerdQuadConsumer} that performs, in sequence, this
+	 * operation followed by the {@code p_after} operation. If performing either
+	 * operation throws an exception, it is relayed to the caller of the
+	 * composed operation. If performing this operation throws an exception,
+	 * the {@code p_after} operation will not be performed.
+	 *
+	 * @param p_after the operation to perform after this operation
+	 * @return a composed {@link NerdQuadConsumer} that performs in sequence this
+	 *         operation followed by the {@code p_after} operation
+	 * @throws NullPointerException if {@code p_after} is {@code null}
+	 */
+	default NerdQuadConsumer<T, U, V, W> andThen(
+			final NerdQuadConsumer<? super T, ? super U, ? super V, ? super W> p_after) {
+		java.util.Objects.requireNonNull(p_after);
 
-        return (a, b, c, d) -> {
-            this.accept(a, b, c, d);
-            p_after.accept(a, b, c, d);
-        };
-    }
+		return (a, b, c, d) -> {
+			this.accept(a, b, c, d);
+			p_after.accept(a, b, c, d);
+		};
+	}
 
 }

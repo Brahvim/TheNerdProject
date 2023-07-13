@@ -15,13 +15,15 @@ import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.net.NerdUdpSocket;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
+import com.brahvim.nerd.processing_wrapper.NerdCustomSketchBuilder;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 
-public class NerdEcsModule extends NerdModule implements Serializable {
+public class NerdEcsModule extends NerdModule {
 
 	// region Inner-classes.
-	/* `package` */ class NerdEntitySerializationPacket implements Serializable {
+	/* `package` */ static class NerdEntitySerializationPacket implements Serializable {
 
 		private final String NAME;
 		private final NerdEcsEntity ENTITY;
@@ -37,14 +39,14 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 	// region Fields.
 	public static final long serialVersionUID = -6488574946L;
 
-	private static final transient Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] DEFAULT_ECS_SYSTEMS_ORDER = null;
+	private static final Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] DEFAULT_ECS_SYSTEMS_ORDER = null;
 	// // Loooooooooong declaration!:
 	// (Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[]) Set
 	// .<Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>>of(null, null,
 	// null).toArray();
 
-	protected final LinkedList<NerdEcsEntity> ENTITIES = new LinkedList<>();
-	protected final LinkedList<NerdEcsComponent> COMPONENTS = new LinkedList<>();
+	protected final HashSet<NerdEcsEntity> ENTITIES = new HashSet<>();
+	protected final HashSet<NerdEcsComponent> COMPONENTS = new HashSet<>();
 	protected final HashMap<String, NerdEcsEntity> NAME_TO_ENTITY_MAP = new HashMap<>();
 	protected final HashMap<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> CLASSES_TO_COMPONENTS_MAP = new HashMap<>();
 
@@ -52,10 +54,13 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 	protected NerdEcsSystem<?>[] ecsSystems;
 	// endregion
 
-	@SafeVarargs
-	public NerdEcsModule(final NerdSketch p_sketch, final Class<? extends NerdEcsSystem<?>>... p_systems) {
+	public NerdEcsModule(final NerdSketch p_sketch) {
 		super(p_sketch);
-		this.setSystemsOrder(p_systems);
+	}
+
+	@Override
+	protected void sketchConstructed(final NerdSketchBuilderSettings p_settings) {
+		this.setSystemsOrder(p_settings.ecsSystemOrder);
 	}
 
 	// region `callOnAllSystems()` overloads.
@@ -139,7 +144,7 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 	// endregion
 
 	// region Public API!
-	public static Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] getDefaultEcsSystemsOrder() {
+	public static Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] getEcsSystemsDefaultOrder() {
 		return NerdEcsModule.DEFAULT_ECS_SYSTEMS_ORDER;
 	}
 
@@ -164,13 +169,16 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 		this.ENTITIES.add(p_entity);
 	}
 
-	public String getEntityName(final NerdEcsEntity p_entity) {
+	public String getNameFromEntity(final NerdEcsEntity p_entity) {
 		for (final Map.Entry<String, NerdEcsEntity> e : this.NAME_TO_ENTITY_MAP.entrySet())
 			if (e.getValue() == p_entity)
 				return e.getKey();
 
-		// If the entity is not from another manager, this won't ever be returned.
 		return "";
+	}
+
+	public NerdEcsEntity getEntityFromName(final String p_name) {
+		return this.NAME_TO_ENTITY_MAP.get(p_name);
 	}
 
 	@SafeVarargs
@@ -180,7 +188,7 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 			return;
 		}
 
-		// Objects.requireNonNull(p_ecsSystems, "`NerdEcsManager::setSystemsOrder()`
+		// Objects.requireNonNull(p_ecsSystems, "`NerdEcsModule::setSystemsOrder()`
 		// can't take `null`! Come on...");
 
 		this.ecsSystems = new NerdEcsSystem<?>[p_ecsSystems.length];
@@ -303,13 +311,12 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 	// region Serialization.
 	// region Saving.
 	public byte[] serializeEntity(final NerdEcsEntity p_entity) {
-		final String name = this.getEntityName(p_entity);
+		final String name = this.getNameFromEntity(p_entity);
 
 		if ("".equals(name))
 			return new byte[0];
 
-		return NerdByteSerialUtils
-				.toBytes(new NerdEntitySerializationPacket(name, p_entity));
+		return NerdByteSerialUtils.toBytes(new NerdEntitySerializationPacket(name, p_entity));
 	}
 
 	public byte[] serializeComponent(final NerdEcsComponent p_component) {
@@ -317,23 +324,23 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 	}
 
 	/**
-	 * You get this entire manager, serialized to bytes!
+	 * You get this entire module, serialized to bytes!
 	 *
 	 * @return The bytes!
 	 * @see NerdEcsModule#saveState(File)
 	 */
 	public byte[] saveState() {
-		return NerdByteSerialUtils.toBytes(this);
+		return NerdByteSerialUtils.toBytes(new NerdEcsModuleData(this));
 	}
 
 	/**
-	 * This entire manager, serialized to a file as bytes!
+	 * This entire module, serialized to a file as bytes!
 	 *
 	 * @return Nothing! The file ate it all...
 	 * @see NerdEcsModule#saveState()
 	 */
 	public void saveState(final File p_file) {
-		NerdByteSerialUtils.toFile(this, p_file);
+		NerdByteSerialUtils.toFile(new NerdEcsModuleData(this), p_file);
 	}
 	// endregion
 
@@ -357,18 +364,18 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 		this.loadStateImpl(NerdByteSerialUtils.fromBytes(p_serializedData));
 	}
 
-	private void loadStateImpl(final NerdEcsModule p_deserialized) {
+	private void loadStateImpl(final NerdEcsModuleData p_deserialized) {
 		this.ecsSystems = p_deserialized.ecsSystems;
 		this.numUnnamedEntities = p_deserialized.numUnnamedEntities;
 
 		this.CLASSES_TO_COMPONENTS_MAP.clear();
-		this.CLASSES_TO_COMPONENTS_MAP.putAll(p_deserialized.CLASSES_TO_COMPONENTS_MAP);
+		this.CLASSES_TO_COMPONENTS_MAP.putAll(p_deserialized.classesToComponentsMap);
 
 		// region Reducing `LinkedList` elements, and modifying `NAME_TO_ENTITY_MAP`.
-		// Remove elements not available in the lists in the deserialized manager:
+		// Remove elements not available in the lists in the deserialized module:
 		for (final Map.Entry<?, ?> e : Map.<LinkedList<?>, LinkedList<?>>of(
-				this.ENTITIES, p_deserialized.ENTITIES,
-				this.COMPONENTS, p_deserialized.COMPONENTS).entrySet()) {
+				this.ENTITIES, p_deserialized.entities,
+				this.COMPONENTS, p_deserialized.components).entrySet()) {
 			final LinkedList<?> myList = (LinkedList<?>) e.getKey(), otherList = (LinkedList<?>) e.getValue();
 
 			for (int i = myList.size() - 1; i != 0; i--) {
@@ -378,12 +385,12 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 			}
 		}
 
-		// region Remove elements not available in the maps in the deserialized manager.
+		// region Remove elements not available in the maps in the deserialized module.
 
 		// There's nothing like `Set::get()`! Storing stuff to remove then removing it!:
 		final HashSet<String> toRemove = new HashSet<>();
 		final HashMap<String, NerdEcsEntity> myMap = this.NAME_TO_ENTITY_MAP,
-				otherMap = p_deserialized.NAME_TO_ENTITY_MAP;
+				otherMap = p_deserialized.nameToEntityMap;
 
 		for (final Map.Entry<String, NerdEcsEntity> e : myMap.entrySet()) {
 			final String key = e.getKey();
@@ -402,7 +409,7 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 		// region Copying components over.
 		final int iterations = this.COMPONENTS.size();
 		for (int i = 0; i < iterations; i++) {
-			final NerdEcsComponent orig = this.COMPONENTS.get(i), latest = p_deserialized.COMPONENTS.get(i);
+			final NerdEcsComponent orig = this.COMPONENTS.get(i), latest = p_deserialized.components.get(i);
 			orig.copyFieldsFrom(latest);
 		}
 		// endregion
@@ -494,44 +501,44 @@ public class NerdEcsModule extends NerdModule implements Serializable {
 
 	// region Touch events.
 	@SuppressWarnings("all")
-	public void touchStarted() {
+	protected void touchStarted() {
 		this.callOnAllSystems(NerdEcsSystem::touchStarted);
 	}
 
 	@SuppressWarnings("all")
-	public void touchMoved() {
+	protected void touchMoved() {
 		this.callOnAllSystems(NerdEcsSystem::touchMoved);
 	}
 
 	@SuppressWarnings("all")
-	public void touchEnded() {
+	protected void touchEnded() {
 		this.callOnAllSystems(NerdEcsSystem::touchEnded);
 	}
 	// endregion
 
 	// region Window focus event
 	@SuppressWarnings("all")
-	public void focusLost() {
+	protected void focusLost() {
 		this.callOnAllSystems(NerdEcsSystem::focusLost);
 	}
 
 	@SuppressWarnings("all")
-	public void resized() {
+	protected void resized() {
 		this.callOnAllSystems(NerdEcsSystem::resized);
 	}
 
 	@SuppressWarnings("all")
-	public void focusGained() {
+	protected void focusGained() {
 		this.callOnAllSystems(NerdEcsSystem::focusGained);
 	}
 
 	@SuppressWarnings("all")
-	public void monitorChanged() {
+	protected void monitorChanged() {
 		this.callOnAllSystems(NerdEcsSystem::monitorChanged);
 	}
 
 	@SuppressWarnings("all")
-	public void fullscreenChanged(final boolean p_state) {
+	protected void fullscreenChanged(final boolean p_state) {
 		this.callOnAllSystems(NerdEcsSystem::fullscreenChanged, p_state);
 	}
 	// endregion

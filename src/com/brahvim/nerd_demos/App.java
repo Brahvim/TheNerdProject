@@ -54,7 +54,7 @@ public class App {
 	// endregion
 
 	public static void main(final String[] p_args) {
-		// region Building the `Sketch`!
+		// region Building the `NerdSketch`!
 		final NerdSketchBuilder builder = new NerdSketchBuilder();
 		builder.setStringTablePath(NerdSketch.fromDataDir("Nerd_StringTable.json"))
 				.canResize()
@@ -69,7 +69,7 @@ public class App {
 					s.stereoSources = Integer.MAX_VALUE;
 				}))
 				.addSketchConstructionListener(s -> System.out.println(s.STRINGS.get("Meta.onConstruct")))
-				.setSceneManagerSettings(s -> s.ON_PRELOAD.preloadOnlyOnce = false);
+				.setScenesModuleSettings(s -> s.ON_PRELOAD.preloadOnlyOnce = false);
 
 		// Build the sketch and collect build artifacts:
 		final NerdSketchBuildArtifacts artifacts = builder.build(p_args);

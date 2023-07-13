@@ -34,7 +34,7 @@ public class DemoScene3 extends NerdScene {
 
 	@Override
 	protected void setup(final NerdSceneState p_state) {
-		MANAGER.SETTINGS.drawFirstCaller = NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder.SCENE;
+		MANAGER.getScenesModuleSettings().drawFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.SCENE;
 		SCENE.addLayer(CinematicBarsLayer.class);
 		SCENE.addLayer(DebugFpsGizmoLayer.class);
 

@@ -153,7 +153,7 @@ public class DemoScene4 extends NerdScene {
 	}
 
 	@Override
-	public void exit() {
+	protected void exit() {
 		System.out.println("Nerd exited!");
 	}
 	// endregion

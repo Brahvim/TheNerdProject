@@ -2,6 +2,7 @@ package com.brahvim.nerd.framework.scene_api;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
+import com.brahvim.nerd.processing_callback_interfaces.workflow.regular.NerdSketchWorkflowsListener;
 import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdInputModule;
@@ -68,64 +69,64 @@ public abstract class NerdLayer {
 
 	// region Events.
 	// region Mouse events.
-	public void mousePressed() {
+	protected void mousePressed() {
 	}
 
-	public void mouseReleased() {
+	protected void mouseReleased() {
 	}
 
-	public void mouseMoved() {
+	protected void mouseMoved() {
 	}
 
-	public void mouseClicked() {
+	protected void mouseClicked() {
 	}
 
-	public void mouseDragged() {
+	protected void mouseDragged() {
 	}
 
-	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
+	protected void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 	}
 	// endregion
 
 	// region Keyboard events.
-	public void keyTyped() {
+	protected void keyTyped() {
 	}
 
-	public void keyPressed() {
+	protected void keyPressed() {
 	}
 
-	public void keyReleased() {
+	protected void keyReleased() {
 	}
 	// endregion
 
 	// region Touch events.
-	public void touchStarted() {
+	protected void touchStarted() {
 	}
 
-	public void touchMoved() {
+	protected void touchMoved() {
 	}
 
-	public void touchEnded() {
+	protected void touchEnded() {
 	}
 	// endregion
 
 	// region Window focus events.
-	public void focusLost() {
+	protected void focusLost() {
 	}
 
-	public void exit() {
+	protected void exit() {
 	}
 
-	public void resized() {
+	protected void resized() {
 	}
 
-	public void focusGained() {
+	protected void focusGained() {
 	}
 
-	public void monitorChanged() {
+	protected void monitorChanged() {
 	}
 
-	public void fullscreenChanged(final boolean p_state) {
+	protected void fullscreenChanged(final boolean p_state) {
 	}
 	// endregion
 	// endregion

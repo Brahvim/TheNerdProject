@@ -4,14 +4,11 @@ import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.Point;
-import java.util.LinkedHashSet;
-
-import com.brahvim.nerd.processing_callback_interfaces.window.NerdWindowListener;
 
 public class NerdDisplayModule extends NerdModule {
 
+	// region Fields!
 	protected final NerdWindowModule WINDOW;
-	protected final LinkedHashSet<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
 
 	protected GraphicsDevice previousMonitor, currentMonitor;
 
@@ -36,6 +33,7 @@ public class NerdDisplayModule extends NerdModule {
 	public int pdisplayWidthTwice, pdisplayHeightTwice; // <-- Twice!
 	public int ppixelDensity, ppixelWidth, ppixelHeight; // <-- Also not included with Processing!
 	public int pdisplayWidthThirdQuart, pdisplayHeightThirdQuart;
+	// endregion
 	// endregion
 
 	public NerdDisplayModule(final NerdSketch p_sketch) {
@@ -106,8 +104,8 @@ public class NerdDisplayModule extends NerdModule {
 		if (this.previousMonitor != this.currentMonitor) {
 			this.previousMonitor = this.currentMonitor;
 			this.updateDisplayParameters();
-			this.windowListeners.forEach(NerdWindowListener::monitorChanged);
-			super.SKETCH.scenes.monitorChanged();
+			for (final NerdModule m : super.getModulesUpdatedFramely())
+				m.monitorChanged();
 		}
 
 		if (super.SKETCH.focused)

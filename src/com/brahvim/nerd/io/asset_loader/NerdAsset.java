@@ -58,7 +58,7 @@ public class NerdAsset {
 	}
 
 	public void startLoading() {
-		// Adding callbacks for each asset since `AssetManager`s don't handle loading.
+		// Adding callbacks for each asset since `AssetModule`s don't handle loading.
 		// final Consumer<NerdSketch> postCallback = s -> this.ploaded = this.loaded;
 		// this.SKETCH.callbacks.addPostListener(postCallback);
 		this.fetchData();

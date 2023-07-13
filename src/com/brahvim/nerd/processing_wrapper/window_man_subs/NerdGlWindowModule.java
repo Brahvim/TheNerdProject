@@ -3,6 +3,7 @@ package com.brahvim.nerd.processing_wrapper.window_man_subs;
 import java.awt.Point;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 
@@ -12,23 +13,9 @@ public class NerdGlWindowModule extends NerdWindowModule {
 
 	protected GLWindow window;
 
-	// region Construction and initialization.
 	public NerdGlWindowModule(final NerdSketch p_sketch) {
 		super(p_sketch);
 	}
-
-	@Override
-	public void initImpl() {
-		this.window = (GLWindow) super.surface.getNative();
-
-		// Let to remain in `Sketch::setup()` due to `ThreadDeath` issues.
-		// if (super.SKETCH.INITIALLY_RESIZABLE)
-		// this.window.setResizable(true);
-
-		// while (!this.window.isResizable())
-		// ;
-	}
-	// endregion
 
 	// region Getters.
 	@Override
@@ -153,7 +140,20 @@ public class NerdGlWindowModule extends NerdWindowModule {
 	// endregion
 
 	@Override
-	public void postCallbackImpl() {
+	protected void preSetupImpl() {
+		this.window = (GLWindow) super.sketchSurface.getNative();
+
+		// Left to remain in `NerdSketch::setup()` due to `ThreadDeath` issues.
+		// if (super.SKETCH.INITIALLY_RESIZABLE)
+		// this.window.setResizable(true);
+
+		// `NerdSketch::setup()` does not need this check at all!:
+		// while (!this.window.isResizable())
+		// ;
+	}
+
+	@Override
+	protected void postImpl() {
 		if (this.pfullscreen != this.fullscreen) {
 			this.window.setFullscreen(this.fullscreen);
 

@@ -9,12 +9,12 @@ import com.brahvim.nerd.framework.ecs.NerdEcsComponent;
 import com.brahvim.nerd.framework.ecs.NerdEcsModule;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 
 public class NerdBridgedEcsModule extends NerdEcsModule {
 
-	@SafeVarargs
-	public NerdBridgedEcsModule(final NerdSketch p_sketch, final Class<? extends NerdEcsSystem<?>>... p_systems) {
-		super(p_sketch, p_systems);
+	public NerdBridgedEcsModule(final NerdSketch p_sketch) {
+		super(p_sketch);
 	}
 
 	// region Custom methods.
@@ -92,7 +92,6 @@ public class NerdBridgedEcsModule extends NerdEcsModule {
 	protected void setup(final NerdSceneState p_state) {
 		super.setup(p_state);
 	}
-
 	// endregion
 
 }

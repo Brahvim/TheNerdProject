@@ -1065,7 +1065,7 @@ public class NerdGraphics {
 	// region 2D rendering.
 	/**
 	 * Pushes the graphics buffer, disables depth testing and resets all current
-	 * transformations (they're restored by a call to `Sketch::pop()` later!).
+	 * transformations (they're restored by a call to `NerdSketch::pop()` later!).
 	 */
 	public void begin2d() {
 		this.push();
@@ -1099,7 +1099,7 @@ public class NerdGraphics {
 	}
 	// endregion
 
-	// region `Sketch::alphaBg()` overloads.
+	// region `NerdSketch::alphaBg()` overloads.
 	public void alphaBg(final int p_color) {
 		this.begin2d();
 		this.GRAPHICS.fill(p_color);

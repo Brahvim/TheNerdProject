@@ -368,10 +368,7 @@ public abstract class NerdScene {
 
 		// If an instance of this layer does not already exist,
 		if (!this.LAYERS.contains(p_layer)) {
-			System.out.printf(
-					"No instance of `%s` exists. Making one...%n",
-					layerClass.getSimpleName());
-
+			System.out.printf("No instance of `%s` exists. Making one...%n", layerClass.getSimpleName());
 			this.addLayer(layerClass);
 			return;
 		}
@@ -443,29 +440,10 @@ public abstract class NerdScene {
 	// endregion
 
 	// region Anything callback-related, LOL.
-	/*
-	 * private void verifyKey(SceneManager.SceneKey p_key) {
-	 * if (p_key == null) {
-	 * throw new IllegalArgumentException(
-	 * "`NerdScene`s should only be accessed by a `NerdSceneManager`!");
-	 * }
-	 * Class<? extends NerdScene> myClass = this.getClass();
-	 * if (!p_key.isFor(myClass)) {
-	 * throw new IllegalArgumentException(
-	 * "This key was not meant to be used by the `NerdScene`, `"
-	 * + myClass.getSimpleName() + "`!");
-	 * }
-	 * }
-	 */
-
 	/* `package` */ void runSetup(final NerdSceneState p_state) {
-		// this.GRAPHICS.beginDraw();
-
 		this.startMillis = this.SKETCH.millis();
 		this.ECS.setup(p_state);
 		this.setup(p_state);
-
-		// this.GRAPHICS.endDraw();
 
 		// `NerdLayer`s don't get to respond to this `setup()`.
 	}
@@ -475,9 +453,9 @@ public abstract class NerdScene {
 		this.preload();
 		this.ASSETS.forceLoading();
 
-		if (this.MANAGER.SETTINGS.ON_PRELOAD.useExecutors) {
+		if (this.MANAGER.scenesModuleSettings.ON_PRELOAD.useExecutors) {
 			final ThreadPoolExecutor executor = new ThreadPoolExecutor(
-					0, this.MANAGER.SETTINGS.ON_PRELOAD.maxExecutorThreads,
+					0, this.MANAGER.scenesModuleSettings.ON_PRELOAD.maxExecutorThreads,
 					10L, TimeUnit.SECONDS, new SynchronousQueue<>(),
 					new ThreadFactory() {
 						private static int threadCount = 1;
@@ -497,7 +475,7 @@ public abstract class NerdScene {
 			executor.shutdown(); // This tells the executor to stop accepting new tasks.
 
 			// If you must complete within this function, do that:
-			if (this.MANAGER.SETTINGS.ON_PRELOAD.completeAssetLoadingWithinPreload)
+			if (this.MANAGER.scenesModuleSettings.ON_PRELOAD.completeAssetLoadingWithinPreload)
 				try {
 					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS); // Keep going, keep going...
 					// Can't simply cheat the implementation to make it wait forever!
@@ -517,20 +495,17 @@ public abstract class NerdScene {
 	}
 
 	/* `package` */ void runDispose() {
-		this.ECS.dispose();
 		this.dispose();
 	}
 
 	/* `package` */ void runDraw() {
-		if (this.MANAGER.SETTINGS.drawFirstCaller == null)
-			this.MANAGER.SETTINGS.drawFirstCaller = NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder.LAYER;
-
-		this.ECS.draw();
+		if (this.MANAGER.scenesModuleSettings.drawFirstCaller == null)
+			this.MANAGER.scenesModuleSettings.drawFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.LAYER;
 
 		// To avoid asynchronous changes from causing repetition, we put both parts in
 		// `if` and `else` block.
 
-		switch (this.MANAGER.SETTINGS.drawFirstCaller) {
+		switch (this.MANAGER.scenesModuleSettings.drawFirstCaller) {
 			case SCENE -> {
 				this.GRAPHICS.push();
 				this.draw();
@@ -563,15 +538,13 @@ public abstract class NerdScene {
 	}
 
 	/* `package` */ void runPost() {
-		if (this.MANAGER.SETTINGS.postFirstCaller == null)
-			this.MANAGER.SETTINGS.postFirstCaller = NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder.LAYER;
-
-		this.ECS.post();
+		if (this.MANAGER.scenesModuleSettings.postFirstCaller == null)
+			this.MANAGER.scenesModuleSettings.postFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.LAYER;
 
 		// To avoid asynchronous changes from causing repetition, we put both parts in
 		// `if` and `else` block.
 
-		switch (this.MANAGER.SETTINGS.preFirstCaller) {
+		switch (this.MANAGER.scenesModuleSettings.preFirstCaller) {
 			case SCENE -> {
 				this.post();
 
@@ -593,8 +566,6 @@ public abstract class NerdScene {
 	}
 
 	/* `package` */ void runExit() {
-		this.ECS.exit();
-
 		for (final NerdLayer l : this.LAYERS)
 			if (l != null)
 				if (l.isActive())
@@ -604,15 +575,13 @@ public abstract class NerdScene {
 	}
 
 	/* `package` */ void runPre() {
-		if (this.MANAGER.SETTINGS.preFirstCaller == null)
-			this.MANAGER.SETTINGS.preFirstCaller = NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder.SCENE;
-
-		this.ECS.pre();
+		if (this.MANAGER.scenesModuleSettings.preFirstCaller == null)
+			this.MANAGER.scenesModuleSettings.preFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.SCENE;
 
 		// To avoid asynchronous changes from causing repetition, we put both parts in
 		// `if` and `else` block.
 
-		switch (this.MANAGER.SETTINGS.preFirstCaller) {
+		switch (this.MANAGER.scenesModuleSettings.preFirstCaller) {
 			case SCENE -> {
 				this.pre();
 
@@ -725,30 +694,30 @@ public abstract class NerdScene {
 	// endregion
 
 	// region Touch events.
-	public void touchStarted() {
+	protected void touchStarted() {
 	}
 
-	public void touchMoved() {
+	protected void touchMoved() {
 	}
 
-	public void touchEnded() {
+	protected void touchEnded() {
 	}
 	// endregion
 
 	// region Window focus events.
-	public void resized() {
+	protected void resized() {
 	}
 
-	public void focusLost() {
+	protected void focusLost() {
 	}
 
-	public void focusGained() {
+	protected void focusGained() {
 	}
 
-	public void monitorChanged() {
+	protected void monitorChanged() {
 	}
 
-	public void fullscreenChanged(final boolean p_state) {
+	protected void fullscreenChanged(final boolean p_state) {
 	}
 	// endregion
 	// endregion

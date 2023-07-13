@@ -8,13 +8,13 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Function;
-
-import javax.swing.JFrame;
 
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
@@ -22,7 +22,6 @@ import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
-import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
@@ -33,6 +32,7 @@ import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
+import processing.event.MouseEvent;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
@@ -41,6 +41,28 @@ import processing.opengl.PJOGL;
  * <h1>¯\_(ツ)_/¯</h1>
  */
 public class NerdSketch extends PApplet {
+
+	private final class NerdSketchOnlyAssetsModule extends NerdAssetsModule {
+
+		private NerdSketchOnlyAssetsModule(final NerdSketch p_sketch) {
+			super(p_sketch);
+		}
+
+		@Override
+		public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type) {
+			final NerdAsset toRet = super.addAsset(p_type);
+			toRet.startLoading();
+			return toRet;
+		}
+
+		@Override
+		public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type, final Runnable p_onLoad) {
+			final NerdAsset toRet = super.addAsset(p_type, p_onLoad);
+			toRet.startLoading();
+			return toRet;
+		}
+
+	}
 
 	// region Inner classes.
 	/** Certain setting for the parent {@link NerdSketch}. */
@@ -64,7 +86,6 @@ public class NerdSketch extends PApplet {
 		public boolean closeOnEscape, canFullscreen, f11Fullscreen, altEnterFullscreen;
 
 		protected final HashSet<Class<? extends NerdScene>> SCENES_TO_PRELOAD;
-		protected final Function<NerdSketch, HashMap<Class<? extends NerdModule>, NerdModule>> NERD_MODULES_INSTANTIATOR;
 
 		protected NerdSketchSettings(final NerdSketchBuilderSettings p_settings) {
 			this.ICON_PATH = p_settings.iconPath;
@@ -74,7 +95,6 @@ public class NerdSketch extends PApplet {
 			this.SCENES_TO_PRELOAD = p_settings.scenesToPreload;
 			this.FIRST_SCENE_CLASS = p_settings.firstSceneClass;
 			this.STARTED_FULLSCREEN = p_settings.startedFullscreen;
-			this.NERD_MODULES_INSTANTIATOR = p_settings.nerdModulesInstantiator;
 			this.NAME = p_settings.name == null ? "TheNerdProject" : p_settings.name;
 
 			this.USES_OPENGL = PConstants.P3D.equals(this.RENDERER_NAME);
@@ -120,12 +140,10 @@ public class NerdSketch extends PApplet {
 
 	// region Instance constants.
 	public final Robot ROBOT;
+	public final NerdAssetsModule ASSETS;
 	public final NerdStringTable STRINGS;
-	public final HashMap<String, Object> EXTENSIONS;
+	public final NerdSketchBuilderSettings BUILDER_SETTINGS;
 	public final NerdSketch.NerdSketchSettings SKETCH_SETTINGS;
-	// `Object`s instead of a custom interface because you can't do
-	// that to libraries you didn't write! (...or you'd be writing subclasses of the
-	// library classes. Manual work. Uhh...)
 
 	// region `java.awt` constants.
 	public final GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment
@@ -148,21 +166,17 @@ public class NerdSketch extends PApplet {
 	// endregion
 
 	// region `protected` fields.
-	protected static final String NULL_LISTENER_ERROR_MESSAGE = "An object passed to `NerdSketch::add*Listener()` cannot be `null`.";
-
 	protected GL gl;
 	protected GLU glu;
 	protected PGL pgl;
 	protected PGraphicsOpenGL glGraphics;
 
 	protected NerdInputModule input;
-	protected NerdAssetsModule assets;
 	protected NerdScenesModule scenes;
 	protected NerdWindowModule window;
 	protected NerdDisplayModule display;
-	protected NerdCallbacksModule callbacks;
-	protected Collection<NerdModule> nerdModules;
-	protected HashMap<Class<? extends NerdModule>, NerdModule> classToNerdModulesMap;
+	protected final LinkedHashSet<NerdModule> MODULES;
+	protected final HashMap<Class<? extends NerdModule>, NerdModule> CLASS_TO_MODULES_MAP;
 
 	// Timers! (`millis()` returns `int`s!):
 	protected int frameStartTime, pframeTime, frameTime;
@@ -170,14 +184,31 @@ public class NerdSketch extends PApplet {
 	protected PFont defaultFont;
 	// endregion
 
-	// region Construction, `settings()`...
 	protected NerdSketch(final NerdSketchBuilderSettings p_settings) {
 		Objects.requireNonNull(p_settings,
 				"Please use an instance of some subclass of `NerdCustomSketchBuilder` to make a `NerdSketch`!");
 
-		// Key settings:
-		this.EXTENSIONS = p_settings.nerdExtensions;
+		// Settings, straight from `NerdSketchBuilderSettings`!:
+		this.BUILDER_SETTINGS = p_settings; // This objects just, ...lives a life. Don't ask me why!
+		this.MODULES = p_settings.nerdModulesSupplier.apply(this);
 		this.SKETCH_SETTINGS = new NerdSketch.NerdSketchSettings(p_settings);
+
+		// region Storing and mapping `NerdModule`s!
+		this.input = this.getNerdModule(NerdInputModule.class);
+		this.scenes = this.getNerdModule(NerdScenesModule.class);
+		this.window = this.getNerdModule(NerdWindowModule.class);
+		this.display = this.getNerdModule(NerdDisplayModule.class);
+		this.ASSETS = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
+
+		this.CLASS_TO_MODULES_MAP = new HashMap<>(this.MODULES.size());
+
+		for (final NerdModule m : this.MODULES)
+			this.CLASS_TO_MODULES_MAP.put(m.getClass(), m);
+
+		// Preloading assets from scenes the user wishes to, in advance:
+		for (final Class<? extends NerdScene> c : this.SKETCH_SETTINGS.SCENES_TO_PRELOAD)
+			this.scenes.loadSceneAssetsAsync(c);
+		// endregion
 
 		// region Setting OpenGL renderer icon.
 		if (this.SKETCH_SETTINGS.USES_OPENGL)
@@ -213,6 +244,7 @@ public class NerdSketch extends PApplet {
 		p_settings.sketchConstructedListeners.forEach(l -> l.accept(this));
 	}
 
+	// region Processing sketch workflow.
 	@Override
 	public void settings() {
 		// Crazy effects (no un-decoration!), I guess:
@@ -230,54 +262,16 @@ public class NerdSketch extends PApplet {
 		// if (c != null)
 		// c.accept(this);
 	}
-	// endregion
 
-	// region Processing sketch workflow.
 	@Override
 	public void setup() {
-		// region Non-key settings.
-		this.classToNerdModulesMap = this.SKETCH_SETTINGS.NERD_MODULES_INSTANTIATOR.apply(this);
-		this.input = this.getNerdModule(NerdInputModule.class);
-		this.scenes = this.getNerdModule(NerdScenesModule.class);
-		this.window = this.getNerdModule(NerdWindowModule.class);
-		this.display = this.getNerdModule(NerdDisplayModule.class);
-		this.callbacks = this.getNerdModule(NerdCallbacksModule.class);
-
-		this.assets = new NerdAssetsModule(this) {
-			@Override
-			public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type) {
-				final NerdAsset toRet = super.addAsset(p_type);
-				toRet.startLoading();
-				return toRet;
-			}
-
-			@Override
-			public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type, final Runnable p_onLoad) {
-				final NerdAsset toRet = super.addAsset(p_type, p_onLoad);
-				toRet.startLoading();
-				return toRet;
-			}
-		};
-
-		this.nerdModules = this.classToNerdModulesMap.values();
-
-		// Preloading assets from scenes the user wishes to, in advance:
-		for (final Class<? extends NerdScene> c : this.SKETCH_SETTINGS.SCENES_TO_PRELOAD)
-			this.scenes.loadSceneAssetsAsync(c);
-		// endregion
-
 		if (this.SKETCH_SETTINGS.USES_OPENGL) {
 			this.glu = new GLU();
 			this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
 			this.gl = ((GLWindow) this.window.getNativeObject()).getGL();
 		}
 
-		// `this.display` before `this.window`!
-		// The latter waits for the former!
-		this.display.updateDisplayParameters();
-		this.window.init();
-		this.window.updateWindowParameters();
-		this.window.iconImage = super.loadImage(this.SKETCH_SETTINGS.ICON_PATH);
+		this.MODULES.forEach(NerdModule::preSetup);
 
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
@@ -294,22 +288,21 @@ public class NerdSketch extends PApplet {
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		// I should make a super slow "convenience" method to perform this
-		// `switch (this.SKETCH_SETTINGS.RENDeRER_NAME)` using `Runnable`s!
-		// :joy:!
-
+		// TODO: Move these calls into the window object itself!
 		if (this.SKETCH_SETTINGS.INITIALLY_RESIZABLE)
 			this.window.setResizable(true);
 
 		this.window.centerWindow();
-		this.nerdModules.forEach(NerdModule::setup);
+		// ..ENDTODO!
+
+		this.MODULES.forEach(NerdModule::postSetup);
 	}
 
 	public void pre() {
 		if (this.SKETCH_SETTINGS.USES_OPENGL)
 			this.pgl = super.beginPGL();
 
-		this.nerdModules.forEach(NerdModule::pre);
+		this.MODULES.forEach(NerdModule::pre);
 	}
 
 	@Override
@@ -324,7 +317,9 @@ public class NerdSketch extends PApplet {
 		this.nerdGraphics.applyCameraIfCan();
 
 		// Call all draw listeners:
-		this.nerdModules.forEach(NerdModule::draw);
+		this.MODULES.forEach(NerdModule::preDraw);
+		this.MODULES.forEach(NerdModule::draw);
+		this.MODULES.forEach(NerdModule::postDraw);
 
 		// region If it doesn't yet exist, construct the scene!
 		if (super.frameCount == 1 && this.scenes.getCurrentScene() == null) {
@@ -347,7 +342,7 @@ public class NerdSketch extends PApplet {
 		// this.sceneGraphics.beginDraw();
 
 		// These help complete background work:
-		this.nerdModules.forEach(NerdModule::post);
+		this.MODULES.forEach(NerdModule::post);
 
 		// THIS ACTUALLY WORKED! How does the JVM interpret pointers?:
 		// this.image(this.sceneGraphics);
@@ -359,13 +354,13 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void exit() {
-		this.nerdModules.forEach(NerdModule::exit);
+		this.MODULES.forEach(NerdModule::exit);
 		super.exit();
 	}
 
 	@Override
 	public void dispose() {
-		this.nerdModules.forEach(NerdModule::dispose);
+		this.MODULES.forEach(NerdModule::dispose);
 		super.dispose();
 	}
 	// endregion
@@ -374,41 +369,41 @@ public class NerdSketch extends PApplet {
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
-		this.nerdModules.forEach(NerdModule::mousePressed);
+		this.MODULES.forEach(NerdModule::mousePressed);
 	}
 
 	@Override
 	public void mouseReleased() {
-		this.nerdModules.forEach(NerdModule::mouseReleased);
+		this.MODULES.forEach(NerdModule::mouseReleased);
 	}
 
 	@Override
 	public void mouseMoved() {
-		this.nerdModules.forEach(NerdModule::mouseMoved);
+		this.MODULES.forEach(NerdModule::mouseMoved);
 	}
 
 	// JUST SO YA' KNOW!: On Android, `mouseClicked()` has been left unused.
 	// AND, AND, ALSO!: On PC, it's called after `mouseReleased()`, AWT docs say.
 	@Override
 	public void mouseClicked() {
-		this.nerdModules.forEach(NerdModule::mouseClicked);
+		this.MODULES.forEach(NerdModule::mouseClicked);
 	}
 
 	@Override
 	public void mouseDragged() {
-		this.nerdModules.forEach(NerdModule::mouseDragged);
+		this.MODULES.forEach(NerdModule::mouseDragged);
 	}
 
 	@Override
-	public void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
-		this.nerdModules.forEach(m -> m.mouseWheel(p_mouseEvent));
+	public void mouseWheel(final MouseEvent p_mouseEvent) {
+		this.MODULES.forEach(m -> m.mouseWheel(p_mouseEvent));
 	}
 	// endregion
 
 	// region Keyboard events.
 	@Override
 	public void keyTyped() {
-		this.nerdModules.forEach(NerdModule::keyTyped);
+		this.MODULES.forEach(NerdModule::keyTyped);
 	}
 
 	@Override
@@ -429,83 +424,66 @@ public class NerdSketch extends PApplet {
 					this.window.fullscreen = !this.window.fullscreen;
 			}
 		}
+
+		this.MODULES.forEach(NerdModule::keyPressed);
 	}
 
 	@Override
 	public void keyReleased() {
-		this.nerdModules.forEach(NerdModule::keyReleased);
+		this.MODULES.forEach(NerdModule::keyReleased);
 	}
 	// endregion
 
 	// region Touch events.
 	public void touchStarted() {
-		this.nerdModules.forEach(NerdModule::touchStarted);
+		this.MODULES.forEach(NerdModule::touchStarted);
 	}
 
 	public void touchMoved() {
-		this.nerdModules.forEach(NerdModule::touchMoved);
+		this.MODULES.forEach(NerdModule::touchMoved);
 	}
 
 	public void touchEnded() {
-		this.nerdModules.forEach(NerdModule::touchEnded);
+		this.MODULES.forEach(NerdModule::touchEnded);
 	}
 	// endregion
 
 	// region Window focus events.
 	@Override
 	public void focusGained() {
-		// For compatibility with newer versions of Processing, I guess:
 		super.focusGained();
 		super.focused = true;
-		this.window.focusGained();
-
-		// I guess this works because `looping` is `false` for sometime after
-		// `handleDraw()`, which is probably when events are handled:
-		if (!super.isLooping())
-			this.nerdModules.forEach(NerdModule::focusGained);
+		this.MODULES.forEach(NerdModule::focusGained);
 
 	}
 
 	@Override
 	public void focusLost() {
-		// For compatibility with newer versions of Processing, I guess:
 		super.focusLost();
 		super.focused = false;
-		this.window.focusLost();
-
-		// I guess this works because `looping` is `false` for sometime after
-		// `handleDraw()`, which is probably when events are handled:
-		if (!super.isLooping())
-			this.nerdModules.forEach(NerdModule::focusLost);
-
+		this.MODULES.forEach(NerdModule::focusLost);
 	}
 	// endregion
 	// endregion
 
 	// region Persistent asset operations.
 	public void reloadGivenPersistentAsset(final NerdAsset p_asset) {
-		this.assets.remove(p_asset);
-		this.assets.addAsset(p_asset.getLoader());
+		this.ASSETS.remove(p_asset);
+		this.ASSETS.addAsset(p_asset.getLoader());
 	}
 
 	public void reloadPersistentAssets() {
-		final NerdAsset[] toReload = (NerdAsset[]) this.assets.toArray();
-		this.assets.clear();
+		final NerdAsset[] toReload = (NerdAsset[]) this.ASSETS.toArray();
+		this.ASSETS.clear();
 
 		for (final NerdAsset a : toReload)
-			this.assets.addAsset(a.getLoader());
+			this.ASSETS.addAsset(a.getLoader());
 	}
 	// endregion
 
-	// region Extension and module getters. Just two methods, haha.
-	@SuppressWarnings("unchecked")
-	public <RetT> RetT getNerdExt(final String p_extName) {
-		return (RetT) this.EXTENSIONS.get(p_extName);
-	}
-
 	@SuppressWarnings("unchecked")
 	public <RetT extends NerdModule> RetT getNerdModule(final Class<RetT> p_moduleClass) {
-		return (RetT) this.classToNerdModulesMap.get(p_moduleClass);
+		return (RetT) this.CLASS_TO_MODULES_MAP.get(p_moduleClass);
 	}
 	// endregion
 
@@ -516,14 +494,6 @@ public class NerdSketch extends PApplet {
 
 	public GLU getGlu() {
 		return this.glu;
-	}
-
-	public PGraphicsOpenGL getGlGraphics() {
-		return this.glGraphics;
-	}
-
-	public int getFrameStartTime() {
-		return this.frameStartTime;
 	}
 
 	public int getFrameTime() {
@@ -538,8 +508,20 @@ public class NerdSketch extends PApplet {
 		return this.defaultFont;
 	}
 
+	public NerdAssetsModule getASSETS() {
+		return this.ASSETS;
+	}
+
+	public final int getFrameStartTime() {
+		return this.frameStartTime;
+	}
+
 	public NerdGraphics getNerdGraphics() {
 		return this.nerdGraphics;
+	}
+
+	public PGraphicsOpenGL getGlGraphics() {
+		return this.glGraphics;
 	}
 
 	// region Rendering utilities!
@@ -629,13 +611,13 @@ public class NerdSketch extends PApplet {
 	 */
 	@Deprecated
 	public static String getPathToRootFrom(final String p_path) {
-		final int PATH_LEN = p_path.length(), LAST_CHAR_ID = PATH_LEN - 1;
+		final int pathLen = p_path.length(), lastCharId = pathLen - 1;
 		final StringBuilder toRetBuilder = new StringBuilder();
 
-		if (p_path.charAt(LAST_CHAR_ID) != File.separatorChar)
+		if (p_path.charAt(lastCharId) != File.separatorChar)
 			toRetBuilder.append(File.separator);
 
-		for (int i = 0; i < PATH_LEN; i++) {
+		for (int i = 0; i < pathLen; i++) {
 			final char C = p_path.charAt(i);
 
 			if (C == File.separatorChar) {

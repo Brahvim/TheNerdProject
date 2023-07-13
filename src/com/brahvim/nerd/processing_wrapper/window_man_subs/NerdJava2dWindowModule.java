@@ -7,6 +7,7 @@ import java.awt.Point;
 import javax.swing.JFrame;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 
 import processing.awt.PSurfaceAWT;
@@ -160,9 +161,9 @@ public class NerdJava2dWindowModule extends NerdWindowModule {
 	// endregion
 
 	@Override
-	public void initImpl() {
-		super.surface.setIcon(super.getIconImage());
-		this.canvas = (PSurfaceAWT.SmoothCanvas) super.surface.getNative();
+	protected void preSetupImpl() {
+		super.sketchSurface.setIcon(super.getIconImage());
+		this.canvas = (PSurfaceAWT.SmoothCanvas) super.sketchSurface.getNative();
 		this.window = (JFrame) canvas.getFrame();
 
 		if (super.SKETCH.SKETCH_SETTINGS.INITIALLY_RESIZABLE)
@@ -170,7 +171,7 @@ public class NerdJava2dWindowModule extends NerdWindowModule {
 	}
 
 	@Override
-	public void postCallbackImpl() {
+	protected void postImpl() {
 		// Fullscreen?
 		// https://stackoverflow.com/a/11570414/
 
@@ -214,7 +215,7 @@ public class NerdJava2dWindowModule extends NerdWindowModule {
 	@Override
 	protected void centerWindowImpl() {
 		final Point dimensions = super.displays.getCurrentMonitorDimensions();
-		super.surface.setLocation(
+		super.sketchSurface.setLocation(
 				(int) (dimensions.x * 0.5f - super.width),
 				(int) (dimensions.y * 0.5f - super.q3y));
 	}

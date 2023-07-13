@@ -104,12 +104,12 @@ public class NerdInputModule extends NerdModule {
 	}
 
 	@Override
-	public void focusGained() {
+	protected void focusGained() {
 		this.KEYS_HELD.clear();
 	}
 
 	@Override
-	public void focusLost() {
+	protected void focusLost() {
 		this.KEYS_HELD.clear();
 	}
 
@@ -207,7 +207,7 @@ public class NerdInputModule extends NerdModule {
 
 	@Override
 	public void mouseDragged() {
-		// Should've included stuff from `NerdInputManager::mouseMoved()`, but hey - if
+		// Should've included stuff from `NerdInputModule::mouseMoved()`, but hey - if
 		// the mouse is dragged, it also moves, right?!
 		this.literallyEveryMouseButtonCallback();
 

@@ -98,6 +98,6 @@ class Sketch extends PApplet {
 }
 ```
 
-There wasn't a `SceneManager` either! It's a thing now!
+There wasn't a `SceneModule` either! It's a thing now!
 <br>I don't remember *exactly* why, but having a manager **for this case** is very helpful.
 <br>The manager allows you to control scenes better! It makes life very easy.

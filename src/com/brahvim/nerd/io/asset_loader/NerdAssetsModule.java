@@ -13,13 +13,13 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdAssetsModule extends NerdModule {
 
-	// region Fields.
+	// The ONLY field!:
 	private final HashSet<NerdAsset> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
 	// Do we even *need* assets in any scene from the very beginning?
-	// endregion
 
 	public NerdAssetsModule(final NerdSketch p_sketch) {
 		super(p_sketch);
+		super.getSketchModulesMap().put(NerdAssetsModule.class, this);
 	}
 
 	// region `NerdAsset`-operations!
@@ -157,9 +157,30 @@ public class NerdAssetsModule extends NerdModule {
 	}
 	// endregion
 
-	@Override
-	protected void post() {
+	private void updateAssetsLoadingStatus() {
 		this.ASSETS.forEach(a -> a.ploaded = a.loaded);
 	}
+
+	// region `NerdModule` events.
+	@Override
+	protected void pre() {
+		this.updateAssetsLoadingStatus();
+	}
+
+	@Override
+	protected void preDraw() {
+		this.updateAssetsLoadingStatus();
+	}
+
+	@Override
+	protected void draw() {
+		this.updateAssetsLoadingStatus();
+	}
+
+	@Override
+	protected void postDraw() {
+		this.updateAssetsLoadingStatus();
+	}
+	// endregion
 
 }

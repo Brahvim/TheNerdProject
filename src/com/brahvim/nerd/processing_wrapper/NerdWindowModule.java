@@ -3,7 +3,7 @@ package com.brahvim.nerd.processing_wrapper;
 import java.awt.Point;
 import java.util.LinkedHashSet;
 
-import com.brahvim.nerd.processing_callback_interfaces.window.NerdWindowListener;
+import com.brahvim.nerd.processing_callback_interfaces.hardware.window.NerdWindowListener;
 
 import processing.core.PImage;
 import processing.core.PSurface;
@@ -27,8 +27,8 @@ public abstract class NerdWindowModule extends NerdModule {
 
 	protected final LinkedHashSet<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
 
-	protected PSurface surface;
 	protected PImage iconImage;
+	protected PSurface sketchSurface;
 	protected NerdDisplayModule displays;
 	// endregion
 
@@ -38,13 +38,19 @@ public abstract class NerdWindowModule extends NerdModule {
 		this.fullscreen = super.SKETCH.SKETCH_SETTINGS.STARTED_FULLSCREEN;
 	}
 
-	public void init() {
-		this.surface = super.SKETCH.getSurface();
-		this.displays = super.SKETCH.getNerdModule(NerdDisplayModule.class);
-		this.initImpl();
+	@Override
+	protected void preSetup() {
+		final NerdSketch sketch = super.SKETCH;
+
+		this.sketchSurface = sketch.getSurface();
+		this.displays = sketch.getNerdModule(NerdDisplayModule.class);
+		this.iconImage = sketch.loadImage(sketch.SKETCH_SETTINGS.ICON_PATH);
+
+		this.preSetupImpl();
+		this.updateWindowParameters();
 	}
 
-	protected abstract void initImpl();
+	protected abstract void preSetupImpl();
 	// endregion
 
 	// region Taking the window to the center.
@@ -62,9 +68,7 @@ public abstract class NerdWindowModule extends NerdModule {
 	// endregion
 
 	// region Updates!
-	public void updateWindowParameters() {
-		this.recordCurrentWindowParameters();
-
+	private void updateWindowParameters() {
 		this.width = this.getWidth();
 		this.height = this.getHeight();
 
@@ -84,6 +88,10 @@ public abstract class NerdWindowModule extends NerdModule {
 	}
 
 	private void recordCurrentWindowParameters() {
+		this.pwidth = this.width;
+		this.pheight = this.height;
+		this.pfocused = this.focused;
+
 		this.pdbx = this.dbx;
 		this.pdby = this.dby;
 
@@ -101,8 +109,8 @@ public abstract class NerdWindowModule extends NerdModule {
 	// endregion
 
 	// region Getters.
-	public PSurface getSurface() {
-		return this.surface;
+	public PSurface getSketchSurface() {
+		return this.sketchSurface;
 	}
 
 	public PImage getIconImage() {
@@ -135,7 +143,7 @@ public abstract class NerdWindowModule extends NerdModule {
 	// endregion
 
 	// region Setters.
-	// Implementations return pointers of their own type, not `NerdWindowManager*`s,
+	// Implementations return pointers of their own type, not `NerdWindowModule*`s,
 	public abstract boolean setAlwaysOnTop(final boolean p_name);
 
 	public abstract NerdWindowModule setName(final String p_name);
@@ -158,15 +166,12 @@ public abstract class NerdWindowModule extends NerdModule {
 	// region Callbacks.
 	@Override
 	protected void pre() {
-		// Previous state:
-		this.pwidth = this.width;
-		this.pheight = this.height;
-		this.pfocused = this.focused;
+		this.recordCurrentWindowParameters();
 
 		// Current state:
 		this.width = super.SKETCH.width;
 		this.height = super.SKETCH.height;
-		// this.focused = super.SKETCH.focused; // Better received in the callbacks!
+		// this.focused = super.SKETCH.focused; // Better handled in the `focus*()`!
 
 		this.PREV_WINDOW_POSITION.set(this.WINDOW_POSITION);
 		this.WINDOW_POSITION.set(this.getPositionAsPVector());
@@ -174,19 +179,18 @@ public abstract class NerdWindowModule extends NerdModule {
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == this.width || this.pheight == this.height)) {
 			this.updateWindowParameters();
-			this.windowListeners.forEach(NerdWindowListener::resized);
-			super.SKETCH.scenes.resized();
+			for (final NerdModule m : super.getModulesUpdatedFramely())
+				m.fullscreenChanged(this.fullscreen);
 		}
 	}
 
 	@Override
 	protected void post() {
-		this.postCallbackImpl();
+		this.postImpl();
 
-		if (this.pfullscreen != this.fullscreen) {
-			this.windowListeners.forEach(l -> l.fullscreenChanged(this.fullscreen));
-			super.SKETCH.scenes.fullscreenChanged(this.fullscreen);
-		}
+		if (this.pfullscreen != this.fullscreen)
+			for (final NerdModule m : super.getModulesUpdatedFramely())
+				m.fullscreenChanged(this.fullscreen);
 
 		this.pfullscreen = this.fullscreen;
 		this.pcursorVisible = this.cursorVisible;
@@ -194,7 +198,7 @@ public abstract class NerdWindowModule extends NerdModule {
 	}
 
 	@Override
-	public void focusGained() {
+	protected void focusGained() {
 		// Copying, because the sketch performs a decision here.
 		this.focused = super.SKETCH.focused;
 	}
@@ -205,7 +209,7 @@ public abstract class NerdWindowModule extends NerdModule {
 		this.focused = super.SKETCH.focused;
 	}
 
-	protected abstract void postCallbackImpl();
+	protected abstract void postImpl();
 	// endregion
 
 }

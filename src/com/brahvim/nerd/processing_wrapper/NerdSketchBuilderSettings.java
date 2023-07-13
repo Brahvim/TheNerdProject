@@ -11,9 +11,6 @@ import com.brahvim.nerd.framework.ecs.NerdEcsModule;
 import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
-import com.brahvim.nerd.framework.scene_api.NerdScenesModule.NerdSceneManagerSettings;
-import com.brahvim.nerd.openal.AlContext;
-import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowModule;
 
 import processing.core.PConstants;
 
@@ -21,30 +18,24 @@ public class NerdSketchBuilderSettings {
 
 	public Class<? extends NerdScene> firstSceneClass;
 	public int width = 400, height = 400, antiAliasing;
-	public NerdSceneManagerSettings sceneManagerSettings;
-	public AlContext.AlContextSettings alContextSettings;
-	public HashMap<String, Object> nerdExtensions = new HashMap<>();
+	public HashMap<String, NerdExtension> nerdExtensions = new HashMap<>(0);
+	public NerdScenesModule.NerdScenesModuleSettings scenesModuleSettings;
 	public String name, iconPath, renderer = PConstants.P3D, stringTablePath;
+	public Function<NerdSketch, LinkedHashSet<NerdModule>> nerdModulesSupplier;
 	public HashSet<Class<? extends NerdScene>> scenesToPreload = new HashSet<>(0);
-	public Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] ecsSystemOrder =
-			// VSCode, you made the decision to tab this all the way down HERE!:
-			NerdEcsModule.getDefaultEcsSystemsOrder();
-	public NerdScenesModule.NerdSceneManagerSettings.NerdSketchCallbackOrder preCallOrder, drawCallOrder, postCallOrder;
+	public Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] ecsSystemOrder = //
+			NerdEcsModule.getEcsSystemsDefaultOrder();
+	public NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder //
+	preCallOrder, drawCallOrder, postCallOrder;
+	public boolean preventCloseOnEscape, startedFullscreen, canResize,
+			cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
 
-	// region Listeners!!!
+	// User-defined callback listeners!!!:
 	public LinkedHashSet<Consumer<NerdSketch>> sketchConstructedListeners,
 			settingsListeners, setupListeners, exitListeners, disposalListeners;
 
-	public LinkedHashSet<NerdScenesModule.NerdSceneChangedListener> sceneChangedListeners = new LinkedHashSet<>();
-
 	public LinkedHashSet<Consumer<NerdSketch>> preListeners, postListeners,
 			drawListeners, preDrawListeners, postDrawListeners;
-
-	public boolean preventCloseOnEscape, startedFullscreen, canResize,
-			cannotFullscreen, cannotAltEnterFullscreen, cannotF11Fullscreen;
-	// endregion
-
-	protected Function<NerdSketch, HashMap<Class<? extends NerdModule>, NerdModule>> nerdModulesInstantiator;
 
 	public NerdSketchBuilderSettings() {
 		// Intializing these listeners:
@@ -59,18 +50,7 @@ public class NerdSketchBuilderSettings {
 		this.setupListeners = new LinkedHashSet<>();
 		this.settingsListeners = new LinkedHashSet<>();
 		this.disposalListeners = new LinkedHashSet<>();
-		this.sceneChangedListeners = new LinkedHashSet<>();
 		this.sketchConstructedListeners = new LinkedHashSet<>();
-
-		this.nerdModulesInstantiator = s -> {
-			final HashMap<Class<? extends NerdModule>, NerdModule> toRet = new HashMap<>();
-			toRet.put(NerdDisplayModule.class, new NerdDisplayModule(s));
-			toRet.put(NerdWindowModule.class, s.SKETCH_SETTINGS.USES_OPENGL ? new NerdGlWindowModule(s) : null);
-			toRet.put(NerdInputModule.class, new NerdInputModule(s));
-			toRet.put(NerdCallbacksModule.class, new NerdCallbacksModule(s, this));
-			toRet.put(NerdScenesModule.class, new NerdScenesModule(s, this));
-			return toRet;
-		};
 	}
 
 }
