@@ -13,12 +13,12 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdInputModule;
 import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdWindowModule;
+import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
 
@@ -159,88 +159,43 @@ public class NerdSketch extends PApplet {
 	protected PGL pgl;
 	protected PGraphicsOpenGL glGraphics;
 
-	protected final NerdInputModule INPUT;
-	protected final NerdWindowModule WINDOW;
 	protected final ArrayList<NerdModule> MODULES;
 	protected final HashMap<Class<? extends NerdModule>, NerdModule> CLASSES_TO_MODULES_MAP;
 
 	// Timers! (`millis()` returns `int`s!):
 	protected int frameStartTime, pframeTime, frameTime;
 	protected NerdGraphics nerdGraphics;
+	protected NerdWindowModule window;
+	protected NerdInputModule input;
 	protected PFont defaultFont;
 	// endregion
 
+	// region Construction!
 	public NerdSketch(final NerdSketchBuilderSettings p_settings) {
-		Objects.requireNonNull(p_settings,
-				"Please use an instance of some subclass of `NerdCustomSketchBuilder` to make a `NerdSketch`!");
+		Objects.requireNonNull(p_settings, String.format("""
+				Please use an instance of some subclass of `%s`, or initialize a `%s` by hand, to make a `%s`.
+				You seem to have provided, `null`, to its constructor.""",
+				NerdCustomSketchBuilder.class.getSimpleName(),
+				NerdSketchBuilderSettings.class.getSimpleName(),
+				this.getClass().getSimpleName()));
 
 		this.SKETCH_SETTINGS = new NerdSketch.NerdSketchSettings(p_settings);
 
-		// region Storing and mapping `NerdModule`s!
-		final LinkedHashSet<Function<NerdSketch, NerdModule>> nerdModulesToAssign = new LinkedHashSet<>(0);
-		p_settings.nerdModulesInstantiator.accept(nerdModulesToAssign);
-
-		this.MODULES = new ArrayList<>(nerdModulesToAssign.size());
+		// region Stuff involving modules
 		this.CLASSES_TO_MODULES_MAP = new HashMap<>(0);
+		this.MODULES = this.sortModules(p_settings);
 
-		// Construct modules using the provided `Function`s, and add them to the map:
-		for (final Function<NerdSketch, NerdModule> f : nerdModulesToAssign)
-			try {
-
-				Objects.requireNonNull(f,
-						"Could not instantiate a `NerdModule` due to the supplying function being `null`.");
-
-				final NerdModule module = f.apply(this);
-				Objects.requireNonNull(module,
-						"Could not include a `NerdModule` due to the it being `null`.");
-
-				final Class<? extends NerdModule> moduleClass = module.getClass();
-
-				// If we already have a certain `NerdModule`,
-				if (this.CLASSES_TO_MODULES_MAP.get(moduleClass) == null) {
-					// ..We update it in our map,
-					this.CLASSES_TO_MODULES_MAP.put(moduleClass, module);
-
-					// ..We replace the existing one,
-					this.MODULES.removeIf(m -> m.getClass().equals(moduleClass));
-
-					// ..Add the new one at the new position:
-					this.MODULES.add(module);
-
-					// ..and continue the loop!:
-					continue;
-				}
-
-				// Otherwise, just add as usual.
-
-				this.MODULES.add(module);
-				this.CLASSES_TO_MODULES_MAP.put(moduleClass, module);
-
-			} catch (final Exception e) {
-				System.err.println("An exception occured when trying to instantiate `NerdModule`s:");
-				e.printStackTrace();
-			}
-
-		// Call `NerdModule::sketchConstructed()` on all `NerdModule`s:
 		for (final NerdModule m : this.MODULES) {
 			this.CLASSES_TO_MODULES_MAP.put(m.getClass(), m);
 			m.sketchConstructed(p_settings);
-		}
 
-		// Assign `NerdModuleSettings` to all `NerdModule`s. ...`Theta(n^2)` style!:
-		for (final NerdModule m : this.MODULES) {
+			// Assign `NerdModuleSettings` to all `NerdModule`s. ...`Theta(n^2)` style!:
 			for (final var e : p_settings.nerdModulesSettings.entrySet())
 				m.assignModuleSettings(e.getValue());
-
-			// Faster code:
-			// final var moduleSettings = p_settings.nerdModulesSettings.get(m.getClass());
-			// if (moduleSettings != null)
-			// m.assignModuleSettings(moduleSettings);
+			// ...Doing it this way because otherwise some subclasses may be missed!
 		}
 		// endregion
 
-		this.INPUT = this.getNerdModule(NerdInputModule.class);
-		this.WINDOW = this.getNerdModule(NerdWindowModule.class);
 		this.ASSETS = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
 
 		// region Setting the icon of the OpenGL renderer's window.
@@ -262,6 +217,54 @@ public class NerdSketch extends PApplet {
 		this.ROBOT = toAssign;
 		// endregion
 	}
+
+	private ArrayList<NerdModule> sortModules(final NerdSketchBuilderSettings p_settings) {
+		final LinkedHashSet<Function<NerdSketch, NerdModule>> nerdModulesToAssign = new LinkedHashSet<>(0);
+		p_settings.nerdModulesInstantiator.accept(nerdModulesToAssign);
+
+		final ArrayList<NerdModule> toRet = new ArrayList<>(nerdModulesToAssign.size());
+
+		// Construct modules using the provided `Function`s, and add them to the map:
+		for (final Function<NerdSketch, NerdModule> f : nerdModulesToAssign)
+			try {
+
+				Objects.requireNonNull(f,
+						"Could not instantiate a `NerdModule` due to the supplying function being `null`.");
+
+				final NerdModule module = f.apply(this);
+				Objects.requireNonNull(module,
+						"Could not include a `NerdModule` due to the it being `null`.");
+
+				final Class<? extends NerdModule> moduleClass = module.getClass();
+
+				// If we already have a certain `NerdModule`,
+				if (this.CLASSES_TO_MODULES_MAP.get(moduleClass) != null) {
+					// ..We replace the existing one,
+					toRet.removeIf(m -> m.getClass().equals(moduleClass));
+
+					// ..Add the new one at the end:
+					toRet.add(module);
+
+					// ..Update it in our map,
+					this.CLASSES_TO_MODULES_MAP.put(moduleClass, module);
+
+					// ..and continue the loop!:
+					continue;
+				}
+
+				// Otherwise, just add as usual.
+
+				toRet.add(module);
+				this.CLASSES_TO_MODULES_MAP.put(moduleClass, module);
+
+			} catch (final Exception e) {
+				System.err.println("An exception occured when trying to instantiate `NerdModule`s:");
+				e.printStackTrace();
+			}
+
+		return toRet;
+	}
+	// endregion
 
 	// region Processing sketch workflow.
 	@Override
@@ -286,10 +289,13 @@ public class NerdSketch extends PApplet {
 		for (final NerdModule m : this.MODULES)
 			m.preSetup();
 
+		this.input = this.getNerdModule(NerdInputModule.class);
+		this.window = this.getNerdModule(NerdWindowModule.class);
+
 		if (this.SKETCH_SETTINGS.USES_OPENGL) {
-			// TODO! // this.glu = new GLU();
-			// this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
-			// this.gl = ((GLWindow) this.window.getNativeObject()).getGL();
+			this.glu = new GLU();
+			this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
+			this.gl = ((GLWindow) this.window.getNativeObject()).getGL();
 		}
 
 		super.registerMethod("pre", this);
@@ -309,9 +315,9 @@ public class NerdSketch extends PApplet {
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
 		if (this.SKETCH_SETTINGS.INITIALLY_RESIZABLE)
-			this.WINDOW.setResizable(true);
+			this.window.setResizable(true);
 
-		this.WINDOW.centerWindow();
+		this.window.centerWindow();
 
 		for (final NerdModule m : this.MODULES)
 			m.postSetup();
@@ -372,7 +378,7 @@ public class NerdSketch extends PApplet {
 	}
 	// endregion
 
-	// region Processing's event callbacks! REMEMBER `this.sceneMan`! :joy:
+	// region Processing's event callbacks! `NerdModule`s, go!!
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
@@ -434,13 +440,13 @@ public class NerdSketch extends PApplet {
 		if (this.SKETCH_SETTINGS.canFullscreen) {
 			if (this.SKETCH_SETTINGS.altEnterFullscreen
 					&& super.keyCode == KeyEvent.VK_ENTER
-					&& this.INPUT.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
-				this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
+					&& this.input.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
+				this.window.fullscreen = !this.window.fullscreen;
 			else if (this.SKETCH_SETTINGS.f11Fullscreen) {
 				// `KeyEvent.VK_ADD` is `107`, but here, it's actually `F11`!:
 				if (this.SKETCH_SETTINGS.USES_OPENGL && super.keyCode == 107
 						|| super.keyCode == KeyEvent.VK_F11)
-					this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
+					this.window.fullscreen = !this.window.fullscreen;
 			}
 		}
 
