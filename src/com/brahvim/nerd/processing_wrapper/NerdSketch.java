@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -64,7 +63,7 @@ public class NerdSketch extends PApplet {
 	/** Certain setting for the parent {@link NerdSketch}. */
 	public class NerdSketchSettings {
 
-		public final String NAME;
+		public final String INITIAL_WINDOW_TITLE;
 		public final String ICON_PATH;
 		public final int ANTI_ALIASING;
 		public final boolean USES_OPENGL;
@@ -85,13 +84,9 @@ public class NerdSketch extends PApplet {
 			this.RENDERER_NAME = p_settings.renderer;
 			this.ANTI_ALIASING = p_settings.antiAliasing;
 			this.INITIALLY_RESIZABLE = p_settings.canResize;
-			// TODO: Put these into `NerdScenesModule`!
-			// this.SCENES_TO_PRELOAD = p_settings.scenesToPreload;
-			// this.FIRST_SCENE_CLASS = p_settings.firstSceneClass;
 			this.STARTED_FULLSCREEN = p_settings.startedFullscreen;
-			this.NAME = p_settings.name == null ? "TheNerdProject" : p_settings.name;
-
 			this.USES_OPENGL = PConstants.P3D.equals(this.RENDERER_NAME);
+			this.INITIAL_WINDOW_TITLE = p_settings.name == null ? "Nerd Sketch" : p_settings.name;
 
 			this.canFullscreen = !p_settings.cannotFullscreen;
 			this.f11Fullscreen = !p_settings.cannotF11Fullscreen;
@@ -205,10 +200,14 @@ public class NerdSketch extends PApplet {
 			m.sketchConstructed(p_settings);
 		}
 
-		// TODO: These are necessary!:
+		for (final NerdModule m : this.MODULES) {
+			final var moduleSettings = p_settings.nerdModulesSettings.get(m.getClass());
+			if (moduleSettings != null)
+				m.assignModuleSettings(moduleSettings);
+		}
+
 		this.input = this.getNerdModule(NerdInputModule.class);
 		this.window = this.getNerdModule(NerdGlWindowModule.class);
-		// PS, a trick!
 
 		// TODO: Move `this.scenes` references OUT completely!
 		this.scenes = this.getNerdModule(NerdScenesModule.class);
@@ -217,11 +216,6 @@ public class NerdSketch extends PApplet {
 		// Some default settings:
 
 		// endregion
-
-		// TODO: Also put into `NerdScenesModule`!:
-		// for (final Class<? extends NerdScene> c :
-		// this.SKETCH_SETTINGS.SCENES_TO_PRELOAD)
-		// this.scenes.loadSceneAssetsAsync(c);
 
 		// region Setting OpenGL renderer icon.
 		if (this.SKETCH_SETTINGS.USES_OPENGL)
@@ -275,7 +269,7 @@ public class NerdSketch extends PApplet {
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
 		super.frameRate(this.DEFAULT_REFRESH_RATE);
-		super.surface.setTitle(this.SKETCH_SETTINGS.NAME);
+		super.surface.setTitle(this.SKETCH_SETTINGS.INITIAL_WINDOW_TITLE);
 
 		this.nerdGraphics = new NerdGraphics(this, super.getGraphics());
 		this.defaultFont = super.createFont("SansSerif",
@@ -517,7 +511,7 @@ public class NerdSketch extends PApplet {
 
 	@SuppressWarnings("unchecked")
 	public <RetT extends NerdModule> RetT getNerdModule(final Class<RetT> p_moduleClass) {
-		for (final Map.Entry<Class<? extends NerdModule>, NerdModule> e : this.CLASSES_TO_MODULES_MAP.entrySet())
+		for (final var e : this.CLASSES_TO_MODULES_MAP.entrySet())
 			if (p_moduleClass.isAssignableFrom(e.getKey()))
 				return (RetT) e.getValue();
 		return null;

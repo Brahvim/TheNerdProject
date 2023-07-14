@@ -38,13 +38,14 @@ public class App {
 		builder
 				.canResize()
 				.setAntiAliasing(4)
-				.setTitle("The Nerd Project")
 				.setIconPath("data/sunglass_nerd.png")
 				.setNerdModuleSettings(NerdScenesModule.class, () -> {
 					final NerdScenesModuleSettings toRet = new NerdScenesModuleSettings();
 					toRet.firstSceneClass = App.FIRST_SCENE_CLASS;
 					return toRet;
-				});
+				})
+
+		;
 
 		// Build the `NerdSketch`!:
 		final NerdSketch sketch = builder.build(p_args);

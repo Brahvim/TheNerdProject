@@ -31,7 +31,7 @@ public abstract class NerdModule {
 		return this.SKETCH.CLASSES_TO_MODULES_MAP;
 	}
 
-	protected /* `abstract` */ void setModuleSettings(final NerdModuleSettings<?> p_settings) {
+	protected /* `abstract` */ void assignModuleSettings(final NerdModuleSettings<?> p_settings) {
 	}
 
 	// region Methods to call methods on other modules.

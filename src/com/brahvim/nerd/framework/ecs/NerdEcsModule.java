@@ -49,7 +49,7 @@ public class NerdEcsModule extends NerdModule {
 	}
 
 	@Override
-	protected void setModuleSettings(final NerdModuleSettings<?> p_settings) {
+	protected void assignModuleSettings(final NerdModuleSettings<?> p_settings) {
 		if (p_settings instanceof final NerdEcsModuleSettings settings) {
 			this.setSystemsOrder(settings.ecsSystemsOrder);
 		} else {
@@ -98,7 +98,7 @@ public class NerdEcsModule extends NerdModule {
 	// region Workflow callbacks (declared as `protected`).
 	@Override
 	protected void sketchConstructed(final NerdSketchBuilderSettings p_settings) {
-		super.SKETCH.getNerdModule(NerdScenesModule.class).addSceneChangedListener(this::sceneChanged);
+		super.SKETCH.getNerdModule(NerdScenesModule.class).addNewSceneStartedListener(this::sceneChanged);
 	}
 
 	// From `NerdScenesModule`:
@@ -169,7 +169,7 @@ public class NerdEcsModule extends NerdModule {
 	}
 
 	public String getNameFromEntity(final NerdEcsEntity p_entity) {
-		for (final Map.Entry<String, NerdEcsEntity> e : this.NAME_TO_ENTITY_MAP.entrySet())
+		for (final var e : this.NAME_TO_ENTITY_MAP.entrySet())
 			if (e.getValue() == p_entity)
 				return e.getKey();
 
@@ -282,14 +282,13 @@ public class NerdEcsModule extends NerdModule {
 			this.NAME_TO_ENTITY_MAP.forEach(p_action);
 
 		// Older method:
-		// for (final Map.Entry<String, NerdEcsEntity> e :
-		// this.ENTITY_TO_NAME_MAP.entrySet())
+		// for (final var e : this.ENTITY_TO_NAME_MAP.entrySet())
 		// p_action.accept(e.getKey(), e.getValue());
 	}
 
 	public void forEachEntityUnnamed(final Consumer<NerdEcsEntity> p_action) {
 		if (p_action != null)
-			for (final Map.Entry<String, NerdEcsEntity> entry : this.NAME_TO_ENTITY_MAP.entrySet()) {
+			for (final var entry : this.NAME_TO_ENTITY_MAP.entrySet()) {
 				final String name = entry.getKey();
 
 				try {
@@ -391,7 +390,7 @@ public class NerdEcsModule extends NerdModule {
 		final HashMap<String, NerdEcsEntity> myMap = this.NAME_TO_ENTITY_MAP,
 				otherMap = p_deserialized.nameToEntityMap;
 
-		for (final Map.Entry<String, NerdEcsEntity> e : myMap.entrySet()) {
+		for (final var e : myMap.entrySet()) {
 			final String key = e.getKey();
 			if (!otherMap.containsKey(key))
 				toRemove.add(key);
@@ -400,7 +399,7 @@ public class NerdEcsModule extends NerdModule {
 		for (final String s : toRemove)
 			myMap.remove(s);
 
-		for (final Map.Entry<String, NerdEcsEntity> e : otherMap.entrySet())
+		for (final var e : otherMap.entrySet())
 			myMap.putIfAbsent(e.getKey(), e.getValue());
 		// endregion
 		// endregion

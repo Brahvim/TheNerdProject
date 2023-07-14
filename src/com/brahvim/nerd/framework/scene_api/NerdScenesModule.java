@@ -16,12 +16,6 @@ import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 
-// TODO: Let there be callbacks! The ECS should register some.
-// Specifically, we need callbacks for `NerdScene::preload()`, `NerdScene::setup()`,
-// `NerdScenesModule::sceneChanged()` (which we already have!), et cetera.
-// ...y'know? Events not part of the `NerdSketch` lifecycle that other modules
-// can't track without using callbacks.
-
 public class NerdScenesModule extends NerdModule {
 
 	// region Inner classes.
@@ -29,7 +23,7 @@ public class NerdScenesModule extends NerdModule {
 	// class. I do this to aid reading and to prevent namespace pollution.
 
 	@FunctionalInterface
-	public interface NerdScenesModuleSceneChangedListener {
+	public interface NerdScenesModuleNewSceneStartedListener {
 		void sceneChanged(
 				NerdScenesModule p_scenesModule,
 				Class<? extends NerdScene> p_previousSceneClass,
@@ -55,7 +49,8 @@ public class NerdScenesModule extends NerdModule {
 		/* `package */ NerdAssetsModule cachedAssets;
 		// endregion
 
-		/* `package */ NerdScenesModuleSceneCache(final Constructor<? extends NerdScene> p_constructor,
+		/* `package */ NerdScenesModuleSceneCache(
+				final Constructor<? extends NerdScene> p_constructor,
 				final NerdScene p_cachedReference) {
 			this.CONSTRUCTOR = p_constructor;
 			this.cachedReference = p_cachedReference;
@@ -99,10 +94,10 @@ public class NerdScenesModule extends NerdModule {
 	private final HashMap<Class<? extends NerdScene>, NerdScenesModule.NerdScenesModuleSceneCache> //
 	SCENE_CACHE = new HashMap<>(2);
 
-	private final LinkedHashSet<NerdScenesModule.NerdScenesModuleSceneChangedListener> //
+	private final LinkedHashSet<NerdScenesModule.NerdScenesModuleNewSceneStartedListener> //
 	SCENE_CHANGED_LISTENERS = new LinkedHashSet<>(0); // Not gunna have any, will we?
 
-	private final LinkedHashSet<NerdScenesModule.NerdScenesModuleSceneChangedListener> //
+	private final LinkedHashSet<NerdScenesModule.NerdScenesModuleNewSceneStartedListener> //
 	SCENE_CHANGED_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0); // Not gunna have any, will we?
 
 	private Class<? extends NerdScene> currentSceneClass, previousSceneClass;
@@ -113,10 +108,12 @@ public class NerdScenesModule extends NerdModule {
 	}
 
 	@Override
-	protected void setModuleSettings(final NerdModuleSettings<?> p_settings) {
-		this.scenesModuleSettings = p_settings == null
-				? new NerdScenesModuleSettings()
-				: (NerdScenesModuleSettings) p_settings;
+	protected void assignModuleSettings(final NerdModuleSettings<?> p_settings) {
+		if (p_settings instanceof final NerdScenesModuleSettings settings) {
+			this.scenesModuleSettings = settings;
+		} else {
+			this.scenesModuleSettings = new NerdScenesModuleSettings();
+		}
 	}
 
 	// region `NerdSketch` workflow callbacks.
@@ -370,24 +367,26 @@ public class NerdScenesModule extends NerdModule {
 
 	// region [`public`] Queries.
 	/**
-	 * Adds a {@link NerdScenesModule.NerdScenesModuleSceneChangedListener} that
+	 * Adds a {@link NerdScenesModule.NerdScenesModuleNewSceneStartedListener} that
 	 * allows you to track when a scene starts!
 	 *
 	 * @param p_listener is the listener you want to add.
 	 */
-	public final void addSceneChangedListener(final NerdScenesModule.NerdScenesModuleSceneChangedListener p_listener) {
+	public final void addNewSceneStartedListener(
+			final NerdScenesModule.NerdScenesModuleNewSceneStartedListener p_listener) {
 		if (p_listener != null)
 			this.SCENE_CHANGED_LISTENERS.add(p_listener);
 	}
 
 	/**
-	 * Removes a {@link NerdScenesModule.NerdScenesModuleSceneChangedListener} that
+	 * Removes a {@link NerdScenesModule.NerdScenesModuleNewSceneStartedListener}
+	 * that
 	 * would otherwise allow you to track when a scene starts.
 	 *
 	 * @param p_listener is the listener you want to remove.
 	 */
-	public final void removeSceneChangedListener(
-			final NerdScenesModule.NerdScenesModuleSceneChangedListener p_listener) {
+	public final void removeNewSceneStartedListener(
+			final NerdScenesModule.NerdScenesModuleNewSceneStartedListener p_listener) {
 		this.SCENE_CHANGED_LISTENERS_TO_REMOVE.add(p_listener);
 	}
 
