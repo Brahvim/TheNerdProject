@@ -2,7 +2,7 @@ package com.brahvim.nerd.framework.ecs;
 
 import java.io.Externalizable;
 
-import com.brahvim.nerd.io.NerdByteSerialUtils;
+import com.brahvim.nerd.utils.NerdByteSerialUtils;
 
 public abstract class NerdEcsComponentPacket<PacketComponentT extends NerdEcsComponent> implements Externalizable {
 

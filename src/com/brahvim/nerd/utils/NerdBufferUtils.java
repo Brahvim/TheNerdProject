@@ -1,4 +1,4 @@
-package com.brahvim.nerd.io;
+package com.brahvim.nerd.utils;
 
 import java.nio.ByteBuffer;
 

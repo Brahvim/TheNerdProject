@@ -4,10 +4,10 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
-import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.net.tcp.NerdTcpClient;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer.NerdClientSentTcpPacket;
+import com.brahvim.nerd.utils.NerdByteSerialUtils;
 
 public class TcpDemoScene extends NerdScene {
 

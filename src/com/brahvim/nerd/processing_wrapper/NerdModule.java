@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.framework.NerdQuadConsumer;
-import com.brahvim.nerd.framework.NerdReflectionUtils;
-import com.brahvim.nerd.framework.NerdTriConsumer;
+import com.brahvim.nerd.utils.NerdQuadConsumer;
+import com.brahvim.nerd.utils.NerdReflectionUtils;
+import com.brahvim.nerd.utils.NerdTriConsumer;
 
 import processing.event.MouseEvent;
 

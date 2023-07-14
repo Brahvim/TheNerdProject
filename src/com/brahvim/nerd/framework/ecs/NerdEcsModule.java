@@ -10,17 +10,17 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.framework.NerdTriConsumer;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
-import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.net.NerdUdpSocket;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
+import com.brahvim.nerd.utils.NerdByteSerialUtils;
+import com.brahvim.nerd.utils.NerdTriConsumer;
 
 public class NerdEcsModule extends NerdModule {
 

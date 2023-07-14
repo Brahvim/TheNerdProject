@@ -38,11 +38,8 @@ public class App {
 				.canResize()
 				.setAntiAliasing(4)
 				.setIconPath("data/sunglass_nerd.png")
-				.setNerdModuleSettings(NerdScenesModule.class, () -> {
-					final var toRet = new NerdScenesModuleSettings();
-					toRet.firstSceneClass = App.FIRST_SCENE_CLASS;
-					return toRet;
-				})
+				.setNerdModuleSettings(NerdScenesModule.class,
+						() -> new NerdScenesModuleSettings(App.FIRST_SCENE_CLASS))
 				.setNerdModuleSettings(NerdOpenAlModule.class, () -> {
 					final var toRet = new NerdOpenAlModuleSettings();
 					// ...for `DemoScene3`!!!:
@@ -51,7 +48,7 @@ public class App {
 					return toRet;
 				})
 
-		/* ...the semi-colon is separate: */ ;
+		/* ...the semi-colon is separate!: */ ;
 
 		// Build the `NerdSketch`!:
 		final NerdSketch sketch = builder.build(p_args);

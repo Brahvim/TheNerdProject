@@ -3,8 +3,8 @@ package com.brahvim.nerd.framework.ecs;
 import java.io.Serializable;
 import java.util.HashSet;
 
-import com.brahvim.nerd.framework.NerdReflectionUtils;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
+import com.brahvim.nerd.utils.NerdReflectionUtils;
 
 public abstract class NerdEcsSystem<SystemComponentT extends NerdEcsComponent> implements Serializable {
 

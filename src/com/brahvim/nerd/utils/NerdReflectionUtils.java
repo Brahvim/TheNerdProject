@@ -1,4 +1,4 @@
-package com.brahvim.nerd.framework;
+package com.brahvim.nerd.utils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

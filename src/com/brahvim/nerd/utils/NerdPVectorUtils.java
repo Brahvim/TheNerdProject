@@ -1,4 +1,4 @@
-package com.brahvim.nerd.math;
+package com.brahvim.nerd.utils;
 
 import processing.core.PVector;
 

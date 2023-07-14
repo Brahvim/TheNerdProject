@@ -112,7 +112,7 @@ public class NerdScenesModule extends NerdModule {
 		if (p_settings instanceof final NerdScenesModuleSettings settings) {
 			this.scenesModuleSettings = settings;
 		} else {
-			this.scenesModuleSettings = new NerdScenesModuleSettings();
+			this.scenesModuleSettings = new NerdScenesModuleSettings(null);
 		}
 	}
 
@@ -134,10 +134,10 @@ public class NerdScenesModule extends NerdModule {
 	@Override
 	protected void draw() {
 		if (super.SKETCH.frameCount == 1 && this.currentScene == null) {
-			if (this.scenesModuleSettings.firstSceneClass == null)
+			if (this.scenesModuleSettings.FIRST_SCENE_CLASS == null)
 				System.err.println("There is no initial `NerdScene` to show!");
 			else
-				this.startScene(this.scenesModuleSettings.firstSceneClass);
+				this.startScene(this.scenesModuleSettings.FIRST_SCENE_CLASS);
 		}
 
 		if (this.currentScene != null)

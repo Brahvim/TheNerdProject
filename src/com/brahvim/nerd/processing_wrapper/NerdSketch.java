@@ -188,11 +188,7 @@ public class NerdSketch extends PApplet {
 		for (final NerdModule m : this.MODULES) {
 			this.CLASSES_TO_MODULES_MAP.put(m.getClass(), m);
 			m.sketchConstructed(p_settings);
-
-			// Assign `NerdModuleSettings` to all `NerdModule`s. ...`Theta(n^2)` style!:
-			for (final var e : p_settings.nerdModulesSettings.entrySet())
-				m.assignModuleSettings(e.getValue());
-			// ...Doing it this way because otherwise some subclasses may be missed!
+			m.assignModuleSettings(p_settings.nerdModulesSettings.get(m.getClass()));
 		}
 		// endregion
 

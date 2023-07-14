@@ -9,7 +9,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.brahvim.nerd.io.NerdByteSerialUtils;
+import com.brahvim.nerd.utils.NerdByteSerialUtils;
 
 public class NerdSceneState {
 
