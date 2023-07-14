@@ -7,7 +7,7 @@ import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModuleSettings;
 import com.brahvim.nerd.openal.AlBuffer;
-import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
+import com.brahvim.nerd.openal.al_asset_loaders.AlOggBufferAsset;
 import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
 import com.brahvim.nerd_demos.effect_layers.CinematicBarsLayer;
 
@@ -29,7 +29,7 @@ public class DemoScene3 extends NerdScene {
 	@Override
 	protected synchronized void preload() {
 		for (int i = 1; i != 5; i++)
-			ASSETS.addAsset(new OggBufferDataAsset("data/Pops/Pop" + i + ".ogg"));
+			ASSETS.addAsset(new AlOggBufferAsset("data/Pops/Pop" + i + ".ogg"));
 	}
 
 	@Override
@@ -81,10 +81,14 @@ public class DemoScene3 extends NerdScene {
 				color2 = SKETCH.color(232, 81, 194);
 		final PImage toRet = SKETCH.createImage(DISPLAY.displayWidth, DISPLAY.displayHeight, PConstants.RGB);
 
+		toRet.loadPixels();
+
 		for (int y = 0; y < toRet.height; y++)
 			for (int x = 0; x < toRet.width; x++)
 				toRet.pixels[x + y * toRet.width] = SKETCH.lerpColor(
 						color1, color2, PApplet.map(y, 0, toRet.height, 0, 1));
+
+		toRet.updatePixels();
 
 		return toRet;
 	}

@@ -3,7 +3,7 @@ package com.brahvim.nerd_demos.scenes;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.openal.AlSource;
-import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
+import com.brahvim.nerd.openal.al_asset_loaders.AlOggBufferAsset;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 
@@ -27,7 +27,7 @@ public class DemoScene4 extends NerdScene {
 
 	@Override
 	protected synchronized void preload() {
-		ASSETS.addAsset(new OggBufferDataAsset("data/RUBBER DUCK.ogg"));
+		ASSETS.addAsset(new AlOggBufferAsset("data/RUBBER DUCK.ogg"));
 		// System.out.println("`DemoScene4` asset preload completed!");
 	}
 

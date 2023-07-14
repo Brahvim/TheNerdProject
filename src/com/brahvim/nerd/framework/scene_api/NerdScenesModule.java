@@ -133,6 +133,13 @@ public class NerdScenesModule extends NerdModule {
 
 	@Override
 	protected void draw() {
+		if (super.SKETCH.frameCount == 1 && this.currentScene == null) {
+			if (this.scenesModuleSettings.firstSceneClass == null)
+				System.err.println("There is no initial `NerdScene` to show!");
+			else
+				this.startScene(this.scenesModuleSettings.firstSceneClass);
+		}
+
 		if (this.currentScene != null)
 			this.currentScene.runDraw();
 	}

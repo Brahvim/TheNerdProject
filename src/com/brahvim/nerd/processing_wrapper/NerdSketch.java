@@ -300,30 +300,15 @@ public class NerdSketch extends PApplet {
 	@Override
 	public void draw() {
 		this.pframeTime = this.frameStartTime;
-		this.frameStartTime = super.millis(); // Timestamp.
+		this.frameStartTime = super.millis(); // Timestamp!
 		this.frameTime = this.frameStartTime - this.pframeTime;
-
-		// Call all pre-render listeners:
-		// this.values.forEach(NerdModule::preDraw);
 
 		this.nerdGraphics.applyCameraIfCan();
 
-		// Call all draw listeners:
+		// Process all `NerdModule`s:
 		this.MODULES.forEach(NerdModule::preDraw);
 		this.MODULES.forEach(NerdModule::draw);
 		this.MODULES.forEach(NerdModule::postDraw);
-
-		// TODO "If it doesn't yet exist, construct the scene!" <-- Move!
-		// if (super.frameCount == 1 && this.scenes.getCurrentScene() == null) {
-		// if (this.SKETCH_SETTINGS.FIRST_SCENE_CLASS == null) {
-		// System.err.println("There is no initial `NerdScene` to show!");
-		// // System.exit(0);
-		// } else
-		// this.scenes.startScene(this.SKETCH_SETTINGS.FIRST_SCENE_CLASS);
-		// }
-
-		// Call all post-render listeners:
-		// this.values.forEach(NerdModule::postDraw);
 	}
 
 	public void post() {
