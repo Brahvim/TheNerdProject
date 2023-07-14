@@ -165,7 +165,7 @@ public class NerdScenesModule extends NerdModule {
 	 */
 	// endregion
 
-	// region Event callbacks. Passed to the ECS first, THEN the scene!
+	// region Event callbacks. Passed to the ECS first, THEN here!
 	// `NerdLayer` callers:
 	protected void callOnCurrSceneActiveLayers(final Consumer<NerdLayer> p_eventCallbackMethod) {
 		if (p_eventCallbackMethod != null)

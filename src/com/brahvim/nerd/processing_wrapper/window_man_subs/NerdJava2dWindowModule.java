@@ -1,6 +1,5 @@
 package com.brahvim.nerd.processing_wrapper.window_man_subs;
 
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 
@@ -60,8 +59,7 @@ public class NerdJava2dWindowModule extends NerdWindowModule {
 
 	@Override
 	public PVector getSizeAsPVector() {
-		final Dimension size = this.window.getSize();
-		return new PVector((float) size.getWidth(), (float) size.getHeight());
+		return new PVector(this.window.getWidth(), this.window.getHeight());
 	}
 
 	// public Image getIcon() {
