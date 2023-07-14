@@ -7,6 +7,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -16,8 +17,8 @@ import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
-import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowModule;
-import com.jogamp.newt.opengl.GLWindow;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdInputModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdWindowModule;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.glu.GLU;
 
@@ -37,6 +38,7 @@ import processing.opengl.PJOGL;
  */
 public class NerdSketch extends PApplet {
 
+	// region Inner classes.
 	protected final class NerdSketchOnlyAssetsModule extends NerdAssetsModule {
 
 		protected NerdSketchOnlyAssetsModule(final NerdSketch p_sketch) {
@@ -59,7 +61,6 @@ public class NerdSketch extends PApplet {
 
 	}
 
-	// region Inner classes.
 	/** Certain setting for the parent {@link NerdSketch}. */
 	public class NerdSketchSettings {
 
@@ -158,10 +159,9 @@ public class NerdSketch extends PApplet {
 	protected PGL pgl;
 	protected PGraphicsOpenGL glGraphics;
 
-	protected NerdInputModule input;
-	protected NerdScenesModule scenes;
-	protected NerdWindowModule window;
-	protected final LinkedHashSet<NerdModule> MODULES;
+	protected final NerdInputModule INPUT;
+	protected final NerdWindowModule WINDOW;
+	protected final ArrayList<NerdModule> MODULES;
 	protected final HashMap<Class<? extends NerdModule>, NerdModule> CLASSES_TO_MODULES_MAP;
 
 	// Timers! (`millis()` returns `int`s!):
@@ -180,44 +180,70 @@ public class NerdSketch extends PApplet {
 		final LinkedHashSet<Function<NerdSketch, NerdModule>> nerdModulesToAssign = new LinkedHashSet<>(0);
 		p_settings.nerdModulesInstantiator.accept(nerdModulesToAssign);
 
-		this.MODULES = new LinkedHashSet<>(nerdModulesToAssign.size());
+		this.MODULES = new ArrayList<>(nerdModulesToAssign.size());
 		this.CLASSES_TO_MODULES_MAP = new HashMap<>(0);
 
+		// Construct modules using the provided `Function`s, and add them to the map:
 		for (final Function<NerdSketch, NerdModule> f : nerdModulesToAssign)
 			try {
+
+				Objects.requireNonNull(f,
+						"Could not instantiate a `NerdModule` due to the supplying function being `null`.");
+
 				final NerdModule module = f.apply(this);
+				Objects.requireNonNull(module,
+						"Could not include a `NerdModule` due to the it being `null`.");
+
+				final Class<? extends NerdModule> moduleClass = module.getClass();
+
+				// If we already have a certain `NerdModule`,
+				if (this.CLASSES_TO_MODULES_MAP.get(moduleClass) == null) {
+					// ..We update it in our map,
+					this.CLASSES_TO_MODULES_MAP.put(moduleClass, module);
+
+					// ..We replace the existing one,
+					this.MODULES.removeIf(m -> m.getClass().equals(moduleClass));
+
+					// ..Add the new one at the new position:
+					this.MODULES.add(module);
+
+					// ..and continue the loop!:
+					continue;
+				}
+
+				// Otherwise, just add as usual.
+
 				this.MODULES.add(module);
-				this.CLASSES_TO_MODULES_MAP.put(module.getClass(), module);
+				this.CLASSES_TO_MODULES_MAP.put(moduleClass, module);
+
 			} catch (final Exception e) {
 				System.err.println("An exception occured when trying to instantiate `NerdModule`s:");
 				e.printStackTrace();
 			}
 
-		Objects.requireNonNull(this.MODULES, "`NerdSketch::MODULES` is `null`!");
-
+		// Call `NerdModule::sketchConstructed()` on all `NerdModule`s:
 		for (final NerdModule m : this.MODULES) {
 			this.CLASSES_TO_MODULES_MAP.put(m.getClass(), m);
 			m.sketchConstructed(p_settings);
 		}
 
+		// Assign `NerdModuleSettings` to all `NerdModule`s. ...`Theta(n^2)` style!:
 		for (final NerdModule m : this.MODULES) {
-			final var moduleSettings = p_settings.nerdModulesSettings.get(m.getClass());
-			if (moduleSettings != null)
-				m.assignModuleSettings(moduleSettings);
+			for (final var e : p_settings.nerdModulesSettings.entrySet())
+				m.assignModuleSettings(e.getValue());
+
+			// Faster code:
+			// final var moduleSettings = p_settings.nerdModulesSettings.get(m.getClass());
+			// if (moduleSettings != null)
+			// m.assignModuleSettings(moduleSettings);
 		}
-
-		this.input = this.getNerdModule(NerdInputModule.class);
-		this.window = this.getNerdModule(NerdGlWindowModule.class);
-
-		// TODO: Move `this.scenes` references OUT completely!
-		this.scenes = this.getNerdModule(NerdScenesModule.class);
-
-		this.ASSETS = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
-		// Some default settings:
-
 		// endregion
 
-		// region Setting OpenGL renderer icon.
+		this.INPUT = this.getNerdModule(NerdInputModule.class);
+		this.WINDOW = this.getNerdModule(NerdWindowModule.class);
+		this.ASSETS = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
+
+		// region Setting the icon of the OpenGL renderer's window.
 		if (this.SKETCH_SETTINGS.USES_OPENGL)
 			PJOGL.setIcon(this.SKETCH_SETTINGS.ICON_PATH);
 		// endregion
@@ -251,19 +277,19 @@ public class NerdSketch extends PApplet {
 				this.SKETCH_SETTINGS.INIT_HEIGHT,
 				this.SKETCH_SETTINGS.RENDERER_NAME);
 
-		// for (final Consumer<NerdSketch> c : this.SETTINGS_LISTENERS)
-		// if (c != null)
-		// c.accept(this);
+		for (final NerdModule m : this.MODULES)
+			m.settings();
 	}
 
 	@Override
 	public void setup() {
-		this.MODULES.forEach(NerdModule::preSetup);
+		for (final NerdModule m : this.MODULES)
+			m.preSetup();
 
 		if (this.SKETCH_SETTINGS.USES_OPENGL) {
-			this.glu = new GLU();
-			this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
-			this.gl = ((GLWindow) this.window.getNativeObject()).getGL();
+			// TODO! // this.glu = new GLU();
+			// this.glGraphics = (PGraphicsOpenGL) super.getGraphics();
+			// this.gl = ((GLWindow) this.window.getNativeObject()).getGL();
 		}
 
 		super.registerMethod("pre", this);
@@ -283,18 +309,21 @@ public class NerdSketch extends PApplet {
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
 		if (this.SKETCH_SETTINGS.INITIALLY_RESIZABLE)
-			this.window.setResizable(true);
+			this.WINDOW.setResizable(true);
 
-		this.window.centerWindow();
+		this.WINDOW.centerWindow();
 
-		this.MODULES.forEach(NerdModule::postSetup);
+		for (final NerdModule m : this.MODULES)
+			m.postSetup();
 	}
 
 	public void pre() {
 		if (this.SKETCH_SETTINGS.USES_OPENGL)
 			this.pgl = super.beginPGL();
 
-		this.MODULES.forEach(NerdModule::pre);
+		for (final NerdModule m : this.MODULES)
+			m.pre();
+
 	}
 
 	@Override
@@ -306,22 +335,20 @@ public class NerdSketch extends PApplet {
 		this.nerdGraphics.applyCameraIfCan();
 
 		// Process all `NerdModule`s:
-		this.MODULES.forEach(NerdModule::preDraw);
-		this.MODULES.forEach(NerdModule::draw);
-		this.MODULES.forEach(NerdModule::postDraw);
+		for (final NerdModule m : this.MODULES) {
+			m.preDraw();
+			m.draw();
+			m.postDraw();
+		}
 	}
 
 	public void post() {
-		// this.sceneGraphics.endDraw();
-		// // if (this.sceneGraphics.hasRendered())
-		// this.image(this.sceneGraphics.getUnderlyingBuffer());
-		// this.sceneGraphics.beginDraw();
-
 		// These help complete background work:
-		this.MODULES.forEach(NerdModule::post);
+		for (final NerdModule m : this.MODULES)
+			m.post();
 
 		// THIS ACTUALLY WORKED! How does the JVM interpret pointers?:
-		// this.image(this.sceneGraphics);
+		// super.image(this.nerdGraphics.getUnderlyingBuffer(), 0, 0);
 
 		// ...Because apparently Processing allows rendering here!:
 		if (this.SKETCH_SETTINGS.USES_OPENGL)
@@ -330,13 +357,17 @@ public class NerdSketch extends PApplet {
 
 	@Override
 	public void exit() {
-		this.MODULES.forEach(NerdModule::exit);
+		for (final NerdModule m : this.MODULES)
+			m.exit();
+
 		super.exit();
 	}
 
 	@Override
 	public void dispose() {
-		this.MODULES.forEach(NerdModule::dispose);
+		for (final NerdModule m : this.MODULES)
+			m.dispose();
+
 		super.dispose();
 	}
 	// endregion
@@ -345,29 +376,39 @@ public class NerdSketch extends PApplet {
 	// region Mouse events.
 	@Override
 	public void mousePressed() {
-		this.MODULES.forEach(NerdModule::mousePressed);
+		for (final NerdModule m : this.MODULES)
+			m.mousePressed();
+
 	}
 
 	@Override
 	public void mouseReleased() {
-		this.MODULES.forEach(NerdModule::mouseReleased);
+		for (final NerdModule m : this.MODULES)
+			m.mouseReleased();
+
 	}
 
 	@Override
 	public void mouseMoved() {
-		this.MODULES.forEach(NerdModule::mouseMoved);
+		for (final NerdModule m : this.MODULES)
+			m.mouseMoved();
+
 	}
 
 	// JUST SO YA' KNOW!: On Android, `mouseClicked()` has been left unused.
 	// AND, AND, ALSO!: On PC, it's called after `mouseReleased()`, AWT docs say.
 	@Override
 	public void mouseClicked() {
-		this.MODULES.forEach(NerdModule::mouseClicked);
+		for (final NerdModule m : this.MODULES)
+			m.mouseClicked();
+
 	}
 
 	@Override
 	public void mouseDragged() {
-		this.MODULES.forEach(NerdModule::mouseDragged);
+		for (final NerdModule m : this.MODULES)
+			m.mouseDragged();
+
 	}
 
 	@Override
@@ -379,7 +420,9 @@ public class NerdSketch extends PApplet {
 	// region Keyboard events.
 	@Override
 	public void keyTyped() {
-		this.MODULES.forEach(NerdModule::keyTyped);
+		for (final NerdModule m : this.MODULES)
+			m.keyTyped();
+
 	}
 
 	@Override
@@ -391,53 +434,84 @@ public class NerdSketch extends PApplet {
 		if (this.SKETCH_SETTINGS.canFullscreen) {
 			if (this.SKETCH_SETTINGS.altEnterFullscreen
 					&& super.keyCode == KeyEvent.VK_ENTER
-					&& this.input.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
-				this.window.fullscreen = !this.window.fullscreen;
+					&& this.INPUT.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
+				this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
 			else if (this.SKETCH_SETTINGS.f11Fullscreen) {
 				// `KeyEvent.VK_ADD` is `107`, but here, it's actually `F11`!:
 				if (this.SKETCH_SETTINGS.USES_OPENGL && super.keyCode == 107
 						|| super.keyCode == KeyEvent.VK_F11)
-					this.window.fullscreen = !this.window.fullscreen;
+					this.WINDOW.fullscreen = !this.WINDOW.fullscreen;
 			}
 		}
 
-		this.MODULES.forEach(NerdModule::keyPressed);
+		for (final NerdModule m : this.MODULES)
+			m.keyPressed();
+
 	}
 
 	@Override
 	public void keyReleased() {
-		this.MODULES.forEach(NerdModule::keyReleased);
+		for (final NerdModule m : this.MODULES)
+			m.keyReleased();
+
 	}
 	// endregion
 
 	// region Touch events.
 	public void touchStarted() {
-		this.MODULES.forEach(NerdModule::touchStarted);
+		for (final NerdModule m : this.MODULES)
+			m.touchStarted();
+
 	}
 
 	public void touchMoved() {
-		this.MODULES.forEach(NerdModule::touchMoved);
+		for (final NerdModule m : this.MODULES)
+			m.touchMoved();
+
 	}
 
 	public void touchEnded() {
-		this.MODULES.forEach(NerdModule::touchEnded);
+		for (final NerdModule m : this.MODULES)
+			m.touchEnded();
+
 	}
 	// endregion
 
-	// region Window focus events.
+	// region Window and display events.
+	public void monitorChanged() {
+		for (final NerdModule m : this.MODULES)
+			m.focusGained();
+	}
+
+	public void fullscreenChanged(final boolean p_state) {
+		for (final NerdModule m : this.MODULES)
+			m.fullscreenChanged(p_state);
+	}
+
+	@Override
+	public void frameMoved(final int x, final int y) {
+		System.out.println("`NerdSketch::frameMoved()`");
+	}
+
+	@Override
+	public void frameResized(final int w, final int h) {
+		System.out.println("`NerdSketch::frameResized()`");
+	}
+
 	@Override
 	public void focusGained() {
 		super.focusGained();
 		super.focused = true;
-		this.MODULES.forEach(NerdModule::focusGained);
-
+		for (final NerdModule m : this.MODULES)
+			m.focusGained();
 	}
 
 	@Override
 	public void focusLost() {
 		super.focusLost();
 		super.focused = false;
-		this.MODULES.forEach(NerdModule::focusLost);
+		for (final NerdModule m : this.MODULES)
+			m.focusLost();
 	}
 	// endregion
 	// endregion

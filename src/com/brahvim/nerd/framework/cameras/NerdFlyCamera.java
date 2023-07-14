@@ -2,10 +2,10 @@ package com.brahvim.nerd.framework.cameras;
 
 import java.awt.Point;
 
-import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
-import com.brahvim.nerd.processing_wrapper.NerdInputModule;
-import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdDisplayModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdInputModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PApplet;

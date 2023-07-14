@@ -1,7 +1,7 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -23,7 +23,7 @@ public abstract class NerdModule {
 		return this.SKETCH;
 	}
 
-	protected LinkedHashSet<NerdModule> getSketchModules() {
+	protected ArrayList<NerdModule> getSketchModules() {
 		return this.SKETCH.MODULES;
 	}
 

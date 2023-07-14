@@ -1,15 +1,18 @@
-package com.brahvim.nerd.processing_wrapper;
+package com.brahvim.nerd.processing_wrapper.necessary_modules;
 
 import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.Point;
 
+import com.brahvim.nerd.processing_wrapper.NerdModule;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
+
 public class NerdDisplayModule extends NerdModule {
 
 	// region Fields!
-	protected final NerdWindowModule WINDOW;
-
+	protected NerdInputModule input;
+	protected NerdWindowModule window;
 	protected GraphicsDevice previousMonitor, currentMonitor;
 
 	// region Display properties.
@@ -38,8 +41,13 @@ public class NerdDisplayModule extends NerdModule {
 
 	public NerdDisplayModule(final NerdSketch p_sketch) {
 		super(p_sketch);
+	}
+
+	@Override
+	protected void preSetup() {
 		this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
-		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowModule.class);
+		this.input = super.SKETCH.getNerdModule(NerdInputModule.class);
+		this.window = super.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
 	// Referenced in `NerdSketch::setup()` - only time it's been called out there.
@@ -103,12 +111,12 @@ public class NerdDisplayModule extends NerdModule {
 		if (this.previousMonitor != this.currentMonitor) {
 			this.previousMonitor = this.currentMonitor;
 			this.updateDisplayParameters();
-			for (final NerdModule m : super.getSketchModules())
-				m.monitorChanged();
+			super.SKETCH.monitorChanged();
 		}
 
 		if (super.SKETCH.focused)
-			this.currentMonitor = this.getGraphicsDeviceAt(super.SKETCH.input.GLOBAL_MOUSE_POINT);
+			this.currentMonitor = this
+					.getGraphicsDeviceAt(input.GLOBAL_MOUSE_POINT);
 
 		if (this.currentMonitor == null)
 			this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;

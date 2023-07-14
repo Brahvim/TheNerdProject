@@ -4,7 +4,7 @@ import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
-import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdWindowModule;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd.openal.AlBuffer;
 

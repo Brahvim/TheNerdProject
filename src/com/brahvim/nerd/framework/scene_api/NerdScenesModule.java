@@ -9,12 +9,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
-import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
-import com.brahvim.nerd.processing_wrapper.NerdInputModule;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdDisplayModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdInputModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdWindowModule;
 
 public class NerdScenesModule extends NerdModule {
 

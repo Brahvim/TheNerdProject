@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdWindowModule;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

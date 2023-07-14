@@ -1,11 +1,13 @@
-package com.brahvim.nerd.processing_wrapper;
+package com.brahvim.nerd.processing_wrapper.necessary_modules;
 
 import java.awt.Point;
 import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.processing_callback_interfaces.hardware.window.NerdWindowListener;
-import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowModule;
-import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdJava2dWindowModule;
+import com.brahvim.nerd.processing_wrapper.NerdModule;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.window_module_impl.NerdGlWindowModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.window_module_impl.NerdJava2dWindowModule;
 
 import processing.core.PImage;
 import processing.core.PSurface;
@@ -191,8 +193,7 @@ public abstract class NerdWindowModule extends NerdModule {
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == this.width || this.pheight == this.height)) {
 			this.updateWindowParameters();
-			for (final NerdModule m : super.getSketchModules())
-				m.fullscreenChanged(this.fullscreen);
+			super.SKETCH.fullscreenChanged(this.fullscreen);
 		}
 	}
 
@@ -201,8 +202,7 @@ public abstract class NerdWindowModule extends NerdModule {
 		this.postImpl();
 
 		if (this.pfullscreen != this.fullscreen)
-			for (final NerdModule m : super.getSketchModules())
-				m.fullscreenChanged(this.fullscreen);
+			super.SKETCH.fullscreenChanged(this.fullscreen);
 
 		this.pfullscreen = this.fullscreen;
 		this.pcursorVisible = this.cursorVisible;

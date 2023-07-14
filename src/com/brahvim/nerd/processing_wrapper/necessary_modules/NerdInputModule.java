@@ -1,10 +1,13 @@
-package com.brahvim.nerd.processing_wrapper;
+package com.brahvim.nerd.processing_wrapper.necessary_modules;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.brahvim.nerd.processing_wrapper.NerdModule;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -70,6 +73,7 @@ public class NerdInputModule extends NerdModule {
 			mouseScrollDelta, pmouseScrollDelta,
 			totalMouseScroll, ptotalMouseScroll;
 
+	protected NerdWindowModule window;
 	protected final ArrayList<Integer> KEYS_HELD = new ArrayList<>(5), PREV_FRAME_KEYS_HELD = new ArrayList<>(5);
 	// endregion
 	// endregion
@@ -79,14 +83,19 @@ public class NerdInputModule extends NerdModule {
 	}
 
 	@Override
+	protected void preSetup() {
+		this.window = super.SKETCH.getNerdModule(NerdWindowModule.class);
+	}
+
+	@Override
 	protected void pre() {
 		this.GLOBAL_MOUSE_POINT.setLocation(MouseInfo.getPointerInfo().getLocation());
 		this.GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_POINT.x, this.GLOBAL_MOUSE_POINT.y);
 
 		this.CURR_FRAME_MOUSE_CENTER_OFFSET_VECTOR.set(
-				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
-				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
-		this.CURR_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
+				super.SKETCH.mouseX - super.SKETCH.width * 0.5f,
+				super.SKETCH.mouseY - super.SKETCH.height * 0.5f);
+		this.CURR_FRAME_MOUSE_VECTOR.set(super.SKETCH.mouseX, super.SKETCH.mouseY);
 	}
 
 	@Override
@@ -95,9 +104,9 @@ public class NerdInputModule extends NerdModule {
 		this.PREV_FRAME_GLOBAL_MOUSE_VECTOR.set(this.GLOBAL_MOUSE_VECTOR);
 
 		this.PREV_FRAME_MOUSE_CENTER_OFFSET_VECTOR.set(
-				this.SKETCH.mouseX - this.SKETCH.width * 0.5f,
-				this.SKETCH.mouseY - this.SKETCH.height * 0.5f);
-		this.PREV_FRAME_MOUSE_VECTOR.set(this.SKETCH.mouseX, this.SKETCH.mouseY);
+				super.SKETCH.mouseX - super.SKETCH.width * 0.5f,
+				super.SKETCH.mouseY - super.SKETCH.height * 0.5f);
+		this.PREV_FRAME_MOUSE_VECTOR.set(super.SKETCH.mouseX, super.SKETCH.mouseY);
 
 		this.PREV_FRAME_KEYS_HELD.clear();
 		this.PREV_FRAME_KEYS_HELD.addAll(this.KEYS_HELD);
@@ -120,9 +129,9 @@ public class NerdInputModule extends NerdModule {
 	// region Keyboard events.
 	@Override
 	public void keyTyped() {
-		this.key = this.SKETCH.key;
-		this.keyCode = this.SKETCH.keyCode;
-		this.keyPressed = this.SKETCH.keyPressed;
+		this.key = super.SKETCH.key;
+		this.keyCode = super.SKETCH.keyCode;
+		this.keyPressed = super.SKETCH.keyPressed;
 	}
 
 	@Override
@@ -133,9 +142,9 @@ public class NerdInputModule extends NerdModule {
 		this.pkeyPressed = this.keyPressed;
 
 		// ...And get the latest states!:
-		this.key = this.SKETCH.key;
-		this.keyCode = this.SKETCH.keyCode;
-		this.keyPressed = this.SKETCH.keyPressed;
+		this.key = super.SKETCH.key;
+		this.keyCode = super.SKETCH.keyCode;
+		this.keyPressed = super.SKETCH.keyPressed;
 
 		synchronized (this.KEYS_HELD) {
 			this.KEYS_HELD.add(this.keyCode);
@@ -146,9 +155,9 @@ public class NerdInputModule extends NerdModule {
 	public void keyReleased() {
 		this.pmouseButton = this.mouseButton;
 
-		this.key = this.SKETCH.key;
-		this.keyCode = this.SKETCH.keyCode;
-		this.keyPressed = this.SKETCH.keyPressed;
+		this.key = super.SKETCH.key;
+		this.keyCode = super.SKETCH.keyCode;
+		this.keyPressed = super.SKETCH.keyPressed;
 
 		try {
 			synchronized (this.KEYS_HELD) {
@@ -164,8 +173,8 @@ public class NerdInputModule extends NerdModule {
 		this.pmouseButton = this.mouseButton;
 		this.pmousePressed = this.mousePressed;
 
-		this.mouseButton = this.SKETCH.mouseButton;
-		this.mousePressed = this.SKETCH.mousePressed;
+		this.mouseButton = super.SKETCH.mouseButton;
+		this.mousePressed = super.SKETCH.mousePressed;
 
 		this.mouseLeft = this.mouseButton == PConstants.LEFT && this.mousePressed;
 		this.mouseMid = this.mouseButton == PConstants.CENTER && this.mousePressed;
@@ -196,13 +205,13 @@ public class NerdInputModule extends NerdModule {
 		this.PREV_MOUSE_VECTOR.set(this.MOUSE_VECTOR);
 		this.PREV_MOUSE_CENTER_OFFSET.set(this.MOUSE_CENTER_OFFSET);
 
-		this.mouseX = this.SKETCH.mouseX;
-		this.mouseY = this.SKETCH.mouseY;
+		this.mouseX = super.SKETCH.mouseX;
+		this.mouseY = super.SKETCH.mouseY;
 
 		this.MOUSE_VECTOR.set(this.mouseX, this.mouseY);
 		this.MOUSE_CENTER_OFFSET.set(
-				this.SKETCH.mouseX - this.SKETCH.window.cx,
-				this.SKETCH.mouseY - this.SKETCH.window.cy);
+				super.SKETCH.mouseX - super.SKETCH.getNerdModule(NerdWindowModule.class).cx,
+				super.SKETCH.mouseY - window.cy);
 	}
 
 	@Override
@@ -212,7 +221,7 @@ public class NerdInputModule extends NerdModule {
 		this.literallyEveryMouseButtonCallback();
 
 		// this.pmouseX = this.mouseX; this.pmouseY = this.mouseY;
-		// this.mouseX = this.SKETCH.mouseX; this.mouseY = this.SKETCH.mouseY;
+		// this.mouseX = super.SKETCH.mouseX; this.mouseY = super.SKETCH.mouseY;
 	}
 
 	@Override
@@ -387,12 +396,12 @@ public class NerdInputModule extends NerdModule {
 	}
 
 	public char getTypedKey() {
-		if (NerdInputModule.isTypeable(this.SKETCH.key))
-			return this.SKETCH.key;
+		if (NerdInputModule.isTypeable(super.SKETCH.key))
+			return super.SKETCH.key;
 
 		// New way to do this in Java!:
 		// (...as seen in [`java.lang.`]`Long.class`, on line 217, in OpenJDK `17`!)
-		return switch (this.SKETCH.keyCode) {
+		return switch (super.SKETCH.keyCode) {
 			case PConstants.BACKSPACE -> '\b';
 			case PConstants.RETURN -> '\n';
 			case PConstants.ENTER -> '\n';

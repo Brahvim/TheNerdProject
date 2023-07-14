@@ -5,7 +5,7 @@ import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModuleSettings;
 import com.brahvim.nerd.openal.NerdAl;
 import com.brahvim.nerd.openal.NerdOpenAlModule;
-import com.brahvim.nerd.openal.NerdOpenAlModuleSettings;
+import com.brahvim.nerd.openal.NerdOpenAlModule.NerdOpenAlModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 
@@ -51,7 +51,7 @@ public class App {
 					return toRet;
 				})
 
-		;
+		/* ...the semi-colon is separate: */ ;
 
 		// Build the `NerdSketch`!:
 		final NerdSketch sketch = builder.build(p_args);

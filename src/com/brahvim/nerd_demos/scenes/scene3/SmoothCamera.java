@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
-import com.brahvim.nerd.processing_wrapper.NerdInputModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdInputModule;
 
 import processing.core.PApplet;
 import processing.core.PVector;

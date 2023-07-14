@@ -597,8 +597,8 @@ public class NerdGraphics {
 
 		this.begin2d();
 		this.GRAPHICS.image(p_bgImage,
-				this.SKETCH.window.cx, this.SKETCH.window.cy,
-				this.SKETCH.window.width, this.SKETCH.window.height);
+				this.SKETCH.WINDOW.cx, this.SKETCH.WINDOW.cy,
+				this.SKETCH.WINDOW.width, this.SKETCH.WINDOW.height);
 		this.end2d();
 	}
 
@@ -789,17 +789,17 @@ public class NerdGraphics {
 	}
 
 	public void perspective(final float p_fov, final float p_near, final float p_far) {
-		this.GRAPHICS.perspective(p_fov, this.SKETCH.window.scr, p_near, p_far);
+		this.GRAPHICS.perspective(p_fov, this.SKETCH.WINDOW.scr, p_near, p_far);
 	}
 
 	public void ortho(final NerdAbstractCamera p_cam) {
-		this.GRAPHICS.ortho(-this.SKETCH.window.cx, this.SKETCH.window.cx, -this.SKETCH.window.cy,
-				this.SKETCH.window.cy, p_cam.near, p_cam.far);
+		this.GRAPHICS.ortho(-this.SKETCH.WINDOW.cx, this.SKETCH.WINDOW.cx, -this.SKETCH.WINDOW.cy,
+				this.SKETCH.WINDOW.cy, p_cam.near, p_cam.far);
 	}
 
 	public void ortho(final float p_near, final float p_far) {
-		this.GRAPHICS.ortho(-this.SKETCH.window.cx, this.SKETCH.window.cx, -this.SKETCH.window.cy,
-				this.SKETCH.window.cy, p_near, p_far);
+		this.GRAPHICS.ortho(-this.SKETCH.WINDOW.cx, this.SKETCH.WINDOW.cx, -this.SKETCH.WINDOW.cy,
+				this.SKETCH.WINDOW.cy, p_near, p_far);
 	}
 
 	/**
@@ -875,12 +875,12 @@ public class NerdGraphics {
 	}
 
 	public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
-		return this.worldVec(this.SKETCH.input.mouseX, this.SKETCH.input.mouseY,
+		return this.worldVec(this.SKETCH.INPUT.mouseX, this.SKETCH.INPUT.mouseY,
 				this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
 	}
 
 	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
-		return this.worldVec(this.SKETCH.input.mouseX, this.SKETCH.input.mouseY, p_distanceFromCamera);
+		return this.worldVec(this.SKETCH.INPUT.mouseX, this.SKETCH.INPUT.mouseY, p_distanceFromCamera);
 	}
 	// endregion
 

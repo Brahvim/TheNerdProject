@@ -5,6 +5,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdDisplayModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdInputModule;
+import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdWindowModule;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -19,7 +22,7 @@ import processing.core.PConstants;
  */
 public abstract class NerdCustomSketchBuilder {
 
-	// region Fields, constructor, building...
+	// region Fields and constructor!
 	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchBuilderSettings` cannot be `null`";
 
 	private final NerdSketchBuilderSettings BUILD_SETTINGS;
@@ -27,39 +30,31 @@ public abstract class NerdCustomSketchBuilder {
 	protected NerdCustomSketchBuilder() {
 		this.BUILD_SETTINGS = new NerdSketchBuilderSettings();
 	}
+	// endregion
 
-	// Getting this passed in here to allow for fake arguments.
+	// region Building.
+	// Getting `p_javaMainArgs` passed in here to allow for fake arguments.
 	// I know `sun.java.command` exists!
 	// (System property containing the strings passed to `main` with spaces between
 	// them. Accessible via `System.getProperty()` like all other ones!)
+
 	public final NerdSketch build(final String[] p_javaMainArgs) {
 		// `NerdModule`s are constructed by the `NerdSketch` constructor.
 
-		// Here, I:
-		// Create two separate `LinkedHashSet`s. One is 'immutable' to the user.
-		// Put all 'default' `NerdModule`s into the immutable one.
-		// Ask the user to fill the other set. If they repeat a `NerdModule`,
-		// remove it from the 'immutable' set! Let users rule!
-
-		final LinkedHashSet<Function<NerdSketch, NerdModule>>
-		/*	 */ defaultModules = this.supplyDefaultModules(),
-				userDefinedModules = new LinkedHashSet<>(0);
-
-		// Remove `NerdModule`s whose order was re-defined!:
-		this.supplyUserDefinedModules(userDefinedModules);
-		defaultModules.removeAll(userDefinedModules);
+		// In order to decrease code over there, and make it easier to modify
+		// the `NerdModule`s used, ...or their order, we keep the code for initializing
+		// them ready, beforehand!:
 
 		this.BUILD_SETTINGS.nerdModulesInstantiator = s -> {
-			for (final Function<NerdSketch, NerdModule> f : defaultModules)
+			final LinkedHashSet<Function<NerdSketch, NerdModule>> userDefinedModules = new LinkedHashSet<>(0, 1);
+			this.supplyUserDefinedModules(userDefinedModules);
+
+			for (final Function<NerdSketch, NerdModule> f : this.supplyDefaultModules())
 				s.add(f);
 
 			for (final Function<NerdSketch, NerdModule> f : userDefinedModules)
 				s.add(f);
 		};
-
-		// In order to decrease code over there, and make it easier to modify
-		// the `NerdModule`s used, ...or their order, we keep the code for initializing
-		// them ready, beforehand!:
 
 		final NerdSketch constructedSketch = this.createNerdSketch(p_javaMainArgs, this.BUILD_SETTINGS);
 		NerdCustomSketchBuilder.runSketch(constructedSketch, p_javaMainArgs);
@@ -67,7 +62,7 @@ public abstract class NerdCustomSketchBuilder {
 	}
 
 	private LinkedHashSet<Function<NerdSketch, NerdModule>> supplyDefaultModules() {
-		final LinkedHashSet<Function<NerdSketch, NerdModule>> toRet = new LinkedHashSet<>(4);
+		final LinkedHashSet<Function<NerdSketch, NerdModule>> toRet = new LinkedHashSet<>(5);
 
 		toRet.add(s -> s.new NerdSketchOnlyAssetsModule(s));
 
@@ -152,7 +147,7 @@ public abstract class NerdCustomSketchBuilder {
 
 	public <ModuleT extends NerdModule> NerdCustomSketchBuilder setNerdModuleSettings(
 			final Class<ModuleT> p_moduleClass,
-			final Supplier<NerdModuleSettings<ModuleT>> p_settingsSupplier) {
+			final Supplier<NerdModuleSettings<?>> p_settingsSupplier) {
 		this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass, p_settingsSupplier.get());
 		return this;
 	}
