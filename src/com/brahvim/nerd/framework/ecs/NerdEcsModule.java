@@ -1,7 +1,6 @@
 package com.brahvim.nerd.framework.ecs;
 
 import java.io.File;
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,28 +11,18 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.NerdTriConsumer;
+import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
+import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
 import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.net.NerdUdpSocket;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
+import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 
 public class NerdEcsModule extends NerdModule {
-
-	// region Inner-classes.
-	/* `package` */ static class NerdEntitySerializationPacket implements Serializable {
-
-		private final String NAME;
-		private final NerdEcsEntity ENTITY;
-
-		public NerdEntitySerializationPacket(final String p_name, final NerdEcsEntity p_entity) {
-			this.NAME = p_name;
-			this.ENTITY = p_entity;
-		}
-
-	}
-	// endregion
 
 	// region Fields.
 	public static final long serialVersionUID = -6488574946L;
@@ -53,18 +42,19 @@ public class NerdEcsModule extends NerdModule {
 	protected NerdEcsSystem<?>[] ecsSystems;
 	// endregion
 
-	// region Constructors.
+	// region Construction.
 	public NerdEcsModule(final NerdSketch p_sketch) {
 		super(p_sketch);
 		this.setSystemsOrder(NerdEcsModule.DEFAULT_ECS_SYSTEMS_ORDER);
 	}
 
-	@SafeVarargs
-	public NerdEcsModule(
-			final NerdSketch p_sketch,
-			final Class<? extends NerdEcsSystem<?>>... p_ecsSystemsOrder) {
-		super(p_sketch);
-		this.setSystemsOrder(p_ecsSystemsOrder);
+	@Override
+	protected void setModuleSettings(final NerdModuleSettings<?> p_settings) {
+		if (p_settings instanceof final NerdEcsModuleSettings settings) {
+			this.setSystemsOrder(settings.ecsSystemsOrder);
+		} else {
+			this.setSystemsOrder(NerdEcsModule.DEFAULT_ECS_SYSTEMS_ORDER);
+		}
 	}
 	// endregion
 
@@ -105,14 +95,18 @@ public class NerdEcsModule extends NerdModule {
 	}
 	// endregion
 
-	// region Sketch workflow callbacks (declared as `protected`).
-	@SuppressWarnings("unchecked")
-	protected synchronized void preload() {
-		this.callOnAllSystems(NerdEcsSystem::preload);
+	// region Workflow callbacks (declared as `protected`).
+	@Override
+	protected void sketchConstructed(final NerdSketchBuilderSettings p_settings) {
+		super.SKETCH.getNerdModule(NerdScenesModule.class).addSceneChangedListener(this::sceneChanged);
 	}
 
+	// From `NerdScenesModule`:
 	@SuppressWarnings("unchecked")
-	protected void sceneChanged() {
+	protected void sceneChanged(
+			final NerdScenesModule p_scenesModule,
+			final Class<? extends NerdScene> p_previousClass,
+			final Class<? extends NerdScene> p_currentClass) {
 		this.callOnAllSystems(NerdEcsSystem::sceneChanged);
 	}
 
@@ -321,7 +315,7 @@ public class NerdEcsModule extends NerdModule {
 		if ("".equals(name))
 			return new byte[0];
 
-		return NerdByteSerialUtils.toBytes(new NerdEntitySerializationPacket(name, p_entity));
+		return NerdByteSerialUtils.toBytes(new NerdEcsEntityPacket(name, p_entity));
 	}
 
 	public byte[] serializeComponent(final NerdEcsComponent p_component) {

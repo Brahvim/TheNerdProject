@@ -32,8 +32,8 @@ public class NerdScenesModule extends NerdModule {
 	public interface NerdScenesModuleSceneChangedListener {
 		void sceneChanged(
 				NerdScenesModule p_scenesModule,
-				Class<? extends NerdScene> previous,
-				Class<? extends NerdScene> current);
+				Class<? extends NerdScene> p_previousSceneClass,
+				Class<? extends NerdScene> p_currentSceneClass);
 	}
 
 	/**

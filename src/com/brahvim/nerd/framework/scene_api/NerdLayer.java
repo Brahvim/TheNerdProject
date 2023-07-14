@@ -28,11 +28,10 @@ public abstract class NerdLayer {
 	protected NerdGraphics GRAPHICS;
 	protected NerdInputModule INPUT;
 	protected NerdAssetsModule ASSETS;
-	protected NerdScenesModule MANAGER;
 	protected NerdWindowModule WINDOW;
-	protected NerdAbstractCamera CAMERA;
-	protected NerdBridgedEcsModule ECS;
+	protected NerdScenesModule MANAGER;
 	protected NerdDisplayModule DISPLAY;
+	protected NerdAbstractCamera CAMERA;
 
 	protected NerdScene SCENE;
 	// endregion

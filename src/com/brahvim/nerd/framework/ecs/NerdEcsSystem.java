@@ -29,9 +29,6 @@ public abstract class NerdEcsSystem<SystemComponentT extends NerdEcsComponent> i
 	}
 
 	// region Sketch workflow callbacks.
-	protected synchronized void preload(final HashSet<SystemComponentT> p_components) {
-	}
-
 	protected void sceneChanged(final HashSet<SystemComponentT> p_components) {
 	}
 

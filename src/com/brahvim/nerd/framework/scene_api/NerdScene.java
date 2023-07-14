@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
-import com.brahvim.nerd.framework.ecs.NerdEcsModule;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
@@ -33,16 +32,15 @@ public abstract class NerdScene {
 	// region `protected` fields.
 	// Forgive me for breaking naming conventions here.
 	// Forgive me. Please!
-	protected NerdEcsModule ECS;
 	protected NerdSketch SKETCH;
 	protected NerdSceneState STATE;
 	protected NerdGraphics GRAPHICS;
 	protected NerdInputModule INPUT;
 	protected NerdAssetsModule ASSETS;
-	protected NerdScenesModule MANAGER;
 	protected NerdWindowModule WINDOW;
-	protected NerdAbstractCamera CAMERA;
+	protected NerdScenesModule MANAGER;
 	protected NerdDisplayModule DISPLAY;
+	protected NerdAbstractCamera CAMERA;
 	// endregion
 
 	// region `private` fields.
@@ -430,6 +428,7 @@ public abstract class NerdScene {
 			toRet.ASSETS = toRet.SCENE.ASSETS;
 			toRet.WINDOW = toRet.SCENE.WINDOW;
 			toRet.CAMERA = toRet.SCENE.CAMERA;
+
 			toRet.MANAGER = toRet.SCENE.MANAGER;
 			toRet.DISPLAY = toRet.SCENE.DISPLAY;
 			toRet.GRAPHICS = toRet.SCENE.GRAPHICS;

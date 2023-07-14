@@ -69,6 +69,8 @@ public abstract class NerdCustomSketchBuilder {
 	private LinkedHashSet<Function<NerdSketch, NerdModule>> supplyDefaultModules() {
 		final LinkedHashSet<Function<NerdSketch, NerdModule>> toRet = new LinkedHashSet<>(4);
 
+		toRet.add(s -> s.new NerdSketchOnlyAssetsModule(s));
+
 		toRet.add(NerdDisplayModule::new);
 
 		toRet.add(NerdWindowModule::createWindowModule);
