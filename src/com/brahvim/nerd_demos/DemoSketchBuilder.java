@@ -11,7 +11,7 @@ import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 
-public class NerdSketchBuilder extends NerdCustomSketchBuilder {
+public final class DemoSketchBuilder extends NerdCustomSketchBuilder {
 
 	@Override
 	protected NerdSketch createNerdSketch(final String[] p_javaMainArgs, final NerdSketchBuilderSettings p_settings) {
@@ -22,12 +22,7 @@ public class NerdSketchBuilder extends NerdCustomSketchBuilder {
 	protected void supplyUserDefinedModules(final LinkedHashSet<Function<NerdSketch, NerdModule>> p_set) {
 		p_set.add(NerdEcsModule::new);
 		p_set.add(NerdScenesModule::new); // Removes `NerdScenesModule` from the defaults, and puts it here!
-
-		p_set.add(a -> new NerdOpenAlModule(a, s -> { // `a` stands for... "Applet"?
-			// ...for `DemoScene3`!!!:
-			s.monoSources = Integer.MAX_VALUE;
-			s.stereoSources = Integer.MAX_VALUE;
-		}));
+		p_set.add(NerdOpenAlModule::new);
 	}
 
 }
