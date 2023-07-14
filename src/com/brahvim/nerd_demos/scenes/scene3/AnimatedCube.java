@@ -41,10 +41,10 @@ public class AnimatedCube extends TestEulerBody {
 				cameraPos.y + super.SKETCH.random(-window.cy, window.cy),
 				cameraPos.z + super.SKETCH.random(-600, 600));
 
-		super.acc.set(0.1f, 0.1f, 0.1f);
-		// super.SKETCH.random(-0.01f, 0.01f),
-		// super.SKETCH.random(-0.01f, 0.01f),
-		// super.SKETCH.random(-0.01f, 0.01f));
+		super.acc.set(
+				super.SKETCH.random(-0.01f, 0.01f),
+				super.SKETCH.random(-0.01f, 0.01f),
+				super.SKETCH.random(-0.01f, 0.01f));
 
 		super.rot.set(
 				super.SKETCH.random(PConstants.TAU),

@@ -8,6 +8,7 @@ import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModuleSettings;
 import com.brahvim.nerd.openal.AlBuffer;
 import com.brahvim.nerd.openal.al_asset_loaders.AlOggBufferAsset;
+import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
 import com.brahvim.nerd_demos.effect_layers.CinematicBarsLayer;
 
@@ -29,7 +30,7 @@ public class DemoScene3 extends NerdScene {
 	@Override
 	protected synchronized void preload() {
 		for (int i = 1; i != 5; i++)
-			ASSETS.addAsset(new AlOggBufferAsset("data/Pops/Pop" + i + ".ogg"));
+			ASSETS.addAsset(new AlOggBufferAsset(App.alUpdater, "data/Pops/Pop" + i + ".ogg"));
 	}
 
 	@Override

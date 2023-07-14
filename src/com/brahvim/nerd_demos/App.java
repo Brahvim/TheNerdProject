@@ -4,6 +4,7 @@ import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModuleSettings;
 import com.brahvim.nerd.openal.NerdAl;
+import com.brahvim.nerd.openal.NerdAlUpdater;
 import com.brahvim.nerd.openal.NerdOpenAlModule;
 import com.brahvim.nerd.openal.NerdOpenAlModule.NerdOpenAlModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -28,6 +29,7 @@ public class App {
 	 */
 
 	public static NerdAl openAl;
+	public static NerdAlUpdater alUpdater;
 	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS = DemoScene3.class;
 	// LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
 
@@ -53,8 +55,10 @@ public class App {
 		// Build the `NerdSketch`!:
 		final NerdSketch sketch = builder.build(p_args);
 
-		// Get our `NerdAl` instance:
-		App.openAl = sketch.getNerdModule(NerdOpenAlModule.class).getOpenAlManager();
+		// Get our OpenAL managers:
+		final NerdOpenAlModule alModule = sketch.getNerdModule(NerdOpenAlModule.class);
+		App.alUpdater = alModule.getAlUpdater(0);
+		App.openAl = App.alUpdater.getUnderlyingManager();
 	}
 
 }

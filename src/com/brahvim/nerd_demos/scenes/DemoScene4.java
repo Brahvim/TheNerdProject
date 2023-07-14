@@ -27,7 +27,7 @@ public class DemoScene4 extends NerdScene {
 
 	@Override
 	protected synchronized void preload() {
-		ASSETS.addAsset(new AlOggBufferAsset("data/RUBBER DUCK.ogg"));
+		ASSETS.addAsset(new AlOggBufferAsset(App.alUpdater, "data/RUBBER DUCK.ogg"));
 		// System.out.println("`DemoScene4` asset preload completed!");
 	}
 
