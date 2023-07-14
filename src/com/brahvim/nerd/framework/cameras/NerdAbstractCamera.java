@@ -62,7 +62,7 @@ public abstract class NerdAbstractCamera {
 			this.aspect = (float) this.SKETCH.width / (float) this.SKETCH.height;
 
 		// Apply projection:
-		final var window = this.SKETCH.getNerdModule(NerdWindowModule.class);
+		final NerdWindowModule window = this.SKETCH.getNerdModule(NerdWindowModule.class);
 
 		switch (this.projection) {
 			case PConstants.PERSPECTIVE -> this.GRAPHICS.perspective(

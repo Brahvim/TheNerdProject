@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -15,10 +16,8 @@ import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.NerdByteSerialUtils;
 import com.brahvim.nerd.io.net.NerdUdpSocket;
 import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
-import com.brahvim.nerd.processing_wrapper.NerdCustomSketchBuilder;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 
 public class NerdEcsModule extends NerdModule {
 
@@ -54,14 +53,20 @@ public class NerdEcsModule extends NerdModule {
 	protected NerdEcsSystem<?>[] ecsSystems;
 	// endregion
 
+	// region Constructors.
 	public NerdEcsModule(final NerdSketch p_sketch) {
 		super(p_sketch);
+		this.setSystemsOrder(NerdEcsModule.DEFAULT_ECS_SYSTEMS_ORDER);
 	}
 
-	@Override
-	protected void sketchConstructed(final NerdSketchBuilderSettings p_settings) {
-		this.setSystemsOrder(p_settings.ecsSystemOrder);
+	@SafeVarargs
+	public NerdEcsModule(
+			final NerdSketch p_sketch,
+			final Class<? extends NerdEcsSystem<?>>... p_ecsSystemsOrder) {
+		super(p_sketch);
+		this.setSystemsOrder(p_ecsSystemsOrder);
 	}
+	// endregion
 
 	// region `callOnAllSystems()` overloads.
 	@SuppressWarnings("all")
@@ -373,7 +378,7 @@ public class NerdEcsModule extends NerdModule {
 
 		// region Reducing `LinkedList` elements, and modifying `NAME_TO_ENTITY_MAP`.
 		// Remove elements not available in the lists in the deserialized module:
-		for (final Map.Entry<?, ?> e : Map.<LinkedList<?>, LinkedList<?>>of(
+		for (final Map.Entry<?, ?> e : Map.<HashSet<?>, HashSet<?>>of(
 				this.ENTITIES, p_deserialized.entities,
 				this.COMPONENTS, p_deserialized.components).entrySet()) {
 			final LinkedList<?> myList = (LinkedList<?>) e.getKey(), otherList = (LinkedList<?>) e.getValue();
@@ -407,11 +412,15 @@ public class NerdEcsModule extends NerdModule {
 		// endregion
 
 		// region Copying components over.
-		final int iterations = this.COMPONENTS.size();
-		for (int i = 0; i < iterations; i++) {
-			final NerdEcsComponent orig = this.COMPONENTS.get(i), latest = p_deserialized.components.get(i);
+		// TODO: JUST USE `ArrayList`s! This won't work!
+		final Iterator<NerdEcsComponent> originalSetIterator = this.COMPONENTS.iterator(),
+				latestSetIterator = p_deserialized.components.iterator();
+
+		while (originalSetIterator.hasNext() && latestSetIterator.hasNext()) {
+			final NerdEcsComponent orig = originalSetIterator.next(), latest = latestSetIterator.next();
 			orig.copyFieldsFrom(latest);
 		}
+
 		// endregion
 	}
 	// endregion

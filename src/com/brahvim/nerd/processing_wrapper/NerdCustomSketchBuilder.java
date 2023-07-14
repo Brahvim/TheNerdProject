@@ -1,18 +1,10 @@
 package com.brahvim.nerd.processing_wrapper;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
+import java.util.function.Supplier;
 
-import com.brahvim.nerd.framework.ecs.NerdEcsComponent;
-import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
-import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
-import com.brahvim.nerd.framework.scene_api.NerdScenesModule.NerdScenesModuleSettings;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -28,23 +20,64 @@ import processing.core.PConstants;
 public abstract class NerdCustomSketchBuilder {
 
 	// region Fields, constructor, building...
-	protected static final String NULL_ERR_MSG = "A listener passed to `NerdSketchKey` cannot be `null`";
+	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchBuilderSettings` cannot be `null`";
 
-	protected final NerdSketchBuilderSettings SKETCH_KEY;
+	private final NerdSketchBuilderSettings BUILD_SETTINGS;
 
 	protected NerdCustomSketchBuilder() {
-		this.SKETCH_KEY = new NerdSketchBuilderSettings();
+		this.BUILD_SETTINGS = new NerdSketchBuilderSettings();
 	}
 
-	// Getting this passed in here to allow fake arguments.
+	// Getting this passed in here to allow for fake arguments.
 	// I know `sun.java.command` exists!
 	// (System property containing the strings passed to `main` with spaces between
 	// them. Accessible via `System.getProperty()` like all other ones!)
-	public final NerdSketchBuildArtifacts build(final String[] p_javaMainArgs) {
-		final NerdSketch constructedSketch = this.buildImpl(p_javaMainArgs);
-		this.SKETCH_KEY.nerdModulesSupplier = this.supplyNerdModulesOrder();
+	public final NerdSketch build(final String[] p_javaMainArgs) {
+		// `NerdModule`s are constructed by the `NerdSketch` constructor.
+
+		// Here, I:
+		// Create two separate `LinkedHashSet`s. One is 'immutable' to the user.
+		// Put all 'default' `NerdModule`s into the immutable one.
+		// Ask the user to fill the other set. If they repeat a `NerdModule`,
+		// remove it from the 'immutable' set! Let users rule!
+
+		final LinkedHashSet<Function<NerdSketch, NerdModule>>
+		/*	 */ defaultModules = this.supplyDefaultModules(),
+				userDefinedModules = new LinkedHashSet<>(0);
+
+		// Remove `NerdModule`s whose order was re-defined!:
+		this.supplyUserDefinedModules(userDefinedModules);
+		defaultModules.removeAll(userDefinedModules);
+
+		this.BUILD_SETTINGS.nerdModulesInstantiator = s -> {
+			for (final Function<NerdSketch, NerdModule> f : defaultModules)
+				s.add(f);
+
+			for (final Function<NerdSketch, NerdModule> f : userDefinedModules)
+				s.add(f);
+		};
+
+		// In order to decrease code over there, and make it easier to modify
+		// the `NerdModule`s used, ...or their order, we keep the code for initializing
+		// them ready, beforehand!:
+
+		final NerdSketch constructedSketch = this.createNerdSketch(p_javaMainArgs, this.BUILD_SETTINGS);
 		NerdCustomSketchBuilder.runSketch(constructedSketch, p_javaMainArgs);
-		return new NerdSketchBuildArtifacts(constructedSketch);
+		return constructedSketch;
+	}
+
+	private LinkedHashSet<Function<NerdSketch, NerdModule>> supplyDefaultModules() {
+		final LinkedHashSet<Function<NerdSketch, NerdModule>> toRet = new LinkedHashSet<>(4);
+
+		toRet.add(NerdDisplayModule::new);
+
+		toRet.add(NerdWindowModule::createWindowModule);
+
+		toRet.add(NerdInputModule::new);
+
+		toRet.add(NerdScenesModule::new);
+
+		return toRet;
 	}
 
 	public static void runSketch(final NerdSketch p_sketch) {
@@ -59,218 +92,103 @@ public abstract class NerdCustomSketchBuilder {
 		else
 			PApplet.runSketch(PApplet.concat(args, p_javaMainArgs), p_sketch);
 	}
-
-	protected abstract Function<NerdSketch, LinkedHashSet<NerdModule>> supplyNerdModulesOrder();
-
-	protected abstract NerdSketch buildImpl(String[] p_javaMainArgs);
 	// endregion
 
-	// region Renderer selection.
-	// Do we actually need to have this renderer around?
-	// I have seen computers too old for OpenGL `3.0`!
-	// I guess it's okay for 2D games...?
-	public NerdCustomSketchBuilder useJavaRenderer() {
-		this.SKETCH_KEY.renderer = PConstants.JAVA2D;
-		return this;
-	}
-
-	// I won't be working with this UI framework any day...?
-	/*
-	 * public NerdCustomSketchBuilder usesJavaFxRenderer() {
-	 * this.SKETCH_KEY.renderer = PConstants.FX2D;
-	 * return this;
-	 * }
+	/**
+	 * Provides a {@link LinkedHashSet}, to be filled with
+	 * {@link NerdModule} instances, given a {@link NerdSketch}.
+	 *
+	 * <p>
+	 * The order in which the {@link NerdModule}s are added, is the order the
+	 * {@link NerdSketch} will process them in. If the same {@link NerdModule} is
+	 * added twice, only the latter instance will be retained.
+	 *
+	 * <p>
+	 * Some {@link NerdModule}s are provided by default in the
+	 * {@link NerdSketch}. If those are added once again, their order in the
+	 * {@link NerdModule} calling pipeline will change. Duplicates are not allowed.
+	 * Once added, the {@link NerdModule} stays until removed.
 	 */
-	// endregion
+	protected abstract void supplyUserDefinedModules(LinkedHashSet<Function<NerdSketch, NerdModule>> p_set);
 
-	// region Adding listeners.
-	public NerdCustomSketchBuilder addSketchConstructionListener(final Consumer<NerdSketch> p_listener) {
-		this.SKETCH_KEY.sketchConstructedListeners.add(Objects.requireNonNull(
-				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
-		return this;
-	}
+	protected abstract NerdSketch createNerdSketch(String[] p_javaMainArgs, NerdSketchBuilderSettings p_settings);
 
-	public NerdCustomSketchBuilder addSketchDisposalListener(final Consumer<NerdSketch> p_listener) {
-		this.SKETCH_KEY.disposalListeners.add(Objects.requireNonNull(
-				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
-		return this;
-	}
-
-	public NerdCustomSketchBuilder addSketchSetupListener(final Consumer<NerdSketch> p_listener) {
-		this.SKETCH_KEY.setupListeners.add(Objects.requireNonNull(
-				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
-		return this;
-	}
-
-	public NerdCustomSketchBuilder addPreListener(final Consumer<NerdSketch> p_listener) {
-		this.SKETCH_KEY.preListeners.add(Objects.requireNonNull(
-				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
-		return this;
-	}
-
-	public NerdCustomSketchBuilder addPostListener(final Consumer<NerdSketch> p_listener) {
-		this.SKETCH_KEY.postListeners.add(Objects.requireNonNull(
-				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
-		return this;
-	}
-
-	public NerdCustomSketchBuilder addPreDrawListener(final Consumer<NerdSketch> p_listener) {
-		this.SKETCH_KEY.preDrawListeners.add(Objects.requireNonNull(
-				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
-		return this;
-	}
-
-	public NerdCustomSketchBuilder addDrawListener(final Consumer<NerdSketch> p_listener) {
-		this.SKETCH_KEY.drawListeners.add(Objects.requireNonNull(
-				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
-		return this;
-	}
-
-	public NerdCustomSketchBuilder addPostDrawListener(final Consumer<NerdSketch> p_listener) {
-		this.SKETCH_KEY.postDrawListeners.add(Objects.requireNonNull(
-				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
-		return this;
-	}
-
-	public NerdCustomSketchBuilder addSketchExitListener(final Consumer<NerdSketch> p_listener) {
-		this.SKETCH_KEY.exitListeners.add(Objects.requireNonNull(
-				p_listener, NerdCustomSketchBuilder.NULL_ERR_MSG));
-		return this;
-	}
-	// endregion
-
-	public <ExtT extends NerdExtension> NerdCustomSketchBuilder addNerdExt(
-			final String p_extName,
-			final Class<? extends NerdExtension> p_extClass,
-			final UnaryOperator<NerdExtSettings<ExtT>> p_extSettingsSupplier) {
-		try {
-			final NerdExtension extObject = p_extClass.getConstructor(NerdCustomSketchBuilder.class).newInstance(this);
-			this.SKETCH_KEY.nerdExtensions.put(p_extName, extObject);
-			extObject.setExtSettings(p_extSettingsSupplier);
-		} catch (final InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			System.err.println("Could not construct a `" + NerdExtension.class.getSimpleName() + "` object!");
-		}
-
+	public NerdCustomSketchBuilder useJavaRenderer() {
+		this.BUILD_SETTINGS.renderer = PConstants.JAVA2D;
 		return this;
 	}
 
 	// region `set()`.
 	// region Window settings!
-	// region Dimensions.
 	public NerdCustomSketchBuilder setWidth(final int p_width) {
-		this.SKETCH_KEY.width = p_width;
+		this.BUILD_SETTINGS.width = p_width;
 		return this;
 	}
 
 	public NerdCustomSketchBuilder setHeight(final int p_height) {
-		this.SKETCH_KEY.height = p_height;
+		this.BUILD_SETTINGS.height = p_height;
 		return this;
 	}
-	// endregion
 
 	public NerdCustomSketchBuilder setTitle(final String p_name) {
-		this.SKETCH_KEY.name = p_name;
+		this.BUILD_SETTINGS.name = p_name;
 		return this;
 	}
 	// endregion
 
-	public NerdCustomSketchBuilder setEcsSystemOrder(
-			final Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] p_ecsSystems) {
-		this.SKETCH_KEY.ecsSystemOrder = p_ecsSystems;
-		return this;
-	}
-
-	public NerdCustomSketchBuilder setScenesModuleSettings(final Consumer<NerdScenesModuleSettings> p_settingsBuilder) {
-		final NerdScenesModule.NerdScenesModuleSettings toPass = new NerdScenesModule.NerdScenesModuleSettings();
-
-		if (p_settingsBuilder != null)
-			p_settingsBuilder.accept(toPass);
-
-		this.SKETCH_KEY.scenesModuleSettings = toPass;
-		return this;
-	}
-
-	public NerdCustomSketchBuilder setScenesModuleSettings(final NerdScenesModuleSettings p_settings) {
-		if (p_settings != null)
-			this.SKETCH_KEY.scenesModuleSettings = p_settings;
-		return this;
-	}
-
-	public NerdCustomSketchBuilder setStringTablePath(final String p_path) {
-		this.SKETCH_KEY.stringTablePath = p_path;
-		return this;
-	}
-
-	public NerdCustomSketchBuilder setFirstScene(final Class<? extends NerdScene> p_firstScene) {
-		// Objects.requireNonNull(p_firstScene, "The first scene needs to be set, and
-		// cannot be `null`!");
-		this.SKETCH_KEY.firstSceneClass = p_firstScene;
-		return this;
-	}
-
 	public NerdCustomSketchBuilder setAntiAliasing(final int p_value) {
-		this.SKETCH_KEY.antiAliasing = p_value;
+		this.BUILD_SETTINGS.antiAliasing = p_value;
+		return this;
+	}
+
+	public <ModuleT extends NerdModule> NerdCustomSketchBuilder setNerdModuleSettings(
+			final Class<ModuleT> p_moduleClass,
+			final NerdModuleSettings<ModuleT> p_settings) {
+		this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass, p_settings);
+		return this;
+	}
+
+	public <ModuleT extends NerdModule> NerdCustomSketchBuilder setNerdModuleSettings(
+			final Class<ModuleT> p_moduleClass,
+			final Supplier<NerdModuleSettings<ModuleT>> p_settingsSupplier) {
+		this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass, p_settingsSupplier.get());
 		return this;
 	}
 	// endregion
 
 	// region Window behaviors and properties.
 	public NerdCustomSketchBuilder canResize() {
-		this.SKETCH_KEY.canResize = true;
+		this.BUILD_SETTINGS.canResize = true;
 		return this;
 	}
 
-	public NerdCustomSketchBuilder startFullscreen() {
-		this.SKETCH_KEY.startedFullscreen = true;
-		return this;
-	}
-
-	public NerdCustomSketchBuilder preventCloseOnEscape() {
-		this.SKETCH_KEY.preventCloseOnEscape = true;
+	public NerdCustomSketchBuilder startFullscreenInitially() {
+		this.BUILD_SETTINGS.startedFullscreen = true;
 		return this;
 	}
 
 	public NerdCustomSketchBuilder disableFullscreenInitially() {
-		this.SKETCH_KEY.cannotFullscreen = false;
+		this.BUILD_SETTINGS.cannotFullscreen = false;
+		return this;
+	}
+
+	public NerdCustomSketchBuilder preventCloseOnEscapeInitially() {
+		this.BUILD_SETTINGS.preventCloseOnEscape = true;
 		return this;
 	}
 
 	public NerdCustomSketchBuilder disableF11FullscreenInitially() {
-		this.SKETCH_KEY.cannotF11Fullscreen = true;
+		this.BUILD_SETTINGS.cannotF11Fullscreen = true;
 		return this;
 	}
 
 	public NerdCustomSketchBuilder disableAltEnterFullscreenInitially() {
-		this.SKETCH_KEY.cannotAltEnterFullscreen = true;
+		this.BUILD_SETTINGS.cannotAltEnterFullscreen = true;
 		return this;
 	}
 
 	public NerdCustomSketchBuilder setIconPath(final String p_pathString) {
-		this.SKETCH_KEY.iconPath = p_pathString;
-		return this;
-	}
-	// endregion
-
-	// region Any kind of pre-loading.
-	public NerdCustomSketchBuilder preLoadAssets(final Class<? extends NerdScene> p_sceneClass) {
-		if (p_sceneClass == null)
-			return this;
-
-		this.SKETCH_KEY.scenesToPreload.add(p_sceneClass);
-		return this;
-	}
-
-	@SuppressWarnings("all")
-	public NerdCustomSketchBuilder preLoadAssets(final Class<? extends NerdScene>... p_sceneClasses) {
-		if (p_sceneClasses == null)
-			return this;
-
-		for (final Class<? extends NerdScene> c : p_sceneClasses) {
-			if (c == null)
-				continue;
-			this.SKETCH_KEY.scenesToPreload.add(c);
-		}
+		this.BUILD_SETTINGS.iconPath = p_pathString;
 		return this;
 	}
 	// endregion

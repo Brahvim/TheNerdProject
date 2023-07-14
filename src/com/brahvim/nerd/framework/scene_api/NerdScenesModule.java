@@ -8,15 +8,19 @@ import java.util.LinkedHashSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.framework.ecs.NerdEcsModule;
-import com.brahvim.nerd.framework.ecs.NerdEcsSystem;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.NerdInputModule;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
+import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
+
+// TODO: Let there be callbacks! The ECS should register some.
+// Specifically, we need callbacks for `NerdScene::preload()`, `NerdScene::setup()`,
+// `NerdScenesModule::sceneChanged()` (which we already have!), et cetera.
+// ...y'know? Events not part of the `NerdSketch` lifecycle that other modules
+// can't track without using callbacks.
 
 public class NerdScenesModule extends NerdModule {
 
@@ -71,146 +75,11 @@ public class NerdScenesModule extends NerdModule {
 		// endregion
 
 	}
-
-	public static class NerdScenesModuleSettings {
-
-		// region App workflow callbacks scene-or-layer order.
-		/**
-		 * Dictates to every {@link NerdScenesModule} instance, the order in which a
-		 * {@link NerdScene} or {@link NerdLayer} is allowed to call certain "workflow
-		 * events" ({@link NerdScene#pre()}, {@link NerdScene#draw()} and
-		 * {@link NerdScene#post()}) from Processing.
-		 *
-		 * @see {@link NerdScenesModule.NerdScenesModuleSettings#preFirstCaller} -
-		 *      {@link NerdSketchCallbackOrder#SCENE} by
-		 *      default.
-		 * @see {@link NerdScenesModule.NerdScenesModuleSettings#drawFirstCaller} -
-		 *      {@link NerdSketchCallbackOrder#LAYER} by
-		 *      default.
-		 * @see {@link NerdScenesModule.NerdScenesModuleSettings#postFirstCaller} -
-		 *      {@link NerdSketchCallbackOrder#LAYER} by
-		 *      default.
-		 */
-		public /* static */ enum NerdSketchCallbackOrder {
-			SCENE(), LAYER();
-		}
-
-		/**
-		 * Controls whether {@link NerdScene#pre()} or {@link NerdLayer#pre()} is
-		 * called first by the {@link NerdScenesModule}. If the value of this field is
-		 * ever {@code null}, it is set to its default,
-		 * {@link NerdSketchCallbackOrder#SCENE}.
-		 */
-		public NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder preFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.SCENE;
-
-		/**
-		 * Controls whether {@link NerdScene#draw()} or {@link NerdLayer#draw()} is
-		 * called first by the {@link NerdScenesModule}. If the value of this field is
-		 * ever{@code null}, it is set to its default,
-		 * {@link NerdSketchCallbackOrder#LAYER}.
-		 */
-		public NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder drawFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.LAYER;
-
-		/**
-		 * Controls whether {@link NerdScene#post()} or {@link NerdLayer#post()} is
-		 * called first by the {@link NerdScenesModule}. If the value of this field is
-		 * ever {@code null}, it is set to its default,
-		 * {@link NerdSketchCallbackOrder#LAYER}.
-		 */
-		public NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder postFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.LAYER;
-		// endregion
-
-		public class OnScenePreload {
-
-			private OnScenePreload() {
-			}
-
-			/**
-			 * When {@code true}, {@link NerdScene#preload()} is run only the first time
-			 * a {@link NerdScene} class is used in the engine. Setting this to
-			 * {@code false} loads scene assets each time, so that assets are updated.
-			 *
-			 * @apiNote {@code true} by default!
-			 */
-			public boolean preloadOnlyOnce = true;
-
-			/**
-			 * When {@code true}, {@link NerdScene#preload()} runs the loading process in
-			 * multiple threads using a {@link java.util.concurrent.ExecutorService}. If
-			 * {@link NerdScenesModule.NerdScenesModuleSettings.OnScenePreload#completeAssetLoadingWithinPreload}
-			 * is {@code true}, the asset loading is <i>guaranteed</i> to finish within
-			 * {@link NerdScene#preload()}.
-			 *
-			 * @apiNote {@code true} by default!
-			 */
-			public boolean useExecutors = true;
-
-			/**
-			 * The maximum number of threads multithreaded asset loading started
-			 * in {@link NerdScene#preload()} can use. You may change whether that's the
-			 * case, by setting
-			 * {@link NerdScenesModule.NerdScenesModuleSettings.OnScenePreload#useExecutors}
-			 * to {@code true} or {@code false}!
-			 *
-			 * @apiNote We use <b>{@code 6}</b> threads by default! Enough? Happy?
-			 *          I hope you are ":D!~
-			 */
-			public int maxExecutorThreads = 6;
-
-			/**
-			 * If
-			 * {@link NerdScenesModule.NerdScenesModuleSettings.OnScenePreload#useExecutors}
-			 * is {@code true}, the asset loading process in {@link NerdScene#preload()} is
-			 * run using multiple threads. Setting <i>this</i> to {@code true}
-			 * <i>guarantees</i> that the asset loading will be finished within
-			 * {@link NerdScene#preload()}.
-			 *
-			 * @apiNote {@code true} by default!
-			 */
-			public boolean completeAssetLoadingWithinPreload = true;
-
-		}
-
-		public class OnSceneSwitch {
-
-			private OnSceneSwitch() {
-			}
-
-			/**
-			 * If set to {@code -1}, will call {@link NerdSketch#clear()} and not
-			 * {@link NerdSketch#background()}. <b>This is the default behavior!</b>
-			 */
-			public int clearColor = -1;
-
-			/**
-			 * Clears the screen according to
-			 * {@link NerdScenesModule.NerdScenesModuleSettings.OnSceneSwitch#clearColor}.
-			 *
-			 * @apiNote {@code false} by default.
-			 */
-			public boolean doClear = false;
-
-			/**
-			 * Resets {@link NerdScenesModule.NerdScenesModuleSettings#preFirstCaller},
-			 * {@link NerdScenesModule.NerdScenesModuleSettings#drawFirstCaller}, and
-			 * {@link NerdScenesModule.NerdScenesModuleSettings#postFirstCaller} to their
-			 * default values!
-			 */
-			public boolean resetSceneLayerCallbackOrder = true;
-
-		}
-
-		public final NerdScenesModule.NerdScenesModuleSettings.OnSceneSwitch ON_SWITCH = new OnSceneSwitch();
-
-		public final NerdScenesModule.NerdScenesModuleSettings.OnScenePreload ON_PRELOAD = new OnScenePreload();
-
-	}
 	// endregion
 
-	protected NerdScenesModule.NerdScenesModuleSettings scenesModuleSettings;
+	protected NerdScenesModuleSettings scenesModuleSettings;
 
 	// region `protected` and `private` fields.
-	protected final NerdBridgedEcsModule ECS_INSTANCE;
 
 	protected NerdScene currentScene;
 	protected boolean sceneSwitchOccured;
@@ -241,15 +110,16 @@ public class NerdScenesModule extends NerdModule {
 
 	public NerdScenesModule(final NerdSketch p_sketch) {
 		super(p_sketch);
-		this.ECS_INSTANCE = (NerdBridgedEcsModule) super.SKETCH.getNerdModule(NerdEcsModule.class);
 	}
 
 	@Override
-	protected void sketchConstructed(final NerdSketchBuilderSettings p_settings) {
-		this.scenesModuleSettings = p_settings.scenesModuleSettings;
+	protected void setModuleSettings(final NerdModuleSettings<?> p_settings) {
+		this.scenesModuleSettings = p_settings == null
+				? new NerdScenesModuleSettings()
+				: (NerdScenesModuleSettings) p_settings;
 	}
 
-	// region Workflow callbacks.
+	// region `NerdSketch` workflow callbacks.
 	@Override
 	protected void pre() {
 		if (this.currentScene != null)
@@ -493,7 +363,7 @@ public class NerdScenesModule extends NerdModule {
 		return this.previousSceneClass;
 	}
 
-	public NerdScenesModule.NerdScenesModuleSettings getScenesModuleSettings() {
+	public NerdScenesModuleSettings getScenesModuleSettings() {
 		return this.scenesModuleSettings;
 	}
 	// endregion
@@ -598,9 +468,7 @@ public class NerdScenesModule extends NerdModule {
 			return;
 
 		final NerdScene toUse = this.constructAndInitScene(this.SCENE_CACHE.get(this.previousSceneClass).CONSTRUCTOR);
-
-		if (toUse != null)
-			this.setScene(toUse, p_setupState);
+		this.setScene(toUse, p_setupState);
 	}
 
 	// "Cache if not cached" / "Start cached" method.
@@ -776,7 +644,6 @@ public class NerdScenesModule extends NerdModule {
 		toRet.SKETCH = toRet.MANAGER.SKETCH;
 
 		// Now, we copy all other objects from `toRet.SKETCH`!:
-		toRet.ECS = this.ECS_INSTANCE.clearAllData();
 		toRet.GRAPHICS = toRet.SKETCH.getNerdGraphics();
 		toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
 		toRet.ASSETS = new NerdAssetsModule(toRet.SKETCH);
@@ -799,11 +666,6 @@ public class NerdScenesModule extends NerdModule {
 	// Yes, this checks for errors.
 	private void startSceneImpl(final Class<? extends NerdScene> p_sceneClass, final NerdSceneState p_state) {
 		final NerdScene toStart = this.constructAndInitScene(this.getSceneConstructor(p_sceneClass));
-
-		if (toStart == null)
-			throw new IllegalStateException(
-					String.format("%s could not be constructed.", p_sceneClass.getSimpleName()));
-
 		this.setScene(toStart, p_state);
 	}
 
@@ -822,9 +684,9 @@ public class NerdScenesModule extends NerdModule {
 		}
 
 		if (this.scenesModuleSettings.ON_SWITCH.resetSceneLayerCallbackOrder) {
-			this.scenesModuleSettings.preFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.SCENE;
-			this.scenesModuleSettings.drawFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.LAYER;
-			this.scenesModuleSettings.postFirstCaller = NerdScenesModule.NerdScenesModuleSettings.NerdSketchCallbackOrder.LAYER;
+			this.scenesModuleSettings.preFirstCaller = NerdScenesModuleSettings.NerdSceneLayerCallbackOrder.SCENE;
+			this.scenesModuleSettings.drawFirstCaller = NerdScenesModuleSettings.NerdSceneLayerCallbackOrder.LAYER;
+			this.scenesModuleSettings.postFirstCaller = NerdScenesModuleSettings.NerdSceneLayerCallbackOrder.LAYER;
 		}
 		// endregion
 
@@ -836,12 +698,6 @@ public class NerdScenesModule extends NerdModule {
 		if (this.previousSceneClass != null) {
 			// Exit the scene, and nullify the cache.
 			this.currentScene.runSceneChanged();
-
-			// Do not clear! They're cached!
-			/*
-			 * if (!this.hasCached(this.currSceneClass))
-			 * this.currScene.ASSETS.clear();
-			 */
 
 			final NerdScenesModule.NerdScenesModuleSceneCache sceneCache = this.SCENE_CACHE.get(this.currentSceneClass);
 			if (sceneCache != null)

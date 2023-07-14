@@ -4,11 +4,17 @@ import java.awt.Point;
 import java.util.LinkedHashSet;
 
 import com.brahvim.nerd.processing_callback_interfaces.hardware.window.NerdWindowListener;
+import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdGlWindowModule;
+import com.brahvim.nerd.processing_wrapper.window_man_subs.NerdJava2dWindowModule;
 
 import processing.core.PImage;
 import processing.core.PSurface;
 import processing.core.PVector;
 
+/**
+ * Please use {@link NerdWindowModule#createWindowModule(NerdSketch)} to create
+ * instances specific to your {@link NerdSketch}'s renderer.
+ */
 public abstract class NerdWindowModule extends NerdModule {
 
 	// region Fields.
@@ -52,6 +58,12 @@ public abstract class NerdWindowModule extends NerdModule {
 
 	protected abstract void preSetupImpl();
 	// endregion
+
+	public static NerdWindowModule createWindowModule(final NerdSketch p_sketch) {
+		return p_sketch.SKETCH_SETTINGS.USES_OPENGL
+				? new NerdGlWindowModule(p_sketch)
+				: new NerdJava2dWindowModule(p_sketch);
+	}
 
 	// region Taking the window to the center.
 	public void centerWindow() {
@@ -179,7 +191,7 @@ public abstract class NerdWindowModule extends NerdModule {
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == this.width || this.pheight == this.height)) {
 			this.updateWindowParameters();
-			for (final NerdModule m : super.getModulesUpdatedFramely())
+			for (final NerdModule m : super.getSketchModules())
 				m.fullscreenChanged(this.fullscreen);
 		}
 	}
@@ -189,7 +201,7 @@ public abstract class NerdWindowModule extends NerdModule {
 		this.postImpl();
 
 		if (this.pfullscreen != this.fullscreen)
-			for (final NerdModule m : super.getModulesUpdatedFramely())
+			for (final NerdModule m : super.getSketchModules())
 				m.fullscreenChanged(this.fullscreen);
 
 		this.pfullscreen = this.fullscreen;

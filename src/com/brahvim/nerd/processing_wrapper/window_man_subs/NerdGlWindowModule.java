@@ -3,7 +3,6 @@ package com.brahvim.nerd.processing_wrapper.window_man_subs;
 import java.awt.Point;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 

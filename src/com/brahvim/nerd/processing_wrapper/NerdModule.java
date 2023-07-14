@@ -23,12 +23,15 @@ public abstract class NerdModule {
 		return this.SKETCH;
 	}
 
-	protected LinkedHashSet<NerdModule> getModulesUpdatedFramely() {
+	protected LinkedHashSet<NerdModule> getSketchModules() {
 		return this.SKETCH.MODULES;
 	}
 
 	protected HashMap<Class<? extends NerdModule>, NerdModule> getSketchModulesMap() {
-		return this.SKETCH.CLASS_TO_MODULES_MAP;
+		return this.SKETCH.CLASSES_TO_MODULES_MAP;
+	}
+
+	protected /* `abstract` */ void setModuleSettings(final NerdModuleSettings<?> p_settings) {
 	}
 
 	// region Methods to call methods on other modules.
@@ -59,7 +62,7 @@ public abstract class NerdModule {
 	}
 	// endregion
 
-	// region Calling the callbacks!1!!!
+	// region Callbacks for `NerdSketch` to call!1!!!
 	// region Workflow callbacks!
 	protected void sketchConstructed(final NerdSketchBuilderSettings p_settings) {
 	}

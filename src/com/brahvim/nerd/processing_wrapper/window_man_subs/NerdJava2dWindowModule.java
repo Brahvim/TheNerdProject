@@ -7,7 +7,6 @@ import java.awt.Point;
 import javax.swing.JFrame;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdSketchBuilderSettings;
 import com.brahvim.nerd.processing_wrapper.NerdWindowModule;
 
 import processing.awt.PSurfaceAWT;

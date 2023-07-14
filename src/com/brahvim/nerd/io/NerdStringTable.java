@@ -35,7 +35,6 @@ public class NerdStringTable {
 		while (keysItr.hasNext()) {
 			final String s = keysItr.next();
 			p_table.json.getJSONObject(s);
-
 		}
 	}
 
@@ -44,11 +43,11 @@ public class NerdStringTable {
 		this.langauge = p_lang;
 
 		if (this.file == null)
-			throw new NullPointerException("`StringTable`s cannot use `null` `File`s!");
+			throw new NullPointerException("`NerdStringTable`s cannot use `null` `File`s!");
 
 		if (this.langauge == null)
 			throw new NullPointerException(
-					"`StringTable`s cannot use `null` for language identifier `String`!");
+					"`NerdStringTable`s cannot use `null` for language identifier `String`!");
 
 		this.refresh();
 	}
@@ -62,7 +61,7 @@ public class NerdStringTable {
 		this.langauge = "en";
 
 		if (this.file == null)
-			throw new NullPointerException("`StringTable`s cannot use `null` `File`s!");
+			throw new NullPointerException("`NerdStringTable`s cannot use `null` `File`s!");
 
 		this.refresh();
 	}
@@ -140,7 +139,7 @@ public class NerdStringTable {
 
 		if (toRet == null) {
 			System.err.printf("""
-					`StringTable` key `%s` not found!
+					`NerdStringTable` key `%s` not found!
 					\tGiving default value, `%s`.""",
 					p_key, p_default);
 			return p_default;
@@ -184,7 +183,7 @@ public class NerdStringTable {
 			// ...get the string-array of the specified langauge!
 		} catch (final Exception e) {
 			System.err.printf("""
-					There is no array called `%s` in the `StringTable` file!
+					There is no array called `%s` in the `NerdStringTable` file!
 					\tGiving default value, `%s`.""",
 					p_key, p_default);
 			return p_default;
@@ -242,7 +241,7 @@ public class NerdStringTable {
 			// ...get the string-array of the specified langauge!
 		} catch (final Exception e) {
 			System.err.printf("""
-					There is no array called `%s` in the `StringTable` file!
+					There is no array called `%s` in the `NerdStringTable` file!
 					\tGiving default value, `%s`.""",
 					p_key, p_default);
 			return p_default;

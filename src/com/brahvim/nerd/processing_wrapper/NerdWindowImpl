@@ -1,0 +1,71 @@
+package com.brahvim.nerd.processing_wrapper;
+
+import java.awt.Point;
+
+import processing.core.PImage;
+import processing.core.PSurface;
+import processing.core.PVector;
+
+public abstract class NerdWindowImpl {
+
+	protected final NerdSketch SKETCH;
+
+	protected NerdWindowImpl(final NerdSketch p_sketch) {
+		this.SKETCH = p_sketch;
+	}
+
+	// region Taking the window to the center.
+	protected abstract void centerWindow();
+
+	// region Getters.
+	protected abstract int getX();
+
+	protected abstract int getY();
+
+	protected abstract int getWidth();
+
+	protected abstract int getHeight();
+
+	protected abstract Point getSize();
+
+	protected abstract String getName();
+
+	protected abstract Point getPosition();
+
+	protected abstract boolean isResizable();
+
+	protected abstract boolean getAlwaysOnTop();
+
+	protected abstract Object getNativeObject();
+
+	protected abstract PVector getSizeAsPVector();
+
+	protected abstract PVector getPositionAsPVector();
+	// endregion
+
+	// region Setters.
+	// Implementations return pointers of their own type, not `NerdWindowModule*`s,
+	protected abstract boolean setAlwaysOnTop(boolean p_on);
+
+	protected abstract NerdWindowImpl setName(String p_name);
+
+	protected abstract NerdWindowImpl setSize(PVector p_size);
+
+	protected abstract NerdWindowImpl setSize(int p_x, int p_y);
+
+	protected abstract NerdWindowImpl setSize(float p_x, float p_y);
+
+	protected abstract NerdWindowImpl setResizable(boolean p_state);
+
+	protected abstract NerdWindowImpl setPosition(int p_x, int p_y);
+
+	protected abstract NerdWindowImpl setPosition(PVector p_position);
+
+	protected abstract NerdWindowImpl setPosition(float p_x, float p_y);
+	// endregion
+
+	protected abstract void focusLost();
+
+	protected abstract void focusGained();
+
+}

@@ -88,7 +88,6 @@ public class NerdDisplayModule extends NerdModule {
 		this.pdisplayHeightThirdQuart = this.displayHeightThirdQuart;
 	}
 
-	// region Current and previous frame monitor settings, plus callback!
 	@Override
 	public void pre() {
 		this.recordPreviousDisplayParameters();
@@ -104,7 +103,7 @@ public class NerdDisplayModule extends NerdModule {
 		if (this.previousMonitor != this.currentMonitor) {
 			this.previousMonitor = this.currentMonitor;
 			this.updateDisplayParameters();
-			for (final NerdModule m : super.getModulesUpdatedFramely())
+			for (final NerdModule m : super.getSketchModules())
 				m.monitorChanged();
 		}
 

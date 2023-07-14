@@ -3,7 +3,6 @@ package com.brahvim.nerd.framework.ecs;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 
 public class NerdEcsModuleData implements Serializable {
 
@@ -16,8 +15,8 @@ public class NerdEcsModuleData implements Serializable {
 
 	protected long numUnnamedEntities = 1;
 	protected NerdEcsSystem<?>[] ecsSystems;
-	protected LinkedList<NerdEcsEntity> entities;
-	protected LinkedList<NerdEcsComponent> components;
+	protected HashSet<NerdEcsEntity> entities;
+	protected HashSet<NerdEcsComponent> components;
 	protected HashMap<String, NerdEcsEntity> nameToEntityMap;
 	protected HashMap<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> classesToComponentsMap;
 
