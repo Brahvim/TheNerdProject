@@ -100,7 +100,7 @@ public class DemoScene3 extends NerdScene {
 			case PConstants.CENTER -> CAMERA.setRoll(0);
 			// case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
 			case PConstants.LEFT -> {
-				this.cubeMan.emitCubes(this.cubeMan.cubesPerClick);
+				this.cubeMan.emitCubes(1); // this.cubeMan.cubesPerClick);
 				// if (this.cubeMan.numCubes() < 2)
 				// // this.cubeMan.emitCubes(1);
 			}

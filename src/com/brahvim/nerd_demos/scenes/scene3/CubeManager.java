@@ -61,8 +61,10 @@ public class CubeManager {
 	public void draw() {
 		if (this.cubesToAdd != 0)
 			for (int i = 0; i != this.cubesPerFrame; i++) {
-				if (--this.cubesToAdd == 0)
+				if (this.cubesToAdd == 0)
 					break;
+
+				this.cubesToAdd--;
 
 				if (this.popAudios == null)
 					this.CUBES.add(new AnimatedCube(this.SCENE).plopIn(null));

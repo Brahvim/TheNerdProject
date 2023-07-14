@@ -49,8 +49,7 @@ public abstract class NerdEasingFunction {
 	/**
 	 * Makes {@link NerdEasingFunction#get()} output
 	 * {@link NerdEasingFunction#inactValue}
-	 * when the
-	 * wave has ended - AKA, when {@link NerdEasingFunction#active} turns
+	 * when the wave has ended - AKA, when {@link NerdEasingFunction#active} turns
 	 * {@code false}.
 	 *
 	 * @apiNote {@code true} by default.
