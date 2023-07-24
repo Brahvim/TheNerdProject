@@ -12,8 +12,8 @@ public class NerdCollisionAlgorithms {
 				+ "` is an uninstantiable, helper class.");
 	}
 
-	public static boolean ptPoly(final float p_x, final float p_y, final PVector[] p_poly) {
-		// As seen on Sir Ben's GitHub!:
+	public static boolean ptPoly(final float p_x, final float p_y, final PVector... p_poly) {
+		// As seen on Sir Ben's GitHub repository!:
 		/*
 		 * p5.prototype.collidePointPoly = function(p_x, p_y, vertices) {
 		 * var collision = false;
@@ -67,8 +67,8 @@ public class NerdCollisionAlgorithms {
 	}
 
 	// Anybody who needs to copy these? LOL:
-	// (...well I did! Because I already wrote them LOL.
-	// Take a look at https://editor.p5js.org/Brahvim/sketches/hyoou0Gkb :D)
+	// (...well I did! Because I already wrote them LOL.)
+	// (Take a look at https://editor.p5js.org/Brahvim/sketches/hyoou0Gkb :D)
 
 	public static boolean ptCircle(final PVector p_point, final PVector p_circlePos, final float p_radius) {
 		return Math.pow(p_circlePos.x - p_point.x, 2)
@@ -86,10 +86,7 @@ public class NerdCollisionAlgorithms {
 				p_rectStartY + p_rectHeight);
 	}
 
-	public static boolean ptRectByDims(
-			final PVector p_vertex,
-			final PVector p_rectPos,
-			final PVector p_rectDims) {
+	public static boolean ptRectByDims(final PVector p_vertex, final PVector p_rectPos, final PVector p_rectDims) {
 		return NerdCollisionAlgorithms.ptRect(
 				p_vertex.x, p_vertex.y,
 				p_rectPos.x, p_rectPos.y,
@@ -101,10 +98,7 @@ public class NerdCollisionAlgorithms {
 		return NerdCollisionAlgorithms.ptRect(p_vertex, p_rect.start, p_rect.end);
 	}
 
-	public static boolean ptRect(
-			final PVector p_vertex,
-			final PVector p_rectStart,
-			final PVector p_rectEnd) {
+	public static boolean ptRect(final PVector p_vertex, final PVector p_rectStart, final PVector p_rectEnd) {
 		return NerdCollisionAlgorithms.ptRect(
 				p_vertex.x, p_vertex.y,
 				p_rectStart.x, p_rectStart.y,

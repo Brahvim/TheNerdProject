@@ -74,6 +74,10 @@ public class NerdGraphics {
 		this.currentCamera = p_camera;
 	}
 
+	public void setCurrentCameraToDefault() {
+		this.currentCamera = this.DEFAULT_CAMERA;
+	}
+
 	@SuppressWarnings("unchecked")
 	public <RetT extends NerdAbstractCamera> RetT getCurrentCamera() {
 		return (RetT) this.currentCamera;

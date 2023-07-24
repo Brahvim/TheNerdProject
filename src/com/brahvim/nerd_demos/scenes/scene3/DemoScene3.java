@@ -11,6 +11,7 @@ import com.brahvim.nerd.openal.al_asset_loaders.AlOggBufferAsset;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
 import com.brahvim.nerd_demos.effect_layers.CinematicBarsLayer;
+import com.brahvim.nerd_demos.scenes.DemoScene4;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -63,6 +64,9 @@ public class DemoScene3 extends NerdScene {
 
 	@Override
 	protected void draw() {
+		// Stress test!:
+		// this.cubeMan.emitCubes(this.cubeMan.cubesPerClick);
+
 		// GRAPHICS.tint(255, 100);
 		GRAPHICS.background(this.bgImage);
 
@@ -99,9 +103,9 @@ public class DemoScene3 extends NerdScene {
 	public void mouseClicked() {
 		switch (INPUT.mouseButton) {
 			case PConstants.CENTER -> CAMERA.setRoll(0);
-			// case PConstants.RIGHT -> MANAGER.startScene(DemoScene1.class);
+			case PConstants.RIGHT -> MANAGER.startScene(DemoScene4.class);
 			case PConstants.LEFT -> {
-				this.cubeMan.emitCubes(1); // this.cubeMan.cubesPerClick);
+				this.cubeMan.emitCubes(this.cubeMan.cubesPerClick);
 				// if (this.cubeMan.numCubes() < 2)
 				// // this.cubeMan.emitCubes(1);
 			}

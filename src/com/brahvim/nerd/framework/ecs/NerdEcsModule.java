@@ -61,37 +61,58 @@ public class NerdEcsModule extends NerdModule {
 	// region `callOnAllSystems()` overloads.
 	@SuppressWarnings("all")
 	protected void callOnAllSystems(final BiConsumer<NerdEcsSystem, HashSet<? extends NerdEcsComponent>> p_methodRef) {
-		if (!(p_methodRef == null || this.ecsSystems == null))
-			for (final NerdEcsSystem<?> s : this.ecsSystems)
-				if (s != null)
-					p_methodRef.accept(s, this.CLASSES_TO_COMPONENTS_MAP.get(s.getComponentTypeClass()));
+		if (p_methodRef == null || this.ecsSystems == null)
+			return;
+
+		if (this.ecsSystems.length == 0)
+			return;
+
+		for (final NerdEcsSystem<?> s : this.ecsSystems)
+			if (s != null)
+				p_methodRef.accept(s, this.CLASSES_TO_COMPONENTS_MAP.get(s.getComponentTypeClass()));
 	}
 
 	@SuppressWarnings("all")
 	protected <OtherArgT> void callOnAllSystems(
 			final NerdTriConsumer<NerdEcsSystem, OtherArgT, HashSet<? extends NerdEcsComponent>> p_methodRef,
 			final OtherArgT p_otherArg) {
-		if (!(p_methodRef == null || this.ecsSystems == null))
-			for (final NerdEcsSystem<?> s : this.ecsSystems)
-				if (s != null)
-					p_methodRef.accept(s, p_otherArg, this.CLASSES_TO_COMPONENTS_MAP.get(s.getComponentTypeClass()));
+		if (p_methodRef == null || this.ecsSystems == null)
+			return;
+
+		if (this.ecsSystems.length == 0)
+			return;
+
+		for (final NerdEcsSystem<?> s : this.ecsSystems)
+			if (s != null)
+				p_methodRef.accept(s, p_otherArg,
+						this.CLASSES_TO_COMPONENTS_MAP.get(s.getComponentTypeClass()));
 	}
 
 	@SuppressWarnings("all")
 	protected <OtherArgT> void callOnAllSystems(
 			final BiConsumer<NerdEcsSystem<?>, OtherArgT> p_methodRef, final OtherArgT p_otherArg) {
-		if (!(p_methodRef == null || this.ecsSystems == null))
-			for (final NerdEcsSystem<?> s : this.ecsSystems)
-				if (s != null)
-					p_methodRef.accept(s, p_otherArg);
+		if (p_methodRef == null || this.ecsSystems == null)
+			return;
+
+		if (this.ecsSystems.length == 0)
+			return;
+
+		for (final NerdEcsSystem<?> s : this.ecsSystems)
+			if (s != null)
+				p_methodRef.accept(s, p_otherArg);
 	}
 
 	// @SuppressWarnings("unchecked")
 	protected void callOnAllSystems(final Consumer<NerdEcsSystem<?>> p_methodRef) {
-		if (!(p_methodRef == null || this.ecsSystems == null))
-			for (final NerdEcsSystem<?> s : this.ecsSystems)
-				if (s != null)
-					p_methodRef.accept(s);
+		if (p_methodRef == null || this.ecsSystems == null)
+			return;
+
+		if (this.ecsSystems.length == 0)
+			return;
+
+		for (final NerdEcsSystem<?> s : this.ecsSystems)
+			if (s != null)
+				p_methodRef.accept(s);
 	}
 	// endregion
 

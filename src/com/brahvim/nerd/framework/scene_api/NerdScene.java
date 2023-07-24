@@ -444,7 +444,7 @@ public abstract class NerdScene {
 		this.startMillis = this.SKETCH.millis();
 		this.setup(p_state);
 
-		// `NerdLayer`s don't get to respond to this `setup()`.
+		// TODO: `NerdLayer`s should get to respond to this `setup()`.
 	}
 
 	/* `package` */ synchronized void runPreload() {
@@ -489,6 +489,10 @@ public abstract class NerdScene {
 
 	/* `package` */ void runSceneChanged() {
 		this.sceneChanged();
+	}
+
+	/* `package` */ void runSceneInit() {
+		this.sceneInit();
 	}
 
 	/* `package` */ void runDispose() {
@@ -621,6 +625,9 @@ public abstract class NerdScene {
 	 * {@link NerdScene#MANAGER} <i><b>will</b></i> cause crashes here!
 	 */
 	protected void sceneChanged() {
+	}
+
+	protected void sceneInit() {
 	}
 
 	/**

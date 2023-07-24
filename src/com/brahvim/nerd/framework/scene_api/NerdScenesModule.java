@@ -715,7 +715,8 @@ public class NerdScenesModule extends NerdModule {
 		this.setupCurrentScene(p_state);
 	}
 
-	// Set the time, *then* call `SceneModule::runSetup()`.
+	// Set the time, *then* call `NerdScenesModule::runSetup()`.
+	// Called only by `NerdScenesModule::setScene()`:
 	private void setupCurrentScene(final NerdSceneState p_state) {
 		this.sceneSwitchOccured = true;
 		this.loadSceneAssets(this.currentScene, false);
@@ -730,6 +731,9 @@ public class NerdScenesModule extends NerdModule {
 		super.SKETCH.textFont(super.SKETCH.getDefaultFont()); // ...Also reset the font. Thanks!
 
 		this.SCENE_CHANGED_LISTENERS.removeAll(this.SCENE_CHANGED_LISTENERS_TO_REMOVE);
+
+		this.currentScene.GRAPHICS.setCurrentCameraToDefault();
+		this.currentScene.runSceneInit();
 
 		// This is `null` in SO MANY PLACES!:
 		if (p_state == null)

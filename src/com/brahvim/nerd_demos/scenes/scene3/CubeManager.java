@@ -13,8 +13,7 @@ import processing.core.PShape;
 public class CubeManager {
 
 	// region Fields.
-	public int cubesPerClick = 7,
-			cubesPerFrame = 2;
+	public int cubesPerClick = 7, cubesPerFrame = 2;
 
 	private final ArrayList<AnimatedCube> CUBES = new ArrayList<>();
 	private final NerdSketch SKETCH;
@@ -124,7 +123,7 @@ public class CubeManager {
 		// this.cubesToRemove = this.CUBES.size() - 1; // I dunno how to do this.
 	}
 
-	public int numCubes() {
+	public int getNumCubes() {
 		return this.CUBES.size();
 	}
 

@@ -8,6 +8,7 @@ import com.brahvim.nerd.openal.NerdAlUpdater;
 import com.brahvim.nerd.openal.NerdOpenAlModule;
 import com.brahvim.nerd.openal.NerdOpenAlModule.NerdOpenAlModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd_demos.scenes.DemoScene4;
 import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 
 public class App {
@@ -30,7 +31,7 @@ public class App {
 
 	public static NerdAl openAl;
 	public static NerdAlUpdater alUpdater;
-	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS = DemoScene3.class;
+	public static final Class<? extends NerdScene> FIRST_SCENE_CLASS = DemoScene4.class;
 	// LoadedSceneClass.DEMO_SCENE_5.getSceneClassLoader();
 
 	public static void main(final String[] p_args) {

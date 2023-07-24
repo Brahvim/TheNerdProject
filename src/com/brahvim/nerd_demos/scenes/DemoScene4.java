@@ -2,9 +2,11 @@ package com.brahvim.nerd_demos.scenes;
 
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
+import com.brahvim.nerd.framework.scene_api.NerdScenesModuleSettings;
 import com.brahvim.nerd.openal.AlSource;
 import com.brahvim.nerd.openal.al_asset_loaders.AlOggBufferAsset;
 import com.brahvim.nerd_demos.App;
+import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
 import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 
 import processing.core.PConstants;
@@ -77,6 +79,9 @@ public class DemoScene4 extends NerdScene {
 
 		this.nerd = WINDOW.getIconImage();
 		this.nerdGraphics = SKETCH.createGraphics(this.nerd.width, this.nerd.height);
+
+		SCENE.addLayer(DebugFpsGizmoLayer.class);
+		MANAGER.getScenesModuleSettings().drawFirstCaller = NerdScenesModuleSettings.NerdSceneLayerCallbackOrder.SCENE;
 
 		GRAPHICS.noStroke();
 		GRAPHICS.getCurrentCamera().getPos().z = 500;
