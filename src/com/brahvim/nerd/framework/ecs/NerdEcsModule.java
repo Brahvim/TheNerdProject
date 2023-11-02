@@ -395,9 +395,10 @@ public class NerdEcsModule extends NerdModule {
 		for (final Map.Entry<?, ?> e : Map.<HashSet<?>, HashSet<?>>of(
 				this.ENTITIES, p_deserialized.entities,
 				this.COMPONENTS, p_deserialized.components).entrySet()) {
-			final LinkedList<?> myList = (LinkedList<?>) e.getKey(), otherList = (LinkedList<?>) e.getValue();
+			final LinkedList<?> myList = (LinkedList<?>) e.getKey(),
+					/*		 */ otherList = (LinkedList<?>) e.getValue();
 
-			for (int i = myList.size() - 1; i != 0; i--) {
+			for (int i = myList.size() - 1; i > -1; i--) {
 				final Object o = myList.get(i);
 				if (!otherList.contains(o))
 					myList.remove(o);

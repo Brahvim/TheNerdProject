@@ -36,9 +36,9 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 
 	public NerdTcpClient(
 			final Socket p_socket,
-			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
+			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
 		this(p_socket);
-		this.startMessageThread(p_mesageCallback);
+		this.startMessageThread(p_messageCallback);
 	}
 
 	public NerdTcpClient(final String p_serverIp, final int p_myPort) {
@@ -46,9 +46,9 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 	}
 
 	public NerdTcpClient(final String p_serverIp, final int p_myPort,
-			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
+			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
 		this(p_serverIp, p_myPort);
-		this.startMessageThread(p_mesageCallback);
+		this.startMessageThread(p_messageCallback);
 	}
 
 	public NerdTcpClient(final int p_port) {
@@ -57,18 +57,18 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 
 	public NerdTcpClient(
 			final int p_port,
-			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
+			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
 		this(p_port);
-		this.startMessageThread(p_mesageCallback);
+		this.startMessageThread(p_messageCallback);
 	}
 	// endregion
 
-	private void startMessageThread(final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_mesageCallback) {
+	private void startMessageThread(final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
 		// Shouldn't occur till somebody uses reflection!:
 		if (super.STOPPED.get())
 			return;
 
-		this.MESSAGE_CALLBACKS.add(p_mesageCallback);
+		this.MESSAGE_CALLBACKS.add(p_messageCallback);
 
 		// It's faster to give the thread a name in this manner:
 		super.commsThread = new Thread(
@@ -84,10 +84,12 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 
 		// ...Get that stream!:
 		try {
-			stream = new DataInputStream(this.socket.getInputStream());
 			synchronized (this.socket) {
+				// If the socket has been closed, EXIT!
+				// `stream` will be `null` otherwise...:
 				if (this.socket.isClosed())
 					return;
+
 				stream = new DataInputStream(this.socket.getInputStream());
 			}
 		} catch (final IOException e) {
@@ -101,7 +103,9 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 
 		while (!super.STOPPED.get())
 			try {
-				stream.available();
+				if (stream.available() < 1)
+					return;
+
 				// ^^^ This is literally gunna return `0`!
 				// ..I guess we use fixed sizes around here...
 
@@ -130,9 +134,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 			} catch (final IOException e) {
 				// When the client disconnects, this exception is thrown by
 				// `*InputStream::read*()`:
-				if (e instanceof EOFException)
-					this.disconnect();
-				else if (e instanceof SocketException)
+				if (e instanceof EOFException || e instanceof SocketException)
 					this.disconnect();
 				else
 					e.printStackTrace(); // I have NO idea what to do, y'hear!

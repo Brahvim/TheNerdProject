@@ -6,7 +6,7 @@ import com.brahvim.nerd.framework.lights.NerdAmbientLight;
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.framework.scene_api.NerdScenesModuleSettings;
-import com.brahvim.nerd.openal.AlBuffer;
+// import com.brahvim.nerd.openal.AlBuffer;
 import com.brahvim.nerd.openal.al_asset_loaders.AlOggBufferAsset;
 import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.debug_layers.DebugFpsGizmoLayer;
@@ -23,7 +23,7 @@ public class DemoScene3 extends NerdScene {
 
 	// region Fields.
 	private PImage bgImage;
-	private SmoothCamera CAMERA;
+	private SmoothCamera camera;
 	private CubeManager cubeMan;
 	private NerdAmbientLight light;
 	// endregion
@@ -40,16 +40,16 @@ public class DemoScene3 extends NerdScene {
 		SCENE.addLayer(CinematicBarsLayer.class);
 		SCENE.addLayer(DebugFpsGizmoLayer.class);
 
-		CAMERA = new SmoothCamera(GRAPHICS);
-		CAMERA.fov = PApplet.radians(75);
-		GRAPHICS.setCurrentCamera(this.CAMERA);
+		camera = new SmoothCamera(GRAPHICS);
+		camera.fov = PApplet.radians(75);
+		GRAPHICS.setCurrentCamera(this.camera);
 		// SKETCH.frameRate(90);
 
-		final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
-		for (int i = 1; i != 5; i++)
-			alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
+		// final AlBuffer<?>[] alBuffers = new AlBuffer<?>[4];
+		// for (int i = 1; i != 5; i++)
+		// alBuffers[i - 1] = ASSETS.get("Pop" + i).getData();
 
-		this.cubeMan = new CubeManager(this, alBuffers);
+		this.cubeMan = new CubeManager(this);
 		this.light = new NerdAmbientLight(
 				GRAPHICS, new PVector(0, 0, 0),
 				// new PVector(255, 255, 0), // Yellow.
@@ -102,7 +102,7 @@ public class DemoScene3 extends NerdScene {
 	@Override
 	public void mouseClicked() {
 		switch (INPUT.mouseButton) {
-			case PConstants.CENTER -> CAMERA.setRoll(0);
+			case PConstants.CENTER -> camera.setRoll(0);
 			case PConstants.RIGHT -> MANAGER.startScene(DemoScene4.class);
 			case PConstants.LEFT -> {
 				this.cubeMan.emitCubes(this.cubeMan.cubesPerClick);
@@ -116,14 +116,14 @@ public class DemoScene3 extends NerdScene {
 	public void keyPressed() {
 		if (INPUT.keyCode == KeyEvent.VK_F) {
 			WINDOW.cursorVisible = !WINDOW.cursorVisible;
-			CAMERA.holdMouse = !CAMERA.holdMouse;
+			camera.holdMouse = !camera.holdMouse;
 		}
 	}
 
 	@Override
 	public void mouseWheel(final MouseEvent p_mouseEvent) {
-		CAMERA.fov -= p_mouseEvent.getCount() * 0.1f;
-		CAMERA.fov = PApplet.constrain(CAMERA.fov, 0, 130);
+		camera.fov -= p_mouseEvent.getCount() * 0.1f;
+		camera.fov = PApplet.constrain(camera.fov, 0, 130);
 	}
 
 	@Override

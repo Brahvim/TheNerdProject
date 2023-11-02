@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
+import com.brahvim.nerd.processing_wrapper.NerdSketch.NerdSketchOnlyAssetsModule;
 import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdDisplayModule;
 import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdInputModule;
 import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdWindowModule;
@@ -64,7 +65,7 @@ public abstract class NerdCustomSketchBuilder {
 	private LinkedHashSet<Function<NerdSketch, NerdModule>> supplyDefaultModules() {
 		final LinkedHashSet<Function<NerdSketch, NerdModule>> toRet = new LinkedHashSet<>(5);
 
-		toRet.add(s -> s.new NerdSketchOnlyAssetsModule(s));
+		toRet.add(NerdSketchOnlyAssetsModule::new);
 
 		toRet.add(NerdDisplayModule::new);
 

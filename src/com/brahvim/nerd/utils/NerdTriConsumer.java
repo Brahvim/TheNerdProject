@@ -1,5 +1,8 @@
 package com.brahvim.nerd.utils;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 /**
  * Represents an operation that accepts three input arguments and returns no
  * result. This is the three-arity specialization of {@link Consumer}.

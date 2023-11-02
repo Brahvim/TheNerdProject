@@ -398,7 +398,7 @@ public class NerdTcpServer implements NerdServerSocket {
 
 	public void disconnectAll() {
 		synchronized (this.CLIENTS) {
-			for (int i = this.CLIENTS.size() - 1; i != -1; i--)
+			for (int i = this.CLIENTS.size() - 1; i > -1; i--)
 				this.CLIENTS.get(i).disconnect();
 		}
 	}

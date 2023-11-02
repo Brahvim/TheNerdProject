@@ -4,12 +4,6 @@ import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PFontAsset;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
-import com.brahvim.nerd.openal.AlAuxiliaryEffectSlot;
-import com.brahvim.nerd.openal.AlSource;
-// import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
-import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
-import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlBandpassFilter;
-import com.brahvim.nerd_demos.App;
 import com.brahvim.nerd_demos.scenes.DemoScene4;
 
 import processing.core.PApplet;
@@ -19,7 +13,7 @@ import processing.core.PFont;
 public class DemoScene1 extends NerdScene {
 	private PFont font;
 	private NerdSineEase ease;
-	private AlSource sceneOneAnnounce;
+	// private AlSource sceneOneAnnounce;
 
 	@Override
 	protected synchronized void preload() {
@@ -38,22 +32,23 @@ public class DemoScene1 extends NerdScene {
 		this.font = SKETCH.ASSETS.get("Arial-Black-48").getData();
 		this.ease = new NerdSineEase(SKETCH, 0.00075f).endWhenAngleIncrementsBy(PConstants.HALF_PI).start();
 
-		this.sceneOneAnnounce = new AlSource(App.openAl, ASSETS.get("SceneOne").getData());
-		this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(App.openAl)
-				.setBandpassGainHf(0.01f)
-				.setBandpassGainLf(0.18f));
+		// this.sceneOneAnnounce = new AlSource(App.openAl,
+		// ASSETS.get("SceneOne").getData());
+		// this.sceneOneAnnounce.attachDirectFilter(new AlBandpassFilter(App.openAl)
+		// .setBandpassGainHf(0.01f)
+		// .setBandpassGainLf(0.18f));
 
-		this.sceneOneAnnounce.setEffectSlot(
-				new AlAuxiliaryEffectSlot(App.openAl,
-						new AlDistortion(App.openAl)
-								.setDistortionGain(1)));
+		// this.sceneOneAnnounce.setEffectSlot(
+		// new AlAuxiliaryEffectSlot(App.openAl,
+		// new AlDistortion(App.openAl)
+		// .setDistortionGain(1)));
 
-		this.sceneOneAnnounce.setGain(0.25f);
+		// this.sceneOneAnnounce.setGain(0.25f);
 
 		SCENE.addLayer(BoxAnimationLayer.class);
 		SCENE.addLayer(RevolvingParticlesLayer.class);
 
-		this.sceneOneAnnounce.play();
+		// this.sceneOneAnnounce.play();
 	}
 
 	@Override
@@ -68,8 +63,8 @@ public class DemoScene1 extends NerdScene {
 		}
 
 		// ..could be lazy about this, haha:
-		if (this.ease.wasActive() && !this.ease.active)
-			this.sceneOneAnnounce.dispose();
+		// if (this.ease.wasActive() && !this.ease.active)
+		// this.sceneOneAnnounce.dispose();
 
 		CAMERA.getPos().z = PApplet.abs(PApplet.sin(this.SCENE.getMillisSinceStart() * 0.001f)) * 500;
 

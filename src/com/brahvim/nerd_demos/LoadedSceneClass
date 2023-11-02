@@ -1,8 +1,8 @@
-package com.brahvim.nerd_demos;
+package com.brahvim.nerd_demos ;
 
-import com.brahvim.nerd.framework.scene_api.NerdScene;
-import com.brahvim.nerd.io.class_loaders.NerdSceneClassLoader;
-import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.framework.scene_api.NerdScene         ;
+import com.brahvim.nerd.io.class_loaders.NerdSceneClassLoader ;
+import com.brahvim.nerd.processing_wrapper.NerdSketch         ;
 
 public enum LoadedSceneClass {
 
@@ -12,14 +12,14 @@ public enum LoadedSceneClass {
 			"com.brahvim.nerd_tests.scenes.DemoScene5");
 
 	// region Non-`enum` stuff.
-	private final NerdSceneClassLoader SCENE_CLASS_LOADER;
+	private final NerdSceneClassLoader SCENE_CLASS_LOADER ;
 
 	private LoadedSceneClass(final String p_urlString, final String p_fullyQualifiedName) {
-		this.SCENE_CLASS_LOADER = new NerdSceneClassLoader(p_urlString, p_fullyQualifiedName);
+		this.SCENE_CLASS_LOADER = new NerdSceneClassLoader(p_urlString, p_fullyQualifiedName)  ;
 	}
 
 	public Class<? extends NerdScene> getLoadedClass() {
-		return this.SCENE_CLASS_LOADER.getLoadedClass();
+		return this.SCENE_CLASS_LOADER.getLoadedClass()     ;
 	}
 	// endregion
 

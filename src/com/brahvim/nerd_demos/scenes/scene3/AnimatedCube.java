@@ -2,11 +2,9 @@ package com.brahvim.nerd_demos.scenes.scene3;
 
 import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
-import com.brahvim.nerd.openal.AlSource;
+import com.brahvim.nerd.openal.AlBuffer;
 import com.brahvim.nerd.processing_wrapper.NerdGraphics;
 import com.brahvim.nerd.processing_wrapper.necessary_modules.NerdWindowModule;
-import com.brahvim.nerd_demos.App;
-import com.brahvim.nerd.openal.AlBuffer;
 
 import processing.core.PConstants;
 import processing.core.PShape;
@@ -15,15 +13,16 @@ import processing.core.PVector;
 public class AnimatedCube extends TestEulerBody {
 
 	// region Fields.
-	public static int DEFAULT_LIFETIME = 8_000;
+	public static final int DEFAULT_LIFETIME = 8_000;
 
 	public float size = 40;
 	public int startTime, lifetime;
 	public int fillColor = Integer.MAX_VALUE, strokeColor = 0;
 
-	private boolean visible = true;
 	private final NerdSineEase plopWave;
-	private AlSource popSrc;
+
+	// private AlSource popSrc;
+	private boolean visible = true;
 	// endregion
 
 	public AnimatedCube(final NerdScene p_scene) {
@@ -106,10 +105,10 @@ public class AnimatedCube extends TestEulerBody {
 		if (p_popAudioBuffer == null)
 			return this;
 
-		this.popSrc = new AlSource(App.openAl, p_popAudioBuffer);
-		this.popSrc.setPosition(super.pos.array());
-		this.popSrc.setGain(5);
-		this.popSrc.playThenDispose();
+		// this.popSrc = new AlSource(App.openAl, p_popAudioBuffer);
+		// this.popSrc.setPosition(super.pos.array());
+		// this.popSrc.setGain(5);
+		// this.popSrc.playThenDispose();
 
 		return this.plopIn();
 	}
@@ -127,14 +126,14 @@ public class AnimatedCube extends TestEulerBody {
 				.start(270, () -> {
 					p_runnable.run();
 					this.visible = false;
-					this.popSrc.dispose();
+					// this.popSrc.dispose();
 				});
 		return this;
 	}
 
-	public AlSource getAudioSource() {
-		return this.popSrc;
-	}
+	// public AlSource getAudioSource() {
+	// return this.popSrc;
+	// }
 
 	public boolean isVisible() {
 		return this.visible;
@@ -144,8 +143,8 @@ public class AnimatedCube extends TestEulerBody {
 		if (!this.visible)
 			return;
 
-		if (!this.popSrc.isDisposed())
-			this.popSrc.setPosition(super.pos.array());
+		// if (!this.popSrc.isDisposed())
+		// this.popSrc.setPosition(super.pos.array());
 
 		final NerdGraphics g = super.SKETCH.getNerdGraphics();
 
