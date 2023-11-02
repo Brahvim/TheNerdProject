@@ -1,7 +1,7 @@
-package com.brahvim.nerd_tests.scenes;
+package com.brahvim.nerd_demos.scenes;
 
-import com.brahvim.nerd.scene_api.NerdScene;
-import com.brahvim.nerd.scene_api.SceneState;
+import com.brahvim.nerd.framework.scene_api.NerdScene;
+import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 
 import processing.core.PApplet;
 
@@ -12,9 +12,9 @@ public class DemoScene5 extends NerdScene {
 			this.getClass().getSimpleName());
 
 	@Override
-	protected void setup(SceneState p_state) {
+	protected void setup(final NerdSceneState p_state) {
 		System.out.println(this.TEXT);
-		GRAPHICS.getCurrentCamera().pos.z = 500;
+		GRAPHICS.getCurrentCamera().getPos().z = 500;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class DemoScene5 extends NerdScene {
 		GRAPHICS.text(this.TEXT, 0, 0);
 		GRAPHICS.popMatrix();
 
-		GRAPHICS.circle(GRAPHICS.mouseX - WINDOW.cx, GRAPHICS.mouseY - WINDOW.cy, 20);
+		GRAPHICS.circle(SKETCH.mouseX - WINDOW.cx, SKETCH.mouseY - WINDOW.cy, 20);
 	}
 
 	@Override

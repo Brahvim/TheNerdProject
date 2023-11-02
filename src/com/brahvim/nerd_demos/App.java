@@ -9,7 +9,6 @@ import com.brahvim.nerd.openal.NerdOpenAlModule;
 import com.brahvim.nerd.openal.NerdOpenAlModule.NerdOpenAlModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd_demos.scenes.DemoScene4;
-import com.brahvim.nerd_demos.scenes.scene3.DemoScene3;
 
 public class App {
 

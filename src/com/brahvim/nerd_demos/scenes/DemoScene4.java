@@ -65,9 +65,9 @@ public class DemoScene4 extends NerdScene {
 			WINDOW.setSize(1600, 900);
 			WINDOW.centerWindow();
 		} else { // Do not play `this.rubberDuck` if this is the first start!
-			App.openAl.setListenerVelocity(0, 0, 0);
-			App.openAl.setListenerPosition(0, 0, 500);
-			App.openAl.setListenerOrientation(0, 1, 0);
+			// App.openAl.setListenerVelocity(0, 0, 0);
+			// App.openAl.setListenerPosition(0, 0, 500);
+			// App.openAl.setListenerOrientation(0, 1, 0);
 
 			rubberDuck.setPosition(
 					5 * (INPUT.mouseX - WINDOW.cx), 0,

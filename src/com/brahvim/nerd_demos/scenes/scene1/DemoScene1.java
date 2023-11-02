@@ -4,9 +4,9 @@ import com.brahvim.nerd.framework.scene_api.NerdScene;
 import com.brahvim.nerd.framework.scene_api.NerdSceneState;
 import com.brahvim.nerd.io.asset_loader.processing_loaders.PFontAsset;
 import com.brahvim.nerd.math.easings.built_in_easings.NerdSineEase;
-import com.brahvim.nerd.openal.AlSource;
-import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.AlAuxiliaryEffectSlot;
+import com.brahvim.nerd.openal.AlSource;
+// import com.brahvim.nerd.openal.al_asset_loaders.OggBufferDataAsset;
 import com.brahvim.nerd.openal.al_ext_efx.al_effects.AlDistortion;
 import com.brahvim.nerd.openal.al_ext_efx.al_filter.AlBandpassFilter;
 import com.brahvim.nerd_demos.App;
@@ -17,7 +17,6 @@ import processing.core.PConstants;
 import processing.core.PFont;
 
 public class DemoScene1 extends NerdScene {
-
 	private PFont font;
 	private NerdSineEase ease;
 	private AlSource sceneOneAnnounce;
@@ -25,7 +24,7 @@ public class DemoScene1 extends NerdScene {
 	@Override
 	protected synchronized void preload() {
 		SKETCH.ASSETS.addAsset(new PFontAsset("data/Arial-Black-48.vlw"));
-		ASSETS.addAsset(new OggBufferDataAsset("data/SceneOne.ogg"));
+		// ASSETS.addAsset(new OggBufferDataAsset("data/SceneOne.ogg"));
 	}
 
 	@Override
@@ -89,9 +88,8 @@ public class DemoScene1 extends NerdScene {
 
 	@Override
 	public void mouseClicked() {
-		switch (SKETCH.mouseButton) {
-			case PConstants.RIGHT -> MANAGER.startScene(DemoScene4.class);
-		}
+		if (SKETCH.mouseButton == PConstants.RIGHT)
+			MANAGER.startScene(DemoScene4.class);
 	}
 
 }

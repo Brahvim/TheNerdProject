@@ -13,12 +13,12 @@ import processing.core.PVector;
 public class DemoScene6 extends NerdScene {
 
 	// region Fields.
-	private NerdFpsCamera CAMERA;
+	private NerdFpsCamera myCamera;
 	private final PVector playerVel = new PVector(10, 7, 10);
 
-	private final float GRAVITY = 2;
-	private final float PLAYER_START_Y = -1500;
-	private final float PLAYER_MIN_Y = -200 - this.GRAVITY;
+	private static final float GRAVITY = 2;
+	private static final float PLAYER_START_Y = -1500;
+	private static final float PLAYER_MIN_Y = -200 - DemoScene6.GRAVITY;
 	// endregion
 
 	@Override
@@ -30,23 +30,23 @@ public class DemoScene6 extends NerdScene {
 		}
 
 		// Need to do this!...:
-		CAMERA = STATE.get("Camera", new NerdFpsCamera(SKETCH));
-		CAMERA.setClearColor(0x006699);
+		myCamera = STATE.get("Camera", new NerdFpsCamera(GRAPHICS));
+		myCamera.setClearColor(0x006699);
 		STATE.set("TimesLoaded", this.SCENE.getTimesLoaded());
 
 		// Do not forget to do these!:
 		WINDOW.cursorVisible = false;
-		GRAPHICS.getCurrentCamera() = CAMERA;
+		GRAPHICS.setCurrentCamera(myCamera);
 		// The camera won't be "auto-used" otherwise!!!
 
 		// Give us a "starting position"!:
-		CAMERA.getPos().set(WINDOW.cx, this.PLAYER_START_Y);
+		myCamera.getPos().set(WINDOW.cx, DemoScene6.PLAYER_START_Y);
 	}
 
 	@Override
 	protected void draw() {
-		CAMERA.fov = PConstants.PI / 3 + 0.01f * INPUT.mouseScroll;
-		CAMERA.getPos().y = PApplet.sin(SKETCH.millis() * 0.001f) * 25;
+		myCamera.fov = PConstants.PI / 3 + 0.01f * INPUT.mouseScroll;
+		myCamera.getPos().y = PApplet.sin(SKETCH.millis() * 0.001f) * 25;
 		this.controlCamera();
 
 		// region Actual rendering!
@@ -71,23 +71,23 @@ public class DemoScene6 extends NerdScene {
 	public void keyPressed() {
 		if (INPUT.keyIsPressed(KeyEvent.VK_F)) {
 			WINDOW.cursorVisible = !WINDOW.cursorVisible;
-			CAMERA.holdMouse = !CAMERA.holdMouse;
+			myCamera.holdMouse = !myCamera.holdMouse;
 		}
 
 		if (INPUT.keysPressed(KeyEvent.VK_CONTROL, KeyEvent.VK_R)) {
-			CAMERA.completeReset();
-			STATE.set("Camera", CAMERA);
+			myCamera.completeReset();
+			STATE.set("Camera", myCamera);
 			MANAGER.restartScene(STATE);
 		}
 	}
 
 	private void controlCamera() {
 		// region Gravity:
-		CAMERA.getPos().y += this.GRAVITY;
+		myCamera.getPos().y += DemoScene6.GRAVITY;
 
 		// Don't-go-underneath check:
-		if (CAMERA.getPos().y > this.PLAYER_MIN_Y)
-			CAMERA.getPos().y = this.PLAYER_MIN_Y;
+		if (myCamera.getPos().y > DemoScene6.PLAYER_MIN_Y)
+			myCamera.getPos().y = DemoScene6.PLAYER_MIN_Y;
 		// endregion
 
 		// region Key-press handling.
@@ -99,32 +99,32 @@ public class DemoScene6 extends NerdScene {
 
 		// region Roll.
 		if (INPUT.keyIsPressed(KeyEvent.VK_Z))
-			CAMERA.getUp().x += velMultiplier * 0.01f;
+			myCamera.getUp().x += velMultiplier * 0.01f;
 
 		if (INPUT.keyIsPressed(KeyEvent.VK_C))
-			CAMERA.getUp().x += -velMultiplier * 0.01f;
+			myCamera.getUp().x += -velMultiplier * 0.01f;
 		// endregion
 
 		// region Elevation.
 		if (INPUT.keyIsPressed(KeyEvent.VK_SPACE))
-			CAMERA.moveY(this.GRAVITY * velMultiplier * -this.playerVel.y);
+			myCamera.moveY(DemoScene6.GRAVITY * velMultiplier * -this.playerVel.y);
 
 		if (INPUT.keyIsPressed(KeyEvent.VK_SHIFT))
-			CAMERA.moveY(velMultiplier * this.playerVel.y);
+			myCamera.moveY(velMultiplier * this.playerVel.y);
 		// endregion
 
 		// region `W`-`A`-`S`-`D` controls.
 		if (INPUT.keyIsPressed(KeyEvent.VK_W))
-			CAMERA.moveZ(velMultiplier * -this.playerVel.z);
+			myCamera.moveZ(velMultiplier * -this.playerVel.z);
 
 		if (INPUT.keyIsPressed(KeyEvent.VK_A))
-			CAMERA.moveX(velMultiplier * -this.playerVel.x);
+			myCamera.moveX(velMultiplier * -this.playerVel.x);
 
 		if (INPUT.keyIsPressed(KeyEvent.VK_S))
-			CAMERA.moveZ(velMultiplier * this.playerVel.z);
+			myCamera.moveZ(velMultiplier * this.playerVel.z);
 
 		if (INPUT.keyIsPressed(KeyEvent.VK_D))
-			CAMERA.moveX(velMultiplier * this.playerVel.x);
+			myCamera.moveX(velMultiplier * this.playerVel.x);
 		// endregion
 		// endregion
 	}
