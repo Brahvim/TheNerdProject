@@ -1,0 +1,29 @@
+{
+	"java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -javaagent:\"c:\\Users\\Brahvim\\.vscode\\extensions\\vscjava.vscode-lombok-1.0.1\\server\\lombok.jar\"",
+	"cmake.configureOnOpen": false,
+	"java.compile.nullAnalysis.mode": "automatic",
+	"cSpell.words": [
+		"frict",
+		"Inact",
+		"Javacpp",
+		"Loooooooooong",
+		"pactive",
+		"pcursor",
+		"pfullscreen",
+		"phold",
+		"pmouse",
+		"pscr"
+	],
+	"java.cleanup.actionsOnSave": [
+		// "qualifyMembers", // `NerdScene`s won't like this!
+		"addOverride",
+		"invertEquals",
+		"addDeprecated",
+		"tryWithResource",
+		"lambdaExpression",
+		"addFinalModifier",
+		"qualifyStaticMembers",
+		"instanceofPatternMatch",
+		"stringConcatToTextBlock",
+	],
+}

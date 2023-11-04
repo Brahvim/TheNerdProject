@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 public final class NerdBufferUtils {
 
 	private NerdBufferUtils() {
-		throw new Error("Sorry, but `"
+		throw new IllegalAccessError("Sorry, but `"
 				+ this.getClass().getCanonicalName()
 				+ "` is an uninstantiable, helper class.");
 	}

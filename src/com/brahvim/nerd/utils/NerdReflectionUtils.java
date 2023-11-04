@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 public class NerdReflectionUtils {
 
 	private NerdReflectionUtils() {
-		throw new Error("Sorry, but `"
+		throw new IllegalAccessError("Sorry, but `"
 				+ this.getClass().getCanonicalName()
 				+ "` is an uninstantiable, helper class.");
 	}

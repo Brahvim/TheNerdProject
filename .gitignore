@@ -1,8 +1,9 @@
-/.vscode
-/bin
-/README.md
-/lib
+# Directories:
+./bin
+./README.md
+./lib
 
+# File types:
 *.jar
 *.zip
-*.log
+*.logs

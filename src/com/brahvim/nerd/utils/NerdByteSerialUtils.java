@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 public class NerdByteSerialUtils {
 
 	private NerdByteSerialUtils() {
-		throw new Error("Sorry, but `"
+		throw new IllegalAccessError("Sorry, but `"
 				+ this.getClass().getCanonicalName()
 				+ "` is an uninstantiable, helper class.");
 	}
