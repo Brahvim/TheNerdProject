@@ -1,0 +1,41 @@
+{
+    "Meta": {
+        "appName": {
+            "en": "The Nerd Project"
+        },
+        "onConstruct": {
+            "en": "Hello, world! This is an application running via APIs from the Processing-based Nerd Engine!"
+        },
+        "arrExample": {
+            "en": [
+                "Random line `#1`!",
+                "Random line `#2`!",
+                "Random line `#3`!"
+            ]
+        }
+    },
+    "Area1": {
+        "beforePlayerRescued": {
+            "npc1": {
+                "en": "..so you see, we have this problem in our town here."
+            },
+            "npc2": {
+                "en": "Oh COME ON! It HAS to be those goons!"
+            },
+            "npc3": {
+                "en": "Yesh! I shaw demm! I shaw demm! Toward da eesht!"
+            }
+        },
+        "afterPlayerRescued": {
+            "npc1": {
+                "en": "Wow. I saw that battle of yours with those thieves. Truly, truly brave of you, <player_name>!"
+            },
+            "npc2": {
+                "en": "You caught the GOONS?! Oh my Gosh!!!"
+            },
+            "npc3": {
+                "en": "You fough da goonzh! You are soooo awesome, <player_name>!"
+            }
+        }
+    }
+}

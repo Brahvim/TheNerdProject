@@ -1,0 +1,15 @@
+package com.brahvim.nerd_demos.effect_layers ;
+
+import com.brahvim.nerd.framework.scene_api.NerdLayer ;
+
+public class CircleTransitionLayer extends NerdLayer {
+
+	@Override
+	protected void draw() {
+		GRAPHICS.begin2d()     ;
+		GRAPHICS.fill(0)       ;
+
+		GRAPHICS.end2d() ;
+	}
+
+}

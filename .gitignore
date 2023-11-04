@@ -1,0 +1,8 @@
+/.vscode
+/bin
+/README.md
+/lib
+
+*.jar
+*.zip
+*.log
