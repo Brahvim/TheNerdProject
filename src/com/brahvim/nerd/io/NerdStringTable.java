@@ -4,31 +4,28 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.random.RandomGenerator;
-
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-
 import processing.core.PApplet;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
 /**
- * A "global" namespace for these strings is provided through
- * {@link NerdSketch#STRINGS}, so you can access string table data across
- * scenes!
+ * A "global" namespace for these strings is provided through {@link NerdSketch#STRINGS}, so you can access string table
+ * data across scenes!
  */
 public class NerdStringTable {
 
 	// region Fields.
 	private File file;
 	private JSONObject json;
-	private String langauge;
+	private String language;
 	// endregion
 
 	// region Constructors.
 	@SuppressWarnings("unchecked")
 	public NerdStringTable(final NerdStringTable p_table) {
 		this.file = p_table.file.getAbsoluteFile();
-		this.langauge = p_table.langauge;
+		this.language = p_table.language;
 		this.json = new JSONObject();
 
 		final Iterator<String> keysItr = p_table.json.keyIterator();
@@ -40,14 +37,13 @@ public class NerdStringTable {
 
 	public NerdStringTable(final File p_file, final String p_lang) throws FileNotFoundException {
 		this.file = p_file;
-		this.langauge = p_lang;
+		this.language = p_lang;
 
 		if (this.file == null)
 			throw new NullPointerException("`NerdStringTable`s cannot use `null` `File`s!");
 
-		if (this.langauge == null)
-			throw new NullPointerException(
-					"`NerdStringTable`s cannot use `null` for language identifier `String`!");
+		if (this.language == null)
+			throw new NullPointerException("`NerdStringTable`s cannot use `null` for language identifier `String`!");
 
 		this.refresh();
 	}
@@ -58,7 +54,7 @@ public class NerdStringTable {
 
 	public NerdStringTable(final File p_file) throws FileNotFoundException {
 		this.file = p_file;
-		this.langauge = "en";
+		this.language = "en";
 
 		if (this.file == null)
 			throw new NullPointerException("`NerdStringTable`s cannot use `null` `File`s!");
@@ -73,19 +69,18 @@ public class NerdStringTable {
 
 	// region Language settings.
 	public void setLanguage(final String p_lang) {
-		this.langauge = p_lang;
+		this.language = p_lang;
 	}
 
 	public void getLanguage(final String p_lang) {
-		this.langauge = p_lang;
+		this.language = p_lang;
 	}
 	// endregion
 
 	// region `refresh()` overloads.
 	public void refresh(final File p_file) throws FileNotFoundException {
 		if (p_file == null)
-			throw new NullPointerException(
-					"`StringTable::refresh(File)` cannot take a `null` `File`!");
+			throw new NullPointerException("`StringTable::refresh(File)` cannot take a `null` `File`!");
 
 		this.file = p_file;
 		this.refresh();
@@ -98,10 +93,7 @@ public class NerdStringTable {
 		// to reflect upon changes in the file.
 
 		if (!this.file.exists()) {
-			throw new FileNotFoundException(
-					"No string table file `"
-							+ this.file.getAbsolutePath()
-							+ "` exists.");
+			throw new FileNotFoundException("No string table file `" + this.file.getAbsolutePath() + "` exists.");
 		}
 
 		this.json = PApplet.loadJSONObject(this.file);
@@ -133,15 +125,14 @@ public class NerdStringTable {
 		// Oh - and yes, I too, have ***no*** idea why we can get the "last object" only
 		// from outside the loop!
 
-		// ...get the string of the specified langauge!
-		final String toRet = lastObject == null ? "" : lastObject.getString(this.langauge);
-		lastObject = null; // GC, do you wish to collect it? Please do it now!
+		// ...get the string of the specified language!
+		final String toRet = lastObject == null ? "" : lastObject.getString(this.language);
+		/* NOSONAR */ lastObject = null; // GC, do you wish to collect it? Please do it now!
 
 		if (toRet == null) {
 			System.err.printf("""
 					`NerdStringTable` key `%s` not found!
-					\tGiving default value, `%s`.""",
-					p_key, p_default);
+					\tGiving default value, `%s`.""", p_key, p_default);
 			return p_default;
 		}
 
@@ -179,18 +170,17 @@ public class NerdStringTable {
 		// region Get the array, else return `p_default`.
 		try {
 			if (lastObject != null)
-				stringArray = lastObject.getJSONArray(this.langauge);
-			// ...get the string-array of the specified langauge!
+				stringArray = lastObject.getJSONArray(this.language);
+			// ...get the string-array of the specified language!
 		} catch (final Exception e) {
 			System.err.printf("""
 					There is no array called `%s` in the `NerdStringTable` file!
-					\tGiving default value, `%s`.""",
-					p_key, p_default);
+					\tGiving default value, `%s`.""", p_key, p_default);
 			return p_default;
 		}
 		// endregion
 
-		lastObject = null; // GC, do you wish to collect it? Please do it now!
+		/* NOSONAR */ lastObject = null; // GC, do you wish to collect it? Please do it now!
 
 		String toRet = p_default;
 		// region Get the element if it is available.
@@ -199,8 +189,7 @@ public class NerdStringTable {
 		} catch (final RuntimeException e) {
 			System.err.printf("""
 					`JSONArray` `%s` does not have any element at index `%d`!
-					\tGiving default value, `%s`.""",
-					p_key, p_id, p_default);
+					\tGiving default value, `%s`.""", p_key, p_id, p_default);
 		}
 		// endregion
 
@@ -237,19 +226,19 @@ public class NerdStringTable {
 		// region Get the array, else return `p_default`.
 		try {
 			if (lastObject != null)
-				stringArray = lastObject.getJSONArray(this.langauge);
-			// ...get the string-array of the specified langauge!
+				stringArray = lastObject.getJSONArray(this.language);
+			// ...get the string-array of the specified language!
 		} catch (final Exception e) {
 			System.err.printf("""
 					There is no array called `%s` in the `NerdStringTable` file!
-					\tGiving default value, `%s`.""",
-					p_key, p_default);
+					\tGiving default value, `%s`.""", p_key, p_default);
 			return p_default;
 		}
 		// endregion
 
-		// Probably a useless, extra instruction:
-		// lastObject = null; // GC, do you wish to collect it? Please do it now!
+		// ~~Probably a useless, extra instruction:~~ We DON'T know how large this guy is in memory.
+		// Must clean him upas quick as possible. May benefit from parallel GC timings, right?
+		/* NOSONAR */ lastObject = null; // GC, do you wish to collect it? Please do it now!
 
 		return stringArray == null ? ""
 				: stringArray.getString(RandomGenerator.getDefault().nextInt(0, stringArray.size()));

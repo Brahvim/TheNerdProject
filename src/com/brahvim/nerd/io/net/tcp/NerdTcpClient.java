@@ -9,7 +9,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 import java.util.function.Consumer;
-
 import processing.core.PApplet;
 
 public class NerdTcpClient extends NerdAbstractTcpClient {
@@ -34,8 +33,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 		super(p_socket);
 	}
 
-	public NerdTcpClient(
-			final Socket p_socket,
+	public NerdTcpClient(final Socket p_socket,
 			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
 		this(p_socket);
 		this.startMessageThread(p_messageCallback);
@@ -55,9 +53,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 		super(p_port);
 	}
 
-	public NerdTcpClient(
-			final int p_port,
-			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
+	public NerdTcpClient(final int p_port, final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
 		this(p_port);
 		this.startMessageThread(p_messageCallback);
 	}
@@ -71,8 +67,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 		this.MESSAGE_CALLBACKS.add(p_messageCallback);
 
 		// It's faster to give the thread a name in this manner:
-		super.commsThread = new Thread(
-				this::receiverTasks,
+		super.commsThread = new Thread(this::receiverTasks,
 				this.getClass().getSimpleName() + "OnPort:" + this.socket.getLocalPort());
 		super.commsThread.setDaemon(true);
 		super.commsThread.start();
@@ -110,6 +105,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 				// ..I guess we use fixed sizes around here...
 
 				// ..Now read it:
+				// FIXME VULNERABILITY! What if the packet ISN'T from Nerd?!:
 				final int packetSize = stream.readInt();
 				final byte[] packetData = new byte[packetSize];
 
@@ -156,8 +152,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 	public NerdTcpClient send(final NerdAbstractTcpPacket p_packet) {
 		try {
 			final byte[] packData = p_packet.getData();
-			final byte[] packDataLen = ByteBuffer
-					.allocate(Integer.BYTES).putInt(p_packet.getDataLength()).array();
+			final byte[] packDataLen = ByteBuffer.allocate(Integer.BYTES).putInt(p_packet.getDataLength()).array();
 
 			// System.out.println("`NerdTcpClient::send()` was called.");
 			super.socket.getOutputStream().write(PApplet.concat(packDataLen, packData));

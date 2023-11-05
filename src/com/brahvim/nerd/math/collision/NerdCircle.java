@@ -34,8 +34,7 @@ public class NerdCircle {
 		final float sideY = PApplet.abs(p_botRight.y - p_topLeft.y);
 
 		if (sideX != sideY)
-			throw new IllegalArgumentException(
-					"Cannot construct a `NerdCircle` from a rectangular `NerdQuad`!");
+			throw new IllegalArgumentException("Cannot construct a `NerdCircle` from a rectangular `NerdQuad`!");
 
 		this.pos = new PVector(p_topLeft.x + sideX, p_topLeft.y + sideY);
 	}

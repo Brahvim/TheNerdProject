@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.brahvim.nerd.io.net.NerdClientSocket;
 
 /**
- * ...Only I (Brahvim) want to be using this class. It's written in the hopes to
- * make the API I want to in Nerd.
+ * ...Only I (Brahvim) want to be using this class. It's written in the hopes to make the API I want to in Nerd.
  */
 public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 
@@ -29,7 +27,7 @@ public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 
 	/* `package` */ NerdAbstractTcpClient(final int p_myPort) {
 		try {
-			this.socket = new Socket((String) null, p_myPort);
+			this.socket = new Socket((String)null, p_myPort);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

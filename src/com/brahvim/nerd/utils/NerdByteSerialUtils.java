@@ -17,14 +17,10 @@ import java.util.function.Consumer;
 // ...And yes, it got TOTALLY changed here! Woohoo!
 
 /**
- * <h3>A serialization utility.</h3>
- *
- * Have data serialized to {@code byte[]}s and files, and also deserialized from
- * them!
+ * <h3>A serialization utility.</h3> Have data serialized to {@code byte[]}s and files, and also deserialized from them!
  * <p>
- * Many methods take {@link Consumer} instances as arguments to provide a way to
- * handle exceptions. ...simply because overloading would not be allowed
- * otherwise!
+ * Many methods take {@link Consumer} instances as arguments to provide a way to handle exceptions. ...simply because
+ * overloading would not be allowed otherwise!
  */
 
 // Bite Cereal, ":D!
@@ -34,15 +30,13 @@ import java.util.function.Consumer;
 public class NerdByteSerialUtils {
 
 	private NerdByteSerialUtils() {
-		throw new IllegalAccessError("Sorry, but `"
-				+ this.getClass().getCanonicalName()
-				+ "` is an uninstantiable, helper class.");
+		throw new IllegalAccessError(
+				"Sorry, but `" + this.getClass().getCanonicalName() + "` is an uninstantiable, helper class.");
 	}
 
 	/**
 	 * @param p_object is the object to convert to bytes.
-	 * @return A {@code byte[0]} if a serialization error occurs, or if
-	 *         {@code p_object} is {@code null}.
+	 * @return A {@code byte[0]} if a serialization error occurs, or if {@code p_object} is {@code null}.
 	 */
 	public static byte[] toBytes(final Serializable p_object) {
 		if (p_object == null)
@@ -72,8 +66,7 @@ public class NerdByteSerialUtils {
 		// For each field in the object to copy to...
 		for (final Field f : p_to.getClass().getFields()) {
 			final int fieldModifiers = f.getModifiers();
-			final boolean editable = !("serialVersionUID".equals(f.getName())
-					|| Modifier.isTransient(fieldModifiers)
+			final boolean editable = !("serialVersionUID".equals(f.getName()) || Modifier.isTransient(fieldModifiers)
 					|| Modifier.isPublic(fieldModifiers));
 
 			if (editable) { // ..that is not the `serialVersionUID`, nor `static`, nor `transient`...
@@ -84,8 +77,8 @@ public class NerdByteSerialUtils {
 					// has a hierarchy that differs from the other...
 					if (value != null && !f.getType().isAssignableFrom(value.getClass())) {
 						// ...we work no longer.
-						throw new IllegalArgumentException("Incompatible field types: `" +
-								f.getType().getName() + "` and `" + value.getClass().getName() + "`");
+						throw new IllegalArgumentException("Incompatible field types: `" + f.getType().getName()
+								+ "` and `" + value.getClass().getName() + "`");
 					}
 					// But if it shows the slightest of similarities, we go on:
 					f.set(p_to, value);
@@ -99,9 +92,8 @@ public class NerdByteSerialUtils {
 
 	/**
 	 * <p>
-	 * Suppose we have a class, {@code C}, which extends {@code B}, which extends
-	 * {@code A}. This method will therefore return {@code 3} when given an object
-	 * of class {@code C}.
+	 * Suppose we have a class, {@code C}, which extends {@code B}, which extends {@code A}. This method will therefore
+	 * return {@code 3} when given an object of class {@code C}.
 	 *
 	 * @param p_object is the object whose class hierarchy depth is to be found.
 	 * @return Returns the depth of the hierarchy of the class of the given object.
@@ -122,7 +114,7 @@ public class NerdByteSerialUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T fromBytes(final byte[] p_data) {
 		try {
-			return (T) NerdByteSerialUtils.fromBytesImpl(p_data);
+			return (T)NerdByteSerialUtils.fromBytesImpl(p_data);
 		} catch (final ClassNotFoundException | ClassCastException | IOException e) {
 			e.printStackTrace();
 		}
@@ -131,11 +123,9 @@ public class NerdByteSerialUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T fromBytes(
-			final byte[] p_data,
-			final Consumer<IOException> p_onIo) {
+	public static <T> T fromBytes(final byte[] p_data, final Consumer<IOException> p_onIo) {
 		try {
-			return (T) NerdByteSerialUtils.fromBytesImpl(p_data);
+			return (T)NerdByteSerialUtils.fromBytesImpl(p_data);
 		} catch (final IOException e) {
 			if (p_onIo == null)
 				e.printStackTrace();
@@ -148,12 +138,10 @@ public class NerdByteSerialUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T fromBytes(
-			final byte[] p_data,
-			final Consumer<IOException> p_onIo,
+	public static <T> T fromBytes(final byte[] p_data, final Consumer<IOException> p_onIo,
 			final Consumer<ClassCastException> p_onClassCast) {
 		try {
-			return (T) NerdByteSerialUtils.fromBytesImpl(p_data);
+			return (T)NerdByteSerialUtils.fromBytesImpl(p_data);
 		} catch (final IOException e) {
 			if (p_onIo == null)
 				e.printStackTrace();
@@ -171,13 +159,10 @@ public class NerdByteSerialUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T fromBytes(
-			final byte[] p_data,
-			final Consumer<ClassNotFoundException> p_onClassNotFound,
-			final Consumer<ClassCastException> p_onClassCast,
-			final Consumer<IOException> p_onIo) {
+	public static <T> T fromBytes(final byte[] p_data, final Consumer<ClassNotFoundException> p_onClassNotFound,
+			final Consumer<ClassCastException> p_onClassCast, final Consumer<IOException> p_onIo) {
 		try {
-			return (T) NerdByteSerialUtils.fromBytesImpl(p_data);
+			return (T)NerdByteSerialUtils.fromBytesImpl(p_data);
 		} catch (final IOException e) {
 			if (p_onIo == null)
 				e.printStackTrace();
@@ -198,12 +183,11 @@ public class NerdByteSerialUtils {
 	}
 
 	/**
-	 * Deserialize an object from bytes, then edit a given one to match the
-	 * deserialized one. Only you can guarantee the equality of their types!
+	 * Deserialize an object from bytes, then edit a given one to match the deserialized one. Only you can guarantee the
+	 * equality of their types!
 	 *
-	 * @deprecated since it uses
-	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)},
-	 *             which is itself deprecated.
+	 * @deprecated since it uses {@link NerdByteSerialUtils#copyFieldValues(Object, Object)}, which is itself
+	 *             deprecated.
 	 * @param p_data   the bytes to deserialize back to an object.
 	 * @param p_object the object to transform into the from the bytes!
 	 */
@@ -231,13 +215,13 @@ public class NerdByteSerialUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T fromFileCasted(final String p_filePath)
 			throws IOException, ClassNotFoundException, ClassCastException {
-		return (T) NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
+		return (T)NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T fromFileCasted(final String p_filePath, final Consumer<IOException> p_onIo) {
 		try {
-			return (T) NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
+			return (T)NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 		} catch (final ClassNotFoundException | ClassCastException e) {
 			e.printStackTrace();
 		} catch (final IOException e) {
@@ -254,7 +238,7 @@ public class NerdByteSerialUtils {
 	public static <T> T fromFileCasted(final String p_filePath, final Consumer<IOException> p_onIo,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return (T) NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
+			return (T)NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -271,13 +255,11 @@ public class NerdByteSerialUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T fromFileCasted(
-			final String p_filePath,
-			final Consumer<IOException> p_onIo,
+	public static <T> T fromFileCasted(final String p_filePath, final Consumer<IOException> p_onIo,
 			final Consumer<ClassCastException> p_onClassCast,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return (T) NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
+			return (T)NerdByteSerialUtils.fromFileImpl(new File(p_filePath));
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -303,13 +285,13 @@ public class NerdByteSerialUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T fromFileCasted(final File p_file)
 			throws IOException, ClassNotFoundException, ClassCastException {
-		return (T) NerdByteSerialUtils.fromFileImpl(p_file);
+		return (T)NerdByteSerialUtils.fromFileImpl(p_file);
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T fromFileCasted(final File p_file, final Consumer<IOException> p_onIo) {
 		try {
-			return (T) NerdByteSerialUtils.fromFileImpl(p_file);
+			return (T)NerdByteSerialUtils.fromFileImpl(p_file);
 		} catch (final ClassNotFoundException | ClassCastException e) {
 			e.printStackTrace();
 		} catch (final IOException e) {
@@ -326,7 +308,7 @@ public class NerdByteSerialUtils {
 	public static <T> T fromFileCasted(final File p_file, final Consumer<IOException> p_onIo,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return (T) NerdByteSerialUtils.fromFileImpl(p_file);
+			return (T)NerdByteSerialUtils.fromFileImpl(p_file);
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -343,13 +325,11 @@ public class NerdByteSerialUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T fromFileCasted(
-			final File p_file,
-			final Consumer<IOException> p_onIo,
+	public static <T> T fromFileCasted(final File p_file, final Consumer<IOException> p_onIo,
 			final Consumer<ClassCastException> p_onClassCast,
 			final Consumer<ClassNotFoundException> p_onClassNotFound) {
 		try {
-			return (T) NerdByteSerialUtils.fromFileImpl(p_file);
+			return (T)NerdByteSerialUtils.fromFileImpl(p_file);
 		} catch (final ClassNotFoundException e) {
 			if (p_onClassNotFound == null)
 				e.printStackTrace();
@@ -461,14 +441,11 @@ public class NerdByteSerialUtils {
 	}
 
 	/**
-	 * Deserialize an object from a file, then edit a given one to match the
-	 * deserialized one. Only you can guarantee the equality of their types!
+	 * Deserialize an object from a file, then edit a given one to match the deserialized one. Only you can guarantee
+	 * the equality of their types!
 	 *
-	 * @deprecated since it uses
-	 *             {@link NerdByteSerialUtils#fromBytesAssigning(byte[], Object)},
-	 *             which is deprecated, since it uses
-	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)},
-	 *             which is also deprecated.
+	 * @deprecated since it uses {@link NerdByteSerialUtils#fromBytesAssigning(byte[], Object)}, which is deprecated,
+	 *             since it uses {@link NerdByteSerialUtils#copyFieldValues(Object, Object)}, which is also deprecated.
 	 * @param p_file   the file to deserialize an object from!
 	 * @param p_object the object to transform into the from the bytes!
 	 */
@@ -486,7 +463,7 @@ public class NerdByteSerialUtils {
 	private static <T> T fromFileImpl(final File p_file) throws IOException, ClassNotFoundException {
 		try (final FileInputStream fis = new FileInputStream(p_file);
 				final ObjectInputStream ois = new ObjectInputStream(fis);) {
-			return (T) ois.readObject();
+			return (T)ois.readObject();
 		}
 	}
 	// endregion

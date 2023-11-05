@@ -15,30 +15,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.brahvim.nerd.utils.NerdTriConsumer;
 
 /**
- * {@link NerdUdpSocket} helps two applications running on different machines
- * connect via networks following the "User Datagram Protocol" and let them
- * listen to each other on a different thread for easier asynchronous
- * multitasking.
- *
+ * {@link NerdUdpSocket} helps two applications running on different machines connect via networks following the "User
+ * Datagram Protocol" and let them listen to each other on a different thread for easier asynchronous multitasking.
  * <p>
- * Of course, it is based on classes from the
- * {@link java.net} package :)
+ * Of course, it is based on classes from the {@link java.net} package :)
+ * 
+ * @author Brahvim Bhaktvatsal
  */
-
 public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	// Concurrent stuff *haha:*
 	/**
-	 * The {@link NerdUdpSocket.ReceiverThread} class helps {@link NerdUdpSocket}s
-	 * receive
-	 * data on
-	 * a separate thread, aiding with application performance and modern
-	 * hardware programming practices. It may NOT, be useful on systems like
-	 * Android, where ALL networking tasks must be done asynchronously.
+	 * The {@link NerdUdpSocket.ReceiverThread} class helps {@link NerdUdpSocket}s receive data on a separate thread,
+	 * aiding with application performance and modern hardware programming practices. It may NOT, be useful on systems
+	 * like Android, where ALL networking tasks must be done asynchronously.
 	 *
 	 * @see NerdUdpSocket
 	 */
@@ -46,16 +39,15 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 		// region Fields.
 		/**
-		 * Number of bytes allocated to hold the data in a packet. The size of the
-		 * array is truncated before it is passed to `UdpSocket::onReceive()`.
+		 * Number of bytes allocated to hold the data in a packet. The size of the array is truncated before it is
+		 * passed to `UdpSocket::onReceive()`.
 		 */
 		public static final int PACKET_MAX_SIZE = 70_000;
 
 		/**
 		 * The {@link Thread} that handles the network's receive calls.
 		 *
-		 * @implSpec {@link NerdUdpSocket.ReceiverThread#start()}
-		 *           should set this to be a daemon thread.
+		 * @implSpec {@link NerdUdpSocket.ReceiverThread#start()} should set this to be a daemon thread.
 		 * @see NerdUdpSocket.ReceiverThread#start()
 		 * @see NerdUdpSocket.ReceiverThread#stop()
 		 */
@@ -96,8 +88,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 						return;
 					} else {
 						synchronized (System.err) {
-							System.err.printf(
-									"`%s.ReceiverThread::receiverTasks()` encountered an:",
+							System.err.printf("`%s.ReceiverThread::receiverTasks()` encountered an:",
 									NerdUdpSocket.class.getSimpleName());
 							e.printStackTrace();
 						}
@@ -135,8 +126,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 						// than to do a loop and set values. Java allocations ARE fast.
 						// I'm only worried about de-allocation. GCs can be slow, right?
 
-						NerdUdpSocket.this.onReceive(copy,
-								addr.toString().substring(1),
+						NerdUdpSocket.this.onReceive(copy, addr.toString().substring(1),
 								NerdUdpSocket.this.in.getPort());
 					} catch (final Exception e) {
 						e.printStackTrace();
@@ -167,24 +157,22 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	// region Fields!
 	/**
-	 * The default timeout value, in milliseconds, for each {@link NerdUdpSocket}.
-	 * Used
-	 * if a timeout value is not specified in the constructor.
+	 * The default timeout value, in milliseconds, for each {@link NerdUdpSocket}. Used if a timeout value is not
+	 * specified in the constructor.
 	 *
 	 * @implSpec Should be {@code 32}.
 	 */
 	public static final int DEFAULT_TIMEOUT = 32;
 
 	/**
-	 * The internal, {@code private} {@link NerdUdpSocket.ReceiverThread} instance.
-	 * In abstract words, it handles threading for receiving messages.
+	 * The internal, {@code private} {@link NerdUdpSocket.ReceiverThread} instance. In abstract words, it handles
+	 * threading for receiving messages.
 	 */
 	private ReceiverThread receiver;
 
 	/**
-	 * The internal, {@code private} and {@code final} {@link Vector} of
-	 * {@link NerdTriConsumer}s, that holds all callback objects that want
-	 * to listen to data received by this {@link NerdUdpSocket}.
+	 * The internal, {@code private} and {@code final} {@link Vector} of {@link NerdTriConsumer}s, that holds all
+	 * callback objects that want to listen to data received by this {@link NerdUdpSocket}.
 	 */
 	private final Vector<NerdTriConsumer<byte[], String, Integer>> receiveCallbacks = new Vector<>(1);
 
@@ -194,16 +182,12 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	private final AtomicBoolean STOPPED = new AtomicBoolean();
 
 	/**
-	 * The internal {@link DatagramSocket} that takes care of
-	 * networking.
+	 * The internal {@link DatagramSocket} that takes care of networking.
 	 * <p>
-	 * If you need to change it, consider using the
-	 * {@link NerdUdpSocket#setUnderlyingSocket(DatagramSocket)}
-	 * method (it pauses the receiving thread, swaps the socket, and resumes
-	 * listening).
+	 * If you need to change it, consider using the {@link NerdUdpSocket#setUnderlyingSocket(DatagramSocket)} method (it
+	 * pauses the receiving thread, swaps the socket, and resumes listening).
 	 * <p>
-	 * {@link NerdUdpSocket#getSocket()} <b>should</b> be used for equality checks,
-	 * etcetera.
+	 * {@link NerdUdpSocket#getSocket()} <b>should</b> be used for equality checks, etcetera.
 	 */
 	private DatagramSocket socket;
 
@@ -220,10 +204,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	// region Construction!~
 	/**
-	 * Constructs a {@link NerdUdpSocket} with an empty port requested from the OS,
-	 * the
-	 * receiver thread of which will time-out every
-	 * {@link NerdUdpSocket#DEFAULT_TIMEOUT} milliseconds.
+	 * Constructs a {@link NerdUdpSocket} with an empty port requested from the OS, the receiver thread of which will
+	 * time-out every {@link NerdUdpSocket#DEFAULT_TIMEOUT} milliseconds.
 	 *
 	 * @implSpec {@link NerdUdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
 	 */
@@ -232,10 +214,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	}
 
 	/**
-	 * Constructs a {@link NerdUdpSocket} with the specified port, the receiver
-	 * thread
-	 * of which will time-out every {@link NerdUdpSocket#DEFAULT_TIMEOUT}
-	 * milliseconds.
+	 * Constructs a {@link NerdUdpSocket} with the specified port, the receiver thread of which will time-out every
+	 * {@link NerdUdpSocket#DEFAULT_TIMEOUT} milliseconds.
 	 *
 	 * @implSpec {@link NerdUdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
 	 */
@@ -262,13 +242,10 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	}
 
 	/**
-	 * Constructs a {@link NerdUdpSocket} with the specified port and receiver
-	 * thread
-	 * timeout (in milliseconds).
+	 * Constructs a {@link NerdUdpSocket} with the specified port and receiver thread timeout (in milliseconds).
 	 *
-	 * @apiNote This constructor used to try to force the OS into giving the port of
-	 *          the user's choice. This functionality has now been split. Please see
-	 *          {@link NerdUdpSocket#createSocketForcingPort(int, int)} and
+	 * @apiNote This constructor used to try to force the OS into giving the port of the user's choice. This
+	 *          functionality has now been split. Please see {@link NerdUdpSocket#createSocketForcingPort(int, int)} and
 	 *          {@link NerdUdpSocket#UdpSocket(DatagramSocket)}.
 	 */
 	protected NerdUdpSocket(final int p_port, final int p_timeout) {
@@ -293,8 +270,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	// region `public`, `static` method[s]!
 	/**
-	 * Tries to 'force' the OS into constructing a socket with the port specified
-	 * using {@link DatagramSocket#setReuseAddress()}.
+	 * Tries to 'force' the OS into constructing a socket with the port specified using
+	 * {@link DatagramSocket#setReuseAddress()}.
 	 *
 	 * @param p_port    is the port to use,
 	 * @param p_timeout is the timeout for the port's receiving thread.
@@ -322,8 +299,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	protected abstract void onStart();
 
 	/**
-	 * Internal callback method called when data is received.
-	 * It calls all callbacks registered with this {@link NerdUdpSocket}.
+	 * Internal callback method called when data is received. It calls all callbacks registered with this
+	 * {@link NerdUdpSocket}.
 	 */
 	private void onReceive(final byte[] p_data, final String p_ip, final int p_port) {
 		this.receiveCallbacks.forEach(c -> c.accept(p_data, p_ip, p_port));
@@ -347,8 +324,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	}
 
 	/**
-	 * @return {@code -1} if there is a UDP error (A {@link SocketException} to be
-	 *         specific).
+	 * @return {@code -1} if there is a UDP error (A {@link SocketException} to be specific).
 	 */
 	public int getTimeout() {
 		try {
@@ -369,8 +345,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	}
 
 	/**
-	 * Tries to force the socket to use the specified port. If the port is not
-	 * available, an address reuse request is performed.
+	 * Tries to force the socket to use the specified port. If the port is not available, an address reuse request is
+	 * performed.
 	 *
 	 * @param p_port The port number!
 	 */
@@ -426,10 +402,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	 * Allows for virtual data-receiving events.
 	 *
 	 * @param p_data is the data to simulate receiving,
-	 * @param p_ip   is the IP address it it coming from (usually
-	 *               {@code 127.0.0.1}),
-	 * @param p_port is the port it is coming from (usually {@code 8080},
-	 *               {@code 80}, or similar).
+	 * @param p_ip   is the IP address it it coming from (usually {@code 127.0.0.1}),
+	 * @param p_port is the port it is coming from (usually {@code 8080}, {@code 80}, or similar).
 	 */
 	public void simulateReceiving(final byte[] p_data, final String p_ip, final int p_port) {
 		this.onReceive(p_data, p_ip, p_port);
@@ -439,8 +413,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	 * Allows for virtual data-receiving events on port {@code 8080}.
 	 *
 	 * @param p_data is the data to simulate receiving,
-	 * @param p_ip   is the IP address it it coming from (usually
-	 *               {@code 127.0.0.1}),
+	 * @param p_ip   is the IP address it it coming from (usually {@code 127.0.0.1}),
 	 */
 	public void simulateReceiving(final byte[] p_data, final String p_ip) {
 		this.onReceive(p_data, p_ip, 8080);
@@ -457,11 +430,9 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	// region UDP group operations overloads.
 	/**
-	 * Calls {@link NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)} with
-	 * an
-	 * instance of {@link InetSocketAddress} - effectively the same as
-	 * calling {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)} on
-	 * the underlying {@link DatagramSocket}.
+	 * Calls {@link NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)} with an instance of
+	 * {@link InetSocketAddress} - effectively the same as calling
+	 * {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)} on the underlying {@link DatagramSocket}.
 	 *
 	 * @see NerdUdpSocket#leaveGroup(String, int, NetworkInterface)
 	 * @see NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
@@ -472,11 +443,9 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	}
 
 	/**
-	 * Calls {@link NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)} with
-	 * an
-	 * instance of {@link InetSocketAddress} - effectively the same as
-	 * calling {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)} on
-	 * the underlying {@link DatagramSocket}.
+	 * Calls {@link NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)} with an instance of
+	 * {@link InetSocketAddress} - effectively the same as calling
+	 * {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)} on the underlying {@link DatagramSocket}.
 	 *
 	 * @see NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
 	 * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
@@ -488,8 +457,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 	// region `send()` overloads.
 	/**
-	 * Sends over a {@link DatagramPacket} using the internal
-	 * {@link DatagramSocket}.
+	 * Sends over a {@link DatagramPacket} using the internal {@link DatagramSocket}.
 	 */
 	public synchronized void send(final DatagramPacket p_packet) {
 		// System.out.println("The socket sent some data!");
@@ -515,8 +483,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 		try {
 			// Okay, okay, look. These methods can be called over threads, so we better set
 			// `this.out` LATER!
-			final DatagramPacket toSend = new DatagramPacket(
-					p_data, p_data.length, InetAddress.getByName(p_ip), p_port);
+			final DatagramPacket toSend = new DatagramPacket(p_data, p_data.length, InetAddress.getByName(p_ip),
+					p_port);
 			this.socket.send(toSend);
 			this.out = toSend;
 		} catch (final Exception e) {
@@ -536,8 +504,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	}
 
 	/**
-	 * Sends over a {@link String} converted to a {@code byte[]} using the
-	 * {@code UTF-8} character set to the specified IP address and port.
+	 * Sends over a {@link String} converted to a {@code byte[]} using the {@code UTF-8} character set to the specified
+	 * IP address and port.
 	 */
 	public synchronized void send(final String p_message, final String p_ip, final int p_port) {
 		this.send(p_message.getBytes(StandardCharsets.UTF_8), p_ip, p_port);
@@ -549,9 +517,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	// endregion
 
 	/**
-	 * Frees memory used by the operating system handle and any other resources the
-	 * underlying {@link DatagramSocket} instance is using, prints the exception
-	 * closing it results in (if it occurs), and stops the receiver thread.
+	 * Frees memory used by the operating system handle and any other resources the underlying {@link DatagramSocket}
+	 * instance is using, prints the exception closing it results in (if it occurs), and stops the receiver thread.
 	 */
 	public synchronized void shutdown() {
 		if (this.STOPPED.get())
@@ -655,8 +622,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 		this.socket.setBroadcast(p_state);
 	}
 
-	public <T> DatagramSocket setOption(
-			final SocketOption<T> p_socketOption, final T p_value) throws IOException {
+	public <T> DatagramSocket setOption(final SocketOption<T> p_socketOption, final T p_value) throws IOException {
 		return this.socket.setOption(p_socketOption, p_value);
 	}
 

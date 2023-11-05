@@ -27,7 +27,7 @@ public class NerdNanosTimer {
 	}
 
 	public int getInt() {
-		return (int) this.get();
+		return (int)this.get();
 	}
 
 	public float getFloat() {

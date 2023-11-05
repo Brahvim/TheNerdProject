@@ -5,9 +5,8 @@ import processing.core.PVector;
 public final class NerdPVectorUtils {
 
 	private NerdPVectorUtils() {
-		throw new IllegalAccessError("Sorry, but `"
-				+ this.getClass().getCanonicalName()
-				+ "` is an uninstantiable, helper class.");
+		throw new IllegalAccessError(
+				"Sorry, but `" + this.getClass().getCanonicalName() + "` is an uninstantiable, helper class.");
 	}
 
 	// region Conversions.
@@ -22,7 +21,7 @@ public final class NerdPVectorUtils {
 	}
 
 	public static PVector fromArray(final double[] p_doubleArray) {
-		return new PVector((float) p_doubleArray[0], (float) p_doubleArray[1], (float) p_doubleArray[2]);
+		return new PVector((float)p_doubleArray[0], (float)p_doubleArray[1], (float)p_doubleArray[2]);
 	}
 	// endregion
 
@@ -45,8 +44,7 @@ public final class NerdPVectorUtils {
 
 	// region `vecLerp()` overloads.
 	public static PVector vecLerp(final PVector p_from, final PVector p_to, final float p_lerpAmt) {
-		return new PVector(p_from.x + (p_to.x - p_from.x) * p_lerpAmt,
-				p_from.y + (p_to.y - p_from.y) * p_lerpAmt,
+		return new PVector(p_from.x + (p_to.x - p_from.x) * p_lerpAmt, p_from.y + (p_to.y - p_from.y) * p_lerpAmt,
 				p_from.z + (p_to.z - p_from.z) * p_lerpAmt);
 	}
 
@@ -55,8 +53,7 @@ public final class NerdPVectorUtils {
 			p_out = new PVector();
 		// ...this method remains unused in the engine. It's for users! :sparkles:
 
-		p_out.set(p_from.x + (p_to.x - p_from.x) * p_lerpAmt,
-				p_from.y + (p_to.y - p_from.y) * p_lerpAmt,
+		p_out.set(p_from.x + (p_to.x - p_from.x) * p_lerpAmt, p_from.y + (p_to.y - p_from.y) * p_lerpAmt,
 				p_from.z + (p_to.z - p_from.z) * p_lerpAmt);
 	}
 	// endregion

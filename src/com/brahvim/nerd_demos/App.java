@@ -1,4 +1,4 @@
-package com.brahvim.nerd.nerd_demos;
+package com.brahvim.nerd_demos;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
 

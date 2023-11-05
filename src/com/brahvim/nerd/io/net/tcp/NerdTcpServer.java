@@ -15,9 +15,7 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
 import com.brahvim.nerd.io.net.NerdServerSocket;
-
 import processing.core.PApplet;
 
 public class NerdTcpServer implements NerdServerSocket {
@@ -27,8 +25,7 @@ public class NerdTcpServer implements NerdServerSocket {
 
 		private final NerdTcpServer.NerdTcpServerClient CLIENT;
 
-		private NerdClientSentTcpPacket(final NerdTcpServer.NerdTcpServerClient p_client,
-				final byte[] p_data) {
+		private NerdClientSentTcpPacket(final NerdTcpServer.NerdTcpServerClient p_client, final byte[] p_data) {
 			super(p_data);
 			this.CLIENT = p_client;
 		}
@@ -104,11 +101,11 @@ public class NerdTcpServer implements NerdServerSocket {
 					// ..I guess we use fixed sizes around here...
 
 					// ..Now read it:
+					// FIXME VULNERABILITY! What if the packet ISN'T from Nerd?!:
 					final int packetSize = stream.readInt();
 					final byte[] packetData = new byte[packetSize];
 					stream.read(packetData); // It needs to know the length of the array!
-					final NerdClientSentTcpPacket packet = new NerdTcpServer.NerdClientSentTcpPacket(
-							this, packetData);
+					final NerdClientSentTcpPacket packet = new NerdTcpServer.NerdClientSentTcpPacket(this, packetData);
 
 					// System.out.println("""
 					// `NerdTcpServer.NerdTcpServerClient\
@@ -149,8 +146,7 @@ public class NerdTcpServer implements NerdServerSocket {
 		public NerdTcpServer.NerdTcpServerClient send(final NerdAbstractTcpPacket p_packet) {
 			try {
 				final byte[] packData = p_packet.getData();
-				final byte[] packDataLen = ByteBuffer
-						.allocate(Integer.BYTES).putInt(p_packet.getDataLength()).array();
+				final byte[] packDataLen = ByteBuffer.allocate(Integer.BYTES).putInt(p_packet.getDataLength()).array();
 				super.socket.getOutputStream().write(PApplet.concat(packDataLen, packData));
 			} catch (final IOException e) {
 				e.printStackTrace();
@@ -310,8 +306,8 @@ public class NerdTcpServer implements NerdServerSocket {
 
 				if (this.invitationCallback != null) {
 					// What if `apply()` returns `null`...?!
-					final boolean check = Objects
-							.requireNonNullElseGet(this.invitationCallback.apply(client), () -> Boolean.FALSE);
+					final boolean check = Objects.requireNonNullElseGet(this.invitationCallback.apply(client),
+							() -> Boolean.FALSE);
 
 					// if (!(check == null || !check)) {
 					// if (check != null && check) {
@@ -331,8 +327,7 @@ public class NerdTcpServer implements NerdServerSocket {
 	}
 	// endregion
 
-	public NerdTcpServer setClientInvitationCallback(
-			final Function<NerdAbstractTcpClient, Boolean> p_callback) {
+	public NerdTcpServer setClientInvitationCallback(final Function<NerdAbstractTcpClient, Boolean> p_callback) {
 		this.invitationCallback = Objects.requireNonNull(p_callback);
 		return this;
 	}
@@ -342,21 +337,18 @@ public class NerdTcpServer implements NerdServerSocket {
 	}
 
 	/**
-	 * When a new client connects to this {@link NerdTcpServer}, callbacks
-	 * registered via this method, are called.
+	 * When a new client connects to this {@link NerdTcpServer}, callbacks registered via this method, are called.
 	 *
 	 * @param p_callback is a callback providing the new client a message callback!
 	 * @return The {@link NerdTcpServer} instance this method was called on.
 	 */
-	public NerdTcpServer addMessageReceivedCallback(
-			final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
+	public NerdTcpServer addMessageReceivedCallback(final Consumer<NerdTcpServer.NerdClientSentTcpPacket> p_callback) {
 		this.NEW_CONNECTION_CALLBACKS.add(Objects.requireNonNull(p_callback));
 		return this;
 	}
 
 	/**
-	 * Removes a callback registered via the method,
-	 * {@link NerdTcpServer#addMessageReceivedCallback(Consumer)}.
+	 * Removes a callback registered via the method, {@link NerdTcpServer#addMessageReceivedCallback(Consumer)}.
 	 *
 	 * @param p_callback is a callback providing the new client a message callback!
 	 * @return The {@link NerdTcpServer} instance this method was called on.

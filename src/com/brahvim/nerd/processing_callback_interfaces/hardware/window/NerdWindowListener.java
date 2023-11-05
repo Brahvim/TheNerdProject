@@ -1,7 +1,6 @@
 package com.brahvim.nerd.processing_callback_interfaces.hardware.window;
 
-public interface NerdWindowListener
-		extends NerdFocusLostCallback, NerdFocusGainedCallback,
+public interface NerdWindowListener extends NerdFocusLostCallback, NerdFocusGainedCallback,
 		NerdFullscreenChangedCallback, NerdMonitorChangedCallback, NerdResizedCallback {
 
 	@Override

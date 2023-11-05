@@ -3,16 +3,20 @@
 	"cmake.configureOnOpen": false,
 	"java.compile.nullAnalysis.mode": "automatic",
 	"cSpell.words": [
+		"fovy",
 		"frict",
 		"Inact",
 		"Javacpp",
 		"Loooooooooong",
+		"Multer",
 		"pactive",
 		"pcursor",
 		"pfullscreen",
 		"phold",
 		"pmouse",
-		"pscr"
+		"pscr",
+		"ures",
+		"vres"
 	],
 	"java.format.settings.url": ".vscode/java-formatter.xml",
 	"[java]": {

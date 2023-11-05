@@ -2,7 +2,6 @@ package com.brahvim.nerd.math.easings.built_in_easings;
 
 import com.brahvim.nerd.math.easings.NerdEasingFunction;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-
 import processing.core.PApplet;
 
 public class NerdSineEase extends NerdEasingFunction {
@@ -41,17 +40,14 @@ public class NerdSineEase extends NerdEasingFunction {
 
 	// region End and extend!
 	/**
-	 * By calling this method, you can modify the time it takes this
-	 * {@link NerdSineEase} instance to deactivate automatically - by directly
-	 * incrementing the amount of time it takes! <i>But do note</i>, that by using
-	 * this method, any calculations made by the
-	 * {@link NerdSineEase#endWhenAngleIncrementsBy(float)} and
-	 * {@link NerdSineEase#endWhenAngleIncrementsToWithin(float, float)} methods are
-	 * ignored, and the wave will no longer end at the angle you specified there.
+	 * By calling this method, you can modify the time it takes this {@link NerdSineEase} instance to deactivate
+	 * automatically - by directly incrementing the amount of time it takes! <i>But do note</i>, that by using this
+	 * method, any calculations made by the {@link NerdSineEase#endWhenAngleIncrementsBy(float)} and
+	 * {@link NerdSineEase#endWhenAngleIncrementsToWithin(float, float)} methods are ignored, and the wave will no
+	 * longer end at the angle you specified there.
 	 *
-	 * @param p_millis is the amount of time the angle parameter will be incremented
-	 *                 by, in terms of radians. <i>Yes, this internally tracked
-	 *                 'angle-parameter' is in terms of time. In milliseconds.</i>
+	 * @param p_millis is the amount of time the angle parameter will be incremented by, in terms of radians. <i>Yes,
+	 *                     this internally tracked 'angle-parameter' is in terms of time. In milliseconds.</i>
 	 */
 	@Override
 	public NerdSineEase endAfterMillis(final int p_millis) {
@@ -60,12 +56,10 @@ public class NerdSineEase extends NerdEasingFunction {
 	}
 
 	/**
-	 * By calling this method, you can make this {@link NerdSineEase} instance
-	 * deactivate automatically, when the angle parameter <i>(passed to the
-	 * sine-based function)</i>, would've been incremented by what you've passed in.
+	 * By calling this method, you can make this {@link NerdSineEase} instance deactivate automatically, when the angle
+	 * parameter <i>(passed to the sine-based function)</i>, would've been incremented by what you've passed in.
 	 * <p>
-	 * Yes, the <i>angle parameter</i> in context is actually just a time value,
-	 * tracked internally.
+	 * Yes, the <i>angle parameter</i> in context is actually just a time value, tracked internally.
 	 *
 	 * @param p_angle is the angle to increment the parameter by, in radians.
 	 */
@@ -85,19 +79,15 @@ public class NerdSineEase extends NerdEasingFunction {
 	}
 
 	/**
-	 * By calling this method, you can make this {@link NerdSineEase} instance
-	 * deactivate automatically, when the angle parameter <i>(passed to the
-	 * sine-based function)</i>, would've been incremented by what you've passed in,
+	 * By calling this method, you can make this {@link NerdSineEase} instance deactivate automatically, when the angle
+	 * parameter <i>(passed to the sine-based function)</i>, would've been incremented by what you've passed in,
 	 * <i><b>within</i></b> the amount of time you provided.
 	 * <p>
-	 * Yes, the <i>angle parameter</i> in context is actually just a time value,
-	 * tracked internally.
+	 * Yes, the <i>angle parameter</i> in context is actually just a time value, tracked internally.
 	 *
-	 * @param p_angle                  is the angle, <i>in radians,</i> that the
-	 *                                 wave will reach, and,
-	 * @param p_timeConstraintDistance is the amount of time this
-	 *                                 {@link NerdSineEase} will stop after, at the
-	 *                                 very angle you've given!
+	 * @param p_angle                  is the angle, <i>in radians,</i> that the wave will reach, and,
+	 * @param p_timeConstraintDistance is the amount of time this {@link NerdSineEase} will stop after, at the very
+	 *                                     angle you've given!
 	 */
 	// Method to put the wave at a given angle within given time.
 	public NerdSineEase endWhenAngleIncrementsToWithin(final float p_angle, final float p_timeConstraintDistance) {
@@ -116,10 +106,9 @@ public class NerdSineEase extends NerdEasingFunction {
 	}
 
 	/**
-	 * By calling this method, you can modify the time it takes this
-	 * {@link NerdSineEase} instance to deactivate automatically - by incrementing
-	 * the angle parameter <i>(passed to the sine-based function)</i>! Passing
-	 * negative numbers decreases it instead.
+	 * By calling this method, you can modify the time it takes this {@link NerdSineEase} instance to deactivate
+	 * automatically - by incrementing the angle parameter <i>(passed to the sine-based function)</i>! Passing negative
+	 * numbers decreases it instead.
 	 *
 	 * @param p_angle is the angle to increment the parameter by, in radians.
 	 */

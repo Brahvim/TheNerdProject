@@ -2,10 +2,8 @@ package com.brahvim.nerd.processing_callback_interfaces.hardware.mouse;
 
 import processing.event.MouseEvent;
 
-public interface NerdMouseListener
-		extends NerdMousePressedCallback, NerdMouseMovedCallback,
-		NerdMouseDraggedCallback, NerdMouseWheelCallback,
-		NerdMouseReleasedCallback, NerdMouseClickedCallback {
+public interface NerdMouseListener extends NerdMousePressedCallback, NerdMouseMovedCallback, NerdMouseDraggedCallback,
+		NerdMouseWheelCallback, NerdMouseReleasedCallback, NerdMouseClickedCallback {
 
 	@Override
 	public default void mousePressed() {

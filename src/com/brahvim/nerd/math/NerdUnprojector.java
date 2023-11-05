@@ -26,10 +26,8 @@ public class NerdUnprojector {
 	// endregion
 
 	/**
-	 * Call this to capture the selection matrix after
-	 * you have called `perspective()` or `ortho()` and applied your
-	 * pan, zoom and camera angles - but before you start drawing
-	 * or playing with the matrices any further.
+	 * Call this to capture the selection matrix after you have called `perspective()` or `ortho()` and applied your
+	 * pan, zoom and camera angles - but before you start drawing or playing with the matrices any further.
 	 */
 	public void captureViewMatrix(final PGraphics3D p_graphicsBuffer) {
 		// Brahvim: "Couldn't we do just this in today's modern world?:"
@@ -47,24 +45,16 @@ public class NerdUnprojector {
 		// endregion
 
 		// region Calculate homogeneous coordinates.
-		this.out[0] = this.matrix.m00 * this.in[0]
-				+ this.matrix.m01 * this.in[1]
-				+ this.matrix.m02 * this.in[2]
+		this.out[0] = this.matrix.m00 * this.in[0] + this.matrix.m01 * this.in[1] + this.matrix.m02 * this.in[2]
 				+ this.matrix.m03;
 
-		this.out[1] = this.matrix.m10 * this.in[0]
-				+ this.matrix.m11 * this.in[1]
-				+ this.matrix.m12 * this.in[2]
+		this.out[1] = this.matrix.m10 * this.in[0] + this.matrix.m11 * this.in[1] + this.matrix.m12 * this.in[2]
 				+ this.matrix.m13;
 
-		this.out[2] = this.matrix.m20 * this.in[0]
-				+ this.matrix.m21 * this.in[1]
-				+ this.matrix.m22 * this.in[2]
+		this.out[2] = this.matrix.m20 * this.in[0] + this.matrix.m21 * this.in[1] + this.matrix.m22 * this.in[2]
 				+ this.matrix.m23;
 
-		this.out[3] = this.matrix.m30 * this.in[0]
-				+ this.matrix.m31 * this.in[1]
-				+ this.matrix.m32 * this.in[2]
+		this.out[3] = this.matrix.m30 * this.in[0] + this.matrix.m31 * this.in[1] + this.matrix.m32 * this.in[2]
 				+ this.matrix.m33;
 		// endregion
 
@@ -87,8 +77,7 @@ public class NerdUnprojector {
 	// Calculate positions on the near and far 3D frustum planes.
 	public boolean calculatePickPoints(final float p_x, final float p_y) {
 		// Have to do both in order to reset the `PVector` in case of an error.
-		return this.gluUnProject(p_x, p_y, 0, this.startPos)
-				&& this.gluUnProject(p_x, p_y, 1, this.endPos);
+		return this.gluUnProject(p_x, p_y, 0, this.startPos) && this.gluUnProject(p_x, p_y, 1, this.endPos);
 	}
 
 }
