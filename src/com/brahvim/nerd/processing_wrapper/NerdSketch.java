@@ -5,7 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.function.Consumer;
+
 import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
+import com.brahvim.nerd.utils.NerdReflectionUtils;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -38,8 +43,8 @@ public class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListene
 	// region Constructions.
 	@SuppressWarnings("unused")
 	private NerdSketch() {
-		throw new IllegalAccessError("Please instantiate `" + this.getClass().getSimpleName()
-				+ "`es the way they're supposed to be! Sorry...");
+		this.SKETCH_SETTINGS = null;
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
 	public NerdSketch(final NerdSketchSettings p_settings) {
@@ -50,9 +55,9 @@ public class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListene
 	@Override
 	public void settings() {
 		if (this.SKETCH_SETTINGS.fullScreen)
-			super.fullScreen();
+			super.fullScreen(PConstants.P3D);
 		else
-			super.size(this.SKETCH_SETTINGS.width, this.SKETCH_SETTINGS.height);
+			super.size(this.SKETCH_SETTINGS.width, this.SKETCH_SETTINGS.height, PConstants.P3D);
 	}
 
 	@Override
@@ -70,6 +75,22 @@ public class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListene
 	@Override
 	public void dispose() {
 	}
+
+	// region `NerdModule` management.
+	public <RetT extends NerdModule> RetT getModule(final Class<RetT> p_moduleClass) {
+		for (final NerdModule m : this.MODULES)
+			if (p_moduleClass.isInstance(m))
+				return p_moduleClass.cast(m);
+		throw new NoSuchElementException("No `NerdModule` of type `" + p_moduleClass.getSimpleName() + "` was found.");
+	}
+
+	public void forEachModule(final Consumer<NerdModule> p_task) {
+		if (p_task == null)
+			return;
+
+		this.MODULES.forEach(p_task);
+	}
+	// endregion
 
 	// region Hardware callbacks!
 	@Override
@@ -139,11 +160,11 @@ public class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListene
 
 	// region Utilitarian overloads.
 	public PGraphics createGraphics(final float p_width, final float p_height) {
-		return this.createGraphics((int)p_width, (int)p_height, super.sketchRenderer());
+		return this.createGraphics((int) p_width, (int) p_height, super.sketchRenderer());
 	}
 
 	public PGraphics createGraphics(final float p_size) {
-		final int size = (int)p_size;
+		final int size = (int) p_size;
 		return this.createGraphics(size, size, super.sketchRenderer());
 	}
 
@@ -157,7 +178,7 @@ public class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListene
 	// endregion
 	// endregion
 
-	// region File system utlities.
+	// region File system utilities.
 	public static String fromExecDir(final String p_path) {
 		return NerdSketch.EXEC_DIR_PATH + p_path;
 	}

@@ -1,7 +1,9 @@
 package com.brahvim.nerd.io;
 
 import java.util.ArrayList;
+
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+
 import processing.core.PImage;
 
 public class NerdSpriteSheet {
@@ -29,7 +31,8 @@ public class NerdSpriteSheet {
 	}
 
 	/**
-	 * You can also choose to simply call this method, without using its return value, to cache the sprite, and have to
+	 * You can also choose to simply call this method, without using its return
+	 * value, to cache the sprite, and have to
 	 * worry less about performance!
 	 */
 	public PImage getSprite(final int p_x, final int p_y, final int p_width, final int p_height) {

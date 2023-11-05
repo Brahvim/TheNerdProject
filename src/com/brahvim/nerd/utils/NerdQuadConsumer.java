@@ -4,8 +4,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * Represents an operation that accepts four input arguments and returns no result. This is the four-arity
- * specialization of {@link Consumer}. Unlike most other functional interfaces, {@link NerdQuadConsumer} is expected to
+ * Represents an operation that accepts four input arguments and returns no
+ * result. This is the four-arity
+ * specialization of {@link Consumer}. Unlike most other functional interfaces,
+ * {@link NerdQuadConsumer} is expected to
  * operate via side-effects.
  * <p>
  * This is a {@link FunctionalInterface} whose functional method is
@@ -33,13 +35,17 @@ public interface NerdQuadConsumer<T, U, V, W> {
 	public void accept(T t, U u, V v, W w);
 
 	/**
-	 * Returns a composed {@link NerdQuadConsumer} that performs, in sequence, this operation followed by the
-	 * {@code p_after} operation. If performing either operation throws an exception, it is relayed to the caller of the
-	 * composed operation. If performing this operation throws an exception, the {@code p_after} operation will not be
+	 * Returns a composed {@link NerdQuadConsumer} that performs, in sequence, this
+	 * operation followed by the
+	 * {@code p_after} operation. If performing either operation throws an
+	 * exception, it is relayed to the caller of the
+	 * composed operation. If performing this operation throws an exception, the
+	 * {@code p_after} operation will not be
 	 * performed.
 	 *
 	 * @param p_after the operation to perform after this operation
-	 * @return a composed {@link NerdQuadConsumer} that performs in sequence this operation followed by the
+	 * @return a composed {@link NerdQuadConsumer} that performs in sequence this
+	 *         operation followed by the
 	 *         {@code p_after} operation
 	 * @throws NullPointerException if {@code p_after} is {@code null}
 	 */

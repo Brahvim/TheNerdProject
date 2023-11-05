@@ -1,5 +1,7 @@
 package com.brahvim.nerd.math.easings;
 
+import com.brahvim.nerd.utils.NerdReflectionUtils;
+
 import processing.core.PConstants;
 
 // Thanks to `https://easings.net`!
@@ -7,11 +9,12 @@ import processing.core.PConstants;
 public class NerdEasingFunctions {
 
 	private NerdEasingFunctions() {
-		throw new Error("Sorry, but `" + this.getClass().getCanonicalName() + "` is an uninstantiable, helper class.");
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+
 	}
 
 	public static float cubic(final float x) {
-		return 1.0f - (float)Math.pow(1 - x, 3);
+		return 1.0f - (float) Math.pow(1 - x, 3);
 	}
 
 	public static float quadratic(final float x) {
@@ -19,23 +22,23 @@ public class NerdEasingFunctions {
 	}
 
 	public static float exponential(final float x) {
-		return x == 0 ? 0 : (float)Math.pow(2, 10 * x);
+		return x == 0 ? 0 : (float) Math.pow(2, 10 * x);
 	}
 
 	public static float easeOutElastic(final float x) {
 		final float c4 = PConstants.TAU / 3.0f;
 
-		return x == 0 ? 0 : x == 1 ? 1 : (float)Math.pow(2, -10 * x) * (float)Math.sin((x * 10 - 0.75f) * c4) + 1;
+		return x == 0 ? 0 : x == 1 ? 1 : (float) Math.pow(2, -10 * x) * (float) Math.sin((x * 10 - 0.75f) * c4) + 1;
 	}
 
 	// Mine! https://www.desmos.com/calculator/88fimxy2ox:
 	public static float exponentialSine(final float x, final float theta) {
-		return (float)Math.pow(x, Math.sin(theta));
+		return (float) Math.pow(x, Math.sin(theta));
 	}
 
 	// Mine! https://www.desmos.com/calculator/hgs8iom7sk:
 	public static float exponentialSine(final float x) {
-		return (float)Math.pow(x, Math.sin(x));
+		return (float) Math.pow(x, Math.sin(x));
 	}
 
 }

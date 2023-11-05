@@ -26,8 +26,10 @@ public class NerdUnprojector {
 	// endregion
 
 	/**
-	 * Call this to capture the selection matrix after you have called `perspective()` or `ortho()` and applied your
-	 * pan, zoom and camera angles - but before you start drawing or playing with the matrices any further.
+	 * Call this to capture the selection matrix after you have called
+	 * `perspective()` or `ortho()` and applied your
+	 * pan, zoom and camera angles - but before you start drawing or playing with
+	 * the matrices any further.
 	 */
 	public void captureViewMatrix(final PGraphics3D p_graphicsBuffer) {
 		// Brahvim: "Couldn't we do just this in today's modern world?:"

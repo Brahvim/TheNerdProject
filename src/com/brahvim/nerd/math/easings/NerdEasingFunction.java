@@ -9,7 +9,8 @@ public abstract class NerdEasingFunction {
 
 	// region Fields.
 	/**
-	 * Time at which the internal timer used as a parameter to the underlying function will be stopped!
+	 * Time at which the internal timer used as a parameter to the underlying
+	 * function will be stopped!
 	 */
 	public float endTime = -1;
 
@@ -24,25 +25,30 @@ public abstract class NerdEasingFunction {
 	public float parameter;
 
 	/**
-	 * And offset value <i>added</i> to the parameter, after which it is passed to the underlying function.
+	 * And offset value <i>added</i> to the parameter, after which it is passed to
+	 * the underlying function.
 	 */
 	public float parameterOffset;
 
 	/**
-	 * Returned by {@link NerdEasingFunction#get()} if {@link NerdEasingFunction#useInactValue} is {@code true}.
+	 * Returned by {@link NerdEasingFunction#get()} if
+	 * {@link NerdEasingFunction#useInactValue} is {@code true}.
 	 */
 	public float inactValue = 0;
 
 	/**
-	 * Determines if an {@link NerdEasingFunction} object is doing calculations or not.
+	 * Determines if an {@link NerdEasingFunction} object is doing calculations or
+	 * not.
 	 *
-	 * @apiNote {@code false} by default. Call {@link NerdEasingFunction#start()} to make the function actively
+	 * @apiNote {@code false} by default. Call {@link NerdEasingFunction#start()} to
+	 *          make the function actively
 	 *          processing again.
 	 */
 	public boolean active = false;
 
 	/**
-	 * Makes {@link NerdEasingFunction#get()} output {@link NerdEasingFunction#inactValue} when the wave has ended -
+	 * Makes {@link NerdEasingFunction#get()} output
+	 * {@link NerdEasingFunction#inactValue} when the wave has ended -
 	 * AKA, when {@link NerdEasingFunction#active} turns {@code false}.
 	 *
 	 * @apiNote {@code true} by default.
@@ -52,8 +58,10 @@ public abstract class NerdEasingFunction {
 	public boolean useInactValue = false;
 
 	/**
-	 * Makes {@link NerdEasingFunction#get()} output its absolute value. This may make the function behave as if the
-	 * periodicity of its parameter has doubled. Toggling this {@code boolean} while the wave is active may show
+	 * Makes {@link NerdEasingFunction#get()} output its absolute value. This may
+	 * make the function behave as if the
+	 * periodicity of its parameter has doubled. Toggling this {@code boolean} while
+	 * the wave is active may show
 	 * unwantedly large, sudden changes in the value given by the function.
 	 *
 	 * @apiNote {@code false} by default.
@@ -173,7 +181,8 @@ public abstract class NerdEasingFunction {
 	}
 
 	/**
-	 * @return Returns a cached sample of the function at the time value recorded at the start of the frame.
+	 * @return Returns a cached sample of the function at the time value recorded at
+	 *         the start of the frame.
 	 */
 	public float getFramelyValue() {
 		// If we've already calculated this value,
@@ -186,7 +195,8 @@ public abstract class NerdEasingFunction {
 	}
 
 	/**
-	 * @return Resamples the function at with the current time value to give you the latest value.
+	 * @return Resamples the function at with the current time value to give you the
+	 *         latest value.
 	 */
 	public float get() {
 		this.pactive = this.active;

@@ -1,10 +1,11 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import com.brahvim.nerd.utils.NerdReflectionUtils;
+
 public class NerdModule {
 
 	private NerdModule() {
-		throw new IllegalAccessError("Please instantiate `" + this.getClass().getSimpleName()
-				+ "`es the way they're supposed to be! Sorry...");
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
 }

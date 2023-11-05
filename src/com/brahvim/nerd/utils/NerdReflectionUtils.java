@@ -4,14 +4,12 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import com.brahvim.nerd.utils.annotations.interfaces.NerdUtilityClass;
 
-@NerdUtilityClass
 public class NerdReflectionUtils {
 
-	// private NerdReflectionUtils() {
-	// NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
-	// }
+	private NerdReflectionUtils() {
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+	}
 
 	public static void rejectStaticClassInstantiationFor(final Object p_object) {
 		throw new IllegalAccessError("Please instantiate `" + p_object.getClass().getSimpleName()
@@ -72,7 +70,7 @@ public class NerdReflectionUtils {
 			return new Class<?>[0];
 
 		// One, derive the actual type arguments. Two, cast back!:
-		return (Class<?>[])((ParameterizedType)genericSuperclass).getActualTypeArguments();
+		return (Class<?>[]) ((ParameterizedType) genericSuperclass).getActualTypeArguments();
 	}
 
 }

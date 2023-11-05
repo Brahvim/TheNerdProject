@@ -27,7 +27,7 @@ public class NerdMillisTimer {
 	}
 
 	public int getInt() {
-		return (int)this.get();
+		return (int) this.get();
 	}
 
 	public float getFloat() {

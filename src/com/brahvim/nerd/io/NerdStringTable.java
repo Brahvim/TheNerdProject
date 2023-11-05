@@ -4,13 +4,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.random.RandomGenerator;
+
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+
 import processing.core.PApplet;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
 /**
- * A "global" namespace for these strings is provided through {@link NerdSketch#STRINGS}, so you can access string table
+ * A "global" namespace for these strings is provided through
+ * {@link NerdSketch#STRINGS}, so you can access string table
  * data across scenes!
  */
 public class NerdStringTable {
@@ -236,8 +239,10 @@ public class NerdStringTable {
 		}
 		// endregion
 
-		// ~~Probably a useless, extra instruction:~~ We DON'T know how large this guy is in memory.
-		// Must clean him upas quick as possible. May benefit from parallel GC timings, right?
+		// ~~Probably a useless, extra instruction:~~ We DON'T know how large this guy
+		// is in memory.
+		// Must clean him upas quick as possible. May benefit from parallel GC timings,
+		// right?
 		/* NOSONAR */ lastObject = null; // GC, do you wish to collect it? Please do it now!
 
 		return stringArray == null ? ""

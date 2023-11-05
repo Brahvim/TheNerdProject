@@ -5,7 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
 import com.brahvim.nerd.io.NerdStringTable;
+
 import processing.core.PConstants;
 
 public class NerdSketchSettings {

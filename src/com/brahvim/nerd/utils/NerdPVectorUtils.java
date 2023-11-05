@@ -5,8 +5,7 @@ import processing.core.PVector;
 public final class NerdPVectorUtils {
 
 	private NerdPVectorUtils() {
-		throw new IllegalAccessError(
-				"Sorry, but `" + this.getClass().getCanonicalName() + "` is an uninstantiable, helper class.");
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
 	// region Conversions.
@@ -21,7 +20,7 @@ public final class NerdPVectorUtils {
 	}
 
 	public static PVector fromArray(final double[] p_doubleArray) {
-		return new PVector((float)p_doubleArray[0], (float)p_doubleArray[1], (float)p_doubleArray[2]);
+		return new PVector((float) p_doubleArray[0], (float) p_doubleArray[1], (float) p_doubleArray[2]);
 	}
 	// endregion
 

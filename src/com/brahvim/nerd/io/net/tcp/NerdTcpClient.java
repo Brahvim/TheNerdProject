@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 import java.util.function.Consumer;
+
 import processing.core.PApplet;
 
 public class NerdTcpClient extends NerdAbstractTcpClient {

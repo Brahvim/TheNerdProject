@@ -15,7 +15,9 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
 import com.brahvim.nerd.io.net.NerdServerSocket;
+
 import processing.core.PApplet;
 
 public class NerdTcpServer implements NerdServerSocket {
@@ -77,7 +79,7 @@ public class NerdTcpServer implements NerdServerSocket {
 				// }
 
 				// This syncing could be a bit clearer, but anyway!:
-				// I could jut've make `socket` private, or put it into another class, where the
+				// I could just've make `socket` private, or put it into another class, where the
 				// only way to call methods on it is to provide a `Consumer`. to some
 				// `synchronized` method.
 				synchronized (this.socket) {
@@ -337,7 +339,8 @@ public class NerdTcpServer implements NerdServerSocket {
 	}
 
 	/**
-	 * When a new client connects to this {@link NerdTcpServer}, callbacks registered via this method, are called.
+	 * When a new client connects to this {@link NerdTcpServer}, callbacks
+	 * registered via this method, are called.
 	 *
 	 * @param p_callback is a callback providing the new client a message callback!
 	 * @return The {@link NerdTcpServer} instance this method was called on.
@@ -348,7 +351,8 @@ public class NerdTcpServer implements NerdServerSocket {
 	}
 
 	/**
-	 * Removes a callback registered via the method, {@link NerdTcpServer#addMessageReceivedCallback(Consumer)}.
+	 * Removes a callback registered via the method,
+	 * {@link NerdTcpServer#addMessageReceivedCallback(Consumer)}.
 	 *
 	 * @param p_callback is a callback providing the new client a message callback!
 	 * @return The {@link NerdTcpServer} instance this method was called on.
