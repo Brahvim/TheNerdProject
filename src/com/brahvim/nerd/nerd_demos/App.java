@@ -4,13 +4,14 @@ import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
 
 public class App {
 
-    public static void main(final String[] p_args) {
-        final NerdSketchBuilder builder = new NerdSketchBuilder()
+	public static void main(final String[] p_args) {
+		final NerdSketchBuilder builder = new NerdSketchBuilder()
+		//
+		;
 
-        //
-        ;
+		builder.build();
 
-        builder.build();
-    }
+		System.out.println("There is nothing to do!");
+	}
 
 }

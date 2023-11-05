@@ -5,9 +5,7 @@ import java.nio.ByteBuffer;
 public final class NerdBufferUtils {
 
 	private NerdBufferUtils() {
-		throw new IllegalAccessError("Sorry, but `"
-				+ this.getClass().getCanonicalName()
-				+ "` is an uninstantiable, helper class.");
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
 	// region Integers.
