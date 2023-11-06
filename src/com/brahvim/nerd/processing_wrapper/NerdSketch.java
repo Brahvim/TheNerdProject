@@ -24,10 +24,11 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
 
-public abstract class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListener {
+public abstract class NerdSketch<RendererT extends PGraphics> extends PApplet
+		implements NerdSketchAllWorkflowsListener {
 
 	// region Fields.
-	// region `public` fields.
+	// region Public fields.
 	// region Constants.
 	// region `static` constants.
 	public static final File EXEC_DIR = new File("");
@@ -62,29 +63,34 @@ public abstract class NerdSketch extends PApplet implements NerdSketchAllWorkflo
 	// endregion
 	// Timers! (`millis()` returns `int`s!):
 	protected int frameStartTime, pframeTime, frameTime;
+	protected final RendererT GRAPHICS;
 	// protected NerdGraphics nerdGraphics;
 	// protected NerdWindowModule window;
 	// protected NerdInputModule input;
 	protected PFont defaultFont;
-	// endregion
 
+	// region Protected fields.
 	protected final NerdSketchSettings SKETCH_SETTINGS;
 	protected final List<NerdModule> MODULES = new ArrayList<>(3);
 	protected final Map<NerdModule, Class<? extends NerdModule>>
 	//////////////////////////////////////////////////////////
 	MODULES_TO_CLASSES_MAP = new HashMap<>(3);
 	// endregion
+	// endregion
 
 	// region Constructions.
 	protected NerdSketch() {
 		this.ROBOT = null;
+		this.GRAPHICS = null;
 		this.SKETCH_SETTINGS = null;
 		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
+	@SuppressWarnings("unchecked")
 	protected NerdSketch(final NerdSketchSettings p_settings) {
 		this.SKETCH_SETTINGS = p_settings;
 		this.ROBOT = NerdAwtUtils.createAwtRobot();
+		this.GRAPHICS = (RendererT) super.getGraphics();
 	}
 	// endregion
 

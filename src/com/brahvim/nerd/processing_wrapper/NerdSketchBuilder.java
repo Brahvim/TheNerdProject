@@ -1,15 +1,15 @@
 package com.brahvim.nerd.processing_wrapper;
 
-public class NerdSketchBuilder {
+public abstract class NerdSketchBuilder {
 
-	private final NerdSketchSettings SETTINGS;
+	private final NerdSketchSettings SKETCH_SETTINGS;
 
-	public NerdSketchBuilder() {
-		this.SETTINGS = new NerdSketchSettings();
+	protected NerdSketchBuilder() {
+		this.SKETCH_SETTINGS = new NerdSketchSettings();
 	}
 
-	public NerdSketch build() {
-		return new NerdSketch(this.SETTINGS);
-	}
+	public abstract NerdSketch build();
+
+	public abstract void configureNerdModules();
 
 }

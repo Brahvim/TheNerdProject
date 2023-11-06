@@ -41,7 +41,7 @@ public class NerdSketchSettings {
 	/** */
 
 	/** */
-	public Consumer<LinkedHashSet<Function<NerdSketch, NerdModule>>> nerdModulesInstantiator;
+	public Consumer<LinkedHashSet<Function<NerdSketch<?>, NerdModule>>> nerdModulesInstantiator;
 
 	/** */
 	public Map<Class<? extends NerdModule>, NerdModuleSettings> nerdModulesSettings = new HashMap<>(0);
