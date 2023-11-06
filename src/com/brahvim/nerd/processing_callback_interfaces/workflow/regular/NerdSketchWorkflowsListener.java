@@ -4,10 +4,10 @@ import com.brahvim.nerd.processing_callback_interfaces.NerdSketchCallback;
 
 public interface NerdSketchWorkflowsListener extends NerdSketchCallback {
 
-	public default void settings() {
+	public default void preSetup() {
 	}
 
-	public default void setup() {
+	public default void postSetup() {
 	}
 
 	public default void draw() {

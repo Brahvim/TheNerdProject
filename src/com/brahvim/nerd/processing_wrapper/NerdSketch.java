@@ -1,26 +1,32 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Robot;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
+import com.brahvim.nerd.utils.NerdAwtUtils;
 import com.brahvim.nerd.utils.NerdReflectionUtils;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
 
-public class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListener {
+public abstract class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListener {
 
 	// region Fields.
-
 	// region `public` fields.
 	// region Constants.
 	// region `static` constants.
@@ -30,30 +36,62 @@ public class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListene
 	public static final File DATA_DIR = new File("data");
 	public static final String DATA_DIR_PATH = NerdSketch.DATA_DIR.getAbsolutePath().concat(File.separator);
 	// endregion
+
+	// region Instance constants.
+	public final Robot ROBOT;
+	// public final NerdAssetsModule ASSETS;
+
+	// region `java.awt` constants.
+	public final GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment
+			.getLocalGraphicsEnvironment();
+
+	public GraphicsDevice[] JAVA_SCREENS = this.LOCAL_GRAPHICS_ENVIRONMENT
+			.getScreenDevices();
+
+	public GraphicsDevice DEFAULT_JAVA_SCREEN = this.LOCAL_GRAPHICS_ENVIRONMENT
+			.getDefaultScreenDevice();
+
+	public DisplayMode DEFAULT_JAVA_SCREEN_MODE = this.DEFAULT_JAVA_SCREEN
+			.getDisplayMode();
+
+	public int DEFAULT_REFRESH_RATE = this.DEFAULT_JAVA_SCREEN_MODE
+			.getRefreshRate();
 	// endregion
+	// endregion
+	// endregion
+	// endregion
+	// Timers! (`millis()` returns `int`s!):
+	protected int frameStartTime, pframeTime, frameTime;
+	// protected NerdGraphics nerdGraphics;
+	// protected NerdWindowModule window;
+	// protected NerdInputModule input;
+	protected PFont defaultFont;
 	// endregion
 
-	private final NerdSketchSettings SKETCH_SETTINGS;
-	private final List<NerdModule> MODULES = new ArrayList<>(3);
-	private final Map<NerdModule, Class<? extends NerdModule>>
+	protected final NerdSketchSettings SKETCH_SETTINGS;
+	protected final List<NerdModule> MODULES = new ArrayList<>(3);
+	protected final Map<NerdModule, Class<? extends NerdModule>>
 	//////////////////////////////////////////////////////////
 	MODULES_TO_CLASSES_MAP = new HashMap<>(3);
 	// endregion
 
 	// region Constructions.
-	@SuppressWarnings("unused")
-	private NerdSketch() {
+	protected NerdSketch() {
+		this.ROBOT = null;
 		this.SKETCH_SETTINGS = null;
 		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
-	public NerdSketch(final NerdSketchSettings p_settings) {
+	protected NerdSketch(final NerdSketchSettings p_settings) {
 		this.SKETCH_SETTINGS = p_settings;
+		this.ROBOT = NerdAwtUtils.createAwtRobot();
 	}
 	// endregion
 
 	@Override
 	public void settings() {
+		super.smooth(this.SKETCH_SETTINGS.antiAliasing);
+
 		if (this.SKETCH_SETTINGS.fullScreen)
 			super.fullScreen(PConstants.P3D);
 		else
@@ -62,18 +100,69 @@ public class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListene
 
 	@Override
 	public void setup() {
+		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
+		this.forEachNerdModule(NerdModule::preSetup);
+
+		super.registerMethod("pre", this);
+		super.registerMethod("post", this);
+		// super.frameRate(this.DEFAULT_REFRESH_RATE);
+		// super.surface.setTitle(this.SKETCH_SETTINGS.INITIAL_WINDOW_TITLE);
+
+		// this.nerdGraphics = new NerdGraphics(this, super.getGraphics());
+		this.defaultFont = super.createFont("SansSerif",
+				72 * ((float) super.displayWidth / (float) super.displayHeight));
+
+		// ...Also makes these changes to `this.nerdGraphics`, haha:
+		super.background(0); // ..This, instead of `NerdAbstractCamera::clear()`.
+		super.textFont(this.defaultFont);
+		super.rectMode(PConstants.CENTER);
+		super.imageMode(PConstants.CENTER);
+		super.textAlign(PConstants.CENTER, PConstants.CENTER);
+
+		// if (this.SKETCH_SETTINGS.canResize)
+		// this.genericWindow.setResizable(true);
+		// this.genericWindow.centerWindow();
+
+		this.forEachNerdModule(NerdModule::postSetup);
+	}
+
+	@Override
+	public void pre() {
+		this.pframeTime = this.frameStartTime;
+		this.frameStartTime = super.millis(); // Timestamp!
+		this.frameTime = this.frameStartTime - this.pframeTime;
+
+		this.forEachNerdModule(NerdModule::pre);
+	}
+
+	@Override
+	public void preDraw() {
+		this.forEachNerdModule(NerdModule::preDraw);
 	}
 
 	@Override
 	public void draw() {
+		this.forEachNerdModule(NerdModule::draw);
+	}
+
+	@Override
+	public void postDraw() {
+		this.forEachNerdModule(NerdModule::postDraw);
+	}
+
+	@Override
+	public void post() {
+		this.forEachNerdModule(NerdModule::post);
 	}
 
 	@Override
 	public void exit() {
+		this.forEachNerdModule(NerdModule::exit);
 	}
 
 	@Override
 	public void dispose() {
+		this.forEachNerdModule(NerdModule::dispose);
 	}
 
 	// region `NerdModule` management.
@@ -84,41 +173,79 @@ public class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListene
 		throw new NoSuchElementException("No `NerdModule` of type `" + p_moduleClass.getSimpleName() + "` was found.");
 	}
 
-	public void forEachModule(final Consumer<NerdModule> p_task) {
+	public void forEachNerdModule(final Consumer<NerdModule> p_task) {
+		if (p_task == null)
+			return;
+		this.MODULES.forEach(p_task);
+	}
+
+	public <OtherArgT> void forEachNerdModule(
+			final BiConsumer<NerdModule, OtherArgT> p_task, final OtherArgT p_otherArg) {
 		if (p_task == null)
 			return;
 
-		this.MODULES.forEach(p_task);
+		for (final NerdModule m : this.MODULES)
+			p_task.accept(m, p_otherArg);
 	}
 	// endregion
 
 	// region Hardware callbacks!
+	// Mouse:
+
 	@Override
 	public void mouseClicked() {
+		this.forEachNerdModule(NerdModule::mouseClicked);
+	}
+
+	@Override
+	public void mouseWheel(final processing.event.MouseEvent p_event) {
+		this.forEachNerdModule(NerdModule::mouseWheel, p_event);
 	}
 
 	@Override
 	public void mouseDragged() {
+		this.forEachNerdModule(NerdModule::mouseDragged);
 	}
 
 	@Override
 	public void mousePressed() {
+		this.forEachNerdModule(NerdModule::mousePressed);
 	}
 
 	@Override
 	public void mouseReleased() {
+		this.forEachNerdModule(NerdModule::mouseReleased);
 	}
+
+	// Keys:
 
 	@Override
 	public void keyPressed() {
+		this.forEachNerdModule(NerdModule::keyPressed);
 	}
 
 	@Override
 	public void keyReleased() {
+		this.forEachNerdModule(NerdModule::keyReleased);
 	}
 
 	@Override
 	public void keyTyped() {
+		this.forEachNerdModule(NerdModule::keyTyped);
+	}
+
+	// Touches:
+
+	public void touchStarted() {
+		this.forEachNerdModule(NerdModule::touchStarted);
+	}
+
+	public void touchMoved() {
+		this.forEachNerdModule(NerdModule::touchMoved);
+	}
+
+	public void touchEnded() {
+		this.forEachNerdModule(NerdModule::touchEnded);
 	}
 	// endregion
 

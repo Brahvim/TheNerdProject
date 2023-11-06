@@ -12,9 +12,6 @@ import processing.core.PConstants;
 
 public class NerdSketchSettings {
 
-	/** Should the sketch be started in fullscreen? */
-	public boolean fullScreen;
-
 	/**
 	 * What {@link NerdSketch}{@code::settings()} passes to
 	 * <a href="https://processing.org/reference/smooth_.html">PApplet::smooth()</a>
@@ -22,7 +19,8 @@ public class NerdSketchSettings {
 	public int antiAliasing = 2;
 
 	/**
-	 * One of the initial dimensions for the sketch's window. Is {@code 640x480} by default!
+	 * One of the initial dimensions for the sketch's window. Is {@code 640x480} by
+	 * default!
 	 */
 	public int width = 640, height = 480;
 
@@ -48,23 +46,28 @@ public class NerdSketchSettings {
 	/** */
 	public Map<Class<? extends NerdModule>, NerdModuleSettings> nerdModulesSettings = new HashMap<>(0);
 
+	// region Booleans.
 	/** */
-	public boolean canResize;
+	public boolean canResize = true;
+
+	/** Should the sketch be started in fullscreen? */
+	public boolean fullScreen = false;
 
 	/** */
-	public boolean cannotFullscreen;
+	public boolean cannotFullscreen = false;
 
 	/** */
-	public boolean startedFullscreen;
+	public boolean startedFullscreen = false;
 
 	/** */
-	public boolean cannotF11Fullscreen;
+	public boolean cannotF11Fullscreen = false;
 
 	/** */
-	public boolean preventCloseOnEscape;
+	public boolean preventCloseOnEscape = false;
 
 	/** */
-	public boolean cannotAltEnterFullscreen;
+	public boolean cannotAltEnterFullscreen = false;
+	// endregion
 
 	// region Initial dimensions.
 	public void startInFullscreen() {

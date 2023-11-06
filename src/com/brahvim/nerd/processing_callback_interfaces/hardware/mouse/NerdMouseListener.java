@@ -1,7 +1,5 @@
 package com.brahvim.nerd.processing_callback_interfaces.hardware.mouse;
 
-import processing.event.MouseEvent;
-
 public interface NerdMouseListener extends NerdMousePressedCallback, NerdMouseMovedCallback, NerdMouseDraggedCallback,
 		NerdMouseWheelCallback, NerdMouseReleasedCallback, NerdMouseClickedCallback {
 
@@ -18,7 +16,7 @@ public interface NerdMouseListener extends NerdMousePressedCallback, NerdMouseMo
 	}
 
 	@Override
-	public default void mouseWheel(final MouseEvent p_mouseEvent) {
+	public default void mouseWheel(final processing.event.MouseEvent p_mouseEvent) {
 	}
 
 	@Override
