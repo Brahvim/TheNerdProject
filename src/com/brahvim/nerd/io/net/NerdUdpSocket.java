@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.brahvim.nerd.utils.NerdTriConsumer;
+import com.brahvim.nerd.utils.java_function_extensions.NerdTriConsumer;
 
 /**
  * {@link NerdUdpSocket} helps two applications running on different machines

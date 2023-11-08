@@ -55,7 +55,7 @@ public class NerdTcpServer implements NerdServerSocket {
 		}
 		// endregion
 
-		private void startCommsThread() {
+		private void startCommunicationsThread() {
 			if (super.STOPPED.get())
 				return;
 
@@ -79,7 +79,8 @@ public class NerdTcpServer implements NerdServerSocket {
 				// }
 
 				// This syncing could be a bit clearer, but anyway!:
-				// I could just've make `socket` private, or put it into another class, where the
+				// I could just've make `socket` private, or put it into another class, where
+				// the
 				// only way to call methods on it is to provide a `Consumer`. to some
 				// `synchronized` method.
 				synchronized (this.socket) {
@@ -225,8 +226,8 @@ public class NerdTcpServer implements NerdServerSocket {
 
 	private final AtomicBoolean STOPPED = new AtomicBoolean();
 
-	private Thread connectionsThread;
 	private ServerSocket socket;
+	private Thread invitationsThread;
 	private Function<NerdAbstractTcpClient, Boolean> invitationCallback;
 	// endregion
 
@@ -285,21 +286,21 @@ public class NerdTcpServer implements NerdServerSocket {
 			e.printStackTrace();
 		}
 
-		this.startConnectionsThread();
+		this.startInvitationsThread();
 	}
 
-	protected void startConnectionsThread() {
-		this.connectionsThread = new Thread(this::connectionTasks);
-		this.connectionsThread.setName(this.getClass().getSimpleName() + "OnPort:" + this.socket.getLocalPort());
-		this.connectionsThread.setDaemon(true);
-		this.connectionsThread.start();
+	protected void startInvitationsThread() {
+		this.invitationsThread = new Thread(this::invitationTasks);
+		this.invitationsThread.setName(this.getClass().getSimpleName() + "OnPort:" + this.socket.getLocalPort());
+		this.invitationsThread.setDaemon(true);
+		this.invitationsThread.start();
 	}
 
-	private void connectionTasks() {
+	private void invitationTasks() {
 		// Loop, or try-catch block first?
 		while (!this.STOPPED.get())
 			try {
-				// System.out.println("Called `NerdTcpServer::CONNS_THREAD::run()`.");
+				// System.out.println("Called `NerdTcpServer::connectionsThread::run()`.");
 				final NerdTcpServerClient client = new NerdTcpServer.NerdTcpServerClient(this.socket.accept());
 
 				synchronized (NerdTcpServer.this.CLIENTS) {
@@ -317,10 +318,11 @@ public class NerdTcpServer implements NerdServerSocket {
 						for (final Consumer<NerdClientSentTcpPacket> c : NerdTcpServer.this.NEW_CONNECTION_CALLBACKS)
 							client.addMessageCallback(c);
 
-						client.startCommsThread();
+						client.startCommunicationsThread();
 					}
 				}
 
+				// TODO: Investigate: WHO ate the `else`?!
 				client.disconnect();
 			} catch (final IOException e) {
 				if (!(e instanceof SocketTimeoutException))
@@ -375,7 +377,7 @@ public class NerdTcpServer implements NerdServerSocket {
 		// System.out.println("`NerdTcpServer::shutdown()` disconnected all clients.");
 
 		try {
-			this.connectionsThread.join();
+			this.invitationsThread.join();
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}

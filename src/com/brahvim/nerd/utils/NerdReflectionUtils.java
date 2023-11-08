@@ -5,13 +5,27 @@ import java.lang.reflect.Type;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import com.brahvim.nerd.utils.java_function_extensions.NerdQuadConsumer;
+import com.brahvim.nerd.utils.java_function_extensions.NerdTriConsumer;
+
 public class NerdReflectionUtils {
 
 	private NerdReflectionUtils() {
 		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
-	public static void rejectStaticClassInstantiationFor(final Object p_object) {
+	/**
+	 * <h1>Have you written a utility class?</h1>
+	 * Let a call to this method be the <i>only</i> statement
+	 * in said class's private null-constructor - just as a good practice!
+	 * <br>
+	 * </br>
+	 * I bet you won't be disappointed!
+	 *
+	 * @throws IllegalAccessError
+	 *
+	 */
+	public static void rejectStaticClassInstantiationFor(final Object p_object) throws IllegalAccessError {
 		throw new IllegalAccessError("Please instantiate `" + p_object.getClass().getSimpleName()
 				+ "`es the way they're supposed to be! Sorry...");
 	}
