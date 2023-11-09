@@ -1,5 +1,7 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends.interfaces;
 
-public class NerdJava2dRenderer {
-    
+import processing.core.PGraphics;
+
+public class NerdJava2dRenderer extends PGraphics {
+
 }

@@ -10,7 +10,9 @@ import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -20,7 +22,7 @@ import com.brahvim.nerd.io.net.NerdServerSocket;
 
 import processing.core.PApplet;
 
-public class NerdTcpServer implements NerdServerSocket {
+public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 
 	// region Inner classes.
 	public class NerdClientSentTcpPacket extends NerdAbstractTcpPacket {
@@ -42,7 +44,7 @@ public class NerdTcpServer implements NerdServerSocket {
 
 		// region Fields.
 		// DO NOT use outside a `synchronized` block! Never!:
-		private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
+		private final List<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
 		// endregion
 
 		// region Constructors.
@@ -189,15 +191,15 @@ public class NerdTcpServer implements NerdServerSocket {
 		/**
 		 * @return A copy of the {@link HashSet} containing all message callbacks.
 		 */
-		public HashSet<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> getAllMessageCallbacks() {
+		public Set<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> getAllMessageCallbacks() {
 			synchronized (this.MESSAGE_CALLBACKS) {
 				return new HashSet<>(this.MESSAGE_CALLBACKS);
 			}
 		}
 
 		@SuppressWarnings("all")
-		public HashSet<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> removeAllMessageCallbacks() {
-			HashSet<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> toRet = null;
+		public Set<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> removeAllMessageCallbacks() {
+			Set<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> toRet = null;
 			synchronized (this.MESSAGE_CALLBACKS) {
 				toRet = new HashSet<>(this.MESSAGE_CALLBACKS);
 				this.MESSAGE_CALLBACKS.clear();
@@ -307,26 +309,24 @@ public class NerdTcpServer implements NerdServerSocket {
 					this.CLIENTS.add(client);
 				}
 
-				if (this.invitationCallback != null) {
-					// What if `apply()` returns `null`...?!
-					final boolean check = Objects.requireNonNullElseGet(this.invitationCallback.apply(client),
-							() -> Boolean.FALSE);
+				if (this.invitationCallback == null)
+					throw new IllegalStateException(
+							"Please call `NerdTcpServer::setClientInvitationCallback`"
+									+ "immediately after creating a `NerdTcpServer`!");
 
-					// if (!(check == null || !check)) {
-					// if (check != null && check) {
-					if (check) {
-						for (final Consumer<NerdClientSentTcpPacket> c : NerdTcpServer.this.NEW_CONNECTION_CALLBACKS)
-							client.addMessageCallback(c);
-
-						client.startCommunicationsThread();
-					}
+				if (!this.invitationCallback.apply(client)) {
+					client.disconnect();
+					continue;
 				}
 
-				// TODO: Investigate: WHO ate the `else`?!
-				client.disconnect();
+				for (final Consumer<NerdClientSentTcpPacket> c : NerdTcpServer.this.NEW_CONNECTION_CALLBACKS)
+					client.addMessageCallback(c);
+				client.startCommunicationsThread();
 			} catch (final IOException e) {
-				if (!(e instanceof SocketTimeoutException))
-					e.printStackTrace();
+				if (e instanceof SocketTimeoutException)
+					return;
+
+				e.printStackTrace();
 			}
 	}
 	// endregion
@@ -365,33 +365,51 @@ public class NerdTcpServer implements NerdServerSocket {
 		return this;
 	}
 
-	public void shutdown() {
+	@Override
+	public synchronized void close() throws Exception {
 		if (this.STOPPED.get())
 			return;
 
 		this.STOPPED.set(true);
-		// System.out.println("`NerdTcpServer::shutdown()` has begun!");
+		// System.out.println("`NerdTcpServer::close()` has begun!");
 
 		this.disconnectAll();
 
-		// System.out.println("`NerdTcpServer::shutdown()` disconnected all clients.");
+		// System.out.println("`NerdTcpServer::close()` disconnected all clients.");
 
-		try {
-			this.invitationsThread.join();
-		} catch (final InterruptedException e) {
-			e.printStackTrace();
-		}
+		// try {
+		this.invitationsThread.join();
+		// } catch (final InterruptedException e) {
+		// e.printStackTrace();
+		// }
 
-		// System.out.println("`NerdTcpServer::shutdown()` stopped `connsThread`.");
+		// System.out.println("`NerdTcpServer::close()` stopped `connsThread`.");
 
-		try {
-			this.socket.close();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
+		// try {
+		this.socket.close();
+		// } catch (final IOException e) {
+		// e.printStackTrace();
+		// }
 
-		// System.out.println("`NerdTcpServer::shutdown()` closed its `ServerSocket`
+		// System.out.println("`NerdTcpServer::close()` closed its `ServerSocket`
 		// instance.");
+	}
+
+	public synchronized void close(
+			final Consumer<IOException> p_onIo,
+			final Consumer<InterruptedException> p_onInterrupted) {
+		try {
+			this.close();
+		} catch (final Exception e) {
+			if (e instanceof final IOException ioException) {
+				if (p_onIo != null)
+					p_onIo.accept(ioException);
+			} else if (e instanceof final InterruptedException interruptedException) {
+				if (p_onInterrupted != null)
+					p_onInterrupted.accept(interruptedException);
+			} else
+				e.printStackTrace();
+		}
 	}
 
 	public void disconnectAll() {

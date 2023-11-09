@@ -14,6 +14,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
 import com.brahvim.nerd.utils.NerdAwtUtils;
 import com.brahvim.nerd.utils.NerdReflectionUtils;
 
@@ -24,7 +25,7 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
 
-public abstract class NerdSketch<RendererT extends PGraphics> extends PApplet
+public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends PApplet
 		implements NerdSketchAllWorkflowsListener {
 
 	// region Fields.
@@ -261,7 +262,8 @@ public abstract class NerdSketch<RendererT extends PGraphics> extends PApplet
 		if (p_shape == null)
 			throw new NullPointerException("`svgToImage(null , p_width, p_height)` won't work.");
 
-		final PGraphics buffer = super.createGraphics(PApplet.ceil(p_width), PApplet.ceil(p_height), PConstants.P3D);
+		final NerdGenericGraphics buffer = super.createGraphics(PApplet.ceil(p_width), PApplet.ceil(p_height),
+				PConstants.P3D);
 
 		if (buffer == null)
 			throw new NullPointerException("`svgToImage()`'s `buffer` is `null`!");

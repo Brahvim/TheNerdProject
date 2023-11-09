@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import com.brahvim.nerd.utils.java_function_extensions.NerdTriConsumer;
 
@@ -28,7 +29,7 @@ import com.brahvim.nerd.utils.java_function_extensions.NerdTriConsumer;
  * 
  * @author Brahvim Bhaktvatsal
  */
-public abstract class NerdUdpSocket implements NerdServerSocket {
+public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 
 	// Concurrent stuff *haha:*
 	/**
@@ -330,7 +331,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	}
 
 	/**
-	 * Called before {@link NerdUdpSocket#shutdown()} closes the thread and socket.
+	 * Called before {@link NerdUdpSocket#close()} closes the thread and socket.
 	 */
 	protected abstract /* `synchronized` */ void onClose(); // AYO, NOBODY CALL THIS UNSYNCED!
 	// endregion
@@ -392,6 +393,40 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 
 			System.out.printf("Successfully forced the port to: `%d`.%n", this.socket.getLocalPort());
 		} catch (final SocketException e) {
+			System.out.printf("Setting the port to `%d` failed!%n", p_port);
+			System.out.printf("Had to revert to port `%d`...%n", this.socket.getLocalPort());
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Tries to force the socket to use the specified port. If the port is not
+	 * available, an address reuse request is
+	 * performed.
+	 *
+	 * @param p_port The port number!
+	 */
+	public void setPort(final int p_port, final Consumer<SocketException> p_taskOnExceptionThrow) {
+		try {
+			final InetAddress previous = this.socket.getLocalAddress();
+			final boolean receiverWasNull = this.receiver == null;
+			// ^^^ Used when the function is called from constructors.
+
+			if (!receiverWasNull)
+				this.receiver.stop();
+			this.socket.close();
+			this.socket = new DatagramSocket(p_port, previous);
+			this.socket.setReuseAddress(true);
+
+			if (receiverWasNull)
+				this.receiver = new ReceiverThread();
+
+			System.out.printf("Successfully forced the port to: `%d`.%n", this.socket.getLocalPort());
+		} catch (final SocketException e) {
+			if (p_taskOnExceptionThrow != null) {
+				p_taskOnExceptionThrow.accept(e);
+				return;
+			}
 			System.out.printf("Setting the port to `%d` failed!%n", p_port);
 			System.out.printf("Had to revert to port `%d`...%n", this.socket.getLocalPort());
 			e.printStackTrace();
@@ -556,7 +591,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket {
 	 * instance is using, prints the exception closing it results in (if it occurs),
 	 * and stops the receiver thread.
 	 */
-	public synchronized void shutdown() {
+	@Override
+	public synchronized void close() throws Exception {
 		if (this.STOPPED.get())
 			return;
 

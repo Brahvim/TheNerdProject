@@ -1,6 +1,7 @@
 package com.brahvim.nerd.io;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
@@ -16,13 +17,13 @@ public class NerdSpriteSheet {
 	private final PImage SHEET;
 	private final NerdSketch SKETCH;
 
-	private ArrayList<PImage> sprites = new ArrayList<>(2);
+	private List<PImage> sprites = new ArrayList<>(2);
 	// If you literally have only one image, why're you even using a 'sheet'?!
 
 	/**
 	 * Position of a sprite, as well as its ID in {@link NerdSpriteSheet#sprites}.
 	 */
-	private ArrayList<SpritePos> poses = new ArrayList<>(2);
+	private List<SpritePos> poses = new ArrayList<>(2);
 	// endregion
 
 	public NerdSpriteSheet(final NerdSketch p_sketch, final PImage p_sheet) {

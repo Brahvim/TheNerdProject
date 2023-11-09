@@ -21,4 +21,8 @@ public enum NerdSketchRenderer {
         this.processingConstant = p_processingConstant;
     }
 
+    public String getPConstant() {
+        return this.processingConstant;
+    }
+
 }

@@ -8,19 +8,17 @@ import java.util.function.Function;
 
 import com.brahvim.nerd.io.NerdStringTable;
 
+import processing.core.PApplet;
 import processing.core.PConstants;
 
 public class NerdSketchSettings {
 
-	/**
-	 * What {@link NerdSketch}{@code::settings()} passes to
-	 * <a href="https://processing.org/reference/smooth_.html">PApplet::smooth()</a>
-	 */
+	/** What {@link NerdSketch#settings()} passes to {@link PApplet#smooth()} */
 	public int antiAliasing = 2;
 
 	/**
-	 * One of the initial dimensions for the sketch's window. Is {@code 640x480} by
-	 * default!
+	 * One of the initial dimensions for the sketch's window - they're
+	 * {@code 640x480} by default!
 	 */
 	public int width = 640, height = 480;
 
