@@ -38,6 +38,7 @@ public abstract class NerdScene {
 	protected NerdSceneState STATE;
 	protected NerdInputModule INPUT;
 	protected NerdWindowModule WINDOW;
+	protected NerdAssetsModule ASSETS;
 	protected NerdScenesModule MANAGER;
 	protected NerdDisplayModule DISPLAY;
 	protected NerdGenericGraphics GRAPHICS;

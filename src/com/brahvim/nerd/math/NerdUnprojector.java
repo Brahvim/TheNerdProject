@@ -15,7 +15,7 @@ public class NerdUnprojector {
 	// These store information about the sketch's viewport:
 	private int width, height;
 
-	// We maintain a refernce to the projection matrix:
+	// We maintain a reference to the projection matrix:
 	private final PMatrix3D matrix = new PMatrix3D();
 
 	// used for intermediate calculations.
@@ -47,17 +47,17 @@ public class NerdUnprojector {
 		// endregion
 
 		// region Calculate homogeneous coordinates.
-		this.out[0] = this.matrix.m00 * this.in[0] + this.matrix.m01 * this.in[1] + this.matrix.m02 * this.in[2]
-				+ this.matrix.m03;
+		this.out[0] = this.matrix.m00 * this.in[0] + this.matrix.m01 *
+				this.in[1] + this.matrix.m02 * this.in[2] + this.matrix.m03;
 
-		this.out[1] = this.matrix.m10 * this.in[0] + this.matrix.m11 * this.in[1] + this.matrix.m12 * this.in[2]
-				+ this.matrix.m13;
+		this.out[1] = this.matrix.m10 * this.in[0] + this.matrix.m11 *
+				this.in[1] + this.matrix.m12 * this.in[2] + this.matrix.m13;
 
-		this.out[2] = this.matrix.m20 * this.in[0] + this.matrix.m21 * this.in[1] + this.matrix.m22 * this.in[2]
-				+ this.matrix.m23;
+		this.out[2] = this.matrix.m20 * this.in[0] + this.matrix.m21 *
+				this.in[1] + this.matrix.m22 * this.in[2] + this.matrix.m23;
 
-		this.out[3] = this.matrix.m30 * this.in[0] + this.matrix.m31 * this.in[1] + this.matrix.m32 * this.in[2]
-				+ this.matrix.m33;
+		this.out[3] = this.matrix.m30 * this.in[0] + this.matrix.m31 *
+				this.in[1] + this.matrix.m32 * this.in[2] + this.matrix.m33;
 		// endregion
 
 		// Check for an invalid result:

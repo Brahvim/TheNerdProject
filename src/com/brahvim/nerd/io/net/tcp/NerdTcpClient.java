@@ -107,7 +107,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 				// ..I guess we use fixed sizes around here...
 
 				// ..Now read it:
-				// FIXME VULNERABILITY! What if the packet ISN'T from Nerd?!:
+				// FIXME VULNERABILITY! What if the packet ISN'T from Nerd?!
 				final int packetSize = stream.readInt();
 				final byte[] packetData = new byte[packetSize];
 
