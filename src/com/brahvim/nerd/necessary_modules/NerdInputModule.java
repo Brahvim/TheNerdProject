@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.brahvim.nerd.processing_wrapper.NerdModule;
-import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PConstants;
@@ -454,7 +453,7 @@ public class NerdInputModule extends NerdModule {
 				p_keyCode == 8 || // `Backspace`,
 				p_keyCode == 10 || // Both `Enter`s/`return`s.
 				p_keyCode == 11 || // `PageDown`,
-				p_keyCode == 12 || // Resistered when a button is pressed on the numpad with `NumLock` off.
+				p_keyCode == 12 || // Registered when a button is pressed on the numpad with `NumLock` off.
 				p_keyCode == 16 || // `PageUp`,
 				p_keyCode == 19 || // "`Alt`-Graph',
 				p_keyCode == 20 || // `CapsLock`,

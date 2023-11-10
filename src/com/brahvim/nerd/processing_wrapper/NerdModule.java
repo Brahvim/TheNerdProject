@@ -3,8 +3,6 @@ package com.brahvim.nerd.processing_wrapper;
 import java.util.List;
 import java.util.Map;
 
-import com.brahvim.nerd.processing_callback_interfaces.hardware.NerdSketchHardwareListener;
-import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.utils.NerdReflectionUtils;
 
 import processing.event.MouseEvent;

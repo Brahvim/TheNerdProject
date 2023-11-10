@@ -394,7 +394,7 @@ public abstract class NerdScene {
 		} catch (final NoSuchMethodException e) {
 			System.err.println("""
 					Every subclass of `NerdLayer` must be `public` with a `public` \"null-constructor\"
-					(constructor with no arguments), or no overriden constructors at all.""");
+					(constructor with no arguments), or no overridden constructors at all.""");
 		} catch (final SecurityException e) {
 			e.printStackTrace();
 		}
