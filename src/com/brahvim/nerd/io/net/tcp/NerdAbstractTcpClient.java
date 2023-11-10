@@ -54,6 +54,7 @@ public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 				this.commsThread.join();
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
+				Thread.currentThread().interrupt();
 			}
 
 		// System.out.println(

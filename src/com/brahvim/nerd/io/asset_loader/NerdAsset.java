@@ -50,7 +50,8 @@ public class NerdAsset {
 			try {
 				Thread.sleep(50);
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
+				// e.printStackTrace();
+				Thread.currentThread().interrupt();
 			}
 		}
 
@@ -122,7 +123,8 @@ public class NerdAsset {
 		try {
 			this.completeLoad();
 		} catch (final InterruptedException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
+			Thread.currentThread().interrupt();
 		}
 
 		return (RetT) this.data;

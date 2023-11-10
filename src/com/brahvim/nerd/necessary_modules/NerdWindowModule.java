@@ -2,6 +2,7 @@ package com.brahvim.nerd.necessary_modules;
 
 import java.awt.Point;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.brahvim.nerd.necessary_modules.window_module_impls.NerdGlWindowModule;
 import com.brahvim.nerd.necessary_modules.window_module_impls.NerdJava2dWindowModule;
@@ -9,7 +10,6 @@ import com.brahvim.nerd.processing_callback_interfaces.hardware.window.NerdWindo
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PSurface;
 import processing.core.PVector;
@@ -34,7 +34,7 @@ public abstract class NerdWindowModule extends NerdModule {
 	public float dbx, dby, cx, cy, qx, qy, q3x, q3y, scr;
 	public int width, height, pwidth, pheight;
 
-	protected final LinkedHashSet<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
+	protected final Set<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
 
 	protected PImage iconImage;
 	protected PSurface sketchSurface;

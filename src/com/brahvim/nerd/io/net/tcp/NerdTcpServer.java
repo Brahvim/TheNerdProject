@@ -223,8 +223,8 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 
 	// region Fields.
 	// Concurrency is huge:
-	private final Vector<NerdTcpServer.NerdTcpServerClient> CLIENTS = new Vector<>(1);
-	private final Vector<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> NEW_CONNECTION_CALLBACKS = new Vector<>(1);
+	private final List<NerdTcpServer.NerdTcpServerClient> CLIENTS = new Vector<>(1);
+	private final List<Consumer<NerdTcpServer.NerdClientSentTcpPacket>> NEW_CONNECTION_CALLBACKS = new Vector<>(1);
 
 	private final AtomicBoolean STOPPED = new AtomicBoolean();
 
@@ -396,19 +396,51 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 	}
 
 	public synchronized void close(
+			final Consumer<Exception> p_onExcept) {
+		try {
+			this.close();
+		} catch (Exception e) {
+			p_onExcept.accept(e);
+		}
+	}
+
+	public synchronized void close(
 			final Consumer<IOException> p_onIo,
 			final Consumer<InterruptedException> p_onInterrupted) {
+		this.close(p_onIo, p_onInterrupted, null);
+	}
+
+	public synchronized void close(
+			final Consumer<IOException> p_onIo,
+			final Consumer<InterruptedException> p_onInterrupted,
+			final Consumer<Exception> p_onAnyOtherException) {
 		try {
 			this.close();
 		} catch (final Exception e) {
 			if (e instanceof final IOException ioException) {
-				if (p_onIo != null)
+
+				// Do either of these,
+				if (p_onIo == null)
+					e.printStackTrace();
+				else
 					p_onIo.accept(ioException);
+
 			} else if (e instanceof final InterruptedException interruptedException) {
-				if (p_onInterrupted != null)
+
+				// Do either of these,
+				if (p_onInterrupted == null)
+					Thread.currentThread().interrupt();
+				else
 					p_onInterrupted.accept(interruptedException);
-			} else
+				return; // Leave.
+
+			}
+
+			// If the exception wasn't one of these guys,
+			if (p_onAnyOtherException == null)
 				e.printStackTrace();
+			else
+				p_onAnyOtherException.accept(e);
 		}
 	}
 

@@ -21,6 +21,7 @@ import com.brahvim.nerd.necessary_modules.NerdInputModule;
 import com.brahvim.nerd.necessary_modules.NerdWindowModule;
 import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.interfaces.NerdPAppletItf;
 import com.brahvim.nerd.utils.NerdAwtUtils;
 import com.brahvim.nerd.utils.NerdReflectionUtils;
 
@@ -32,7 +33,8 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.opengl.PJOGL;
 
-public abstract class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListener {
+public abstract class NerdSketch extends PApplet implements
+		NerdSketchAllWorkflowsListener, NerdPAppletItf {
 
 	// region Fields.
 	// region Public fields.
@@ -129,11 +131,11 @@ public abstract class NerdSketch extends PApplet implements NerdSketchAllWorkflo
 		this.GRAPHICS = new NerdGenericGraphics(this, super.getGraphics());
 	}
 
-	private ArrayList<NerdModule> sortModules(final NerdSketchSettings p_settings) {
+	private List<NerdModule> sortModules(final NerdSketchSettings p_settings) {
 		final LinkedHashSet<Function<NerdSketch, NerdModule>> nerdModulesToAssign = new LinkedHashSet<>(0);
 		p_settings.nerdModulesInstantiator.accept(nerdModulesToAssign);
 
-		final ArrayList<NerdModule> toRet = new ArrayList<>(nerdModulesToAssign.size());
+		final List<NerdModule> toRet = new ArrayList<>(nerdModulesToAssign.size());
 
 		// Construct modules using the provided `Function`s, and add them to the map:
 		for (final Function<NerdSketch, NerdModule> f : nerdModulesToAssign)

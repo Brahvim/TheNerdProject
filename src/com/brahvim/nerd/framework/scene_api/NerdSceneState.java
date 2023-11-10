@@ -1,6 +1,7 @@
 package com.brahvim.nerd.framework.scene_api;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,40 +14,41 @@ import com.brahvim.nerd.utils.NerdByteSerialUtils;
 
 public class NerdSceneState {
 
-	private final HashMap<String, Object> DATA = new HashMap<>(0);
+	private final HashMap<String, Serializable> DATA = new HashMap<>(0);
 
 	// region From `HashMap`.
 	public void clear() {
 		this.DATA.clear();
 	}
 
-	public Object compute(final String key,
-			final BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
+	public Serializable compute(final String key,
+			final BiFunction<? super String, ? super Serializable, ? extends Serializable> remappingFunction) {
 		return this.DATA.compute(key, remappingFunction);
 	}
 
-	public Object computeIfAbsent(final String key, final Function<? super String, ? extends Object> mappingFunction) {
+	public Serializable computeIfAbsent(final String key,
+			final Function<? super String, ? extends Serializable> mappingFunction) {
 		return this.DATA.computeIfAbsent(key, mappingFunction);
 	}
 
-	public Object computeIfPresent(final String key,
-			final BiFunction<? super String, ? super Object, ? extends Object> remappingFunction) {
+	public Serializable computeIfPresent(final String key,
+			final BiFunction<? super String, ? super Serializable, ? extends Serializable> remappingFunction) {
 		return this.DATA.computeIfPresent(key, remappingFunction);
 	}
 
-	public boolean containsKey(final Object key) {
+	public boolean containsKey(final Serializable key) {
 		return this.DATA.containsKey(key);
 	}
 
-	public boolean containsValue(final Object value) {
+	public boolean containsValue(final Serializable value) {
 		return this.DATA.containsValue(value);
 	}
 
-	public Set<Map.Entry<String, Object>> entrySet() {
+	public Set<Map.Entry<String, Serializable>> entrySet() {
 		return this.DATA.entrySet();
 	}
 
-	public void forEach(final BiConsumer<? super String, ? super Object> action) {
+	public void forEach(final BiConsumer<? super String, ? super Serializable> action) {
 		this.DATA.forEach(action);
 	}
 
@@ -58,8 +60,8 @@ public class NerdSceneState {
 		return this.DATA.keySet();
 	}
 
-	public Object merge(final String key, final Object value,
-			final BiFunction<? super Object, ? super Object, ? extends Object> remappingFunction) {
+	public Serializable merge(final String key, final Serializable value,
+			final BiFunction<? super Serializable, ? super Serializable, ? extends Serializable> remappingFunction) {
 		return this.DATA.merge(key, value, remappingFunction);
 	}
 
@@ -67,7 +69,7 @@ public class NerdSceneState {
 		return this.DATA.size();
 	}
 
-	public Collection<Object> values() {
+	public Collection<Serializable> values() {
 		return this.DATA.values();
 	}
 	// endregion
@@ -95,7 +97,7 @@ public class NerdSceneState {
 	 * <p>
 	 * Else, a new key-value pair is created and saved.
 	 */
-	public <T> NerdSceneState set(final String p_key, final T p_value) {
+	public NerdSceneState set(final String p_key, final Serializable p_value) {
 		this.DATA.put(p_key, p_value);
 		return this;
 	}

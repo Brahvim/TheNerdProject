@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -80,7 +82,7 @@ public class NerdScenesModule extends NerdModule {
 	protected boolean sceneSwitchOccurred;
 
 	/**
-	 * This {@link HashMap} contains cached data about each {@link NerdScene} class
+	 * This {@link Map} contains cached data about each {@link NerdScene} class
 	 * any {@link NerdScenesModule} instance has cached or ran.
 	 * <p>
 	 * Actual "caching" of a {@link NerdScene} is when its corresponding
@@ -91,13 +93,13 @@ public class NerdScenesModule extends NerdModule {
 	 * does no optimization till the first scene switch. All scene switches after
 	 * that the initial should be fast enough!
 	 */
-	private final HashMap<Class<? extends NerdScene>, NerdScenesModule.NerdScenesModuleSceneCache> //
+	private final Map<Class<? extends NerdScene>, NerdScenesModule.NerdScenesModuleSceneCache> //
 	SCENE_CACHE = new HashMap<>(2);
 
-	private final LinkedHashSet<NerdScenesModule.NerdScenesModuleNewSceneStartedListener> //
+	private final Set<NerdScenesModule.NerdScenesModuleNewSceneStartedListener> //
 	SCENE_CHANGED_LISTENERS = new LinkedHashSet<>(0); // Not gunna have any, will we?
 
-	private final LinkedHashSet<NerdScenesModule.NerdScenesModuleNewSceneStartedListener> //
+	private final Set<NerdScenesModule.NerdScenesModuleNewSceneStartedListener> //
 	SCENE_CHANGED_LISTENERS_TO_REMOVE = new LinkedHashSet<>(0); // Not gunna have any, will we?
 
 	private Class<? extends NerdScene> currentSceneClass, previousSceneClass;
@@ -484,7 +486,7 @@ public class NerdScenesModule extends NerdModule {
 	/*
 	 * - Asking for deletion permissions when you may not be caching is awkward,
 	 * - Structure. `cache == null`, `cache.getCache() == null` must result in the
-	 * same, but can't be grouped together logicaly, for optimization. This can be
+	 * same, but can't be grouped together logically, for optimization. This can be
 	 * fixed with the use of an implementation method, but this class already has
 	 * too many similarly-named methods!
 	 *
@@ -562,7 +564,7 @@ public class NerdScenesModule extends NerdModule {
 			final NerdAssetsModule assets = this.SCENE_CACHE.get(sceneClass).cachedAssets;
 			super.getSketchModulesMap().put(NerdAssetsModule.class, assets);
 			p_scene.ASSETS = assets;
-		} else { // Else, since we're supposed to run `NerdScene::preload()` eachtime, do that!:
+		} else { // Else, since we're supposed to run `NerdScene::preload()` each time, do that!:
 			p_scene.ASSETS.clear();
 			p_scene.runPreload();
 			this.SCENE_CACHE.get(sceneClass).cachedAssets = p_scene.ASSETS;
@@ -652,9 +654,9 @@ public class NerdScenesModule extends NerdModule {
 		toRet.SKETCH = toRet.MANAGER.SKETCH;
 
 		// Now, we copy all other objects from `toRet.SKETCH`!:
+		// toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
+		// toRet.ASSETS = new NerdAssetsModule(toRet.SKETCH);
 		toRet.GRAPHICS = toRet.SKETCH.getNerdGenericGraphics();
-		toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
-		toRet.ASSETS = new NerdAssetsModule(toRet.SKETCH);
 		toRet.INPUT = toRet.SKETCH.getNerdModule(NerdInputModule.class);
 		toRet.WINDOW = toRet.SKETCH.getNerdModule(NerdWindowModule.class);
 		toRet.DISPLAY = toRet.SKETCH.getNerdModule(NerdDisplayModule.class);
@@ -677,7 +679,7 @@ public class NerdScenesModule extends NerdModule {
 		this.setScene(toStart, p_state);
 	}
 
-	// The scene-deleter! Receives EVERY request to start a scenes, by the way.
+	// The scene-deleter! Also receives EVERY request to start a scene, by the way.
 	private void setScene(final NerdScene p_currentScene, final NerdSceneState p_state) {
 		final NerdWindowModule window = super.SKETCH.getNerdModule(NerdWindowModule.class);
 		window.cursorConfined = false;

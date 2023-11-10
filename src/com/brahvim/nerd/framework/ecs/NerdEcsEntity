@@ -18,7 +18,7 @@ public final class NerdEcsEntity implements Serializable {
 	protected final transient NerdEcsModule MANAGER;
 	protected final transient NerdEcsEntity ENTITY = this;
 
-	private final LinkedHashSet<NerdEcsComponent> COMPONENTS = new LinkedHashSet<>();
+	private final Set<NerdEcsComponent> COMPONENTS = new LinkedHashSet<>();
 	// endregion
 
 	protected NerdEcsEntity(final NerdEcsModule p_module) {
@@ -180,7 +180,7 @@ public final class NerdEcsEntity implements Serializable {
 	}
 
 	public void removeAllComponentsOfCondition(final Predicate<NerdEcsComponent> p_ifStatement) {
-		final LinkedHashSet<NerdEcsComponent> toRemove = new LinkedHashSet<>();
+		final Set<NerdEcsComponent> toRemove = new LinkedHashSet<>();
 
 		for (final NerdEcsComponent c : this.COMPONENTS)
 			if (p_ifStatement.test(c))
@@ -190,7 +190,7 @@ public final class NerdEcsEntity implements Serializable {
 	}
 
 	public void removeAllComponentsTyped(final Class<? extends NerdEcsComponent> p_componentClass) {
-		final LinkedHashSet<NerdEcsComponent> toRemove = new LinkedHashSet<>();
+		final Set<NerdEcsComponent> toRemove = new LinkedHashSet<>();
 
 		for (final NerdEcsComponent c : this.COMPONENTS)
 			if (c.getClass().equals(p_componentClass))

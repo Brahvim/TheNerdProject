@@ -2,6 +2,7 @@ package com.brahvim.nerd.io.asset_loader;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
@@ -14,7 +15,7 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 public class NerdAssetsModule extends NerdModule {
 
 	// The ONLY field!:
-	private final HashSet<NerdAsset> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
+	private final Set<NerdAsset> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
 	// Do we even *need* assets in any scene from the very beginning?
 
 	public NerdAssetsModule(final NerdSketch p_sketch) {

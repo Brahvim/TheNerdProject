@@ -32,10 +32,10 @@ public class NerdEcsModule extends NerdModule {
 	// .<Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>>of(null, null,
 	// null).toArray();
 
-	protected final HashSet<NerdEcsEntity> ENTITIES = new HashSet<>();
-	protected final HashSet<NerdEcsComponent> COMPONENTS = new HashSet<>();
-	protected final HashMap<String, NerdEcsEntity> NAME_TO_ENTITY_MAP = new HashMap<>();
-	protected final HashMap<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> CLASSES_TO_COMPONENTS_MAP = new HashMap<>();
+	protected final Set<NerdEcsEntity> ENTITIES = new HashSet<>();
+	protected final Set<NerdEcsComponent> COMPONENTS = new HashSet<>();
+	protected final Map<String, NerdEcsEntity> NAME_TO_ENTITY_MAP = new HashMap<>();
+	protected final Map<Class<? extends NerdEcsComponent>, HashSet<NerdEcsComponent>> CLASSES_TO_COMPONENTS_MAP = new HashMap<>();
 
 	protected long numUnnamedEntities = 1;
 	protected NerdEcsSystem<?>[] ecsSystems;
@@ -394,8 +394,8 @@ public class NerdEcsModule extends NerdModule {
 		for (final Map.Entry<?, ?> e : Map.<HashSet<?>, HashSet<?>>of(
 				this.ENTITIES, p_deserialized.entities,
 				this.COMPONENTS, p_deserialized.components).entrySet()) {
-			final LinkedList<?> myList = (LinkedList<?>) e.getKey(),
-					/*		 */ otherList = (LinkedList<?>) e.getValue();
+			final LinkedList<?> myList = (LinkedList<?>) e.getKey();
+			final LinkedList<?> otherList = (LinkedList<?>) e.getValue();
 
 			for (int i = myList.size() - 1; i > -1; i--) {
 				final Object o = myList.get(i);
@@ -405,10 +405,9 @@ public class NerdEcsModule extends NerdModule {
 		}
 
 		// region Remove elements not available in the maps in the deserialized module.
-
 		// There's nothing like `Set::get()`! Storing stuff to remove then removing it!:
-		final HashSet<String> toRemove = new HashSet<>();
-		final HashMap<String, NerdEcsEntity> myMap = this.NAME_TO_ENTITY_MAP,
+		final Set<String> toRemove = new HashSet<>();
+		final Map<String, NerdEcsEntity> myMap = this.NAME_TO_ENTITY_MAP,
 				otherMap = p_deserialized.nameToEntityMap;
 
 		for (final var e : myMap.entrySet()) {

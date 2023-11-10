@@ -32,7 +32,7 @@ public class NerdInputModule extends NerdModule {
 
 	// region Frame-wise states, Processing style (thus mutable).
 	// ...yeah, *these* ain't mutable, are they?:
-	public final ArrayList<PVector> UNPROJ_TOUCHES = new ArrayList<>(10),
+	public final List<PVector> UNPROJ_TOUCHES = new ArrayList<>(10),
 			PREV_UNPROJ_TOUCHES = new ArrayList<>(10),
 			PREV_FRAME_UNPROJ_TOUCHES = new ArrayList<>(10);
 
@@ -74,7 +74,7 @@ public class NerdInputModule extends NerdModule {
 			totalMouseScroll, ptotalMouseScroll;
 
 	protected NerdWindowModule window;
-	protected final ArrayList<Integer> KEYS_HELD = new ArrayList<>(5), PREV_FRAME_KEYS_HELD = new ArrayList<>(5);
+	protected final List<Integer> KEYS_HELD = new ArrayList<>(5), PREV_FRAME_KEYS_HELD = new ArrayList<>(5);
 	// endregion
 	// endregion
 

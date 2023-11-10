@@ -12,6 +12,7 @@ import java.net.SocketOption;
 import java.net.SocketTimeoutException;
 import java.nio.channels.DatagramChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -189,7 +190,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	 * callback objects that want to listen to data received by this
 	 * {@link NerdUdpSocket}.
 	 */
-	private final Vector<NerdTriConsumer<byte[], String, Integer>> receiveCallbacks = new Vector<>(1);
+	private final List<NerdTriConsumer<byte[], String, Integer>> receiveCallbacks = new Vector<>(1);
 
 	/**
 	 * Internal field checked in the thread loop to stop the thread if needed.

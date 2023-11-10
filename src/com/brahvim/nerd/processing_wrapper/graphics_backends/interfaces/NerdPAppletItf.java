@@ -18,7 +18,7 @@ import processing.event.Event;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
-public interface AppletOnlyItf {
+public interface NerdPAppletItf {
 
     PGraphics beginRaw(String renderer, String filename);
 

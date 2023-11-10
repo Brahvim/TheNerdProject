@@ -1,6 +1,7 @@
 package com.brahvim.nerd.framework.scene_api;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -139,7 +140,7 @@ public class NerdScenesModuleSettings extends NerdModuleSettings<NerdScenesModul
 	public NerdScenesModuleSettings.NerdSceneLayerCallbackOrder postFirstCaller = NerdScenesModuleSettings.NerdSceneLayerCallbackOrder.LAYER;
 	// endregion
 
-	public HashSet<Class<? extends NerdScene>> classesOfScenesToPreload = new HashSet<>(0);
+	public Set<Class<? extends NerdScene>> classesOfScenesToPreload = new HashSet<>(0);
 
 	public NerdScenesModuleSettings(final Class<? extends NerdScene> p_firstSceneClass) {
 		this.FIRST_SCENE_CLASS = p_firstSceneClass;

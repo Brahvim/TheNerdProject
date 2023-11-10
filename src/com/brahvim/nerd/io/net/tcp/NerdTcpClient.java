@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Vector;
 import java.util.function.Consumer;
 
@@ -26,7 +27,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 
 	}
 
-	private final Vector<Consumer<NerdTcpClient.NerdServerSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
+	private final List<Consumer<NerdTcpClient.NerdServerSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
 
 	// region Construction.
 	// region Constructors.

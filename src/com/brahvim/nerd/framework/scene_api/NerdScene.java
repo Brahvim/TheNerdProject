@@ -5,6 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
@@ -12,14 +15,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
-import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.necessary_modules.NerdDisplayModule;
 import com.brahvim.nerd.necessary_modules.NerdInputModule;
 import com.brahvim.nerd.necessary_modules.NerdWindowModule;
+import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
 
 /**
  * <h2>Do not use as an anonymous class!</h2>
@@ -34,13 +36,11 @@ public abstract class NerdScene {
 	// Forgive me. Please!
 	protected NerdSketch SKETCH;
 	protected NerdSceneState STATE;
-	protected NerdGenericGraphics GRAPHICS;
 	protected NerdInputModule INPUT;
-	protected NerdAssetsModule ASSETS;
 	protected NerdWindowModule WINDOW;
 	protected NerdScenesModule MANAGER;
 	protected NerdDisplayModule DISPLAY;
-	protected NerdAbstractCamera CAMERA;
+	protected NerdGenericGraphics GRAPHICS;
 	// endregion
 
 	// region `private` fields.
@@ -48,34 +48,13 @@ public abstract class NerdScene {
 	private boolean donePreloading;
 
 	// Start at `0`. "Who needs layers anyway?"
-	private final ArrayList<NerdLayer> LAYERS = new ArrayList<>(0);
+	private final List<NerdLayer> LAYERS = new ArrayList<>(0);
 	// Worth remembering: `LinkedHashSet`s allow duplicate objects, store everything
 	// in *insertion order*, but have no `indexOf()` method!
 
-	private final HashMap<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
+	private final Map<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
 	// ////////////////////////////////////////////////////////////////////////////////
 	LAYER_CONSTRUCTORS = new HashMap<>(0);
-
-	/*
-	 * Alternative approach: storing a reference to the constructor WITHIN the class
-	 * extending `Layer` itself.
-	 *
-	 * ...won't work!
-	 *
-	 * Why?
-	 * - Can't make it [`public`, and] `static`! That'd mean that every subclass of
-	 * `Layer` would have to provide this field. Making it `public` would also make
-	 * it accessible everywhere before calling the constructor - not API-friendly!
-	 * Won't simply declare it `private` and quietly use reflection for access to it
-	 * either, since that would be slow, and would mean that everybody would have
-	 * access to it anyway. Let's never consider reflection an option!
-	 *
-	 * - Any instance of a layer WILL re-initialize the constructor reference. This
-	 * can be avoided by making the reference `static` (and also `private`, making
-	 * it accessible only through a method checking for a `LayerKey`
-	 * argument, since constructors cannot return anything), but we've already
-	 * decided not to do that.
-	 */
 	// endregion
 
 	protected NerdScene() {
@@ -262,14 +241,14 @@ public abstract class NerdScene {
 	}
 
 	/**
-	 * Gives an {@link ArrayList} of {@link NerdLayer} instances of the given
+	 * Gives an {@link List} of {@link NerdLayer} instances of the given
 	 * subclass this {@link NerdScene} contains, which are <b>not</b> active.
 	 */
-	public ArrayList<NerdLayer> getInactiveLayers(final Class<? extends NerdLayer> p_layerClass) {
+	public List<NerdLayer> getInactiveLayers(final Class<? extends NerdLayer> p_layerClass) {
 		if (p_layerClass == null)
 			return new ArrayList<>();
 
-		final ArrayList<NerdLayer> toRet = new ArrayList<>();
+		final List<NerdLayer> toRet = new ArrayList<>();
 
 		for (final NerdLayer l : this.LAYERS)
 			if (l != null && l.getClass().equals(p_layerClass) && !l.isActive())
@@ -279,14 +258,14 @@ public abstract class NerdScene {
 	}
 
 	/**
-	 * Gives an {@link ArrayList} of {@link NerdLayer} instances of the given
+	 * Gives an {@link List} of {@link NerdLayer} instances of the given
 	 * subclass this {@link NerdScene} contains, which are also active.
 	 */
-	public ArrayList<NerdLayer> getActiveLayers(final Class<? extends NerdLayer> p_layerClass) {
+	public List<NerdLayer> getActiveLayers(final Class<? extends NerdLayer> p_layerClass) {
 		if (p_layerClass == null)
 			return new ArrayList<>();
 
-		final ArrayList<NerdLayer> toRet = new ArrayList<>();
+		final List<NerdLayer> toRet = new ArrayList<>();
 
 		for (final NerdLayer l : this.LAYERS)
 			if (l != null && l.getClass().equals(p_layerClass) && l.isActive())
@@ -296,11 +275,11 @@ public abstract class NerdScene {
 	}
 
 	/**
-	 * Gives an {@link ArrayList} of {@link NerdLayer} instances of the given
+	 * Gives an {@link List} of {@link NerdLayer} instances of the given
 	 * subclass this {@link NerdScene} contains.
 	 */
-	public ArrayList<NerdLayer> getLayers(final Class<? extends NerdLayer> p_layerClass) {
-		final ArrayList<NerdLayer> toRet = new ArrayList<>();
+	public List<NerdLayer> getLayers(final Class<? extends NerdLayer> p_layerClass) {
+		final List<NerdLayer> toRet = new ArrayList<>();
 
 		for (final NerdLayer l : this.LAYERS)
 			if (l != null && l.getClass().equals(p_layerClass))
@@ -314,7 +293,7 @@ public abstract class NerdScene {
 	 * used by this {@link NerdScene} along with rights such as changing layer
 	 * rendering order.
 	 */
-	public ArrayList<NerdLayer> getLayers() {
+	public List<NerdLayer> getLayers() {
 		return this.LAYERS;
 	}
 	// endregion
@@ -425,9 +404,9 @@ public abstract class NerdScene {
 			toRet.STATE = toRet.SCENE.STATE;
 			toRet.INPUT = toRet.SCENE.INPUT;
 			toRet.SKETCH = toRet.SCENE.SKETCH;
-			toRet.ASSETS = toRet.SCENE.ASSETS;
+			// toRet.ASSETS = toRet.SCENE.ASSETS;
 			toRet.WINDOW = toRet.SCENE.WINDOW;
-			toRet.CAMERA = toRet.SCENE.CAMERA;
+			// toRet.CAMERA = toRet.SCENE.CAMERA;
 
 			toRet.MANAGER = toRet.SCENE.MANAGER;
 			toRet.DISPLAY = toRet.SCENE.DISPLAY;
@@ -468,7 +447,7 @@ public abstract class NerdScene {
 						}
 					});
 
-			final HashSet<Future<?>> futures = new HashSet<>(this.ASSETS.size());
+			final Set<Future<?>> futures = new HashSet<>(this.ASSETS.size());
 			this.ASSETS.forEach(a -> futures.add(executor.submit(a::startLoading)));
 			executor.shutdown(); // This tells the executor to stop accepting new tasks.
 
@@ -478,7 +457,8 @@ public abstract class NerdScene {
 					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS); // Keep going, keep going...
 					// Can't simply cheat the implementation to make it wait forever!
 				} catch (final InterruptedException e) {
-					e.printStackTrace();
+					// e.printStackTrace();
+					Thread.currentThread().interrupt();
 				}
 		} else
 			this.ASSETS.forEach(NerdAsset::startLoading);
