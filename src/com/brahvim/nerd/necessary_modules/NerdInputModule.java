@@ -57,10 +57,10 @@ public class NerdInputModule extends NerdModule {
 	public int mouseButton, pmouseButton;
 
 	/** Updated each time events changing this variable occur. */
-	public boolean keyPressed, pkeyPressed;
+	public boolean keyPressed, pkeyPressed; // NOSONAR
 
 	/** Updated each time events changing this variable occur. */
-	public boolean mousePressed, pmousePressed;
+	public boolean mousePressed, pmousePressed; // NOSONAR
 
 	/** Updated each time events changing this variable occur. */
 	public float mouseX, mouseY, pmouseX, pmouseY;
@@ -163,7 +163,7 @@ public class NerdInputModule extends NerdModule {
 			synchronized (this.KEYS_HELD) {
 				this.KEYS_HELD.remove((Integer) this.keyCode);
 			}
-		} catch (final IndexOutOfBoundsException e) {
+		} catch (final IndexOutOfBoundsException e) { // NOSONAR
 		}
 	}
 	// endregion

@@ -271,7 +271,8 @@ public class NerdVector extends PVector {
         return v == null ? new PVector() : PVector.mult(v, n);
     }
 
-    public static processing.core.PVector mult(final processing.core.PVector v, final float n, final processing.core.PVector target) {
+    public static processing.core.PVector mult(final processing.core.PVector v, final float n,
+            final processing.core.PVector target) {
         return v == null ? new PVector() : PVector.mult(v, n, target);
     }
 
@@ -279,7 +280,8 @@ public class NerdVector extends PVector {
         return v == null ? new PVector() : PVector.div(v, n);
     }
 
-    public static processing.core.PVector div(final processing.core.PVector v, final float n, final processing.core.PVector target) {
+    public static processing.core.PVector div(final processing.core.PVector v, final float n,
+            final processing.core.PVector target) {
         return v == null ? new PVector() : PVector.div(v, n, target);
     }
 
@@ -297,7 +299,8 @@ public class NerdVector extends PVector {
         return v1 == null || v2 == null ? new PVector() : PVector.cross(v1, v2, target);
     }
 
-    public static processing.core.PVector lerp(final processing.core.PVector v1, final processing.core.PVector v2, final float amt) {
+    public static processing.core.PVector lerp(final processing.core.PVector v1, final processing.core.PVector v2,
+            final float amt) {
         return v1 == null || v2 == null ? new PVector() : PVector.lerp(v1, v2, amt);
     }
 
