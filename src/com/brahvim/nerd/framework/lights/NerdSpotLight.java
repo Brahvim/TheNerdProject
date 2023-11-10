@@ -43,7 +43,8 @@ public class NerdSpotLight extends NerdLight {
 		this.dir = p_dir;
 	}
 
-	public NerdSpotLight(final NerdGenericGraphics p_buffer, final PVector p_pos, final PVector p_color, final PVector p_dir) {
+	public NerdSpotLight(final NerdGenericGraphics p_buffer, final PVector p_pos, final PVector p_color,
+			final PVector p_dir) {
 		super(p_buffer, p_pos, p_color);
 		this.dir = p_dir;
 	}

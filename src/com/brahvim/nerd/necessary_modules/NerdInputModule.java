@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.brahvim.nerd.processing_wrapper.NerdModule;
+import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PConstants;

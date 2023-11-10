@@ -322,7 +322,7 @@ public abstract class NerdSketch extends PApplet implements NerdSketchAllWorkflo
 		return this.frameStartTime;
 	}
 
-	public NerdGenericGraphics getNerdGraphics() {
+	public NerdGenericGraphics getNerdGenericGraphics() {
 		return this.GRAPHICS;
 	}
 
