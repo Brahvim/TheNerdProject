@@ -77,7 +77,7 @@ public class NerdScenesModule extends NerdModule {
 	// region `protected` and `private` fields.
 
 	protected NerdScene currentScene;
-	protected boolean sceneSwitchOccured;
+	protected boolean sceneSwitchOccurred;
 
 	/**
 	 * This {@link HashMap} contains cached data about each {@link NerdScene} class
@@ -128,14 +128,16 @@ public class NerdScenesModule extends NerdModule {
 		if (this.currentScene != null)
 			this.currentScene.runPost();
 
-		this.sceneSwitchOccured = false;
+		this.sceneSwitchOccurred = false;
 	}
 
 	@Override
 	protected void draw() {
 		if (super.SKETCH.frameCount == 1 && this.currentScene == null) {
 			if (this.scenesModuleSettings.FIRST_SCENE_CLASS == null)
-				System.err.println("There is no initial `NerdScene` to show!");
+				System.err.println("There is no initial `"
+						+ NerdScene.class.getSimpleName()
+						+ "` to show!");
 			else
 				this.startScene(this.scenesModuleSettings.FIRST_SCENE_CLASS);
 		}
@@ -356,7 +358,7 @@ public class NerdScenesModule extends NerdModule {
 	}
 
 	public boolean didSceneSwitchOccur() {
-		return this.sceneSwitchOccured;
+		return this.sceneSwitchOccurred;
 	}
 
 	public Class<? extends NerdScene> getCurrentSceneClass() {
@@ -718,7 +720,7 @@ public class NerdScenesModule extends NerdModule {
 	// Set the time, *then* call `NerdScenesModule::runSetup()`.
 	// Called only by `NerdScenesModule::setScene()`:
 	private void setupCurrentScene(final NerdSceneState p_state) {
-		this.sceneSwitchOccured = true;
+		this.sceneSwitchOccurred = true;
 		this.loadSceneAssets(this.currentScene, false);
 		this.SCENE_CACHE.get(this.currentSceneClass).timesLoaded++;
 

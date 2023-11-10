@@ -36,50 +36,39 @@ public class NerdSketchSettings {
 	/** */
 	public String renderer = PConstants.P3D;
 
-	/** */
-
-	/** */
+	/**
+	 * Holds the method that is called when the {@link NerdSketch} needs to know
+	 * what {@link NerdModule}s are to be loaded.
+	 */
 	public Consumer<LinkedHashSet<Function<NerdSketch, NerdModule>>> nerdModulesInstantiator;
 
 	/** */
 	public Map<Class<? extends NerdModule>, NerdModuleSettings<?>> nerdModulesSettings = new HashMap<>(0);
 
 	// region Booleans.
-	/** */
+	/** Dictates if the sketch can ever resize the window at all. */
 	public boolean canResize = true;
 
-	/** Should the sketch be started in fullscreen? */
-	public boolean fullScreen = false;
+	/** Dictates if the sketch can ever enter fullscreen at all. */
+	public boolean canFullscreen = false;
 
-	/** */
-	public boolean cannotFullscreen = false;
+	/** Dictates if the sketch can enter fullscreen via the {@code F11} key. */
+	public boolean canF11Fullscreen = false;
 
-	/** */
-	public boolean startedFullscreen = false;
-
-	/** */
-	public boolean cannotF11Fullscreen = false;
-
-	/** */
+	/**
+	 * Should the sketch stop the default behavior of exiting when {@code Esc} is
+	 * pressed?
+	 */
 	public boolean preventCloseOnEscape = false;
 
-	/** */
-	public boolean cannotAltEnterFullscreen = false;
+	/** Should the sketch be started in fullscreen? */
+	public boolean shouldStartFullscreen = false;
 
-	// endregion
-
-	// region Initial dimensions.
-	public void startInFullscreen() {
-		this.fullScreen = true;
-	}
-
-	public void setHeight(final int p_height) {
-		this.height = p_height;
-	}
-
-	public void setWidth(final int p_width) {
-		this.width = p_width;
-	}
+	/**
+	 * Dictates if the sketch can enter fullscreen via the {@code Alt} +
+	 * {@code Enter} key combination.
+	 */
+	public boolean canAltEnterFullscreen = false;
 	// endregion
 
 }

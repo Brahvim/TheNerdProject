@@ -45,7 +45,13 @@ public class NerdGenericGraphics {
 
 	public NerdGenericGraphics(final NerdSketch p_sketch, final PGraphics p_graphics) {
 		this.SKETCH = p_sketch;
-		this.GRAPHICS = p_graphics;
+		this.GRAPHICS = Objects.requireNonNull(p_graphics,
+				"The `"
+						+ this.getClass().getSimpleName()
+						+ "` constructor received a `null` `"
+						+ p_graphics.getClass().getSimpleName()
+						+ "` instance!");
+
 		this.UNPROJECTOR = new NerdUnprojector();
 		this.DEFAULT_CAMERA = new NerdBasicCameraBuilder(this).build();
 
@@ -63,7 +69,7 @@ public class NerdGenericGraphics {
 	}
 
 	protected void applyCameraIfCan() {
-		if (!PConstants.P3D.equals(this.SKETCH.SKETCH_SETTINGS.renderer))
+		if (!this.SKETCH.USES_OPENGL)
 			return;
 
 		// If the current camera is `null`, use the default one instead:

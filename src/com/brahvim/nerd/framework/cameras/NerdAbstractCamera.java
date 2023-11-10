@@ -51,7 +51,7 @@ public abstract class NerdAbstractCamera {
 	public abstract void applyMatrix();
 
 	public void applyProjection() {
-		if (!PConstants.P3D.equals(this.SKETCH.SKETCH_SETTINGS.renderer))
+		if (!this.SKETCH.USES_OPENGL)
 			return;
 
 		if (this.doAutoAspect)

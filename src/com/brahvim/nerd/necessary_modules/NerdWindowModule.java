@@ -44,7 +44,7 @@ public abstract class NerdWindowModule extends NerdModule {
 	// region Construction and initialization.
 	protected NerdWindowModule(final NerdSketch p_sketch) {
 		super(p_sketch);
-		this.fullscreen = super.SKETCH.SKETCH_SETTINGS.startedFullscreen;
+		this.fullscreen = super.SKETCH.SKETCH_SETTINGS.shouldStartFullscreen;
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public abstract class NerdWindowModule extends NerdModule {
 	// endregion
 
 	public static NerdWindowModule createWindowModule(final NerdSketch p_sketch) {
-		return PConstants.P3D.equals(p_sketch.SKETCH_SETTINGS.renderer)
+		return p_sketch.USES_OPENGL
 				? new NerdGlWindowModule(p_sketch)
 				: new NerdJava2dWindowModule(p_sketch);
 	}
