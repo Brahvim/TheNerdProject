@@ -118,14 +118,14 @@ public class NerdVector extends PVector {
     }
 
     @Override
-    public PVector lerp(final PVector v, float amt) {
+    public PVector lerp(final PVector v, final float amt) {
         if (v == null)
             return new PVector();
         return super.lerp(v, amt);
     }
 
     @Override
-    public PVector lerp(final float x, final float y, final float z, float amt) {
+    public PVector lerp(final float x, final float y, final float z, final float amt) {
         return super.lerp(x, y, z, amt);
     }
 
@@ -249,59 +249,59 @@ public class NerdVector extends PVector {
     // processing.core.PVector target) { }
     // endregion
 
-    public static processing.core.PVector add(processing.core.PVector v1, processing.core.PVector v2) {
+    public static processing.core.PVector add(final processing.core.PVector v1, final processing.core.PVector v2) {
         return v1 == null || v2 == null ? new PVector() : PVector.add(v1, v2);
     }
 
-    public static processing.core.PVector add(processing.core.PVector v1, processing.core.PVector v2,
-            processing.core.PVector target) {
+    public static processing.core.PVector add(final processing.core.PVector v1, final processing.core.PVector v2,
+            final processing.core.PVector target) {
         return v1 == null || v2 == null ? new PVector() : PVector.add(v1, v2, target);
     }
 
-    public static processing.core.PVector sub(processing.core.PVector v1, processing.core.PVector v2) {
+    public static processing.core.PVector sub(final processing.core.PVector v1, final processing.core.PVector v2) {
         return v1 == null || v2 == null ? new PVector() : PVector.sub(v1, v2);
     }
 
-    public static processing.core.PVector sub(processing.core.PVector v1, processing.core.PVector v2,
-            processing.core.PVector target) {
+    public static processing.core.PVector sub(final processing.core.PVector v1, final processing.core.PVector v2,
+            final processing.core.PVector target) {
         return v1 == null || v2 == null ? new PVector() : PVector.sub(v1, v2, target);
     }
 
-    public static processing.core.PVector mult(processing.core.PVector v, float n) {
+    public static processing.core.PVector mult(final processing.core.PVector v, final float n) {
         return v == null ? new PVector() : PVector.mult(v, n);
     }
 
-    public static processing.core.PVector mult(processing.core.PVector v, float n, processing.core.PVector target) {
+    public static processing.core.PVector mult(final processing.core.PVector v, final float n, final processing.core.PVector target) {
         return v == null ? new PVector() : PVector.mult(v, n, target);
     }
 
-    public static processing.core.PVector div(processing.core.PVector v, float n) {
+    public static processing.core.PVector div(final processing.core.PVector v, final float n) {
         return v == null ? new PVector() : PVector.div(v, n);
     }
 
-    public static processing.core.PVector div(processing.core.PVector v, float n, processing.core.PVector target) {
+    public static processing.core.PVector div(final processing.core.PVector v, final float n, final processing.core.PVector target) {
         return v == null ? new PVector() : PVector.div(v, n, target);
     }
 
-    public static float dist(processing.core.PVector v1, processing.core.PVector v2) {
+    public static float dist(final processing.core.PVector v1, final processing.core.PVector v2) {
         return v1 == null || v2 == null ? 0 : PVector.dist(v1, v2);
     }
 
-    public static float dot(processing.core.PVector v1, processing.core.PVector v2) {
+    public static float dot(final processing.core.PVector v1, final processing.core.PVector v2) {
         return v1 == null || v2 == null ? 0 : PVector.dot(v1, v2);
     }
 
     public static processing.core.PVector cross(
-            processing.core.PVector v1,
-            processing.core.PVector v2, processing.core.PVector target) {
+            final processing.core.PVector v1,
+            final processing.core.PVector v2, final processing.core.PVector target) {
         return v1 == null || v2 == null ? new PVector() : PVector.cross(v1, v2, target);
     }
 
-    public static processing.core.PVector lerp(processing.core.PVector v1, processing.core.PVector v2, float amt) {
+    public static processing.core.PVector lerp(final processing.core.PVector v1, final processing.core.PVector v2, final float amt) {
         return v1 == null || v2 == null ? new PVector() : PVector.lerp(v1, v2, amt);
     }
 
-    public static float angleBetween(processing.core.PVector v1, processing.core.PVector v2) {
+    public static float angleBetween(final processing.core.PVector v1, final processing.core.PVector v2) {
         return v1 == null || v2 == null ? 0 : PVector.angleBetween(v1, v2);
     }
     // endregion

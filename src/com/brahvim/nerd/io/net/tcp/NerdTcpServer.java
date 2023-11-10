@@ -399,7 +399,7 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 			final Consumer<Exception> p_onExcept) {
 		try {
 			this.close();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			p_onExcept.accept(e);
 		}
 	}
