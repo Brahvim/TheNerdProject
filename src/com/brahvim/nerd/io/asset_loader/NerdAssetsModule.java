@@ -43,12 +43,13 @@ public class NerdAssetsModule extends NerdModule {
 	// endregion
 
 	/**
-	 * @deprecated Since using {@link NerdAssetsModule#get()} is better. In cases
-	 *             where you'd want to check for the availability of an asset, you
-	 *             probably also a want a reference to it, in which case, it is much
-	 *             better to use {@link NerdAssetsModule#get()} and check if the
-	 *             return
-	 *             value is {@code null}.
+	 * @apiNote Using {@link NerdAssetsModule#get()} is better. In cases
+	 *          where you'd want to check for the availability of an asset, you
+	 *          probably also a want a reference to it, in which case, it is much
+	 *          better to use {@link NerdAssetsModule#get()} and check if the
+	 *          return value is {@code null}.
+	 *          <p>
+	 *          Feel free to use this method otherwise!
 	 */
 	@Deprecated
 	public boolean contains(final String p_fileName) {
