@@ -13,6 +13,8 @@ import java.util.NoSuchElementException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import com.brahvim.nerd.necessary_modules.NerdInputModule;
+import com.brahvim.nerd.necessary_modules.NerdWindowModule;
 import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
 import com.brahvim.nerd.utils.NerdAwtUtils;
@@ -25,8 +27,7 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
 
-public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends PApplet
-		implements NerdSketchAllWorkflowsListener {
+public abstract class NerdSketch extends PApplet implements NerdSketchAllWorkflowsListener {
 
 	// region Fields.
 	// region Public fields.
@@ -64,16 +65,16 @@ public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends 
 	// endregion
 	// Timers! (`millis()` returns `int`s!):
 	protected int frameStartTime, pframeTime, frameTime;
-	protected final RendererT GRAPHICS;
-	// protected NerdGraphics nerdGraphics;
-	// protected NerdWindowModule window;
-	// protected NerdInputModule input;
+	protected final NerdGenericGraphics GRAPHICS;
+	protected NerdGenericGraphics NerdGenericGraphics;
+	protected NerdWindowModule window;
+	protected NerdInputModule input;
 	protected PFont defaultFont;
 
 	// region Protected fields.
-	protected final NerdSketchSettings SKETCH_SETTINGS;
+	public final NerdSketchSettings SKETCH_SETTINGS;
 	protected final List<NerdModule> MODULES = new ArrayList<>(3);
-	protected final Map<NerdModule, Class<? extends NerdModule>>
+	protected final Map<Class<? extends NerdModule>, NerdModule>
 	//////////////////////////////////////////////////////////
 	MODULES_TO_CLASSES_MAP = new HashMap<>(3);
 	// endregion
@@ -87,14 +88,14 @@ public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends 
 		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
-	@SuppressWarnings("unchecked")
 	protected NerdSketch(final NerdSketchSettings p_settings) {
 		this.SKETCH_SETTINGS = p_settings;
 		this.ROBOT = NerdAwtUtils.createAwtRobot();
-		this.GRAPHICS = (RendererT) super.getGraphics();
+		this.GRAPHICS = new NerdGenericGraphics(this, super.getGraphics());
 	}
 	// endregion
 
+	// region Processing sketch workflow.
 	@Override
 	public void settings() {
 		super.smooth(this.SKETCH_SETTINGS.antiAliasing);
@@ -115,11 +116,12 @@ public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends 
 		// super.frameRate(this.DEFAULT_REFRESH_RATE);
 		// super.surface.setTitle(this.SKETCH_SETTINGS.INITIAL_WINDOW_TITLE);
 
-		// this.nerdGraphics = new NerdGraphics(this, super.getGraphics());
+		// this.NerdGenericGraphics = new NerdGenericGraphics(this,
+		// super.getGraphics());
 		this.defaultFont = super.createFont("SansSerif",
 				72 * ((float) super.displayWidth / (float) super.displayHeight));
 
-		// ...Also makes these changes to `this.nerdGraphics`, haha:
+		// ...Also makes these changes to `this.NerdGenericGraphics`, haha:
 		super.background(0); // ..This, instead of `NerdAbstractCamera::clear()`.
 		super.textFont(this.defaultFont);
 		super.rectMode(PConstants.CENTER);
@@ -171,29 +173,6 @@ public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends 
 	public void dispose() {
 		this.forEachNerdModule(NerdModule::dispose);
 	}
-
-	// region `NerdModule` management.
-	public <RetT extends NerdModule> RetT getModule(final Class<RetT> p_moduleClass) {
-		for (final NerdModule m : this.MODULES)
-			if (p_moduleClass.isInstance(m))
-				return p_moduleClass.cast(m);
-		throw new NoSuchElementException("No `NerdModule` of type `" + p_moduleClass.getSimpleName() + "` was found.");
-	}
-
-	public void forEachNerdModule(final Consumer<NerdModule> p_task) {
-		if (p_task == null)
-			return;
-		this.MODULES.forEach(p_task);
-	}
-
-	public <OtherArgT> void forEachNerdModule(
-			final BiConsumer<NerdModule, OtherArgT> p_task, final OtherArgT p_otherArg) {
-		if (p_task == null)
-			return;
-
-		for (final NerdModule m : this.MODULES)
-			p_task.accept(m, p_otherArg);
-	}
 	// endregion
 
 	// region Hardware callbacks!
@@ -224,7 +203,7 @@ public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends 
 		this.forEachNerdModule(NerdModule::mouseReleased);
 	}
 
-	// Keys:
+	// Keyboard:
 
 	@Override
 	public void keyPressed() {
@@ -241,7 +220,7 @@ public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends 
 		this.forEachNerdModule(NerdModule::keyTyped);
 	}
 
-	// Touches:
+	// Touchscreen:
 
 	public void touchStarted() {
 		this.forEachNerdModule(NerdModule::touchStarted);
@@ -254,16 +233,110 @@ public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends 
 	public void touchEnded() {
 		this.forEachNerdModule(NerdModule::touchEnded);
 	}
+
+	// Window:
+
+	public void monitorChanged() {
+		this.forEachNerdModule(NerdModule::focusGained);
+	}
+
+	public void fullscreenChanged(final boolean p_state) {
+		this.forEachNerdModule(NerdModule::fullscreenChanged, p_state);
+	}
+
+	// @Override
+	// public void frameMoved(final int x, final int y) {
+	// System.out.println("`NerdSketch::frameMoved()`");
+	// }
+
+	// @Override
+	// public void frameResized(final int w, final int h) {
+	// System.out.println("`NerdSketch::frameResized()`");
+	// }
+
+	@Override
+	public void focusLost() {
+		super.focusLost();
+		super.focused = false;
+		this.forEachNerdModule(NerdModule::focusLost);
+	}
+
+	@Override
+	public void focusGained() {
+		super.focusGained();
+		super.focused = true;
+		this.forEachNerdModule(NerdModule::focusGained);
+	}
 	// endregion
 
-	// FIXME The ACTUAL utilities are NOT here yet!
+	// region `NerdModule` management.
+	public <RetT extends NerdModule> RetT getNerdModule(final Class<RetT> p_moduleClass) {
+		for (final NerdModule m : this.MODULES)
+			if (p_moduleClass.isInstance(m))
+				return p_moduleClass.cast(m);
+		throw new NoSuchElementException("No `NerdModule` of type `" + p_moduleClass.getSimpleName() + "` was found.");
+	}
+
+	public void forEachNerdModule(final Consumer<NerdModule> p_task) {
+		if (p_task == null)
+			return;
+		this.MODULES.forEach(p_task);
+	}
+
+	public <OtherArgT> void forEachNerdModule(
+			final BiConsumer<NerdModule, OtherArgT> p_task, final OtherArgT p_otherArg) {
+		if (p_task == null)
+			return;
+
+		for (final NerdModule m : this.MODULES)
+			p_task.accept(m, p_otherArg);
+	}
+	// endregion
+
+	// region Utilities!
+	// public GL getGl() {
+	// return this.gl;
+	// }
+
+	// public GLU getGlu() {
+	// return this.glu;
+	// }
+
+	public int getFrameTime() {
+		return this.frameTime;
+	}
+
+	public int getPframeTime() {
+		return this.pframeTime;
+	}
+
+	public PFont getDefaultFont() {
+		return this.defaultFont;
+	}
+
+	// public NerdAssetsModule getAssets() {
+	// return this.ASSETS;
+	// }
+
+	public final int getFrameStartTime() {
+		return this.frameStartTime;
+	}
+
+	public NerdGenericGraphics getNerdGraphics() {
+		return this.GRAPHICS;
+	}
+
+	// public PGraphicsOpenGL getGlGraphics() {
+	// return this.glGraphics;
+	// }
+
 	// region Rendering utilities!
 	public PImage svgToImage(final PShape p_shape, final float p_width, final float p_height) {
 		if (p_shape == null)
 			throw new NullPointerException("`svgToImage(null , p_width, p_height)` won't work.");
 
-		final NerdGenericGraphics buffer = super.createGraphics(PApplet.ceil(p_width), PApplet.ceil(p_height),
-				PConstants.P3D);
+		final PGraphics buffer = super.createGraphics(
+				PApplet.ceil(p_width), PApplet.ceil(p_height), PConstants.P3D);
 
 		if (buffer == null)
 			throw new NullPointerException("`svgToImage()`'s `buffer` is `null`!");
@@ -321,6 +394,7 @@ public abstract class NerdSketch<RendererT extends NerdGenericGraphics> extends 
 	public static String fromDataDir(final String p_path) {
 		return NerdSketch.DATA_DIR_PATH + p_path;
 	}
+	// endregion
 	// endregion
 	// endregion
 

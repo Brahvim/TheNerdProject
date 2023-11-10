@@ -204,9 +204,8 @@ public abstract class NerdEasingFunction {
 		if (this.endTime != -1)
 			this.active = this.aliveTime <= this.endTime;
 
-		if (this.active) {
-			// TODO `this.aliveTime += this.SKETCH.getFrameTime()`
-		}
+		if (this.active)
+			this.aliveTime += this.SKETCH.getFrameTime();
 
 		// ^^^ `frameTime` comes from "the engine" by the way. (Hey - that's "Nerd"!)
 		else { // If no longer active,

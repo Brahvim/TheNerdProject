@@ -4,6 +4,6 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public interface NerdRendererSpecificSubclass {
 
-    NerdSketch<?> getNerdSketch();
+    NerdSketch getNerdSketch();
 
 }
