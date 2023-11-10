@@ -33,7 +33,8 @@ public abstract class NerdLayer {
 	protected NerdDisplayModule DISPLAY;
 	protected NerdAbstractCamera CAMERA;
 
-	protected NerdScene SCENE;
+	// TODO: Genericize `NerdLayer`!
+	protected NerdScene<?> SCENE;
 	// endregion
 
 	// region `private` fields.

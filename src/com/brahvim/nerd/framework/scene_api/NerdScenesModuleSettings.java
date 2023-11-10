@@ -8,7 +8,7 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 public class NerdScenesModuleSettings extends NerdModuleSettings<NerdScenesModule> {
 
-	public final Class<? extends NerdScene> FIRST_SCENE_CLASS;
+	public final Class<? extends NerdScene<?>> FIRST_SCENE_CLASS;
 
 	/**
 	 * Dictates to every {@link NerdScenesModule} instance, the order in which a
@@ -140,9 +140,9 @@ public class NerdScenesModuleSettings extends NerdModuleSettings<NerdScenesModul
 	public NerdScenesModuleSettings.NerdSceneLayerCallbackOrder postFirstCaller = NerdScenesModuleSettings.NerdSceneLayerCallbackOrder.LAYER;
 	// endregion
 
-	public Set<Class<? extends NerdScene>> classesOfScenesToPreload = new HashSet<>(0);
+	public Set<Class<? extends NerdScene<?>>> classesOfScenesToPreload = new HashSet<>(0);
 
-	public NerdScenesModuleSettings(final Class<? extends NerdScene> p_firstSceneClass) {
+	public NerdScenesModuleSettings(final Class<? extends NerdScene<?>> p_firstSceneClass) {
 		this.FIRST_SCENE_CLASS = p_firstSceneClass;
 	}
 

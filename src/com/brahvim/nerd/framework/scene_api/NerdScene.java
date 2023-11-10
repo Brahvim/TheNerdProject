@@ -27,21 +27,21 @@ import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGeneric
  * <h2>Do not use as an anonymous class!</h2>
  * <i>Always extend!</i>
  */
-public abstract class NerdScene {
+public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 
-	public final NerdScene SCENE = this;
+	public final NerdScene<GraphicsT> SCENE = this;
 
 	// region `protected` fields.
 	// Forgive me for breaking naming conventions here.
 	// Forgive me. Please!
 	protected NerdSketch SKETCH;
+	protected GraphicsT GRAPHICS;
 	protected NerdSceneState STATE;
 	protected NerdInputModule INPUT;
 	protected NerdWindowModule WINDOW;
 	protected NerdAssetsModule ASSETS;
 	protected NerdScenesModule MANAGER;
 	protected NerdDisplayModule DISPLAY;
-	protected NerdGenericGraphics GRAPHICS;
 	// endregion
 
 	// region `private` fields.
@@ -62,8 +62,9 @@ public abstract class NerdScene {
 	}
 
 	// region Queries.
+	@SuppressWarnings("unchecked")
 	public int getTimesLoaded() {
-		return this.MANAGER.getTimesSceneLoaded(this.getClass());
+		return this.MANAGER.getTimesSceneLoaded((Class<NerdScene<GraphicsT>>) this.getClass());
 	}
 
 	public NerdSketch getSketch() {
@@ -373,7 +374,7 @@ public abstract class NerdScene {
 			toRet = p_layerClass.getConstructor();
 		} catch (final NoSuchMethodException e) {
 			System.err.println("""
-					Every subclass of `NerdLayer` must be `public` with a `public` \"null-constructor\"
+					Every subclass of `NerdLayer` must be `public` with a `public` "null-constructor"
 					(constructor with no arguments), or no overridden constructors at all.""");
 		} catch (final SecurityException e) {
 			e.printStackTrace();

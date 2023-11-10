@@ -72,10 +72,9 @@ public abstract class NerdSketch extends PApplet implements
 	// endregion
 	// endregion
 	// Timers! (`millis()` returns `int`s!):
-	protected final NerdGenericGraphics GRAPHICS;
 
 	protected int frameStartTime, pframeTime, frameTime;
-	protected NerdGenericGraphics NerdGenericGraphics;
+	protected NerdGenericGraphics nerdGenericGraphics;
 	protected NerdWindowModule window;
 	protected NerdInputModule input;
 	protected PFont defaultFont;
@@ -91,7 +90,7 @@ public abstract class NerdSketch extends PApplet implements
 	protected NerdSketch() {
 		this.ROBOT = null;
 		this.MODULES = null;
-		this.GRAPHICS = null;
+		this.nerdGenericGraphics = null;
 		this.USES_OPENGL = false;
 		this.SKETCH_SETTINGS = null;
 		this.MODULES_TO_CLASSES_MAP = null;
@@ -128,7 +127,6 @@ public abstract class NerdSketch extends PApplet implements
 		// endregion
 
 		this.ROBOT = NerdAwtUtils.createAwtRobot();
-		this.GRAPHICS = new NerdGenericGraphics(this, super.getGraphics());
 	}
 
 	private List<NerdModule> sortModules(final NerdSketchSettings p_settings) {
@@ -192,6 +190,7 @@ public abstract class NerdSketch extends PApplet implements
 
 	@Override
 	public void setup() {
+		this.nerdGenericGraphics = new NerdGenericGraphics(this, super.g);
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
 		this.forEachNerdModule(NerdModule::preSetup);
 
@@ -434,7 +433,7 @@ public abstract class NerdSketch extends PApplet implements
 	}
 
 	public NerdGenericGraphics getNerdGenericGraphics() {
-		return this.GRAPHICS;
+		return this.nerdGenericGraphics;
 	}
 
 	// public PGraphicsOpenGL getGlGraphics() {
