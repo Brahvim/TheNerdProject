@@ -14,6 +14,7 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
@@ -29,7 +30,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	@FunctionalInterface
 	public interface NerdScenesModuleNewSceneStartedListener {
 		void sceneChanged(
-				NerdScenesModule p_scenesModule,
+				NerdScenesModule<?> p_scenesModule,
 				Class<? extends NerdScene<?>> p_previousSceneClass,
 				Class<? extends NerdScene<?>> p_currentSceneClass);
 	}
@@ -38,17 +39,17 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	 * Stores scene data while a scene is not active. This is done for purposes such
 	 * as loading assets for the scene before it even starts!
 	 */
-	/* `package` */ class NerdScenesModuleSceneCache {
+	/* `package` */ class NerdScenesModuleSceneCache<SketchPGraphicsForCacheT extends PGraphics> {
 
 		// region Fields.
 		/* `package */ int timesLoaded = 0;
 		/* `package */ final NerdSceneState STATE;
-		/* `package */ final Constructor<? extends NerdScene<?>> CONSTRUCTOR;
+		/* `package */ final Constructor<? extends NerdScene<SketchPGraphicsForCacheT>> CONSTRUCTOR;
 
 		// private NerdEcsModule cachedEcs; // Nope! If the user really wants it,
 		// they'll should get stuff serialized via `NerdEcsModule` and handle it...
 
-		/* `package */ NerdScene<?> cachedReference;
+		/* `package */ NerdScene<SketchPGraphicsForCacheT> cachedReference;
 		// `NerdSceneModule` deletes this when the scene exits.
 		/* `package */ NerdAssetsModule cachedAssets;
 		// endregion
@@ -91,14 +92,15 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	 * Actual "caching" of a
 	 * {@link NerdScene<SketchPGraphicsT>} is when its
 	 * corresponding
-	 * {@link NerdScenesModule.NerdScenesModuleSceneCache#cachedReference} is not
+	 * {@link NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache#cachedReference}
+	 * is not
 	 * {@code null}.
 	 * <p>
 	 * The initial capacity here ({@code 2}) is to aid performance, since, the JIT
 	 * does no optimization till the first scene switch. All scene switches after
 	 * that the initial should be fast enough!
 	 */
-	private final Map<Class<? extends NerdScene<?>>, NerdScenesModule.NerdScenesModuleSceneCache> //
+	private final Map<Class<? extends NerdScene<?>>, NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache> //
 	SCENE_CACHE = new HashMap<>(2);
 
 	private final Set<NerdScenesModule.NerdScenesModuleNewSceneStartedListener> //
@@ -147,7 +149,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 						+ NerdScene.class.getSimpleName()
 						+ "` to show!");
 			else
-				this.startScene((Class<NerdScene<?>>) this.scenesModuleSettings.FIRST_SCENE_CLASS);
+				this.startScene((Class<NerdScene<SketchPGraphicsT>>) this.scenesModuleSettings.FIRST_SCENE_CLASS);
 		}
 
 		if (this.currentScene != null)
@@ -459,7 +461,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 
 	@SuppressWarnings("unchecked")
 	public void loadSceneAssets(
-			final Class<? extends NerdScene<?>> p_sceneClass,
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass,
 			final boolean p_forcibly) {
 		if (!this.hasCached(p_sceneClass))
 			this.cacheScene(p_sceneClass);
@@ -467,16 +469,14 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		if (this.givenSceneRanPreload(p_sceneClass))
 			return;
 
-		final NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache sceneCache =
-				//
-				(NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache) this.SCENE_CACHE
-						.get(p_sceneClass);
+		final NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache sceneCache = this.SCENE_CACHE
+				.get(p_sceneClass);
 
 		if (sceneCache != null) {
 			if (sceneCache.cachedReference.hasCompletedPreload())
 				return;
 
-			this.loadSceneAssets(sceneCache.cachedReference, p_forcibly);
+			this.loadSceneAssets((Class<? extends NerdScene<SketchPGraphicsT>>) sceneCache.cachedReference, p_forcibly);
 		}
 	}
 	// endregion
@@ -634,7 +634,8 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		// return !this.SCENE_CACHE.get(p_sceneClass).isSceneCacheNull();
 
 		// Faster!:
-		final NerdScenesModule.NerdScenesModuleSceneCache cachedScene = this.SCENE_CACHE.get(p_sceneClass);
+		final NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache cachedScene = this.SCENE_CACHE
+				.get(p_sceneClass);
 		// return cachedScene == null ? false : !cachedScene.isSceneCacheNull();
 		return cachedScene != null && !cachedScene.isSceneCacheNull(); // SonarLint's 'simplification'!
 		// (For the JVM, not us 😅)
@@ -642,9 +643,9 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 
 	private void cacheScene(
 			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass /*
-																									 * final boolean
-																									 * p_isDeletable
-																									 */) {
+																			 * final boolean
+																			 * p_isDeletable
+																			 */) {
 		if (this.SCENE_CACHE.containsKey(p_sceneClass))
 			return;
 
@@ -656,8 +657,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 			throw new IllegalStateException(
 					"`NerdScenesModule::constructScene()` returned `null` on an attempt to cache!");
 
-		this.SCENE_CACHE.put(p_sceneClass,
-				new NerdScenesModule.NerdScenesModuleSceneCache(sceneConstructor, constructedScene));
+		this.SCENE_CACHE.put(p_sceneClass, new NerdScenesModuleSceneCache(sceneConstructor, constructedScene));
 	}
 	// endregion
 
@@ -718,10 +718,10 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		// Now, we copy all other objects from `toRet.SKETCH`!:
 		// toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
 		toRet.ASSETS = new NerdAssetsModule(toRet.SKETCH);
-		toRet.GRAPHICS = (SketchPGraphicsT) toRet.SKETCH.getNerdGenericGraphics();
-		toRet.INPUT = (NerdInputModule) toRet.SKETCH.getNerdModule(NerdInputModule.class);
-		toRet.WINDOW = (NerdWindowModule<SketchPGraphicsT>) toRet.SKETCH.getNerdModule(NerdWindowModule.class);
-		toRet.DISPLAY = (NerdDisplayModule) toRet.SKETCH.getNerdModule(NerdDisplayModule.class);
+		toRet.GRAPHICS = toRet.SKETCH.getNerdGenericGraphics();
+		toRet.INPUT = toRet.SKETCH.getNerdModule(NerdInputModule.class);
+		toRet.WINDOW = toRet.SKETCH.getNerdModule(NerdWindowModule.class);
+		toRet.DISPLAY = toRet.SKETCH.getNerdModule(NerdDisplayModule.class);
 
 		// If this is the first time we're constructing this scene,
 		// ensure it has a cache and a saved state!
@@ -749,7 +749,8 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	private void setScene(
 			final NerdScene<SketchPGraphicsT> p_currentScene,
 			final NerdSceneState p_state) {
-		final NerdWindowModule window = super.SKETCH.getNerdModule(NerdWindowModule.class);
+		final NerdWindowModule<SketchPGraphicsT> window = (NerdWindowModule<SketchPGraphicsT>) super.SKETCH
+				.getNerdModule(NerdWindowModule.class);
 		window.cursorConfined = false;
 		window.cursorVisible = true;
 
@@ -777,7 +778,8 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 			// Exit the scene, and nullify the cache.
 			this.currentScene.runSceneChanged();
 
-			final NerdScenesModule.NerdScenesModuleSceneCache sceneCache = this.SCENE_CACHE.get(this.currentSceneClass);
+			final NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache sceneCache = this.SCENE_CACHE
+					.get(this.currentSceneClass);
 			if (sceneCache != null)
 				sceneCache.nullifyCache(); // Sets the `NerdScene<SketchPGraphicsT>` instance to
 											// `null` and calls

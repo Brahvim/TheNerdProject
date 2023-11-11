@@ -42,14 +42,14 @@ public abstract class NerdAbstractCamera {
 	protected NerdAbstractCamera(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
 		this.SKETCH = p_sketch;
 		this.GRAPHICS = new NerdP3dGraphics(this.SKETCH, p_graphics);
-		this.WINDOW = this.SKETCH.getNerdWindowModule();
+		this.WINDOW = (NerdGlWindowModule) this.SKETCH.getNerdWindowModule();
 	}
 
 	@SuppressWarnings("unchecked")
 	protected NerdAbstractCamera(final NerdP3dGraphics p_graphics) {
 		this.GRAPHICS = p_graphics;
 		this.SKETCH = this.GRAPHICS.getSketch();
-		this.WINDOW = this.SKETCH.getNerdWindowModule();
+		this.WINDOW = (NerdGlWindowModule) this.SKETCH.getNerdWindowModule();
 	}
 
 	public abstract void applyMatrix();
