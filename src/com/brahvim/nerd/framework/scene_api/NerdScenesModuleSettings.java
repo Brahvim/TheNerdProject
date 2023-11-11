@@ -6,7 +6,8 @@ import java.util.Set;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-public class NerdScenesModuleSettings extends NerdModuleSettings<NerdScenesModule<?>> {
+@SuppressWarnings("rawtypes")
+public class NerdScenesModuleSettings extends NerdModuleSettings<NerdScenesModule> {
 
 	public final Class<? extends NerdScene<?>> FIRST_SCENE_CLASS;
 

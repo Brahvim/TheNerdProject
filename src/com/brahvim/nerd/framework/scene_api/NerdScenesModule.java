@@ -11,8 +11,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
+import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
-import com.brahvim.nerd.processing_wrapper.NerdRendererReliantModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
@@ -20,7 +20,7 @@ import com.brahvim.nerd.window_management.NerdWindowModule;
 
 import processing.core.PGraphics;
 
-public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdRendererReliantModule<SketchPGraphicsT> {
+public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdModule {
 
 	// region Inner classes.
 	// My code style: If it is an inner class, also write the name of the outer

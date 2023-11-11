@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.brahvim.nerd.processing_callback_interfaces.hardware.window.NerdWindowListener;
-import com.brahvim.nerd.processing_wrapper.NerdRendererReliantModule;
+import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.window_management.window_module_impls.NerdFx2dWindowModule;
 import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule;
@@ -24,8 +24,7 @@ import processing.opengl.PGraphicsOpenGL;
  * Please use {@link NerdWindowModule#createWindowModule(NerdSketch)} to create
  * instances specific to your {@link NerdSketch}'s renderer.
  */
-public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics>
-		extends NerdRendererReliantModule<SketchPGraphicsT> {
+public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> extends NerdModule {
 
 	// region Instance fields.
 	/** Position of the window relative to the monitor. */
