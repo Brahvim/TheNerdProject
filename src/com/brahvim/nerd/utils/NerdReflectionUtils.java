@@ -56,7 +56,9 @@ public class NerdReflectionUtils {
 	}
 
 	@SafeVarargs
-	public static final boolean isMethodOverridden(final Object p_object, final String p_methodName,
+	public static final boolean isMethodOverridden(
+			final Object p_object,
+			final String p_methodName,
 			final Class<?>... p_parameterTypes) {
 		try {
 			p_object.getClass().getDeclaredMethod(p_methodName, p_parameterTypes);
@@ -80,6 +82,7 @@ public class NerdReflectionUtils {
 
 		final Type genericSuperclass = p_object.getClass().getGenericSuperclass();
 
+		// Impossible case?:
 		if (!(genericSuperclass instanceof ParameterizedType))
 			return new Class<?>[0];
 

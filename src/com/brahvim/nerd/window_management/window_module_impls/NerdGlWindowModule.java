@@ -7,17 +7,13 @@ import com.brahvim.nerd.window_management.NerdWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PVector;
-import processing.opengl.PGraphics3D;
+import processing.opengl.PGraphicsOpenGL;
 
-public class NerdGlWindowModule extends NerdWindowModule<PGraphics3D> {
+public class NerdGlWindowModule extends NerdWindowModule<PGraphicsOpenGL> {
 
 	protected GLWindow window;
 
-	static {
-		NerdWindowModule.subclassesIndex.put(PGraphics3D.class, NerdGlWindowModule.class);
-	}
-
-	public NerdGlWindowModule(final NerdSketch<PGraphics3D> p_sketch) {
+	public NerdGlWindowModule(final NerdSketch<PGraphicsOpenGL> p_sketch) {
 		super(p_sketch);
 	}
 

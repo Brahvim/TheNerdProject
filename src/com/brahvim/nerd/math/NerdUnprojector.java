@@ -3,7 +3,7 @@ package com.brahvim.nerd.math;
 import processing.core.PApplet;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
-import processing.opengl.PGraphics3D;
+import processing.opengl.PGraphicsOpenGL;
 
 // Dr. Andrew Marsh's `gluUnProject()` code! ":D!~
 // http://andrewmarsh.com/blog/2011/12/04/gluunproject-p3d-and-opengl-sketches/
@@ -31,7 +31,7 @@ public class NerdUnprojector {
 	 * pan, zoom and camera angles - but before you start drawing or playing with
 	 * the matrices any further.
 	 */
-	public void captureViewMatrix(final PGraphics3D p_graphicsBuffer) {
+	public void captureViewMatrix(final PGraphicsOpenGL p_graphicsBuffer) {
 		// Brahvim: "Couldn't we do just this in today's modern world?:"
 		this.matrix.set(p_graphicsBuffer.projmodelview);
 		this.matrix.invert();

@@ -1,16 +1,20 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends.generic;
 
 import java.awt.Image;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdFx2dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdJava2dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP2dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdPdfGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdSvgGraphics;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
+import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -23,13 +27,15 @@ import processing.core.PShape;
 import processing.core.PStyle;
 import processing.core.PSurface;
 import processing.core.PVector;
+import processing.javafx.PGraphicsFX2D;
 import processing.opengl.PGL;
+import processing.opengl.PGraphics2D;
+import processing.opengl.PGraphics3D;
 import processing.opengl.PShader;
+import processing.pdf.PGraphicsPDF;
+import processing.svg.PGraphicsSVG;
 
 public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
-
-	protected static final Map<Class<? extends PGraphics>, Class<? extends NerdGenericGraphics<? extends PGraphics>>> subclassesIndex = Collections
-			.synchronizedMap(new HashMap<>(6));
 
 	// region Instance fields.
 	protected NerdAbstractCamera currentCamera; // CAMERA! wher lite?! wher accsunn?!
@@ -40,19 +46,39 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	protected final NerdWindowModule<SketchPGraphicsT> WINDOW;
 	// endregion
 
-	@SuppressWarnings("unchecked")
-	public static <RetGraphicsT extends PGraphics> NerdGenericGraphics<RetGraphicsT> createNerdGenericGraphics(
-			final NerdSketch<RetGraphicsT> p_sketch, final PGraphics p_pGraphicsToWrap) {
-		for (final var entry : NerdGenericGraphics.subclassesIndex.entrySet())
-			if (entry.getKey().isInstance(p_pGraphicsToWrap))
-				try {
-					return (NerdGenericGraphics<RetGraphicsT>) entry.getValue().getConstructor().newInstance(p_sketch,
-							p_pGraphicsToWrap);
-				} catch (final Exception e) {
-					e.printStackTrace();
-				}
+	public static NerdGenericGraphics<?> createWrapperNerdGenericGraphicsForSketch(final NerdSketch<?> p_sketch) {
+		final NerdGenericGraphics<?> toRet = NerdGenericGraphics.supplySubModuleForSketch(p_sketch);
 
-		throw new IllegalArgumentException("Please write your own `PGraphics` subclass for this one!");
+		if (toRet == null)
+			throw new IllegalArgumentException("Please write your own `NerdGenericGraphics` subclass for this one!");
+
+		return toRet;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected static <RetGraphicsT extends PGraphics> NerdGenericGraphics<?> supplySubModuleForSketch(
+			final NerdSketch<RetGraphicsT> p_sketch) {
+		return switch (p_sketch.sketchRenderer()) {
+			case PConstants.P2D -> new NerdP2dGraphics(
+					(NerdSketch<PGraphics2D>) p_sketch, (PGraphics2D) p_sketch.getGraphics());
+
+			case PConstants.P3D -> new NerdP3dGraphics(
+					(NerdSketch<PGraphics3D>) p_sketch, (PGraphics3D) p_sketch.getGraphics());
+
+			case PConstants.PDF -> new NerdPdfGraphics(
+					(NerdSketch<PGraphicsPDF>) p_sketch, (PGraphicsPDF) p_sketch.getGraphics());
+
+			case PConstants.SVG -> new NerdSvgGraphics(
+					(NerdSketch<PGraphicsSVG>) p_sketch, (PGraphicsSVG) p_sketch.getGraphics());
+
+			case PConstants.FX2D -> new NerdFx2dGraphics(
+					(NerdSketch<PGraphicsFX2D>) p_sketch, (PGraphicsFX2D) p_sketch.getGraphics());
+
+			case PConstants.JAVA2D -> new NerdJava2dGraphics(
+					(NerdSketch<PGraphicsJava2D>) p_sketch, (PGraphicsJava2D) p_sketch.getGraphics());
+
+			default -> null;
+		};
 	}
 
 	@SuppressWarnings("unchecked")

@@ -2,7 +2,6 @@ package com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impl
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
-import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -10,65 +9,16 @@ import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGeneric
 
 import processing.core.PApplet;
 import processing.core.PVector;
-import processing.opengl.PGraphics3D;
+import processing.opengl.PGraphics2D;
 
-public class NerdP3dGraphics extends NerdGenericGraphics<PGraphics3D> {
+public class NerdP2dGraphics extends NerdGenericGraphics<PGraphics2D> {
 
     protected final NerdUnprojector UNPROJECTOR;
-    protected final NerdAbstractCamera DEFAULT_CAMERA;
 
-    protected NerdAbstractCamera previousCamera;
-
-    public NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
+    public NerdP2dGraphics(final NerdSketch<PGraphics2D> p_sketch, final PGraphics2D p_graphics) {
         super(p_sketch, p_graphics);
         this.UNPROJECTOR = new NerdUnprojector();
-        this.DEFAULT_CAMERA = new NerdBasicCameraBuilder(this).build();
-
-        this.currentCamera = this.DEFAULT_CAMERA;
     }
-
-    // region Dealing with `NerdAbstractCamera` subclasses.
-    // Applies the camera as well.
-    @Override
-    public void beginDraw() {
-        super.beginDraw();
-        this.applyCameraIfCan();
-    }
-
-    protected void applyCameraIfCan() {
-        if (!this.SKETCH.USES_OPENGL)
-            return;
-
-        // If the current camera is `null`, use the default one instead:
-        if (this.currentCamera != null)
-            this.currentCamera.apply();
-        else {
-            this.DEFAULT_CAMERA.apply();
-
-            // If the current camera is null, but wasn't, notify!:
-            if (this.currentCamera != this.previousCamera)
-                System.out.printf("`%s` has no camera! Consider adding one...?", this);
-        }
-    }
-
-    public void setCurrentCamera(final NerdAbstractCamera p_camera) {
-        this.currentCamera = p_camera;
-    }
-
-    public void setCurrentCameraToDefault() {
-        this.currentCamera = this.DEFAULT_CAMERA;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <RetT extends NerdAbstractCamera> RetT getCurrentCamera() {
-        return (RetT) this.currentCamera;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <RetT extends NerdAbstractCamera> RetT getPreviousCamera() {
-        return (RetT) this.previousCamera;
-    }
-    // endregion
 
     // region `modelVec()` and `screenVec()`.
     public PVector modelVec() {
@@ -332,48 +282,31 @@ public class NerdP3dGraphics extends NerdGenericGraphics<PGraphics3D> {
     // endregion
     // endregion
 
-    // Generated stuff:
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((this.UNPROJECTOR == null) ? 0 : this.UNPROJECTOR.hashCode());
-        result = prime * result + ((this.DEFAULT_CAMERA == null) ? 0 : this.DEFAULT_CAMERA.hashCode());
-        result = prime * result + ((this.previousCamera == null) ? 0 : this.previousCamera.hashCode());
+        result = prime * result + ((UNPROJECTOR == null) ? 0 : UNPROJECTOR.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
         if (!super.equals(obj)) {
             return false;
         }
-        if (this.getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
-        final NerdP3dGraphics other = (NerdP3dGraphics) obj;
-        if (this.UNPROJECTOR == null) {
+        NerdP2dGraphics other = (NerdP2dGraphics) obj;
+        if (UNPROJECTOR == null) {
             if (other.UNPROJECTOR != null) {
                 return false;
             }
-        } else if (!this.UNPROJECTOR.equals(other.UNPROJECTOR)) {
-            return false;
-        }
-        if (this.DEFAULT_CAMERA == null) {
-            if (other.DEFAULT_CAMERA != null) {
-                return false;
-            }
-        } else if (!this.DEFAULT_CAMERA.equals(other.DEFAULT_CAMERA)) {
-            return false;
-        }
-        if (this.previousCamera == null) {
-            if (other.previousCamera != null) {
-                return false;
-            }
-        } else if (!this.previousCamera.equals(other.previousCamera)) {
+        } else if (!UNPROJECTOR.equals(other.UNPROJECTOR)) {
             return false;
         }
         return true;

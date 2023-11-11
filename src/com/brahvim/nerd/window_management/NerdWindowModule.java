@@ -1,29 +1,30 @@
 package com.brahvim.nerd.window_management;
 
 import java.awt.Point;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import com.brahvim.nerd.processing_callback_interfaces.hardware.window.NerdWindowListener;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.window_management.window_module_impls.NerdFx2dWindowModule;
+import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule;
+import com.brahvim.nerd.window_management.window_module_impls.NerdJava2dWindowModule;
 
+import processing.awt.PGraphicsJava2D;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PSurface;
 import processing.core.PVector;
+import processing.javafx.PGraphicsFX2D;
+import processing.opengl.PGraphicsOpenGL;
 
 /**
  * Please use {@link NerdWindowModule#createWindowModule(NerdSketch)} to create
  * instances specific to your {@link NerdSketch}'s renderer.
  */
 public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> extends NerdModule {
-
-	protected static final Map<Class<? extends PGraphics>, Class<? extends NerdWindowModule<? extends PGraphics>>> subclassesIndex = Collections
-			.synchronizedMap(new HashMap<>(6));
 
 	// region Instance fields.
 	/** Position of the window relative to the monitor. */
@@ -65,18 +66,28 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	protected abstract void preSetupImpl();
 	// endregion
 
-	@SuppressWarnings("unchecked")
-	public static <RetGraphicsT extends PGraphics> NerdWindowModule<RetGraphicsT> createWindowModule(
-			final NerdSketch<RetGraphicsT> p_sketch) {
-		for (final var entry : NerdWindowModule.subclassesIndex.entrySet())
-			if (entry.getKey().isInstance(p_sketch.getNerdGenericGraphics().getUnderlyingBuffer()))
-				try {
-					return (NerdWindowModule<RetGraphicsT>) entry.getValue().getConstructor().newInstance(p_sketch);
-				} catch (final Exception e) {
-					e.printStackTrace();
-				}
+	public static NerdWindowModule<?> createWindowModule(final NerdSketch<?> p_sketch) {
+		final NerdWindowModule<?> toRet = NerdWindowModule.supplyWindowModuleForSketch(p_sketch);
 
-		throw new IllegalArgumentException("Please write your own `PGraphics` subclass for this one!");
+		if (toRet == null)
+			throw new IllegalArgumentException("Please write your own `PGraphics` subclass for this one!");
+
+		return toRet;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected static <RetGraphicsT extends PGraphics> NerdWindowModule<?> supplyWindowModuleForSketch(
+			final NerdSketch<RetGraphicsT> p_sketch) {
+		return switch (p_sketch.sketchRenderer()) {
+			case PConstants.P2D -> new NerdGlWindowModule((NerdSketch<PGraphicsOpenGL>) p_sketch);
+			case PConstants.P3D -> new NerdGlWindowModule((NerdSketch<PGraphicsOpenGL>) p_sketch);
+			case PConstants.PDF -> new NerdJava2dWindowModule((NerdSketch<PGraphicsJava2D>) p_sketch);
+			case PConstants.SVG -> new NerdJava2dWindowModule((NerdSketch<PGraphicsJava2D>) p_sketch);
+			case PConstants.FX2D -> new NerdFx2dWindowModule((NerdSketch<PGraphicsFX2D>) p_sketch);
+			case PConstants.JAVA2D -> new NerdJava2dWindowModule((NerdSketch<PGraphicsJava2D>) p_sketch);
+
+			default -> null;
+		};
 	}
 
 	// region Taking the window to the center.
@@ -170,7 +181,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 
 	// region Setters.
 	// Implementations return pointers of their own type, not `NerdWindowModule*`s,
-	public abstract boolean setAlwaysOnTop(final boolean p_name);
+	public abstract boolean setAlwaysOnTop(final boolean p_state);
 
 	public abstract NerdWindowModule<SketchPGraphicsT> setName(final String p_name);
 

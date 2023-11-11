@@ -17,10 +17,6 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 	protected JFrame window;
 	protected PSurfaceAWT.SmoothCanvas canvas;
 
-	static {
-		NerdWindowModule.subclassesIndex.put(PGraphicsJava2D.class, NerdJava2dWindowModule.class);
-	}
-
 	public NerdJava2dWindowModule(final NerdSketch<PGraphicsJava2D> p_sketch) {
 		super(p_sketch);
 	}
@@ -145,7 +141,7 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 	 * @return Whether or not the operation was successful.
 	 */
 	@Override
-	public boolean setAlwaysOnTop(final boolean p_name) {
+	public boolean setAlwaysOnTop(final boolean p_state) {
 		if (!this.window.isAlwaysOnTopSupported())
 			return false;
 
@@ -164,7 +160,7 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 
 	@Override
 	protected void preSetupImpl() {
-		super.sketchSurface.setIcon(super.getIconImage());
+		super.sketchSurface.setIcon(super.iconImage);
 		this.canvas = (PSurfaceAWT.SmoothCanvas) super.sketchSurface.getNative();
 		this.window = (JFrame) this.canvas.getFrame();
 
