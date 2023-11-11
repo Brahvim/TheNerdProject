@@ -17,6 +17,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.brahvim.nerd.framework.scene_api.NerdScene;
+import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
 import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
@@ -29,6 +31,7 @@ import com.brahvim.nerd.utils.NerdReflectionUtils;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
+import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -254,8 +257,33 @@ public abstract class NerdSketch extends PApplet
 		this.pframeStartTime = this.frameStartTime;
 		this.frameStartTime = super.millis(); // Timestamp!
 		this.deltaTime = this.frameStartTime - this.pframeStartTime;
+		// this.forEachNerdModule(NerdModule::pre);
 
-		this.forEachNerdModule(NerdModule::pre);
+		for (NerdModule m : this.MODULES) {
+			// Class<? extends NerdModule> moduleClass = m.getClass();
+
+			if (m instanceof NerdAssetsModule)
+				// continue
+				;
+			else if (m instanceof NerdInputModule)
+				// continue
+				;
+			else if (m instanceof NerdScenesModule)
+				// continue
+				;
+			else if (m instanceof NerdDisplayModule) // THE CULPRIT!
+				continue
+				;
+			else if (m instanceof NerdGlWindowModule)
+				// continue
+				;
+			else if (m instanceof NerdSketch.NerdSketchOnlyAssetsModule)
+				// continue
+				;
+
+			m.pre();
+		}
+
 	}
 
 	@Override
@@ -265,7 +293,16 @@ public abstract class NerdSketch extends PApplet
 
 	@Override
 	public void draw() {
-		this.forEachNerdModule(NerdModule::draw);
+		// this.forEachNerdModule(NerdModule::draw);
+		NerdScenesModule scenesModule = this.getNerdModule(NerdScenesModule.class);
+		scenesModule.draw();
+
+		NerdScene<?> scene = scenesModule.getCurrentScene();
+
+		if (scene == null)
+			return;
+
+		scene.draw();
 	}
 
 	@Override

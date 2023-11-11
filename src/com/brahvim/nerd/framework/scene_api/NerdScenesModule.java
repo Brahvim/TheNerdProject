@@ -138,7 +138,7 @@ public class NerdScenesModule extends NerdModule {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected void draw() {
+	public void draw() {
 		if (super.SKETCH.frameCount == 1 && this.currentScene == null) {
 			if (this.scenesModuleSettings.FIRST_SCENE_CLASS == null)
 				System.err.println("There is no initial `"

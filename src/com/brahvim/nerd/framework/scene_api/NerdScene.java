@@ -561,9 +561,6 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 		if (this.MANAGER.scenesModuleSettings.preFirstCaller == null)
 			this.MANAGER.scenesModuleSettings.preFirstCaller = NerdScenesModuleSettings.NerdSceneLayerCallbackOrder.SCENE;
 
-		// To avoid asynchronous changes from causing repetition, we put both parts in
-		// `if` and `else` block.
-
 		switch (this.MANAGER.scenesModuleSettings.preFirstCaller) {
 			case SCENE -> {
 				this.pre();
@@ -629,7 +626,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	protected void pre() {
 	}
 
-	protected void draw() {
+	public void draw() {
 	}
 
 	protected void post() {

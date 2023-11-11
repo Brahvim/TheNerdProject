@@ -98,8 +98,8 @@ public class NerdDisplayModule extends NerdModule {
 
 	@Override
 	public void pre() {
-		this.recordPreviousDisplayParameters();
-		this.updateDisplayParameters();
+		// this.recordPreviousDisplayParameters();
+		// this.updateDisplayParameters();
 
 		final GraphicsDevice[] updatedList = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
 		if (super.SKETCH.JAVA_SCREENS != updatedList) {
