@@ -4,6 +4,7 @@ import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.Point;
+import java.util.Arrays;
 
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -73,6 +74,28 @@ public class NerdDisplayModule extends NerdModule {
 		this.displayHeightThirdQuart = this.displayWidthHalf + this.displayWidthQuart;
 	}
 
+	// protected void updateSketchAwtGlobals() {
+	// final GraphicsDevice[] updatedList =
+	// super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
+	// if (super.SKETCH.JAVA_SCREENS != updatedList) {
+	// super.SKETCH.DEFAULT_JAVA_SCREEN =
+	// super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
+	// super.SKETCH.DEFAULT_JAVA_SCREEN_MODE =
+	// super.SKETCH.DEFAULT_JAVA_SCREEN.getDisplayMode();
+	// super.SKETCH.DEFAULT_REFRESH_RATE =
+	// super.SKETCH.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
+	// }
+	// }
+
+	protected void updateSketchAwtGlobals() {
+		// This could be faster?:
+		if (!Arrays.equals(super.SKETCH.JAVA_SCREENS, super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices())) {
+			super.SKETCH.DEFAULT_JAVA_SCREEN = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
+			super.SKETCH.DEFAULT_JAVA_SCREEN_MODE = super.SKETCH.DEFAULT_JAVA_SCREEN.getDisplayMode();
+			super.SKETCH.DEFAULT_REFRESH_RATE = super.SKETCH.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
+		}
+	}
+
 	protected void recordPreviousDisplayParameters() {
 		this.pdisplayScr = this.displayScr;
 		this.ppixelWidth = this.pixelWidth;
@@ -96,19 +119,18 @@ public class NerdDisplayModule extends NerdModule {
 		this.pdisplayHeightThirdQuart = this.displayHeightThirdQuart;
 	}
 
-	protected void updateSketchAwtGlobals() {
-		final GraphicsDevice[] updatedList = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
-		if (super.SKETCH.JAVA_SCREENS != updatedList) {
-			super.SKETCH.DEFAULT_JAVA_SCREEN = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
-			super.SKETCH.DEFAULT_JAVA_SCREEN_MODE = super.SKETCH.DEFAULT_JAVA_SCREEN.getDisplayMode();
-			super.SKETCH.DEFAULT_REFRESH_RATE = super.SKETCH.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
-		}
-	}
-
 	private void onWindowMonitorChange() {
 		this.previousMonitor = this.currentMonitor;
+		this.updatePAppletDisplayDimensions();
 		this.updateDisplayParameters();
 		super.SKETCH.monitorChanged();
+	}
+
+	protected void updatePAppletDisplayDimensionsIfNotDefault() {
+		if (this.currentMonitor == super.SKETCH.DEFAULT_JAVA_SCREEN)
+			return;
+
+		this.updatePAppletDisplayDimensions();
 	}
 
 	protected void updatePAppletDisplayDimensions() {
@@ -116,16 +138,16 @@ public class NerdDisplayModule extends NerdModule {
 			this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
 
 		// Update `PApplet::displayWidth` and `PApplet::displayHeight`:
-		final DisplayMode currMonitorMode = this.currentMonitor.getDisplayMode();
-		super.SKETCH.displayWidth = currMonitorMode.getWidth();
-		super.SKETCH.displayHeight = currMonitorMode.getHeight();
+		final DisplayMode currentMonitorMode = this.currentMonitor.getDisplayMode();
+		super.SKETCH.displayWidth = currentMonitorMode.getWidth();
+		super.SKETCH.displayHeight = currentMonitorMode.getHeight();
 	}
 
 	@Override
 	public void pre() {
 		this.recordPreviousDisplayParameters(); // Not a bottleneck.
-		this.updateDisplayParameters();
-		this.updateSketchAwtGlobals();
+		// this.updateDisplayParameters();
+		// this.updateSketchAwtGlobals();
 
 		if (this.previousMonitor != this.currentMonitor)
 			this.onWindowMonitorChange();
@@ -133,7 +155,7 @@ public class NerdDisplayModule extends NerdModule {
 		if (super.SKETCH.focused)
 			this.currentMonitor = this.getGraphicsDeviceAt(this.input.GLOBAL_MOUSE_POINT);
 
-		this.updatePAppletDisplayDimensions();
+		this.updatePAppletDisplayDimensionsIfNotDefault();
 	}
 
 	// region Getters.

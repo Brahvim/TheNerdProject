@@ -257,11 +257,11 @@ public abstract class NerdSketch extends PApplet
 		this.pframeStartTime = this.frameStartTime;
 		this.frameStartTime = super.millis(); // Timestamp!
 		this.deltaTime = this.frameStartTime - this.pframeStartTime;
-		// this.forEachNerdModule(NerdModule::pre);
+		this.forEachNerdModule(NerdModule::pre);
 
-		for (NerdModule m : this.MODULES)
-			if (!(m instanceof NerdDisplayModule)) // THE CULPRIT!
-				m.pre();
+		// for (NerdModule m : this.MODULES)
+		// if (!(m instanceof NerdDisplayModule)) // THE CULPRIT!
+		// m.pre();
 	}
 
 	@Override
