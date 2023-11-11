@@ -98,8 +98,8 @@ public class NerdDisplayModule extends NerdModule {
 
 	@Override
 	public void pre() {
-		// this.recordPreviousDisplayParameters();
-		// this.updateDisplayParameters();
+		this.recordPreviousDisplayParameters();
+		this.updateDisplayParameters();
 
 		final GraphicsDevice[] updatedList = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
 		if (super.SKETCH.JAVA_SCREENS != updatedList) {
@@ -107,6 +107,8 @@ public class NerdDisplayModule extends NerdModule {
 			super.SKETCH.DEFAULT_JAVA_SCREEN_MODE = super.SKETCH.DEFAULT_JAVA_SCREEN.getDisplayMode();
 			super.SKETCH.DEFAULT_REFRESH_RATE = super.SKETCH.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
 		}
+
+		// The rest of this method is fine. It's the lines above that slow things down!
 
 		if (this.previousMonitor != this.currentMonitor) {
 			this.previousMonitor = this.currentMonitor;

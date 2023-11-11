@@ -272,7 +272,7 @@ public abstract class NerdSketch extends PApplet
 				// continue
 				;
 			else if (m instanceof NerdDisplayModule) // THE CULPRIT!
-				continue
+				// continue
 				;
 			else if (m instanceof NerdGlWindowModule)
 				// continue
