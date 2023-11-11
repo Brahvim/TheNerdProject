@@ -1,15 +1,17 @@
 package com.brahvim.nerd.window_management;
 
 import java.awt.Point;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.brahvim.nerd.processing_callback_interfaces.hardware.window.NerdWindowListener;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule;
-import com.brahvim.nerd.window_management.window_module_impls.NerdJava2dWindowModule;
 
+import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PSurface;
 import processing.core.PVector;
@@ -18,9 +20,12 @@ import processing.core.PVector;
  * Please use {@link NerdWindowModule#createWindowModule(NerdSketch)} to create
  * instances specific to your {@link NerdSketch}'s renderer.
  */
-public abstract class NerdWindowModule extends NerdModule {
+public abstract class NerdWindowModule<PGraphicsT extends PGraphics> extends NerdModule {
 
-	// region Fields.
+	protected static final Map<Class<? extends PGraphics>, Class<? extends NerdWindowModule<? extends PGraphics>>> subclassesIndex = Collections
+			.synchronizedMap(new HashMap<>(6));
+
+	// region Instance fields.
 	/** Position of the window relative to the monitor. */
 	public final PVector WINDOW_POSITION = new PVector(), PREV_WINDOW_POSITION = new PVector();
 
@@ -42,7 +47,7 @@ public abstract class NerdWindowModule extends NerdModule {
 	// endregion
 
 	// region Construction and initialization.
-	protected NerdWindowModule(final NerdSketch p_sketch) {
+	protected NerdWindowModule(final NerdSketch<PGraphicsT> p_sketch) {
 		super(p_sketch);
 		this.fullscreen = super.SKETCH.SKETCH_SETTINGS.shouldStartFullscreen;
 	}
@@ -60,10 +65,19 @@ public abstract class NerdWindowModule extends NerdModule {
 	protected abstract void preSetupImpl();
 	// endregion
 
-	public static NerdWindowModule createWindowModule(final NerdSketch p_sketch) {
-		return p_sketch.USES_OPENGL
-				? new NerdGlWindowModule(p_sketch)
-				: new NerdJava2dWindowModule(p_sketch);
+	@SuppressWarnings("unchecked")
+	public static <RetGraphicsT extends PGraphics> NerdWindowModule<RetGraphicsT> createWindowModule(
+			final NerdSketch<RetGraphicsT> p_sketch) {
+		for (final var entry : NerdWindowModule.subclassesIndex.entrySet())
+			if (entry.getKey().isInstance(p_sketch.getNerdGenericGraphics().getUnderlyingBuffer()))
+				try {
+					return (NerdWindowModule<RetGraphicsT>) entry.getValue().getConstructor()
+							.newInstance(p_sketch);
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+
+		throw new IllegalArgumentException("Please write your own `PGraphics` subclass for this one!");
 	}
 
 	// region Taking the window to the center.

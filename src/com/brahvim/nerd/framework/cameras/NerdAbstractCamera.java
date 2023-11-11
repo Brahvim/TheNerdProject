@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
-import com.brahvim.nerd.window_management.NerdWindowModule;
+import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -19,8 +19,9 @@ public abstract class NerdAbstractCamera {
 	public static final float DEFAULT_CAM_FOV = PApplet.radians(60),
 			DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10_000, DEFAULT_CAM_MOUSE_Z = 1;
 
-	protected final NerdSketch SKETCH;
+	protected final NerdSketch<PGraphics3D> SKETCH;
 	protected final NerdP3dGraphics GRAPHICS;
+	protected final NerdGlWindowModule WINDOW;
 	public Consumer<NerdAbstractCamera> script; // Smart users will write complete classes for these.
 
 	// ...yeah, for some reason `PApplet::color()` fails. No ARGB!
@@ -38,14 +39,17 @@ public abstract class NerdAbstractCamera {
 	public boolean doScript = true, doAutoClear = true, doAutoAspect = true;
 	// endregion
 
-	protected NerdAbstractCamera(final NerdSketch p_sketch, final PGraphics3D p_graphics) {
+	protected NerdAbstractCamera(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
 		this.SKETCH = p_sketch;
 		this.GRAPHICS = new NerdP3dGraphics(this.SKETCH, p_graphics);
+		this.WINDOW = this.SKETCH.getNerdWindowModule();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected NerdAbstractCamera(final NerdP3dGraphics p_graphics) {
 		this.GRAPHICS = p_graphics;
 		this.SKETCH = this.GRAPHICS.getSketch();
+		this.WINDOW = this.SKETCH.getNerdWindowModule();
 	}
 
 	public abstract void applyMatrix();
@@ -59,18 +63,16 @@ public abstract class NerdAbstractCamera {
 			// if (!(this.SKETCH.pwidth == this.SKETCH.width
 			// || this.SKETCH.pheight == this.SKETCH.height))
 			// A simple divide instruction is enough!
-			this.aspect = (float) this.SKETCH.width / (float) this.SKETCH.height;
+			this.aspect = this.WINDOW.scr;
 
 		// Apply projection:
-		final NerdWindowModule window = this.SKETCH.getNerdModule(NerdWindowModule.class);
-
 		switch (this.projection) {
 			case PConstants.PERSPECTIVE -> this.GRAPHICS.perspective(
 					this.fov, this.aspect, this.near, this.far);
 
 			case PConstants.ORTHOGRAPHIC -> this.GRAPHICS.ortho(
-					-window.cx, window.cx,
-					-window.cy, window.cy,
+					-this.WINDOW.cx, this.WINDOW.cx,
+					-this.WINDOW.cy, this.WINDOW.cy,
 					this.near, this.far);
 
 			default -> throw new UnsupportedOperationException(

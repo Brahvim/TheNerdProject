@@ -11,7 +11,6 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
-import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -26,17 +25,11 @@ import processing.core.PSurface;
 import processing.core.PVector;
 import processing.opengl.PGL;
 import processing.opengl.PShader;
-import processing.pdf.PGraphicsPDF;
-import processing.svg.PGraphicsSVG;
 
 public abstract class NerdGenericGraphics<PGraphicsT extends PGraphics> {
 
-	public static final Map<Class<? extends PGraphics>, Class<? extends NerdGenericGraphics<PGraphics>>> subclassesIndex = NerdGenericGraphics
-			.supplyInternalPGraphicsSubclassToNerdGenericGraphicsSubclassMap();
-
-	private static final <RetGraphicsT extends PGraphics> Map<Class<? extends RetGraphicsT>, Class<? extends NerdGenericGraphics<RetGraphicsT>>> supplyInternalPGraphicsSubclassToNerdGenericGraphicsSubclassMap() {
-		return Collections.synchronizedMap(new HashMap<>(6));
-	}
+	protected static final Map<Class<? extends PGraphics>, Class<? extends NerdGenericGraphics<? extends PGraphics>>> subclassesIndex = Collections
+			.synchronizedMap(new HashMap<>(6));
 
 	// region Instance fields.
 	protected NerdAbstractCamera currentCamera; // CAMERA! wher lite?! wher accsunn?!
@@ -47,28 +40,28 @@ public abstract class NerdGenericGraphics<PGraphicsT extends PGraphics> {
 	protected final NerdWindowModule WINDOW;
 	// endregion
 
+	@SuppressWarnings("unchecked")
 	public static <RetGraphicsT extends PGraphics> NerdGenericGraphics<RetGraphicsT> createNerdGenericGraphics(
-			final PGraphics p_toWrap) {
-		if (p_toWrap instanceof PGraphicsSVG) {
+			final NerdSketch p_sketch, final PGraphics p_pGraphicsToWrap) {
+		for (final var entry : NerdGenericGraphics.subclassesIndex.entrySet())
+			if (entry.getKey().isInstance(p_pGraphicsToWrap))
+				try {
+					return (NerdGenericGraphics<RetGraphicsT>) entry.getValue().getConstructor().newInstance(p_sketch,
+							p_pGraphicsToWrap);
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
 
-		} else if (p_toWrap instanceof PGraphicsPDF) {
-		} else if (p_toWrap instanceof PGraphicsJava2D) {
-		} else if (p_toWrap instanceof PGraphicsPDF) {
-		} else if (p_toWrap instanceof PGraphicsPDF) {
-		} else if (p_toWrap instanceof PGraphicsPDF) {
-		} else if (p_toWrap instanceof PGraphicsPDF) {
-		} else {
-			throw IllegalArgumentException("Please write your own `PGraphics` subclass for this one!");
-		}
+		throw new IllegalArgumentException("Please write your own `PGraphics` subclass for this one!");
 	}
 
-	protected NerdGenericGraphics(final NerdSketch p_sketch, final PGraphicsT p_graphics) {
+	protected NerdGenericGraphics(final NerdSketch p_sketch, final PGraphicsT p_pGraphicsToWrap) {
 		this.SKETCH = p_sketch;
-		this.GRAPHICS = Objects.requireNonNull(p_graphics,
+		this.GRAPHICS = Objects.requireNonNull(p_pGraphicsToWrap,
 				"The `"
 						+ this.getClass().getSimpleName()
 						+ "` constructor received a `null` `"
-						+ p_graphics.getClass().getSimpleName()
+						+ p_pGraphicsToWrap.getClass().getSimpleName()
 						+ "` instance!");
 
 		this.INPUT = this.SKETCH.getNerdModule(NerdInputModule.class);
