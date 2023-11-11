@@ -1,17 +1,17 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends.generic;
 
 import java.awt.Image;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
-import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
-import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
-import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
-import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
+import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -25,25 +25,44 @@ import processing.core.PStyle;
 import processing.core.PSurface;
 import processing.core.PVector;
 import processing.opengl.PGL;
-import processing.opengl.PGraphics3D;
 import processing.opengl.PShader;
+import processing.pdf.PGraphicsPDF;
+import processing.svg.PGraphicsSVG;
 
-public class NerdGenericGraphics {
+public abstract class NerdGenericGraphics<PGraphicsT extends PGraphics> {
 
-	// region Fields.
+	public static final Map<Class<? extends PGraphics>, Class<? extends NerdGenericGraphics<PGraphics>>> subclassesIndex = NerdGenericGraphics
+			.supplyInternalPGraphicsSubclassToNerdGenericGraphicsSubclassMap();
+
+	private static final <RetGraphicsT extends PGraphics> Map<Class<? extends RetGraphicsT>, Class<? extends NerdGenericGraphics<RetGraphicsT>>> supplyInternalPGraphicsSubclassToNerdGenericGraphicsSubclassMap() {
+		return Collections.synchronizedMap(new HashMap<>(6));
+	}
+
+	// region Instance fields.
 	protected NerdAbstractCamera currentCamera; // CAMERA! wher lite?! wher accsunn?!
 
 	protected final NerdSketch SKETCH;
-	protected final PGraphics GRAPHICS;
+	protected final PGraphicsT GRAPHICS;
 	protected final NerdInputModule INPUT;
 	protected final NerdWindowModule WINDOW;
-	protected final NerdUnprojector UNPROJECTOR;
-	protected final NerdAbstractCamera DEFAULT_CAMERA;
-
-	protected NerdAbstractCamera previousCamera;
 	// endregion
 
-	public NerdGenericGraphics(final NerdSketch p_sketch, final PGraphics p_graphics) {
+	public static <RetGraphicsT extends PGraphics> NerdGenericGraphics<RetGraphicsT> createNerdGenericGraphics(
+			final PGraphics p_toWrap) {
+		if (p_toWrap instanceof PGraphicsSVG) {
+
+		} else if (p_toWrap instanceof PGraphicsPDF) {
+		} else if (p_toWrap instanceof PGraphicsJava2D) {
+		} else if (p_toWrap instanceof PGraphicsPDF) {
+		} else if (p_toWrap instanceof PGraphicsPDF) {
+		} else if (p_toWrap instanceof PGraphicsPDF) {
+		} else if (p_toWrap instanceof PGraphicsPDF) {
+		} else {
+			throw IllegalArgumentException("Please write your own `PGraphics` subclass for this one!");
+		}
+	}
+
+	protected NerdGenericGraphics(final NerdSketch p_sketch, final PGraphicsT p_graphics) {
 		this.SKETCH = p_sketch;
 		this.GRAPHICS = Objects.requireNonNull(p_graphics,
 				"The `"
@@ -52,60 +71,13 @@ public class NerdGenericGraphics {
 						+ p_graphics.getClass().getSimpleName()
 						+ "` instance!");
 
-		this.UNPROJECTOR = new NerdUnprojector();
-		this.DEFAULT_CAMERA = new NerdBasicCameraBuilder(this).build();
-
 		this.INPUT = this.SKETCH.getNerdModule(NerdInputModule.class);
 		this.WINDOW = this.SKETCH.getNerdModule(NerdWindowModule.class);
-
-		this.currentCamera = this.DEFAULT_CAMERA;
-	}
-
-	// region Novel ("new") stuff.
-	// Applies the camera as well.
-	public void beginDraw() {
-		this.GRAPHICS.beginDraw();
-		this.applyCameraIfCan();
-	}
-
-	protected void applyCameraIfCan() {
-		if (!this.SKETCH.USES_OPENGL)
-			return;
-
-		// If the current camera is `null`, use the default one instead:
-		if (this.currentCamera != null)
-			this.currentCamera.apply();
-		else {
-			this.DEFAULT_CAMERA.apply();
-
-			// If the current camera is null, but wasn't, notify!:
-			if (this.currentCamera != this.previousCamera)
-				System.out.printf("`%s` has no camera! Consider adding one...?", this);
-		}
-	}
-
-	public void setCurrentCamera(final NerdAbstractCamera p_camera) {
-		this.currentCamera = p_camera;
-	}
-
-	public void setCurrentCameraToDefault() {
-		this.currentCamera = this.DEFAULT_CAMERA;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <RetT extends NerdAbstractCamera> RetT getCurrentCamera() {
-		return (RetT) this.currentCamera;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <RetT extends NerdAbstractCamera> RetT getPreviousCamera() {
-		return (RetT) this.previousCamera;
 	}
 
 	public NerdSketch getSketch() {
 		return this.SKETCH;
 	}
-	// endregion
 
 	// region Rendering utilities!
 	public final PGraphics getUnderlyingBuffer() {
@@ -614,268 +586,6 @@ public class NerdGenericGraphics {
 	}
 	// endregion
 
-	// region `modelVec()` and `screenVec()`.
-	public PVector modelVec() {
-		return new PVector(
-				// "I passed these `0`s in myself, yeah. Let's not rely on the JIT too much!"
-				// - Me before re-thinking that.
-				this.modelX(), this.modelY(), this.modelZ());
-	}
-
-	public PVector modelVec(final PVector p_vec) {
-		return new PVector(this.GRAPHICS.modelX(p_vec.x, p_vec.y, p_vec.z),
-				this.GRAPHICS.modelY(p_vec.x, p_vec.y, p_vec.z), this.GRAPHICS.modelZ(p_vec.x, p_vec.y, p_vec.z));
-	}
-
-	public PVector modelVec(final float p_x, final float p_y, final float p_z) {
-		return new PVector(this.GRAPHICS.modelX(p_x, p_y, p_z), this.GRAPHICS.modelY(p_x, p_y, p_z),
-				this.GRAPHICS.modelZ(p_x, p_y, p_z));
-	}
-
-	public PVector screenVec() {
-		return new PVector(this.screenX(), this.screenY(), this.screenZ());
-	}
-
-	public PVector screenVec(final PVector p_vec) {
-		return new PVector(this.screenX(p_vec.x, p_vec.y, p_vec.z), this.screenY(p_vec.x, p_vec.y, p_vec.z),
-				this.screenZ(p_vec.x, p_vec.y, p_vec.z));
-	}
-
-	public PVector screenVec(final float p_x, final float p_y, final float p_z) {
-		return new PVector(this.screenX(p_x, p_y, p_z), this.screenY(p_x, p_y, p_z), this.screenZ(p_x, p_y, p_z));
-	}
-	// endregion
-
-	// region `modelX()`-`modelY()`-`modelZ()` `PVector` and no-parameter overloads.
-	// region Parameterless overloads.
-	public float modelX() {
-		return this.GRAPHICS.modelX(0, 0, 0);
-	}
-
-	public float modelY() {
-		return this.GRAPHICS.modelY(0, 0, 0);
-	}
-
-	public float modelZ() {
-		return this.GRAPHICS.modelZ(0, 0, 0);
-	}
-	// endregion
-
-	// region `p_vec`?
-	// ...how about `p_modelMatInvMulter`? :rofl:!
-	public float modelX(final PVector p_vec) {
-		return this.GRAPHICS.modelX(p_vec.x, p_vec.y, p_vec.z);
-	}
-
-	public float modelY(final PVector p) {
-		return this.GRAPHICS.modelY(p.x, p.y, p.z);
-	}
-
-	public float modelZ(final PVector p) {
-		return this.GRAPHICS.modelZ(p.x, p.y, p.z);
-	}
-	// endregion
-	// endregion
-
-	// region `screenX()`-`screenY()`-`screenZ()`, `PVector`, plus no-arg overloads.
-	// "Oh! And when the `z` is `-1`, you just add this and sub that. Optimization!"
-	// - That ONE Mathematician.
-
-	// region Parameterless overloads.
-	public float screenX() {
-		return this.GRAPHICS.screenX(0, 0, 0);
-	}
-
-	public float screenY() {
-		return this.GRAPHICS.screenY(0, 0, 0);
-	}
-
-	public float screenZ() {
-		return this.GRAPHICS.screenY(0, 0, 0);
-	}
-	// endregion
-
-	// region `p_vec`!
-	// The following two were going to exclude the `z` if it was `0`.
-	// And later, I felt this was risky.
-	// This two-`float` overload ain't in the docs, that scares me!
-
-	// ...ACTUALLY,
-	// https://github.com/SKETCHssing/SKETCHssing/blob/459853d0dcdf1e1648b1049d3fdbb4bf233fded8/core/src/SKETCHssing/opengl/PGraphicsOpenGL.java#L4611
-	// ..."they rely on the JIT too!" (no, they don't optimize this at all. They
-	// just put the `0` themselves, LOL.) :joy:
-
-	public float screenX(final PVector p_vec) {
-		return this.GRAPHICS.screenX(p_vec.x, p_vec.y, p_vec.z);
-
-		// return p_vec.z == 0
-		// ? this.GRAPHICS.screenX(p_vec.x, p_vec.y)
-		// : this.GRAPHICS.screenX(p_vec.x, p_vec.y, p_vec.z);
-	}
-
-	public float screenY(final PVector p_vec) {
-		return this.GRAPHICS.screenY(p_vec.x, p_vec.y, p_vec.z);
-
-		// return p_vec.z == 0
-		// ? this.GRAPHICS.screenY(p_vec.x, p_vec.y)
-		// : this.GRAPHICS.screenY(p_vec.x, p_vec.y, p_vec.z);
-	}
-
-	public float screenZ(final PVector p_vec) {
-		// Hmmm...
-		// ..so `z` cannot be `0` here.
-		// ..and `x` and `y` cannot be ignored!
-		// "No room for optimization here!"
-		return this.GRAPHICS.screenZ(p_vec.x, p_vec.y, p_vec.z);
-	}
-	// endregion
-	// endregion
-
-	// region Camera matrix configuration.
-	public void camera(final NerdBasicCamera p_cam) {
-		this.GRAPHICS.camera(p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z, p_cam.getCenter().x,
-				p_cam.getCenter().y, p_cam.getCenter().z, p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
-	}
-
-	public void camera(final NerdFlyCamera p_cam) {
-		this.GRAPHICS.camera(p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z,
-
-				p_cam.getPos().x + p_cam.front.x, p_cam.getPos().y + p_cam.front.y, p_cam.getPos().z + p_cam.front.z,
-
-				p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
-	}
-
-	public void camera(final PVector p_pos, final PVector p_center, final PVector p_up) {
-		this.GRAPHICS.camera(p_pos.x, p_pos.y, p_pos.z, p_center.x, p_center.y, p_center.z, p_up.x, p_up.y, p_up.z);
-	}
-	// endregion
-
-	// region Projection functions.
-	public void perspective(final NerdAbstractCamera p_cam) {
-		this.GRAPHICS.perspective(p_cam.fov, p_cam.aspect, p_cam.near, p_cam.far);
-	}
-
-	public void perspective(final float p_fov, final float p_near, final float p_far) {
-		this.GRAPHICS.perspective(p_fov, this.WINDOW.scr, p_near, p_far);
-	}
-
-	public void ortho(final NerdAbstractCamera p_cam) {
-		this.GRAPHICS.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy,
-				this.WINDOW.cy, p_cam.near, p_cam.far);
-	}
-
-	public void ortho(final float p_near, final float p_far) {
-		this.GRAPHICS.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy,
-				this.WINDOW.cy, p_near, p_far);
-	}
-
-	/**
-	 * Expands to:
-	 * {@code PGraphics::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
-	 */
-	public void ortho(final float p_cx, final float p_cy, final float p_near, final float p_far) {
-		this.GRAPHICS.ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far);
-	}
-	// endregion
-
-	// region Unprojection functions.
-	// region 2D versions!
-	public float worldX(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0).x;
-	}
-
-	public float worldY(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0).y;
-	}
-
-	public float worldZ(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0).z;
-	}
-	// endregion
-
-	// region 3D versions (should use!).
-	public float worldX(final float p_x, final float p_y, final float p_z) {
-		return this.worldVec(p_x, p_y, p_z).x;
-	}
-
-	public float worldY(final float p_x, final float p_y, final float p_z) {
-		return this.worldVec(p_x, p_y, p_z).y;
-	}
-
-	public float worldZ(final float p_x, final float p_y, final float p_z) {
-		return this.worldVec(p_x, p_y, p_z).z;
-	}
-	// endregion
-
-	// region `worldVec()`!
-	public PVector worldVec(final PVector p_vec) {
-		return this.worldVec(p_vec.x, p_vec.y, p_vec.z);
-	}
-
-	public PVector worldVec(final float p_x, final float p_y) {
-		return this.worldVec(p_x, p_y, 0);
-	}
-
-	public PVector worldVec(final float p_x, final float p_y, final float p_z) {
-		final PVector toRet = new PVector();
-		// Unproject:
-		this.UNPROJECTOR.captureViewMatrix((PGraphics3D) this.GRAPHICS);
-		this.UNPROJECTOR.gluUnProject(p_x, this.SKETCH.height - p_y,
-				// `0.9f`: at the near clipping plane.
-				// `0.9999f`: at the far clipping plane. (NO! Calculate EPSILON first! *Then-*)
-				// 0.9f + map(mouseY, height, 0, 0, 0.1f),
-				PApplet.map(p_z, this.currentCamera.near, this.currentCamera.far, 0, 1), toRet);
-
-		return toRet;
-	}
-	// endregion
-
-	// region Mouse!
-	/**
-	 * Caching this vector never works. Call this method everytime!~ People
-	 * recalculate things framely in computer
-	 * graphics anyway! :joy:
-	 */
-	public PVector getMouseInWorld() {
-		return this.getMouseInWorldFromFarPlane(this.currentCamera.mouseZ);
-	}
-
-	public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
-		return this.worldVec(this.INPUT.mouseX, this.INPUT.mouseY,
-				this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
-	}
-
-	public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
-		return this.worldVec(this.INPUT.mouseX, this.INPUT.mouseY, p_distanceFromCamera);
-	}
-	// endregion
-
-	// region Touches.
-	// /**
-	// * Caching this vector never works. Call this method everytime!~
-	// * People recalculate things framely in computer graphics anyway! :joy:
-	// */
-	// public PVector getTouchInWorld(final int p_touchId) {
-	// return this.getTouchInWorldFromFarPlane(p_touchId,
-	// this.camera.mouseZ);
-	// }
-
-	// public PVector getTouchInWorldFromFarPlane(final float p_touchId, final float
-	// p_distanceFromFarPlane) {
-	// final TouchEvent.Pointer touch = this.SKETCH.touches[p_touchId];
-	// return this.worldVec(touch.x, touch.y,
-	// this.camera.far - p_distanceFromFarPlane +
-	// this.camera.near);
-	// }
-
-	// public PVector getTouchInWorldAtZ(final int p_touchId, final float
-	// p_distanceFromCamera) {
-	// final TouchEvent.Pointer touch = this.SKETCH.touches[p_touchId];
-	// return this.worldVec(touch.x, touch.y, p_distanceFromCamera);
-	// }
-	// endregion
-	// endregion
-
 	// region The billion `image()` overloads. Help me make "standards"?
 	// region For `PImage`s.
 	public void image(final PImage p_image) {
@@ -952,42 +662,44 @@ public class NerdGenericGraphics {
 	// endregion
 
 	// region For `NerdGraphics`.
-	public void image(final NerdGenericGraphics p_graphics) {
+	public void image(final NerdGenericGraphics<PGraphicsT> p_graphics) {
 		this.GRAPHICS.image(p_graphics.getUnderlyingBuffer(), 0, 0);
 	}
 
-	public void image(final NerdGenericGraphics p_graphics, final float p_x, final float p_y, final float p_width,
+	public void image(final NerdGenericGraphics<PGraphicsT> p_graphics, final float p_x, final float p_y,
+			final float p_width,
 			final float p_height) {
 		this.GRAPHICS.image(p_graphics.getUnderlyingBuffer(), p_x, p_y, p_width, p_height);
 	}
 
-	public void image(final NerdGenericGraphics p_graphics, final PVector p_pos) {
+	public void image(final NerdGenericGraphics<PGraphicsT> p_graphics, final PVector p_pos) {
 		this.GRAPHICS.pushMatrix();
 		this.GRAPHICS.translate(p_pos.x, p_pos.y, p_pos.z);
 		this.GRAPHICS.image(p_graphics.getUnderlyingBuffer(), 0, 0);
 		this.GRAPHICS.popMatrix();
 	}
 
-	public void image(final NerdGenericGraphics p_graphics, final float p_scale) {
+	public void image(final NerdGenericGraphics<PGraphicsT> p_graphics, final float p_scale) {
 		this.GRAPHICS.image(p_graphics.getUnderlyingBuffer(), 0, 0, p_scale, p_scale);
 	}
 
-	public void image(final NerdGenericGraphics p_graphics, final float p_x, final float p_y) {
+	public void image(final NerdGenericGraphics<PGraphicsT> p_graphics, final float p_x, final float p_y) {
 		this.image(p_graphics.getUnderlyingBuffer(), p_x, p_y);
 	}
 
-	public void image(final NerdGenericGraphics p_graphics, final PVector p_pos, final float p_scale) {
+	public void image(final NerdGenericGraphics<PGraphicsT> p_graphics, final PVector p_pos, final float p_scale) {
 		this.GRAPHICS.pushMatrix();
 		this.GRAPHICS.translate(p_pos.x, p_pos.y, p_pos.z);
 		this.image(p_graphics.getUnderlyingBuffer(), 0, 0, p_scale, p_scale);
 		this.GRAPHICS.popMatrix();
 	}
 
-	public void image(final NerdGenericGraphics p_graphics, final float p_x, final float p_y, final float p_z) {
+	public void image(final NerdGenericGraphics<PGraphicsT> p_graphics, final float p_x, final float p_y,
+			final float p_z) {
 		this.image((PImage) p_graphics.getUnderlyingBuffer(), p_x, p_y, p_z);
 	}
 
-	public void image(final NerdGenericGraphics p_graphics, final PVector p_pos, final float p_width,
+	public void image(final NerdGenericGraphics<PGraphicsT> p_graphics, final PVector p_pos, final float p_width,
 			final float p_height) {
 		this.GRAPHICS.pushMatrix();
 		this.GRAPHICS.translate(p_pos.x, p_pos.y, p_pos.z);
@@ -1217,6 +929,10 @@ public class NerdGenericGraphics {
 
 	public void beginContour() {
 		this.GRAPHICS.beginContour();
+	}
+
+	public void beginDraw() {
+		this.GRAPHICS.beginDraw();
 	}
 
 	public PGL beginPGL() {

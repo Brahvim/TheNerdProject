@@ -219,10 +219,11 @@ public abstract class NerdSketch extends PApplet
 
 	@Override
 	public void setup() {
-		this.nerdGenericGraphics = new NerdGenericGraphics(this, super.g);
-		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
 		this.genericWindowModule = this.getNerdModule(NerdWindowModule.class);
+		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
 		this.inputModule = this.getNerdModule(NerdInputModule.class);
+
+		this.nerdGenericGraphics = new NerdGenericGraphics(this, super.g);
 
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
 		this.forEachNerdModule(NerdModule::preSetup);
@@ -416,6 +417,7 @@ public abstract class NerdSketch extends PApplet
 		for (final NerdModule m : this.MODULES)
 			if (p_moduleClass.isInstance(m))
 				return p_moduleClass.cast(m);
+
 		throw new NoSuchElementException(
 				"No `" + NerdModule.class.getSimpleName() + "` of type `"
 						+ p_moduleClass.getSimpleName() + "` was found.");

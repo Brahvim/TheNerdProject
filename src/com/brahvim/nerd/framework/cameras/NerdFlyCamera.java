@@ -2,7 +2,7 @@ package com.brahvim.nerd.framework.cameras;
 
 import java.awt.Point;
 
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
@@ -31,7 +31,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 
 	// region Construction.
 	// Nope! Can't merge the two o' these:
-	public NerdFlyCamera(final NerdGenericGraphics p_graphics) {
+	public NerdFlyCamera(final NerdP3dGraphics p_graphics) {
 		super(p_graphics);
 		this.front = super.pos.copy();
 		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowModule.class);
@@ -41,7 +41,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		this.defaultCamFront = this.front.copy();
 	}
 
-	public NerdFlyCamera(final NerdGenericGraphics p_graphics, final PVector p_defaultFront) {
+	public NerdFlyCamera(final NerdP3dGraphics p_graphics, final PVector p_defaultFront) {
 		super(p_graphics);
 		this.front.set(p_defaultFront);
 		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowModule.class);
@@ -49,6 +49,31 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 
 		this.WINDOW.cursorVisible = false;
 		this.defaultCamFront.set(p_defaultFront);
+	}
+
+	public NerdFlyCamera(final NerdFlyCamera p_source) {
+		super(p_source.GRAPHICS);
+
+		this.WINDOW = p_source.WINDOW;
+		this.DISPLAYS = p_source.DISPLAYS;
+
+		// Copying settings over to `this`.
+		this.up = p_source.up.copy();
+		this.pos = p_source.pos.copy();
+		this.front = p_source.front.copy();
+
+		this.far = p_source.far;
+		this.fov = p_source.fov;
+		this.near = p_source.near;
+
+		this.script = p_source.script;
+
+		this.yaw = p_source.yaw;
+		this.zoom = p_source.zoom;
+		this.pitch = p_source.pitch;
+
+		this.mouseSensitivity = p_source.mouseSensitivity;
+		this.shouldConstrainPitch = p_source.shouldConstrainPitch;
 	}
 	// endregion
 
@@ -61,32 +86,6 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 			this.mouseTransform();
 
 		this.pholdMouse = this.holdMouse;
-	}
-
-	@Override
-	public NerdFlyCamera clone() {
-		final NerdFlyCamera toRet = new NerdFlyCamera(super.GRAPHICS);
-
-		// region Copying settings over to `toRet`.
-		toRet.up = new PVector(super.up.x, super.up.x, super.up.z);
-		toRet.pos = new PVector(super.pos.x, super.pos.x, super.pos.z);
-		toRet.front = new PVector(this.front.x, this.front.x, this.front.z);
-
-		toRet.far = super.far;
-		toRet.fov = super.fov;
-		toRet.near = super.near;
-
-		toRet.script = this.script;
-
-		toRet.yaw = this.yaw;
-		toRet.zoom = this.zoom;
-		toRet.pitch = this.pitch;
-
-		toRet.mouseSensitivity = this.mouseSensitivity;
-		toRet.shouldConstrainPitch = this.shouldConstrainPitch;
-		// endregion
-
-		return toRet;
 	}
 
 	@Override

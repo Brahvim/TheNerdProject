@@ -4,13 +4,13 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
-import processing.core.PGraphics;
 import processing.core.PVector;
+import processing.opengl.PGraphics3D;
 
 // Declared as abstract because it is supposed to be extended everytime.
 public abstract class NerdAbstractCamera {
@@ -20,7 +20,7 @@ public abstract class NerdAbstractCamera {
 			DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10_000, DEFAULT_CAM_MOUSE_Z = 1;
 
 	protected final NerdSketch SKETCH;
-	protected final NerdGenericGraphics GRAPHICS;
+	protected final NerdP3dGraphics GRAPHICS;
 	public Consumer<NerdAbstractCamera> script; // Smart users will write complete classes for these.
 
 	// ...yeah, for some reason `PApplet::color()` fails. No ARGB!
@@ -38,12 +38,12 @@ public abstract class NerdAbstractCamera {
 	public boolean doScript = true, doAutoClear = true, doAutoAspect = true;
 	// endregion
 
-	protected NerdAbstractCamera(final NerdSketch p_sketch, final PGraphics p_graphics) {
+	protected NerdAbstractCamera(final NerdSketch p_sketch, final PGraphics3D p_graphics) {
 		this.SKETCH = p_sketch;
-		this.GRAPHICS = new NerdGenericGraphics(this.SKETCH, p_graphics);
+		this.GRAPHICS = new NerdP3dGraphics(this.SKETCH, p_graphics);
 	}
 
-	protected NerdAbstractCamera(final NerdGenericGraphics p_graphics) {
+	protected NerdAbstractCamera(final NerdP3dGraphics p_graphics) {
 		this.GRAPHICS = p_graphics;
 		this.SKETCH = this.GRAPHICS.getSketch();
 	}

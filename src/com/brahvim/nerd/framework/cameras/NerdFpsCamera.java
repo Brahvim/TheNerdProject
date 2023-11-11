@@ -1,11 +1,11 @@
 package com.brahvim.nerd.framework.cameras;
 
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
 
 public class NerdFpsCamera extends NerdFlyCamera {
 	private float height;
 
-	public NerdFpsCamera(final NerdGenericGraphics p_graphics) {
+	public NerdFpsCamera(final NerdP3dGraphics p_graphics) {
 		super(p_graphics);
 	}
 

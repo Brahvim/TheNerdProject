@@ -3,22 +3,22 @@ package com.brahvim.nerd.framework.cameras;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
 
 import processing.core.PConstants;
-import processing.core.PGraphics;
 import processing.core.PVector;
+import processing.opengl.PGraphics3D;
 
 public class NerdBasicCameraBuilder {
 
 	private final NerdSketch SKETCH;
 	private final NerdBasicCamera BUILD;
 
-	public NerdBasicCameraBuilder(final NerdSketch p_sketch, final PGraphics p_graphics) {
-		this(new NerdGenericGraphics(p_sketch, p_graphics));
+	public NerdBasicCameraBuilder(final NerdSketch p_sketch, final PGraphics3D p_graphics) {
+		this(new NerdP3dGraphics(p_sketch, p_graphics));
 	}
 
-	public NerdBasicCameraBuilder(final NerdGenericGraphics p_graphics) {
+	public NerdBasicCameraBuilder(final NerdP3dGraphics p_graphics) {
 		this.SKETCH = p_graphics.getSketch(); // Used by `setClearColor()`.
 		this.BUILD = new NerdBasicCamera(p_graphics);
 

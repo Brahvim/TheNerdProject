@@ -2,7 +2,7 @@ package com.brahvim.nerd.framework.cameras;
 
 import java.util.Objects;
 
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
 
 import processing.core.PVector;
 
@@ -14,7 +14,22 @@ public class NerdBasicCamera extends NerdAbstractCamera {
 
 	protected PVector center, defaultCamCenter;
 
-	protected NerdBasicCamera(final NerdGenericGraphics p_graphics) {
+	public NerdBasicCamera(final NerdBasicCamera original) {
+		super(original.GRAPHICS);
+
+		// Copying camera parameters.
+		this.up = original.up.copy();
+		this.pos = original.pos.copy();
+		this.center = original.center.copy();
+
+		this.far = original.far;
+		this.fov = original.fov;
+		this.near = original.near;
+
+		this.script = original.script;
+	}
+
+	protected NerdBasicCamera(final NerdP3dGraphics p_graphics) {
 		super(p_graphics);
 		this.center = new PVector();
 	}
@@ -60,25 +75,6 @@ public class NerdBasicCamera extends NerdAbstractCamera {
 
 	public void setDefaultCamCenter(final PVector p_defaultCamCenter) {
 		this.defaultCamCenter = Objects.requireNonNull(p_defaultCamCenter);
-	}
-
-	@Override
-	public NerdBasicCamera clone() {
-		final NerdBasicCamera toRet = new NerdBasicCamera(super.GRAPHICS);
-
-		// region Copying camera parameters.
-		toRet.up.set(this.up);
-		toRet.pos.set(this.pos);
-		toRet.center.set(this.center);
-
-		toRet.far = this.far;
-		toRet.fov = this.fov;
-		toRet.near = this.near;
-
-		toRet.script = this.script;
-		// endregion
-
-		return toRet;
 	}
 
 }
