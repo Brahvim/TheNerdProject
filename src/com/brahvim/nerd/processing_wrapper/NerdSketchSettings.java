@@ -13,6 +13,7 @@ import processing.core.PConstants;
 
 public class NerdSketchSettings {
 
+	// region Non-Boolean settings.
 	/** What {@link NerdSketch#settings()} passes to {@link PApplet#smooth()} */
 	public int antiAliasing = 2;
 
@@ -44,31 +45,59 @@ public class NerdSketchSettings {
 
 	/** */
 	public Map<Class<? extends NerdModule>, NerdModuleSettings<?>> nerdModulesSettings = new HashMap<>(0);
+	// endregion
 
 	// region Booleans.
-	/** Dictates if the sketch can ever resize the window at all. */
+	/**
+	 * Dictates if the sketch can ever resize the window at all.
+	 * <p>
+	 * {@code true} by default.
+	 */
 	public boolean canResize = true;
 
-	/** Dictates if the sketch can ever enter fullscreen at all. */
-	public boolean canFullscreen = false;
+	/**
+	 * Dictates if the sketch can ever enter fullscreen at all.
+	 * <p>
+	 * {@code true} by default.
+	 */
+	public boolean canFullscreen = true;
 
-	/** Dictates if the sketch can enter fullscreen via the {@code F11} key. */
-	public boolean canF11Fullscreen = false;
+	/**
+	 * Dictates if the sketch can enter fullscreen via the {@code F11} key.
+	 * <p>
+	 * {@code true} by default.
+	 */
+	public boolean canF11Fullscreen = true;
 
 	/**
 	 * Should the sketch stop the default behavior of exiting when {@code Esc} is
 	 * pressed?
+	 * <p>
+	 * {@code true} by default.
 	 */
-	public boolean preventCloseOnEscape = false;
+	public boolean preventCloseOnEscape = true;
 
-	/** Should the sketch be started in fullscreen? */
+	/**
+	 * Should the sketch be started in fullscreen?
+	 * <p>
+	 * {@code false} by default.
+	 */
 	public boolean shouldStartFullscreen = false;
 
 	/**
 	 * Dictates if the sketch can enter fullscreen via the {@code Alt} +
 	 * {@code Enter} key combination.
+	 * <p>
+	 * {@code true} by default.
 	 */
-	public boolean canAltEnterFullscreen = false;
+	public boolean canAltEnterFullscreen = true;
+
+	/**
+	 * Dictates if the sketch should start in the portrait orientation on Android.
+	 * <p>
+	 * {@code false} by default.
+	 */
+	public boolean shouldStartPortraitMode = false;
 	// endregion
 
 }

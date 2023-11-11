@@ -17,6 +17,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.brahvim.nerd.io.NerdStringTable;
+import com.brahvim.nerd.io.asset_loader.NerdAsset;
+import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
+import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
+import com.brahvim.nerd.necessary_modules.NerdDisplayModule;
 import com.brahvim.nerd.necessary_modules.NerdInputModule;
 import com.brahvim.nerd.necessary_modules.NerdWindowModule;
 import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
@@ -33,8 +38,32 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.opengl.PJOGL;
 
-public abstract class NerdSketch extends PApplet implements
-		NerdSketchAllWorkflowsListener, NerdPAppletItf {
+public abstract class NerdSketch extends PApplet
+		implements NerdSketchAllWorkflowsListener, NerdPAppletItf {
+
+	// region Inner classes.
+	protected static final class NerdSketchOnlyAssetsModule extends NerdAssetsModule {
+
+		protected NerdSketchOnlyAssetsModule(final NerdSketch p_sketch) {
+			super(p_sketch);
+		}
+
+		@Override
+		public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type) {
+			final NerdAsset toRet = super.addAsset(p_type);
+			toRet.startLoading();
+			return toRet;
+		}
+
+		@Override
+		public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type, final Runnable p_onLoad) {
+			final NerdAsset toRet = super.addAsset(p_type, p_onLoad);
+			toRet.startLoading();
+			return toRet;
+		}
+
+	}
+	// endregion
 
 	// region Fields.
 	// region Public fields.
@@ -53,31 +82,27 @@ public abstract class NerdSketch extends PApplet implements
 	// public final NerdAssetsModule ASSETS;
 
 	// region `java.awt` constants.
-	public final GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment
-			.getLocalGraphicsEnvironment();
-
-	public GraphicsDevice[] JAVA_SCREENS = this.LOCAL_GRAPHICS_ENVIRONMENT
-			.getScreenDevices();
-
-	public GraphicsDevice DEFAULT_JAVA_SCREEN = this.LOCAL_GRAPHICS_ENVIRONMENT
-			.getDefaultScreenDevice();
-
-	public DisplayMode DEFAULT_JAVA_SCREEN_MODE = this.DEFAULT_JAVA_SCREEN
-			.getDisplayMode();
-
-	public int DEFAULT_REFRESH_RATE = this.DEFAULT_JAVA_SCREEN_MODE
-			.getRefreshRate();
+	public final GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	public GraphicsDevice DEFAULT_JAVA_SCREEN = this.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
+	public GraphicsDevice[] JAVA_SCREENS = this.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
+	public DisplayMode DEFAULT_JAVA_SCREEN_MODE = this.DEFAULT_JAVA_SCREEN.getDisplayMode();
+	public int DEFAULT_REFRESH_RATE = this.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
 	// endregion
 	// endregion
 	// endregion
 	// endregion
 	// Timers! (`millis()` returns `int`s!):
 
-	protected int frameStartTime, pframeTime, frameTime;
+	protected int frameStartTime, pframeStartTime, deltaTime;
 	protected NerdGenericGraphics nerdGenericGraphics;
-	protected NerdWindowModule window;
-	protected NerdInputModule input;
+	protected NerdStringTable globalStringTable;
 	protected PFont defaultFont;
+
+	// Necessary `NerdModule`s:
+	protected NerdSketch.NerdSketchOnlyAssetsModule globalAssetsModule;
+	protected NerdDisplayModule displayModule;
+	protected NerdWindowModule windowModule;
+	protected NerdInputModule inputModule;
 
 	// region Protected fields.
 	protected final List<NerdModule> MODULES;
@@ -117,8 +142,7 @@ public abstract class NerdSketch extends PApplet implements
 			m.assignModuleSettings(p_settings.nerdModulesSettings.get(m.getClass()));
 		}
 
-		// this.ASSETS =
-		// this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
+		this.globalAssetsModule = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
 		// endregion
 
 		// region Setting the icon of the OpenGL renderer's window.
@@ -180,9 +204,14 @@ public abstract class NerdSketch extends PApplet implements
 	// region Processing sketch workflow.
 	@Override
 	public void settings() {
+		// Placed first, since this restarts the sketch:
+		super.orientation(this.SKETCH_SETTINGS.shouldStartPortraitMode
+				? PConstants.PORTRAIT
+				: PConstants.LANDSCAPE);
+
 		super.smooth(this.SKETCH_SETTINGS.antiAliasing);
 
-		if (this.SKETCH_SETTINGS.canFullscreen)
+		if (this.SKETCH_SETTINGS.shouldStartFullscreen)
 			super.fullScreen(PConstants.P3D);
 		else
 			super.size(this.SKETCH_SETTINGS.width, this.SKETCH_SETTINGS.height, PConstants.P3D);
@@ -191,16 +220,18 @@ public abstract class NerdSketch extends PApplet implements
 	@Override
 	public void setup() {
 		this.nerdGenericGraphics = new NerdGenericGraphics(this, super.g);
+		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
+		this.windowModule = this.getNerdModule(NerdWindowModule.class);
+		this.inputModule = this.getNerdModule(NerdInputModule.class);
+
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
 		this.forEachNerdModule(NerdModule::preSetup);
 
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
-		// super.frameRate(this.DEFAULT_REFRESH_RATE);
-		// super.surface.setTitle(this.SKETCH_SETTINGS.INITIAL_WINDOW_TITLE);
+		super.frameRate(this.DEFAULT_REFRESH_RATE);
+		super.surface.setTitle(this.SKETCH_SETTINGS.initialWindowTitle);
 
-		// this.NerdGenericGraphics = new NerdGenericGraphics(this,
-		// super.getGraphics());
 		this.defaultFont = super.createFont("SansSerif",
 				72 * ((float) super.displayWidth / (float) super.displayHeight));
 
@@ -220,9 +251,9 @@ public abstract class NerdSketch extends PApplet implements
 
 	@Override
 	public void pre() {
-		this.pframeTime = this.frameStartTime;
+		this.pframeStartTime = this.frameStartTime;
 		this.frameStartTime = super.millis(); // Timestamp!
-		this.frameTime = this.frameStartTime - this.pframeTime;
+		this.deltaTime = this.frameStartTime - this.pframeStartTime;
 
 		this.forEachNerdModule(NerdModule::pre);
 	}
@@ -250,11 +281,13 @@ public abstract class NerdSketch extends PApplet implements
 	@Override
 	public void exit() {
 		this.forEachNerdModule(NerdModule::exit);
+		super.exit();
 	}
 
 	@Override
 	public void dispose() {
 		this.forEachNerdModule(NerdModule::dispose);
+		super.dispose();
 	}
 	// endregion
 
@@ -292,24 +325,26 @@ public abstract class NerdSketch extends PApplet implements
 	public void keyPressed() {
 		if (this.keyCode == 27)
 			if (this.SKETCH_SETTINGS.preventCloseOnEscape)
-				this.key = '\0'; // Processing checks this field to know what key was pressed.
+				super.key = '\0';
+		// .....^^^^^^^^^^^^^^^^^.....
+		// Processing checks this field, `PApplet::key` to observe what key was pressed.
 		// By setting it to `\0`, we disallow exiting.
 
 		if (this.SKETCH_SETTINGS.canFullscreen) {
 
 			if (this.SKETCH_SETTINGS.canAltEnterFullscreen
 					&& super.keyCode == KeyEvent.VK_ENTER
-					&& this.input.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
-				this.window.fullscreen = !this.window.fullscreen;
+					&& this.inputModule.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
+				this.windowModule.fullscreen = !this.windowModule.fullscreen;
 
 			else if (this.SKETCH_SETTINGS.canF11Fullscreen) {
 				// `KeyEvent.VK_ADD` is `107`, but here, it's actually `F11`!:
 				if (this.USES_OPENGL) {
 					if (super.keyCode == 107)
-						this.window.fullscreen = !this.window.fullscreen;
+						this.windowModule.fullscreen = !this.windowModule.fullscreen;
 				} else {
 					if (super.keyCode == KeyEvent.VK_F11)
-						this.window.fullscreen = !this.window.fullscreen;
+						this.windowModule.fullscreen = !this.windowModule.fullscreen;
 				}
 			}
 		}
@@ -401,44 +436,48 @@ public abstract class NerdSketch extends PApplet implements
 		for (final NerdModule m : this.MODULES)
 			p_task.accept(m, p_otherArg);
 	}
+
+	public NerdAssetsModule getGlobalNerdAssetsModule() {
+		return this.globalAssetsModule;
+	}
+
+	public NerdDisplayModule getNerdDisplayModule() {
+		return this.displayModule;
+	}
+
+	public NerdWindowModule getNerdWindowModule() {
+		return this.windowModule;
+	}
+
+	public NerdInputModule getNerdInputModule() {
+		return this.inputModule;
+	}
 	// endregion
 
 	// region Utilities!
-	// public GL getGl() {
-	// return this.gl;
-	// }
-
-	// public GLU getGlu() {
-	// return this.glu;
-	// }
-
-	public int getFrameTime() {
-		return this.frameTime;
+	public int getDeltaTime() {
+		return this.deltaTime;
 	}
 
-	public int getPframeTime() {
-		return this.pframeTime;
+	public int getPframeStartTime() {
+		return this.pframeStartTime;
 	}
 
 	public PFont getDefaultFont() {
 		return this.defaultFont;
 	}
 
-	// public NerdAssetsModule getAssets() {
-	// return this.ASSETS;
-	// }
-
 	public final int getFrameStartTime() {
 		return this.frameStartTime;
+	}
+
+	public NerdStringTable getGlobalStringTable() {
+		return this.globalStringTable;
 	}
 
 	public NerdGenericGraphics getNerdGenericGraphics() {
 		return this.nerdGenericGraphics;
 	}
-
-	// public PGraphicsOpenGL getGlGraphics() {
-	// return this.glGraphics;
-	// }
 
 	// region Rendering utilities!
 	public PImage svgToImage(final PShape p_shape, final float p_width, final float p_height) {
