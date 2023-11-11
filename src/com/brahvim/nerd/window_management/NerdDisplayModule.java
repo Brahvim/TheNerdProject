@@ -51,17 +51,13 @@ public class NerdDisplayModule extends NerdModule {
 		this.window = super.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
-	// Referenced in `NerdSketch::setup()` - only time it's been called out there.
-	protected void updateDisplayParameters() {
+	public void updateDisplayParameters() {
 		this.displayWidth = super.SKETCH.displayWidth;
 		this.displayHeight = super.SKETCH.displayHeight;
 
 		this.displayWidthTwice = this.displayWidth * 2;
 		this.displayHeightTwice = this.displayHeight * 2;
 		this.displayScr = (float) this.displayWidth / (float) this.displayHeight;
-
-		if (this.currentMonitor != null)
-			this.displayRefreshRate = this.currentMonitor.getDisplayMode().getRefreshRate();
 
 		this.displayWidthHalf = this.displayWidth / 2;
 		this.displayHeightHalf = this.displayHeight / 2;
@@ -74,21 +70,8 @@ public class NerdDisplayModule extends NerdModule {
 		this.displayHeightThirdQuart = this.displayWidthHalf + this.displayWidthQuart;
 	}
 
-	// protected void updateSketchAwtGlobals() {
-	// final GraphicsDevice[] updatedList =
-	// super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
-	// if (super.SKETCH.JAVA_SCREENS != updatedList) {
-	// super.SKETCH.DEFAULT_JAVA_SCREEN =
-	// super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
-	// super.SKETCH.DEFAULT_JAVA_SCREEN_MODE =
-	// super.SKETCH.DEFAULT_JAVA_SCREEN.getDisplayMode();
-	// super.SKETCH.DEFAULT_REFRESH_RATE =
-	// super.SKETCH.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
-	// }
-	// }
-
-	protected void updateSketchAwtGlobals() {
-		// This could be faster?:
+	public void updateSketchAwtGlobals() {
+		// Why is `Array.equals()` faster!? It is supposed to be slow!
 		if (!Arrays.equals(super.SKETCH.JAVA_SCREENS, super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices())) {
 			super.SKETCH.DEFAULT_JAVA_SCREEN = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
 			super.SKETCH.DEFAULT_JAVA_SCREEN_MODE = super.SKETCH.DEFAULT_JAVA_SCREEN.getDisplayMode();
@@ -96,7 +79,7 @@ public class NerdDisplayModule extends NerdModule {
 		}
 	}
 
-	protected void recordPreviousDisplayParameters() {
+	public void recordPreviousDisplayParameters() {
 		this.pdisplayScr = this.displayScr;
 		this.ppixelWidth = this.pixelWidth;
 		this.ppixelHeight = this.pixelHeight;
@@ -119,21 +102,14 @@ public class NerdDisplayModule extends NerdModule {
 		this.pdisplayHeightThirdQuart = this.displayHeightThirdQuart;
 	}
 
-	private void onWindowMonitorChange() {
-		this.previousMonitor = this.currentMonitor;
-		this.updatePAppletDisplayDimensions();
-		this.updateDisplayParameters();
-		super.SKETCH.monitorChanged();
-	}
-
-	protected void updatePAppletDisplayDimensionsIfNotDefault() {
+	public void updatePAppletDisplayDimensionsIfNotDefault() {
 		if (this.currentMonitor == super.SKETCH.DEFAULT_JAVA_SCREEN)
 			return;
 
 		this.updatePAppletDisplayDimensions();
 	}
 
-	protected void updatePAppletDisplayDimensions() {
+	public void updatePAppletDisplayDimensions() {
 		if (this.currentMonitor == null)
 			this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
 
@@ -146,8 +122,8 @@ public class NerdDisplayModule extends NerdModule {
 	@Override
 	public void pre() {
 		this.recordPreviousDisplayParameters(); // Not a bottleneck.
-		// this.updateDisplayParameters();
-		// this.updateSketchAwtGlobals();
+		this.updateDisplayParameters();
+		this.updateSketchAwtGlobals();
 
 		if (this.previousMonitor != this.currentMonitor)
 			this.onWindowMonitorChange();
@@ -156,6 +132,18 @@ public class NerdDisplayModule extends NerdModule {
 			this.currentMonitor = this.getGraphicsDeviceAt(this.input.GLOBAL_MOUSE_POINT);
 
 		this.updatePAppletDisplayDimensionsIfNotDefault();
+	}
+
+	// Internal callback. `protected` so it can be extended further!
+	protected void onWindowMonitorChange() {
+		this.previousMonitor = this.currentMonitor;
+
+		if (this.currentMonitor != null)
+			this.displayRefreshRate = this.currentMonitor.getDisplayMode().getRefreshRate();
+
+		this.updatePAppletDisplayDimensions();
+		this.updateDisplayParameters();
+		super.SKETCH.monitorChanged(); // Notify the `NerdSketch` instance.
 	}
 
 	// region Getters.
