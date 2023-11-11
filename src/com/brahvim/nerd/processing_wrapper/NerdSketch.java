@@ -38,13 +38,13 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.opengl.PJOGL;
 
-public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet
+public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet
 		implements NerdSketchAllWorkflowsListener, NerdPAppletItf {
 
 	// region Inner classes.
 	protected static final class NerdSketchOnlyAssetsModule extends NerdAssetsModule {
 
-		protected NerdSketchOnlyAssetsModule(final NerdSketch p_sketch) {
+		protected NerdSketchOnlyAssetsModule(final NerdSketch<?> p_sketch) {
 			super(p_sketch);
 		}
 
@@ -100,19 +100,19 @@ public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PAp
 
 	// Necessary `NerdModule`s:
 	protected NerdSketch.NerdSketchOnlyAssetsModule globalAssetsModule;
+	protected NerdWindowModule<SketchPGraphicsT> genericWindowModule;
 	protected NerdDisplayModule displayModule;
-	protected NerdWindowModule genericWindowModule;
 	protected NerdInputModule inputModule;
 
 	// region Protected fields.
 	protected final List<NerdModule> MODULES;
-	public final NerdSketchSettings SKETCH_SETTINGS;
+	public final NerdSketchSettings<SketchPGraphicsT> SKETCH_SETTINGS;
 	protected final Map<Class<? extends NerdModule>, NerdModule> MODULES_TO_CLASSES_MAP;
 	// endregion
 	// endregion
 
 	// region Construction.
-	protected NerdSketch() {
+	public NerdSketch() {
 		this.ROBOT = null;
 		this.MODULES = null;
 		this.nerdGenericGraphics = null;
@@ -122,7 +122,7 @@ public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PAp
 		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
-	protected NerdSketch(final NerdSketchSettings p_settings) {
+	public NerdSketch(final NerdSketchSettings<SketchPGraphicsT> p_settings) {
 		Objects.requireNonNull(this.SKETCH_SETTINGS = p_settings, String.format("""
 				Please use an instance of some subclass of `%s`, or initialize a `%s` by hand, to make a `%s`.
 				You seem to have provided, `null`, to its constructor.""",
@@ -153,14 +153,16 @@ public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PAp
 		this.ROBOT = NerdAwtUtils.createAwtRobot();
 	}
 
-	private List<NerdModule> sortModules(final NerdSketchSettings p_settings) {
-		final LinkedHashSet<Function<NerdSketch, NerdModule>> nerdModulesToAssign = new LinkedHashSet<>(0);
+	private List<NerdModule> sortModules(final NerdSketchSettings<SketchPGraphicsT> p_settings) {
+		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> nerdModulesToAssign
+		/////////////////////////////////
+				= new LinkedHashSet<>(0);
 		p_settings.nerdModulesInstantiator.accept(nerdModulesToAssign);
 
 		final List<NerdModule> toRet = new ArrayList<>(nerdModulesToAssign.size());
 
 		// Construct modules using the provided `Function`s, and add them to the map:
-		for (final Function<NerdSketch, NerdModule> f : nerdModulesToAssign)
+		for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule> f : nerdModulesToAssign)
 			try {
 
 				Objects.requireNonNull(f,
@@ -224,9 +226,7 @@ public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PAp
 		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
 		this.inputModule = this.getNerdModule(NerdInputModule.class);
 
-		this.nerdGenericGraphics = (NerdGenericGraphics<SketchPGraphicsT>) NerdGenericGraphics
-				.createNerdGenericGraphics(this,
-						super.g);
+		this.nerdGenericGraphics = NerdGenericGraphics.createNerdGenericGraphics(this, super.g);
 
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
 		this.forEachNerdModule(NerdModule::preSetup);
@@ -449,7 +449,6 @@ public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PAp
 		return this.displayModule;
 	}
 
-	@SuppressWarnings("unchecked")
 	public NerdWindowModule<SketchPGraphicsT> getNerdWindowModule() {
 		return this.genericWindowModule;
 	}
@@ -480,7 +479,7 @@ public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PAp
 		return this.globalStringTable;
 	}
 
-	public NerdGenericGraphics getNerdGenericGraphics() {
+	public NerdGenericGraphics<SketchPGraphicsT> getNerdGenericGraphics() {
 		return this.nerdGenericGraphics;
 	}
 

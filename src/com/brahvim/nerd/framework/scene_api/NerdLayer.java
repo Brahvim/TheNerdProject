@@ -7,6 +7,8 @@ import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
+import processing.core.PGraphics;
+
 /**
  * Just like {@link NerdScene}s, {@link NerdLayer}s
  * are used via inheritance, and not anonymous classes.
@@ -16,24 +18,26 @@ import com.brahvim.nerd.window_management.NerdWindowModule;
  * {@link NerdScene#addLayer(Class)}, passing in your {@link NerdLayer}
  * subclass.
  */
-public abstract class NerdLayer<GraphicsT extends NerdGenericGraphics> {
+public abstract class NerdLayer<SketchPGraphicsT extends PGraphics> {
 
 	// region `protected` fields.
 	// Seriously, why did I set these to be `protected`?
-	public final NerdLayer<GraphicsT> LAYER = this;
+	public final NerdLayer<SketchPGraphicsT> LAYER = this;
 
 	// Forgive me for breaking naming conventions here.
 	// Forgive me. Please!
-	protected NerdSketch SKETCH;
-	protected GraphicsT GRAPHICS;
+	protected NerdSketch<SketchPGraphicsT> SKETCH;
+	protected NerdWindowModule<SketchPGraphicsT> WINDOW;
+	protected NerdScenesModule<SketchPGraphicsT> MANAGER;
+	protected NerdGenericGraphics<SketchPGraphicsT> GRAPHICS;
+
+	// Non-generic ones:
 	protected NerdSceneState STATE;
 	protected NerdInputModule INPUT;
-	protected NerdWindowModule WINDOW;
 	protected NerdAssetsModule ASSETS;
-	protected NerdScenesModule MANAGER;
 	protected NerdDisplayModule DISPLAY;
 
-	protected NerdScene<?> SCENE;
+	protected NerdScene<SketchPGraphicsT> SCENE;
 	// endregion
 
 	// region `private` fields.

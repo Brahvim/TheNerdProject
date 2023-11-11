@@ -12,7 +12,7 @@ public class NerdSerializedAsset extends NerdSinglePathAssetLoader<Object> {
 	}
 
 	@Override
-	protected Object fetchData(final NerdSketch p_sketch)
+	protected Object fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		try {
 			return NerdByteSerialUtils.fromFile(super.path);

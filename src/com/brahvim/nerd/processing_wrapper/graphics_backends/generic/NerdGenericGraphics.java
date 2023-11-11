@@ -1,7 +1,6 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends.generic;
 
 import java.awt.Image;
-import java.rmi.server.SkeletonMismatchException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,13 +70,12 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.WINDOW = this.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	public NerdSketch<SketchPGraphicsT> getSketch() {
 		return this.SKETCH;
 	}
 
 	// region Rendering utilities!
-	public final PGraphics getUnderlyingBuffer() {
+	public final SketchPGraphicsT getUnderlyingBuffer() {
 		return this.GRAPHICS;
 	}
 

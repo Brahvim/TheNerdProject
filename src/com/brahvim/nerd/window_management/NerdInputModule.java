@@ -83,9 +83,8 @@ public class NerdInputModule extends NerdModule {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void preSetup() {
-		this.window = (NerdWindowModule<?>) super.SKETCH.getNerdModule(NerdWindowModule.class);
+		this.window = super.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
 	@Override

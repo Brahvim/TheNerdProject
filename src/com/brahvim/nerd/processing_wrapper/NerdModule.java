@@ -9,7 +9,7 @@ import processing.event.MouseEvent;
 
 public abstract class NerdModule {
 
-	protected final NerdSketch SKETCH;
+	protected final NerdSketch<?> SKETCH;
 
 	@SuppressWarnings("unused")
 	private NerdModule() {
@@ -17,11 +17,11 @@ public abstract class NerdModule {
 		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
 	}
 
-	protected NerdModule(final NerdSketch p_sketch) {
+	protected NerdModule(final NerdSketch<?> p_sketch) {
 		this.SKETCH = p_sketch;
 	}
 
-	public NerdSketch getSketch() {
+	public NerdSketch<?> getSketch() {
 		return this.SKETCH;
 	}
 
@@ -36,9 +36,9 @@ public abstract class NerdModule {
 	protected void assignModuleSettings(final NerdModuleSettings<?> p_settings) {
 	}
 
-	// region Callbacks for `NerdSketch` to call!1!!!
+	// region Callbacks for `NerdSketch<?>` to call!1!!!
 	// region Workflow callbacks!
-	protected void sketchConstructed(final NerdSketchSettings p_settings) {
+	protected void sketchConstructed(final NerdSketchSettings<?> p_settings) {
 	}
 
 	protected void settings() {

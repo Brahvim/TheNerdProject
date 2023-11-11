@@ -23,7 +23,7 @@ public class NerdP3dGraphics extends NerdGenericGraphics<PGraphics3D> {
         NerdGenericGraphics.subclassesIndex.put(PGraphics3D.class, NerdP3dGraphics.class);
     }
 
-    public NerdP3dGraphics(final NerdSketch p_sketch, final PGraphics3D p_graphics) {
+    public NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
         super(p_sketch, p_graphics);
         this.UNPROJECTOR = new NerdUnprojector();
         this.DEFAULT_CAMERA = new NerdBasicCameraBuilder(this).build();

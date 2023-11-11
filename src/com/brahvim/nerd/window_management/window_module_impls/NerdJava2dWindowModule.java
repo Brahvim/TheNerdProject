@@ -11,7 +11,6 @@ import com.brahvim.nerd.window_management.NerdWindowModule;
 import processing.awt.PGraphicsJava2D;
 import processing.awt.PSurfaceAWT;
 import processing.core.PVector;
-import processing.opengl.PGraphics3D;
 
 public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 

@@ -76,7 +76,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	}
 	// endregion
 
-	protected NerdScenesModuleSettings scenesModuleSettings;
+	protected NerdScenesModuleSettings<SketchPGraphicsT> scenesModuleSettings;
 
 	// region `protected` and `private` fields.
 
@@ -116,12 +116,12 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void assignModuleSettings(final NerdModuleSettings<?> p_settings) {
-		if (p_settings instanceof final NerdScenesModuleSettings settings) {
+		if (p_settings instanceof final NerdScenesModuleSettings settings)
 			this.scenesModuleSettings = settings;
-		} else {
-			this.scenesModuleSettings = new NerdScenesModuleSettings(null);
-		}
+		else
+			this.scenesModuleSettings = new NerdScenesModuleSettings<>(null);
 	}
 
 	// region `NerdSketch` workflow callbacks.
@@ -382,7 +382,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		return (Class<? extends NerdScene<SketchPGraphicsT>>) this.previousSceneClass;
 	}
 
-	public NerdScenesModuleSettings getScenesModuleSettings() {
+	public NerdScenesModuleSettings<SketchPGraphicsT> getScenesModuleSettings() {
 		return this.scenesModuleSettings;
 	}
 	// endregion
@@ -709,7 +709,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		// Initialize fields as if this was a part of the construction
 		// (done here instead so your subclass doesn't need to write one!):
 		toRet.MANAGER = this;
-		toRet.SKETCH = toRet.MANAGER.SKETCH;
+		toRet.SKETCH = (NerdSketch<SketchPGraphicsT>) toRet.MANAGER.SKETCH;
 
 		// Now, we copy all other objects from `toRet.SKETCH`!:
 		// toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
@@ -742,13 +742,10 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 
 	// The scene-deleter! Also receives EVERY request to start a scene, by the way.
 	@SuppressWarnings("unchecked")
-	private void setScene(
-			final NerdScene<SketchPGraphicsT> p_currentScene,
-			final NerdSceneState p_state) {
-		final NerdWindowModule<SketchPGraphicsT> window = (NerdWindowModule<SketchPGraphicsT>) super.SKETCH
-				.getNerdModule(NerdWindowModule.class);
-		window.cursorConfined = false;
+	private void setScene(final NerdScene<SketchPGraphicsT> p_currentScene, final NerdSceneState p_state) {
+		final NerdWindowModule<SketchPGraphicsT> window = super.SKETCH.getNerdModule(NerdWindowModule.class);
 		window.cursorVisible = true;
+		window.cursorConfined = false;
 
 		// region `this.SETTINGS.ON_SWITCH` tasks.
 		if (this.scenesModuleSettings.ON_SWITCH.doClear) {

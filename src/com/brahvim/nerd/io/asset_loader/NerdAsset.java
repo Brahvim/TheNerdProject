@@ -7,7 +7,7 @@ public class NerdAsset {
 	// region Fields!
 	public final String NAME;
 
-	private final NerdSketch SKETCH;
+	private final NerdSketch<?> SKETCH;
 	private final NerdAssetsModule ASSETS;
 	private final NerdAssetLoader<?> LOADER;
 
@@ -75,7 +75,7 @@ public class NerdAsset {
 
 		// final Consumer<NerdSketch> whenLoaded = new Consumer<NerdSketch>() {
 		// @Override
-		// public void accept(final NerdSketch p_sketch) {
+		// public void accept(final NerdSketch<?> p_sketch) {
 		// NerdAsset.this.ploaded = true;
 		// // p_sketch.callbacks.removePostListener(this);
 		// }

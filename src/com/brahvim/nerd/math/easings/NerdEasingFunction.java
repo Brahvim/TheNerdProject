@@ -68,7 +68,7 @@ public abstract class NerdEasingFunction {
 	 */
 	public boolean absoluteValue = false;
 
-	protected final NerdSketch SKETCH;
+	protected final NerdSketch<?> SKETCH;
 
 	protected Runnable onEnd;
 	protected float lastValue;
@@ -76,7 +76,7 @@ public abstract class NerdEasingFunction {
 	protected boolean pactive = false;
 	// endregion
 
-	protected NerdEasingFunction(final NerdSketch p_parentSketch) {
+	protected NerdEasingFunction(final NerdSketch<?> p_parentSketch) {
 		this.SKETCH = p_parentSketch;
 	}
 

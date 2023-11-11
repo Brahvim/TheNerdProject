@@ -20,7 +20,7 @@ import processing.core.PVector;
  * Please use {@link NerdWindowModule#createWindowModule(NerdSketch)} to create
  * instances specific to your {@link NerdSketch}'s renderer.
  */
-public abstract class NerdWindowModule<PGraphicsT extends PGraphics> extends NerdModule {
+public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> extends NerdModule {
 
 	protected static final Map<Class<? extends PGraphics>, Class<? extends NerdWindowModule<? extends PGraphics>>> subclassesIndex = Collections
 			.synchronizedMap(new HashMap<>(6));
@@ -47,16 +47,15 @@ public abstract class NerdWindowModule<PGraphicsT extends PGraphics> extends Ner
 	// endregion
 
 	// region Construction and initialization.
-	protected NerdWindowModule(final NerdSketch<PGraphicsT> p_sketch) {
+	protected NerdWindowModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
 		super(p_sketch);
 		this.fullscreen = super.SKETCH.SKETCH_SETTINGS.shouldStartFullscreen;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void preSetup() {
 		this.sketchSurface = super.SKETCH.getSurface();
-		this.displays = (NerdDisplayModule) super.SKETCH.getNerdModule(NerdDisplayModule.class);
+		this.displays = super.SKETCH.getNerdModule(NerdDisplayModule.class);
 		this.iconImage = super.SKETCH.loadImage(super.SKETCH.SKETCH_SETTINGS.windowIconPath);
 
 		this.preSetupImpl();
@@ -72,8 +71,7 @@ public abstract class NerdWindowModule<PGraphicsT extends PGraphics> extends Ner
 		for (final var entry : NerdWindowModule.subclassesIndex.entrySet())
 			if (entry.getKey().isInstance(p_sketch.getNerdGenericGraphics().getUnderlyingBuffer()))
 				try {
-					return (NerdWindowModule<RetGraphicsT>) entry.getValue().getConstructor()
-							.newInstance(p_sketch);
+					return (NerdWindowModule<RetGraphicsT>) entry.getValue().getConstructor().newInstance(p_sketch);
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}
@@ -174,21 +172,21 @@ public abstract class NerdWindowModule<PGraphicsT extends PGraphics> extends Ner
 	// Implementations return pointers of their own type, not `NerdWindowModule*`s,
 	public abstract boolean setAlwaysOnTop(final boolean p_name);
 
-	public abstract NerdWindowModule setName(final String p_name);
+	public abstract NerdWindowModule<SketchPGraphicsT> setName(final String p_name);
 
-	public abstract NerdWindowModule setSize(final PVector p_size);
+	public abstract NerdWindowModule<SketchPGraphicsT> setSize(final PVector p_size);
 
-	public abstract NerdWindowModule setResizable(final boolean p_state);
+	public abstract NerdWindowModule<SketchPGraphicsT> setResizable(final boolean p_state);
 
-	public abstract NerdWindowModule setSize(final int p_x, final int p_y);
+	public abstract NerdWindowModule<SketchPGraphicsT> setSize(final int p_x, final int p_y);
 
-	public abstract NerdWindowModule setSize(final float p_x, final float p_y);
+	public abstract NerdWindowModule<SketchPGraphicsT> setSize(final float p_x, final float p_y);
 
-	public abstract NerdWindowModule setPosition(final PVector p_position);
+	public abstract NerdWindowModule<SketchPGraphicsT> setPosition(final PVector p_position);
 
-	public abstract NerdWindowModule setPosition(final int p_x, final int p_y);
+	public abstract NerdWindowModule<SketchPGraphicsT> setPosition(final int p_x, final int p_y);
 
-	public abstract NerdWindowModule setPosition(final float p_x, final float p_y);
+	public abstract NerdWindowModule<SketchPGraphicsT> setPosition(final float p_x, final float p_y);
 	// endregion
 
 	// region Callbacks.

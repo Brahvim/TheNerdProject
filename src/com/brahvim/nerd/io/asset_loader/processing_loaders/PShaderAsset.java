@@ -22,7 +22,7 @@ public class PShaderAsset extends NerdAssetLoader<PShader> {
 	// endregion
 
 	@Override
-	protected PShader fetchData(final NerdSketch p_sketch)
+	protected PShader fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		final PShader shader = this.vertPath == null
 				? p_sketch.loadShader(this.fragPath)

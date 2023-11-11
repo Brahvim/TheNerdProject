@@ -13,7 +13,7 @@ public class PJsonArrayAsset extends NerdSinglePathAssetLoader<JSONArray> {
 	}
 
 	@Override
-	protected JSONArray fetchData(final NerdSketch p_sketch)
+	protected JSONArray fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		try {
 			return p_sketch.loadJSONArray(super.path);

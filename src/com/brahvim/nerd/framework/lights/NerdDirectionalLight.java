@@ -1,6 +1,6 @@
 package com.brahvim.nerd.framework.lights;
 
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
 
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
@@ -12,7 +12,7 @@ public class NerdDirectionalLight extends NerdLight {
 		super(p_buffer);
 	}
 
-	public NerdDirectionalLight(final NerdGenericGraphics p_buffer) {
+	public NerdDirectionalLight(final NerdP3dGraphics p_buffer) {
 		super(p_buffer);
 	}
 
@@ -20,7 +20,7 @@ public class NerdDirectionalLight extends NerdLight {
 		super(p_buffer, p_pos);
 	}
 
-	public NerdDirectionalLight(final NerdGenericGraphics p_buffer, final PVector p_pos) {
+	public NerdDirectionalLight(final NerdP3dGraphics p_buffer, final PVector p_pos) {
 		super(p_buffer, p_pos);
 	}
 
@@ -28,7 +28,7 @@ public class NerdDirectionalLight extends NerdLight {
 		super(p_buffer, p_pos, p_color);
 	}
 
-	public NerdDirectionalLight(final NerdGenericGraphics p_buffer, final PVector p_pos, final PVector p_color) {
+	public NerdDirectionalLight(final NerdP3dGraphics p_buffer, final PVector p_pos, final PVector p_color) {
 		super(p_buffer, p_pos, p_color);
 	}
 	// endregion

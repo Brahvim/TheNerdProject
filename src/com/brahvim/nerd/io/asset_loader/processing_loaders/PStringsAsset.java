@@ -11,7 +11,7 @@ public class PStringsAsset extends NerdSinglePathAssetLoader<String[]> {
 	}
 
 	@Override
-	protected String[] fetchData(final NerdSketch p_sketch)
+	protected String[] fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		final String[] strings = p_sketch.loadStrings(super.path);
 

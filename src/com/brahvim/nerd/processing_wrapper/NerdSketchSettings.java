@@ -10,8 +10,9 @@ import com.brahvim.nerd.io.NerdStringTable;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 
-public class NerdSketchSettings {
+public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 
 	// region Non-Boolean settings.
 	/** What {@link NerdSketch#settings()} passes to {@link PApplet#smooth()} */
@@ -41,7 +42,7 @@ public class NerdSketchSettings {
 	 * Holds the method that is called when the {@link NerdSketch} needs to know
 	 * what {@link NerdModule}s are to be loaded.
 	 */
-	public Consumer<LinkedHashSet<Function<NerdSketch, NerdModule>>> nerdModulesInstantiator;
+	public Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> nerdModulesInstantiator;
 
 	/** */
 	public Map<Class<? extends NerdModule>, NerdModuleSettings<?>> nerdModulesSettings = new HashMap<>(0);

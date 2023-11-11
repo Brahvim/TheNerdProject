@@ -13,7 +13,7 @@ public class PShapeAsset extends NerdSinglePathAssetLoader<PShape> {
 	}
 
 	@Override
-	protected PShape fetchData(final NerdSketch p_sketch)
+	protected PShape fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		final PShape shape = p_sketch.loadShape(super.path);
 

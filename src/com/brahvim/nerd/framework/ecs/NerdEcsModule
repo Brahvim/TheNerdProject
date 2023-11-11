@@ -42,7 +42,7 @@ public class NerdEcsModule extends NerdModule {
 	// endregion
 
 	// region Construction.
-	public NerdEcsModule(final NerdSketch p_sketch) {
+	public NerdEcsModule(final NerdSketch<?> p_sketch) {
 		super(p_sketch);
 		this.setSystemsOrder(NerdEcsModule.DEFAULT_ECS_SYSTEMS_ORDER);
 	}

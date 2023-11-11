@@ -13,7 +13,7 @@ public class PXmlAsset extends NerdSinglePathAssetLoader<XML> {
 	}
 
 	@Override
-	protected XML fetchData(final NerdSketch p_sketch)
+	protected XML fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		final XML markup = p_sketch.loadXML(super.path);
 		if (markup == null)

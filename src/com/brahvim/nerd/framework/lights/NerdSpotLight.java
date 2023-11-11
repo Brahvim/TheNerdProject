@@ -1,6 +1,6 @@
 package com.brahvim.nerd.framework.lights;
 
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
 
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
@@ -25,7 +25,7 @@ public class NerdSpotLight extends NerdLight {
 		this.dir = new PVector(0, 1, 0);
 	}
 
-	public NerdSpotLight(final NerdGenericGraphics p_buffer, final PVector p_pos) {
+	public NerdSpotLight(final NerdP3dGraphics p_buffer, final PVector p_pos) {
 		super(p_buffer, p_pos);
 	}
 
@@ -34,7 +34,7 @@ public class NerdSpotLight extends NerdLight {
 		this.dir = new PVector(0, 1, 0);
 	}
 
-	public NerdSpotLight(final NerdGenericGraphics p_buffer, final PVector p_pos, final PVector p_color) {
+	public NerdSpotLight(final NerdP3dGraphics p_buffer, final PVector p_pos, final PVector p_color) {
 		super(p_buffer, p_pos, p_color);
 	}
 
@@ -43,7 +43,7 @@ public class NerdSpotLight extends NerdLight {
 		this.dir = p_dir;
 	}
 
-	public NerdSpotLight(final NerdGenericGraphics p_buffer, final PVector p_pos, final PVector p_color,
+	public NerdSpotLight(final NerdP3dGraphics p_buffer, final PVector p_pos, final PVector p_color,
 			final PVector p_dir) {
 		super(p_buffer, p_pos, p_color);
 		this.dir = p_dir;

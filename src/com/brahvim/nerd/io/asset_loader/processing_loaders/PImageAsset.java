@@ -13,7 +13,7 @@ public class PImageAsset extends NerdSinglePathAssetLoader<PImage> {
 	}
 
 	@Override
-	protected PImage fetchData(final NerdSketch p_sketch)
+	protected PImage fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		final PImage img = p_sketch.loadImage(super.path);
 

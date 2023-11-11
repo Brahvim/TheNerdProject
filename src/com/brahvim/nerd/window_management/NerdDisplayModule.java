@@ -45,7 +45,6 @@ public class NerdDisplayModule extends NerdModule {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void preSetup() {
 		this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
 		this.input = (NerdInputModule) super.SKETCH.getNerdModule(NerdInputModule.class);

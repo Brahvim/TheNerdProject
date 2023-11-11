@@ -15,20 +15,28 @@ public class NerdSpriteSheet {
 
 	// region Fields.
 	private final PImage SHEET;
-	private final NerdSketch SKETCH;
+	private final NerdSketch<?> SKETCH;
 
 	private List<PImage> sprites = new ArrayList<>(2);
 	// If you literally have only one image, why're you even using a 'sheet'?!
+	// ...Oh, preparing in advance? Well then, nevermind.
 
-	/**
-	 * Position of a sprite, as well as its ID in {@link NerdSpriteSheet#sprites}.
-	 */
+	/** Position and ID of a sprite in {@link NerdSpriteSheet#sprites}. */
 	private List<SpritePos> poses = new ArrayList<>(2);
 	// endregion
 
-	public NerdSpriteSheet(final NerdSketch p_sketch, final PImage p_sheet) {
+	public NerdSpriteSheet(final NerdSketch<?> p_sketch, final PImage p_sheet) {
 		this.SHEET = p_sheet;
 		this.SKETCH = p_sketch;
+	}
+
+	public NerdSpriteSheet(final NerdSpriteSheet p_sheet) {
+		this.SHEET = p_sheet.SHEET;
+		this.SKETCH = p_sheet.SKETCH;
+
+		// Non-`final` fields:
+		this.poses = p_sheet.poses;
+		this.sprites = p_sheet.sprites;
 	}
 
 	/**
@@ -50,19 +58,6 @@ public class NerdSpriteSheet {
 		this.sprites.add(toCache);
 
 		return toCache;
-	}
-
-	@Override
-	public NerdSpriteSheet clone() {
-		final NerdSpriteSheet toRet = new NerdSpriteSheet(this.SKETCH, this.SHEET);
-
-		toRet.poses = new ArrayList<>(this.poses);
-		toRet.sprites = new ArrayList<>(this.sprites);
-
-		for (final PImage i : toRet.sprites)
-			i.parent = toRet.SKETCH;
-
-		return toRet;
 	}
 
 }

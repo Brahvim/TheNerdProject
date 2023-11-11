@@ -11,7 +11,7 @@ public class PBytesAsset extends NerdSinglePathAssetLoader<byte[]> {
 	}
 
 	@Override
-	protected byte[] fetchData(final NerdSketch p_sketch)
+	protected byte[] fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		final byte[] bytes = p_sketch.loadBytes(super.path);
 

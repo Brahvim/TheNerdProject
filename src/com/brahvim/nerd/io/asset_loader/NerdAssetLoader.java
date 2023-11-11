@@ -11,7 +11,7 @@ public abstract class NerdAssetLoader<AssetT> {
 	 * @throws IllegalArgumentException if the options passed to the loader
 	 *                                  weren't meant for it.
 	 */
-	protected abstract AssetT fetchData(final NerdSketch p_sketch)
+	protected abstract AssetT fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException;
 
 	/**

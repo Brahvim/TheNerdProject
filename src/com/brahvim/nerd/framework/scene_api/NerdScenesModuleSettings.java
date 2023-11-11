@@ -11,7 +11,7 @@ import processing.core.PGraphics;
 public class NerdScenesModuleSettings<SketchPGraphicsT extends PGraphics>
 		extends NerdModuleSettings<NerdScenesModule<SketchPGraphicsT>> {
 
-	public final Class<? extends NerdScene<?>> FIRST_SCENE_CLASS;
+	public final Class<? extends NerdScene<SketchPGraphicsT>> FIRST_SCENE_CLASS;
 
 	/**
 	 * Dictates to every {@link NerdScenesModule} instance, the order in which a
@@ -145,7 +145,7 @@ public class NerdScenesModuleSettings<SketchPGraphicsT extends PGraphics>
 
 	public Set<Class<? extends NerdScene<?>>> classesOfScenesToPreload = new HashSet<>(0);
 
-	public NerdScenesModuleSettings(final Class<? extends NerdScene<?>> p_firstSceneClass) {
+	public NerdScenesModuleSettings(final Class<? extends NerdScene<SketchPGraphicsT>> p_firstSceneClass) {
 		this.FIRST_SCENE_CLASS = p_firstSceneClass;
 	}
 

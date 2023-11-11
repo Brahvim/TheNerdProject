@@ -1,6 +1,6 @@
 package com.brahvim.nerd.framework.lights;
 
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
 
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
@@ -23,18 +23,10 @@ public abstract class NerdLight {
 		this.color = new PVector();
 	}
 
-	protected NerdLight(final NerdGenericGraphics p_buffer) {
-		PGraphics3D buffer = null;
-
-		try {
-			buffer = (PGraphics3D) p_buffer.getUnderlyingBuffer();
-		} catch (final ClassCastException e) {
-			throw new RuntimeException("`NerdLight`s cannot be used without OpenGL.");
-		}
-
-		this.GRAPHICS = buffer;
+	protected NerdLight(final NerdP3dGraphics p_buffer) {
 		this.pos = new PVector();
 		this.color = new PVector(255, 255, 255);
+		this.GRAPHICS = p_buffer.getUnderlyingBuffer();
 	}
 
 	protected NerdLight(final PGraphics3D p_buffer, final PVector p_pos) {
@@ -43,7 +35,7 @@ public abstract class NerdLight {
 		this.color = new PVector(255, 255, 255);
 	}
 
-	protected NerdLight(final NerdGenericGraphics p_buffer, final PVector p_pos) {
+	protected NerdLight(final NerdP3dGraphics p_buffer, final PVector p_pos) {
 		this(p_buffer);
 		this.pos = p_pos;
 	}
@@ -54,7 +46,7 @@ public abstract class NerdLight {
 		this.GRAPHICS = p_buffer;
 	}
 
-	protected NerdLight(final NerdGenericGraphics p_buffer, final PVector p_pos, final PVector p_color) {
+	protected NerdLight(final NerdP3dGraphics p_buffer, final PVector p_pos, final PVector p_color) {
 		this(p_buffer);
 		this.pos = p_pos;
 		this.color = p_color;

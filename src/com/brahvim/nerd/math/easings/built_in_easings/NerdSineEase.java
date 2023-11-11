@@ -13,11 +13,11 @@ public class NerdSineEase extends NerdEasingFunction {
 	public float parameterCoef = 0.001f;
 
 	// region Constructors.
-	public NerdSineEase(final NerdSketch p_parentSketch) {
+	public NerdSineEase(final NerdSketch<?> p_parentSketch) {
 		super(p_parentSketch);
 	}
 
-	public NerdSineEase(final NerdSketch p_parentSketch, final float p_freqMult) {
+	public NerdSineEase(final NerdSketch<?> p_parentSketch, final float p_freqMult) {
 		super(p_parentSketch);
 		this.parameterCoef = p_freqMult;
 	}
@@ -25,7 +25,7 @@ public class NerdSineEase extends NerdEasingFunction {
 	/**
 	 * @apiNote {@code p_angleOffset} is assumed to be in radians.
 	 */
-	public NerdSineEase(final NerdSketch p_parentSketch, final float p_freqMult, final float p_angleOffset) {
+	public NerdSineEase(final NerdSketch<?> p_parentSketch, final float p_freqMult, final float p_angleOffset) {
 		super(p_parentSketch);
 		this.parameterCoef = p_freqMult;
 		super.parameterOffset = p_angleOffset;

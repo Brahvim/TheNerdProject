@@ -15,7 +15,7 @@ public class NerdFileInputStreamAsset extends NerdSinglePathAssetLoader<FileInpu
 	}
 
 	@Override
-	protected FileInputStream fetchData(final NerdSketch p_sketch)
+	protected FileInputStream fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		try {
 			return new FileInputStream(new File(super.path));

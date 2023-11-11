@@ -13,7 +13,7 @@ public class PFontAsset extends NerdSinglePathAssetLoader<PFont> {
 	}
 
 	@Override
-	protected PFont fetchData(final NerdSketch p_sketch)
+	protected PFont fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		final PFont font = p_sketch.loadFont(super.path);
 
