@@ -224,8 +224,9 @@ public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PAp
 		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
 		this.inputModule = this.getNerdModule(NerdInputModule.class);
 
-		this.nerdGenericGraphics = (NerdGenericGraphics<SketchPGraphicsT>) NerdGenericGraphics.createNerdGenericGraphics(this,
-				super.g);
+		this.nerdGenericGraphics = (NerdGenericGraphics<SketchPGraphicsT>) NerdGenericGraphics
+				.createNerdGenericGraphics(this,
+						super.g);
 
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
 		this.forEachNerdModule(NerdModule::preSetup);
@@ -448,7 +449,8 @@ public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PAp
 		return this.displayModule;
 	}
 
-	public NerdWindowModule getNerdWindowModule() {
+	@SuppressWarnings("unchecked")
+	public NerdWindowModule<SketchPGraphicsT> getNerdWindowModule() {
 		return this.genericWindowModule;
 	}
 

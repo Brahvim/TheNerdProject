@@ -14,12 +14,13 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
-public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> extends NerdModule {
+import processing.core.PGraphics;
+
+public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdModule {
 
 	// region Inner classes.
 	// My code style: If it is an inner class, also write the name of the outer
@@ -84,10 +85,11 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 
 	/**
 	 * This {@link Map} contains cached data about each
-	 * {@link NerdScene<NerdGraphicsT>} class
+	 * {@link NerdScene<SketchPGraphicsT>} class
 	 * any {@link NerdScenesModule} instance has cached or ran.
 	 * <p>
-	 * Actual "caching" of a {@link NerdScene<NerdGraphicsT>} is when its
+	 * Actual "caching" of a
+	 * {@link NerdScene<SketchPGraphicsT>} is when its
 	 * corresponding
 	 * {@link NerdScenesModule.NerdScenesModuleSceneCache#cachedReference} is not
 	 * {@code null}.
@@ -108,7 +110,7 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 	private Class<? extends NerdScene<?>> currentSceneClass, previousSceneClass;
 	// endregion
 
-	public NerdScenesModule(final NerdSketch p_sketch) {
+	public NerdScenesModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
 		super(p_sketch);
 	}
 
@@ -361,8 +363,8 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 
 	// region [`public`] Getters.
 	@SuppressWarnings("unchecked")
-	public NerdScene<NerdGraphicsT> getCurrentScene() {
-		return (NerdScene<NerdGraphicsT>) this.currentScene;
+	public NerdScene<SketchPGraphicsT> getCurrentScene() {
+		return (NerdScene<SketchPGraphicsT>) this.currentScene;
 	}
 
 	public boolean didSceneSwitchOccur() {
@@ -370,13 +372,13 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 	}
 
 	@SuppressWarnings("unchecked")
-	public Class<? extends NerdScene<NerdGraphicsT>> getCurrentSceneClass() {
-		return (Class<? extends NerdScene<NerdGraphicsT>>) this.currentSceneClass;
+	public Class<? extends NerdScene<SketchPGraphicsT>> getCurrentSceneClass() {
+		return (Class<? extends NerdScene<SketchPGraphicsT>>) this.currentSceneClass;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Class<? extends NerdScene<NerdGraphicsT>> getPreviousSceneClass() {
-		return (Class<? extends NerdScene<NerdGraphicsT>>) this.previousSceneClass;
+	public Class<? extends NerdScene<SketchPGraphicsT>> getPreviousSceneClass() {
+		return (Class<? extends NerdScene<SketchPGraphicsT>>) this.previousSceneClass;
 	}
 
 	public NerdScenesModuleSettings getScenesModuleSettings() {
@@ -410,7 +412,8 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 	}
 
 	/**
-	 * Returns a {@link HashSet} of {@link NerdScene<NerdGraphicsT>} classes
+	 * Returns a {@link HashSet} of
+	 * {@link NerdScene<SketchPGraphicsT>} classes
 	 * including only
 	 * classes
 	 * instances of which this {@link NerdScenesModule} has ran.
@@ -422,7 +425,7 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 
 	// region `Scene`-operations.
 	public int getTimesSceneLoaded(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass) {
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass) {
 		return this.SCENE_CACHE.get(p_sceneClass).timesLoaded;
 	}
 
@@ -431,12 +434,12 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 	// "...no"! (I mean, should I just make a bean of some kind?)
 
 	public void loadSceneAssetsAsync(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass) {
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass) {
 		this.loadSceneAssetsAsync(p_sceneClass, false);
 	}
 
 	public void loadSceneAssetsAsync(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass,
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass,
 			final boolean p_forcibly) {
 		if (!this.hasCached(p_sceneClass))
 			this.cacheScene(p_sceneClass);
@@ -450,13 +453,13 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 
 	// Non-async versions:
 	public void loadSceneAssets(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass) {
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass) {
 		this.loadSceneAssets(p_sceneClass, false);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void loadSceneAssets(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass,
+			final Class<? extends NerdScene<?>> p_sceneClass,
 			final boolean p_forcibly) {
 		if (!this.hasCached(p_sceneClass))
 			this.cacheScene(p_sceneClass);
@@ -464,9 +467,10 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 		if (this.givenSceneRanPreload(p_sceneClass))
 			return;
 
-		final NerdScenesModule<NerdGraphicsT>.NerdScenesModuleSceneCache sceneCache =
+		final NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache sceneCache =
 				//
-				(NerdScenesModule<NerdGraphicsT>.NerdScenesModuleSceneCache) this.SCENE_CACHE.get(p_sceneClass);
+				(NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache) this.SCENE_CACHE
+						.get(p_sceneClass);
 
 		if (sceneCache != null) {
 			if (sceneCache.cachedReference.hasCompletedPreload())
@@ -499,7 +503,7 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 		if (this.previousSceneClass == null)
 			return;
 
-		final NerdScene<NerdGraphicsT> toUse = (NerdScene<NerdGraphicsT>) this
+		final NerdScene<SketchPGraphicsT> toUse = (NerdScene<SketchPGraphicsT>) this
 				.constructAndInitScene(this.SCENE_CACHE.get(this.previousSceneClass).CONSTRUCTOR);
 		this.setScene(toUse, p_setupState);
 	}
@@ -519,18 +523,20 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 	 */
 
 	/**
-	 * Starts a {@link NerdScene<NerdGraphicsT>}, and tells using the return value,
+	 * Starts a {@link NerdScene<SketchPGraphicsT>}, and tells
+	 * using the return value,
 	 * whether it
 	 * was
 	 * restored from cache or started again.
 	 */
 	public boolean startScene(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass) {
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass) {
 		return this.startScene(p_sceneClass, null);
 	}
 
 	public boolean startScene(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass, final NerdSceneState p_setupState) {
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass,
+			final NerdSceneState p_setupState) {
 		if (p_sceneClass == null)
 			throw new NullPointerException(
 					"`"
@@ -552,17 +558,19 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 		 * else
 		 * throw new IllegalArgumentException("""
 		 * Use `SceneModule::restartScene()
-		 * to restart a `NerdScene<NerdGraphicsT>` while it runs!""");
+		 * to restart a `NerdScene<SketchPGraphicsT>` while it
+		 * runs!""");
 		 */
 
 	}
 	// endregion
 
-	// region `NerdScene<NerdGraphicsT>` operations, declared `private`.
+	// region `NerdScene<SketchPGraphicsT>` operations,
+	// declared `private`.
 	@SuppressWarnings("unchecked")
 	private boolean givenSceneRanPreload(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass) {
-		final NerdScene<NerdGraphicsT> sceneCache = (NerdScene<NerdGraphicsT>) this.SCENE_CACHE
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass) {
+		final NerdScene<SketchPGraphicsT> sceneCache = (NerdScene<SketchPGraphicsT>) this.SCENE_CACHE
 				.get(p_sceneClass).cachedReference;
 
 		// `SonarLint` did this optimization, yay!:
@@ -572,7 +580,7 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 
 	@SuppressWarnings("unchecked")
 	private void loadSceneAssets(
-			final NerdScene<NerdGraphicsT> p_scene,
+			final NerdScene<SketchPGraphicsT> p_scene,
 			final boolean p_forcibly) {
 		if (p_scene == null)
 			return;
@@ -583,7 +591,7 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 			return;
 		}
 
-		final Class<? extends NerdScene<NerdGraphicsT>> sceneClass = (Class<NerdScene<NerdGraphicsT>>) p_scene
+		final Class<? extends NerdScene<SketchPGraphicsT>> sceneClass = (Class<NerdScene<SketchPGraphicsT>>) p_scene
 				.getClass();
 
 		// If this scene has never been loaded up before, preload the data!
@@ -601,7 +609,8 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 			final NerdAssetsModule assets = this.SCENE_CACHE.get(sceneClass).cachedAssets;
 			super.getSketchModulesMap().put(NerdAssetsModule.class, assets);
 			p_scene.ASSETS = assets;
-		} else { // Else, since we're supposed to run `NerdScene<NerdGraphicsT>::preload()` each
+		} else { // Else, since we're supposed to run
+					// `NerdScene<SketchPGraphicsT>::preload()` each
 					// time, do
 					// that!:
 			p_scene.ASSETS.clear();
@@ -615,7 +624,7 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 
 	// region (`private`) Caching operations.
 	private boolean hasCached(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass) {
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass) {
 		// If you haven't been asked to run the scene even once, you didn't cache it!
 		// Simply report so:
 		// if (!this.SCENE_CACHE.containsKey(p_sceneClass))
@@ -632,16 +641,16 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 	}
 
 	private void cacheScene(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass /*
-																			 * final boolean
-																			 * p_isDeletable
-																			 */) {
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass /*
+																									 * final boolean
+																									 * p_isDeletable
+																									 */) {
 		if (this.SCENE_CACHE.containsKey(p_sceneClass))
 			return;
 
-		final Constructor<? extends NerdScene<NerdGraphicsT>> sceneConstructor = this
+		final Constructor<? extends NerdScene<SketchPGraphicsT>> sceneConstructor = this
 				.getSceneConstructor(p_sceneClass);
-		final NerdScene<NerdGraphicsT> constructedScene = this.constructScene(sceneConstructor);
+		final NerdScene<SketchPGraphicsT> constructedScene = this.constructScene(sceneConstructor);
 
 		if (constructedScene == null)
 			throw new IllegalStateException(
@@ -653,25 +662,26 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 	// endregion
 
 	// region `private` construction-and-setup operations!
-	private Constructor<? extends NerdScene<NerdGraphicsT>> getSceneConstructor(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass) {
+	private Constructor<? extends NerdScene<SketchPGraphicsT>> getSceneConstructor(
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass) {
 		try {
 			return p_sceneClass.getConstructor();
 		} catch (final NoSuchMethodException e) {
-			throw new UnsupportedOperationException("""
-					Every subclass of `NerdScene<NerdGraphicsT>` must be declared `public` with a `public`
-					"null-constructor" (constructor with no arguments), or should not
-					override any constructors at all (to inherit the default one).
-					It also must not be an anonymous, or inner class.""");
+			throw new UnsupportedOperationException(
+					"""
+							Every subclass of `NerdScene<SketchPGraphicsT>` must be declared `public` with a `public`
+							"null-constructor" (constructor with no arguments), or should not
+							override any constructors at all (to inherit the default one).
+							It also must not be an anonymous, or inner class.""");
 		}
 	}
 
-	private NerdScene<NerdGraphicsT> constructScene(
-			final Constructor<? extends NerdScene<NerdGraphicsT>> p_sceneConstructor) {
+	private NerdScene<SketchPGraphicsT> constructScene(
+			final Constructor<? extends NerdScene<SketchPGraphicsT>> p_sceneConstructor) {
 		if (p_sceneConstructor == null) // Won't ever be so, since this class is tightly packed!
 			return null; // ...Checking anyway.
 
-		NerdScene<NerdGraphicsT> toRet = null;
+		NerdScene<SketchPGraphicsT> toRet = null;
 
 		// region Get an instance if possible!
 		try {
@@ -679,7 +689,7 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 		} catch (final InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e) {
 			throw new UnsupportedOperationException(
-					"No subclass of `NerdScene<NerdGraphicsT>` must be an anonymous or inner class.");
+					"No subclass of `NerdScene<SketchPGraphicsT>` must be an anonymous or inner class.");
 		}
 		// endregion
 
@@ -687,16 +697,18 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 	}
 
 	@SuppressWarnings("unchecked")
-	private NerdScene<NerdGraphicsT> constructAndInitScene(
-			final Constructor<? extends NerdScene<NerdGraphicsT>> p_sceneConstructor) {
-		final NerdScene<NerdGraphicsT> toRet = this.constructScene(p_sceneConstructor);
+	private NerdScene<SketchPGraphicsT> constructAndInitScene(
+			final Constructor<? extends NerdScene<SketchPGraphicsT>> p_sceneConstructor) {
+		final NerdScene<SketchPGraphicsT> toRet = this.constructScene(p_sceneConstructor);
 
 		if (toRet == null)
 			throw new IllegalStateException("`NerdScenesModule::constructScene()` returned `null`!");
 
 		// region Initialize it!
-		final Class<? extends NerdScene<NerdGraphicsT>> sceneClass = p_sceneConstructor.getDeclaringClass();
-		final NerdScenesModule.NerdScenesModuleSceneCache sceneCache = this.SCENE_CACHE.get(sceneClass);
+		final Class<? extends NerdScene<SketchPGraphicsT>> sceneClass = p_sceneConstructor
+				.getDeclaringClass();
+		final NerdScenesModule<SketchPGraphicsT>.NerdScenesModuleSceneCache sceneCache = this.SCENE_CACHE
+				.get(sceneClass);
 
 		// Initialize fields as if this was a part of the construction
 		// (done here instead so your subclass doesn't need to write one!):
@@ -706,10 +718,10 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 		// Now, we copy all other objects from `toRet.SKETCH`!:
 		// toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
 		toRet.ASSETS = new NerdAssetsModule(toRet.SKETCH);
-		toRet.GRAPHICS = (NerdGraphicsT) toRet.SKETCH.getNerdGenericGraphics();
-		toRet.INPUT = toRet.SKETCH.getNerdModule(NerdInputModule.class);
-		toRet.WINDOW = toRet.SKETCH.getNerdModule(NerdWindowModule.class);
-		toRet.DISPLAY = toRet.SKETCH.getNerdModule(NerdDisplayModule.class);
+		toRet.GRAPHICS = (SketchPGraphicsT) toRet.SKETCH.getNerdGenericGraphics();
+		toRet.INPUT = (NerdInputModule) toRet.SKETCH.getNerdModule(NerdInputModule.class);
+		toRet.WINDOW = (NerdWindowModule<SketchPGraphicsT>) toRet.SKETCH.getNerdModule(NerdWindowModule.class);
+		toRet.DISPLAY = (NerdDisplayModule) toRet.SKETCH.getNerdModule(NerdDisplayModule.class);
 
 		// If this is the first time we're constructing this scene,
 		// ensure it has a cache and a saved state!
@@ -725,16 +737,17 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 
 	// Yes, this checks for errors.
 	private void startSceneImpl(
-			final Class<? extends NerdScene<NerdGraphicsT>> p_sceneClass,
+			final Class<? extends NerdScene<SketchPGraphicsT>> p_sceneClass,
 			final NerdSceneState p_state) {
-		final NerdScene<NerdGraphicsT> toStart = this.constructAndInitScene(this.getSceneConstructor(p_sceneClass));
+		final NerdScene<SketchPGraphicsT> toStart = this
+				.constructAndInitScene(this.getSceneConstructor(p_sceneClass));
 		this.setScene(toStart, p_state);
 	}
 
 	// The scene-deleter! Also receives EVERY request to start a scene, by the way.
 	@SuppressWarnings("unchecked")
 	private void setScene(
-			final NerdScene<NerdGraphicsT> p_currentScene,
+			final NerdScene<SketchPGraphicsT> p_currentScene,
 			final NerdSceneState p_state) {
 		final NerdWindowModule window = super.SKETCH.getNerdModule(NerdWindowModule.class);
 		window.cursorConfined = false;
@@ -766,11 +779,12 @@ public class NerdScenesModule<NerdGraphicsT extends NerdGenericGraphics<?>> exte
 
 			final NerdScenesModule.NerdScenesModuleSceneCache sceneCache = this.SCENE_CACHE.get(this.currentSceneClass);
 			if (sceneCache != null)
-				sceneCache.nullifyCache(); // Sets the `NerdScene<NerdGraphicsT>` instance to `null` and calls
+				sceneCache.nullifyCache(); // Sets the `NerdScene<SketchPGraphicsT>` instance to
+											// `null` and calls
 											// `System.gc()`!
 		}
 
-		this.currentSceneClass = (Class<NerdScene<NerdGraphicsT>>) p_currentScene.getClass();
+		this.currentSceneClass = (Class<NerdScene<SketchPGraphicsT>>) p_currentScene.getClass();
 		this.currentScene = p_currentScene;
 		this.setupCurrentScene(p_state);
 	}

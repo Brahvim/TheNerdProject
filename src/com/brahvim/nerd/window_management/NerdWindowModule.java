@@ -53,9 +53,10 @@ public abstract class NerdWindowModule<PGraphicsT extends PGraphics> extends Ner
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void preSetup() {
 		this.sketchSurface = super.SKETCH.getSurface();
-		this.displays = super.SKETCH.getNerdModule(NerdDisplayModule.class);
+		this.displays = (NerdDisplayModule) super.SKETCH.getNerdModule(NerdDisplayModule.class);
 		this.iconImage = super.SKETCH.loadImage(super.SKETCH.SKETCH_SETTINGS.windowIconPath);
 
 		this.preSetupImpl();
