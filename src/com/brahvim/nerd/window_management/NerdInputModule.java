@@ -36,7 +36,7 @@ public class NerdInputModule extends NerdModule {
 			PREV_UNPROJ_TOUCHES = new ArrayList<>(10),
 			PREV_FRAME_UNPROJ_TOUCHES = new ArrayList<>(10);
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated during appropriate event callbacks - not in a loop. */
 	public final PVector MOUSE_VECTOR = new PVector(),
 			PREV_MOUSE_VECTOR = new PVector(),
 			MOUSE_CENTER_OFFSET = new PVector(),
@@ -47,28 +47,28 @@ public class NerdInputModule extends NerdModule {
 			CURR_FRAME_MOUSE_CENTER_OFFSET_VECTOR = new PVector(),
 			PREV_FRAME_MOUSE_CENTER_OFFSET_VECTOR = new PVector();
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated during appropriate event callbacks - not in a loop. */
 	public char key, pkey;
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated during appropriate event callbacks - not in a loop. */
 	public int keyCode, pkeyCode;
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated during appropriate event callbacks - not in a loop. */
 	public int mouseButton, pmouseButton;
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated during appropriate event callbacks - not in a loop. */
 	public boolean keyPressed, pkeyPressed; // NOSONAR
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated during appropriate event callbacks - not in a loop. */
 	public boolean mousePressed, pmousePressed; // NOSONAR
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated during appropriate event callbacks - not in a loop. */
 	public float mouseX, mouseY, pmouseX, pmouseY;
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated during appropriate event callbacks - not in a loop. */
 	public boolean mouseLeft, mouseMid, mouseRight, pmouseLeft, pmouseMid, pmouseRight;
 
-	/** Updated each time events changing this variable occur. */
+	/** Updated during appropriate event callbacks - not in a loop. */
 	public float mouseScroll, pmouseScroll,
 			mouseScrollDelta, pmouseScrollDelta,
 			totalMouseScroll, ptotalMouseScroll;
@@ -249,11 +249,11 @@ public class NerdInputModule extends NerdModule {
 			return "";
 
 		String toRet = "[ ";
-		final int iCheck = this.KEYS_HELD.size() - 1;
+		final int lastId = this.KEYS_HELD.size() - 1;
 
 		for (int i = 0; i < numStrings; i++)
 			toRet = toRet.concat(KeyEvent.getKeyText(this.KEYS_HELD.get(i)))
-					.concat(i == iCheck ? " ]" : ", ");
+					.concat(i == lastId ? " ]" : ", ");
 
 		return toRet;
 	}
