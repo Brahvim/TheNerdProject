@@ -13,6 +13,10 @@ public class NerdGlWindowModule extends NerdWindowModule<PGraphics3D> {
 
 	protected GLWindow window;
 
+	static {
+		NerdWindowModule.subclassesIndex.put(PGraphics3D.class, NerdGlWindowModule.class);
+	}
+
 	public NerdGlWindowModule(final NerdSketch<PGraphics3D> p_sketch) {
 		super(p_sketch);
 	}

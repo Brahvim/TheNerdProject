@@ -6,7 +6,10 @@ import java.util.Set;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-public class NerdScenesModuleSettings extends NerdModuleSettings<NerdScenesModule<?>> {
+import processing.core.PGraphics;
+
+public class NerdScenesModuleSettings<SketchPGraphicsT extends PGraphics>
+		extends NerdModuleSettings<NerdScenesModule<SketchPGraphicsT>> {
 
 	public final Class<? extends NerdScene<?>> FIRST_SCENE_CLASS;
 
@@ -110,9 +113,9 @@ public class NerdScenesModuleSettings extends NerdModuleSettings<NerdScenesModul
 
 	}
 
-	public final NerdScenesModuleSettings.OnSceneSwitch ON_SWITCH = new OnSceneSwitch();
+	public final NerdScenesModuleSettings<SketchPGraphicsT>.OnSceneSwitch ON_SWITCH = new OnSceneSwitch();
 
-	public final NerdScenesModuleSettings.OnScenePreload ON_PRELOAD = new OnScenePreload();
+	public final NerdScenesModuleSettings<SketchPGraphicsT>.OnScenePreload ON_PRELOAD = new OnScenePreload();
 
 	// region Callback order specifiers.
 	/**

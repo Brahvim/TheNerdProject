@@ -45,7 +45,6 @@ public abstract class NerdAbstractCamera {
 		this.WINDOW = (NerdGlWindowModule) this.SKETCH.getNerdWindowModule();
 	}
 
-	@SuppressWarnings("unchecked")
 	protected NerdAbstractCamera(final NerdP3dGraphics p_graphics) {
 		this.GRAPHICS = p_graphics;
 		this.SKETCH = this.GRAPHICS.getSketch();

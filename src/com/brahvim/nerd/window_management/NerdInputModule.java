@@ -73,18 +73,19 @@ public class NerdInputModule extends NerdModule {
 			mouseScrollDelta, pmouseScrollDelta,
 			totalMouseScroll, ptotalMouseScroll;
 
-	protected NerdWindowModule window;
+	protected NerdWindowModule<?> window;
 	protected final List<Integer> KEYS_HELD = new ArrayList<>(5), PREV_FRAME_KEYS_HELD = new ArrayList<>(5);
 	// endregion
 	// endregion
 
-	public NerdInputModule(final NerdSketch p_sketch) {
+	public NerdInputModule(final NerdSketch<?> p_sketch) {
 		super(p_sketch);
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void preSetup() {
-		this.window = super.SKETCH.getNerdModule(NerdWindowModule.class);
+		this.window = (NerdWindowModule<?>) super.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
 	@Override
@@ -194,7 +195,7 @@ public class NerdInputModule extends NerdModule {
 	// Not called on Android!:
 	@Override
 	public void mouseClicked() {
-		// this.literallyEveryMouseButtonCallback();
+		this.literallyEveryMouseButtonCallback();
 	}
 
 	@Override
@@ -210,7 +211,7 @@ public class NerdInputModule extends NerdModule {
 
 		this.MOUSE_VECTOR.set(this.mouseX, this.mouseY);
 		this.MOUSE_CENTER_OFFSET.set(
-				super.SKETCH.mouseX - super.SKETCH.getNerdModule(NerdWindowModule.class).cx,
+				super.SKETCH.mouseX - this.window.cx,
 				super.SKETCH.mouseY - this.window.cy);
 	}
 

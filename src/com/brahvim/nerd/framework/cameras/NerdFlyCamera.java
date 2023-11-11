@@ -5,7 +5,6 @@ import java.awt.Point;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
-import com.brahvim.nerd.window_management.NerdWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PApplet;
@@ -23,8 +22,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	public PVector front = new PVector(), defaultCamFront = new PVector();
 	public float mouseSensitivity = NerdFlyCamera.DEFAULT_MOUSE_SENSITIVITY;
 
-	protected final NerdWindowModule WINDOW;
-	protected final NerdDisplayModule DISPLAYS;
+	protected final NerdDisplayModule DISPLAY;
 
 	private boolean pholdMouse;
 	// endregion
@@ -34,28 +32,24 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	public NerdFlyCamera(final NerdP3dGraphics p_graphics) {
 		super(p_graphics);
 		this.front = super.pos.copy();
-		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowModule.class);
-		this.DISPLAYS = super.SKETCH.getNerdModule(NerdDisplayModule.class);
+		this.DISPLAY = super.SKETCH.getNerdModule(NerdDisplayModule.class);
 
-		this.WINDOW.cursorVisible = false;
+		super.WINDOW.cursorVisible = false;
 		this.defaultCamFront = this.front.copy();
 	}
 
 	public NerdFlyCamera(final NerdP3dGraphics p_graphics, final PVector p_defaultFront) {
 		super(p_graphics);
 		this.front.set(p_defaultFront);
-		this.WINDOW = super.SKETCH.getNerdModule(NerdWindowModule.class);
-		this.DISPLAYS = super.SKETCH.getNerdModule(NerdDisplayModule.class);
+		this.DISPLAY = super.SKETCH.getNerdModule(NerdDisplayModule.class);
 
-		this.WINDOW.cursorVisible = false;
+		super.WINDOW.cursorVisible = false;
 		this.defaultCamFront.set(p_defaultFront);
 	}
 
 	public NerdFlyCamera(final NerdFlyCamera p_source) {
 		super(p_source.GRAPHICS);
-
-		this.WINDOW = p_source.WINDOW;
-		this.DISPLAYS = p_source.DISPLAYS;
+		this.DISPLAY = p_source.DISPLAY;
 
 		// Copying settings over to `this`.
 		this.up = p_source.up.copy();
@@ -160,7 +154,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 
 		if (this.holdMouse) {
 			// TODO: 😔 (Bring back `JAVA2D`!)
-			final GLWindow window = (GLWindow) this.WINDOW.getNativeObject();
+			final GLWindow window = (GLWindow) super.WINDOW.getNativeObject();
 			// window.warpPointer(mouseLockPos.x, mouseLockPos.y);
 			window.warpPointer(window.getSurfaceWidth() / 2, window.getSurfaceHeight() / 2);
 
@@ -200,14 +194,14 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	}
 
 	protected Point calculateMouseLockPos() {
-		if (this.WINDOW.fullscreen) {
+		if (super.WINDOW.fullscreen) {
 			// this.DISPLAYS.updateDisplayRatios();
-			return new Point(this.DISPLAYS.displayWidthHalf, this.DISPLAYS.displayHeightHalf);
+			return new Point(this.DISPLAY.displayWidthHalf, this.DISPLAY.displayHeightHalf);
 		} else {
-			final PVector position = this.WINDOW.getPositionAsPVector();
+			final PVector position = super.WINDOW.getPositionAsPVector();
 			return new Point(
-					(int) (position.x + this.WINDOW.cx),
-					(int) (position.y + this.WINDOW.cy));
+					(int) (position.x + super.WINDOW.cx),
+					(int) (position.y + super.WINDOW.cy));
 		}
 	}
 	// endregion

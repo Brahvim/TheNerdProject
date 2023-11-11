@@ -13,7 +13,7 @@ public class NerdDisplayModule extends NerdModule {
 
 	// region Fields!
 	protected NerdInputModule input;
-	protected NerdWindowModule window;
+	protected NerdWindowModule<?> window;
 	protected GraphicsDevice previousMonitor, currentMonitor;
 
 	// region Display properties.
@@ -40,15 +40,16 @@ public class NerdDisplayModule extends NerdModule {
 	// endregion
 	// endregion
 
-	public NerdDisplayModule(final NerdSketch p_sketch) {
+	public NerdDisplayModule(final NerdSketch<?> p_sketch) {
 		super(p_sketch);
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void preSetup() {
 		this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
-		this.input = super.SKETCH.getNerdModule(NerdInputModule.class);
-		this.window = super.SKETCH.getNerdModule(NerdWindowModule.class);
+		this.input = (NerdInputModule) super.SKETCH.getNerdModule(NerdInputModule.class);
+		this.window = (NerdWindowModule<?>) super.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
 	public void updateDisplayParameters() {

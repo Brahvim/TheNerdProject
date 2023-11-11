@@ -11,11 +11,16 @@ import com.brahvim.nerd.window_management.NerdWindowModule;
 import processing.awt.PGraphicsJava2D;
 import processing.awt.PSurfaceAWT;
 import processing.core.PVector;
+import processing.opengl.PGraphics3D;
 
 public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 
 	protected JFrame window;
 	protected PSurfaceAWT.SmoothCanvas canvas;
+
+	static {
+		NerdWindowModule.subclassesIndex.put(PGraphicsJava2D.class, NerdJava2dWindowModule.class);
+	}
 
 	public NerdJava2dWindowModule(final NerdSketch<PGraphicsJava2D> p_sketch) {
 		super(p_sketch);

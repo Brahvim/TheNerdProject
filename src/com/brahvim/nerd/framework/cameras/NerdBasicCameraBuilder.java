@@ -18,7 +18,6 @@ public class NerdBasicCameraBuilder {
 		this(new NerdP3dGraphics(p_sketch, p_graphics));
 	}
 
-	@SuppressWarnings("unchecked")
 	public NerdBasicCameraBuilder(final NerdP3dGraphics p_graphics) {
 		this.SKETCH = p_graphics.getSketch(); // Used by `setClearColor()`.
 		this.BUILD = new NerdBasicCamera(p_graphics);
