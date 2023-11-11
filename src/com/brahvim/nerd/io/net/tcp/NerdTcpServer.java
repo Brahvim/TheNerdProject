@@ -71,7 +71,7 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 			// No worries - the same stream is used till the socket shuts down.
 			DataInputStream stream = null;
 
-			// ...Get that stream!:
+			// region ...Get that stream!:
 			try {
 				// synchronized (System.out) {
 				// System.out.printf(
@@ -94,6 +94,7 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 				e.printStackTrace();
 				return;
 			}
+			// endregion
 
 			while (this.STOPPED.get())
 				try {
@@ -126,12 +127,12 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 						// `NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` \
 						// entered the synced block.""");
 						for (final Consumer<NerdClientSentTcpPacket> c : this.MESSAGE_CALLBACKS)
-							try {
+							try { // [ NOSONAR ] This is too short to be confusing, right?
+								c.accept(packet);
 								// System.out.println("""
 								// `NerdTcpServer.NerdTcpServerClient\
 								// ::serverCommThread::run()` \
 								// called a message callback.""");
-								c.accept(packet);
 							} catch (final Exception e) {
 								e.printStackTrace();
 							}
@@ -139,7 +140,7 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 				} catch (final IOException e) {
 					// When the client disconnects, this exception is thrown by
 					// `*InputStream::read*()`:
-					if (e instanceof EOFException)
+					if (e instanceof EOFException) // NOSONAR
 						this.disconnect();
 					else
 						e.printStackTrace();
@@ -309,12 +310,16 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 					this.CLIENTS.add(client);
 				}
 
-				if (this.invitationCallback == null)
+				if (this.invitationCallback == null) {
 					throw new IllegalStateException(
 							"Please call `NerdTcpServer::setClientInvitationCallback`"
 									+ "immediately after creating a `NerdTcpServer`!");
+				}
 
-				if (!this.invitationCallback.apply(client)) {
+				// We're already checking for `null`!
+				// No longer does it matter if we're using a boxed type here.
+				// Thus, the "NOSONAR":
+				if (!this.invitationCallback.apply(client)) { // NOSONAR
 					client.disconnect();
 					continue;
 				}
