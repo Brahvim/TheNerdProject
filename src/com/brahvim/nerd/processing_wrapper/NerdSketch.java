@@ -104,7 +104,7 @@ public abstract class NerdSketch extends PApplet
 	// Necessary `NerdModule`s:
 	protected NerdSketch.NerdSketchOnlyAssetsModule globalAssetsModule;
 	protected NerdDisplayModule displayModule;
-	protected NerdWindowModule windowModule;
+	protected NerdWindowModule genericWindowModule;
 	protected NerdInputModule inputModule;
 
 	// region Protected fields.
@@ -224,7 +224,7 @@ public abstract class NerdSketch extends PApplet
 	public void setup() {
 		this.nerdGenericGraphics = new NerdGenericGraphics(this, super.g);
 		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
-		this.windowModule = this.getNerdModule(NerdWindowModule.class);
+		this.genericWindowModule = this.getNerdModule(NerdWindowModule.class);
 		this.inputModule = this.getNerdModule(NerdInputModule.class);
 
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
@@ -232,7 +232,7 @@ public abstract class NerdSketch extends PApplet
 
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
-		super.frameRate(this.DEFAULT_REFRESH_RATE);
+		super.frameRate(1000); // TODO!: Replace with `this.DEFAULT_REFRESH_RATE`.
 		super.surface.setTitle(this.SKETCH_SETTINGS.initialWindowTitle);
 
 		this.defaultFont = super.createFont("SansSerif",
@@ -245,9 +245,9 @@ public abstract class NerdSketch extends PApplet
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		// if (this.SKETCH_SETTINGS.canResize)
-		// this.genericWindow.setResizable(true);
-		// this.genericWindow.centerWindow();
+		if (this.SKETCH_SETTINGS.canResize)
+			this.genericWindowModule.setResizable(true);
+		this.genericWindowModule.centerWindow();
 
 		this.forEachNerdModule(NerdModule::postSetup);
 	}
@@ -259,31 +259,9 @@ public abstract class NerdSketch extends PApplet
 		this.deltaTime = this.frameStartTime - this.pframeStartTime;
 		// this.forEachNerdModule(NerdModule::pre);
 
-		for (NerdModule m : this.MODULES) {
-			// Class<? extends NerdModule> moduleClass = m.getClass();
-
-			if (m instanceof NerdAssetsModule)
-				// continue
-				;
-			else if (m instanceof NerdInputModule)
-				// continue
-				;
-			else if (m instanceof NerdScenesModule)
-				// continue
-				;
-			else if (m instanceof NerdDisplayModule) // THE CULPRIT!
-				// continue
-				;
-			else if (m instanceof NerdGlWindowModule)
-				// continue
-				;
-			else if (m instanceof NerdSketch.NerdSketchOnlyAssetsModule)
-				// continue
-				;
-
-			m.pre();
-		}
-
+		for (NerdModule m : this.MODULES)
+			if (!(m instanceof NerdDisplayModule)) // THE CULPRIT!
+				m.pre();
 	}
 
 	@Override
@@ -293,16 +271,7 @@ public abstract class NerdSketch extends PApplet
 
 	@Override
 	public void draw() {
-		// this.forEachNerdModule(NerdModule::draw);
-		NerdScenesModule scenesModule = this.getNerdModule(NerdScenesModule.class);
-		scenesModule.draw();
-
-		NerdScene<?> scene = scenesModule.getCurrentScene();
-
-		if (scene == null)
-			return;
-
-		scene.draw();
+		this.forEachNerdModule(NerdModule::draw);
 	}
 
 	@Override
@@ -372,16 +341,16 @@ public abstract class NerdSketch extends PApplet
 			if (this.SKETCH_SETTINGS.canAltEnterFullscreen
 					&& super.keyCode == KeyEvent.VK_ENTER
 					&& this.inputModule.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
-				this.windowModule.fullscreen = !this.windowModule.fullscreen;
+				this.genericWindowModule.fullscreen = !this.genericWindowModule.fullscreen;
 
 			else if (this.SKETCH_SETTINGS.canF11Fullscreen) {
 				// `KeyEvent.VK_ADD` is `107`, but here, it's actually `F11`!:
 				if (this.USES_OPENGL) {
 					if (super.keyCode == 107)
-						this.windowModule.fullscreen = !this.windowModule.fullscreen;
+						this.genericWindowModule.fullscreen = !this.genericWindowModule.fullscreen;
 				} else {
 					if (super.keyCode == KeyEvent.VK_F11)
-						this.windowModule.fullscreen = !this.windowModule.fullscreen;
+						this.genericWindowModule.fullscreen = !this.genericWindowModule.fullscreen;
 				}
 			}
 		}
@@ -483,7 +452,7 @@ public abstract class NerdSketch extends PApplet
 	}
 
 	public NerdWindowModule getNerdWindowModule() {
-		return this.windowModule;
+		return this.genericWindowModule;
 	}
 
 	public NerdInputModule getNerdInputModule() {

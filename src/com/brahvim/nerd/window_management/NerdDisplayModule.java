@@ -51,7 +51,7 @@ public class NerdDisplayModule extends NerdModule {
 	}
 
 	// Referenced in `NerdSketch::setup()` - only time it's been called out there.
-	public void updateDisplayParameters() {
+	protected void updateDisplayParameters() {
 		this.displayWidth = super.SKETCH.displayWidth;
 		this.displayHeight = super.SKETCH.displayHeight;
 
@@ -96,37 +96,44 @@ public class NerdDisplayModule extends NerdModule {
 		this.pdisplayHeightThirdQuart = this.displayHeightThirdQuart;
 	}
 
-	@Override
-	public void pre() {
-		this.recordPreviousDisplayParameters();
-		this.updateDisplayParameters();
-
+	protected void updateSketchAwtGlobals() {
 		final GraphicsDevice[] updatedList = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
 		if (super.SKETCH.JAVA_SCREENS != updatedList) {
 			super.SKETCH.DEFAULT_JAVA_SCREEN = super.SKETCH.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
 			super.SKETCH.DEFAULT_JAVA_SCREEN_MODE = super.SKETCH.DEFAULT_JAVA_SCREEN.getDisplayMode();
 			super.SKETCH.DEFAULT_REFRESH_RATE = super.SKETCH.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
 		}
+	}
 
-		// The rest of this method is fine. It's the lines above that slow things down!
+	private void onWindowMonitorChange() {
+		this.previousMonitor = this.currentMonitor;
+		this.updateDisplayParameters();
+		super.SKETCH.monitorChanged();
+	}
 
-		if (this.previousMonitor != this.currentMonitor) {
-			this.previousMonitor = this.currentMonitor;
-			this.updateDisplayParameters();
-			super.SKETCH.monitorChanged();
-		}
-
-		if (super.SKETCH.focused)
-			this.currentMonitor = this
-					.getGraphicsDeviceAt(this.input.GLOBAL_MOUSE_POINT);
-
+	protected void updatePAppletDisplayDimensions() {
 		if (this.currentMonitor == null)
 			this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
 
-		// Update `super.SKETCH.displayWidth` and `super.SKETCH.displayHeight`:
+		// Update `PApplet::displayWidth` and `PApplet::displayHeight`:
 		final DisplayMode currMonitorMode = this.currentMonitor.getDisplayMode();
 		super.SKETCH.displayWidth = currMonitorMode.getWidth();
 		super.SKETCH.displayHeight = currMonitorMode.getHeight();
+	}
+
+	@Override
+	public void pre() {
+		this.recordPreviousDisplayParameters(); // Not a bottleneck.
+		this.updateDisplayParameters();
+		this.updateSketchAwtGlobals();
+
+		if (this.previousMonitor != this.currentMonitor)
+			this.onWindowMonitorChange();
+
+		if (super.SKETCH.focused)
+			this.currentMonitor = this.getGraphicsDeviceAt(this.input.GLOBAL_MOUSE_POINT);
+
+		this.updatePAppletDisplayDimensions();
 	}
 
 	// region Getters.
