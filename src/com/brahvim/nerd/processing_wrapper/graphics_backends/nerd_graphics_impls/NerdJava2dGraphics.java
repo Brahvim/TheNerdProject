@@ -7,7 +7,7 @@ import processing.awt.PGraphicsJava2D;
 
 public class NerdJava2dGraphics extends NerdGenericGraphics<PGraphicsJava2D> {
 
-    public NerdJava2dGraphics(NerdSketch<PGraphicsJava2D> p_sketch, PGraphicsJava2D p_pGraphicsToWrap) {
+    public NerdJava2dGraphics(final NerdSketch<PGraphicsJava2D> p_sketch, final PGraphicsJava2D p_pGraphicsToWrap) {
         super(p_sketch, p_pGraphicsToWrap);
     }
 

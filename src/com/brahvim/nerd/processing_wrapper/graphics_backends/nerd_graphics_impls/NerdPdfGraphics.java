@@ -7,7 +7,7 @@ import processing.pdf.PGraphicsPDF;
 
 public class NerdPdfGraphics extends NerdGenericGraphics<PGraphicsPDF> {
 
-    public NerdPdfGraphics(NerdSketch<PGraphicsPDF> p_sketch, PGraphicsPDF p_pGraphicsToWrap) {
+    public NerdPdfGraphics(final NerdSketch<PGraphicsPDF> p_sketch, final PGraphicsPDF p_pGraphicsToWrap) {
         super(p_sketch, p_pGraphicsToWrap);
 
         super.GRAPHICS.nextPage();

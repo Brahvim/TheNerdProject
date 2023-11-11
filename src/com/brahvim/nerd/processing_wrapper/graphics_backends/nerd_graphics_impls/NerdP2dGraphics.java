@@ -286,27 +286,27 @@ public class NerdP2dGraphics extends NerdGenericGraphics<PGraphics2D> {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((UNPROJECTOR == null) ? 0 : UNPROJECTOR.hashCode());
+        result = prime * result + ((this.UNPROJECTOR == null) ? 0 : this.UNPROJECTOR.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
         if (!super.equals(obj)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
-        NerdP2dGraphics other = (NerdP2dGraphics) obj;
-        if (UNPROJECTOR == null) {
+        final NerdP2dGraphics other = (NerdP2dGraphics) obj;
+        if (this.UNPROJECTOR == null) {
             if (other.UNPROJECTOR != null) {
                 return false;
             }
-        } else if (!UNPROJECTOR.equals(other.UNPROJECTOR)) {
+        } else if (!this.UNPROJECTOR.equals(other.UNPROJECTOR)) {
             return false;
         }
         return true;

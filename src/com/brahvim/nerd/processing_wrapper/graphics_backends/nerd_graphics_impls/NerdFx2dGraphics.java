@@ -7,7 +7,7 @@ import processing.javafx.PGraphicsFX2D;
 
 public class NerdFx2dGraphics extends NerdGenericGraphics<PGraphicsFX2D> {
 
-    public NerdFx2dGraphics(NerdSketch<PGraphicsFX2D> p_sketch, PGraphicsFX2D p_pGraphicsToWrap) {
+    public NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final PGraphicsFX2D p_pGraphicsToWrap) {
         super(p_sketch, p_pGraphicsToWrap);
     }
 

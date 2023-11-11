@@ -6,12 +6,9 @@ import java.util.Set;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.core.PGraphics;
+public class NerdScenesModuleSettings extends NerdModuleSettings<NerdScenesModule<?>> {
 
-public class NerdScenesModuleSettings<SketchPGraphicsT extends PGraphics>
-		extends NerdModuleSettings<NerdScenesModule<SketchPGraphicsT>> {
-
-	public final Class<? extends NerdScene<SketchPGraphicsT>> FIRST_SCENE_CLASS;
+	public final Class<? extends NerdScene<?>> FIRST_SCENE_CLASS;
 
 	/**
 	 * Dictates to every {@link NerdScenesModule} instance, the order in which a
@@ -113,9 +110,9 @@ public class NerdScenesModuleSettings<SketchPGraphicsT extends PGraphics>
 
 	}
 
-	public final NerdScenesModuleSettings<SketchPGraphicsT>.OnSceneSwitch ON_SWITCH = new OnSceneSwitch();
+	public final NerdScenesModuleSettings.OnSceneSwitch ON_SWITCH = new OnSceneSwitch();
 
-	public final NerdScenesModuleSettings<SketchPGraphicsT>.OnScenePreload ON_PRELOAD = new OnScenePreload();
+	public final NerdScenesModuleSettings.OnScenePreload ON_PRELOAD = new OnScenePreload();
 
 	// region Callback order specifiers.
 	/**
@@ -145,7 +142,7 @@ public class NerdScenesModuleSettings<SketchPGraphicsT extends PGraphics>
 
 	public Set<Class<? extends NerdScene<?>>> classesOfScenesToPreload = new HashSet<>(0);
 
-	public NerdScenesModuleSettings(final Class<? extends NerdScene<SketchPGraphicsT>> p_firstSceneClass) {
+	public NerdScenesModuleSettings(final Class<? extends NerdScene<?>> p_firstSceneClass) {
 		this.FIRST_SCENE_CLASS = p_firstSceneClass;
 	}
 

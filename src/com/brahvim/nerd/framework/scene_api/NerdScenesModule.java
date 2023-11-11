@@ -11,8 +11,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
-import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
+import com.brahvim.nerd.processing_wrapper.NerdRendererReliantModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
@@ -20,7 +20,7 @@ import com.brahvim.nerd.window_management.NerdWindowModule;
 
 import processing.core.PGraphics;
 
-public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdModule {
+public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdRendererReliantModule<SketchPGraphicsT> {
 
 	// region Inner classes.
 	// My code style: If it is an inner class, also write the name of the outer
@@ -76,7 +76,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	}
 	// endregion
 
-	protected NerdScenesModuleSettings<SketchPGraphicsT> scenesModuleSettings;
+	protected NerdScenesModuleSettings scenesModuleSettings;
 
 	// region `protected` and `private` fields.
 
@@ -116,12 +116,11 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void assignModuleSettings(final NerdModuleSettings<?> p_settings) {
 		if (p_settings instanceof final NerdScenesModuleSettings settings)
 			this.scenesModuleSettings = settings;
 		else
-			this.scenesModuleSettings = new NerdScenesModuleSettings<>(null);
+			this.scenesModuleSettings = new NerdScenesModuleSettings(null);
 	}
 
 	// region `NerdSketch` workflow callbacks.
@@ -382,7 +381,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		return (Class<? extends NerdScene<SketchPGraphicsT>>) this.previousSceneClass;
 	}
 
-	public NerdScenesModuleSettings<SketchPGraphicsT> getScenesModuleSettings() {
+	public NerdScenesModuleSettings getScenesModuleSettings() {
 		return this.scenesModuleSettings;
 	}
 	// endregion
