@@ -179,18 +179,18 @@ public class NerdScenesModule extends NerdModule {
 
 	// region Event callbacks. Passed to the ECS first, THEN here!
 	// `NerdLayer` callers:
-	protected void callOnCurrSceneActiveLayers(final Consumer<NerdLayer> p_eventCallbackMethod) {
+	protected void callOnCurrSceneActiveLayers(final Consumer<NerdLayer<?>> p_eventCallbackMethod) {
 		if (p_eventCallbackMethod != null)
-			for (final NerdLayer l : this.currentScene.getLayers())
+			for (final NerdLayer<?> l : this.currentScene.getLayers())
 				if (l != null)
 					if (l.isActive())
 						p_eventCallbackMethod.accept(l);
 	}
 
 	protected <OtherArgT> void callOnCurrSceneActiveLayers(
-			final BiConsumer<NerdLayer, OtherArgT> p_eventCallbackMethod, final OtherArgT p_otherArg) {
+			final BiConsumer<NerdLayer<?>, OtherArgT> p_eventCallbackMethod, final OtherArgT p_otherArg) {
 		if (p_eventCallbackMethod != null)
-			for (final NerdLayer l : this.currentScene.getLayers())
+			for (final NerdLayer<?> l : this.currentScene.getLayers())
 				if (l != null)
 					if (l.isActive())
 						p_eventCallbackMethod.accept(l, p_otherArg);

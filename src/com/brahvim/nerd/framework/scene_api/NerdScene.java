@@ -49,11 +49,11 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	private boolean donePreloading;
 
 	// Start at `0`. "Who needs layers anyway?"
-	private final List<NerdLayer> LAYERS = new ArrayList<>(0);
+	private final List<NerdLayer<GraphicsT>> LAYERS = new ArrayList<>(0);
 	// Worth remembering: `LinkedHashSet`s allow duplicate objects, store everything
 	// in *insertion order*, but have no `indexOf()` method!
 
-	private final Map<Class<? extends NerdLayer>, Constructor<? extends NerdLayer>>
+	private final Map<Class<? extends NerdLayer<GraphicsT>>, Constructor<? extends NerdLayer<GraphicsT>>>
 	// ////////////////////////////////////////////////////////////////////////////////
 	LAYER_CONSTRUCTORS = new HashMap<>(0);
 	// endregion
@@ -96,7 +96,8 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	 * Given a {@link NerdLayer} class, performs a task on the instance of that
 	 * class, which was added <i>first</i> to this {@link NerdScene}.
 	 */
-	public <T extends NerdLayer> void onFirstLayerOfClass(final Class<T> p_layerClass, final Consumer<T> p_task) {
+	public <T extends NerdLayer<GraphicsT>> void onFirstLayerOfClass(final Class<T> p_layerClass,
+			final Consumer<T> p_task) {
 		this.onFirstLayerOfClass(p_layerClass, p_task, null);
 	}
 
@@ -106,7 +107,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	 * instance of the given class, performs the other given task.
 	 */
 	// Actual implementation!:
-	public <T extends NerdLayer> void onFirstLayerOfClass(
+	public <T extends NerdLayer<GraphicsT>> void onFirstLayerOfClass(
 			final Class<T> p_layerClass, final Consumer<T> p_onFoundTask, final Runnable p_notFoundTask) {
 		final T instance = this.getFirstLayerOfClass(p_layerClass);
 
@@ -125,14 +126,14 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 
 	// region `onLayersOfClass()` and similar.
 	// region `onInactiveLayersOfClass()` overloads.
-	public <T extends NerdLayer> void onInactiveLayersOfClass(
+	public <T extends NerdLayer<GraphicsT>> void onInactiveLayersOfClass(
 			final Class<T> p_layerClass, final Consumer<T> p_task) {
 		this.onInactiveLayersOfClass(p_layerClass, p_task, null);
 	}
 
 	// Actual implementation!:
 	@SuppressWarnings("unchecked")
-	public <T extends NerdLayer> void onInactiveLayersOfClass(
+	public <T extends NerdLayer<GraphicsT>> void onInactiveLayersOfClass(
 			final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_notFoundTask) {
 		if (p_layerClass == null) {
 			p_notFoundTask.run();
@@ -144,7 +145,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 
 		// For every `NerdLayer`,
 		for (; i != LAYERS_SIZE; i++) {
-			final NerdLayer l = this.LAYERS.get(i);
+			final NerdLayer<GraphicsT> l = this.LAYERS.get(i);
 
 			if (l != null) // If it ain't `null`,
 				if (l.getClass().equals(p_layerClass)) // And it be from ma' class,
@@ -159,13 +160,13 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	// endregion
 
 	// region `onActiveLayersOfClass()` overloads.
-	public <T extends NerdLayer> void onActiveLayersOfClass(
+	public <T extends NerdLayer<GraphicsT>> void onActiveLayersOfClass(
 			final Class<T> p_layerClass, final Consumer<T> p_task) {
 		this.onActiveLayersOfClass(p_layerClass, p_task, null);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends NerdLayer> void onActiveLayersOfClass(
+	public <T extends NerdLayer<GraphicsT>> void onActiveLayersOfClass(
 			final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_noLayersFoundTask) {
 		if (p_layerClass == null) {
 			p_noLayersFoundTask.run();
@@ -177,7 +178,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 
 		// For every `NerdLayer`,
 		for (; i != LAYERS_SIZE; i++) {
-			final NerdLayer l = this.LAYERS.get(i);
+			final NerdLayer<GraphicsT> l = this.LAYERS.get(i);
 
 			if (l != null) // If it ain't `null`,
 				if (l.getClass().equals(p_layerClass)) // And it be from ma' class,
@@ -196,7 +197,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	 * Given a {@link NerdLayer} class, performs a task on all instances of that
 	 * class being used by this {@link NerdScene}.
 	 */
-	public <T extends NerdLayer> void onLayersOfClass(
+	public <T extends NerdLayer<GraphicsT>> void onLayersOfClass(
 			final Class<T> p_layerClass, final Consumer<T> p_task) {
 		this.onLayersOfClass(p_layerClass, p_task, null);
 	}
@@ -208,7 +209,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	 */
 	// Actual implementation!:
 	@SuppressWarnings("unchecked")
-	public <T extends NerdLayer> void onLayersOfClass(
+	public <T extends NerdLayer<GraphicsT>> void onLayersOfClass(
 			final Class<T> p_layerClass, final Consumer<T> p_task, final Runnable p_noLayersFoundTask) {
 		if (p_layerClass == null) {
 			p_noLayersFoundTask.run();
@@ -220,7 +221,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 
 		// For every `NerdLayer`,
 		for (; i != LAYERS_SIZE; i++) {
-			final NerdLayer l = this.LAYERS.get(i);
+			final NerdLayer<GraphicsT> l = this.LAYERS.get(i);
 			if (l != null) // If it ain't `null`,
 				if (l.getClass().equals(p_layerClass)) // And it be from ma' class,
 					p_task.accept((T) l); // ...perform the given task, brah!
@@ -235,8 +236,8 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 
 	// region `getLayer()` and similar.
 	// They get a running `Layer`'s reference from its (given) class.
-	public <RetT extends NerdLayer> RetT getFirstLayerOfClass(final Class<RetT> p_layerClass) {
-		for (final NerdLayer l : this.LAYERS)
+	public <RetT extends NerdLayer<GraphicsT>> RetT getFirstLayerOfClass(final Class<RetT> p_layerClass) {
+		for (final NerdLayer<GraphicsT> l : this.LAYERS)
 			if (l.getClass().equals(p_layerClass))
 				return p_layerClass.cast(l);
 		return null;
@@ -246,13 +247,13 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	 * Gives an {@link List} of {@link NerdLayer} instances of the given
 	 * subclass this {@link NerdScene} contains, which are <b>not</b> active.
 	 */
-	public List<NerdLayer> getInactiveLayers(final Class<? extends NerdLayer> p_layerClass) {
+	public List<NerdLayer<GraphicsT>> getInactiveLayers(final Class<? extends NerdLayer<GraphicsT>> p_layerClass) {
 		if (p_layerClass == null)
 			return new ArrayList<>();
 
-		final List<NerdLayer> toRet = new ArrayList<>();
+		final List<NerdLayer<GraphicsT>> toRet = new ArrayList<>();
 
-		for (final NerdLayer l : this.LAYERS)
+		for (final NerdLayer<GraphicsT> l : this.LAYERS)
 			if (l != null && l.getClass().equals(p_layerClass) && !l.isActive())
 				toRet.add(l);
 
@@ -263,13 +264,13 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	 * Gives an {@link List} of {@link NerdLayer} instances of the given
 	 * subclass this {@link NerdScene} contains, which are also active.
 	 */
-	public List<NerdLayer> getActiveLayers(final Class<? extends NerdLayer> p_layerClass) {
+	public List<NerdLayer<GraphicsT>> getActiveLayers(final Class<? extends NerdLayer<GraphicsT>> p_layerClass) {
 		if (p_layerClass == null)
 			return new ArrayList<>();
 
-		final List<NerdLayer> toRet = new ArrayList<>();
+		final List<NerdLayer<GraphicsT>> toRet = new ArrayList<>();
 
-		for (final NerdLayer l : this.LAYERS)
+		for (final NerdLayer<GraphicsT> l : this.LAYERS)
 			if (l != null && l.getClass().equals(p_layerClass) && l.isActive())
 				toRet.add(l);
 
@@ -280,10 +281,10 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	 * Gives an {@link List} of {@link NerdLayer} instances of the given
 	 * subclass this {@link NerdScene} contains.
 	 */
-	public List<NerdLayer> getLayers(final Class<? extends NerdLayer> p_layerClass) {
-		final List<NerdLayer> toRet = new ArrayList<>();
+	public List<NerdLayer<GraphicsT>> getLayers(final Class<? extends NerdLayer<GraphicsT>> p_layerClass) {
+		final List<NerdLayer<GraphicsT>> toRet = new ArrayList<>();
 
-		for (final NerdLayer l : this.LAYERS)
+		for (final NerdLayer<GraphicsT> l : this.LAYERS)
 			if (l != null && l.getClass().equals(p_layerClass))
 				toRet.add(l);
 
@@ -295,7 +296,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	 * used by this {@link NerdScene} along with rights such as changing layer
 	 * rendering order.
 	 */
-	public List<NerdLayer> getLayers() {
+	public List<NerdLayer<GraphicsT>> getLayers() {
 		return this.LAYERS;
 	}
 	// endregion
@@ -316,15 +317,15 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	 * }
 	 */
 
-	public <RetT extends NerdLayer> RetT addLayer(final Class<RetT> p_layerClass) {
+	public <RetT extends NerdLayer<GraphicsT>> RetT addLayer(final Class<RetT> p_layerClass) {
 		if (p_layerClass == null)
 			throw new NullPointerException(
 					"You weren't supposed to pass `null` into `NerdScene::startLayer()`.");
 
 		// We allow multiple layer instances, by the way.
 
-		final Constructor<? extends NerdLayer> layerConstructor = this.getLayerConstructor(p_layerClass);
-		final NerdLayer toRet = this.constructLayer(layerConstructor);
+		final Constructor<? extends NerdLayer<GraphicsT>> layerConstructor = this.getLayerConstructor(p_layerClass);
+		final NerdLayer<GraphicsT> toRet = this.constructLayer(layerConstructor);
 
 		if (toRet == null)
 			throw new NullPointerException("Could not construct `NerdLayer`!");
@@ -335,16 +336,17 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	}
 
 	@SafeVarargs // I'm not willing to limit your freedom, but this method HAS to be `final`...
-	public final void restartLayers(final Class<? extends NerdLayer>... p_layerClasses) {
-		for (final Class<? extends NerdLayer> c : p_layerClasses)
+	public final void restartLayers(final Class<? extends NerdLayer<GraphicsT>>... p_layerClasses) {
+		for (final Class<? extends NerdLayer<GraphicsT>> c : p_layerClasses)
 			this.restartLayers(c);
 	}
 
-	public void restartLayer(final NerdLayer p_layer) {
+	@SuppressWarnings("unchecked")
+	public void restartLayer(final NerdLayer<GraphicsT> p_layer) {
 		if (p_layer == null)
 			return;
 
-		final Class<? extends NerdLayer> layerClass = p_layer.getClass();
+		final Class<? extends NerdLayer<GraphicsT>> layerClass = (Class<NerdLayer<GraphicsT>>) p_layer.getClass();
 
 		// If an instance of this layer does not already exist,
 		if (!this.LAYERS.contains(p_layer)) {
@@ -353,7 +355,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 			return;
 		}
 
-		final NerdLayer toStart = this.constructLayer(this.getLayerConstructor(layerClass));
+		final NerdLayer<GraphicsT> toStart = this.constructLayer(this.getLayerConstructor(layerClass));
 
 		if (toStart == null)
 			throw new NullPointerException("You passed a `null` `NerdLayer` into `NerdScene::restartLayer()` :|");
@@ -365,8 +367,9 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	// endregion
 
 	// region `NerdLayer` construction.
-	private Constructor<? extends NerdLayer> getLayerConstructor(final Class<? extends NerdLayer> p_layerClass) {
-		Constructor<? extends NerdLayer> toRet = this.LAYER_CONSTRUCTORS.get(p_layerClass);
+	private Constructor<? extends NerdLayer<GraphicsT>> getLayerConstructor(
+			final Class<? extends NerdLayer<GraphicsT>> p_layerClass) {
+		Constructor<? extends NerdLayer<GraphicsT>> toRet = this.LAYER_CONSTRUCTORS.get(p_layerClass);
 		if (toRet != null)
 			return toRet;
 
@@ -384,11 +387,12 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 		return toRet;
 	}
 
-	private NerdLayer constructLayer(final Constructor<? extends NerdLayer> p_layerConstructor) {
+	@SuppressWarnings("unchecked")
+	private NerdLayer<GraphicsT> constructLayer(final Constructor<? extends NerdLayer<GraphicsT>> p_layerConstructor) {
 		if (p_layerConstructor == null)
 			return null;
 
-		NerdLayer toRet = null;
+		NerdLayer<GraphicsT> toRet = null;
 
 		// region Construct `toRet`.
 		try {
@@ -412,7 +416,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 
 			toRet.MANAGER = toRet.SCENE.MANAGER;
 			toRet.DISPLAY = toRet.SCENE.DISPLAY;
-			toRet.GRAPHICS = toRet.SCENE.GRAPHICS;
+			toRet.GRAPHICS = (GraphicsT) toRet.SCENE.GRAPHICS;
 		}
 
 		return toRet;
@@ -494,7 +498,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 				this.draw();
 				this.GRAPHICS.pop();
 
-				for (final NerdLayer l : this.LAYERS)
+				for (final NerdLayer<GraphicsT> l : this.LAYERS)
 					if (l != null)
 						if (l.isActive()) {
 							this.GRAPHICS.push();
@@ -504,7 +508,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 			}
 
 			case LAYER -> {
-				for (final NerdLayer l : this.LAYERS)
+				for (final NerdLayer<GraphicsT> l : this.LAYERS)
 					if (l != null)
 						if (l.isActive()) {
 							this.GRAPHICS.push();
@@ -531,13 +535,13 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 			case SCENE -> {
 				this.post();
 
-				for (final NerdLayer l : this.LAYERS)
+				for (final NerdLayer<GraphicsT> l : this.LAYERS)
 					if (l != null)
 						if (l.isActive())
 							l.post();
 			}
 			case LAYER -> {
-				for (final NerdLayer l : this.LAYERS)
+				for (final NerdLayer<GraphicsT> l : this.LAYERS)
 					if (l != null)
 						if (l.isActive())
 							l.post();
@@ -549,7 +553,7 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 	}
 
 	/* `package` */ void runExit() {
-		for (final NerdLayer l : this.LAYERS)
+		for (final NerdLayer<GraphicsT> l : this.LAYERS)
 			if (l != null)
 				if (l.isActive())
 					l.exit();
@@ -565,13 +569,13 @@ public abstract class NerdScene<GraphicsT extends NerdGenericGraphics> {
 			case SCENE -> {
 				this.pre();
 
-				for (final NerdLayer l : this.LAYERS)
+				for (final NerdLayer<GraphicsT> l : this.LAYERS)
 					if (l != null)
 						if (l.isActive())
 							l.pre();
 			}
 			case LAYER -> {
-				for (final NerdLayer l : this.LAYERS)
+				for (final NerdLayer<GraphicsT> l : this.LAYERS)
 					if (l != null)
 						if (l.isActive())
 							l.pre();

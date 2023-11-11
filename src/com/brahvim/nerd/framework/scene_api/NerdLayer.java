@@ -1,6 +1,5 @@
 package com.brahvim.nerd.framework.scene_api;
 
-import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
@@ -17,23 +16,23 @@ import com.brahvim.nerd.window_management.NerdWindowModule;
  * {@link NerdScene#addLayer(Class)}, passing in your {@link NerdLayer}
  * subclass.
  */
-public abstract class NerdLayer {
+public abstract class NerdLayer<GraphicsT extends NerdGenericGraphics> {
 
 	// region `protected` fields.
 	// Seriously, why did I set these to be `protected`?
-	public final NerdLayer LAYER = this;
+	public final NerdLayer<GraphicsT> LAYER = this;
 
+	// Forgive me for breaking naming conventions here.
+	// Forgive me. Please!
 	protected NerdSketch SKETCH;
+	protected GraphicsT GRAPHICS;
 	protected NerdSceneState STATE;
-	protected NerdGenericGraphics GRAPHICS;
 	protected NerdInputModule INPUT;
-	protected NerdAssetsModule ASSETS;
 	protected NerdWindowModule WINDOW;
+	protected NerdAssetsModule ASSETS;
 	protected NerdScenesModule MANAGER;
 	protected NerdDisplayModule DISPLAY;
-	protected NerdAbstractCamera CAMERA;
 
-	// TODO: Genericize `NerdLayer`!
 	protected NerdScene<?> SCENE;
 	// endregion
 
