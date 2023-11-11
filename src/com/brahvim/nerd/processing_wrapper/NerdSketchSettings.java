@@ -9,6 +9,7 @@ import java.util.function.Function;
 import com.brahvim.nerd.io.NerdStringTable;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 
 public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
@@ -35,7 +36,7 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	public String initialWindowTitle = "";
 
 	/** */
-	public String renderer = "";
+	public String renderer = PConstants.P3D;
 
 	/**
 	 * Holds the method that is called when the {@link NerdSketch} needs to know

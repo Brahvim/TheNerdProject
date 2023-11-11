@@ -65,8 +65,8 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 				s.add(f);
 		};
 
-		final NerdSketch<SketchPGraphicsT> constructedSketch = this.createNerdSketch(p_javaMainArgs,
-				this.BUILD_SETTINGS);
+		final NerdSketch<SketchPGraphicsT> constructedSketch = this
+				.createNerdSketch(p_javaMainArgs, this.BUILD_SETTINGS);
 		NerdSketchBuilder.runSketch(constructedSketch, p_javaMainArgs);
 		return constructedSketch;
 	}

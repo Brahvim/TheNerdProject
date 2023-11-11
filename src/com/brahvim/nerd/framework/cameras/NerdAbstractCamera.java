@@ -54,9 +54,6 @@ public abstract class NerdAbstractCamera {
 	public abstract void applyMatrix();
 
 	public void applyProjection() {
-		if (!this.SKETCH.USES_OPENGL)
-			return;
-
 		if (this.doAutoAspect)
 			// It probably is faster not to perform this check.
 			// if (!(this.SKETCH.pwidth == this.SKETCH.width

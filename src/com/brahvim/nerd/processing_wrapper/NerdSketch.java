@@ -25,7 +25,6 @@ import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWor
 import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.interfaces.NerdPAppletItf;
 import com.brahvim.nerd.utils.NerdAwtUtils;
-import com.brahvim.nerd.utils.NerdReflectionUtils;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
@@ -112,16 +111,6 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet
 	// endregion
 
 	// region Construction.
-	public NerdSketch() {
-		this.ROBOT = null;
-		this.MODULES = null;
-		this.nerdGenericGraphics = null;
-		this.USES_OPENGL = false;
-		this.SKETCH_SETTINGS = null;
-		this.MODULES_TO_CLASSES_MAP = null;
-		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
-	}
-
 	public NerdSketch(final NerdSketchSettings<SketchPGraphicsT> p_settings) {
 		Objects.requireNonNull(this.SKETCH_SETTINGS = p_settings, String.format("""
 				Please use an instance of some subclass of `%s`, or initialize a `%s` by hand, to make a `%s`.
@@ -214,9 +203,9 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet
 		super.smooth(this.SKETCH_SETTINGS.antiAliasing);
 
 		if (this.SKETCH_SETTINGS.shouldStartFullscreen)
-			super.fullScreen(PConstants.P3D);
+			super.fullScreen(this.SKETCH_SETTINGS.renderer);
 		else
-			super.size(this.SKETCH_SETTINGS.width, this.SKETCH_SETTINGS.height, PConstants.P3D);
+			super.size(this.SKETCH_SETTINGS.width, this.SKETCH_SETTINGS.height, this.SKETCH_SETTINGS.renderer);
 	}
 
 	@Override
