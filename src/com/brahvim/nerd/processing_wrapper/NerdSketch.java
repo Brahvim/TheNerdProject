@@ -229,7 +229,7 @@ public abstract class NerdSketch extends PApplet
 
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
-		super.frameRate(1000); // TODO!: Replace with `this.DEFAULT_REFRESH_RATE`.
+		super.frameRate(this.DEFAULT_REFRESH_RATE);
 		super.surface.setTitle(this.SKETCH_SETTINGS.initialWindowTitle);
 
 		this.defaultFont = super.createFont("SansSerif",
