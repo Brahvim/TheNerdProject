@@ -1,14 +1,14 @@
-package com.brahvim.nerd.necessary_modules;
+package com.brahvim.nerd.window_management;
 
 import java.awt.Point;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.brahvim.nerd.necessary_modules.window_module_impls.NerdGlWindowModule;
-import com.brahvim.nerd.necessary_modules.window_module_impls.NerdJava2dWindowModule;
 import com.brahvim.nerd.processing_callback_interfaces.hardware.window.NerdWindowListener;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule;
+import com.brahvim.nerd.window_management.window_module_impls.NerdJava2dWindowModule;
 
 import processing.core.PImage;
 import processing.core.PSurface;

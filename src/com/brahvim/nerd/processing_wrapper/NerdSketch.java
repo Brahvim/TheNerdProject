@@ -21,14 +21,14 @@ import com.brahvim.nerd.io.NerdStringTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
-import com.brahvim.nerd.necessary_modules.NerdDisplayModule;
-import com.brahvim.nerd.necessary_modules.NerdInputModule;
-import com.brahvim.nerd.necessary_modules.NerdWindowModule;
 import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.interfaces.NerdPAppletItf;
 import com.brahvim.nerd.utils.NerdAwtUtils;
 import com.brahvim.nerd.utils.NerdReflectionUtils;
+import com.brahvim.nerd.window_management.NerdDisplayModule;
+import com.brahvim.nerd.window_management.NerdInputModule;
+import com.brahvim.nerd.window_management.NerdWindowModule;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

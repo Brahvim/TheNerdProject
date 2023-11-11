@@ -5,9 +5,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
-import com.brahvim.nerd.necessary_modules.NerdDisplayModule;
-import com.brahvim.nerd.necessary_modules.NerdInputModule;
-import com.brahvim.nerd.necessary_modules.NerdWindowModule;
+import com.brahvim.nerd.window_management.NerdDisplayModule;
+import com.brahvim.nerd.window_management.NerdInputModule;
+import com.brahvim.nerd.window_management.NerdWindowModule;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

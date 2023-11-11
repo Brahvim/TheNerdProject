@@ -1,4 +1,4 @@
-package com.brahvim.nerd.necessary_modules;
+package com.brahvim.nerd.window_management;
 
 import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;

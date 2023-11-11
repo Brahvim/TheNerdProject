@@ -1,12 +1,12 @@
-package com.brahvim.nerd.necessary_modules.window_module_impls;
+package com.brahvim.nerd.window_management.window_module_impls;
 
 import java.awt.Image;
 import java.awt.Point;
 
 import javax.swing.JFrame;
 
-import com.brahvim.nerd.necessary_modules.NerdWindowModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.window_management.NerdWindowModule;
 
 import processing.awt.PSurfaceAWT;
 import processing.core.PVector;

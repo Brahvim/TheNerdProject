@@ -8,9 +8,9 @@ import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.math.NerdUnprojector;
-import com.brahvim.nerd.necessary_modules.NerdInputModule;
-import com.brahvim.nerd.necessary_modules.NerdWindowModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.window_management.NerdInputModule;
+import com.brahvim.nerd.window_management.NerdWindowModule;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

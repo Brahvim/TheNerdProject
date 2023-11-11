@@ -1,9 +1,9 @@
-package com.brahvim.nerd.necessary_modules.window_module_impls;
+package com.brahvim.nerd.window_management.window_module_impls;
 
 import java.awt.Point;
 
-import com.brahvim.nerd.necessary_modules.NerdWindowModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.window_management.NerdWindowModule;
 import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PVector;
