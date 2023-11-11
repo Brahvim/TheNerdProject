@@ -38,7 +38,7 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.opengl.PJOGL;
 
-public abstract class NerdSketch extends PApplet
+public abstract class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet
 		implements NerdSketchAllWorkflowsListener, NerdPAppletItf {
 
 	// region Inner classes.
@@ -94,8 +94,8 @@ public abstract class NerdSketch extends PApplet
 	// Timers! (`millis()` returns `int`s!):
 
 	protected int frameStartTime, pframeStartTime, deltaTime;
-	protected NerdGenericGraphics nerdGenericGraphics;
 	protected NerdStringTable globalStringTable;
+	protected NerdGenericGraphics<SketchPGraphicsT> nerdGenericGraphics;
 	protected PFont defaultFont;
 
 	// Necessary `NerdModule`s:
@@ -218,12 +218,14 @@ public abstract class NerdSketch extends PApplet
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void setup() {
 		this.genericWindowModule = this.getNerdModule(NerdWindowModule.class);
 		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
 		this.inputModule = this.getNerdModule(NerdInputModule.class);
 
-		this.nerdGenericGraphics = new NerdGenericGraphics(this, super.g);
+		this.nerdGenericGraphics = (NerdGenericGraphics<SketchPGraphicsT>) NerdGenericGraphics.createNerdGenericGraphics(this,
+				super.g);
 
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
 		this.forEachNerdModule(NerdModule::preSetup);

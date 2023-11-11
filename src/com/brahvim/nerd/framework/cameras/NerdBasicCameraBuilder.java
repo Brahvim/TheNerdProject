@@ -11,13 +11,14 @@ import processing.opengl.PGraphics3D;
 
 public class NerdBasicCameraBuilder {
 
-	private final NerdSketch SKETCH;
+	private final NerdSketch<PGraphics3D> SKETCH;
 	private final NerdBasicCamera BUILD;
 
-	public NerdBasicCameraBuilder(final NerdSketch p_sketch, final PGraphics3D p_graphics) {
+	public NerdBasicCameraBuilder(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
 		this(new NerdP3dGraphics(p_sketch, p_graphics));
 	}
 
+	@SuppressWarnings("unchecked")
 	public NerdBasicCameraBuilder(final NerdP3dGraphics p_graphics) {
 		this.SKETCH = p_graphics.getSketch(); // Used by `setClearColor()`.
 		this.BUILD = new NerdBasicCamera(p_graphics);
