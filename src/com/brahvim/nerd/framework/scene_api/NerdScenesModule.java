@@ -58,7 +58,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 				final NerdScene<SketchPGraphicsForCacheT> p_cachedReference) {
 			this.CONSTRUCTOR = p_constructor;
 			this.cachedReference = p_cachedReference;
-			this.STATE = this.cachedReference.STATE;
+			this.STATE = this.cachedReference.state;
 		}
 
 		// region Cache queries.
@@ -593,7 +593,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		if (this.getTimesSceneLoaded(sceneClass) == 0) {
 			// p_scene.ASSETS.clear(); // Not needed - this code will never have bugs. Hah!
 			p_scene.runPreload();
-			this.SCENE_CACHE.get(sceneClass).cachedAssets = p_scene.ASSETS;
+			this.SCENE_CACHE.get(sceneClass).cachedAssets = p_scene.assets;
 			return;
 		}
 
@@ -603,14 +603,14 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		if (this.scenesModuleSettings.ON_PRELOAD.preloadOnlyOnce) {
 			final NerdAssetsModule assets = this.SCENE_CACHE.get(sceneClass).cachedAssets;
 			super.getSketchModulesMap().put(NerdAssetsModule.class, assets);
-			p_scene.ASSETS = assets;
+			p_scene.assets = assets;
 		} else { // Else, since we're supposed to run
 					// `NerdScene<SketchPGraphicsT>::preload()` each
 					// time, do
 					// that!:
-			p_scene.ASSETS.clear();
+			p_scene.assets.clear();
 			p_scene.runPreload();
-			this.SCENE_CACHE.get(sceneClass).cachedAssets = p_scene.ASSETS;
+			this.SCENE_CACHE.get(sceneClass).cachedAssets = p_scene.assets;
 			// ^^^ `NerdAssetsModule` has literally only ONE field, but alright!
 		}
 		// endregion
@@ -707,24 +707,24 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 
 		// Initialize fields as if this was a part of the construction
 		// (done here instead so your subclass doesn't need to write one!):
-		toRet.MANAGER = this;
-		toRet.SKETCH = (NerdSketch<SketchPGraphicsT>) toRet.MANAGER.SKETCH;
+		toRet.manager = this;
+		toRet.sketch = (NerdSketch<SketchPGraphicsT>) toRet.manager.SKETCH;
 
 		// Now, we copy all other objects from `toRet.SKETCH`!:
 		// toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
-		toRet.ASSETS = new NerdAssetsModule(toRet.SKETCH);
-		toRet.GRAPHICS = toRet.SKETCH.getNerdGenericGraphics();
-		toRet.INPUT = toRet.SKETCH.getNerdModule(NerdInputModule.class);
-		toRet.WINDOW = toRet.SKETCH.getNerdModule(NerdWindowModule.class);
-		toRet.DISPLAY = toRet.SKETCH.getNerdModule(NerdDisplayModule.class);
+		toRet.assets = new NerdAssetsModule(toRet.sketch);
+		toRet.graphics = toRet.sketch.getNerdGenericGraphics();
+		toRet.input = toRet.sketch.getNerdModule(NerdInputModule.class);
+		toRet.window = toRet.sketch.getNerdModule(NerdWindowModule.class);
+		toRet.display = toRet.sketch.getNerdModule(NerdDisplayModule.class);
 
 		// If this is the first time we're constructing this scene,
 		// ensure it has a cache and a saved state!
 		if (sceneCache == null) {
-			toRet.STATE = new NerdSceneState();
+			toRet.state = new NerdSceneState();
 			this.cacheScene(sceneClass);
 		} else
-			toRet.STATE = sceneCache.STATE;
+			toRet.state = sceneCache.STATE;
 		// endregion
 
 		return toRet;
