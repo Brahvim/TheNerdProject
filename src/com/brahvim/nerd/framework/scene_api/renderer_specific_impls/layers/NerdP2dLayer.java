@@ -7,6 +7,6 @@ import processing.opengl.PGraphics2D;
 
 public class NerdP2dLayer extends NerdLayer<PGraphics2D> {
 
-    protected NerdP2dGraphics graphics = (NerdP2dGraphics) super.GRAPHICS; // NOSONAR
+    protected NerdP2dGraphics graphics = (NerdP2dGraphics) super.graphics; // NOSONAR
 
 }

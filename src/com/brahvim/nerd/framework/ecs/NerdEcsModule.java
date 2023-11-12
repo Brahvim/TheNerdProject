@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -18,6 +19,7 @@ import com.brahvim.nerd.io.net.tcp.NerdTcpServer;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdModuleSettings;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.NerdSketchSettings;
 import com.brahvim.nerd.utils.NerdByteSerialUtils;
 import com.brahvim.nerd.utils.java_function_extensions.NerdTriConsumer;
 
@@ -27,7 +29,7 @@ public class NerdEcsModule extends NerdModule {
 	public static final long serialVersionUID = -6488574946L;
 
 	private static final Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[] DEFAULT_ECS_SYSTEMS_ORDER = null;
-	// // Loooooooooong declaration!:
+	// Loooooooooong declaration!:
 	// (Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>[]) Set
 	// .<Class<? extends NerdEcsSystem<? extends NerdEcsComponent>>>of(null, null,
 	// null).toArray();
@@ -117,7 +119,7 @@ public class NerdEcsModule extends NerdModule {
 
 	// region Workflow callbacks (declared as `protected`).
 	@Override
-	protected void sketchConstructed(final NerdSketchBuilderSettings p_settings) {
+	protected void sketchConstructed(final NerdSketchSettings p_settings) {
 		super.SKETCH.getNerdModule(NerdScenesModule.class).addNewSceneStartedListener(this::sceneChanged);
 	}
 
@@ -391,7 +393,7 @@ public class NerdEcsModule extends NerdModule {
 
 		// region Reducing `LinkedList` elements, and modifying `NAME_TO_ENTITY_MAP`.
 		// Remove elements not available in the lists in the deserialized module:
-		for (final Map.Entry<?, ?> e : Map.<HashSet<?>, HashSet<?>>of(
+		for (final Map.Entry<?, ?> e : Map.of(
 				this.ENTITIES, p_deserialized.entities,
 				this.COMPONENTS, p_deserialized.components).entrySet()) {
 			final LinkedList<?> myList = (LinkedList<?>) e.getKey();

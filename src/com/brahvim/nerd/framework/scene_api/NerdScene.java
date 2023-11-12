@@ -423,16 +423,16 @@ public abstract class NerdScene<SketchPGraphicsT extends PGraphics> {
 
 		if (toRet != null) {
 			toRet.SCENE = this;
-			toRet.STATE = toRet.SCENE.state;
-			toRet.INPUT = toRet.SCENE.input;
-			toRet.SKETCH = toRet.SCENE.sketch;
-			toRet.ASSETS = toRet.SCENE.assets;
-			toRet.WINDOW = toRet.SCENE.window;
+			toRet.state = toRet.SCENE.state;
+			toRet.input = toRet.SCENE.input;
+			toRet.sketch = toRet.SCENE.sketch;
+			toRet.assets = toRet.SCENE.assets;
+			toRet.window = toRet.SCENE.window;
 			// toRet.CAMERA = toRet.SCENE.CAMERA;
 
-			toRet.MANAGER = toRet.SCENE.manager;
-			toRet.DISPLAY = toRet.SCENE.display;
-			toRet.GRAPHICS = toRet.SCENE.graphics;
+			toRet.manager = toRet.SCENE.manager;
+			toRet.display = toRet.SCENE.display;
+			toRet.graphics = toRet.SCENE.graphics;
 		}
 
 		return toRet;

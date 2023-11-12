@@ -26,16 +26,16 @@ public abstract class NerdLayer<SketchPGraphicsT extends PGraphics> {
 
 	// Forgive me for breaking naming conventions here.
 	// Forgive me. Please!
-	protected NerdSketch<SketchPGraphicsT> SKETCH;
-	protected NerdWindowModule<SketchPGraphicsT> WINDOW;
-	protected NerdScenesModule<SketchPGraphicsT> MANAGER;
-	protected NerdGenericGraphics<SketchPGraphicsT> GRAPHICS;
+	protected NerdSketch<SketchPGraphicsT> sketch;
+	protected NerdWindowModule<SketchPGraphicsT> window;
+	protected NerdScenesModule<SketchPGraphicsT> manager;
+	protected NerdGenericGraphics<SketchPGraphicsT> graphics;
 
 	// Non-generic ones:
-	protected NerdSceneState STATE;
-	protected NerdInputModule INPUT;
-	protected NerdAssetsModule ASSETS;
-	protected NerdDisplayModule DISPLAY;
+	protected NerdSceneState state;
+	protected NerdInputModule input;
+	protected NerdAssetsModule assets;
+	protected NerdDisplayModule display;
 
 	protected NerdScene<SketchPGraphicsT> SCENE;
 	// endregion

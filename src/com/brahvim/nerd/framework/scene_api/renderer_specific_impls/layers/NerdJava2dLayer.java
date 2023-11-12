@@ -7,6 +7,6 @@ import processing.awt.PGraphicsJava2D;
 
 public class NerdJava2dLayer extends NerdLayer<PGraphicsJava2D> {
 
-    protected NerdJava2dGraphics graphics = (NerdJava2dGraphics) super.GRAPHICS; // NOSONAR
+    protected NerdJava2dGraphics graphics = (NerdJava2dGraphics) super.graphics; // NOSONAR
 
 }

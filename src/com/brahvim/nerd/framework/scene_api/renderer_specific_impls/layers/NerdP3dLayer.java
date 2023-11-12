@@ -7,6 +7,6 @@ import processing.opengl.PGraphics3D;
 
 public class NerdP3dLayer extends NerdLayer<PGraphics3D> {
 
-    protected NerdP3dGraphics graphics = (NerdP3dGraphics) super.GRAPHICS; // NOSONAR
+    protected NerdP3dGraphics graphics = (NerdP3dGraphics) super.graphics; // NOSONAR
 
 }
