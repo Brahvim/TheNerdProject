@@ -119,16 +119,16 @@ public class NerdEcsModule extends NerdModule {
 
 	// region Workflow callbacks (declared as `protected`).
 	@Override
-	protected void sketchConstructed(final NerdSketchSettings p_settings) {
+	protected void sketchConstructed(final NerdSketchSettings<?> p_settings) {
 		super.SKETCH.getNerdModule(NerdScenesModule.class).addNewSceneStartedListener(this::sceneChanged);
 	}
 
 	// From `NerdScenesModule`:
 	@SuppressWarnings("unchecked")
 	protected void sceneChanged(
-			final NerdScenesModule p_scenesModule,
-			final Class<? extends NerdScene> p_previousClass,
-			final Class<? extends NerdScene> p_currentClass) {
+			final NerdScenesModule<?> p_scenesModule,
+			final Class<? extends NerdScene<?>> p_previousClass,
+			final Class<? extends NerdScene<?>> p_currentClass) {
 		this.callOnAllSystems(NerdEcsSystem::sceneChanged);
 	}
 

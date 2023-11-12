@@ -5,8 +5,20 @@ import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 
 import processing.opengl.PGraphics3D;
 
-public class NerdP3dScene extends NerdScene<PGraphics3D> {
+public abstract class NerdP3dScene extends NerdScene<PGraphics3D> {
 
-    protected NerdP3dGraphics graphics = (NerdP3dGraphics) super.graphics; // NOSONAR
+    protected NerdP3dGraphics graphics;
+
+    @Override
+    protected void sceneRendererInit() {
+        this.graphics = (NerdP3dGraphics) super.genericGraphics;
+        this.graphics.setCurrentCameraToDefault();
+    }
+
+    /* package */ void runSceneInit() {
+    }
+
+    protected void sceneInit() {
+    }
 
 }

@@ -7,6 +7,11 @@ import processing.javafx.PGraphicsFX2D;
 
 public class NerdFx2dLayer extends NerdLayer<PGraphicsFX2D> {
 
-    protected NerdFx2dGraphics graphics = (NerdFx2dGraphics) super.graphics; // NOSONAR
+    protected NerdFx2dGraphics graphics;
+
+    @Override
+    protected void layerRendererInit() {
+        this.graphics = (NerdFx2dGraphics) super.genericGraphics;
+    }
 
 }

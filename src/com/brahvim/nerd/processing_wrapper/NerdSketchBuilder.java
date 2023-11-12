@@ -9,8 +9,16 @@ import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
+import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
+import processing.javafx.PGraphicsFX2D;
+import processing.opengl.PGraphics2D;
+import processing.opengl.PGraphics3D;
+import processing.opengl.PGraphicsOpenGL;
+import processing.pdf.PGraphicsPDF;
+import processing.svg.PGraphicsSVG;
 
 /**
  * Want to hack into the {@link NerdSketch<SketchPGraphicsT>} class and control
@@ -27,11 +35,34 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	// region Fields and constructor!
 	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
-
 	private final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
 
-	protected NerdSketchBuilder() {
+	protected NerdSketchBuilder(Class<SketchPGraphicsT> p_rendererClass) {
 		this.BUILD_SETTINGS = new NerdSketchSettings<>();
+
+		if (p_rendererClass == PGraphics2D.class)
+			this.BUILD_SETTINGS.renderer = PConstants.P2D;
+		else if (p_rendererClass == PGraphics3D.class)
+			this.BUILD_SETTINGS.renderer = PConstants.P3D;
+		else if (p_rendererClass == PGraphicsJava2D.class)
+			this.BUILD_SETTINGS.renderer = PConstants.JAVA2D;
+		else if (p_rendererClass == PGraphicsFX2D.class)
+			this.BUILD_SETTINGS.renderer = PConstants.FX2D;
+
+		// Unsupported!...:
+		else if (p_rendererClass == PGraphicsSVG.class)
+			throw new IllegalArgumentException("Unsupported renderers. Sorry.");
+		else if (p_rendererClass == PGraphicsPDF.class)
+			throw new IllegalArgumentException("Unsupported renderers. Sorry.");
+		// ...
+		// ...Unreal:
+		else if (p_rendererClass == PGraphics.class)
+			throw new IllegalArgumentException("Those renderers are not real!");
+		else if (p_rendererClass == PGraphicsOpenGL.class)
+			throw new IllegalArgumentException("Those renderers are not real!");
+		else
+			throw new IllegalArgumentException("That's not a real type...");
+
 	}
 	// endregion
 
@@ -71,7 +102,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return constructedSketch;
 	}
 
-	protected LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> supplyDefaultModules() {
+	private LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> supplyDefaultModules() {
 		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> toRet = new LinkedHashSet<>(5);
 
 		toRet.add(NerdSketch.NerdSketchOnlyAssetsModule::new);

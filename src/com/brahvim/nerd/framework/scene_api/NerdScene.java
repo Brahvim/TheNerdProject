@@ -39,7 +39,7 @@ public abstract class NerdScene<SketchPGraphicsT extends PGraphics> {
 	protected NerdSketch<SketchPGraphicsT> sketch;
 	protected NerdWindowModule<SketchPGraphicsT> window;
 	protected NerdScenesModule<SketchPGraphicsT> manager;
-	protected NerdGenericGraphics<SketchPGraphicsT> graphics;
+	protected NerdGenericGraphics<SketchPGraphicsT> genericGraphics;
 
 	// Non-generic:
 	protected NerdSceneState state;
@@ -76,8 +76,8 @@ public abstract class NerdScene<SketchPGraphicsT extends PGraphics> {
 		return this.sketch;
 	}
 
-	public NerdGenericGraphics<SketchPGraphicsT> getGraphics() {
-		return this.graphics;
+	public NerdGenericGraphics<SketchPGraphicsT> getGenericGraphics() {
+		return this.genericGraphics;
 	}
 
 	public boolean hasCompletedPreload() {
@@ -432,7 +432,7 @@ public abstract class NerdScene<SketchPGraphicsT extends PGraphics> {
 
 			toRet.manager = toRet.SCENE.manager;
 			toRet.display = toRet.SCENE.display;
-			toRet.graphics = toRet.SCENE.graphics;
+			toRet.genericGraphics = toRet.SCENE.genericGraphics;
 		}
 
 		return toRet;
@@ -444,8 +444,6 @@ public abstract class NerdScene<SketchPGraphicsT extends PGraphics> {
 	/* `package` */ void runSetup(final NerdSceneState p_state) {
 		this.startMillis = this.sketch.millis();
 		this.setup(p_state);
-
-		// TODO: `NerdLayer`s should get to respond to this `setup()`.
 	}
 
 	/* `package` */ synchronized void runPreload() {
@@ -493,8 +491,8 @@ public abstract class NerdScene<SketchPGraphicsT extends PGraphics> {
 		this.sceneChanged();
 	}
 
-	/* `package` */ void runSceneInit() {
-		this.sceneInit();
+	/* `package` */ void runSceneRendererInit() {
+		this.sceneRendererInit();
 	}
 
 	/* `package` */ void runDispose() {
@@ -510,16 +508,16 @@ public abstract class NerdScene<SketchPGraphicsT extends PGraphics> {
 
 		switch (this.manager.scenesModuleSettings.drawFirstCaller) {
 			case SCENE -> {
-				this.graphics.push();
+				this.genericGraphics.push();
 				this.draw();
-				this.graphics.pop();
+				this.genericGraphics.pop();
 
 				for (final NerdLayer<SketchPGraphicsT> l : this.LAYERS)
 					if (l != null)
 						if (l.isActive()) {
-							this.graphics.push();
+							this.genericGraphics.push();
 							l.draw();
-							this.graphics.pop();
+							this.genericGraphics.pop();
 						}
 			}
 
@@ -527,14 +525,14 @@ public abstract class NerdScene<SketchPGraphicsT extends PGraphics> {
 				for (final NerdLayer<SketchPGraphicsT> l : this.LAYERS)
 					if (l != null)
 						if (l.isActive()) {
-							this.graphics.push();
+							this.genericGraphics.push();
 							l.draw();
-							this.graphics.pop();
+							this.genericGraphics.pop();
 						}
 
-				this.graphics.push();
+				this.genericGraphics.push();
 				this.draw();
-				this.graphics.pop();
+				this.genericGraphics.pop();
 			}
 		}
 
@@ -626,7 +624,8 @@ public abstract class NerdScene<SketchPGraphicsT extends PGraphics> {
 	protected void sceneChanged() {
 	}
 
-	protected void sceneInit() {
+	/** Called right before {@link NerdScene#setup(NerdSceneState)}! */
+	protected void sceneRendererInit() {
 	}
 
 	/**

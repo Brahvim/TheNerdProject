@@ -7,6 +7,11 @@ import processing.opengl.PGraphics2D;
 
 public class NerdP2dLayer extends NerdLayer<PGraphics2D> {
 
-    protected NerdP2dGraphics graphics = (NerdP2dGraphics) super.graphics; // NOSONAR
+    protected NerdP2dGraphics graphics;
+
+    @Override
+    protected void layerRendererInit() {
+        this.graphics = (NerdP2dGraphics) super.genericGraphics;
+    }
 
 }

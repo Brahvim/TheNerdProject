@@ -29,7 +29,7 @@ public abstract class NerdLayer<SketchPGraphicsT extends PGraphics> {
 	protected NerdSketch<SketchPGraphicsT> sketch;
 	protected NerdWindowModule<SketchPGraphicsT> window;
 	protected NerdScenesModule<SketchPGraphicsT> manager;
-	protected NerdGenericGraphics<SketchPGraphicsT> graphics;
+	protected NerdGenericGraphics<SketchPGraphicsT> genericGraphics;
 
 	// Non-generic ones:
 	protected NerdSceneState state;
@@ -53,19 +53,22 @@ public abstract class NerdLayer<SketchPGraphicsT extends PGraphics> {
 		return this.active;
 	}
 
+	public int getTimesActivated() {
+		return this.timesActivated;
+	}
+
 	public void setActive(final boolean p_toggleState) {
 		final boolean previouslyActive = this.active; // RECORD!!!!
 		this.active = p_toggleState;
 
 		if (this.active && !previouslyActive) {
+			if (this.timesActivated == 0)
+				this.layerRendererInit();
+
 			this.setup();
 			this.timesActivated++;
 		} else
 			this.layerExit();
-	}
-
-	public int getTimesActivated() {
-		return this.timesActivated;
 	}
 	// endregion
 
@@ -135,6 +138,9 @@ public abstract class NerdLayer<SketchPGraphicsT extends PGraphics> {
 
 	// region `protected` methods. Nobody can call them outside of this package!
 	// region `NerdLayer`-only (`protected`) callbacks!
+	protected void layerRendererInit() {
+	}
+
 	protected void layerExit() {
 	}
 	// endregion

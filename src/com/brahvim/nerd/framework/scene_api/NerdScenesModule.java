@@ -713,7 +713,7 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		// Now, we copy all other objects from `toRet.SKETCH`!:
 		// toRet.CAMERA = toRet.GRAPHICS.getCurrentCamera();
 		toRet.assets = new NerdAssetsModule(toRet.sketch);
-		toRet.graphics = toRet.sketch.getNerdGenericGraphics();
+		toRet.genericGraphics = toRet.sketch.getNerdGenericGraphics();
 		toRet.input = toRet.sketch.getNerdModule(NerdInputModule.class);
 		toRet.window = toRet.sketch.getNerdModule(NerdWindowModule.class);
 		toRet.display = toRet.sketch.getNerdModule(NerdDisplayModule.class);
@@ -801,11 +801,10 @@ public class NerdScenesModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 
 		this.SCENE_CHANGED_LISTENERS.removeAll(this.SCENE_CHANGED_LISTENERS_TO_REMOVE);
 
-		// TODO `this.currentScene.GRAPHICS.setCurrentCameraToDefault();`
-		this.currentScene.runSceneInit();
+		this.currentScene.runSceneRendererInit();
 
-		// This is `null` in SO MANY PLACES!:
-		if (p_state == null)
+		// This is nullable in SO MANY PLACES!:
+		if (p_state == null) // Deal with it now!
 			this.currentScene.runSetup(new NerdSceneState());
 		else
 			this.currentScene.runSetup(p_state);
