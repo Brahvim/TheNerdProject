@@ -63,9 +63,9 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 		return new PVector(this.window.getWidth(), this.window.getHeight());
 	}
 
-	// public Image getIcon() {
-	// return this.window.getIconImage();
-	// }
+	public Image getIcon() {
+		return this.window.getIconImage();
+	}
 
 	@Override
 	public PVector getPositionAsPVector() {
@@ -73,7 +73,7 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 	}
 
 	@Override
-	public Object getNativeObject() {
+	public JFrame getNativeObject() {
 		return this.window;
 	}
 

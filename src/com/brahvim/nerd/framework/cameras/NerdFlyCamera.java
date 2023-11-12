@@ -153,8 +153,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		final Point mouseLockPos = this.calculateMouseLockPos();
 
 		if (this.holdMouse) {
-			// TODO: 😔 (Bring back `JAVA2D`!)
-			final GLWindow window = (GLWindow) super.WINDOW.getNativeObject();
+			final GLWindow window = super.WINDOW.getNativeObject();
 			// window.warpPointer(mouseLockPos.x, mouseLockPos.y);
 			window.warpPointer(window.getSurfaceWidth() / 2, window.getSurfaceHeight() / 2);
 

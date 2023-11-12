@@ -78,8 +78,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	@SuppressWarnings("unchecked")
 	protected static <RetGraphicsT extends PGraphics> NerdWindowModule<?> supplyWindowModuleForSketch(
 			final NerdSketch<RetGraphicsT> p_sketch) {
-		final String sketchRenderer = p_sketch.SKETCH_SETTINGS.renderer;
-		return switch (sketchRenderer) {
+		return switch (p_sketch.SKETCH_SETTINGS.renderer) {
 			case PConstants.P2D -> new NerdGlWindowModule((NerdSketch<PGraphicsOpenGL>) p_sketch);
 			case PConstants.P3D -> new NerdGlWindowModule((NerdSketch<PGraphicsOpenGL>) p_sketch);
 			case PConstants.PDF -> new NerdJava2dWindowModule((NerdSketch<PGraphicsJava2D>) p_sketch);

@@ -5,13 +5,14 @@ import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGlGraphics;
 
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
-public class NerdP2dGraphics extends NerdGenericGraphics<PGraphics2D> {
+public class NerdP2dGraphics extends NerdGenericGlGraphics<PGraphics2D> {
 
     protected final NerdUnprojector UNPROJECTOR;
 
@@ -43,12 +44,7 @@ public class NerdP2dGraphics extends NerdGenericGraphics<PGraphics2D> {
     }
 
     public PVector screenVec(final PVector p_vec) {
-        return new PVector(this.screenX(p_vec.x, p_vec.y, p_vec.z), this.screenY(p_vec.x, p_vec.y, p_vec.z),
-                this.screenZ(p_vec.x, p_vec.y, p_vec.z));
-    }
-
-    public PVector screenVec(final float p_x, final float p_y, final float p_z) {
-        return new PVector(this.screenX(p_x, p_y, p_z), this.screenY(p_x, p_y, p_z), this.screenZ(p_x, p_y, p_z));
+        return new PVector(this.screenX(p_vec.x, p_vec.y), this.screenY(p_vec.x, p_vec.y));
     }
     // endregion
 
@@ -89,17 +85,25 @@ public class NerdP2dGraphics extends NerdGenericGraphics<PGraphics2D> {
 
     // region Parameterless overloads.
     public float screenX() {
-        return this.GRAPHICS.screenX(0, 0, 0);
+        return this.GRAPHICS.screenX(0, 0);
     }
 
     public float screenY() {
-        return this.GRAPHICS.screenY(0, 0, 0);
+        return this.GRAPHICS.screenY(0, 0);
     }
 
     public float screenZ() {
-        return this.GRAPHICS.screenY(0, 0, 0);
+        return this.GRAPHICS.screenY(0, 0);
     }
     // endregion
+
+    public float screenX(final float x, final float y) {
+        return this.GRAPHICS.screenX(x, y);
+    }
+
+    public float screenY(final float x, final float y) {
+        return this.GRAPHICS.screenY(x, y);
+    }
 
     // region `p_vec`!
     // The following two were going to exclude the `z` if it was `0`.
@@ -280,6 +284,78 @@ public class NerdP2dGraphics extends NerdGenericGraphics<PGraphics2D> {
     // return this.worldVec(touch.x, touch.y, p_distanceFromCamera);
     // }
     // endregion
+    // endregion
+
+    // region Not in `SVG`/`PDF`, but are here.
+    public boolean save(final String filename) {
+        return this.GRAPHICS.save(filename);
+    }
+
+    public void blend(final int sx, final int sy, final int sw, final int sh,
+            final int dx, final int dy, final int dw,
+            final int dh, final int mode) {
+        this.GRAPHICS.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    }
+
+    public void blend(final PImage src, final int sx, final int sy, final int sw,
+            final int sh, final int dx,
+            final int dy, final int dw, final int dh, final int mode) {
+        this.GRAPHICS.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    }
+
+    public void copy(final int sx, final int sy, final int sw, final int sh,
+            final int dx, final int dy, final int dw,
+            final int dh) {
+        this.GRAPHICS.copy(sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+
+    public void copy(final PImage src, final int sx, final int sy, final int sw,
+            final int sh, final int dx,
+            final int dy, final int dw, final int dh) {
+        this.GRAPHICS.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+
+    public void filter(final int kind) {
+        this.GRAPHICS.filter(kind);
+    }
+
+    public void filter(final int kind, final float param) {
+        this.GRAPHICS.filter(kind, param);
+    }
+
+    public PImage get() {
+        return this.GRAPHICS.get();
+    }
+
+    public int get(final int x, final int y) {
+        return this.GRAPHICS.get(x, y);
+    }
+
+    public PImage get(final int x, final int y, final int w, final int h) {
+        return this.GRAPHICS.get(x, y, w, h);
+
+    }
+
+    public void loadPixels() {
+        this.GRAPHICS.loadPixels();
+    }
+
+    public void mask(final int[] maskArray) {
+        this.GRAPHICS.mask(maskArray);
+    }
+
+    public void mask(final PImage img) {
+        this.GRAPHICS.mask(img);
+    }
+
+    public void updatePixels() {
+        this.GRAPHICS.updatePixels();
+    }
+
+    public void updatePixels(final int x, final int y, final int w, final int h) {
+        this.GRAPHICS.updatePixels(x, y, w, h);
+    }
+
     // endregion
 
     @Override

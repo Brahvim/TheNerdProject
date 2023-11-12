@@ -23,7 +23,6 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.processing_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.interfaces.NerdPAppletItf;
 import com.brahvim.nerd.utils.NerdAwtUtils;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
@@ -37,8 +36,7 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.opengl.PJOGL;
 
-public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet
-		implements NerdSketchAllWorkflowsListener, NerdPAppletItf {
+public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet implements NerdSketchAllWorkflowsListener {
 
 	// region Inner classes.
 	protected static final class NerdSketchOnlyAssetsModule extends NerdAssetsModule {

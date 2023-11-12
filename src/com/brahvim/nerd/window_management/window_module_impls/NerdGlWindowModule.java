@@ -64,7 +64,7 @@ public class NerdGlWindowModule extends NerdWindowModule<PGraphicsOpenGL> {
 	}
 
 	@Override
-	public Object getNativeObject() {
+	public GLWindow getNativeObject() {
 		return this.window;
 	}
 
@@ -150,6 +150,11 @@ public class NerdGlWindowModule extends NerdWindowModule<PGraphicsOpenGL> {
 		// `NerdSketch::setup()` does not need this check at all!:
 		// while (!this.window.isResizable())
 		// ;
+	}
+
+	@Override
+	public void pre() { // TODO: Slowdowns? Take THIS decision better!
+		this.window = (GLWindow) super.sketchSurface.getNative();
 	}
 
 	@Override
