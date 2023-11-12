@@ -1,19 +1,22 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls;
 
+import java.util.Objects;
+
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGlGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGlGenericGraphics;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
 
-public class NerdP3dGraphics extends NerdGenericGlGraphics<PGraphics3D> {
+public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     protected final NerdUnprojector UNPROJECTOR;
     protected final NerdAbstractCamera DEFAULT_CAMERA;
@@ -152,14 +155,17 @@ public class NerdP3dGraphics extends NerdGenericGlGraphics<PGraphics3D> {
     }
     // endregion
 
+    @Override
     public float screenX(final float p_x, final float p_y, final float p_z) {
         return super.GRAPHICS.screenZ(p_x, p_y, p_z);
     }
 
+    @Override
     public float screenY(final float p_x, final float p_y, final float p_z) {
         return super.GRAPHICS.screenZ(p_x, p_y, p_z);
     }
 
+    @Override
     public float screenZ(final float p_x, final float p_y, final float p_z) {
         return super.GRAPHICS.screenZ(p_x, p_y, p_z);
     }
@@ -415,6 +421,225 @@ public class NerdP3dGraphics extends NerdGenericGlGraphics<PGraphics3D> {
         this.GRAPHICS.updatePixels(x, y, w, h);
     }
     // endregions
+
+    /**
+     * Draws the {@code p_bgImage} as if it was a background. You may even choose to
+     * call one of the
+     * {@link PApplet#tint()} overloads before calling this!
+     */
+    @Override
+    public void background(final PImage p_bgImage) {
+        Objects.requireNonNull(p_bgImage);
+        this.begin2d();
+        this.GRAPHICS.image(p_bgImage,
+                this.WINDOW.cx, this.WINDOW.cy,
+                this.WINDOW.width, this.WINDOW.height);
+        this.end2d();
+    }
+
+    // region 3D shapes.
+    // region `box()` overloads.
+    public void box(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height,
+            final float p_depth) {
+        this.GRAPHICS.pushMatrix();
+        this.GRAPHICS.translate(p_x, p_y, p_z);
+        this.GRAPHICS.box(p_width, p_height, p_depth);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void box(final PVector p_pos, final float p_width, final float p_height, final float p_depth) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_pos);
+        this.GRAPHICS.box(p_width, p_height, p_depth);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void box(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
+        this.GRAPHICS.pushMatrix();
+        this.GRAPHICS.translate(p_x, p_y, p_z);
+        this.GRAPHICS.box(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void box(final float p_x, final float p_y, final float p_z, final float p_size) {
+        this.GRAPHICS.pushMatrix();
+        this.GRAPHICS.translate(p_x, p_y, p_z);
+        this.GRAPHICS.box(p_size);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void box(final PVector p_pos, final PVector p_dimensions) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_pos);
+        this.GRAPHICS.box(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void box(final PVector p_pos, final float p_size) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_pos);
+        this.GRAPHICS.box(p_size);
+        this.GRAPHICS.popMatrix();
+    }
+    // endregion
+
+    // region `sphere()` overloads (just a copy of the `box()` ones, hehehe.).
+    public void sphere(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height,
+            final float p_depth) {
+        this.GRAPHICS.pushMatrix();
+        this.GRAPHICS.translate(p_x, p_y, p_z);
+        this.GRAPHICS.scale(p_width, p_height, p_depth);
+        this.GRAPHICS.sphere(1);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void sphere(final PVector p_pos, final float p_width, final float p_height, final float p_depth) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_pos);
+        this.GRAPHICS.scale(p_width, p_height, p_depth);
+        this.GRAPHICS.sphere(1);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void sphere(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
+        this.GRAPHICS.pushMatrix();
+        this.GRAPHICS.translate(p_x, p_y, p_z);
+        this.GRAPHICS.scale(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+        this.GRAPHICS.sphere(1);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void sphere(final float p_x, final float p_y, final float p_z, final float p_size) {
+        this.GRAPHICS.pushMatrix();
+        this.GRAPHICS.translate(p_x, p_y, p_z);
+        this.GRAPHICS.sphere(p_size);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void sphere(final PVector p_pos, final PVector p_dimensions) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_pos);
+        this.GRAPHICS.scale(p_dimensions.x, p_dimensions.y, p_dimensions.z);
+        this.GRAPHICS.sphere(1);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void sphere(final PVector p_pos, final float p_size) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_pos);
+        this.GRAPHICS.sphere(p_size);
+        this.GRAPHICS.popMatrix();
+    }
+    // endregion
+    // endregion
+
+    // region 2D rendering.
+    /**
+     * Pushes the graphics buffer, disables depth testing and resets all current
+     * transformations (they're restored by a
+     * call to `NerdSketch::pop()` later!).
+     */
+    public void begin2d() {
+        this.push();
+        this.GRAPHICS.hint(PConstants.DISABLE_DEPTH_TEST);
+        this.GRAPHICS.perspective();
+        this.GRAPHICS.camera();
+    }
+
+    /**
+     * Pops back transformations and enables depth testing.
+     */
+    public void end2d() {
+        this.pop();
+        this.GRAPHICS.hint(PConstants.ENABLE_DEPTH_TEST);
+        this.currentCamera.applyMatrix();
+    }
+
+    /**
+     * Pushes the graphics buffer, disables depth testing, resets all current
+     * transformations, calls your
+     * {@link Runnable} {@code p_toDraw}, and finally, pops back the transformations
+     * and enables depth testing!
+     *
+     * @see {@link NerdSketch#end2d()}
+     * @see {@link NerdSketch#begin2d()}
+     */
+    public void in2d(final Runnable p_toDraw) {
+        // #JIT_FTW!
+        this.begin2d();
+        p_toDraw.run();
+        this.end2d();
+    }
+    // endregion
+
+    // region `background()`-with-alpha overloads.
+    @Override
+    public void background(final int p_color) {
+        this.begin2d();
+        this.GRAPHICS.fill(p_color);
+        this.backgroundWithAlphaRectRenderingImpl();
+    }
+
+    @Override
+    public void background(final int p_color, final float p_alpha) {
+        this.begin2d();
+        this.GRAPHICS.fill(p_color, p_alpha);
+        this.backgroundWithAlphaRectRenderingImpl();
+    }
+
+    @Override
+    public void background(final float p_grey, final float p_alpha) {
+        this.begin2d();
+        this.GRAPHICS.fill(p_grey, p_alpha);
+        this.backgroundWithAlphaRectRenderingImpl();
+    }
+
+    @Override
+    public void background(final float p_v1, final float p_v2, final float p_v3) {
+        this.begin2d();
+        this.GRAPHICS.fill(p_v1, p_v2, p_v3);
+        this.backgroundWithAlphaRectRenderingImpl();
+    }
+
+    @Override
+    public void background(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
+        this.begin2d();
+        this.GRAPHICS.fill(p_v1, p_v2, p_v3, p_alpha);
+        this.backgroundWithAlphaRectRenderingImpl();
+    }
+
+    @Override
+    protected void backgroundWithAlphaRectRenderingImpl() {
+        // Removing this will not display the previous camera's view,
+        // but still show clipping:
+
+        this.GRAPHICS.camera();
+        this.GRAPHICS.noStroke();
+        this.GRAPHICS.rectMode(PConstants.CORNER);
+        this.GRAPHICS.rect(0, 0, this.GRAPHICS.width, this.GRAPHICS.height);
+        this.end2d();
+    }
+    // endregion
+
+    public void bezier(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
+            final float x3, final float y3, final float z3, final float x4, final float y4, final float z4) {
+        this.GRAPHICS.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    }
+
+    public void bezierVertex(final float x2, final float y2, final float z2, final float x3, final float y3,
+            final float z3, final float x4, final float y4, final float z4) {
+        this.GRAPHICS.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    }
+
+    public void curve(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
+            final float x3, final float y3, final float z3, final float x4, final float y4, final float z4) {
+        this.GRAPHICS.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+    }
+
+    public void directionalLight(final float v1, final float v2, final float v3, final float nx, final float ny,
+            final float nz) {
+        this.GRAPHICS.directionalLight(v1, v2, v3, nx, ny, nz);
+    }
 
     // Generated stuff:
     @Override

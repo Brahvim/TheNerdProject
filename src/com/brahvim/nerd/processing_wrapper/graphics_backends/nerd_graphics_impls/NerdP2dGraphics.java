@@ -1,18 +1,20 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls;
 
+import java.util.Objects;
+
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGenericGlGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGlGenericGraphics;
 
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 import processing.opengl.PGraphics2D;
 
-public class NerdP2dGraphics extends NerdGenericGlGraphics<PGraphics2D> {
+public class NerdP2dGraphics extends NerdGlGenericGraphics<PGraphics2D> {
 
     protected final NerdUnprojector UNPROJECTOR;
 
@@ -97,10 +99,12 @@ public class NerdP2dGraphics extends NerdGenericGlGraphics<PGraphics2D> {
     }
     // endregion
 
+    @Override
     public float screenX(final float x, final float y) {
         return this.GRAPHICS.screenX(x, y);
     }
 
+    @Override
     public float screenY(final float x, final float y) {
         return this.GRAPHICS.screenY(x, y);
     }
@@ -149,9 +153,7 @@ public class NerdP2dGraphics extends NerdGenericGlGraphics<PGraphics2D> {
 
     public void camera(final NerdFlyCamera p_cam) {
         this.GRAPHICS.camera(p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z,
-
                 p_cam.getPos().x + p_cam.front.x, p_cam.getPos().y + p_cam.front.y, p_cam.getPos().z + p_cam.front.z,
-
                 p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
     }
 
@@ -357,6 +359,20 @@ public class NerdP2dGraphics extends NerdGenericGlGraphics<PGraphics2D> {
     }
 
     // endregion
+
+    /**
+     * Draws the {@code p_bgImage} as if it was a background. You may even choose to
+     * call one of the
+     * {@link PApplet#tint()} overloads before calling this!
+     */
+    @Override
+    public void background(final PImage p_bgImage) {
+        Objects.requireNonNull(p_bgImage);
+        super.push();
+        this.GRAPHICS.image(p_bgImage, this.WINDOW.cx, this.WINDOW.cy, this.WINDOW.width,
+                this.WINDOW.height);
+        super.pop();
+    }
 
     @Override
     public int hashCode() {

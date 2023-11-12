@@ -20,9 +20,6 @@ import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
-import processing.core.PMatrix;
-import processing.core.PMatrix2D;
-import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PStyle;
 import processing.core.PSurface;
@@ -30,7 +27,6 @@ import processing.core.PVector;
 import processing.javafx.PGraphicsFX2D;
 import processing.opengl.PGraphics2D;
 import processing.opengl.PGraphics3D;
-import processing.opengl.PShader;
 import processing.pdf.PGraphicsPDF;
 import processing.svg.PGraphicsSVG;
 
@@ -189,102 +185,6 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	}
 
 	// region `PVector` overloads.
-	// region 3D shapes.
-	// region `box()` overloads.
-	public void box(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height,
-			final float p_depth) {
-		this.GRAPHICS.pushMatrix();
-		this.GRAPHICS.translate(p_x, p_y, p_z);
-		this.GRAPHICS.box(p_width, p_height, p_depth);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void box(final PVector p_pos, final float p_width, final float p_height, final float p_depth) {
-		this.GRAPHICS.pushMatrix();
-		this.translate(p_pos);
-		this.GRAPHICS.box(p_width, p_height, p_depth);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void box(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
-		this.GRAPHICS.pushMatrix();
-		this.GRAPHICS.translate(p_x, p_y, p_z);
-		this.GRAPHICS.box(p_dimensions.x, p_dimensions.y, p_dimensions.z);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void box(final float p_x, final float p_y, final float p_z, final float p_size) {
-		this.GRAPHICS.pushMatrix();
-		this.GRAPHICS.translate(p_x, p_y, p_z);
-		this.GRAPHICS.box(p_size);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void box(final PVector p_pos, final PVector p_dimensions) {
-		this.GRAPHICS.pushMatrix();
-		this.translate(p_pos);
-		this.GRAPHICS.box(p_dimensions.x, p_dimensions.y, p_dimensions.z);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void box(final PVector p_pos, final float p_size) {
-		this.GRAPHICS.pushMatrix();
-		this.translate(p_pos);
-		this.GRAPHICS.box(p_size);
-		this.GRAPHICS.popMatrix();
-	}
-	// endregion
-
-	// region `sphere()` overloads (just a copy of the `box()` ones, hehehe.).
-	public void sphere(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height,
-			final float p_depth) {
-		this.GRAPHICS.pushMatrix();
-		this.GRAPHICS.translate(p_x, p_y, p_z);
-		this.GRAPHICS.scale(p_width, p_height, p_depth);
-		this.GRAPHICS.sphere(1);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void sphere(final PVector p_pos, final float p_width, final float p_height, final float p_depth) {
-		this.GRAPHICS.pushMatrix();
-		this.translate(p_pos);
-		this.GRAPHICS.scale(p_width, p_height, p_depth);
-		this.GRAPHICS.sphere(1);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void sphere(final float p_x, final float p_y, final float p_z, final PVector p_dimensions) {
-		this.GRAPHICS.pushMatrix();
-		this.GRAPHICS.translate(p_x, p_y, p_z);
-		this.GRAPHICS.scale(p_dimensions.x, p_dimensions.y, p_dimensions.z);
-		this.GRAPHICS.sphere(1);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void sphere(final float p_x, final float p_y, final float p_z, final float p_size) {
-		this.GRAPHICS.pushMatrix();
-		this.GRAPHICS.translate(p_x, p_y, p_z);
-		this.GRAPHICS.sphere(p_size);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void sphere(final PVector p_pos, final PVector p_dimensions) {
-		this.GRAPHICS.pushMatrix();
-		this.translate(p_pos);
-		this.GRAPHICS.scale(p_dimensions.x, p_dimensions.y, p_dimensions.z);
-		this.GRAPHICS.sphere(1);
-		this.GRAPHICS.popMatrix();
-	}
-
-	public void sphere(final PVector p_pos, final float p_size) {
-		this.GRAPHICS.pushMatrix();
-		this.translate(p_pos);
-		this.GRAPHICS.sphere(p_size);
-		this.GRAPHICS.popMatrix();
-	}
-	// endregion
-	// endregion
-
 	public void arc(final PVector p_translation, final PVector p_size, final float p_startAngle,
 			final float p_endAngle) {
 		this.GRAPHICS.pushMatrix();
@@ -586,11 +486,8 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	 */
 	public void background(final PImage p_bgImage) {
 		Objects.requireNonNull(p_bgImage);
-
-		this.begin2d();
 		this.GRAPHICS.image(p_bgImage, this.WINDOW.cx, this.WINDOW.cy, this.WINDOW.width,
 				this.WINDOW.height);
-		this.end2d();
 	}
 
 	// region Transformations!
@@ -770,88 +667,6 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.text(p_text, this.GRAPHICS.textWidth(p_text) * 0.5f, this.textHeight() * 0.5f);
 	}
 
-	// region 2D rendering.
-	/**
-	 * Pushes the graphics buffer, disables depth testing and resets all current
-	 * transformations (they're restored by a
-	 * call to `NerdSketch::pop()` later!).
-	 */
-	public void begin2d() {
-		this.push();
-		this.GRAPHICS.hint(PConstants.DISABLE_DEPTH_TEST);
-		this.GRAPHICS.perspective();
-		this.GRAPHICS.camera();
-	}
-
-	/**
-	 * Pops back transformations and enables depth testing.
-	 */
-	public void end2d() {
-		this.pop();
-		this.GRAPHICS.hint(PConstants.ENABLE_DEPTH_TEST);
-		this.currentCamera.applyMatrix();
-	}
-
-	/**
-	 * Pushes the graphics buffer, disables depth testing, resets all current
-	 * transformations, calls your
-	 * {@link Runnable} {@code p_toDraw}, and finally, pops back the transformations
-	 * and enables depth testing!
-	 *
-	 * @see {@link NerdSketch#end2d()}
-	 * @see {@link NerdSketch#begin2d()}
-	 */
-	public void in2d(final Runnable p_toDraw) {
-		// #JIT_FTW!
-		this.begin2d();
-		p_toDraw.run();
-		this.end2d();
-	}
-	// endregion
-
-	// region `NerdSketch::alphaBg()` overloads.
-	public void alphaBg(final int p_color) {
-		this.begin2d();
-		this.GRAPHICS.fill(p_color);
-		this.alphaBgImplRect();
-	}
-
-	public void alphaBg(final int p_color, final float p_alpha) {
-		this.begin2d();
-		this.GRAPHICS.fill(p_color, p_alpha);
-		this.alphaBgImplRect();
-	}
-
-	public void alphaBg(final float p_grey, final float p_alpha) {
-		this.begin2d();
-		this.GRAPHICS.fill(p_grey, p_alpha);
-		this.alphaBgImplRect();
-	}
-
-	public void alphaBg(final float p_v1, final float p_v2, final float p_v3) {
-		this.begin2d();
-		this.GRAPHICS.fill(p_v1, p_v2, p_v3);
-		this.alphaBgImplRect();
-	}
-
-	public void alphaBg(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
-		this.begin2d();
-		this.GRAPHICS.fill(p_v1, p_v2, p_v3, p_alpha);
-		this.alphaBgImplRect();
-	}
-
-	protected void alphaBgImplRect() {
-		// Removing this will not display the previous camera's view,
-		// but still show clipping:
-		this.GRAPHICS.camera();
-		this.GRAPHICS.noStroke();
-		this.GRAPHICS.rectMode(PConstants.CORNER);
-		this.GRAPHICS.rect(0, 0, this.GRAPHICS.width, this.GRAPHICS.height);
-		this.end2d();
-	}
-	// endregion
-	// endregion
-
 	// region ...From `PGraphics`.
 
 	// OpenGL-specific:
@@ -941,29 +756,56 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	// this.GRAPHICS.attribPosition(name, x, y, z);
 	// }
 
-	public void background(final int rgb) {
-		this.GRAPHICS.background(rgb);
+	// region `background()`-with-alpha overloads.
+	public void background(final int p_color) {
+		this.push();
+		this.GRAPHICS.fill(p_color);
+		this.backgroundWithAlphaRectRenderingImpl();
 	}
 
-	public void background(final float gray) {
-		this.GRAPHICS.background(gray);
+	public void background(final int p_color, final float p_alpha) {
+		this.push();
+		this.GRAPHICS.fill(p_color, p_alpha);
+		this.backgroundWithAlphaRectRenderingImpl();
 	}
 
-	public void background(final int rgb, final float alpha) {
-		this.GRAPHICS.background(rgb, alpha);
+	public void background(final float p_grey, final float p_alpha) {
+		this.push();
+		this.GRAPHICS.fill(p_grey, p_alpha);
+		this.backgroundWithAlphaRectRenderingImpl();
 	}
 
-	public void background(final float gray, final float alpha) {
-		this.GRAPHICS.background(gray, alpha);
+	public void background(final float p_v1, final float p_v2, final float p_v3) {
+		this.push();
+		this.GRAPHICS.fill(p_v1, p_v2, p_v3);
+		this.backgroundWithAlphaRectRenderingImpl();
 	}
 
-	public void background(final float v1, final float v2, final float v3) {
-		this.GRAPHICS.background(v1, v2, v3);
+	public void background(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
+		this.push();
+		this.GRAPHICS.fill(p_v1, p_v2, p_v3, p_alpha);
+		this.backgroundWithAlphaRectRenderingImpl();
 	}
 
-	public void background(final float v1, final float v2, final float v3, final float alpha) {
-		this.GRAPHICS.background(v1, v2, v3, alpha);
+	/**
+	 * This method provides an implementation for how overloads of
+	 * {@link PGraphics#background()} that have an alpha value are rendered after a
+	 * color has been chosen using {@link PGraphics#fill()}.
+	 * <p>
+	 * {@link NerdP3dGraphics} call {@link PGraphics#camera()}, while
+	 * {@link NerdP2dGraphics} ones don't.
+	 */
+	protected void backgroundWithAlphaRectRenderingImpl() {
+		// Removing this will not display the previous camera's view,
+		// but still show clipping:
+
+		// this.GRAPHICS.camera(); // Nuh-uh, a-uh! Not in `P2D`, my friend!
+		this.GRAPHICS.noStroke();
+		this.GRAPHICS.rectMode(PConstants.CORNER);
+		this.GRAPHICS.rect(0, 0, this.GRAPHICS.width, this.GRAPHICS.height);
+		this.pop();
 	}
+	// endregion
 
 	// OpenGL-specific:
 	// public void beginCamera() {
@@ -1000,10 +842,13 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
 	}
 
-	public void bezier(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
-			final float x3, final float y3, final float z3, final float x4, final float y4, final float z4) {
-		this.GRAPHICS.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-	}
+	// OpenGL-specific:
+	// public void bezier(final float x1, final float y1, final float z1, final
+	// float x2, final float y2, final float z2,
+	// final float x3, final float y3, final float z3, final float x4, final float
+	// y4, final float z4) {
+	// this.GRAPHICS.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+	// }
 
 	public void bezierDetail(final int detail) {
 		this.GRAPHICS.bezierDetail(detail);
@@ -1022,35 +867,40 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.bezierVertex(x2, y2, x3, y3, x4, y4);
 	}
 
-	public void bezierVertex(final float x2, final float y2, final float z2, final float x3, final float y3,
-			final float z3, final float x4, final float y4, final float z4) {
-		this.GRAPHICS.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
-	}
+	// OpenGL-specific:
+	// public void bezierVertex(final float x2, final float y2, final float z2,
+	// final float x3, final float y3,
+	// final float z3, final float x4, final float y4, final float z4) {
+	// this.GRAPHICS.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
+	// }
 
 	public void blendMode(final int mode) {
 		this.GRAPHICS.blendMode(mode);
 	}
 
-	public void box(final float size) {
-		this.GRAPHICS.box(size);
-	}
+	// OpenGL-specific:
+	// public void box(final float size) {
+	// this.GRAPHICS.box(size);
+	// }
 
-	public void box(final float w, final float h, final float d) {
-		this.GRAPHICS.box(w, h, d);
-	}
+	// public void box(final float w, final float h, final float d) {
+	// this.GRAPHICS.box(w, h, d);
+	// }
 
-	public void camera() {
-		this.GRAPHICS.camera();
-	}
+	// public void camera() {
+	// this.GRAPHICS.camera();
+	// }
 
-	public void camera(final float eyeX, final float eyeY, final float eyeZ, final float centerX, final float centerY,
-			final float centerZ, final float upX, final float upY, final float upZ) {
-		this.GRAPHICS.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
-	}
+	// public void camera(final float eyeX, final float eyeY, final float eyeZ,
+	// final float centerX, final float centerY,
+	// final float centerZ, final float upX, final float upY, final float upZ) {
+	// this.GRAPHICS.camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY,
+	// upZ);
+	// }
 
-	public void circle(final float x, final float y, final float extent) {
-		this.GRAPHICS.circle(x, y, extent);
-	}
+	// public void circle(final float x, final float y, final float extent) {
+	// this.GRAPHICS.circle(x, y, extent);
+	// }
 
 	public void clear() {
 		this.GRAPHICS.clear();
@@ -1097,10 +947,12 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.curve(x1, y1, x2, y2, x3, y3, x4, y4);
 	}
 
-	public void curve(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
-			final float x3, final float y3, final float z3, final float x4, final float y4, final float z4) {
-		this.GRAPHICS.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-	}
+	// public void curve(final float x1, final float y1, final float z1, final float
+	// x2, final float y2, final float z2,
+	// final float x3, final float y3, final float z3, final float x4, final float
+	// y4, final float z4) {
+	// this.GRAPHICS.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
+	// }
 
 	public void curveDetail(final int detail) {
 		this.GRAPHICS.curveDetail(detail);
@@ -1127,10 +979,11 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	// this.GRAPHICS.curveVertex(x, y, z);
 	// }
 
-	public void directionalLight(final float v1, final float v2, final float v3, final float nx, final float ny,
-			final float nz) {
-		this.GRAPHICS.directionalLight(v1, v2, v3, nx, ny, nz);
-	}
+	// public void directionalLight(final float v1, final float v2, final float v3,
+	// final float nx, final float ny,
+	// final float nz) {
+	// this.GRAPHICS.directionalLight(v1, v2, v3, nx, ny, nz);
+	// }
 
 	public boolean displayable() {
 		return this.GRAPHICS.displayable();
@@ -1225,26 +1078,29 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.flush();
 	}
 
-	public void frustum(final float left, final float right, final float bottom, final float top, final float near,
-			final float far) {
-		this.GRAPHICS.frustum(left, right, bottom, top, near, far);
-	}
+	// OpenGL-specific:
+	// public void frustum(final float left, final float right, final float bottom,
+	// final float top, final float near,
+	// final float far) {
+	// this.GRAPHICS.frustum(left, right, bottom, top, near, far);
+	// }
 
 	public Object getCache(final PImage image) {
 		return this.GRAPHICS.getCache(image);
 	}
 
-	public PMatrix getMatrix() {
-		return this.GRAPHICS.getMatrix();
-	}
+	// OpenGL-specific:
+	// public PMatrix getMatrix() {
+	// return this.GRAPHICS.getMatrix();
+	// }
 
-	public PMatrix2D getMatrix(final PMatrix2D target) {
-		return this.GRAPHICS.getMatrix(target);
-	}
+	// public PMatrix2D getMatrix(final PMatrix2D target) {
+	// return this.GRAPHICS.getMatrix(target);
+	// }
 
-	public PMatrix3D getMatrix(final PMatrix3D target) {
-		return this.GRAPHICS.getMatrix(target);
-	}
+	// public PMatrix3D getMatrix(final PMatrix3D target) {
+	// return this.GRAPHICS.getMatrix(target);
+	// }
 
 	public PGraphics getRaw() {
 		return this.GRAPHICS.getRaw();
@@ -1303,33 +1159,39 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		return this.GRAPHICS.lerpColor(c1, c2, amt);
 	}
 
-	public void lightFalloff(final float constant, final float linear, final float quadratic) {
-		this.GRAPHICS.lightFalloff(constant, linear, quadratic);
-	}
+	// OpenGL-specific:
+	// public void lightFalloff(final float constant, final float linear, final
+	// float quadratic) {
+	// this.GRAPHICS.lightFalloff(constant, linear, quadratic);
+	// }
 
-	public void lightSpecular(final float v1, final float v2, final float v3) {
-		this.GRAPHICS.lightSpecular(v1, v2, v3);
-	}
+	// public void lightSpecular(final float v1, final float v2, final float v3) {
+	// this.GRAPHICS.lightSpecular(v1, v2, v3);
+	// }
 
-	public void lights() {
-		this.GRAPHICS.lights();
-	}
+	// public void lights() {
+	// this.GRAPHICS.lights();
+	// }
 
 	public void line(final float x1, final float y1, final float x2, final float y2) {
 		this.GRAPHICS.line(x1, y1, x2, y2);
 	}
 
-	public void line(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2) {
-		this.GRAPHICS.line(x1, y1, z1, x2, y2, z2);
-	}
+	// OpenGL-specific:
+	// public void line(final float x1, final float y1, final float z1, final float
+	// x2, final float y2, final float z2) {
+	// this.GRAPHICS.line(x1, y1, z1, x2, y2, z2);
+	// }
 
-	public PShader loadShader(final String fragFilename) {
-		return this.GRAPHICS.loadShader(fragFilename);
-	}
+	// OpenGL-specific:
+	// public PShader loadShader(final String fragFilename) {
+	// return this.GRAPHICS.loadShader(fragFilename);
+	// }
 
-	public PShader loadShader(final String fragFilename, final String vertFilename) {
-		return this.GRAPHICS.loadShader(fragFilename, vertFilename);
-	}
+	// public PShader loadShader(final String fragFilename, final String
+	// vertFilename) {
+	// return this.GRAPHICS.loadShader(fragFilename, vertFilename);
+	// }
 
 	public PShape loadShape(final String filename) {
 		return this.GRAPHICS.loadShape(filename);
@@ -1360,9 +1222,10 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.noFill();
 	}
 
-	public void noLights() {
-		this.GRAPHICS.noLights();
-	}
+	// OpenGL-specific:
+	// public void noLights() {
+	// this.GRAPHICS.noLights();
+	// }
 
 	public void noSmooth() {
 		this.GRAPHICS.noSmooth();
@@ -1384,22 +1247,25 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.normal(nx, ny, nz);
 	}
 
-	public void ortho() {
-		this.GRAPHICS.ortho();
-	}
+	// OpenGL-specific:
+	// public void ortho() {
+	// this.GRAPHICS.ortho();
+	// }
 
-	public void ortho(final float left, final float right, final float bottom, final float top, final float near,
-			final float far) {
-		this.GRAPHICS.ortho(left, right, bottom, top, near, far);
-	}
+	// public void ortho(final float left, final float right, final float bottom,
+	// final float top, final float near,
+	// final float far) {
+	// this.GRAPHICS.ortho(left, right, bottom, top, near, far);
+	// }
 
-	public void perspective() {
-		this.GRAPHICS.perspective();
-	}
+	// public void perspective() {
+	// this.GRAPHICS.perspective();
+	// }
 
-	public void perspective(final float fovy, final float aspect, final float zNear, final float zFar) {
-		this.GRAPHICS.perspective(fovy, aspect, zNear, zFar);
-	}
+	// public void perspective(final float fovy, final float aspect, final float
+	// zNear, final float zFar) {
+	// this.GRAPHICS.perspective(fovy, aspect, zNear, zFar);
+	// }
 
 	public void point(final float x, final float y) {
 		this.GRAPHICS.point(x, y);
@@ -1423,17 +1289,18 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.popStyle();
 	}
 
-	public void printCamera() {
-		this.GRAPHICS.printCamera();
-	}
+	// OpenGL-specific:
+	// public void printCamera() {
+	// this.GRAPHICS.printCamera();
+	// }
 
-	public void printMatrix() {
-		this.GRAPHICS.printMatrix();
-	}
+	// public void printMatrix() {
+	// this.GRAPHICS.printMatrix();
+	// }
 
-	public void printProjection() {
-		this.GRAPHICS.printProjection();
-	}
+	// public void printProjection() {
+	// this.GRAPHICS.printProjection();
+	// }
 
 	public void pushMatrix() {
 		this.GRAPHICS.pushMatrix();
@@ -1442,8 +1309,6 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	public void pushStyle() {
 		this.GRAPHICS.pushStyle();
 	}
-
-	// TODO: Removal of projection, lighting, and shader methods.
 
 	public void quad(final float x1, final float y1, final float x2, final float y2, final float x3, final float y3,
 			final float x4, final float y4) {
@@ -1454,10 +1319,12 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.quadraticVertex(cx, cy, x3, y3);
 	}
 
-	public void quadraticVertex(final float cx, final float cy, final float cz, final float x3, final float y3,
-			final float z3) {
-		this.GRAPHICS.quadraticVertex(cx, cy, cz, x3, y3, z3);
-	}
+	// OpenGL-specific:
+	// public void quadraticVertex(final float cx, final float cy, final float cz,
+	// final float x3, final float y3,
+	// final float z3) {
+	// this.GRAPHICS.quadraticVertex(cx, cy, cz, x3, y3, z3);
+	// }
 
 	public void rect(final float a, final float b, final float c, final float d) {
 		this.GRAPHICS.rect(a, b, c, d);
@@ -1553,17 +1420,18 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.setCache(image, storage);
 	}
 
-	public void setMatrix(final PMatrix source) {
-		this.GRAPHICS.setMatrix(source);
-	}
+	// OpenGL-specific:
+	// public void setMatrix(final PMatrix source) {
+	// this.GRAPHICS.setMatrix(source);
+	// }
 
-	public void setMatrix(final PMatrix2D source) {
-		this.GRAPHICS.setMatrix(source);
-	}
+	// public void setMatrix(final PMatrix2D source) {
+	// this.GRAPHICS.setMatrix(source);
+	// }
 
-	public void setMatrix(final PMatrix3D source) {
-		this.GRAPHICS.setMatrix(source);
-	}
+	// public void setMatrix(final PMatrix3D source) {
+	// this.GRAPHICS.setMatrix(source);
+	// }
 
 	public void setParent(final PApplet parent) {
 		this.GRAPHICS.setParent(parent);
@@ -1581,13 +1449,14 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.setSize(w, h);
 	}
 
-	public void shader(final PShader shader) {
-		this.GRAPHICS.shader(shader);
-	}
+	// OpenGL-specific:
+	// public void shader(final PShader shader) {
+	// this.GRAPHICS.shader(shader);
+	// }
 
-	public void shader(final PShader shader, final int kind) {
-		this.GRAPHICS.shader(shader, kind);
-	}
+	// public void shader(final PShader shader, final int kind) {
+	// this.GRAPHICS.shader(shader, kind);
+	// }
 
 	public void shape(final PShape shape) {
 		this.GRAPHICS.shape(shape);
@@ -1637,17 +1506,18 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.specular(v1, v2, v3);
 	}
 
-	public void sphere(final float r) {
-		this.GRAPHICS.sphere(r);
-	}
+	// OpenGL-specific:
+	// public void sphere(final float r) {
+	// this.GRAPHICS.sphere(r);
+	// }
 
-	public void sphereDetail(final int res) {
-		this.GRAPHICS.sphereDetail(res);
-	}
+	// public void sphereDetail(final int res) {
+	// this.GRAPHICS.sphereDetail(res);
+	// }
 
-	public void sphereDetail(final int ures, final int vres) {
-		this.GRAPHICS.sphereDetail(ures, vres);
-	}
+	// public void sphereDetail(final int ures, final int vres) {
+	// this.GRAPHICS.sphereDetail(ures, vres);
+	// }
 
 	// OpenGL-specific:
 	// public void spotLight(final float v1, final float v2, final float v3, final

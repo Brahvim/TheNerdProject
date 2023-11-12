@@ -105,7 +105,7 @@ public abstract class NerdAbstractCamera {
 	}
 
 	public void clear() {
-		this.GRAPHICS.alphaBg(
+		this.GRAPHICS.background(
 				this.clearColorParam1, this.clearColorParam2,
 				this.clearColorParam3, this.clearColorParamAlpha);
 	}
