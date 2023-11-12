@@ -147,7 +147,8 @@ public class NerdInputModule extends NerdModule {
 		this.keyPressed = super.SKETCH.keyPressed;
 
 		synchronized (this.KEYS_HELD) {
-			this.KEYS_HELD.add(this.keyCode);
+			if (!this.KEYS_HELD.contains(this.keyCode))
+				this.KEYS_HELD.add(this.keyCode);
 		}
 	}
 
