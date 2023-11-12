@@ -160,7 +160,14 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 
 	@Override
 	protected void preSetupImpl() {
-		super.sketchSurface.setIcon(super.iconImage);
+		try {
+			super.iconImage = super.SKETCH.loadImage(super.SKETCH.SKETCH_SETTINGS.windowIconPath);
+		} catch (Exception e) { // NOSONAR
+		}
+
+		if (super.iconImage != null)
+			super.sketchSurface.setIcon(super.iconImage);
+
 		this.canvas = (PSurfaceAWT.SmoothCanvas) super.sketchSurface.getNative();
 		this.window = (JFrame) this.canvas.getFrame();
 

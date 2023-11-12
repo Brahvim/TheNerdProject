@@ -20,7 +20,9 @@ public class NerdFx2dWindowModule extends NerdWindowModule<PGraphicsFX2D> {
     @Override
     protected void preSetupImpl() {
         this.surface = (PSurfaceFX) super.SKETCH.getSurface();
-        this.surface.setIcon(super.iconImage);
+
+        if (super.iconImage != null)
+            this.surface.setIcon(super.iconImage);
     }
 
     @Override

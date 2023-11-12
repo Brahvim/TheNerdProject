@@ -149,8 +149,9 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 * {@link NerdModule} calling pipeline will change. Duplicates are not allowed.
 	 * Once added, the {@link NerdModule} stays until removed.
 	 */
-	protected abstract void supplyUserDefinedModules(
-			LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> p_set);
+	protected void supplyUserDefinedModules(
+			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> p_set) {
+	}
 
 	protected abstract NerdSketch<SketchPGraphicsT> createNerdSketch(
 			final String[] p_javaMainArgs,
