@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls;
+package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
 import java.util.Objects;
 
@@ -7,7 +7,6 @@ import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGlGenericGraphics;
 
 import processing.core.PApplet;
 import processing.core.PImage;

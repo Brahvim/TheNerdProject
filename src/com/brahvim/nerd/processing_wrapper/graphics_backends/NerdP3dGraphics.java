@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls;
+package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
 import java.util.Objects;
 
@@ -8,7 +8,6 @@ import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
 import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.generic.NerdGlGenericGraphics;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -420,7 +419,7 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     public void updatePixels(final int x, final int y, final int w, final int h) {
         this.GRAPHICS.updatePixels(x, y, w, h);
     }
-    // endregions
+    // endregion
 
     /**
      * Draws the {@code p_bgImage} as if it was a background. You may even choose to

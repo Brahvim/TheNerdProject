@@ -2,7 +2,7 @@ package com.brahvim.nerd.framework.cameras;
 
 import java.util.Objects;
 
-import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 
 import processing.core.PVector;
 

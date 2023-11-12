@@ -1,6 +1,6 @@
 package com.brahvim.nerd.framework.lights;
 
-import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;

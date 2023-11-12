@@ -1,16 +1,10 @@
-package com.brahvim.nerd.processing_wrapper.graphics_backends.generic;
+package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
 import java.awt.Image;
 import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdFx2dGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdJava2dGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP2dGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdP3dGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdPdfGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.nerd_graphics_impls.NerdSvgGraphics;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
