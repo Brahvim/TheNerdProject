@@ -97,7 +97,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	// Necessary `NerdModule`s:
 	protected NerdSketch.NerdSketchOnlyAssetsModule globalAssetsModule;
-	protected NerdWindowModule<SketchPGraphicsT> genericWindowModule;
+	protected NerdWindowModule<SketchPGraphicsT> windowButGeneric;
 	protected NerdDisplayModule displayModule;
 	protected NerdInputModule inputModule;
 
@@ -209,7 +209,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	@Override
 	@SuppressWarnings("unchecked")
 	public void setup() {
-		this.genericWindowModule = this.getNerdModule(NerdWindowModule.class);
+		this.windowButGeneric = this.getNerdModule(NerdWindowModule.class);
 		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
 		this.inputModule = this.getNerdModule(NerdInputModule.class);
 
@@ -235,9 +235,14 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
 		if (this.SKETCH_SETTINGS.canResize)
-			this.genericWindowModule.setResizable(true);
-		this.genericWindowModule.centerWindow();
+			this.windowButGeneric.setResizable(true);
+		this.windowButGeneric.centerWindow();
 
+		this.postSetup();
+	}
+
+	@Override
+	public void postSetup() {
 		this.forEachNerdModule(NerdModule::postSetup);
 	}
 
@@ -326,16 +331,16 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 			if (this.SKETCH_SETTINGS.canAltEnterFullscreen
 					&& super.keyCode == KeyEvent.VK_ENTER
 					&& this.inputModule.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
-				this.genericWindowModule.fullscreen = !this.genericWindowModule.fullscreen;
+				this.windowButGeneric.fullscreen = !this.windowButGeneric.fullscreen;
 
 			else if (this.SKETCH_SETTINGS.canF11Fullscreen) {
 				// `KeyEvent.VK_ADD` is `107`, but here, it's actually `F11`!:
 				if (this.USES_OPENGL) {
 					if (super.keyCode == 107)
-						this.genericWindowModule.fullscreen = !this.genericWindowModule.fullscreen;
+						this.windowButGeneric.fullscreen = !this.windowButGeneric.fullscreen;
 				} else {
 					if (super.keyCode == KeyEvent.VK_F11)
-						this.genericWindowModule.fullscreen = !this.genericWindowModule.fullscreen;
+						this.windowButGeneric.fullscreen = !this.windowButGeneric.fullscreen;
 				}
 			}
 		}
@@ -438,7 +443,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	}
 
 	public NerdWindowModule<SketchPGraphicsT> getNerdWindowModule() {
-		return this.genericWindowModule;
+		return this.windowButGeneric;
 	}
 
 	public NerdInputModule getNerdInputModule() {

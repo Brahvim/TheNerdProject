@@ -14,6 +14,9 @@ For more history on where I got inspiration, see this other repository [here](ht
 Feel free to remind me about integrating a visual editor into it the day I'm done with this!<br>
 *Go look at the history,* this project actually has been big in the past!
 
+PS Have a look at [extra `NerdModule`s](https://github.com/Brahvim/NerdExtraModules)!<br>
+You'll find in there, Nerd's ECS and other parts of the framework that are not central.
+
 Wish me luck if you'd like, and enjoy watching me build this thing that could be in your hands *someday!*
 
 Thanks :),<br>

@@ -14,7 +14,8 @@ import processing.core.PVector;
 
 public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 
-	protected JFrame window;
+	protected JFrame frame;
+	public boolean stayUndecorated = false;
 	protected PSurfaceAWT.SmoothCanvas canvas;
 
 	public NerdJava2dWindowModule(final NerdSketch<PGraphicsJava2D> p_sketch) {
@@ -24,116 +25,116 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 	// region Getters.
 	@Override
 	public String getName() {
-		return this.window.getName();
+		return this.frame.getName();
 	}
 
 	@Override
 	public int getX() {
-		return this.window.getX();
+		return this.frame.getX();
 	}
 
 	@Override
 	public int getY() {
-		return this.window.getY();
+		return this.frame.getY();
 	}
 
 	@Override
 	public int getWidth() {
-		return this.window.getWidth();
+		return this.frame.getWidth();
 	}
 
 	@Override
 	public int getHeight() {
-		return this.window.getHeight();
+		return this.frame.getHeight();
 	}
 
 	@Override
 	public Point getSize() {
-		return new Point(this.window.getWidth(), this.window.getHeight());
+		return new Point(this.frame.getWidth(), this.frame.getHeight());
 	}
 
 	@Override
 	public Point getPosition() {
 		// Faster!.... *wait, really?*
-		return this.window.getLocation();
+		return this.frame.getLocation();
 	}
 
 	@Override
 	public PVector getSizeAsPVector() {
-		return new PVector(this.window.getWidth(), this.window.getHeight());
+		return new PVector(this.frame.getWidth(), this.frame.getHeight());
 	}
 
 	public Image getIcon() {
-		return this.window.getIconImage();
+		return this.frame.getIconImage();
 	}
 
 	@Override
 	public PVector getPositionAsPVector() {
-		return new PVector(this.window.getX(), this.window.getY());
+		return new PVector(this.frame.getX(), this.frame.getY());
 	}
 
 	@Override
 	public JFrame getNativeObject() {
-		return this.window;
+		return this.frame;
 	}
 
 	@Override
 	public boolean getAlwaysOnTop() {
-		return this.window.isAlwaysOnTop();
+		return this.frame.isAlwaysOnTop();
 	}
 
 	@Override
 	public boolean isResizable() {
-		return this.window.isResizable();
+		return this.frame.isResizable();
 	}
 	// endregion
 
 	// region Setters.
 	@Override
 	public NerdJava2dWindowModule setName(final String p_name) {
-		this.window.setName(p_name);
+		this.frame.setName(p_name);
 		return this;
 	}
 
 	@Override
 	public NerdJava2dWindowModule setSize(final PVector p_size) {
-		this.window.setSize((int) p_size.x, (int) p_size.y);
+		this.frame.setSize((int) p_size.x, (int) p_size.y);
 		return this;
 	}
 
 	@Override
 	public NerdJava2dWindowModule setResizable(final boolean p_state) {
-		this.window.setResizable(p_state);
+		this.frame.setResizable(p_state);
 		return this;
 	}
 
 	@Override
 	public NerdJava2dWindowModule setSize(final float p_x, final float p_y) {
-		this.window.setSize((int) p_x, (int) p_y);
+		this.frame.setSize((int) p_x, (int) p_y);
 		return this;
 	}
 
 	@Override
 	public NerdJava2dWindowModule setSize(final int p_x, final int p_y) {
-		this.window.setSize(p_x, p_y);
+		this.frame.setSize(p_x, p_y);
 		return this;
 	}
 
 	@Override
 	public NerdJava2dWindowModule setPosition(final PVector p_position) {
-		this.window.setLocation((int) p_position.x, (int) p_position.y);
+		this.frame.setLocation((int) p_position.x, (int) p_position.y);
 		return this;
 	}
 
 	@Override
 	public NerdJava2dWindowModule setPosition(final int p_x, final int p_y) {
-		this.window.setLocation(p_x, p_y);
+		this.frame.setLocation(p_x, p_y);
 		return this;
 	}
 
 	@Override
 	public NerdJava2dWindowModule setPosition(final float p_x, final float p_y) {
-		this.window.setLocation((int) p_x, (int) p_y);
+		this.frame.setLocation((int) p_x, (int) p_y);
 		return this;
 	}
 
@@ -142,18 +143,18 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 	 */
 	@Override
 	public boolean setAlwaysOnTop(final boolean p_state) {
-		if (!this.window.isAlwaysOnTopSupported())
+		if (!this.frame.isAlwaysOnTopSupported())
 			return false;
 
 		// this.window.removeNotify();
-		this.window.setAlwaysOnTop(true);
+		this.frame.setAlwaysOnTop(true);
 		// this.window.addNotify();
 
 		return true;
 	}
 
 	public NerdJava2dWindowModule setIcon(final Image p_image) {
-		this.window.setIconImage(p_image);
+		this.frame.setIconImage(p_image);
 		return this;
 	}
 	// endregion
@@ -162,17 +163,17 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 	protected void preSetupImpl() {
 		try {
 			super.iconImage = super.SKETCH.loadImage(super.SKETCH.SKETCH_SETTINGS.windowIconPath);
-		} catch (Exception e) { // NOSONAR
+		} catch (final Exception e) { // NOSONAR
 		}
 
 		if (super.iconImage != null)
 			super.sketchSurface.setIcon(super.iconImage);
 
 		this.canvas = (PSurfaceAWT.SmoothCanvas) super.sketchSurface.getNative();
-		this.window = (JFrame) this.canvas.getFrame();
+		this.frame = (JFrame) this.canvas.getFrame();
 
 		if (super.SKETCH.SKETCH_SETTINGS.canResize)
-			this.window.setResizable(true);
+			this.frame.setResizable(true);
 	}
 
 	@Override
@@ -181,10 +182,10 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 		// https://stackoverflow.com/a/11570414/
 
 		if (this.pfullscreen != this.fullscreen) {
-			this.window.removeNotify();
+			this.frame.removeNotify();
 
-			this.window.setVisible(false);
-			while (this.window.isDisplayable())
+			this.frame.setVisible(false);
+			while (this.frame.isDisplayable())
 				;
 
 			if (this.fullscreen) {
@@ -197,19 +198,21 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 				// Though these are arbitrary numbers, they work cross-platform, surprisingly!:
 
 				// this.window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				this.window.setLocation(-8, -30);
-				this.window.setSize(super.SKETCH.displayWidth + 15, super.SKETCH.displayHeight);
-				this.window.setUndecorated(true);
+				this.frame.setLocation(-8, -30);
+				this.frame.setSize(super.SKETCH.displayWidth + 15, super.SKETCH.displayHeight);
+				this.frame.setUndecorated(true);
+				this.frame.setVisible(true);
+				this.frame.addNotify();
 			} else {
+				this.frame.setUndecorated(this.stayUndecorated);
 				this.centerWindow();
-				this.window.setSize(
+				this.frame.setVisible(true);
+				this.frame.setSize(
 						super.SKETCH.SKETCH_SETTINGS.width,
 						super.SKETCH.SKETCH_SETTINGS.height);
-				this.window.setUndecorated(false);
+				this.frame.addNotify();
 			}
 
-			this.window.setVisible(true);
-			this.window.addNotify();
 		}
 
 		if (this.cursorVisible)
