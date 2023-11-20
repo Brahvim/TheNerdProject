@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.brahvim.nerd.framework.scene_api.NerdScenesModule;
+import com.brahvim.nerd.framework.scene_layer_api.NerdScenesModule;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
@@ -37,7 +37,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
 	private final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
 
-	protected NerdSketchBuilder(Class<SketchPGraphicsT> p_rendererClass) {
+	protected NerdSketchBuilder(final Class<SketchPGraphicsT> p_rendererClass) {
 		this.BUILD_SETTINGS = new NerdSketchSettings<>();
 
 		if (p_rendererClass == PGraphics2D.class)
