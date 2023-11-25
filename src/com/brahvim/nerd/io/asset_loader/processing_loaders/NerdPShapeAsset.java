@@ -6,9 +6,9 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PShape;
 
-public class PShapeAsset extends NerdSinglePathAssetLoader<PShape> {
+public class NerdPShapeAsset extends NerdSinglePathAssetLoader<PShape> {
 
-	public PShapeAsset(final String p_path) {
+	public NerdPShapeAsset(final String p_path) {
 		super(p_path);
 	}
 

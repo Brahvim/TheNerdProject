@@ -4,21 +4,29 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
 import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.data.XML;
+import processing.core.PImage;
 
-public class PXmlAsset extends NerdSinglePathAssetLoader<XML> {
+public class NerdPImageAsset extends NerdSinglePathAssetLoader<PImage> {
 
-	public PXmlAsset(final String p_path) {
+	public NerdPImageAsset(final String p_path) {
 		super(p_path);
 	}
 
 	@Override
-	protected XML fetchData(final NerdSketch<?> p_sketch)
+	protected PImage fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
-		final XML markup = p_sketch.loadXML(super.path);
-		if (markup == null)
+		final PImage img = p_sketch.loadImage(super.path);
+
+		// Oh, it failed?
+		boolean failure = img == null;
+
+		if (!failure)
+			failure = img.width == -1;
+
+		if (failure)
 			throw new NerdAssetLoaderException(this);
-		return markup;
+
+		return img;
 	}
 
 }

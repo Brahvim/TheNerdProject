@@ -4,22 +4,23 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
 import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.data.JSONObject;
+import processing.core.PFont;
 
-public class PJsonObjectAsset extends NerdSinglePathAssetLoader<JSONObject> {
+public class NerdPFontAsset extends NerdSinglePathAssetLoader<PFont> {
 
-	public PJsonObjectAsset(final String p_path) {
+	public NerdPFontAsset(final String p_path) {
 		super(p_path);
 	}
 
 	@Override
-	protected JSONObject fetchData(final NerdSketch<?> p_sketch)
+	protected PFont fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
-		try {
-			return p_sketch.loadJSONObject(super.path);
-		} catch (final NullPointerException e) {
+		final PFont font = p_sketch.loadFont(super.path);
+
+		if (font == null)
 			throw new NerdAssetLoaderException(this);
-		}
+
+		return font;
 	}
 
 }

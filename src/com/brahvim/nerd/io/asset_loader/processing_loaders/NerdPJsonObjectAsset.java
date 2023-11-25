@@ -4,21 +4,22 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
 import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-public class PBytesAsset extends NerdSinglePathAssetLoader<byte[]> {
+import processing.data.JSONObject;
 
-	public PBytesAsset(final String p_path) {
+public class NerdPJsonObjectAsset extends NerdSinglePathAssetLoader<JSONObject> {
+
+	public NerdPJsonObjectAsset(final String p_path) {
 		super(p_path);
 	}
 
 	@Override
-	protected byte[] fetchData(final NerdSketch<?> p_sketch)
+	protected JSONObject fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
-		final byte[] bytes = p_sketch.loadBytes(super.path);
-
-		if (bytes == null)
+		try {
+			return p_sketch.loadJSONObject(super.path);
+		} catch (final NullPointerException e) {
 			throw new NerdAssetLoaderException(this);
-
-		return bytes;
+		}
 	}
 
 }

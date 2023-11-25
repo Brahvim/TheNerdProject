@@ -6,16 +6,16 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.opengl.PShader;
 
-public class PShaderAsset extends NerdAssetLoader<PShader> {
+public class NerdPShaderAsset extends NerdAssetLoader<PShader> {
 
 	private final String vertPath, fragPath;
 
 	// region Constructors.
-	public PShaderAsset(final String p_fragPath) {
+	public NerdPShaderAsset(final String p_fragPath) {
 		this(null, p_fragPath);
 	}
 
-	public PShaderAsset(final String p_vertPath, final String p_fragPath) {
+	public NerdPShaderAsset(final String p_vertPath, final String p_fragPath) {
 		this.vertPath = p_vertPath;
 		this.fragPath = p_fragPath;
 	}

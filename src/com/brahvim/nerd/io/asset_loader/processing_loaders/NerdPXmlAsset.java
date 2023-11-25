@@ -4,23 +4,21 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
 import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.core.PFont;
+import processing.data.XML;
 
-public class PFontAsset extends NerdSinglePathAssetLoader<PFont> {
+public class NerdPXmlAsset extends NerdSinglePathAssetLoader<XML> {
 
-	public PFontAsset(final String p_path) {
+	public NerdPXmlAsset(final String p_path) {
 		super(p_path);
 	}
 
 	@Override
-	protected PFont fetchData(final NerdSketch<?> p_sketch)
+	protected XML fetchData(final NerdSketch<?> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
-		final PFont font = p_sketch.loadFont(super.path);
-
-		if (font == null)
+		final XML markup = p_sketch.loadXML(super.path);
+		if (markup == null)
 			throw new NerdAssetLoaderException(this);
-
-		return font;
+		return markup;
 	}
 
 }
