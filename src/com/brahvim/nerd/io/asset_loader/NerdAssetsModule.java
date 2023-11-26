@@ -23,6 +23,10 @@ public class NerdAssetsModule extends NerdModule {
 		super.getSketchModulesMap().put(NerdAssetsModule.class, this);
 	}
 
+	public void addAllAssetsFrom(final NerdAssetsModule p_assetsModule) {
+		this.ASSETS.addAll(p_assetsModule.ASSETS);
+	}
+
 	// region `NerdAsset`-operations!
 	private <AssetT> NerdAsset makeAsset(final NerdAssetLoader<AssetT> p_type) {
 		return new NerdAsset(this, p_type);

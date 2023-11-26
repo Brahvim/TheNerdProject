@@ -573,38 +573,8 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     // region `background()`-with-alpha overloads.
     @Override
-    public void background(final int p_color) {
+    protected void backgroundWithAlphaInitialPushMethod() {
         this.begin2d();
-        this.GRAPHICS.fill(p_color);
-        this.backgroundWithAlphaRectRenderingImpl();
-    }
-
-    @Override
-    public void background(final int p_color, final float p_alpha) {
-        this.begin2d();
-        this.GRAPHICS.fill(p_color, p_alpha);
-        this.backgroundWithAlphaRectRenderingImpl();
-    }
-
-    @Override
-    public void background(final float p_grey, final float p_alpha) {
-        this.begin2d();
-        this.GRAPHICS.fill(p_grey, p_alpha);
-        this.backgroundWithAlphaRectRenderingImpl();
-    }
-
-    @Override
-    public void background(final float p_v1, final float p_v2, final float p_v3) {
-        this.begin2d();
-        this.GRAPHICS.fill(p_v1, p_v2, p_v3);
-        this.backgroundWithAlphaRectRenderingImpl();
-    }
-
-    @Override
-    public void background(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
-        this.begin2d();
-        this.GRAPHICS.fill(p_v1, p_v2, p_v3, p_alpha);
-        this.backgroundWithAlphaRectRenderingImpl();
     }
 
     @Override

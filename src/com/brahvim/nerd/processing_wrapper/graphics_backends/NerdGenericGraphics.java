@@ -661,6 +661,55 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.text(p_text, this.GRAPHICS.textWidth(p_text) * 0.5f, this.textHeight() * 0.5f);
 	}
 
+	// region `background()`-with-alpha overloads.
+	public void background(final int p_color) {
+		this.push();
+		this.GRAPHICS.fill(p_color);
+		this.backgroundWithAlphaRectRenderingImpl();
+	}
+
+	public void background(final int p_color, final float p_alpha) {
+		this.push();
+		this.GRAPHICS.fill(p_color, p_alpha);
+		this.backgroundWithAlphaRectRenderingImpl();
+	}
+
+	public void background(final float p_grey, final float p_alpha) {
+		this.push();
+		this.GRAPHICS.fill(p_grey, p_alpha);
+		this.backgroundWithAlphaRectRenderingImpl();
+	}
+
+	public void background(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
+		this.push();
+		this.GRAPHICS.fill(p_v1, p_v2, p_v3, p_alpha);
+		this.backgroundWithAlphaRectRenderingImpl();
+	}
+
+	protected void backgroundWithAlphaInitialPushMethod() {
+		this.push();
+	}
+
+	/**
+	 * This method provides an implementation for how overloads of
+	 * {@link PGraphics#background()} that have an alpha value are rendered after a
+	 * color has been chosen using {@link PGraphics#fill()}.
+	 * <p>
+	 * {@link NerdP3dGraphics} call {@link PGraphics#camera()}, while
+	 * {@link NerdP2dGraphics} ones don't.
+	 */
+	protected void backgroundWithAlphaRectRenderingImpl() {
+		// Removing this will not display the previous camera's view,
+		// but still show clipping:
+
+		// this.GRAPHICS.camera(); // Nuh-uh, a-uh! Not in `P2D`, my friend!
+		this.GRAPHICS.noStroke();
+		this.GRAPHICS.rectMode(PConstants.CORNER);
+		this.GRAPHICS.rect(0, 0, this.GRAPHICS.width, this.GRAPHICS.height);
+		this.pop();
+	}
+	// endregion
+
 	// region ...From `PGraphics`.
 
 	// OpenGL-specific:
@@ -750,56 +799,13 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	// this.GRAPHICS.attribPosition(name, x, y, z);
 	// }
 
-	// region `background()`-with-alpha overloads.
-	public void background(final int p_color) {
-		this.push();
-		this.GRAPHICS.fill(p_color);
-		this.backgroundWithAlphaRectRenderingImpl();
-	}
-
-	public void background(final int p_color, final float p_alpha) {
-		this.push();
-		this.GRAPHICS.fill(p_color, p_alpha);
-		this.backgroundWithAlphaRectRenderingImpl();
-	}
-
-	public void background(final float p_grey, final float p_alpha) {
-		this.push();
-		this.GRAPHICS.fill(p_grey, p_alpha);
-		this.backgroundWithAlphaRectRenderingImpl();
+	public void background(final float p_color) {
+		this.GRAPHICS.background(p_color);
 	}
 
 	public void background(final float p_v1, final float p_v2, final float p_v3) {
-		this.push();
-		this.GRAPHICS.fill(p_v1, p_v2, p_v3);
-		this.backgroundWithAlphaRectRenderingImpl();
+		this.GRAPHICS.background(p_v1, p_v2, p_v3);
 	}
-
-	public void background(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
-		this.push();
-		this.GRAPHICS.fill(p_v1, p_v2, p_v3, p_alpha);
-		this.backgroundWithAlphaRectRenderingImpl();
-	}
-
-	/**
-	 * This method provides an implementation for how overloads of
-	 * {@link PGraphics#background()} that have an alpha value are rendered after a
-	 * color has been chosen using {@link PGraphics#fill()}.
-	 * <p>
-	 * {@link NerdP3dGraphics} call {@link PGraphics#camera()}, while
-	 * {@link NerdP2dGraphics} ones don't.
-	 */
-	protected void backgroundWithAlphaRectRenderingImpl() {
-		// Removing this will not display the previous camera's view,
-		// but still show clipping:
-
-		// this.GRAPHICS.camera(); // Nuh-uh, a-uh! Not in `P2D`, my friend!
-		this.GRAPHICS.noStroke();
-		this.GRAPHICS.rectMode(PConstants.CORNER);
-		this.GRAPHICS.rect(0, 0, this.GRAPHICS.width, this.GRAPHICS.height);
-		this.pop();
-	}
-	// endregion
 
 	// OpenGL-specific:
 	// public void beginCamera() {
