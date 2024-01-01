@@ -26,7 +26,7 @@ import com.brahvim.nerd.utils.java_function_extensions.NerdTriConsumer;
  * Datagram Protocol" and let them listen to each other on a different thread
  * for easier asynchronous multitasking.
  * <p>
- * Of course, it is based on classes from the {@link java.net} package :)
+ * Of course, it is based on classes from the {@code java.net} package :)
  * 
  * @author Brahvim Bhaktvatsal
  */
@@ -190,7 +190,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	 * callback objects that want to listen to data received by this
 	 * {@link NerdUdpSocket}.
 	 */
-	private final List<NerdTriConsumer<byte[], String, Integer>> receiveCallbacks = new Vector<>(1);
+	private final List<NerdTriConsumer<byte[], String, Integer>> RECEIVER_CALLBACKS = new Vector<>(1);
 
 	/**
 	 * Internal field checked in the thread loop to stop the thread if needed.
@@ -324,11 +324,10 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 
 	/**
 	 * Internal callback method called when data is received. It calls all callbacks
-	 * registered with this
-	 * {@link NerdUdpSocket}.
+	 * registered with this {@link NerdUdpSocket}.
 	 */
 	private void onReceive(final byte[] p_data, final String p_ip, final int p_port) {
-		this.receiveCallbacks.forEach(c -> c.accept(p_data, p_ip, p_port));
+		this.RECEIVER_CALLBACKS.forEach(c -> c.accept(p_data, p_ip, p_port));
 	}
 
 	/**
@@ -450,12 +449,12 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 
 	// region Other `public` methods!:
 	public NerdUdpSocket addReceivingCallback(final NerdTriConsumer<byte[], String, Integer> p_callback) {
-		this.receiveCallbacks.add(p_callback);
+		this.RECEIVER_CALLBACKS.add(p_callback);
 		return this;
 	}
 
 	public NerdUdpSocket removeReceivingCallback(final NerdTriConsumer<byte[], String, Integer> p_callback) {
-		this.receiveCallbacks.remove(p_callback);
+		this.RECEIVER_CALLBACKS.remove(p_callback);
 		return this;
 	}
 
