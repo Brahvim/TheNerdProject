@@ -21,15 +21,17 @@ import processing.pdf.PGraphicsPDF;
 import processing.svg.PGraphicsSVG;
 
 /**
- * Want to hack into the {@link NerdSketch<SketchPGraphicsT>} class and control
- * its inner
- * workings
+ * Want to hack into the
+ * {@link NerdSketch NerdSketch<SketchPGraphicsT> }
+ * class and control its inner workings
  * beyond just... using callbacks? Why not extend it!?
  *
  * <p>
- * Override/Implement {@link NerdSketchBuilder<SketchPGraphicsT>#build()}, and
- * return an
- * instance of your own {@link NerdSketch<SketchPGraphicsT>} subclass!
+ * Override/Implement {@linkplain NerdSketchBuilder#build()
+ * NerdSketchBuilder::build()},
+ * and return an instance of your own
+ * {@linkplain NerdSketch NerdSketch<SketchPGraphicsT>}
+ * subclass!
  */
 public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
