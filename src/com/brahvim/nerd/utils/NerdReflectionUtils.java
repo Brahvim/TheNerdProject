@@ -90,4 +90,36 @@ public class NerdReflectionUtils {
 		return (Class<?>[]) ((ParameterizedType) genericSuperclass).getActualTypeArguments();
 	}
 
+	public static Class<?> getTypeParameterClass(final Class<?> p_class) {
+		// final Type genericSuperClass = p_class.getGenericSuperclass();
+
+		// if (genericSuperClass instanceof final ParameterizedType parameterizedType) {
+		// final Type[] typeArguments = parameterizedType.getActualTypeArguments();
+
+		// if (typeArguments.length > 0 && typeArguments[0] instanceof Class)
+		// return (Class<?>) typeArguments[0];
+		// }
+
+		// throw new IllegalArgumentException("Unable to determine the type parameter");
+
+		return NerdReflectionUtils.getTypeParameterClasses(p_class)[0];
+	}
+
+	public static Class<?>[] getTypeParameterClasses(final Class<?> p_class) {
+		final Type genericSuperClass = p_class.getGenericSuperclass();
+
+		if (genericSuperClass instanceof final ParameterizedType parameterizedType) {
+			final Type[] typeArguments = parameterizedType.getActualTypeArguments();
+
+			if (typeArguments.length > 0) {
+				for (final var i : typeArguments)
+					if (!(i instanceof Class<?>))
+						return new Class<?>[0];
+				return (Class<?>[]) typeArguments;
+			}
+		}
+
+		throw new IllegalArgumentException("Unable to determine the type parameter");
+	}
+
 }
