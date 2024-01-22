@@ -43,21 +43,8 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	@SuppressWarnings("unchecked")
 	protected NerdSketchBuilder() {
 
-		final Class<? extends PGraphics> p_rendererClass = (Class<? extends PGraphics>) //
-		/*	*/ NerdReflectionUtils.getTypeParameterClass(this.getClass());
-
-		// final Type superClass = this.getClass().getGenericSuperclass();
-
-		// if (superClass instanceof final ParameterizedType parameterizedType) {
-		// final Type[] typeArguments = parameterizedType.getActualTypeArguments();
-
-		// if (typeArguments.length > 0 && typeArguments[0] instanceof final Class<?>
-		// typeParameterClass) {
-		// p_rendererClass = (Class<? extends PGraphics>) typeParameterClass;
-		// System.out.println(typeParameterClass.getName());
-		// }
-		// } else
-		// throw new IllegalArgumentException("Unable to determine the type parameter");
+		final Class<? extends PGraphics> p_rendererClass //
+				= (Class<? extends PGraphics>) NerdReflectionUtils.getFirstTypeArg(this);
 
 		this.BUILD_SETTINGS = new NerdSketchSettings<>();
 
