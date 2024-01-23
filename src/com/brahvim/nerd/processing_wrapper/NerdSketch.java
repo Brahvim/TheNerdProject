@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.brahvim.nerd.io.NerdStringTable;
+import com.brahvim.nerd.io.NerdStringsTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
@@ -91,7 +91,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// Timers! (`millis()` returns `int`s!):
 
 	protected int frameStartTime, pframeStartTime, deltaTime;
-	protected NerdStringTable globalStringTable;
+	protected NerdStringsTable globalStringTable;
 	protected NerdGenericGraphics<SketchPGraphicsT> nerdGenericGraphics;
 	protected PFont defaultFont;
 
@@ -468,7 +468,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		return this.frameStartTime;
 	}
 
-	public NerdStringTable getGlobalStringTable() {
+	public NerdStringsTable getGlobalStringsTable() {
 		return this.globalStringTable;
 	}
 

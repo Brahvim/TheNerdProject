@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.brahvim.nerd.io.NerdStringTable;
+import com.brahvim.nerd.io.NerdStringsTable;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -15,7 +15,10 @@ import processing.core.PGraphics;
 public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 
 	// region Non-Boolean settings.
-	/** What {@link NerdSketch#settings()} passes to {@link PApplet#smooth()} */
+	/**
+	 * What {@link NerdSketch#settings() NerdSketch<SketchPGraphicsT>::settings()}
+	 * passes to {@linkplain PApplet#smooth() PApplet::smooth()}.
+	 */
 	public int antiAliasing = 2;
 
 	/**
@@ -28,14 +31,19 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	public String windowIconPath = "";
 
 	/**
-	 * The path to the global {@link NerdStringTable} within the {@link NerdSketch}.
+	 * The path to the global {@link NerdStringsTable} within the {@link NerdSketch}.
 	 */
 	public String stringTablePath = "";
 
 	/** */
 	public String initialWindowTitle = "";
 
-	/** */
+	/**
+	 * The {@code PConstants} constant that describes what renderer the sketch will
+	 * use. {@link NerdSketch#sketchRenderer()} a.k.a.
+	 * {@linkplain PApplet#sketchRenderer() PApplet::sketchRenderer()} returns the
+	 * same.
+	 */
 	public String renderer = PConstants.P3D;
 
 	/**

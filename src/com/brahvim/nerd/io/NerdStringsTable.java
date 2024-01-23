@@ -12,11 +12,14 @@ import processing.data.JSONArray;
 import processing.data.JSONObject;
 
 /**
+ * <h2>A class for string tables, which are used for localization.</h2>
+ * <p>
  * A "global" namespace for these strings is provided through
- * {@link NerdSketch#STRINGS}, so you can access string table
- * data across scenes!
+ * {@linkplain NerdSketch#getGlobalStringsTable()
+ * NerdSketch<SketchPGraphicsT>::getGlobalStringTable()}, so you can access
+ * string table data across scenes!
  */
-public class NerdStringTable {
+public class NerdStringsTable {
 
 	// region Fields.
 	private File file;
@@ -26,7 +29,7 @@ public class NerdStringTable {
 
 	// region Constructors.
 	@SuppressWarnings("unchecked")
-	public NerdStringTable(final NerdStringTable p_table) {
+	public NerdStringsTable(final NerdStringsTable p_table) {
 		this.file = p_table.file.getAbsoluteFile();
 		this.language = p_table.language;
 		this.json = new JSONObject();
@@ -38,7 +41,7 @@ public class NerdStringTable {
 		}
 	}
 
-	public NerdStringTable(final File p_file, final String p_lang) throws FileNotFoundException {
+	public NerdStringsTable(final File p_file, final String p_lang) throws FileNotFoundException {
 		this.file = p_file;
 		this.language = p_lang;
 
@@ -51,11 +54,11 @@ public class NerdStringTable {
 		this.refresh();
 	}
 
-	public NerdStringTable(final String p_filePath, final String p_lang) throws FileNotFoundException {
+	public NerdStringsTable(final String p_filePath, final String p_lang) throws FileNotFoundException {
 		this(new File(p_filePath), p_lang);
 	}
 
-	public NerdStringTable(final File p_file) throws FileNotFoundException {
+	public NerdStringsTable(final File p_file) throws FileNotFoundException {
 		this.file = p_file;
 		this.language = "en";
 
@@ -65,7 +68,7 @@ public class NerdStringTable {
 		this.refresh();
 	}
 
-	public NerdStringTable(final String p_filePath) throws FileNotFoundException {
+	public NerdStringsTable(final String p_filePath) throws FileNotFoundException {
 		this(new File(p_filePath));
 	}
 	// endregion

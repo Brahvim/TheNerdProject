@@ -27,7 +27,7 @@ import com.brahvim.nerd.utils.java_function_extensions.NerdTriConsumer;
  * for easier asynchronous multitasking.
  * <p>
  * Of course, it is based on classes from the {@code java.net} package :)
- * 
+ *
  * @author Brahvim Bhaktvatsal
  */
 public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
@@ -55,12 +55,15 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 		/**
 		 * The {@link Thread} that handles the network's receive calls.
 		 *
-		 * @implSpec {@link NerdUdpSocket.ReceiverThread#start()} should set this to be
+		 * @implSpec {@linkplain NerdUdpSocket.ReceiverThread#start()
+		 *           NerdUdpSocket.ReceiverThread::start()} should set this to be
 		 *           a daemon thread.
-		 * @see NerdUdpSocket.ReceiverThread#start()
-		 * @see NerdUdpSocket.ReceiverThread#stop()
+		 * @see {@linkplain NerdUdpSocket.ReceiverThread#start()
+		 *      NerdUdpSocket.ReceiverThread::start()}.
+		 * @see {@linkplain NerdUdpSocket.ReceiverThread#stop()
+		 *      NerdUdpSocket.ReceiverThread::stop()}.
 		 */
-		private final Thread thread; // Ti's but a daemon thread.
+		private final Thread thread; // Ti's but a daemon thread!
 
 		/**
 		 * Internal field holding data used by the receiver thread.
@@ -201,10 +204,12 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	 * The internal {@link DatagramSocket} that takes care of networking.
 	 * <p>
 	 * If you need to change it, consider using the
-	 * {@link NerdUdpSocket#setUnderlyingSocket(DatagramSocket)} method (it
+	 * {@linkplain NerdUdpSocket#setUnderlyingSocket(DatagramSocket)
+	 * NerdUdpSocket::setUnderlyingSocket(DatagramSocket)} method (it
 	 * pauses the receiving thread, swaps the socket, and resumes listening).
 	 * <p>
-	 * {@link NerdUdpSocket#getSocket()} <b>should</b> be used for equality checks,
+	 * {@linkplain NerdUdpSocket#getSocket() NerdUdpSocket::getSocket()}
+	 * <b>should</b> be used for equality checks,
 	 * etcetera.
 	 */
 	private DatagramSocket socket;
@@ -224,9 +229,11 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	/**
 	 * Constructs a {@link NerdUdpSocket} with an empty port requested from the OS,
 	 * the receiver thread of which will
-	 * time-out every {@link NerdUdpSocket#DEFAULT_TIMEOUT} milliseconds.
+	 * time-out every {@linkplain NerdUdpSocket#DEFAULT_TIMEOUT
+	 * NerdUdpSocket::DEFAULT_TIMEOUT} milliseconds.
 	 *
-	 * @implSpec {@link NerdUdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
+	 * @implSpec {@linkplain NerdUdpSocket#DEFAULT_TIMEOUT
+	 *           NerdUdpSocket::DEFAULT_TIMEOUT} should be {@code 32}.
 	 */
 	protected NerdUdpSocket() {
 		this(0, NerdUdpSocket.DEFAULT_TIMEOUT);
@@ -235,9 +242,11 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	/**
 	 * Constructs a {@link NerdUdpSocket} with the specified port, the receiver
 	 * thread of which will time-out every
-	 * {@link NerdUdpSocket#DEFAULT_TIMEOUT} milliseconds.
+	 * {@linkplain NerdUdpSocket#DEFAULT_TIMEOUT NerdUdpSocket::DEFAULT_TIMEOUT}
+	 * milliseconds.
 	 *
-	 * @implSpec {@link NerdUdpSocket#DEFAULT_TIMEOUT} should be {@code 32}.
+	 * @implSpec {@linkplain NerdUdpSocket#DEFAULT_TIMEOUT
+	 *           NerdUdpSocket::DEFAULT_TIMEOUT} should be {@code 32}.
 	 */
 	protected NerdUdpSocket(final int p_port) {
 		this(p_port, NerdUdpSocket.DEFAULT_TIMEOUT);
@@ -265,11 +274,14 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	 * Constructs a {@link NerdUdpSocket} with the specified port and receiver
 	 * thread timeout (in milliseconds).
 	 *
-	 * @apiNote This constructor used to try to force the OS into giving the port of
+	 * @apiNote This constructor <b>used to</b> try to force the OS into giving the
+	 *          port of
 	 *          the user's choice. This
 	 *          functionality has now been split. Please see
-	 *          {@link NerdUdpSocket#createSocketForcingPort(int, int)} and
-	 *          {@link NerdUdpSocket#UdpSocket(DatagramSocket)}.
+	 *          {@linkplain NerdUdpSocket#createSocketForcingPort(int, int)
+	 *          NerdUdpSocket::createSocketForcingPort(int, int)} and
+	 *          {@linkplain NerdUdpSocket#UdpSocket(DatagramSocket)
+	 *          NerdUdpSocket::UdpSocket(DatagramSocket)}.
 	 */
 	protected NerdUdpSocket(final int p_port, final int p_timeout) {
 
@@ -294,8 +306,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	// region `public`, `static` method[s]!
 	/**
 	 * Tries to 'force' the OS into constructing a socket with the port specified
-	 * using
-	 * {@link DatagramSocket#setReuseAddress()}.
+	 * using {@linkplain DatagramSocket#setReuseAddress()
+	 * DatagramSocket::setReuseAddress()}.
 	 *
 	 * @param p_port    is the port to use,
 	 * @param p_timeout is the timeout for the port's receiving thread.
@@ -331,7 +343,9 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	}
 
 	/**
-	 * Called before {@link NerdUdpSocket#close()} closes the thread and socket.
+	 * Called before {@linkplain NerdUdpSocket#close() NerdUdpSocket::close()}
+	 * sets the receiver thread's shutdown flag <i>and</i> closes the underlying
+	 * {@link DatagramSocket}.
 	 */
 	protected abstract /* `synchronized` */ void onClose(); // AYO, NOBODY CALL THIS UNSYNCED!
 	// endregion
@@ -493,15 +507,34 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 
 	// region UDP group operations overloads.
 	/**
-	 * Calls {@link NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)} with
-	 * an instance of
-	 * {@link InetSocketAddress} - effectively the same as calling
-	 * {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)} on the
-	 * underlying {@link DatagramSocket}.
+	 * Calls {@link NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
+	 * NerdUdpSocket::joinGroup(SocketAddress, NetworkInterface)} with an instance
+	 * of {@link InetSocketAddress} - effectively the same as calling
+	 * {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)
+	 * DatagramSocket::joinGroup(SocketAddress, NetworkInterface)}
+	 * on the underlying {@link DatagramSocket}.
 	 *
-	 * @see NerdUdpSocket#leaveGroup(String, int, NetworkInterface)
-	 * @see NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
-	 * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+	 * @param p_ip    is the IP address.
+	 * @param p_port  is the port the group is on.
+	 * @param p_netIf is the network interface card (NIC) on the computer to use to
+	 *                join the group. Care to run {@code ifconfig}/{@code ipconfig}
+	 *                - perhaps using Java 9's process API to check some out? Pretty
+	 *                sure the JDK offers an API for iterating over all
+	 *                cards, too!
+	 *
+	 * @throws IOException "if there is an error joining, or when the address is not
+	 *                     a multicast address, or the platform does not support
+	 *                     multicasting", just like
+	 *                     {@linkplain DatagramSocket#joinGroup(SocketAddress, NetworkInterface)
+	 *                     DatagramSocket::joinGroup(SocketAddress,
+	 *                     NetworkInterface)} does!
+	 *
+	 * @see {@linkplain NerdUdpSocket#leaveGroup(String, int, NetworkInterface)
+	 *      NerdUdpSocket::leaveGroup(String, int, NetworkInterface)},
+	 * @see {@linkplain NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
+	 *      NerdUdpSocket::joinGroup(SocketAddress, NetworkInterface)},
+	 * @see {@linkplain NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+	 *      NerdUdpSocket::leaveGroup(SocketAddress, NetworkInterface)}.
 	 */
 	public void joinGroup(final String p_ip, final int p_port, final NetworkInterface p_netIf) throws IOException {
 		this.joinGroup(new InetSocketAddress(p_ip, p_port), p_netIf);
@@ -514,8 +547,10 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	 * {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)} on the
 	 * underlying {@link DatagramSocket}.
 	 *
-	 * @see NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
-	 * @see NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+	 * @see {@linkplain NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
+	 *      NerdUdpSocket::joinGroup(SocketAddress, NetworkInterface)},
+	 * @see {@linkplain NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+	 *      NerdUdpSocket::leaveGroup(SocketAddress, NetworkInterface)}.
 	 */
 	public void leaveGroup(final String p_ip, final int p_port, final NetworkInterface p_netIf) throws IOException {
 		this.socket.leaveGroup(new InetSocketAddress(p_ip, p_port), p_netIf);

@@ -560,8 +560,8 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
      * {@link Runnable} {@code p_toDraw}, and finally, pops back the transformations
      * and enables depth testing!
      *
-     * @see {@link NerdSketch#end2d()}
-     * @see {@link NerdSketch#begin2d()}
+     * @see {@linkplain NerdSketch#end2d() NerdSketch::end2d()},
+     * @see {@linkplain NerdSketch#begin2d() NerdSketch::begin2d()}.
      */
     public void in2d(final Runnable p_toDraw) {
         // #JIT_FTW!

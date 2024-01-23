@@ -645,6 +645,9 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 	// endregion
 
+	/**
+	 * @return the height of text
+	 */
 	public float textHeight() {
 		return this.GRAPHICS.textAscent() - this.GRAPHICS.textDescent();
 	}
@@ -654,8 +657,11 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	 * height, halved, before actually rendering
 	 * the text.
 	 *
-	 * @see NerdSketch#textHeight()
-	 * @see PApplet#textWidth(String)
+	 * @param p_text is the text to render.
+	 *
+	 * @see {@linkplain NerdGenericGraphics#textHeight()
+	 *      NerdGenericGraphics::textHeight()},
+	 * @see {@linkplain PGraphics#textWidth(String) PGraphics::textWidth(String)}.
 	 */
 	public void centeredText(final String p_text) {
 		this.GRAPHICS.text(p_text, this.GRAPHICS.textWidth(p_text) * 0.5f, this.textHeight() * 0.5f);

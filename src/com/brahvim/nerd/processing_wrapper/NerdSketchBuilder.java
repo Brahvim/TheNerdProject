@@ -38,39 +38,49 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	// region Fields and constructor!
 	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
-	private final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
+	protected Function<String[], NerdSketch<SketchPGraphicsT>> sketchFxn = null;
+	protected final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
 
-	@SuppressWarnings("unchecked")
 	protected NerdSketchBuilder() {
-
-		final Class<? extends PGraphics> p_rendererClass //
-				= (Class<? extends PGraphics>) NerdReflectionUtils.getFirstTypeArg(this);
+		final Class<? extends PGraphics> rendererClass = NerdReflectionUtils.getFirstTypeArg(this);
 
 		this.BUILD_SETTINGS = new NerdSketchSettings<>();
 
-		if (p_rendererClass == PGraphics2D.class)
+		if (rendererClass == PGraphics2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.P2D;
-		else if (p_rendererClass == PGraphics3D.class)
+		else if (rendererClass == PGraphics3D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.P3D;
-		else if (p_rendererClass == PGraphicsJava2D.class)
+		else if (rendererClass == PGraphicsJava2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.JAVA2D;
-		else if (p_rendererClass == PGraphicsFX2D.class)
+		else if (rendererClass == PGraphicsFX2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.FX2D;
 
-		// Unsupported!...:
-		else if (p_rendererClass == PGraphicsSVG.class)
-			throw new IllegalArgumentException("Unsupported renderers. Sorry.");
-		else if (p_rendererClass == PGraphicsPDF.class)
-			throw new IllegalArgumentException("Unsupported renderers. Sorry.");
+		// Unsupported renderers!...:
+		else if (rendererClass == PGraphicsSVG.class)
+			// this.BUILD_SETTINGS.renderer = PConstants.SVG;
+			throw new IllegalArgumentException(String.format(
+					"`%s` is an unsupported renderer. Sorry.",
+					PGraphicsSVG.class.getName()));
+
+		else if (rendererClass == PGraphicsPDF.class)
+			// this.BUILD_SETTINGS.renderer = PConstants.PDF;
+			throw new IllegalArgumentException(String.format(
+					"`%s` is an unsupported renderer. Sorry.",
+					PGraphicsPDF.class.getName()));
 		// ...
 		// ...Unreal:
-		else if (p_rendererClass == PGraphics.class)
+		else if (rendererClass == PGraphics.class)
 			throw new IllegalArgumentException("Those renderers are not real!");
-		else if (p_rendererClass == PGraphicsOpenGL.class)
+		else if (rendererClass == PGraphicsOpenGL.class)
 			throw new IllegalArgumentException("Those renderers are not real!");
 		else
 			throw new IllegalArgumentException("That's not a real type...");
 
+	}
+
+	protected NerdSketchBuilder(final Function<String[], NerdSketch<SketchPGraphicsT>> p_object) {
+		this();
+		this.sketchFxn = p_object;
 	}
 	// endregion
 
@@ -126,17 +136,20 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return toRet;
 	}
 
-	public static void runSketch(final NerdSketch<?> p_sketch) {
-		NerdSketchBuilder.runSketch(p_sketch, null);
+	public static <SketchPGraphicsT extends PGraphics> NerdSketch<SketchPGraphicsT> runSketch(
+			final NerdSketch<SketchPGraphicsT> p_sketch) {
+		return NerdSketchBuilder.runSketch(p_sketch, null);
 	}
 
-	public static void runSketch(final NerdSketch<?> p_sketch, final String[] p_javaMainArgs) {
+	public static <SketchPGraphicsT extends PGraphics> NerdSketch<SketchPGraphicsT> runSketch(
+			final NerdSketch<SketchPGraphicsT> p_sketch, final String[] p_javaMainArgs) {
 		final String[] args = new String[] { p_sketch.getClass().getName() };
 
 		if (p_javaMainArgs == null || p_javaMainArgs.length == 0)
 			PApplet.runSketch(args, p_sketch);
 		else
 			PApplet.runSketch(PApplet.concat(args, p_javaMainArgs), p_sketch);
+		return p_sketch;
 	}
 	// endregion
 

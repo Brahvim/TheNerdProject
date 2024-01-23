@@ -68,20 +68,24 @@ public class NerdReflectionUtils {
 		}
 	}
 
-	public static Class<?> getFirstTypeArg(final Object p_object) {
+	@SuppressWarnings("unchecked")
+	public static <RetT> Class<? extends RetT> getFirstTypeArg(final Object p_object) {
+		if (p_object == null)
+			return null;
+
 		final Type genericSuperClass = p_object.getClass().getGenericSuperclass();
 
 		if (genericSuperClass instanceof final ParameterizedType parameterizedType) {
 			final Type[] typeArguments = parameterizedType.getActualTypeArguments();
 
 			if (typeArguments.length > 0 && typeArguments[0] instanceof Class)
-				return (Class<?>) typeArguments[0];
+				return (Class<? extends RetT>) typeArguments[0];
 		}
 
 		throw new IllegalArgumentException("Unable to determine the type parameter");
 	}
 
-	public static Class<?>[] getTypeArgs(final Object p_object) {
+	public static Type[] getTypeArgsAsTypes(final Object p_object) {
 		// ...Trivial reflection tricks are where ChatGPT is my best friend ._.
 		if (p_object == null)
 			return new Class<?>[0];
@@ -93,7 +97,7 @@ public class NerdReflectionUtils {
 			return new Class<?>[0];
 
 		// One, derive the actual type arguments. Two, cast back!:
-		return (Class<?>[]) ((ParameterizedType) genericSuperclass).getActualTypeArguments();
+		return ((ParameterizedType) genericSuperclass).getActualTypeArguments();
 	}
 
 	/*
