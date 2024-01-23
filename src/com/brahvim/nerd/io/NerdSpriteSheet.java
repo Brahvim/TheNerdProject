@@ -21,7 +21,10 @@ public class NerdSpriteSheet {
 	// If you literally have only one image, why're you even using a 'sheet'?!
 	// ...Oh, preparing in advance? Well then, nevermind.
 
-	/** Position and ID of a sprite in {@linkplain NerdSpriteSheet#sprites NerdSpriteSheet::sprites}. */
+	/**
+	 * Position and ID of a sprite in {@linkplain NerdSpriteSheet#sprites
+	 * NerdSpriteSheet::sprites}.
+	 */
 	private List<SpritePos> poses = new ArrayList<>(2);
 	// endregion
 

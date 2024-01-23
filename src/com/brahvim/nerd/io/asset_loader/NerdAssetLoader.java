@@ -16,7 +16,7 @@ public abstract class NerdAssetLoader<AssetT> {
 
 	/**
 	 * This method tells the wrapping {@link NerdAsset} the name to use. For most
-	 * implementations, just:
+	 * implementations (that hold a string named {@code PATH}), just:
 	 *
 	 * <pre>
 	 * return super.findNameFromPath(this.PATH);
@@ -26,7 +26,8 @@ public abstract class NerdAssetLoader<AssetT> {
 	 *
 	 * @return The name of the {@link NerdAsset} <i>properly</i> derived from its
 	 *         file's name, perhaps by using the parsing algorithm provided by
-	 *         {@linkplain NerdAssetLoader#findNameFromPath(String) NerdAssetLoader::findNameFromPath(String)}.
+	 *         {@linkplain NerdAssetLoader#findNameFromPath(String)
+	 *         NerdAssetLoader::findNameFromPath(String)}.
 	 */
 	protected abstract String getAssetName();
 
