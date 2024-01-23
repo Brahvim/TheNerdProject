@@ -1,6 +1,7 @@
 package com.brahvim.nerd.processing_wrapper;
 
 import java.util.LinkedHashSet;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -32,14 +33,15 @@ import processing.svg.PGraphicsSVG;
  * <p>
  * This is it! This is how you can hack more things in!
  */
-public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
+public class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	// region Fields and constructor!
 	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
-	protected Function<String[], NerdSketch<SketchPGraphicsT>> sketchFxn = null;
+	protected Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> sketchFxn = null;
+	protected Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> modulesConsumer = null;
 	protected final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
 
-	protected NerdSketchBuilder() {
+	public NerdSketchBuilder() {
 		final Class<? extends PGraphics> rendererClass = NerdReflectionUtils.getFirstTypeArg(this);
 
 		this.BUILD_SETTINGS = new NerdSketchSettings<>();
@@ -76,9 +78,24 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	}
 
-	protected NerdSketchBuilder(final Function<String[], NerdSketch<SketchPGraphicsT>> p_object) {
+	public NerdSketchBuilder(
+			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_set) {
+		this();
+		this.modulesConsumer = p_set;
+	}
+
+	public NerdSketchBuilder(
+			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_object) {
 		this();
 		this.sketchFxn = p_object;
+	}
+
+	public NerdSketchBuilder(
+			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_object,
+			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_set) {
+		this();
+		this.sketchFxn = p_object;
+		this.modulesConsumer = p_set;
 	}
 	// endregion
 
@@ -101,8 +118,8 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		// them ready, beforehand!:
 
 		this.BUILD_SETTINGS.nerdModulesInstantiator = s -> {
-			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> userDefinedModules = new LinkedHashSet<>(
-					0, 1);
+			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> //
+			/*	*/ userDefinedModules = new LinkedHashSet<>(0, 1);
 			this.supplyUserDefinedModules(userDefinedModules);
 
 			for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule> f : this.supplyDefaultModules())
@@ -165,14 +182,63 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 * {@link NerdSketch}. If those are added once again, their order in the
 	 * {@link NerdModule} calling pipeline will change. Duplicates are not allowed.
 	 * Once added, the {@link NerdModule} stays until removed.
+	 *
+	 * @apiNote This method now simply calls {@linkplain Consumer#accept(Object)
+	 *          Consumer::accept(Object)} on
+	 *          {@linkplain NerdSketchBuilder#modulesConsumer
+	 *          NerdSketchBuilder::modulesConsumer} if it isn't {@code null}.
 	 */
 	protected void supplyUserDefinedModules(
 			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> p_set) {
+		if (this.modulesConsumer == null)
+			return;
+
+		this.modulesConsumer.accept(p_set);
 	}
 
-	protected abstract NerdSketch<SketchPGraphicsT> createNerdSketch(
-			final String[] p_javaMainArgs,
-			final NerdSketchSettings<SketchPGraphicsT> p_settings);
+	/**
+	 * This <i>actually</i> creates the {@link NerdSketch} instance! (<i>Id est,</i>
+	 * does the builder object's work.)
+	 *
+	 * @param p_javaMainArgs is an array of string that can be obtained through
+	 *                       either:
+	 *                       <ul>
+	 *
+	 *                       <li>The array of arguments passed to {@code main()},
+	 *                       </li>
+	 *
+	 *                       <li>A fake array of strings you made yourself,</li>
+	 *
+	 *                       <li>
+	 *
+	 *                       <pre>
+	 *                       System.getProperty("sun.java.command");
+	 *                       </pre>
+	 *
+	 *                       </li>
+	 *
+	 *                       </ul>
+	 *
+	 * @param p_settings     are the {@link NerdSketchSettings} you want to use.
+	 * @return The {@link NerdSketch} instance you want to create using this builder
+	 *         object.
+	 *
+	 * @apiNote The default implementation simply calls
+	 *          {@linkplain Function#apply(Object) Function::apply()} on
+	 *          {@linkplain NerdSketchBuilder#sketchFxn
+	 *          NerdSketchBuilder::sketchFxn}, given it is not {@code null}. If it
+	 *          is, the default constructor of {@link NerdSketch},
+	 *          {@linkplain NerdSketch#NerdSketch(NerdSketchSettings)
+	 *          NerdSketch::NerdSketch(NerdSketchSettings)} is called, and the
+	 *          created instance is returned - no custom classes!
+	 */
+	protected NerdSketch<SketchPGraphicsT> createNerdSketch(
+			final NerdSketchSettings<SketchPGraphicsT> p_settings) {
+		if (this.sketchFxn == null)
+			return new NerdSketch<>(p_settings);
+
+		return this.sketchFxn.apply(p_settings);
+	}
 
 	// region `set()`.
 	// region Window settings!

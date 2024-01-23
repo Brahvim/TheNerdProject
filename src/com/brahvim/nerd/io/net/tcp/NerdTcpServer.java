@@ -102,9 +102,11 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 
 					// System.out.printf("hasDisconnected: `%s`.%n", super.hasDisconnected);
 					// System.out.println("`NerdTcpServer.NerdTcpServerClient::serverCommsThread::run()`");
-					stream.available();
-					// ^^^ This is literally gunna return `0`!
+
+					// This call `DataInputStream::available()` call is literally gunna return `0`!
 					// ..I guess we use fixed sizes around here...
+					if (stream.available() < 1)
+						return;
 
 					// ..Now read it:
 					// FIXME VULNERABILITY! What if the packet ISN'T from Nerd?!
