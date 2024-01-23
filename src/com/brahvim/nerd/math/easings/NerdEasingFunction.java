@@ -31,38 +31,40 @@ public abstract class NerdEasingFunction {
 	public float parameterOffset;
 
 	/**
-	 * Returned by {@link NerdEasingFunction#get()} if
-	 * {@link NerdEasingFunction#useInactValue} is {@code true}.
+	 * Returned by {@linkplain NerdEasingFunction#get() NerdEasingFunction::get()}
+	 * if {@linkplain NerdEasingFunction#useInactValue
+	 * NerdEasingFunction::useInactValue} is {@code true}.
 	 */
 	public float inactValue = 0;
 
 	/**
-	 * Determines if an {@link NerdEasingFunction} object is doing calculations or
-	 * not.
+	 * Determines if a {@link NerdEasingFunction} object should be performing
+	 * calculations or not.
 	 *
-	 * @apiNote {@code false} by default. Call {@link NerdEasingFunction#start()} to
-	 *          make the function actively
-	 *          processing again.
+	 * @apiNote {@code false} by default. Call
+	 *          {@linkplain NerdEasingFunction#start() NerdEasingFunction::start()}
+	 *          to make the function actively processing again.
 	 */
 	public boolean active = false;
 
 	/**
-	 * Makes {@link NerdEasingFunction#get()} output
-	 * {@link NerdEasingFunction#inactValue} when the wave has ended -
-	 * AKA, when {@link NerdEasingFunction#active} turns {@code false}.
+	 * Makes {@linkplain NerdEasingFunction#get() NerdEasingFunction::get()} output
+	 * {@linkplain NerdEasingFunction#inactValue NerdEasingFunction::inactValue}
+	 * when the wave has ended - <i>id est</i>, when
+	 * {@linkplain NerdEasingFunction#active NerdEasingFunction::active}
+	 * has turned {@code false}.
 	 *
-	 * @apiNote {@code true} by default.
-	 *          <p>
-	 *          {@link NerdEasingFunction#inactValue} is {@code 0} by default.
+	 * @apiNote {@code true} by default. {@linkplain NerdEasingFunction#inactValue
+	 *          NerdEasingFunction::inactValue} is {@code 0} by default.
 	 */
 	public boolean useInactValue = false;
 
 	/**
-	 * Makes {@link NerdEasingFunction#get()} output its absolute value. This may
-	 * make the function behave as if the
-	 * periodicity of its parameter has doubled. Toggling this {@code boolean} while
-	 * the wave is active may show
-	 * unwantedly large, sudden changes in the value given by the function.
+	 * Makes {@linkplain NerdEasingFunction#get() NerdEasingFunction::get()} output
+	 * its absolute value. This may make the function behave as if the periodicity
+	 * of its parameter has doubled. Toggling this {@code boolean} while the wave is
+	 * active may show unwantedly large, sudden changes in the value given by the
+	 * function.
 	 *
 	 * @apiNote {@code false} by default.
 	 */

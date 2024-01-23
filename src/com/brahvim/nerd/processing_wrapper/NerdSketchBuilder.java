@@ -22,17 +22,15 @@ import processing.pdf.PGraphicsPDF;
 import processing.svg.PGraphicsSVG;
 
 /**
- * Want to hack into the
- * {@link NerdSketch NerdSketch<SketchPGraphicsT> }
- * class and control its inner workings
- * beyond just... using callbacks? Why not extend it!?
+ * Want to hack into the {@link NerdSketch} class and control its inner workings
+ * beyond just... <i>using callbacks from it?</i> Extend it!?
  *
  * <p>
  * Override/Implement {@linkplain NerdSketchBuilder#build()
- * NerdSketchBuilder::build()},
- * and return an instance of your own
- * {@linkplain NerdSketch NerdSketch<SketchPGraphicsT>}
- * subclass!
+ * NerdSketchBuilder::build()}, and return an instance of your own
+ * {@linkplain NerdSketch NerdSketch<SketchPGraphicsT>} subclass!
+ * <p>
+ * This is it! This is how you can hack more things in!
  */
 public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
@@ -155,18 +153,16 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	/**
 	 * Provides a {@link LinkedHashSet}, to be filled with
-	 * {@link NerdModule} instances, given a {@link NerdSketch<SketchPGraphicsT>}.
+	 * {@link NerdModule} instances, given a {@link NerdSketch}.
 	 *
 	 * <p>
 	 * The order in which the {@link NerdModule}s are added, is the order the
-	 * {@link NerdSketch<SketchPGraphicsT>} will process them in. If the same
-	 * {@link NerdModule} is
-	 * added twice, only the latter instance will be retained.
+	 * {@link NerdSketch} will process them in. If the same
+	 * {@link NerdModule} is added twice, only the latter instance will be retained.
 	 *
 	 * <p>
 	 * Some {@link NerdModule}s are provided by default in the
-	 * {@link NerdSketch<SketchPGraphicsT>}. If those are added once again, their
-	 * order in the
+	 * {@link NerdSketch}. If those are added once again, their order in the
 	 * {@link NerdModule} calling pipeline will change. Duplicates are not allowed.
 	 * Once added, the {@link NerdModule} stays until removed.
 	 */

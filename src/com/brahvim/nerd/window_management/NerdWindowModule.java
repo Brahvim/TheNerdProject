@@ -21,8 +21,9 @@ import processing.javafx.PGraphicsFX2D;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
- * Please use {@link NerdWindowModule#createWindowModule(NerdSketch)} to create
- * instances specific to your {@link NerdSketch}'s renderer.
+ * Please use {@linkplain NerdWindowModule#createWindowModule(NerdSketch)
+ * NerdWindowModule::createWindowModule(NerdSketch)} to create instances
+ * specific to your {@link NerdSketch}'s renderer.
  */
 public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> extends NerdModule {
 

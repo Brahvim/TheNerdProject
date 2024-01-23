@@ -16,7 +16,7 @@ import processing.data.JSONObject;
  * <p>
  * A "global" namespace for these strings is provided through
  * {@linkplain NerdSketch#getGlobalStringsTable()
- * NerdSketch<SketchPGraphicsT>::getGlobalStringTable()}, so you can access
+ * NerdSketch::getGlobalStringTable()}, so you can access
  * string table data across scenes!
  */
 public class NerdStringsTable {

@@ -10,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.function.Consumer;
 
 // Brought to you, from my other (currently supa'-dupa' secret, ";P!) project, "AGC"!:
@@ -57,31 +56,48 @@ public class NerdByteSerialUtils {
 		return new byte[0];
 	}
 
-	/**
-	 * @deprecated Broken! Bummer...
-	 */
+	/** @deprecated Broken! Bummer... */
 	@Deprecated
 	public static void copyFieldValues(final Object p_from, final Object p_to) {
-		if (p_from.getClass().isAssignableFrom(p_to.getClass()))
+		NerdByteSerialUtils.copyFieldValues(p_from, p_to, new String[0], 0);
+	}
+
+	/** @deprecated Broken! Bummer... */
+	@Deprecated
+	public static void copyFieldValues(
+			final Object p_from,
+			final Object p_to,
+			final String[] p_fieldsToSkip,
+			final int p_fieldExclusionFlagsEnum) {
+		if (!p_from.getClass().isAssignableFrom(p_to.getClass()))
 			throw new UnsupportedOperationException("Cannot copy fields of objects from different hierarchies!");
 
 		// For each field in the object to copy to...
-		for (final Field f : p_to.getClass().getFields()) {
-			final int fieldModifiers = f.getModifiers();
-			final boolean editable = !("serialVersionUID".equals(f.getName()) || Modifier.isTransient(fieldModifiers)
-					|| Modifier.isPublic(fieldModifiers));
+		loop1: for (final Field f : p_to.getClass().getFields()) {
+			final String name = f.getName();
 
-			if (editable) { // ..that is not the `serialVersionUID`, nor `static`, nor `transient`...
-				f.setAccessible(true); // ..making sure it is accessible if it is not...
+			for (final String s : p_fieldsToSkip)
+				if (name.equals(s))
+					continue loop1;
+
+			final boolean editable = !("serialVersionUID".equals(name)
+					// || Modifier.isTransient(fieldModifiers)
+					// || Modifier.isPublic(fieldModifiers)
+					|| (f.getModifiers() & p_fieldExclusionFlagsEnum) != 0);
+
+			if (editable) { // ..that is not the `serialVersionUID`, ~~nor `static`, nor `transient`~~...
+				f.setAccessible(true); // ..making sure it is accessible, if it is not...
 				try {
-					final Object value = f.get(p_from); // ..we get the value of.
+					final Object value = f.get(p_from); // ...we get the value of.
 					// ...Upon checking the types, if the the field, from the object to copy from,
 					// has a hierarchy that differs from the other...
-					if (value != null && !f.getType().isAssignableFrom(value.getClass())) {
+					if ( // value != null && // What if the value is actually `null`?!
+					!f.getType().isAssignableFrom(value.getClass()))
 						// ...we work no longer.
-						throw new IllegalArgumentException("Incompatible field types: `" + f.getType().getName()
-								+ "` and `" + value.getClass().getName() + "`");
-					}
+						throw new IllegalArgumentException(String.format(
+								"Incompatible field types: `%s` and `%s`!",
+								f.getType().getName(),
+								value.getClass().getName()));
 					// But if it shows the slightest of similarities, we go on:
 					f.set(p_to, value);
 				} catch (final IllegalAccessException e) {
@@ -187,13 +203,12 @@ public class NerdByteSerialUtils {
 
 	/**
 	 * Deserialize an object from bytes, then edit a given one to match the
-	 * deserialized one. Only you can guarantee the
-	 * equality of their types!
+	 * deserialized one. Only you can guarantee the equality of their types!
 	 *
 	 * @deprecated since it uses
-	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)},
-	 *             which is itself
-	 *             deprecated.
+	 *             {@linkplain NerdByteSerialUtils#copyFieldValues(Object, Object)
+	 *             NerdByteSerialUtils::copyFieldValues(Object, Object)}, which is
+	 *             itself deprecated.
 	 * @param p_data   the bytes to deserialize back to an object.
 	 * @param p_object the object to transform into the from the bytes!
 	 */
@@ -452,10 +467,11 @@ public class NerdByteSerialUtils {
 	 * the equality of their types!
 	 *
 	 * @deprecated since it uses
-	 *             {@link NerdByteSerialUtils#fromBytesAssigning(byte[], Object)},
-	 *             which is deprecated,
-	 *             since it uses
-	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)},
+	 *             {@link NerdByteSerialUtils#fromBytesAssigning(byte[], Object)
+	 *             NerdByteSerialUtils::fromBytesAssigning(byte[], Object)},
+	 *             which is deprecated, since it uses
+	 *             {@link NerdByteSerialUtils#copyFieldValues(Object, Object)
+	 *             NerdByteSerialUtils::copyFieldValues(Object, Object)},
 	 *             which is also deprecated.
 	 * @param p_file   the file to deserialize an object from!
 	 * @param p_object the object to transform into the from the bytes!

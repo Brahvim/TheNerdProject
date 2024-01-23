@@ -26,7 +26,7 @@ public abstract class NerdAssetLoader<AssetT> {
 	 *
 	 * @return The name of the {@link NerdAsset} <i>properly</i> derived from its
 	 *         file's name, perhaps by using the parsing algorithm provided by
-	 *         {@link NerdAssetLoader#findNameFromPath(String)}.
+	 *         {@linkplain NerdAssetLoader#findNameFromPath(String) NerdAssetLoader::findNameFromPath(String)}.
 	 */
 	protected abstract String getAssetName();
 

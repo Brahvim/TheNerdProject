@@ -11,7 +11,8 @@ import java.util.function.Consumer;
  * operate via side-effects.
  * <p>
  * This is a {@link FunctionalInterface} whose functional method is
- * {@link NerdQuadConsumer#accept(Object, Object, Object, Object)}.
+ * {@linkplain NerdQuadConsumer#accept(Object, Object, Object, Object)
+ * NerdQuadConsumer::accept(Object, Object, Object, Object)}.
  *
  * @param <T> the type of the first argument to the operation
  * @param <U> the type of the second argument to the operation

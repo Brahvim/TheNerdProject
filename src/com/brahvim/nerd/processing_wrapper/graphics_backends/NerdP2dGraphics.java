@@ -362,7 +362,7 @@ public class NerdP2dGraphics extends NerdGlGenericGraphics<PGraphics2D> {
     /**
      * Draws the {@code p_bgImage} as if it was a background. You may even choose to
      * call one of the
-     * {@link PApplet#tint()} overloads before calling this!
+     * {@linkplain PApplet#tint() PApplet::tint()} overloads before calling this!
      */
     @Override
     public void background(final PImage p_bgImage) {

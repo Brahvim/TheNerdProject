@@ -46,15 +46,17 @@ public class NerdSineEase extends NerdEasingFunction {
 	 * automatically - by directly incrementing the amount of time it takes! <i>But
 	 * do note</i>, that by using this
 	 * method, any calculations made by the
-	 * {@link NerdSineEase#endWhenAngleIncrementsBy(float)} and
-	 * {@link NerdSineEase#endWhenAngleIncrementsToWithin(float, float)} methods are
-	 * ignored, and the wave will no
-	 * longer end at the angle you specified there.
+	 * {@linkplain NerdSineEase#endWhenAngleIncrementsBy(float)
+	 * NerdSineEase::endWhenAngleIncrementsBy(float)} and
+	 * {@linkplain NerdSineEase#endWhenAngleIncrementsToWithin(float, float)
+	 * NerdSineEase::endWhenAngleIncrementsToWithin(float, float)} methods are
+	 * ignored, and the wave will no longer end at the angle you specified there.
 	 *
 	 * @param p_millis is the amount of time the angle parameter will be incremented
-	 *                 by, in terms of radians. <i>Yes,
-	 *                 this internally tracked 'angle-parameter' is in terms of
-	 *                 time. In milliseconds.</i>
+	 *                 by, in terms of radians.
+	 *
+	 *                 <i>Yes, this internally tracked
+	 *                 'angle-parameter' is in terms of time. In milliseconds.</i>
 	 */
 	@Override
 	public NerdSineEase endAfterMillis(final int p_millis) {
@@ -69,7 +71,7 @@ public class NerdSineEase extends NerdEasingFunction {
 	 * incremented by what you've passed in.
 	 * <p>
 	 * Yes, the <i>angle parameter</i> in context is actually just a time value,
-	 * tracked internally.
+	 * tracked internally. Yes, it is in milliseconds.
 	 *
 	 * @param p_angle is the angle to increment the parameter by, in radians.
 	 */
@@ -99,11 +101,10 @@ public class NerdSineEase extends NerdEasingFunction {
 	 * tracked internally.
 	 *
 	 * @param p_angle                  is the angle, <i>in radians,</i> that the
-	 *                                 wave will reach, and,
+	 *                                 wave will reach.
 	 * @param p_timeConstraintDistance is the amount of time this
 	 *                                 {@link NerdSineEase} will stop after, at the
-	 *                                 very
-	 *                                 angle you've given!
+	 *                                 very angle you've given!
 	 */
 	// Method to put the wave at a given angle within given time.
 	public NerdSineEase endWhenAngleIncrementsToWithin(final float p_angle, final float p_timeConstraintDistance) {

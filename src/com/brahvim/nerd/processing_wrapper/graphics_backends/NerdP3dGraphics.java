@@ -423,8 +423,8 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     /**
      * Draws the {@code p_bgImage} as if it was a background. You may even choose to
-     * call one of the
-     * {@link PApplet#tint()} overloads before calling this!
+     * call one of the {@linkplain PApplet#tint() PApplet::tint()} overloads before
+     * calling this!
      */
     @Override
     public void background(final PImage p_bgImage) {
@@ -535,8 +535,8 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     // region 2D rendering.
     /**
      * Pushes the graphics buffer, disables depth testing and resets all current
-     * transformations (they're restored by a
-     * call to `NerdSketch::pop()` later!).
+     * transformations (they're restored by a call to {@linkplain NerdSketch#pop()
+     * NerdSketch::pop()} later!).
      */
     public void begin2d() {
         this.push();
@@ -545,9 +545,7 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         this.GRAPHICS.camera();
     }
 
-    /**
-     * Pops back transformations and enables depth testing.
-     */
+    /** Pops back transformations and enables depth testing. */
     public void end2d() {
         this.pop();
         this.GRAPHICS.hint(PConstants.ENABLE_DEPTH_TEST);
@@ -556,9 +554,8 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     /**
      * Pushes the graphics buffer, disables depth testing, resets all current
-     * transformations, calls your
-     * {@link Runnable} {@code p_toDraw}, and finally, pops back the transformations
-     * and enables depth testing!
+     * transformations, calls your {@link Runnable} {@code p_toDraw}, and finally,
+     * pops back the transformations and enables depth testing!
      *
      * @see {@linkplain NerdSketch#end2d() NerdSketch::end2d()},
      * @see {@linkplain NerdSketch#begin2d() NerdSketch::begin2d()}.

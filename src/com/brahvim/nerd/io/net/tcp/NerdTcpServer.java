@@ -359,7 +359,8 @@ public class NerdTcpServer implements NerdServerSocket, AutoCloseable {
 
 	/**
 	 * Removes a callback registered via the method,
-	 * {@link NerdTcpServer#addMessageReceivedCallback(Consumer)}.
+	 * {@linkplain NerdTcpServer#addMessageReceivedCallback(Consumer)
+	 * NerdTcpServer::addMessageReceivedCallback(Consumer)}.
 	 *
 	 * @param p_callback is a callback providing the new client a message callback!
 	 * @return The {@link NerdTcpServer} instance this method was called on.

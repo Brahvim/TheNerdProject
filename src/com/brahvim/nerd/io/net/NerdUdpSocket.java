@@ -311,7 +311,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	 *
 	 * @param p_port    is the port to use,
 	 * @param p_timeout is the timeout for the port's receiving thread.
-	 * @return A {@link java.net.DatagramSocket}.
+	 * @return A {@link DatagramSocket}.
 	 */
 	public static DatagramSocket createSocketForcingPort(final int p_port, final int p_timeout) {
 		/* final */ DatagramSocket toRet = null;
@@ -362,8 +362,10 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	}
 
 	/**
-	 * @return {@code -1} if there is a UDP error (A {@link SocketException} to be
-	 *         specific).
+	 * @return {@code -1}, if there's a UDP error (a {@link SocketException} when
+	 *         calling {@link DatagramSocket#getSoTimeout()
+	 *         DatagramSocket::getSoTimeout()} on the underlying
+	 *         {@link DatagramSocket} instance, to be specific).
 	 */
 	public int getTimeout() {
 		try {
@@ -507,10 +509,10 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 
 	// region UDP group operations overloads.
 	/**
-	 * Calls {@link NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
+	 * Calls {@linkplain NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
 	 * NerdUdpSocket::joinGroup(SocketAddress, NetworkInterface)} with an instance
 	 * of {@link InetSocketAddress} - effectively the same as calling
-	 * {@link DatagramSocket#joinGroup(SocketAddress, NetworkInterface)
+	 * {@linkplain DatagramSocket#joinGroup(SocketAddress, NetworkInterface)
 	 * DatagramSocket::joinGroup(SocketAddress, NetworkInterface)}
 	 * on the underlying {@link DatagramSocket}.
 	 *
@@ -541,10 +543,11 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	}
 
 	/**
-	 * Calls {@link NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)} with
-	 * an instance of
-	 * {@link InetSocketAddress} - effectively the same as calling
-	 * {@link DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)} on the
+	 * Calls {@linkplain NerdUdpSocket#leaveGroup(SocketAddress, NetworkInterface)
+	 * NerdUdpSocket::leaveGroup(SocketAddress, NetworkInterface)} with an instance
+	 * of {@link InetSocketAddress} - effectively the same as calling
+	 * {@linkplain DatagramSocket#leaveGroup(SocketAddress, NetworkInterface)
+	 * DatagramSocket::leaveGroup(SocketAddress, NetworkInterface)} on the
 	 * underlying {@link DatagramSocket}.
 	 *
 	 * @see {@linkplain NerdUdpSocket#joinGroup(SocketAddress, NetworkInterface)
@@ -607,9 +610,8 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	}
 
 	/**
-	 * Sends over a {@link String} converted to a {@code byte[]} using the
-	 * {@code UTF-8} character set to the specified
-	 * IP address and port.
+	 * Sends over a {@link String} converted to a {@code byte[]} using the UTF-8
+	 * character set to the specified IP address and port.
 	 */
 	public synchronized void send(final String p_message, final String p_ip, final int p_port) {
 		this.send(p_message.getBytes(StandardCharsets.UTF_8), p_ip, p_port);

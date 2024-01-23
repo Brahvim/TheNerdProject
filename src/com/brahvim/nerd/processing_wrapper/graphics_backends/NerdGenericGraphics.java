@@ -475,8 +475,8 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 
 	/**
 	 * Draws the {@code p_bgImage} as if it was a background. You may even choose to
-	 * call one of the
-	 * {@link PApplet#tint()} overloads before calling this!
+	 * call one of the {@linkplain PApplet#tint() PApplet::tint()} overloads before
+	 * calling this!
 	 */
 	public void background(final PImage p_bgImage) {
 		Objects.requireNonNull(p_bgImage);
@@ -698,11 +698,12 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 
 	/**
 	 * This method provides an implementation for how overloads of
-	 * {@link PGraphics#background()} that have an alpha value are rendered after a
-	 * color has been chosen using {@link PGraphics#fill()}.
+	 * {@linkplain PGraphics#background() PGraphics::background()} that have an
+	 * alpha value are rendered after a color has been chosen using
+	 * {@linkplain PGraphics#fill() PGraphics::fill()}.
 	 * <p>
-	 * {@link NerdP3dGraphics} call {@link PGraphics#camera()}, while
-	 * {@link NerdP2dGraphics} ones don't.
+	 * {@link NerdP3dGraphics} call {@linkplain PGraphics#camera()
+	 * PGraphics::camera()}, while {@link NerdP2dGraphics} ones don't.
 	 */
 	protected void backgroundWithAlphaRectRenderingImpl() {
 		// Removing this will not display the previous camera's view,
