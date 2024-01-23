@@ -18,9 +18,9 @@ public class NerdPdfSketchBuilder extends NerdSketchBuilder<PGraphicsPDF> {
     }
 
     public NerdPdfSketchBuilder(
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsPDF>, NerdModule>>> p_set) {
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsPDF>, NerdModule>>> p_modulesSet) {
         this();
-        this.modulesConsumer = p_set;
+        this.modulesConsumer = p_modulesSet;
     }
 
     public NerdPdfSketchBuilder(
@@ -30,8 +30,8 @@ public class NerdPdfSketchBuilder extends NerdSketchBuilder<PGraphicsPDF> {
 
     public NerdPdfSketchBuilder(
             final Function<NerdSketchSettings<PGraphicsPDF>, NerdSketch<PGraphicsPDF>> p_object,
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsPDF>, NerdModule>>> p_set) {
-        super(p_object, p_set);
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsPDF>, NerdModule>>> p_modulesSet) {
+        super(p_object, p_modulesSet);
     }
 
 }

@@ -18,9 +18,9 @@ public class NerdP3dSketchBuilder extends NerdSketchBuilder<PGraphics3D> {
     }
 
     public NerdP3dSketchBuilder(
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics3D>, NerdModule>>> p_set) {
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics3D>, NerdModule>>> p_modulesSet) {
         this();
-        this.modulesConsumer = p_set;
+        this.modulesConsumer = p_modulesSet;
     }
 
     public NerdP3dSketchBuilder(
@@ -30,8 +30,8 @@ public class NerdP3dSketchBuilder extends NerdSketchBuilder<PGraphics3D> {
 
     public NerdP3dSketchBuilder(
             final Function<NerdSketchSettings<PGraphics3D>, NerdSketch<PGraphics3D>> p_object,
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics3D>, NerdModule>>> p_set) {
-        super(p_object, p_set);
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics3D>, NerdModule>>> p_modulesSet) {
+        super(p_object, p_modulesSet);
     }
 
 }

@@ -18,9 +18,9 @@ public class NerdJava2dSketchBuilder extends NerdSketchBuilder<PGraphicsJava2D> 
     }
 
     public NerdJava2dSketchBuilder(
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsJava2D>, NerdModule>>> p_set) {
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsJava2D>, NerdModule>>> p_modulesSet) {
         this();
-        this.modulesConsumer = p_set;
+        this.modulesConsumer = p_modulesSet;
     }
 
     public NerdJava2dSketchBuilder(
@@ -30,8 +30,8 @@ public class NerdJava2dSketchBuilder extends NerdSketchBuilder<PGraphicsJava2D> 
 
     public NerdJava2dSketchBuilder(
             final Function<NerdSketchSettings<PGraphicsJava2D>, NerdSketch<PGraphicsJava2D>> p_object,
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsJava2D>, NerdModule>>> p_set) {
-        super(p_object, p_set);
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsJava2D>, NerdModule>>> p_modulesSet) {
+        super(p_object, p_modulesSet);
     }
 
 }

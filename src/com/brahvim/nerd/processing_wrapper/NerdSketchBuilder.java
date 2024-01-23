@@ -79,9 +79,9 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	}
 
 	protected NerdSketchBuilder(
-			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_set) {
+			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_modulesSet) {
 		this();
-		this.modulesConsumer = p_set;
+		this.modulesConsumer = p_modulesSet;
 	}
 
 	protected NerdSketchBuilder(
@@ -92,10 +92,10 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	protected NerdSketchBuilder(
 			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_object,
-			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_set) {
+			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_modulesSet) {
 		this();
 		this.sketchFxn = p_object;
-		this.modulesConsumer = p_set;
+		this.modulesConsumer = p_modulesSet;
 	}
 	// endregion
 
@@ -189,11 +189,11 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 *          NerdSketchBuilder::modulesConsumer} if it isn't {@code null}.
 	 */
 	protected void supplyUserDefinedModules(
-			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> p_set) {
+			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> p_modulesSet) {
 		if (this.modulesConsumer == null)
 			return;
 
-		this.modulesConsumer.accept(p_set);
+		this.modulesConsumer.accept(p_modulesSet);
 	}
 
 	/**
@@ -245,16 +245,36 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	}
 
 	public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
-			final Class<ModuleT> p_moduleClass, final NerdModuleSettings<ModuleT> p_settings) {
-		this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass, p_settings);
+			final NerdModuleSettings<ModuleT> p_settings) {
+		this.BUILD_SETTINGS.nerdModulesSettings.put(p_settings.getModuleClass(),
+				p_settings);
 		return this;
 	}
 
 	public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
-			final Class<ModuleT> p_moduleClass, final Supplier<NerdModuleSettings<ModuleT>> p_settingsSupplier) {
-		this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass, p_settingsSupplier.get());
+			final Supplier<NerdModuleSettings<ModuleT>> p_settingsSupplier) {
+		final NerdModuleSettings<ModuleT> settings = p_settingsSupplier.get();
+		this.BUILD_SETTINGS.nerdModulesSettings.put(settings.getModuleClass(),
+				settings);
 		return this;
 	}
+
+	// public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT>
+	// setNerdModuleSettings(
+	// final Class<ModuleT> p_moduleClass, final NerdModuleSettings<ModuleT>
+	// p_settings) {
+	// this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass, p_settings);
+	// return this;
+	// }
+
+	// public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT>
+	// setNerdModuleSettings(
+	// final Class<ModuleT> p_moduleClass, final
+	// Supplier<NerdModuleSettings<ModuleT>> p_settingsSupplier) {
+	// this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass,
+	// p_settingsSupplier.get());
+	// return this;
+	// }
 	// endregion
 
 	// region Window behaviors and properties.
