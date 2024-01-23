@@ -33,7 +33,7 @@ import processing.svg.PGraphicsSVG;
  * <p>
  * This is it! This is how you can hack more things in!
  */
-public class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
+public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	// region Fields and constructor!
 	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
@@ -41,7 +41,7 @@ public class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	protected Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> modulesConsumer = null;
 	protected final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
 
-	public NerdSketchBuilder() {
+	protected NerdSketchBuilder() {
 		final Class<? extends PGraphics> rendererClass = NerdReflectionUtils.getFirstTypeArg(this);
 
 		this.BUILD_SETTINGS = new NerdSketchSettings<>();
@@ -78,19 +78,19 @@ public class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	}
 
-	public NerdSketchBuilder(
+	protected NerdSketchBuilder(
 			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_set) {
 		this();
 		this.modulesConsumer = p_set;
 	}
 
-	public NerdSketchBuilder(
+	protected NerdSketchBuilder(
 			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_object) {
 		this();
 		this.sketchFxn = p_object;
 	}
 
-	public NerdSketchBuilder(
+	protected NerdSketchBuilder(
 			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_object,
 			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_set) {
 		this();
@@ -130,7 +130,7 @@ public class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		};
 
 		final NerdSketch<SketchPGraphicsT> constructedSketch = this
-				.createNerdSketch(p_javaMainArgs, this.BUILD_SETTINGS);
+				.createNerdSketch(this.BUILD_SETTINGS);
 		NerdSketchBuilder.runSketch(constructedSketch, p_javaMainArgs);
 		return constructedSketch;
 	}
@@ -200,26 +200,7 @@ public class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 * This <i>actually</i> creates the {@link NerdSketch} instance! (<i>Id est,</i>
 	 * does the builder object's work.)
 	 *
-	 * @param p_javaMainArgs is an array of string that can be obtained through
-	 *                       either:
-	 *                       <ul>
-	 *
-	 *                       <li>The array of arguments passed to {@code main()},
-	 *                       </li>
-	 *
-	 *                       <li>A fake array of strings you made yourself,</li>
-	 *
-	 *                       <li>
-	 *
-	 *                       <pre>
-	 *                       System.getProperty("sun.java.command");
-	 *                       </pre>
-	 *
-	 *                       </li>
-	 *
-	 *                       </ul>
-	 *
-	 * @param p_settings     are the {@link NerdSketchSettings} you want to use.
+	 * @param p_settings are the {@link NerdSketchSettings} you want to use.
 	 * @return The {@link NerdSketch} instance you want to create using this builder
 	 *         object.
 	 *

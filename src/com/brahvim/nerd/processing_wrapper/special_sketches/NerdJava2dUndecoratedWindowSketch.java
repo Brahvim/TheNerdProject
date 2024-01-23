@@ -11,11 +11,11 @@ import processing.awt.PSurfaceAWT;
 import processing.awt.PSurfaceAWT.SmoothCanvas;
 import processing.core.PSurface;
 
-public class NerdSketchUndecoratedJava2dWindow extends NerdSketch<PGraphicsJava2D> {
+public class NerdJava2dUndecoratedWindowSketch extends NerdSketch<PGraphicsJava2D> {
 
     protected NerdJava2dWindowModule window;
 
-    public NerdSketchUndecoratedJava2dWindow(final NerdSketchSettings<PGraphicsJava2D> p_settings) {
+    public NerdJava2dUndecoratedWindowSketch(final NerdSketchSettings<PGraphicsJava2D> p_settings) {
         super(p_settings);
     }
 
