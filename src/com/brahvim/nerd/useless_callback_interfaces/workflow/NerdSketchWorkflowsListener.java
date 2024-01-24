@@ -1,4 +1,4 @@
-package com.brahvim.nerd.useless_callback_interfaces.workflow.regular;
+package com.brahvim.nerd.useless_callback_interfaces.workflow;
 
 import com.brahvim.nerd.useless_callback_interfaces.NerdSketchCallback;
 
