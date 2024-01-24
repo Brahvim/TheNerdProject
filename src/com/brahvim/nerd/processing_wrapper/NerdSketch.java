@@ -141,9 +141,8 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	}
 
 	private List<NerdModule> sortModules(final NerdSketchSettings<SketchPGraphicsT> p_settings) {
-		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> nerdModulesToAssign
-		/////////////////////////////////
-				= new LinkedHashSet<>(0);
+		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>
+		/*   */ nerdModulesToAssign = new LinkedHashSet<>(0);
 		p_settings.nerdModulesInstantiator.accept(nerdModulesToAssign);
 
 		final List<NerdModule> toRet = new ArrayList<>(nerdModulesToAssign.size());

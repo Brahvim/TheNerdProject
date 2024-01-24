@@ -1,10 +1,10 @@
-package com.brahvim.nerd.io.net.tcp;
+package com.brahvim.nerd.io.net.tcp.abstracts;
 
-public class NerdAbstractTcpPacket {
+public abstract class NerdAbstractTcpPacket {
 
 	protected byte[] data;
 
-	public NerdAbstractTcpPacket(final byte[] p_data) {
+	protected NerdAbstractTcpPacket(final byte[] p_data) {
 		this.data = p_data;
 	}
 

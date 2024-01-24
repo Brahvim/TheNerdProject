@@ -1,16 +1,12 @@
-package com.brahvim.nerd.io.net.tcp;
+package com.brahvim.nerd.io.net.tcp.abstracts;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.brahvim.nerd.io.net.NerdClientSocket;
+import com.brahvim.nerd.io.net.tcp.interfaces.NerdClientSocket;
 
-/**
- * ...Only I (Brahvim) want to be using this class. It's written in the hopes to
- * make the API I want to in Nerd.
- */
 public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 
 	protected final AtomicBoolean STOPPED = new AtomicBoolean();
@@ -18,8 +14,8 @@ public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 	protected Socket socket;
 	protected Thread commsThread;
 
-	// region (`package`-level) Constructors.
-	/* `package` */ NerdAbstractTcpClient(final String p_serverIp, final int p_myPort) {
+	// region Constructors.
+	protected NerdAbstractTcpClient(final String p_serverIp, final int p_myPort) {
 		try {
 			this.socket = new Socket(p_serverIp, p_myPort);
 		} catch (final IOException e) {
@@ -27,7 +23,7 @@ public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 		}
 	}
 
-	/* `package` */ NerdAbstractTcpClient(final int p_myPort) {
+	protected NerdAbstractTcpClient(final int p_myPort) {
 		try {
 			this.socket = new Socket((String) null, p_myPort);
 		} catch (final IOException e) {
@@ -35,7 +31,7 @@ public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 		}
 	}
 
-	/* `package` */ NerdAbstractTcpClient(final Socket p_socket) {
+	protected NerdAbstractTcpClient(final Socket p_socket) {
 		this.socket = p_socket;
 	}
 	// endregion

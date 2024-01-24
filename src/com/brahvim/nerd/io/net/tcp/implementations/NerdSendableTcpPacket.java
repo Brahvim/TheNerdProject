@@ -1,4 +1,6 @@
-package com.brahvim.nerd.io.net.tcp;
+package com.brahvim.nerd.io.net.tcp.implementations;
+
+import com.brahvim.nerd.io.net.tcp.abstracts.NerdAbstractTcpPacket;
 
 public class NerdSendableTcpPacket extends NerdAbstractTcpPacket {
 

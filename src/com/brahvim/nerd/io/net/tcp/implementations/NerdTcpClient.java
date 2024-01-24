@@ -1,4 +1,4 @@
-package com.brahvim.nerd.io.net.tcp;
+package com.brahvim.nerd.io.net.tcp.implementations;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -10,6 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Vector;
 import java.util.function.Consumer;
+
+import com.brahvim.nerd.io.net.tcp.abstracts.NerdAbstractTcpClient;
+import com.brahvim.nerd.io.net.tcp.abstracts.NerdAbstractTcpPacket;
 
 import processing.core.PApplet;
 
@@ -123,7 +126,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 
 				synchronized (this.MESSAGE_CALLBACKS) {
 					for (final Consumer<NerdServerSentTcpPacket> c : this.MESSAGE_CALLBACKS)
-						try {// NOSONAR!:
+						try {// NOSONAR
 								// I want this to skip an iteration when something goes wrong, not
 								// completely break the loop!
 							c.accept(packet);
