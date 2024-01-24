@@ -1,6 +1,6 @@
 # Directories:
-./bin
-./lib
+bin
+lib
 
 # File types:
 *.jar
