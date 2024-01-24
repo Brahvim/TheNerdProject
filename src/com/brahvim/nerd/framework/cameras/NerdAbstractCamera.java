@@ -1,6 +1,5 @@
 package com.brahvim.nerd.framework.cameras;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -16,14 +15,22 @@ import processing.opengl.PGraphics3D;
 public abstract class NerdAbstractCamera {
 
 	// region Fields.
-	public static final float DEFAULT_CAM_FOV = PApplet.radians(60),
-			DEFAULT_CAM_NEAR = 0.05f, DEFAULT_CAM_FAR = 10_000, DEFAULT_CAM_MOUSE_Z = 1;
+	public static final float
+	/*   */ DEFAULT_CAM_FOV = PApplet.radians(60),
+			DEFAULT_CAM_NEAR = 0.05f,
+			DEFAULT_CAM_FAR = 10_000,
+			DEFAULT_CAM_MOUSE_Z = 1;
 
-	protected final NerdSketch<PGraphics3D> SKETCH;
-	protected final NerdP3dGraphics GRAPHICS;
-	protected final NerdGlWindowModule WINDOW;
+	public static final float
+	/*   */ DEFAULT_CAM_POS_X = 0,
+			DEFAULT_CAM_POS_Y = 0,
+			DEFAULT_CAM_POS_Z = 0,
+			// Up vector:
+			DEFAULT_CAM_UP_X = 0,
+			DEFAULT_CAM_UP_Y = 1,
+			DEFAULT_CAM_UP_Z = 0;
+
 	public Consumer<NerdAbstractCamera> script; // Smart users will write complete classes for these.
-
 	// ...yeah, for some reason `PApplet::color()` fails. No ARGB!
 	public float clearColorParam1, clearColorParam2, clearColorParam3, clearColorParamAlpha;
 	public float fov = NerdAbstractCamera.DEFAULT_CAM_FOV,
@@ -31,12 +38,22 @@ public abstract class NerdAbstractCamera {
 			near = NerdAbstractCamera.DEFAULT_CAM_NEAR,
 			mouseZ = NerdAbstractCamera.DEFAULT_CAM_MOUSE_Z,
 			aspect /* `= 1`? */;
-
-	protected PVector pos = new PVector(), up = new PVector(0, 1, 0),
-			defaultCamUp, defaultCamPos;
-
 	public int projection = PConstants.PERSPECTIVE;
-	public boolean doScript = true, doAutoClear = true, doAutoAspect = true;
+
+	public boolean
+	/*   */ doScript = true,
+			doAutoClear = true,
+			doAutoAspect = true;
+
+	protected final NerdP3dGraphics GRAPHICS;
+	protected final NerdGlWindowModule WINDOW;
+	protected final NerdSketch<PGraphics3D> SKETCH;
+
+	protected PVector
+	/*   */ pos = new PVector(),
+			up = new PVector(0, 1, 0),
+			defaultCamPos = new PVector(),
+			defaultCamUp = new PVector(0, 1, 0);
 	// endregion
 
 	protected NerdAbstractCamera(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
@@ -87,12 +104,26 @@ public abstract class NerdAbstractCamera {
 		return this.pos;
 	}
 
-	public void setUp(final PVector p_up) {
-		this.up = p_up;
+	public void setUp(final PVector p_vec) {
+		if (p_vec == null)
+			this.up.set(0, 0, 0);
+		else
+			this.up.set(p_vec);
 	}
 
-	public void setPos(final PVector p_pos) {
-		this.pos = p_pos;
+	public void setPos(final PVector p_vec) {
+		if (p_vec == null)
+			this.pos.set(0, 0, 0);
+		else
+			this.pos.set(p_vec);
+	}
+
+	public void setPos(final float p_x, final float p_y) {
+		this.pos.set(p_x, p_y);
+	}
+
+	public void setPos(final float p_x, final float p_y, final float p_z) {
+		this.pos.set(p_x, p_y, p_z);
 	}
 	// endregion
 
@@ -153,11 +184,17 @@ public abstract class NerdAbstractCamera {
 	}
 
 	public void setDefaultCamUp(final PVector p_vec) {
-		this.defaultCamUp = Objects.requireNonNull(p_vec);
+		if (p_vec == null)
+			this.defaultCamUp.set(0, 0, 0);
+		else
+			this.defaultCamUp.set(p_vec);
 	}
 
 	public void setDefaultCamPos(final PVector p_vec) {
-		this.defaultCamPos = Objects.requireNonNull(p_vec);
+		if (p_vec == null)
+			this.defaultCamPos.set(0, 0, 0);
+		else
+			this.defaultCamPos.set(p_vec);
 	}
 
 	// region `setClearColor()` overloads.

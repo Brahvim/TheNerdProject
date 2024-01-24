@@ -24,12 +24,11 @@
 		"editor.insertSpaces": false,
 		"editor.detectIndentation": false
 	},
-	/**
 	"java.cleanup.actionsOnSave": [
-		// "qualifyMembers", // `NerdScene`s won't like this!
 		"addOverride",
 		"invertEquals",
 		"addDeprecated",
+		"qualifyMembers",
 		"tryWithResource",
 		"lambdaExpression",
 		"addFinalModifier",
@@ -37,5 +36,4 @@
 		"instanceofPatternMatch",
 		"stringConcatToTextBlock",
 	],
-	 */
 }

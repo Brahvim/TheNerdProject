@@ -153,7 +153,7 @@ public class NerdGlWindowModule extends NerdWindowModule<PGraphicsOpenGL> {
 	}
 
 	@Override
-	public void pre() { // Slowdowns? Maybe remove this?
+	public void preImpl() { // Slowdowns? Maybe remove this?
 		this.window = (GLWindow) super.sketchSurface.getNative();
 	}
 

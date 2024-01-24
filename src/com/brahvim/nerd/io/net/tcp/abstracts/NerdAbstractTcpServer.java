@@ -229,12 +229,12 @@ public abstract class NerdAbstractTcpServer implements NerdServerSocket, AutoClo
 	// region Fields.
 	// Concurrency is huge:
 	private final List<NerdAbstractTcpServer.NerdTcpServerClient> CLIENTS = new Vector<>(1);
-	private final List<Consumer<NerdAbstractTcpServer.NerdClientSentTcpPacket>> //
+	private final List<Consumer<NerdAbstractTcpServer.NerdClientSentTcpPacket>>
 	/*   */ NEW_CONNECTION_CALLBACKS = new Vector<>(1);
 
 	private final AtomicBoolean STOPPED = new AtomicBoolean();
 
-	private ServerSocket socket;
+	private final ServerSocket socket;
 	private Thread invitationsThread;
 	private Function<NerdAbstractTcpClient, Boolean> invitationCallback;
 	// endregion

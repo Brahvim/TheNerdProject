@@ -33,9 +33,15 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	protected final SketchPGraphicsT GRAPHICS;
 	protected final NerdSketch<SketchPGraphicsT> SKETCH;
 	protected final NerdWindowModule<SketchPGraphicsT> WINDOW;
+
+	// Dimensions for the current and previous frames:
+	public float pdbx, pdby, pcx, pcy, pqx, pqy, pq3x, pq3y, pscr;
+	public float dbx, dby, cx, cy, qx, qy, q3x, q3y, scr;
+	public int width, height, pwidth, pheight;
 	// endregion
 
-	public static NerdGenericGraphics<?> createWrapperNerdGenericGraphicsForSketch(final NerdSketch<?> p_sketch) {
+	// region Static methods.
+	public static NerdGenericGraphics<?> createNerdGenericGraphicsWrapperForSketch(final NerdSketch<?> p_sketch) {
 		final NerdGenericGraphics<?> toRet = NerdGenericGraphics.supplySubModuleForSketch(p_sketch);
 
 		if (toRet == null)
@@ -69,6 +75,7 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 			default -> null;
 		};
 	}
+	// endregion
 
 	@SuppressWarnings("unchecked")
 	protected NerdGenericGraphics(
@@ -645,6 +652,72 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 	// endregion
 
+	// TODO: Get these bois going:
+	private void updateParmeters() {
+		this.width = this.GRAPHICS.width;
+		this.height = this.GRAPHICS.height;
+
+		this.dbx = this.width * 2.0f;
+		this.dby = this.height * 2.0f;
+
+		this.cx = this.width * 0.5f;
+		this.cy = this.height * 0.5f;
+
+		this.qx = this.cx * 0.5f;
+		this.qy = this.cy * 0.5f;
+
+		this.q3x = this.cx + this.qx;
+		this.q3y = this.cy + this.qy;
+
+		this.scr = (float) this.width / (float) this.height;
+	}
+
+	private void recordCurrentParameters() {
+		this.pwidth = this.width;
+		this.pheight = this.height;
+
+		this.pdbx = this.dbx;
+		this.pdby = this.dby;
+
+		this.pcx = this.cx;
+		this.pcy = this.cy;
+
+		this.pqx = this.qx;
+		this.pqy = this.qy;
+
+		this.pq3x = this.q3x;
+		this.pq3y = this.q3y;
+
+		this.pscr = this.scr;
+	}
+
+	// region `translateToCenter()` and `translateFromCenter()`.
+	public void translateToCenter() {
+		this.GRAPHICS.translate(this.cx, this.cy);
+	}
+
+	public void translateX(final float p_value) {
+		this.GRAPHICS.translate(p_value, 0);
+	}
+
+	public void translateY(final float p_value) {
+		this.GRAPHICS.translate(0, p_value);
+	}
+
+	public void translateFromCenterX(final float p_value) {
+		this.GRAPHICS.translate(this.cx + p_value, this.cy);
+	}
+
+	public void translateFromCenterY(final float p_value) {
+		this.GRAPHICS.translate(this.cx, this.cy + p_value);
+	}
+
+	public void translateFromCenter(final float p_x, final float p_y) {
+		this.GRAPHICS.translate(this.cx + p_x, this.cy + p_y);
+	}
+	// endregion
+
+	// region Text!
 	/**
 	 * @return the height of text
 	 */
@@ -666,6 +739,7 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	public void centeredText(final String p_text) {
 		this.GRAPHICS.text(p_text, this.GRAPHICS.textWidth(p_text) * 0.5f, this.textHeight() * 0.5f);
 	}
+	// endregion
 
 	// region `background()`-with-alpha overloads.
 	public void background(final int p_color) {
@@ -716,9 +790,9 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.pop();
 	}
 	// endregion
+	// endregion
 
 	// region ...From `PGraphics`.
-
 	// OpenGL-specific:
 	// public void ambient(final int rgb) {
 	// this.GRAPHICS.ambient(rgb);

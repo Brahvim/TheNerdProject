@@ -54,12 +54,14 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         }
     }
 
-    public void setCurrentCamera(final NerdAbstractCamera p_camera) {
-        this.currentCamera = p_camera;
+    @SuppressWarnings("unchecked")
+    public <RetT extends NerdAbstractCamera> RetT setCurrentCamera(final NerdAbstractCamera p_camera) {
+        return (RetT) (this.currentCamera = p_camera);
     }
 
-    public void setCurrentCameraToDefault() {
-        this.currentCamera = this.DEFAULT_CAMERA;
+    @SuppressWarnings("unchecked")
+    public <RetT extends NerdAbstractCamera> RetT setCurrentCameraToDefault() {
+        return (RetT) (this.currentCamera = this.DEFAULT_CAMERA);
     }
 
     @SuppressWarnings("unchecked")
@@ -72,6 +74,14 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         return (RetT) this.previousCamera;
     }
     // endregion
+
+    public void translateZ(final float p_value) {
+        this.GRAPHICS.translate(0, 0, p_value);
+    }
+
+    public void translateFromCenterZ(final float p_value) {
+        this.GRAPHICS.translate(this.cx, this.cy, p_value);
+    }
 
     // region `modelVec()` and `screenVec()`.
     public PVector modelVec() {
@@ -246,6 +256,11 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     /**
      * Expands to:
      * {@code PGraphics::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
+     * 
+     * @param p_cx   is the screen center on the `x`-axis.
+     * @param p_cy   is the screen center on the `y`-axis.
+     * @param p_near is the camera's distance from near plane.
+     * @param p_far  is the camera's distance from far plane.
      */
     public void ortho(final float p_cx, final float p_cy, final float p_near, final float p_far) {
         this.GRAPHICS.ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far);

@@ -124,6 +124,7 @@ public class NerdAsset {
 			this.completeLoad();
 		} catch (final InterruptedException e) {
 			// e.printStackTrace();
+			// TODO: Investigate this and `NerdAsset::completeLoad()`'s interrupt behavior.
 			Thread.currentThread().interrupt();
 		}
 

@@ -212,8 +212,8 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
 		this.inputModule = this.getNerdModule(NerdInputModule.class);
 
-		this.nerdGenericGraphics = (NerdGenericGraphics<SketchPGraphicsT>) NerdGenericGraphics
-				.createWrapperNerdGenericGraphicsForSketch(this);
+		this.nerdGenericGraphics = (NerdGenericGraphics<SketchPGraphicsT>)
+		/*   */ NerdGenericGraphics.createNerdGenericGraphicsWrapperForSketch(this);
 
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
 		this.forEachNerdModule(NerdModule::preSetup);

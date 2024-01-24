@@ -55,7 +55,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	}
 
 	@Override
-	public void preSetup() {
+	public final void preSetup() {
 		this.sketchSurface = super.SKETCH.getSurface();
 		this.displays = super.SKETCH.getNerdModule(NerdDisplayModule.class);
 		this.iconImage = super.SKETCH.loadImage(super.SKETCH.SKETCH_SETTINGS.windowIconPath);
@@ -64,7 +64,8 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 		this.updateWindowParameters();
 	}
 
-	protected abstract void preSetupImpl();
+	protected void preSetupImpl() {
+	}
 	// endregion
 
 	public static NerdWindowModule<?> createWindowModule(final NerdSketch<?> p_sketch) {
@@ -203,7 +204,8 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 
 	// region Callbacks.
 	@Override
-	public void pre() {
+	public final void pre() {
+		this.preImpl();
 		this.recordCurrentWindowParameters();
 
 		// Current state:
@@ -221,8 +223,11 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 		}
 	}
 
+	protected void preImpl() {
+	}
+
 	@Override
-	public void post() {
+	public final void post() {
 		this.postImpl();
 
 		if (this.pfullscreen != this.fullscreen)
@@ -231,6 +236,9 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 		this.pfullscreen = this.fullscreen;
 		this.pcursorVisible = this.cursorVisible;
 		this.pcursorConfined = this.cursorConfined;
+	}
+
+	protected void postImpl() {
 	}
 
 	@Override
@@ -244,8 +252,6 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 		// Copying, because the sketch performs a decision here.
 		this.focused = super.SKETCH.focused;
 	}
-
-	protected abstract void postImpl();
 	// endregion
 
 }
