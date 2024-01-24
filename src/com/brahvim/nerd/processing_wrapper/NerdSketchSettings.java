@@ -16,8 +16,26 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 
 	// region Non-Boolean settings.
 	/**
+	 * What {@linkplain NerdSketch#setup() NerdSketch::setup()}
+	 * passes to {@linkplain PApplet#frameRate() PApplet::frameRate()}.
+	 * <p>
+	 * {@code 0} by default.
+	 * 
+	 * @apiNote
+	 *          Any values <i>below</i> {@code 1} indicate a request for the
+	 *          framerate to be set according to the <b>default</b> display's
+	 *          refresh rate.
+	 *          <p>
+	 *          Processing automatically sets the framerate to {@code 1} if it is
+	 *          lesser, and logs a message about it.
+	 */
+	public int frameRateLimit = 0;
+
+	/**
 	 * What {@linkplainNerdSketch#settings() NerdSketch::settings()}
 	 * passes to {@linkplain PApplet#smooth() PApplet::smooth()}.
+	 * <p>
+	 * {@code 2} by default.
 	 */
 	public int antiAliasing = 2;
 
@@ -27,33 +45,58 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	 */
 	public int width = 640, height = 480;
 
-	/** The path to the icon for the window started by Processing. */
+	/**
+	 * The path to the icon for the window started by Processing.
+	 * <p>
+	 * {@code ""} by default.
+	 */
 	public String windowIconPath = "";
 
 	/**
 	 * The path to the global {@link NerdStringsTable} within the
 	 * {@link NerdSketch}.
+	 * <p>
+	 * {@code ""} by default.
 	 */
 	public String stringTablePath = "";
 
-	/** */
-	public String initialWindowTitle = "";
+	/**
+	 * The title of the window in the beginning.
+	 * <p>
+	 * {@code "The Nerd Project"} by default.
+	 */
+	public String initialWindowTitle = "The Nerd Project";
 
 	/**
 	 * The {@code PConstants} constant that describes what renderer the sketch will
 	 * use. {@linkplain NerdSketch#sketchRenderer() NerdSketch::sketchRenderer()}
 	 * a.k.a. {@linkplain PApplet#sketchRenderer() PApplet::sketchRenderer()}
 	 * returns the same.
+	 *
+	 * <p>
+	 * {@linkplain PConstants#P3D PConstants.P3D} by default.
 	 */
 	public String renderer = PConstants.P3D;
 
 	/**
 	 * Holds the method that is called when the {@link NerdSketch} needs to know
 	 * what {@link NerdModule}s are to be loaded.
+	 * <p>
+	 * {@code true} by default.
 	 */
 	public Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> nerdModulesInstantiator;
 
-	/** */
+	/**
+	 * This holds the {@link NerdModuleSettings} of the {@link NerdModule}s you want
+	 * the engine to use.
+	 *
+	 * @implNote Initialize using a {@link HashMap} with no allocation
+	 *           ({@code 0} elements' worth of allocation):
+	 *
+	 *           <pre>
+	 *           new HashMap<>(0);
+	 *           </pre>
+	 */
 	public Map<Class<? extends NerdModule>, NerdModuleSettings<?>> nerdModulesSettings = new HashMap<>(0);
 	// endregion
 

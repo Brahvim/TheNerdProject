@@ -221,7 +221,9 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
-		super.frameRate(this.DEFAULT_REFRESH_RATE);
+		super.frameRate(this.SKETCH_SETTINGS.frameRateLimit < 1
+				? this.DEFAULT_REFRESH_RATE
+				: this.SKETCH_SETTINGS.frameRateLimit);
 		super.surface.setTitle(this.SKETCH_SETTINGS.initialWindowTitle);
 
 		this.defaultFont = super.createFont("SansSerif",
@@ -343,10 +345,13 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 						this.windowButGeneric.fullscreen = !this.windowButGeneric.fullscreen;
 				}
 			}
+
 		}
 
-		for (final NerdModule m : this.MODULES)
-			m.keyPressed();
+		// for (final NerdModule m : this.MODULES)
+		// m.keyPressed(); // If things slow down too much, this guy's your bud.
+
+		this.forEachNerdModule(NerdModule::keyPressed);
 	}
 
 	@Override
@@ -414,14 +419,16 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 			if (p_moduleClass.isInstance(m))
 				return p_moduleClass.cast(m);
 
-		throw new NoSuchElementException(
-				"No `" + NerdModule.class.getSimpleName() + "` of type `"
-						+ p_moduleClass.getSimpleName() + "` was found.");
+		throw new NoSuchElementException(String.format(
+				"No `%s` of type `%s` was found.",
+				NerdModule.class.getSimpleName(),
+				p_moduleClass.getSimpleName()));
 	}
 
 	public void forEachNerdModule(final Consumer<NerdModule> p_task) {
 		if (p_task == null)
 			return;
+
 		this.MODULES.forEach(p_task);
 	}
 

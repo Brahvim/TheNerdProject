@@ -23,14 +23,20 @@ import processing.svg.PGraphicsSVG;
 
 /**
  * Want to hack into the {@link NerdSketch} class and control its inner workings
- * beyond just... <i>using callbacks from it?</i> Extend it!?
+ * beyond just... <i>using callbacks from it?</i>
+ * <p>
+ * ...Then extend it!
  *
  * <p>
  * Override/Implement {@linkplain NerdSketchBuilder#build()
- * NerdSketchBuilder::build()}, and return an instance of your own
- * {@linkplain NerdSketch NerdSketch<SketchPGraphicsT>} subclass!
+ * NerdSketchBuilder::build()} (or the builder for your favorite
+ * renderer-specific subclass of {@code NerdSketch}), and return an instance of
+ * your own {@linkplain NerdSketch NerdSketch<SketchPGraphicsT>} subclass!
  * <p>
  * This is it! This is how you can hack more things in!
+ *
+ * @apiNote See {@link NerdSketchSettings} for specific details on data being
+ *          passed here.
  */
 public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
@@ -234,11 +240,16 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return this;
 	}
 
-	public NerdSketchBuilder<SketchPGraphicsT> setTitle(final String p_name) {
+	public NerdSketchBuilder<SketchPGraphicsT> setInitialWindowTitle(final String p_name) {
 		this.BUILD_SETTINGS.initialWindowTitle = p_name;
 		return this;
 	}
 	// endregion
+
+	public NerdSketchBuilder<SketchPGraphicsT> setFrameRateLimit(final int p_value) {
+		this.BUILD_SETTINGS.frameRateLimit = p_value;
+		return this;
+	}
 
 	public NerdSketchBuilder<SketchPGraphicsT> setAntiAliasing(final int p_value) {
 		this.BUILD_SETTINGS.antiAliasing = p_value;
