@@ -11,8 +11,8 @@ public abstract class NerdAbstractTcpClient implements NerdClientSocket {
 
 	protected final AtomicBoolean STOPPED = new AtomicBoolean();
 
-	protected Socket socket;
 	protected Thread commsThread;
+	protected Socket socket;
 
 	// region Constructors.
 	protected NerdAbstractTcpClient(final String p_serverIp, final int p_myPort) {

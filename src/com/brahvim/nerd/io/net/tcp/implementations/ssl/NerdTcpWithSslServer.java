@@ -1,4 +1,4 @@
-package com.brahvim.nerd.io.net.tcp.implementations;
+package com.brahvim.nerd.io.net.tcp.implementations.ssl;
 
 import java.net.ServerSocket;
 import java.util.function.Function;
@@ -8,30 +8,30 @@ import javax.net.ssl.SSLServerSocketFactory;
 import com.brahvim.nerd.io.net.tcp.abstracts.NerdAbstractTcpClient;
 import com.brahvim.nerd.io.net.tcp.abstracts.NerdAbstractTcpServer;
 
-public class NerdSslTcpServer extends NerdAbstractTcpServer {
+public class NerdTcpWithSslServer extends NerdAbstractTcpServer {
 
-    public NerdSslTcpServer(int p_port) {
+    public NerdTcpWithSslServer(final int p_port) {
         super(p_port);
     }
 
-    public NerdSslTcpServer(int p_port, int p_maxConnReqsAtOnce) {
+    public NerdTcpWithSslServer(final int p_port, final int p_maxConnReqsAtOnce) {
         super(p_port, p_maxConnReqsAtOnce);
     }
 
-    public NerdSslTcpServer(int p_port, Function<NerdAbstractTcpClient, Boolean> p_invitationCallback) {
+    public NerdTcpWithSslServer(final int p_port, final Function<NerdAbstractTcpClient, Boolean> p_invitationCallback) {
         super(p_port, p_invitationCallback);
     }
 
-    public NerdSslTcpServer(int p_port, int p_maxConnReqsAtOnce,
-            Function<NerdAbstractTcpClient, Boolean> p_connectionCallback) {
+    public NerdTcpWithSslServer(final int p_port, final int p_maxConnReqsAtOnce,
+            final Function<NerdAbstractTcpClient, Boolean> p_connectionCallback) {
         super(p_port, p_maxConnReqsAtOnce, p_connectionCallback);
     }
 
     @Override
-    protected ServerSocket createSocketForConstructor(int p_port) {
+    protected ServerSocket createSocketForConstructor(final int p_port) {
         try {
             return SSLServerSocketFactory.getDefault().createServerSocket(p_port);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
 
@@ -39,10 +39,10 @@ public class NerdSslTcpServer extends NerdAbstractTcpServer {
     }
 
     @Override
-    protected ServerSocket createSocketForConstructor(int p_port, int p_maxConnReqsAtOnce) {
+    protected ServerSocket createSocketForConstructor(final int p_port, final int p_maxConnReqsAtOnce) {
         try {
             return SSLServerSocketFactory.getDefault().createServerSocket(p_port, p_maxConnReqsAtOnce);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
 

@@ -1,4 +1,4 @@
-package com.brahvim.nerd.io.net.tcp.implementations;
+package com.brahvim.nerd.io.net.tcp.implementations.no_ssl;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -13,10 +13,11 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.net.tcp.abstracts.NerdAbstractTcpClient;
 import com.brahvim.nerd.io.net.tcp.abstracts.NerdAbstractTcpPacket;
+import com.brahvim.nerd.io.net.tcp.implementations.NerdSendableTcpPacket;
 
 import processing.core.PApplet;
 
-public class NerdTcpClient extends NerdAbstractTcpClient {
+public class NerdTcpNoSslClient extends NerdAbstractTcpClient {
 
 	public class NerdServerSentTcpPacket extends NerdAbstractTcpPacket {
 
@@ -24,47 +25,47 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 			super(p_data);
 		}
 
-		public NerdTcpClient getReceivingClient() {
-			return NerdTcpClient.this;
+		public NerdTcpNoSslClient getReceivingClient() {
+			return NerdTcpNoSslClient.this;
 		}
 
 	}
 
-	private final List<Consumer<NerdTcpClient.NerdServerSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
+	private final List<Consumer<NerdTcpNoSslClient.NerdServerSentTcpPacket>> MESSAGE_CALLBACKS = new Vector<>(1);
 
 	// region Construction.
 	// region Constructors.
-	public NerdTcpClient(final Socket p_socket) {
+	public NerdTcpNoSslClient(final Socket p_socket) {
 		super(p_socket);
 	}
 
-	public NerdTcpClient(final Socket p_socket,
-			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
+	public NerdTcpNoSslClient(final Socket p_socket,
+			final Consumer<NerdTcpNoSslClient.NerdServerSentTcpPacket> p_messageCallback) {
 		this(p_socket);
 		this.startMessageThread(p_messageCallback);
 	}
 
-	public NerdTcpClient(final String p_serverIp, final int p_myPort) {
+	public NerdTcpNoSslClient(final String p_serverIp, final int p_myPort) {
 		super(p_serverIp, p_myPort);
 	}
 
-	public NerdTcpClient(final String p_serverIp, final int p_myPort,
-			final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
+	public NerdTcpNoSslClient(final String p_serverIp, final int p_myPort,
+			final Consumer<NerdTcpNoSslClient.NerdServerSentTcpPacket> p_messageCallback) {
 		this(p_serverIp, p_myPort);
 		this.startMessageThread(p_messageCallback);
 	}
 
-	public NerdTcpClient(final int p_port) {
+	public NerdTcpNoSslClient(final int p_port) {
 		super(p_port);
 	}
 
-	public NerdTcpClient(final int p_port, final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
+	public NerdTcpNoSslClient(final int p_port, final Consumer<NerdTcpNoSslClient.NerdServerSentTcpPacket> p_messageCallback) {
 		this(p_port);
 		this.startMessageThread(p_messageCallback);
 	}
 	// endregion
 
-	private void startMessageThread(final Consumer<NerdTcpClient.NerdServerSentTcpPacket> p_messageCallback) {
+	private void startMessageThread(final Consumer<NerdTcpNoSslClient.NerdServerSentTcpPacket> p_messageCallback) {
 		// Shouldn't occur till somebody uses reflection!:
 		if (super.STOPPED.get())
 			return;
@@ -118,7 +119,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 				// while (!(bytesRead == packetSize || bytesRead == -1))
 				/* bytesRead = */ stream.read(packetData); // It needs to know the length of the array!
 
-				final NerdServerSentTcpPacket packet = new NerdTcpClient.NerdServerSentTcpPacket(packetData);
+				final NerdServerSentTcpPacket packet = new NerdTcpNoSslClient.NerdServerSentTcpPacket(packetData);
 
 				// The benefit of having a type like `ReceivableTcpPacket` *is* that I won't
 				// have to reconstruct it every time, fearing that one of these callbacks might
@@ -156,7 +157,7 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 
 	// region Sending stuff.
 	@Override
-	public NerdTcpClient send(final NerdAbstractTcpPacket p_packet) {
+	public NerdTcpNoSslClient send(final NerdAbstractTcpPacket p_packet) {
 		try {
 			final byte[] packData = p_packet.getData();
 			final byte[] packDataLen = ByteBuffer.allocate(Integer.BYTES).putInt(p_packet.getDataLength()).array();
@@ -170,12 +171,12 @@ public class NerdTcpClient extends NerdAbstractTcpClient {
 	}
 
 	@Override
-	public NerdTcpClient send(final String p_data) {
+	public NerdTcpNoSslClient send(final String p_data) {
 		return this.send(p_data.getBytes(StandardCharsets.UTF_8));
 	}
 
 	@Override
-	public NerdTcpClient send(final byte[] p_data) {
+	public NerdTcpNoSslClient send(final byte[] p_data) {
 		return this.send(new NerdSendableTcpPacket(p_data));
 	}
 	// endregion
