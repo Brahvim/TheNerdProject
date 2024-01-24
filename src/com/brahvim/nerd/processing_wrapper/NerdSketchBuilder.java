@@ -6,7 +6,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.brahvim.nerd.framework.scene_layer_api.NerdScenesModule;
-import com.brahvim.nerd.utils.NerdReflectionUtils;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
@@ -37,65 +36,67 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	// region Fields and constructor!
 	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
-	protected Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> sketchFxn = null;
+	protected Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> sketchConstructor = null;
 	protected Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> modulesConsumer = null;
 	protected final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
 
-	protected NerdSketchBuilder() {
-		final Class<? extends PGraphics> rendererClass = NerdReflectionUtils.getFirstTypeArg(this);
+	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass) {
+		// This caused issues till the design just... *fixed itself!:*
+		// final Class<? extends PGraphics> rendererClass =
+		// NerdReflectionUtils.getFirstTypeArg(this);
 
 		this.BUILD_SETTINGS = new NerdSketchSettings<>();
 
-		if (rendererClass == PGraphics2D.class)
+		if (p_rendererClass == PGraphics2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.P2D;
-		else if (rendererClass == PGraphics3D.class)
+		else if (p_rendererClass == PGraphics3D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.P3D;
-		else if (rendererClass == PGraphicsJava2D.class)
+		else if (p_rendererClass == PGraphicsJava2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.JAVA2D;
-		else if (rendererClass == PGraphicsFX2D.class)
+		else if (p_rendererClass == PGraphicsFX2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.FX2D;
 
 		// Unsupported renderers!...:
-		else if (rendererClass == PGraphicsSVG.class)
+		else if (p_rendererClass == PGraphicsSVG.class)
 			// this.BUILD_SETTINGS.renderer = PConstants.SVG;
 			throw new IllegalArgumentException(String.format(
 					"`%s` is an unsupported renderer. Sorry.",
 					PGraphicsSVG.class.getName()));
 
-		else if (rendererClass == PGraphicsPDF.class)
+		else if (p_rendererClass == PGraphicsPDF.class)
 			// this.BUILD_SETTINGS.renderer = PConstants.PDF;
 			throw new IllegalArgumentException(String.format(
 					"`%s` is an unsupported renderer. Sorry.",
 					PGraphicsPDF.class.getName()));
 		// ...
 		// ...Unreal:
-		else if (rendererClass == PGraphics.class)
+		else if (p_rendererClass == PGraphics.class)
 			throw new IllegalArgumentException("Those renderers are not real!");
-		else if (rendererClass == PGraphicsOpenGL.class)
+		else if (p_rendererClass == PGraphicsOpenGL.class)
 			throw new IllegalArgumentException("Those renderers are not real!");
 		else
 			throw new IllegalArgumentException("That's not a real type...");
-
 	}
 
-	protected NerdSketchBuilder(
+	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass,
 			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_modulesSet) {
-		this();
+		this(p_rendererClass);
 		this.modulesConsumer = p_modulesSet;
 	}
 
-	protected NerdSketchBuilder(
-			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_object) {
-		this();
-		this.sketchFxn = p_object;
+	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass,
+			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_sketchConstructor) {
+		this(p_rendererClass);
+		this.sketchConstructor = p_sketchConstructor;
 	}
 
 	protected NerdSketchBuilder(
-			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_object,
+			final Class<? extends PGraphics> p_rendererClass,
+			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_sketchConstructor,
 			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_modulesSet) {
-		this();
-		this.sketchFxn = p_object;
+		this(p_rendererClass);
 		this.modulesConsumer = p_modulesSet;
+		this.sketchConstructor = p_sketchConstructor;
 	}
 	// endregion
 
@@ -206,7 +207,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 *
 	 * @apiNote The default implementation simply calls
 	 *          {@linkplain Function#apply(Object) Function::apply()} on
-	 *          {@linkplain NerdSketchBuilder#sketchFxn
+	 *          {@linkplain NerdSketchBuilder#sketchConstructor
 	 *          NerdSketchBuilder::sketchFxn}, given it is not {@code null}. If it
 	 *          is, the default constructor of {@link NerdSketch},
 	 *          {@linkplain NerdSketch#NerdSketch(NerdSketchSettings)
@@ -215,10 +216,10 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 */
 	protected NerdSketch<SketchPGraphicsT> createNerdSketch(
 			final NerdSketchSettings<SketchPGraphicsT> p_settings) {
-		if (this.sketchFxn == null)
+		if (this.sketchConstructor == null)
 			return new NerdSketch<>(p_settings);
 
-		return this.sketchFxn.apply(p_settings);
+		return this.sketchConstructor.apply(p_settings);
 	}
 
 	// region `set()`.

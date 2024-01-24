@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrapper.special_sketches;
+package com.brahvim.nerd.processing_wrapper.sketches.special;
 
 import java.awt.Frame;
 

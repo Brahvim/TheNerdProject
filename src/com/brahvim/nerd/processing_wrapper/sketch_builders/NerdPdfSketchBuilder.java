@@ -8,30 +8,32 @@ import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.processing_wrapper.NerdSketchSettings;
+import com.brahvim.nerd.processing_wrapper.sketches.NerdPdfSketch;
 
 import processing.pdf.PGraphicsPDF;
 
 public class NerdPdfSketchBuilder extends NerdSketchBuilder<PGraphicsPDF> {
 
     public NerdPdfSketchBuilder() {
-        super();
+        super(PGraphicsPDF.class);
+        super.sketchConstructor = NerdPdfSketch::new;
     }
 
     public NerdPdfSketchBuilder(
             final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsPDF>, NerdModule>>> p_modulesSet) {
-        this();
-        this.modulesConsumer = p_modulesSet;
+        this(); // Call this class's constructor because... It changes things, y'know?!
+        super.modulesConsumer = p_modulesSet;
     }
 
     public NerdPdfSketchBuilder(
-            final Function<NerdSketchSettings<PGraphicsPDF>, NerdSketch<PGraphicsPDF>> p_object) {
-        super(p_object);
+            final Function<NerdSketchSettings<PGraphicsPDF>, NerdSketch<PGraphicsPDF>> p_sketchConstructor) {
+        super(PGraphicsPDF.class, p_sketchConstructor);
     }
 
     public NerdPdfSketchBuilder(
-            final Function<NerdSketchSettings<PGraphicsPDF>, NerdSketch<PGraphicsPDF>> p_object,
+            final Function<NerdSketchSettings<PGraphicsPDF>, NerdSketch<PGraphicsPDF>> p_sketchConstructor,
             final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsPDF>, NerdModule>>> p_modulesSet) {
-        super(p_object, p_modulesSet);
+        super(PGraphicsPDF.class, p_sketchConstructor, p_modulesSet);
     }
 
 }

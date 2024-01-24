@@ -8,30 +8,32 @@ import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.processing_wrapper.NerdSketchSettings;
+import com.brahvim.nerd.processing_wrapper.sketches.NerdP3dSketch;
 
 import processing.opengl.PGraphics3D;
 
 public class NerdP3dSketchBuilder extends NerdSketchBuilder<PGraphics3D> {
 
     public NerdP3dSketchBuilder() {
-        super();
+        super(PGraphics3D.class);
+        super.sketchConstructor = NerdP3dSketch::new;
     }
 
     public NerdP3dSketchBuilder(
             final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics3D>, NerdModule>>> p_modulesSet) {
-        this();
-        this.modulesConsumer = p_modulesSet;
+        this(); // Call this class's constructor because... It changes things, y'know?!
+        super.modulesConsumer = p_modulesSet;
     }
 
     public NerdP3dSketchBuilder(
-            final Function<NerdSketchSettings<PGraphics3D>, NerdSketch<PGraphics3D>> p_object) {
-        super(p_object);
+            final Function<NerdSketchSettings<PGraphics3D>, NerdSketch<PGraphics3D>> p_sketchConstructor) {
+        super(PGraphics3D.class, p_sketchConstructor);
     }
 
     public NerdP3dSketchBuilder(
-            final Function<NerdSketchSettings<PGraphics3D>, NerdSketch<PGraphics3D>> p_object,
+            final Function<NerdSketchSettings<PGraphics3D>, NerdSketch<PGraphics3D>> p_sketchConstructor,
             final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics3D>, NerdModule>>> p_modulesSet) {
-        super(p_object, p_modulesSet);
+        super(PGraphics3D.class, p_sketchConstructor, p_modulesSet);
     }
 
 }

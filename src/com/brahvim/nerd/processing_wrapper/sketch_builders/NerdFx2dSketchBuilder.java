@@ -8,30 +8,32 @@ import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.processing_wrapper.NerdSketchSettings;
+import com.brahvim.nerd.processing_wrapper.sketches.NerdFx2dSketch;
 
 import processing.javafx.PGraphicsFX2D;
 
 public class NerdFx2dSketchBuilder extends NerdSketchBuilder<PGraphicsFX2D> {
 
     public NerdFx2dSketchBuilder() {
-        super();
+        super(PGraphicsFX2D.class);
+        super.sketchConstructor = NerdFx2dSketch::new;
     }
 
     public NerdFx2dSketchBuilder(
             final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsFX2D>, NerdModule>>> p_modulesSet) {
-        this();
-        this.modulesConsumer = p_modulesSet;
+        this(); // Call this class's constructor because... It changes things, y'know?!
+        super.modulesConsumer = p_modulesSet;
     }
 
     public NerdFx2dSketchBuilder(
-            final Function<NerdSketchSettings<PGraphicsFX2D>, NerdSketch<PGraphicsFX2D>> p_object) {
-        super(p_object);
+            final Function<NerdSketchSettings<PGraphicsFX2D>, NerdSketch<PGraphicsFX2D>> p_sketchConstructor) {
+        super(PGraphicsFX2D.class, p_sketchConstructor);
     }
 
     public NerdFx2dSketchBuilder(
-            final Function<NerdSketchSettings<PGraphicsFX2D>, NerdSketch<PGraphicsFX2D>> p_object,
+            final Function<NerdSketchSettings<PGraphicsFX2D>, NerdSketch<PGraphicsFX2D>> p_sketchConstructor,
             final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsFX2D>, NerdModule>>> p_modulesSet) {
-        super(p_object, p_modulesSet);
+        super(PGraphicsFX2D.class, p_sketchConstructor, p_modulesSet);
     }
 
 }
