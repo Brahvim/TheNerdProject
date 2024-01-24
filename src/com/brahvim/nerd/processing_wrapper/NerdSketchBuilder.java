@@ -246,16 +246,14 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
 			final NerdModuleSettings<ModuleT> p_settings) {
-		this.BUILD_SETTINGS.nerdModulesSettings.put(p_settings.getModuleClass(),
-				p_settings);
+		this.BUILD_SETTINGS.nerdModulesSettings.put(p_settings.getModuleClass(), p_settings);
 		return this;
 	}
 
 	public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
 			final Supplier<NerdModuleSettings<ModuleT>> p_settingsSupplier) {
 		final NerdModuleSettings<ModuleT> settings = p_settingsSupplier.get();
-		this.BUILD_SETTINGS.nerdModulesSettings.put(settings.getModuleClass(),
-				settings);
+		this.BUILD_SETTINGS.nerdModulesSettings.put(settings.getModuleClass(), settings);
 		return this;
 	}
 
