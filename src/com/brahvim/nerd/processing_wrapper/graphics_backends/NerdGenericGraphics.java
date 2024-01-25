@@ -653,7 +653,7 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 
 	// TODO: Get these bois going:
-	private void updateParmeters() {
+	private void updateParameters() {
 		this.width = this.GRAPHICS.width;
 		this.height = this.GRAPHICS.height;
 
