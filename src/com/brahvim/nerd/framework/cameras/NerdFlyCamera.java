@@ -1,6 +1,7 @@
 package com.brahvim.nerd.framework.cameras;
 
 import java.awt.Point;
+import java.util.Objects;
 
 import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
@@ -85,6 +86,10 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	@Override
 	public void applyMatrix() {
 		super.applyProjection();
+
+		// System.out.println(this.front);
+		// System.out.println(super.pos);
+		// System.out.println(super.up);
 
 		// Apply the camera matrix:
 		super.GRAPHICS.camera(

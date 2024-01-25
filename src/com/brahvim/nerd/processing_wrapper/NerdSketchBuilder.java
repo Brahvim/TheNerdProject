@@ -303,8 +303,8 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return this;
 	}
 
-	public NerdSketchBuilder<SketchPGraphicsT> preventCloseOnEscapeInitially() {
-		this.BUILD_SETTINGS.preventCloseOnEscape = true;
+	public NerdSketchBuilder<SketchPGraphicsT> closeOnPressingEscapeInitially() {
+		this.BUILD_SETTINGS.preventCloseOnEscape = false;
 		return this;
 	}
 
