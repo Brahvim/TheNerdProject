@@ -1,5 +1,6 @@
 package com.brahvim.nerd.framework.cameras;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -8,6 +9,7 @@ import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PImage;
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
 
@@ -15,6 +17,7 @@ import processing.opengl.PGraphics3D;
 public abstract class NerdAbstractCamera {
 
 	// region Fields.
+	// region `public` fields.
 	public static final float
 	/*   */ DEFAULT_CAM_FOV = PApplet.radians(60),
 			DEFAULT_CAM_NEAR = 0.05f,
@@ -43,8 +46,11 @@ public abstract class NerdAbstractCamera {
 	public boolean
 	/*   */ doScript = true,
 			doAutoClear = true,
-			doAutoAspect = true;
+			doAutoAspect = true,
+			doClearWithImage = true;
+	// endregion
 
+	protected PImage clearImage; // "Clear, Clear! Crystal-Clear!"
 	protected final NerdP3dGraphics GRAPHICS;
 	protected final NerdGlWindowModule WINDOW;
 	protected final NerdSketch<PGraphics3D> SKETCH;
@@ -136,9 +142,15 @@ public abstract class NerdAbstractCamera {
 	}
 
 	public void clear() {
-		this.GRAPHICS.background(
-				this.clearColorParam1, this.clearColorParam2,
-				this.clearColorParam3, this.clearColorParamAlpha);
+		// Did they explicitly state they wanted to use images?:
+		if (this.doClearWithImage) {
+			if (this.clearImage != null) // No `null`-bombs, right?!
+				this.GRAPHICS.background(this.clearImage); // GO!!!
+		} else // Else, ...just use colors.
+			this.GRAPHICS.background(
+					this.clearColorParam1, this.clearColorParam2,
+					this.clearColorParam3, this.clearColorParamAlpha);
+
 	}
 
 	public void completeReset() {
@@ -195,6 +207,11 @@ public abstract class NerdAbstractCamera {
 			this.defaultCamPos.set(0, 0, 0);
 		else
 			this.defaultCamPos.set(p_vec);
+	}
+
+	public void setClearImage(final PImage p_image) {
+		Objects.requireNonNull(p_image);
+		this.clearImage = p_image;
 	}
 
 	// region `setClearColor()` overloads.

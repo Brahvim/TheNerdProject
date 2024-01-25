@@ -597,8 +597,7 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         this.GRAPHICS.camera();
         this.GRAPHICS.noStroke();
         this.GRAPHICS.rectMode(PConstants.CORNER);
-        // FIXME: AYO! Found this rect-in-camera buggy boi!
-        // this.GRAPHICS.rect(0, 0, this.GRAPHICS.width, this.GRAPHICS.height);
+        this.GRAPHICS.rect(0, 0, this.GRAPHICS.width, this.GRAPHICS.height);
         this.end2d();
     }
     // endregion

@@ -1,7 +1,6 @@
 package com.brahvim.nerd.framework.cameras;
 
 import java.awt.Point;
-import java.util.Objects;
 
 import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
@@ -125,7 +124,8 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		super.pos.add(
 				PVector.mult(
 						PVector.cross(
-								this.front, super.up, null).normalize(),
+								this.front, super.up, null)
+								.normalize(),
 						p_velX));
 	}
 
@@ -184,14 +184,15 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		}
 
 		// region Find `this.front` (point camera looks at; related to position).
-		final float YAW_COS = PApplet.cos(PApplet.radians(this.yaw)),
+		final float
+		/*   */ YAW_COS = PApplet.cos(PApplet.radians(this.yaw)),
 				YAW_SIN = PApplet.sin(PApplet.radians(this.yaw)),
 				PITCH_COS = PApplet.cos(PApplet.radians(this.pitch)),
 				PITCH_SIN = PApplet.sin(PApplet.radians(this.pitch));
 
 		this.front.set(
 				YAW_COS * PITCH_COS,
-				PITCH_SIN,
+				/* */ PITCH_SIN /* */,
 				YAW_SIN * PITCH_COS);
 		this.front.normalize();
 		// endregion
