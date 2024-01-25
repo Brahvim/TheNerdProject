@@ -98,7 +98,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// Necessary `NerdModule`s:
 	public final NerdSketch.NerdSketchOnlyAssetsModule ASSETS;
 	public final NerdWindowModule<SketchPGraphicsT> GENERIC_WINDOW;
-	public final NerdDisplayModule DISPLAY;
+	public final NerdDisplayModule DISPLAY; // NOSONAR! `PApplet::display` is not even visible here, brotha'!
 	public final NerdInputModule INPUT;
 
 	// region Protected fields.
