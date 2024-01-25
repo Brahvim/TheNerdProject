@@ -9,6 +9,14 @@ import processing.event.MouseEvent;
 
 public abstract class NerdModule {
 
+	interface NerdModuleRelinkBehavior {
+
+	}
+
+	enum NerdModuleDefaultRelinkBehavior {
+
+	}
+
 	protected final NerdSketch<?> SKETCH;
 
 	@SuppressWarnings("unused")
@@ -25,12 +33,36 @@ public abstract class NerdModule {
 		return this.SKETCH;
 	}
 
-	protected List<NerdModule> getSketchModules() {
+	public List<NerdModule> getSketchModules() {
 		return this.SKETCH.MODULES;
 	}
 
+	public NerdSketchSettings<?> getSketchSettings() {
+		return this.SKETCH.SKETCH_SETTINGS;
+	}
+
+	/**
+	 * Removes this {@link NerdModule} instance from the {@link NerdSketch} it was
+	 * instantiated and stored by.
+	 *
+	 * @return The {@link NerdSketch} this {@link NerdModule} was instantiated by.
+	 */
+	protected NerdSketch<?> unlinkFromSketch() {
+		this.SKETCH.CLASSES_TO_MODULES_MAP.remove(this.getClass());
+		return this.SKETCH;
+	}
+
+	protected NerdSketch<?> linkToSketch(NerdSketch<?> p_sketch) {
+		if (p_sketch == this.SKETCH)
+			return this.SKETCH;
+
+		this.unlinkFromSketch();
+		p_sketch.CLASSES_TO_MODULES_MAP.remove(this.getClass());
+		return this.SKETCH;
+	}
+
 	protected Map<Class<? extends NerdModule>, NerdModule> getSketchModulesMap() {
-		return this.SKETCH.MODULES_TO_CLASSES_MAP;
+		return this.SKETCH.CLASSES_TO_MODULES_MAP;
 	}
 
 	protected void assignModuleSettings(final NerdModuleSettings<?> p_settings) {

@@ -96,19 +96,20 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	protected PFont defaultFont;
 
 	// Necessary `NerdModule`s:
-	protected NerdSketch.NerdSketchOnlyAssetsModule globalAssetsModule;
-	protected NerdWindowModule<SketchPGraphicsT> windowButGeneric;
-	protected NerdDisplayModule displayModule;
-	protected NerdInputModule inputModule;
+	public final NerdSketch.NerdSketchOnlyAssetsModule ASSETS;
+	public final NerdWindowModule<SketchPGraphicsT> GENERIC_WINDOW;
+	public final NerdDisplayModule DISPLAY;
+	public final NerdInputModule INPUT;
 
 	// region Protected fields.
 	protected final List<NerdModule> MODULES;
 	public final NerdSketchSettings<SketchPGraphicsT> SKETCH_SETTINGS;
-	protected final Map<Class<? extends NerdModule>, NerdModule> MODULES_TO_CLASSES_MAP;
+	protected final Map<Class<? extends NerdModule>, NerdModule> CLASSES_TO_MODULES_MAP;
 	// endregion
 	// endregion
 
 	// region Construction.
+	@SuppressWarnings("unchecked")
 	public NerdSketch(final NerdSketchSettings<SketchPGraphicsT> p_settings) {
 		Objects.requireNonNull(this.SKETCH_SETTINGS = p_settings, String.format("""
 				Please use an instance of some subclass of `%s`, or initialize a `%s` by hand, to make a `%s`.
@@ -120,16 +121,19 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		this.USES_OPENGL = PConstants.P3D.equals(p_settings.renderer);
 
 		// region Stuff involving modules
-		this.MODULES_TO_CLASSES_MAP = new HashMap<>(0);
-		this.MODULES = this.sortModules(p_settings);
+		this.CLASSES_TO_MODULES_MAP = new HashMap<>(0);
+		this.MODULES = this.createAndSortModules(p_settings);
 
 		for (final NerdModule m : this.MODULES) {
-			this.MODULES_TO_CLASSES_MAP.put(m.getClass(), m);
+			this.CLASSES_TO_MODULES_MAP.put(m.getClass(), m);
 			m.sketchConstructed(p_settings);
 			m.assignModuleSettings(p_settings.nerdModulesSettings.get(m.getClass()));
 		}
 
-		this.globalAssetsModule = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
+		this.ASSETS = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
+		this.GENERIC_WINDOW = this.getNerdModule(NerdWindowModule.class);
+		this.DISPLAY = this.getNerdModule(NerdDisplayModule.class);
+		this.INPUT = this.getNerdModule(NerdInputModule.class);
 		// endregion
 
 		// region Setting the icon of the OpenGL renderer's window.
@@ -140,7 +144,10 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		this.ROBOT = NerdAwtUtils.createAwtRobot();
 	}
 
-	private List<NerdModule> sortModules(final NerdSketchSettings<SketchPGraphicsT> p_settings) {
+	// This method will break *any second* Nerd decides to not use "modules".
+	// Oh God, do I hope that never happens! (Phew! It likely never will!)
+	// (The entire engine is built on this *evolutionary* idea, Brahvim! You idiot!)
+	private List<NerdModule> createAndSortModules(final NerdSketchSettings<SketchPGraphicsT> p_settings) {
 		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>
 		/*   */ nerdModulesToAssign = new LinkedHashSet<>(0);
 		p_settings.nerdModulesInstantiator.accept(nerdModulesToAssign);
@@ -150,7 +157,6 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		// Construct modules using the provided `Function`s, and add them to the map:
 		for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule> f : nerdModulesToAssign)
 			try {
-
 				Objects.requireNonNull(f,
 						"Could not instantiate a `NerdModule` due to the supplying function being `null`.");
 
@@ -161,7 +167,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 				final Class<? extends NerdModule> moduleClass = module.getClass();
 
 				// If we already have a certain `NerdModule`,
-				if (this.MODULES_TO_CLASSES_MAP.get(moduleClass) != null) {
+				if (this.CLASSES_TO_MODULES_MAP.get(moduleClass) != null) {
 					// ..We replace the existing one,
 					toRet.removeIf(m -> m.getClass().equals(moduleClass));
 
@@ -169,7 +175,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 					toRet.add(module);
 
 					// ..Update it in our map,
-					this.MODULES_TO_CLASSES_MAP.put(moduleClass, module);
+					this.CLASSES_TO_MODULES_MAP.put(moduleClass, module);
 
 					// ..and continue the loop!:
 					continue;
@@ -178,8 +184,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 				// Otherwise, just add as usual.
 
 				toRet.add(module);
-				this.MODULES_TO_CLASSES_MAP.put(moduleClass, module);
-
+				this.CLASSES_TO_MODULES_MAP.put(moduleClass, module);
 			} catch (final Exception e) {
 				System.err.println("An exception occurred when trying to instantiate `NerdModule`s:");
 				e.printStackTrace();
@@ -208,10 +213,6 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	@Override
 	@SuppressWarnings("unchecked")
 	public void setup() {
-		this.windowButGeneric = this.getNerdModule(NerdWindowModule.class);
-		this.displayModule = this.getNerdModule(NerdDisplayModule.class);
-		this.inputModule = this.getNerdModule(NerdInputModule.class);
-
 		this.nerdGenericGraphics = (NerdGenericGraphics<SketchPGraphicsT>)
 		/*   */ NerdGenericGraphics.createNerdGenericGraphicsWrapperForSketch(this);
 
@@ -236,8 +237,8 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
 		if (this.SKETCH_SETTINGS.canResize)
-			this.windowButGeneric.setResizable(true);
-		this.windowButGeneric.centerWindow();
+			this.GENERIC_WINDOW.setResizable(true);
+		this.GENERIC_WINDOW.centerWindow();
 
 		this.postSetup();
 	}
@@ -331,17 +332,17 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 			if (this.SKETCH_SETTINGS.canAltEnterFullscreen
 					&& super.keyCode == KeyEvent.VK_ENTER
-					&& this.inputModule.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
-				this.windowButGeneric.fullscreen = !this.windowButGeneric.fullscreen;
+					&& this.INPUT.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
+				this.GENERIC_WINDOW.fullscreen = !this.GENERIC_WINDOW.fullscreen;
 
 			else if (this.SKETCH_SETTINGS.canF11Fullscreen) {
 				// `KeyEvent.VK_ADD` is `107`, but here, it's actually `F11`!:
 				if (this.USES_OPENGL) {
 					if (super.keyCode == 107)
-						this.windowButGeneric.fullscreen = !this.windowButGeneric.fullscreen;
+						this.GENERIC_WINDOW.fullscreen = !this.GENERIC_WINDOW.fullscreen;
 				} else {
 					if (super.keyCode == KeyEvent.VK_F11)
-						this.windowButGeneric.fullscreen = !this.windowButGeneric.fullscreen;
+						this.GENERIC_WINDOW.fullscreen = !this.GENERIC_WINDOW.fullscreen;
 				}
 			}
 
@@ -441,19 +442,19 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	}
 
 	public NerdAssetsModule getGlobalNerdAssetsModule() {
-		return this.globalAssetsModule;
+		return this.ASSETS;
 	}
 
 	public NerdDisplayModule getNerdDisplayModule() {
-		return this.displayModule;
+		return this.DISPLAY;
 	}
 
 	public NerdWindowModule<SketchPGraphicsT> getNerdWindowModule() {
-		return this.windowButGeneric;
+		return this.GENERIC_WINDOW;
 	}
 
 	public NerdInputModule getNerdInputModule() {
-		return this.inputModule;
+		return this.INPUT;
 	}
 	// endregion
 

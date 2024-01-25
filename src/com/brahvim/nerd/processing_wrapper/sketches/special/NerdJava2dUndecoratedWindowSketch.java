@@ -24,7 +24,7 @@ public class NerdJava2dUndecoratedWindowSketch extends NerdSketch<PGraphicsJava2
         super.postSetup();
 
         // Our specialty!:
-        this.window = (NerdJava2dWindowModule) super.windowButGeneric;
+        this.window = (NerdJava2dWindowModule) super.GENERIC_WINDOW;
         this.window.stayUndecorated = true;
     }
 
