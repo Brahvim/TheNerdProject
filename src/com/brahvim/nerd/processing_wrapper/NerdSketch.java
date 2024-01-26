@@ -22,7 +22,6 @@ import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.math.timing.NerdMillisTimer;
-import com.brahvim.nerd.math.timing.NerdNanosTimer;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdGenericGraphics;
 import com.brahvim.nerd.useless_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.utils.NerdAwtUtils;
@@ -265,14 +264,13 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	@Override
 	public void draw() {
-		NerdMillisTimer millisTimer = new NerdMillisTimer();
-		NerdNanosTimer nanosTimer = new NerdNanosTimer();
+		try (NerdMillisTimer millisTimer = new NerdMillisTimer("`NerdSketch::draw()`")) {
 
-		this.forEachNerdModule(NerdModule::draw);
+			this.forEachNerdModule(NerdModule::draw);
 
-		millisTimer.close();
-		nanosTimer.close();
-		System.out.printf("`NerdSketch::draw()` took `%s` ms, AKA `%s` us.%n", millisTimer.get(), nanosTimer.get());
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

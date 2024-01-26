@@ -1,38 +1,33 @@
 package com.brahvim.nerd.math.timing;
 
-public class NerdNanosTimer implements NerdTimer {
+import java.io.PrintStream;
+import java.util.function.Supplier;
 
-	private boolean active;
-	private long startTime, endTime;
+public class NerdNanosTimer extends NerdAbstractTimer {
 
-	public NerdNanosTimer() {
-		this.restart();
+	// region Constructors.
+	public NerdNanosTimer(final String p_eventNameToLog) {
+		super(p_eventNameToLog);
 	}
 
-	// region State manipulation!
-	public void close() {
-		this.active = false;
-		this.endTime = System.nanoTime();
+	public NerdNanosTimer(final String p_eventNameToLog, final PrintStream p_streamToLogTo) {
+		super(p_eventNameToLog, p_streamToLogTo);
 	}
 
-	public void restart() {
-		this.active = true;
-		this.startTime = System.nanoTime();
-	}
+	// public NerdNanosTimer() {
+	// super();
+	// // this.restart();
+	// }
 	// endregion
 
-	// region Duration getters.
-	public long get() {
-		return this.active ? System.nanoTime() - this.startTime : this.endTime - this.startTime;
+	@Override
+	public Supplier<Long> supplyTimeProviderFunction() {
+		return System::nanoTime;
 	}
 
-	public int getInt() {
-		return (int) this.get();
+	@Override
+	public String supplyUnitName() {
+		return "ns";
 	}
-
-	public float getFloat() {
-		return this.get();
-	}
-	// endregion
 
 }
