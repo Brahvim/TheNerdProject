@@ -264,13 +264,12 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	@Override
 	public void draw() {
-		try (NerdMillisTimer millisTimer = new NerdMillisTimer("`NerdSketch::draw()`")) {
-
-			this.forEachNerdModule(NerdModule::draw);
-
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+		// try (NerdMillisTimer millisTimer = new
+		// NerdMillisTimer("`NerdSketch::draw()`")) {
+		this.forEachNerdModule(NerdModule::draw);
+		// } catch (final Exception e) {
+		// e.printStackTrace();
+		// }
 	}
 
 	@Override
