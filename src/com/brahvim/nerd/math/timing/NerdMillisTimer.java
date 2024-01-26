@@ -1,6 +1,6 @@
 package com.brahvim.nerd.math.timing;
 
-public class NerdMillisTimer {
+public class NerdMillisTimer implements NerdTimer {
 
 	private boolean active;
 	private long startTime, endTime;
@@ -10,7 +10,7 @@ public class NerdMillisTimer {
 	}
 
 	// region State manipulation!
-	public void stop() {
+	public void close() {
 		this.active = false;
 		this.endTime = System.currentTimeMillis();
 	}

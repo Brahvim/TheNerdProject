@@ -50,10 +50,11 @@ public abstract class NerdAbstractCamera {
 			doClearWithImage = true;
 	// endregion
 
-	protected PImage clearImage; // "Clear, Clear! Crystal-Clear!"
 	protected final NerdP3dGraphics GRAPHICS;
 	protected final NerdGlWindowModule WINDOW;
 	protected final NerdSketch<PGraphics3D> SKETCH;
+
+	protected PImage clearImage; // "Clear, Clear! Crystal-Clear!"
 
 	protected PVector
 	/*   */ pos = new PVector(),
@@ -150,10 +151,9 @@ public abstract class NerdAbstractCamera {
 			this.GRAPHICS.background(
 					this.clearColorParam1, this.clearColorParam2,
 					this.clearColorParam3, this.clearColorParamAlpha);
-
 	}
 
-	public void completeReset() {
+	public void completeReset() { // Will keep the name! It makes sense relative to subclass's `reset()` methods!
 		// region Parameters and `NerdAbstractCamera`-only vectors.
 		this.clearColorParam1 = 0;
 		this.clearColorParam2 = 0;
@@ -161,12 +161,18 @@ public abstract class NerdAbstractCamera {
 		this.clearColorParamAlpha = 255;
 
 		if (this.defaultCamUp == null)
-			this.up.set(0, 1, 0);
+			this.up.set(
+					NerdAbstractCamera.DEFAULT_CAM_UP_X,
+					NerdAbstractCamera.DEFAULT_CAM_UP_Y,
+					NerdAbstractCamera.DEFAULT_CAM_UP_Z);
 		else
 			this.up.set(this.defaultCamUp);
 
 		if (this.defaultCamPos == null)
-			this.pos.set(0, 0, 0);
+			this.pos.set(
+					NerdAbstractCamera.DEFAULT_CAM_POS_X,
+					NerdAbstractCamera.DEFAULT_CAM_POS_Y,
+					NerdAbstractCamera.DEFAULT_CAM_POS_Z);
 		else
 			this.pos.set(this.defaultCamPos);
 		// endregion

@@ -12,21 +12,31 @@ import processing.core.PVector;
  */
 public class NerdBasicCamera extends NerdAbstractCamera {
 
-	protected PVector center, defaultCamCenter;
+	public static final float
+	/*   */ DEFAULT_CAM_CENTER_X = 0,
+			DEFAULT_CAM_CENTER_Y = 0,
+			DEFAULT_CAM_CENTER_Z = 0;
 
-	public NerdBasicCamera(final NerdBasicCamera original) {
-		super(original.GRAPHICS);
+	protected PVector
+	/*   */ center,
+			defaultCamCenter = new PVector(
+					NerdBasicCamera.DEFAULT_CAM_CENTER_X,
+					NerdBasicCamera.DEFAULT_CAM_CENTER_Y,
+					NerdBasicCamera.DEFAULT_CAM_CENTER_Z);
+
+	public NerdBasicCamera(final NerdBasicCamera p_original) {
+		super(p_original.GRAPHICS);
 
 		// Copying camera parameters.
-		this.up = original.up.copy();
-		this.pos = original.pos.copy();
-		this.center = original.center.copy();
+		this.up = p_original.up.copy();
+		this.pos = p_original.pos.copy();
+		this.center = p_original.center.copy();
 
-		this.far = original.far;
-		this.fov = original.fov;
-		this.near = original.near;
+		this.far = p_original.far;
+		this.fov = p_original.fov;
+		this.near = p_original.near;
 
-		this.script = original.script;
+		this.script = p_original.script;
 	}
 
 	protected NerdBasicCamera(final NerdP3dGraphics p_graphics) {
@@ -39,7 +49,10 @@ public class NerdBasicCamera extends NerdAbstractCamera {
 		super.completeReset();
 
 		if (this.defaultCamCenter == null)
-			this.center.set(0, 0, 0);
+			this.center.set(
+					NerdBasicCamera.DEFAULT_CAM_CENTER_X,
+					NerdBasicCamera.DEFAULT_CAM_CENTER_Y,
+					NerdBasicCamera.DEFAULT_CAM_CENTER_Z);
 		else
 			this.center.set(this.defaultCamCenter);
 	}

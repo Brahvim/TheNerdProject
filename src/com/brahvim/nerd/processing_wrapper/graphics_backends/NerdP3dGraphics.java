@@ -22,11 +22,40 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     protected NerdAbstractCamera previousCamera;
 
+    // region Utilitarian constructors.
+    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height,
+            final String p_renderer) {
+        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_width, p_height, p_renderer));
+    }
+
+    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height) {
+        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_width, p_height));
+    }
+
+    protected NerdP3dGraphics(
+            final NerdSketch<PGraphics3D> p_sketch,
+            final float p_width,
+            final float p_height) {
+        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_width, p_height));
+    }
+
+    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final float p_size) {
+        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_size));
+    }
+
+    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_size) {
+        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_size));
+    }
+
+    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch) {
+        this(p_sketch, (PGraphics3D) p_sketch.createGraphics());
+    }
+    // endregion
+
     public NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
         super(p_sketch, p_graphics);
         this.UNPROJECTOR = new NerdUnprojector();
         this.DEFAULT_CAMERA = new NerdBasicCameraBuilder(this).build();
-
         this.currentCamera = this.DEFAULT_CAMERA;
     }
 

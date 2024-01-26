@@ -7,6 +7,36 @@ import processing.javafx.PGraphicsFX2D;
 
 public class NerdFx2dGraphics extends NerdGenericGraphics<PGraphicsFX2D> {
 
+    // region Utilitarian constructors.
+    protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final int p_width, final int p_height,
+            final String p_renderer) {
+        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_width, p_height, p_renderer));
+    }
+
+    protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final int p_width, final int p_height) {
+        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_width, p_height));
+    }
+
+    protected NerdFx2dGraphics(
+            final NerdSketch<PGraphicsFX2D> p_sketch,
+            final float p_width,
+            final float p_height) {
+        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_width, p_height));
+    }
+
+    protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final float p_size) {
+        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_size));
+    }
+
+    protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final int p_size) {
+        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_size));
+    }
+
+    protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch) {
+        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics());
+    }
+    // endregion
+
     public NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final PGraphicsFX2D p_pGraphicsToWrap) {
         super(p_sketch, p_pGraphicsToWrap);
     }

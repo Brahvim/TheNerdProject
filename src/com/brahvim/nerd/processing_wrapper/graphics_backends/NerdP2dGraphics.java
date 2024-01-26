@@ -17,6 +17,36 @@ public class NerdP2dGraphics extends NerdGlGenericGraphics<PGraphics2D> {
 
     protected final NerdUnprojector UNPROJECTOR;
 
+    // region Utilitarian constructors.
+    protected NerdP2dGraphics(final NerdSketch<PGraphics2D> p_sketch, final int p_width, final int p_height,
+            final String p_renderer) {
+        this(p_sketch, (PGraphics2D) p_sketch.createGraphics(p_width, p_height, p_renderer));
+    }
+
+    protected NerdP2dGraphics(final NerdSketch<PGraphics2D> p_sketch, final int p_width, final int p_height) {
+        this(p_sketch, (PGraphics2D) p_sketch.createGraphics(p_width, p_height));
+    }
+
+    protected NerdP2dGraphics(
+            final NerdSketch<PGraphics2D> p_sketch,
+            final float p_width,
+            final float p_height) {
+        this(p_sketch, (PGraphics2D) p_sketch.createGraphics(p_width, p_height));
+    }
+
+    protected NerdP2dGraphics(final NerdSketch<PGraphics2D> p_sketch, final float p_size) {
+        this(p_sketch, (PGraphics2D) p_sketch.createGraphics(p_size));
+    }
+
+    protected NerdP2dGraphics(final NerdSketch<PGraphics2D> p_sketch, final int p_size) {
+        this(p_sketch, (PGraphics2D) p_sketch.createGraphics(p_size));
+    }
+
+    protected NerdP2dGraphics(final NerdSketch<PGraphics2D> p_sketch) {
+        this(p_sketch, (PGraphics2D) p_sketch.createGraphics());
+    }
+    // endregion
+
     public NerdP2dGraphics(final NerdSketch<PGraphics2D> p_sketch, final PGraphics2D p_graphics) {
         super(p_sketch, p_graphics);
         this.UNPROJECTOR = new NerdUnprojector();

@@ -1,6 +1,6 @@
 package com.brahvim.nerd.math.timing;
 
-public class NerdNanosTimer {
+public class NerdNanosTimer implements NerdTimer {
 
 	private boolean active;
 	private long startTime, endTime;
@@ -10,7 +10,7 @@ public class NerdNanosTimer {
 	}
 
 	// region State manipulation!
-	public void stop() {
+	public void close() {
 		this.active = false;
 		this.endTime = System.nanoTime();
 	}

@@ -77,6 +77,46 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	}
 	// endregion
 
+	// region Utilitarian constructors.
+	@SuppressWarnings("unchecked")
+	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
+			final String p_renderer, final String p_path) {
+		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height, p_renderer, p_path));
+	}
+
+	@SuppressWarnings("unchecked")
+	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
+			final String p_renderer) {
+		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height, p_renderer));
+	}
+
+	@SuppressWarnings("unchecked")
+	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height) {
+		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height));
+	}
+
+	@SuppressWarnings("unchecked")
+	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_width,
+			final float p_height) {
+		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height));
+	}
+
+	@SuppressWarnings("unchecked")
+	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_size) {
+		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_size));
+	}
+
+	@SuppressWarnings("unchecked")
+	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_size) {
+		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_size));
+	}
+
+	@SuppressWarnings("unchecked")
+	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch) {
+		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics());
+	}
+	// endregion
+
 	@SuppressWarnings("unchecked")
 	protected NerdGenericGraphics(
 			final NerdSketch<SketchPGraphicsT> p_sketch,
