@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.brahvim.nerd.framework.scene_layer_api.NerdScenesModule;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
@@ -85,12 +84,6 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	}
 
 	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass,
-			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_modulesSet) {
-		this(p_rendererClass);
-		this.modulesConsumer = p_modulesSet;
-	}
-
-	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass,
 			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_sketchConstructor) {
 		this(p_rendererClass);
 		this.sketchConstructor = p_sketchConstructor;
@@ -125,7 +118,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		// them ready, beforehand!:
 
 		this.BUILD_SETTINGS.nerdModulesInstantiator = s -> {
-			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> //
+			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>
 			/*	*/ userDefinedModules = new LinkedHashSet<>(0, 1);
 			this.supplyUserDefinedModules(userDefinedModules);
 
@@ -152,8 +145,6 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		toRet.add(NerdWindowModule::createWindowModule);
 
 		toRet.add(NerdInputModule::new);
-
-		toRet.add(NerdScenesModule::new);
 
 		return toRet;
 	}
@@ -197,10 +188,6 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 */
 	protected void supplyUserDefinedModules(
 			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> p_modulesSet) {
-		if (this.modulesConsumer == null)
-			return;
-
-		this.modulesConsumer.accept(p_modulesSet);
 	}
 
 	/**

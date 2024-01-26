@@ -20,12 +20,6 @@ public class NerdJava2dUndecoratedWindowSketchBuilder extends NerdJava2dSketchBu
     }
 
     public NerdJava2dUndecoratedWindowSketchBuilder(
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsJava2D>, NerdModule>>> p_modulesSet) {
-        this(); // Call this class's constructor because... It changes things, y'know?!
-        super.modulesConsumer = p_modulesSet;
-    }
-
-    public NerdJava2dUndecoratedWindowSketchBuilder(
             final Function<NerdSketchSettings<PGraphicsJava2D>, NerdSketch<PGraphicsJava2D>> p_sketchConstructor) {
         super(p_sketchConstructor);
     }

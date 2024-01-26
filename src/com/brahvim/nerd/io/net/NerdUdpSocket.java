@@ -304,7 +304,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 	}
 	// endregion
 
-	// region `public`, `static` method[s]!
+	// region `public static` method[s]!
 	/**
 	 * Tries to 'force' the OS into constructing a socket with the port specified
 	 * using {@linkplain DatagramSocket#setReuseAddress()

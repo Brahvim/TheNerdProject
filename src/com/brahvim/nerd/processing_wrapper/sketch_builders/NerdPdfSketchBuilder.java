@@ -20,12 +20,6 @@ public class NerdPdfSketchBuilder extends NerdSketchBuilder<PGraphicsPDF> {
     }
 
     public NerdPdfSketchBuilder(
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsPDF>, NerdModule>>> p_modulesSet) {
-        this(); // Call this class's constructor because... It changes things, y'know?!
-        super.modulesConsumer = p_modulesSet;
-    }
-
-    public NerdPdfSketchBuilder(
             final Function<NerdSketchSettings<PGraphicsPDF>, NerdSketch<PGraphicsPDF>> p_sketchConstructor) {
         super(PGraphicsPDF.class, p_sketchConstructor);
     }

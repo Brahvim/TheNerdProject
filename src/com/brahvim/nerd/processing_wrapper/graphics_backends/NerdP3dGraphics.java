@@ -593,8 +593,27 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     public void end2d() {
         this.pop();
         this.GRAPHICS.hint(PConstants.ENABLE_DEPTH_TEST);
-        this.currentCamera.applyMatrix();
+        if (this.currentCamera != null)
+            this.currentCamera.applyMatrix();
     }
+
+    // Best for these `*shape2d()` operations to be explicit!...
+    // /**
+    // * Pushes the graphics buffer, disables depth testing and resets all current
+    // * transformations (they're restored by a call to {@linkplain NerdSketch#pop()
+    // * NerdSketch::pop()} later!), then begins a shape.
+    // */
+    // public void beginShape2d() {
+    // this.begin2d();
+    // super.beginShape();
+    // }
+    //
+    // /** Ends the shape, and pops back transformations and enables depth testing.
+    // */
+    // public void endShape2d() {
+    // this.endShape();
+    // this.end2d();
+    // }
 
     /**
      * Pushes the graphics buffer, disables depth testing, resets all current

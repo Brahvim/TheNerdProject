@@ -132,6 +132,9 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.WINDOW = this.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
+	public void draw() {
+	}
+
 	public NerdSketch<SketchPGraphicsT> getSketch() {
 		return this.SKETCH;
 	}

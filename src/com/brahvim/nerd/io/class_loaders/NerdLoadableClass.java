@@ -8,6 +8,10 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.brahvim.nerd.framework.scene_layer_api.NerdScene;
+
+import processing.core.PGraphics;
+
 public class NerdLoadableClass<ClassT> {
 
 	// region Fields.
@@ -60,8 +64,9 @@ public class NerdLoadableClass<ClassT> {
 		NerdLoadableClass.ALL_LOADABLE_CLASSES.add(this);
 	}
 
-	public Class<? extends ClassT> getLoadedClass() {
-		return this.loadedClass;
+	@SuppressWarnings("unchecked")
+	public <RetScenePGraphicsT extends PGraphics> Class<? extends NerdScene<RetScenePGraphicsT>> getLoadedClass() {
+		return (Class<NerdScene<RetScenePGraphicsT>>) this.loadedClass;
 	}
 
 	public URL getUrl() {

@@ -21,7 +21,6 @@ import com.brahvim.nerd.io.NerdStringsTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
-import com.brahvim.nerd.math.timing.NerdMillisTimer;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdGenericGraphics;
 import com.brahvim.nerd.useless_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.utils.NerdAwtUtils;
@@ -64,14 +63,14 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// endregion
 
 	// region Fields.
-	// region Public fields.
+	// region `public` fields.
 	// region Constants.
 	// region `static` constants.
 	public static final File EXEC_DIR = new File("");
-	public static final String EXEC_DIR_PATH = NerdSketch.EXEC_DIR.getAbsolutePath().concat(File.separator);
+	public static final String EXEC_DIR_PATH = NerdSketch.EXEC_DIR.getAbsolutePath(); // .concat(File.separator);
 
 	public static final File DATA_DIR = new File("data");
-	public static final String DATA_DIR_PATH = NerdSketch.DATA_DIR.getAbsolutePath().concat(File.separator);
+	public static final String DATA_DIR_PATH = NerdSketch.DATA_DIR.getAbsolutePath(); // .concat(File.separator);
 	// endregion
 
 	// region Instance constants.
@@ -89,23 +88,26 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// endregion
 	// endregion
 	// endregion
-	// Timers! (`millis()` returns `int`s!):
 
-	protected int frameStartTime, pframeStartTime, deltaTime;
-	protected NerdStringsTable globalStringTable;
-	protected NerdGenericGraphics<SketchPGraphicsT> nerdGenericGraphics;
-	protected PFont defaultFont;
-
-	// Necessary `NerdModule`s:
+	// region Necessary `NerdModule`s:
+	public final NerdInputModule INPUT;
+	public final NerdDisplayModule DISPLAY; // NOSONAR! `PApplet::display` is not even visible here, brotha'!
 	public final NerdSketch.NerdSketchOnlyAssetsModule ASSETS;
 	public final NerdWindowModule<SketchPGraphicsT> GENERIC_WINDOW;
-	public final NerdDisplayModule DISPLAY; // NOSONAR! `PApplet::display` is not even visible here, brotha'!
-	public final NerdInputModule INPUT;
-
-	// region Protected fields.
-	protected final List<NerdModule> MODULES;
 	public final NerdSketchSettings<SketchPGraphicsT> SKETCH_SETTINGS;
-	protected final Map<Class<? extends NerdModule>, NerdModule> CLASSES_TO_MODULES_MAP;
+	// endregion
+
+	// region `protected` fields.
+	protected final List<NerdModule> MODULES;
+	protected final Map<Class<? extends NerdModule>, NerdModule>
+	/* */ CLASSES_TO_MODULES_MAP = new HashMap<>(5);
+	protected final Map<? extends NerdGenericGraphics<?>, ? extends PGraphics>
+	/* */ NERD_GRAPHICS_TO_PGRAPHICS_MAP = new HashMap<>(1);
+
+	protected PFont defaultFont;
+	protected NerdStringsTable globalStringTable;
+	protected int frameStartTime, pframeStartTime, deltaTime; // Timers! (`millis()` returns `int`s!).
+	protected NerdGenericGraphics<SketchPGraphicsT> nerdGenericGraphics;
 	// endregion
 	// endregion
 
@@ -121,8 +123,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 		this.USES_OPENGL = PConstants.P3D.equals(p_settings.renderer);
 
-		// region Stuff involving modules
-		this.CLASSES_TO_MODULES_MAP = new HashMap<>(0);
+		// region Stuff involving modules.
 		this.MODULES = this.createAndSortModules(p_settings);
 
 		for (final NerdModule m : this.MODULES) {
@@ -465,6 +466,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// endregion
 
 	// region Utilities!
+	// region Getters.
 	public int getDeltaTime() {
 		return this.deltaTime;
 	}
@@ -488,6 +490,23 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	public NerdGenericGraphics<SketchPGraphicsT> getNerdGenericGraphics() {
 		return this.nerdGenericGraphics;
 	}
+	// endregion
+
+	// region `frameRate()` overloads.
+	/**
+	 * Sets the framerate to the maximum possible.
+	 * <p>
+	 * Warning: this can cause issues!
+	 */
+	public void frameRateMaximize() {
+		super.frameRate(1000);
+	}
+
+	/** Sets the framerate to the current display's refresh rate. */
+	public void frameRateMinimize() {
+		super.frameRate(this.DISPLAY.displayRefreshRate);
+	}
+	// endregion
 
 	// region Rendering utilities!
 	public PImage svgToImage(final PShape p_shape, final float p_width, final float p_height) {
