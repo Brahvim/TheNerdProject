@@ -16,6 +16,7 @@ import processing.event.MouseEvent;
 public class NerdInputModule extends NerdModule {
 
 	// region Fields.
+	// region Standard keyboard codes.
 	public static final List<Character> STANDARD_KEYBOARD_SYMBOLS = List.of(
 			'\'', '\"', '-', '=', '`', '~', '!', '@', '#', '$',
 			'%', '^', '&', '*', '(', ')', '{', '}', '[',
@@ -37,6 +38,7 @@ public class NerdInputModule extends NerdModule {
 			20, // `Caps Lock`.
 			23, // `Scroll Lock`.
 			26, // `Insert`/`Ins` (old name first).
+			27, // `Escape`/`Esc` (old name first).
 
 			// `97` to `108` are for all function keys
 			// [regardless of whether `Shift` or `Ctrl` are pressed]:
@@ -47,28 +49,34 @@ public class NerdInputModule extends NerdModule {
 			153, // `Menu`/`Application` AKA "RightClick" key.
 			157 // "Meta"/"Super", AKA the "OS key".
 	);
+	// endregion
 
-	/** Position of the mouse relative to the monitor. */
+	/** Position of the mouse relative to the monitor. Updated framely. */
 	public final Point GLOBAL_MOUSE_POINT = new Point(),
 			PREV_FRAME_GLOBAL_MOUSE_POINT = new Point();
 
-	/** Position of the mouse relative to the monitor. */
-	public final PVector GLOBAL_MOUSE_VECTOR = new PVector(),
+	/** Position of the mouse relative to the monitor. Updated framely. */
+	public final PVector
+	/*   */ GLOBAL_MOUSE_VECTOR = new PVector(),
 			PREV_FRAME_GLOBAL_MOUSE_VECTOR = new PVector();
 
 	// region Frame-wise states, Processing style (thus mutable).
 	// ...yeah, *these* ain't mutable, are they?:
-	public final List<PVector> UNPROJ_TOUCHES = new ArrayList<>(10),
+	public final List<PVector>
+	/*   */ UNPROJ_TOUCHES = new ArrayList<>(10),
 			PREV_UNPROJ_TOUCHES = new ArrayList<>(10),
 			PREV_FRAME_UNPROJ_TOUCHES = new ArrayList<>(10);
 
 	/** Updated during appropriate event callbacks - not in a loop. */
-	public final PVector MOUSE_VECTOR = new PVector(),
+	public final PVector
+	/*   */ MOUSE_VECTOR = new PVector(),
 			PREV_MOUSE_VECTOR = new PVector(),
 			MOUSE_CENTER_OFFSET = new PVector(),
 			PREV_MOUSE_CENTER_OFFSET = new PVector();
+
 	/** Updated framely! Generally, don't use this (look at that long name!). */
-	public final PVector CURR_FRAME_MOUSE_VECTOR = new PVector(),
+	public final PVector
+	/*   */ CURR_FRAME_MOUSE_VECTOR = new PVector(),
 			PREV_FRAME_MOUSE_VECTOR = new PVector(),
 			CURR_FRAME_MOUSE_CENTER_OFFSET_VECTOR = new PVector(),
 			PREV_FRAME_MOUSE_CENTER_OFFSET_VECTOR = new PVector();
@@ -83,10 +91,10 @@ public class NerdInputModule extends NerdModule {
 	public int mouseButton, pmouseButton;
 
 	/** Updated during appropriate event callbacks - not in a loop. */
-	public boolean keyPressed, pkeyPressed; // NOSONAR
+	public boolean keyPressed, pkeyPressed; // NOSONAR Processing calls them the same!...
 
 	/** Updated during appropriate event callbacks - not in a loop. */
-	public boolean mousePressed, pmousePressed; // NOSONAR
+	public boolean mousePressed, pmousePressed; // NOSONAR Processing calls them the same!...
 
 	/** Updated during appropriate event callbacks - not in a loop. */
 	public float mouseX, mouseY, pmouseX, pmouseY;
@@ -98,10 +106,13 @@ public class NerdInputModule extends NerdModule {
 	public float mouseScroll, pmouseScroll,
 			mouseScrollDelta, pmouseScrollDelta,
 			totalMouseScroll, ptotalMouseScroll;
-
-	protected NerdWindowModule<?> window;
-	protected final List<Integer> KEYS_HELD = new ArrayList<>(5), PREV_FRAME_KEYS_HELD = new ArrayList<>(5);
 	// endregion
+
+	/** Updates framely. */
+	protected final List<Integer>
+	/*   */ KEYS_HELD = new ArrayList<>(5),
+			PREV_FRAME_KEYS_HELD = new ArrayList<>(5);
+	protected NerdWindowModule<?> window;
 	// endregion
 
 	public NerdInputModule(final NerdSketch<?> p_sketch) {
@@ -139,12 +150,12 @@ public class NerdInputModule extends NerdModule {
 	}
 
 	@Override
-	public void focusGained() {
+	public void focusLost() {
 		this.KEYS_HELD.clear();
 	}
 
 	@Override
-	public void focusLost() {
+	public void focusGained() {
 		this.KEYS_HELD.clear();
 	}
 
