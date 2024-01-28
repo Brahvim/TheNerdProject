@@ -22,6 +22,32 @@ public class NerdInputModule extends NerdModule {
 			']', ';', ',', '.', '/', '\\', ':', '|', '<',
 			'>', '_', '+', '?');
 
+	public static final List<Integer> STANDARD_KEYBOARD_SPECIAL_KEYS = List.of(
+			0, // `Fn`, plus any function key.
+			2, // `Home`.
+			3, // `End`.
+			5, // `Sys Rq` ("System Request") or `Prt Sc` ("Print Screen").
+			8, // `Backspace`.
+			9, // `Tab`.
+			10, // Both `Return`s/`Enter`s (old name first).
+			11, // `PageDown`.
+			12, // Registered when a button is pressed on the numpad with `NumLock` off.
+			16, // `PageUp`.
+			19, // "`Alt`-Graph".
+			20, // `Caps Lock`.
+			23, // `Scroll Lock`.
+			26, // `Insert`/`Ins` (old name first).
+
+			// `97` to `108` are for all function keys
+			// [regardless of whether `Shift` or `Ctrl` are pressed]:
+			97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109,
+
+			147, // Both `Delete` keys.
+			148, // `Pause`/`Break` and also `Num Lock`.
+			153, // `Menu`/`Application` AKA "RightClick" key.
+			157 // "Meta"/"Super", AKA the "OS key".
+	);
+
 	/** Position of the mouse relative to the monitor. */
 	public final Point GLOBAL_MOUSE_POINT = new Point(),
 			PREV_FRAME_GLOBAL_MOUSE_POINT = new Point();
@@ -295,7 +321,7 @@ public class NerdInputModule extends NerdModule {
 		return toRet;
 	}
 
-	public boolean keysPressedAreOrdered(final int... p_keyCodes) {
+	public boolean areKeysPressedAreOrdered(final int... p_keyCodes) {
 		final int paramArrLen = p_keyCodes.length;
 		final int ownArrLen = this.KEYS_HELD.size();
 
@@ -323,7 +349,7 @@ public class NerdInputModule extends NerdModule {
 		return paramArrId == paramArrLen;
 	}
 
-	public boolean keysPressed(final int... p_keyCodes) {
+	public boolean keysPressedAre(final int... p_keyCodes) {
 		// this.keysHeld.contains(p_keyCodes); // Causes a totally unique error
 		// :O
 
@@ -342,58 +368,11 @@ public class NerdInputModule extends NerdModule {
 		// An article once said: `boolean` flags are bad.
 	}
 
-	public boolean keysPressedLastFrame(final int... p_keyCodes) {
+	public boolean keysGivenWerePressedLastFrame(final int... p_keyCodes) {
 		for (final int i : p_keyCodes)
 			if (!this.PREV_FRAME_KEYS_HELD.contains(i))
 				return false;
 		return true;
-	}
-
-	public boolean keyIsPressed(final int p_keyCode) {
-		return this.KEYS_HELD.contains(p_keyCode);
-	}
-
-	public boolean keyWasPressed(final int p_keyCode) {
-		return this.PREV_FRAME_KEYS_HELD.contains(p_keyCode);
-	}
-
-	public boolean anyGivenKeyIsPressed(final int... p_keyCodes) {
-		for (final int i : p_keyCodes)
-			if (this.KEYS_HELD.contains(i))
-				return true;
-		return false;
-	}
-
-	public boolean anyGivenKeyWasPressed(final int... p_keyCodes) {
-		for (final int i : p_keyCodes)
-			if (this.PREV_FRAME_KEYS_HELD.contains(i))
-				return true;
-		return false;
-	}
-
-	public static boolean isStandardKeyboardSymbol(final char p_char) {
-		// boolean is = false;
-		for (final char ch : NerdInputModule.STANDARD_KEYBOARD_SYMBOLS)
-			// Can't use this!:
-			// return ch == p_char;
-			// What if the array being examined is empty?!
-
-			if (ch == p_char)
-				return true;
-
-		// These used to be in the loop:
-		// is = ch == p_char;
-		// is |= ch == p_char;
-		// return is;
-
-		return false;
-	}
-
-	public static boolean isTypeable(final char p_char) {
-		return Character.isDigit(p_char) ||
-				Character.isLetter(p_char) ||
-				Character.isWhitespace(p_char) ||
-				NerdInputModule.isStandardKeyboardSymbol(p_char);
 	}
 
 	public char getTypedKey() {
@@ -442,28 +421,84 @@ public class NerdInputModule extends NerdModule {
 			p_str.append(Character.toString(typedChar));
 	}
 
-	// To be used for checking if a certain key can be typed:
-	public boolean isNotSpecialKey(final int p_keyCode) {
-		// I just didn't want to make an array :joy::
-		return !(
-		// For all function keys [regardless of whether `Shift` or `Ctrl` are pressed]:
-		p_keyCode > 96 && p_keyCode < 109 ||
-				p_keyCode == 0 || // `Fn`, plus a function key.
-				p_keyCode == 2 || // `Home`,
-				p_keyCode == 3 || // `End`,
-				p_keyCode == 8 || // `Backspace`,
-				p_keyCode == 10 || // Both `Enter`s/`return`s.
-				p_keyCode == 11 || // `PageDown`,
-				p_keyCode == 12 || // Registered when a button is pressed on the numpad with `NumLock` off.
-				p_keyCode == 16 || // `PageUp`,
-				p_keyCode == 19 || // "`Alt`-Graph',
-				p_keyCode == 20 || // `CapsLock`,
-				p_keyCode == 23 || // `ScrollLock`,
-				p_keyCode == 26 || // `Insert`,
-				p_keyCode == 147 || // Both `Delete` keys,
-				p_keyCode == 148 || // `Pause`/`Break` and also `NumLock`,
-				p_keyCode == 153 || // `Menu`/`Application` AKA "RightClick" key.
-				p_keyCode == 157 // "Meta", AKA the "OS key".
+	public boolean keyGivenIsPressed(final int p_keyCode) {
+		return this.KEYS_HELD.contains(p_keyCode);
+	}
+
+	public boolean keyGivenWasPressed(final int p_keyCode) {
+		return this.PREV_FRAME_KEYS_HELD.contains(p_keyCode);
+	}
+
+	public static boolean isTypeable(final char p_char) {
+		return Character.isDigit(p_char) ||
+				Character.isLetter(p_char) ||
+				Character.isWhitespace(p_char) ||
+				NerdInputModule.givenKeyIsStandardKeyboardSymbol(p_char);
+	}
+
+	public boolean anyGivenKeyIsPressed(final int... p_keyCodes) {
+		for (final int i : p_keyCodes)
+			if (this.KEYS_HELD.contains(i))
+				return true;
+
+		return false;
+	}
+
+	public boolean anyGivenKeyWasPressed(final int... p_keyCodes) {
+		for (final int i : p_keyCodes)
+			if (this.PREV_FRAME_KEYS_HELD.contains(i))
+				return true;
+
+		return false;
+	}
+
+	public static boolean givenKeyIsStandardKeyboardSymbol(final char p_char) {
+		// boolean is = false;
+		for (final char ch : NerdInputModule.STANDARD_KEYBOARD_SYMBOLS)
+			// Can't use this!:
+			// return ch == p_char;
+			// What if the array being examined is empty?!
+
+			if (ch == p_char)
+				return true;
+
+		// These used to be in the loop:
+		// is = ch == p_char;
+		// is |= ch == p_char;
+		// return is;
+
+		return false;
+	}
+
+	/**
+	 * To be used for checking if a certain key can be typed as a character
+	 * <b>using no escape sequence</b>.
+	 *
+	 * @param p_keyCode is the code of the key to check.
+	 * @return Can the key can be used in typing?
+	 */
+	public boolean isSpecialKey(final int p_keyCode) {
+		// I just didn't want to make an array 😂:
+		return (p_keyCode > 96 && p_keyCode < 109
+				// ^^^ `97` to `108` for all function keys
+				// [regardless of whether `Shift` or `Ctrl` are pressed]:
+				|| p_keyCode == 0 // `Fn`, plus any function key.
+				|| p_keyCode == 2 // `Home`,
+				|| p_keyCode == 3 // `End`,
+				|| p_keyCode == 8 // `Backspace`,
+				|| p_keyCode == 9 // `Tab`,
+				|| p_keyCode == 10 // Both `Enter`s/`return`s.
+				|| p_keyCode == 11 // `PageDown`,
+				|| p_keyCode == 12 // Registered when a button is pressed on the numpad with `NumLock` off.
+				|| p_keyCode == 16 // `PageUp`,
+				|| p_keyCode == 19 // "`Alt`-Graph',
+				|| p_keyCode == 20 // `CapsLock`,
+				|| p_keyCode == 23 // `ScrollLock`,
+				|| p_keyCode == 26 // `Insert`,
+				|| p_keyCode == 147 // Both `Delete` keys,
+				|| p_keyCode == 148 // `Pause`/`Break` and also `NumLock`,
+				|| p_keyCode == 153 // `Menu`/`Application` AKA "RightClick" key.
+				|| p_keyCode == 157 // "Meta"/"Super", AKA the "OS key".
 		);
 	}
 	// endregion

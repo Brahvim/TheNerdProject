@@ -19,10 +19,13 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     protected final NerdUnprojector UNPROJECTOR;
     protected final NerdAbstractCamera DEFAULT_CAMERA;
+    protected final NerdBasicCamera DEFAULT_CAMERA_BASIC;
 
-    protected NerdAbstractCamera previousCamera;
+    /** To be assigned to in the constructor. */
+    protected NerdAbstractCamera currentCamera, previousCamera; // CAMERA! wher lite?! wher accsunn?!
 
     // region Utilitarian constructors.
+
     protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height,
             final String p_renderer) {
         this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_width, p_height, p_renderer));
@@ -54,9 +57,18 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     public NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
         super(p_sketch, p_graphics);
+
+        if (!this.SKETCH.USES_OPENGL)
+            throw new IllegalStateException("""
+                    DUDE WHO SET `NerdSketch::USES_OPENGL` TO `false`!?
+                    You!? WAS IT YOU? WHO DID IT?!""");
+
+        this.DEFAULT_CAMERA_BASIC = new NerdBasicCameraBuilder(this).build();
+        this.DEFAULT_CAMERA = this.DEFAULT_CAMERA_BASIC;
         this.UNPROJECTOR = new NerdUnprojector();
-        this.DEFAULT_CAMERA = new NerdBasicCameraBuilder(this).build();
+
         this.currentCamera = this.DEFAULT_CAMERA;
+        this.previousCamera = this.DEFAULT_CAMERA;
     }
 
     // region Dealing with `NerdAbstractCamera` subclasses.
@@ -68,8 +80,9 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     }
 
     protected void applyCameraIfCan() {
-        if (!this.SKETCH.USES_OPENGL)
-            return;
+        // This was moved to the constructor:
+        // if (!this.SKETCH.USES_OPENGL)
+        // return;
 
         // If the current camera is `null`, use the default one instead:
         if (this.currentCamera != null)
@@ -83,14 +96,24 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <RetT extends NerdAbstractCamera> RetT setCurrentCamera(final NerdAbstractCamera p_camera) {
-        return (RetT) (this.currentCamera = p_camera);
+    /**
+     * @param <RetT>   is the type of your {@link NerdAbstractCamera} subclass.
+     * @param p_camera is the camera object you want to declare as the current one
+     *                 used for rendering by the scene's {@link NerdP3dGraphics}.
+     * @return The very same camera you pass.
+     */
+    public <RetT extends NerdAbstractCamera> RetT setCurrentCamera(final RetT p_camera) {
+        this.currentCamera = Objects.requireNonNull(p_camera);
+        return p_camera;
     }
 
-    @SuppressWarnings("unchecked")
-    public <RetT extends NerdAbstractCamera> RetT setCurrentCameraToDefault() {
-        return (RetT) (this.currentCamera = this.DEFAULT_CAMERA);
+    /**
+     * @param <RetT> is the type of your {@link NerdAbstractCamera} subclass.
+     * @return The default camera you passed to this method.
+     */
+    public NerdBasicCamera setCurrentCameraToDefault() {
+        this.currentCamera = new NerdBasicCamera(this.DEFAULT_CAMERA_BASIC);
+        return (NerdBasicCamera) this.currentCamera;
     }
 
     @SuppressWarnings("unchecked")
@@ -160,7 +183,7 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     // endregion
 
     // region `p_vec`?
-    // ...how about `p_modelMatInvMulter`? :rofl:!
+    // ...how about `p_modelMatInvMulter`? 🤣!
     public float modelX(final PVector p_vec) {
         return this.GRAPHICS.modelX(p_vec.x, p_vec.y, p_vec.z);
     }
@@ -216,7 +239,7 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     // ...ACTUALLY,
     // https://github.com/SKETCHssing/SKETCHssing/blob/459853d0dcdf1e1648b1049d3fdbb4bf233fded8/core/src/SKETCHssing/opengl/PGraphicsOpenGL.java#L4611
     // ..."they rely on the JIT too!" (no, they don't optimize this at all. They
-    // just put the `0` themselves, LOL.) :joy:
+    // just put the `0` themselves, LOL.) 😂
 
     public float screenX(final PVector p_vec) {
         return this.GRAPHICS.screenX(p_vec.x, p_vec.y, p_vec.z);
@@ -352,26 +375,29 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     /**
      * Caching this vector never works. Call this method everytime!~ People
      * recalculate things framely in computer
-     * graphics anyway! :joy:
+     * graphics anyway! 😂
      */
     public PVector getMouseInWorld() {
-        return this.getMouseInWorldFromFarPlane(this.currentCamera.mouseZ);
+        return // this.currentCamera == null ? new PVector() :
+        this.getMouseInWorldFromFarPlane(this.currentCamera.mouseZ);
     }
 
     public PVector getMouseInWorldFromFarPlane(final float p_distanceFromFarPlane) {
-        return this.worldVec(this.INPUT.mouseX, this.INPUT.mouseY,
+        return // this.currentCamera == null ? new PVector() :
+        this.worldVec(this.INPUT.mouseX, this.INPUT.mouseY,
                 this.currentCamera.far - p_distanceFromFarPlane + this.currentCamera.near);
     }
 
     public PVector getMouseInWorldAtZ(final float p_distanceFromCamera) {
-        return this.worldVec(this.INPUT.mouseX, this.INPUT.mouseY, p_distanceFromCamera);
+        return // this.currentCamera == null ? new PVector() :
+        this.worldVec(this.INPUT.mouseX, this.INPUT.mouseY, p_distanceFromCamera);
     }
     // endregion
 
     // region Touches.
     // /**
     // * Caching this vector never works. Call this method everytime!~
-    // * People recalculate things framely in computer graphics anyway! :joy:
+    // * People recalculate things framely in computer graphics anyway! 😂
     // */
     // public PVector getTouchInWorld(final int p_touchId) {
     // return this.getTouchInWorldFromFarPlane(p_touchId,

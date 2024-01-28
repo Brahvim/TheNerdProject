@@ -3,7 +3,6 @@ package com.brahvim.nerd.processing_wrapper.graphics_backends;
 import java.awt.Image;
 import java.util.Objects;
 
-import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
@@ -27,8 +26,6 @@ import processing.svg.PGraphicsSVG;
 public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 
 	// region Instance fields.
-	protected NerdAbstractCamera currentCamera; // CAMERA! wher lite?! wher accsunn?!
-
 	protected final NerdInputModule INPUT;
 	protected final SketchPGraphicsT GRAPHICS;
 	protected final NerdSketch<SketchPGraphicsT> SKETCH;
@@ -513,7 +510,7 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	// `triangle(PVector p_v2, float x2, float y2, PVector v3)`.
 	// ...Yeah. You get the point. I'm crazy ;)
 	// Yes, I was going to use more generator code (JavaScript!) for this.
-	// I might be crazy, but am also lazy! :joy:
+	// I might be crazy, but am also lazy! 😂
 	// endregion
 
 	public void triangle(final PVector p_v1, final PVector p_v2, final PVector p_v3) {
@@ -781,6 +778,33 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	 */
 	public void centeredText(final String p_text) {
 		this.GRAPHICS.text(p_text, this.GRAPHICS.textWidth(p_text) * 0.5f, this.textHeight() * 0.5f);
+	}
+
+	// region Coordinate-less overloads.
+	public void text(final char c) {
+		this.GRAPHICS.text(c, 0, 0);
+	}
+
+	public void text(final String str) {
+		this.GRAPHICS.text(str, 0, 0);
+	}
+
+	public void text(final int num) {
+		this.GRAPHICS.text(num, 0, 0);
+	}
+
+	public void text(final float num) {
+		this.GRAPHICS.text(num, 0, 0);
+	}
+
+	public void text(final char[] p_charArray) {
+		this.GRAPHICS.text(p_charArray, 0, p_charArray.length, 0, 0);
+	}
+	// endregion
+
+	// That one array-length based overload:
+	public void text(final char[] p_charArray, final float p_x, final float p_y) {
+		this.GRAPHICS.text(p_charArray, 0, p_charArray.length, p_x, p_y);
 	}
 	// endregion
 

@@ -64,13 +64,14 @@ public abstract class NerdAbstractCamera {
 	// endregion
 
 	protected NerdAbstractCamera(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
-		this.SKETCH = p_sketch;
-		this.GRAPHICS = new NerdP3dGraphics(this.SKETCH, p_graphics);
+		this.SKETCH = Objects.requireNonNull(p_sketch, "The parameter `p_sketch` was `null`!");
 		this.WINDOW = this.SKETCH.getNerdModule(NerdGlWindowModule.class);
+		this.GRAPHICS = new NerdP3dGraphics(this.SKETCH,
+				Objects.requireNonNull(p_graphics, "The parameter `p_graphics` was `null`!"));
 	}
 
 	protected NerdAbstractCamera(final NerdP3dGraphics p_graphics) {
-		this.GRAPHICS = p_graphics;
+		this.GRAPHICS = Objects.requireNonNull(p_graphics, "The parameter `p_graphics` was `null`!");
 		this.SKETCH = this.GRAPHICS.getSketch();
 		this.WINDOW = this.SKETCH.getNerdModule(NerdGlWindowModule.class);
 	}

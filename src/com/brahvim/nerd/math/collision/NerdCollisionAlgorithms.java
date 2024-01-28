@@ -47,7 +47,7 @@ public class NerdCollisionAlgorithms {
 			if (((currentVertex.y >= p_y && nextVertex.y < p_y) || (currentVertex.y < p_y && nextVertex.y >= p_y))
 					&& (p_x < (nextVertex.x - currentVertex.x) * (p_y - currentVertex.y)
 							/ (nextVertex.y - currentVertex.y) + currentVertex.x)) {
-				ret = !ret; // :rofl:
+				ret = !ret; // 🤣
 			}
 		}
 

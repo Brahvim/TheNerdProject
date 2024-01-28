@@ -12,6 +12,7 @@ import processing.core.PVector;
  */
 public class NerdBasicCamera extends NerdAbstractCamera {
 
+	// region Fields.
 	public static final float
 	/*   */ DEFAULT_CAM_CENTER_X = 0,
 			DEFAULT_CAM_CENTER_Y = 0,
@@ -23,6 +24,7 @@ public class NerdBasicCamera extends NerdAbstractCamera {
 					NerdBasicCamera.DEFAULT_CAM_CENTER_X,
 					NerdBasicCamera.DEFAULT_CAM_CENTER_Y,
 					NerdBasicCamera.DEFAULT_CAM_CENTER_Z);
+	// endregion
 
 	public NerdBasicCamera(final NerdBasicCamera p_original) {
 		super(p_original.GRAPHICS);

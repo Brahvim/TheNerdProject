@@ -46,7 +46,7 @@ public final class NerdBufferUtils {
 		return new byte[] { p_number };
 	}
 
-	// :rofl:!!! ...but yeah, people! Use this for consistency.
+	// 🤣!!! ...but yeah, people! Use this for consistency.
 	public static byte[] toByteArray(final byte... p_numbers) {
 		return p_numbers;
 	}

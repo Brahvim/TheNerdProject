@@ -11,29 +11,27 @@ import processing.opengl.PGraphics3D;
 
 public class NerdBasicCameraBuilder {
 
-	private final NerdSketch<PGraphics3D> SKETCH;
 	private final NerdBasicCamera BUILD;
+	private final NerdSketch<PGraphics3D> SKETCH;
 
 	public NerdBasicCameraBuilder(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
 		this(new NerdP3dGraphics(p_sketch, p_graphics));
 	}
 
 	public NerdBasicCameraBuilder(final NerdP3dGraphics p_graphics) {
-		this.SKETCH = p_graphics.getSketch(); // Used by `setClearColor()`.
+		this.SKETCH = p_graphics.getSketch(); // Used by `NerdAbstractCamera::setClearColor()`.
 		this.BUILD = new NerdBasicCamera(p_graphics);
 
-		// region My defaults:
+		// // My defaults.
 		// this.defaultCamUp = new PVector(0, 1, 0);
-
+		//
 		// this.defaultCamPos = new PVector(
-		// this.parentSketch.INIT_WIDTH * 0.5f, this.parentSketch.INIT_HEIGHT * 0.5f,
-		// 600);
-
+		// this.parentSketch.INIT_WIDTH * 0.5f,
+		// this.parentSketch.INIT_HEIGHT * 0.5f, 600);
+		//
 		// this.defaultCamCenter = new PVector(
-		// this.parentSketch.INIT_WIDTH * 0.5f, this.parentSketch.INIT_HEIGHT * 0.5f,
-		// 0);
-		// endregion
-
+		// this.parentSketch.INIT_WIDTH * 0.5f,
+		// this.parentSketch.INIT_HEIGHT * 0.5f, 0);
 	}
 
 	public NerdBasicCamera build() {
