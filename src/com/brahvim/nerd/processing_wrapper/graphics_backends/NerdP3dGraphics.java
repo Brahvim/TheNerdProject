@@ -36,7 +36,9 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     protected final NerdAbstractCamera DEFAULT_CAMERA;
     protected final NerdBasicCamera DEFAULT_CAMERA_BASIC;
 
-    protected boolean applyLighting = true, applyCameraMatrix = true;
+    protected boolean
+    /*   */ applyCameraMatrix = true,
+            applyDefaultLighting;
 
     /** To be assigned to in the constructor. */
     protected NerdAbstractCamera currentCamera, previousCamera; // CAMERA! wher lite?! wher accsunn?!
@@ -93,25 +95,25 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         if (this.applyCameraMatrix)
             this.applyCurrentCamera();
 
-        if (this.applyLighting)
+        if (this.applyDefaultLighting)
             this.lights();
     }
 
     // region Lighting toggles.
-    public void toggleLights() {
-        this.applyLighting = !this.applyLighting;
+    public void toggleDefaultLighting() {
+        this.applyDefaultLighting = !this.applyDefaultLighting;
     }
 
-    public void enableLights() {
-        this.applyLighting = true;
+    public void enableDefaultLighting() {
+        this.applyDefaultLighting = true;
     }
 
-    public void disableLights() {
-        this.applyLighting = false;
+    public void disableDefaultLighting() {
+        this.applyDefaultLighting = false;
     }
 
-    public void setLights(final boolean p_status) {
-        this.applyLighting = p_status;
+    public void setDefaultLighting(final boolean p_status) {
+        this.applyDefaultLighting = p_status;
     }
     // endregion
 
@@ -313,16 +315,22 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     // region Camera matrix configuration.
     public void camera(final NerdBasicCamera p_cam) {
-        this.GRAPHICS.camera(p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z, p_cam.getCenter().x,
-                p_cam.getCenter().y, p_cam.getCenter().z, p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
+        this.GRAPHICS.camera(
+                p_cam.POSITION.x, p_cam.POSITION.y, p_cam.POSITION.z,
+                p_cam.CENTER.x, p_cam.CENTER.y, p_cam.CENTER.z,
+                p_cam.ORIENTATION.x, p_cam.ORIENTATION.y,
+                p_cam.ORIENTATION.z);
     }
 
     public void camera(final NerdFlyCamera p_cam) {
-        this.GRAPHICS.camera(p_cam.getPos().x, p_cam.getPos().y, p_cam.getPos().z,
+        this.GRAPHICS.camera(
+                p_cam.POSITION.x, p_cam.POSITION.y, p_cam.POSITION.z,
 
-                p_cam.getPos().x + p_cam.front.x, p_cam.getPos().y + p_cam.front.y, p_cam.getPos().z + p_cam.front.z,
+                p_cam.POSITION.x + p_cam.FRONT.x,
+                p_cam.POSITION.y + p_cam.FRONT.y,
+                p_cam.POSITION.z + p_cam.FRONT.z,
 
-                p_cam.getUp().x, p_cam.getUp().y, p_cam.getUp().z);
+                p_cam.ORIENTATION.x, p_cam.ORIENTATION.y, p_cam.ORIENTATION.z);
     }
 
     public void camera(final PVector p_pos, final PVector p_center, final PVector p_up) {
@@ -352,7 +360,7 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     /**
      * Expands to:
      * {@code PGraphics::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
-     * 
+     *
      * @param p_cx   is the screen center on the `x`-axis.
      * @param p_cy   is the screen center on the `y`-axis.
      * @param p_near is the camera's distance from near plane.

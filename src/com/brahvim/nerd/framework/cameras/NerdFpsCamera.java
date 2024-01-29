@@ -11,7 +11,7 @@ public class NerdFpsCamera extends NerdFlyCamera {
 
 	@Override
 	public void applyMatrix() {
-		super.pos.y = this.height;
+		super.POSITION.y = this.height;
 		super.applyMatrix();
 	}
 
@@ -24,7 +24,8 @@ public class NerdFpsCamera extends NerdFlyCamera {
 		return this.height;
 	}
 
-	public void setHeight(final float p_height) {
+	@Override
+    public void setHeight(final float p_height) {
 		this.height = p_height;
 	}
 

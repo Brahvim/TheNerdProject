@@ -12,8 +12,8 @@ public abstract class NerdLight {
 
 	protected final PGraphics3D GRAPHICS;
 
-	protected boolean pactive;
 	protected PVector pos, color;
+	protected boolean pactive;
 	// endregion
 
 	// region Constructors.
@@ -54,8 +54,11 @@ public abstract class NerdLight {
 	// endregion
 
 	public void apply() {
-		if (this.active)
+		if (this.active) {
+			this.GRAPHICS.lights();
 			this.applyImpl();
+		}
+
 		this.pactive = this.active;
 	}
 

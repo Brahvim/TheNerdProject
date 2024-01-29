@@ -17,10 +17,11 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	// region Fields.
 	public static final float DEFAULT_MOUSE_SENSITIVITY = 0.18f;
 
+	public final PVector FRONT, DEFAULT_FRONT;
+
 	public float yaw, zoom, pitch;
 	public boolean holdMouse = true;
 	public boolean shouldConstrainPitch = true;
-	public PVector front = new PVector(), defaultCamFront = new PVector();
 	public float mouseSensitivity = NerdFlyCamera.DEFAULT_MOUSE_SENSITIVITY;
 
 	protected final NerdDisplayModule<PGraphics3D> DISPLAY;
@@ -29,41 +30,38 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	// endregion
 
 	// region Construction.
-	// Nope! Can't merge the two o' these:
-	@SuppressWarnings("unchecked")
-	public NerdFlyCamera(final NerdP3dGraphics p_graphics) {
-		super(p_graphics);
-		this.DISPLAY = super.SKETCH.getNerdModule(NerdDisplayModule.class);
-		super.WINDOW.cursorVisible = false;
-
-		this.front = super.pos.copy();
-		this.defaultCamFront = this.front.copy();
-	}
-
+	// Nope! Can't merge the two o' these constructu's:
 	@SuppressWarnings("unchecked")
 	public NerdFlyCamera(final NerdP3dGraphics p_graphics, final PVector p_defaultFront) {
 		super(p_graphics);
 		this.DISPLAY = super.SKETCH.getNerdModule(NerdDisplayModule.class);
-		super.WINDOW.cursorVisible = false;
 
-		this.front.set(p_defaultFront);
-		this.defaultCamFront.set(p_defaultFront);
+		this.FRONT = p_defaultFront.copy();
+		super.WINDOW.cursorVisible = false;
+		this.DEFAULT_FRONT = p_defaultFront.copy();
+	}
+
+	@SuppressWarnings("unchecked")
+	public NerdFlyCamera(final NerdP3dGraphics p_graphics) {
+		super(p_graphics);
+		this.DISPLAY = super.SKETCH.getNerdModule(NerdDisplayModule.class);
+
+		this.FRONT = super.POSITION.copy();
+		super.WINDOW.cursorVisible = false;
+		this.DEFAULT_FRONT = this.FRONT.copy();
 	}
 
 	public NerdFlyCamera(final NerdFlyCamera p_source) {
-		super(p_source.GRAPHICS);
+		super(p_source);
 		this.DISPLAY = p_source.DISPLAY;
 
 		// Copying settings over to `this`.
-		this.up = p_source.up.copy();
-		this.pos = p_source.pos.copy();
-		this.front = p_source.front.copy();
+		this.FRONT = p_source.FRONT.copy();
+		this.DEFAULT_FRONT = p_source.DEFAULT_FRONT.copy();
 
 		this.far = p_source.far;
 		this.fov = p_source.fov;
 		this.near = p_source.near;
-
-		this.script = p_source.script;
 
 		this.yaw = p_source.yaw;
 		this.zoom = p_source.zoom;
@@ -86,35 +84,28 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	}
 
 	@Override
-	public void applyMatrix() {
-		super.applyProjection();
+	public void reset() {
+		super.reset();
+		this.yaw = this.pitch = 0;
+		this.FRONT.set(this.DEFAULT_FRONT);
+	}
 
+	@Override
+	public void applyMatrix() {
 		// System.out.println(this.front);
 		// System.out.println(super.pos);
 		// System.out.println(super.up);
 
 		// Apply the camera matrix:
 		super.GRAPHICS.camera(
-				super.pos.x, super.pos.y, super.pos.z,
+				super.POSITION.x, super.POSITION.y, super.POSITION.z,
 
 				// Camera center point:
-				this.front.x + super.pos.x,
-				this.front.y + super.pos.y,
-				this.front.z + super.pos.z,
+				this.FRONT.x + super.POSITION.x,
+				this.FRONT.y + super.POSITION.y,
+				this.FRONT.z + super.POSITION.z,
 
-				super.up.x, super.up.y, super.up.z);
-	}
-
-	@Override
-	public void completeReset() {
-		super.completeReset();
-
-		if (this.defaultCamFront == null)
-			this.front.set(super.pos);
-		else
-			this.front.set(this.defaultCamFront);
-
-		this.yaw = this.pitch = 0;
+				super.ORIENTATION.x, super.ORIENTATION.y, super.ORIENTATION.z);
 	}
 	// endregion
 
@@ -130,33 +121,33 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	}
 
 	public void moveX(final float p_velX) {
-		super.pos.add(
+		super.POSITION.add(
 				PVector.mult(
 						PVector.cross(
-								this.front, super.up, null)
+								this.FRONT, super.ORIENTATION, null)
 								.normalize(),
 						p_velX));
 	}
 
 	public void moveY(final float p_velY) {
-		super.pos.y += p_velY;
+		super.POSITION.y += p_velY;
 	}
 
 	public void moveZ(final float p_velZ) {
-		super.pos.sub(PVector.mult(this.front, p_velZ));
+		super.POSITION.sub(PVector.mult(this.FRONT, p_velZ));
 	}
 
 	public void addRoll(final float p_roll) {
-		super.up.x += p_roll;
+		super.ORIENTATION.x += p_roll;
 	}
 
 	// Setters for movement:
-	public void setY(final float p_height) {
-		super.pos.y = p_height;
+	public void setRoll(final float p_roll) {
+		super.ORIENTATION.x = p_roll;
 	}
 
-	public void setRoll(final float p_roll) {
-		super.up.x = p_roll;
+	public void setHeight(final float p_height) {
+		super.POSITION.y = p_height;
 	}
 
 	protected void mouseTransform() {
@@ -200,11 +191,11 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 				PITCH_COS = PApplet.cos(PApplet.radians(this.pitch)),
 				PITCH_SIN = PApplet.sin(PApplet.radians(this.pitch));
 
-		this.front.set(
+		this.FRONT.set(
 				YAW_COS * PITCH_COS,
 				/* */ PITCH_SIN /* */,
 				YAW_SIN * PITCH_COS);
-		this.front.normalize();
+		this.FRONT.normalize();
 		// endregion
 	}
 

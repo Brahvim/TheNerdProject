@@ -224,8 +224,6 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	public void setup() {
 		this.nerdGenericGraphics = (NerdAbstractGraphics<SketchPGraphicsT>)
 		/*   */ NerdAbstractGraphics.createNerdGenericGraphicsWrapperForSketch(this);
-		// this.NERD_GRAPHICS_TO_PGRAPHICS_MAP.put(
-		// this.nerdGenericGraphics, (SketchPGraphicsT) super.g);
 
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
 		this.forEachNerdModule(NerdModule::preSetup);
