@@ -39,17 +39,23 @@ import processing.svg.PGraphicsSVG;
  */
 public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
+	public static interface NerdSketchModulesSetConsumer<SketchPGraphicsT extends PGraphics>
+			extends Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>> {
+	}
+
+	public static interface NerdSketchConstructorFunction<SketchPGraphicsT extends PGraphics>
+			extends Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> {
+	}
+
 	// region Fields and constructor!
 	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
-	protected Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> sketchConstructor = null;
-	protected Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>> modulesConsumer = null;
+
+	protected NerdSketchConstructorFunction<SketchPGraphicsT> sketchConstructor = null;
+	protected NerdSketchModulesSetConsumer<SketchPGraphicsT> modulesConsumer = null;
+
 	protected final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
 
 	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass) {
-		// This caused issues till the design just... *fixed itself!:*
-		// final Class<? extends PGraphics> rendererClass =
-		// NerdReflectionUtils.getFirstTypeArg(this);
-
 		this.BUILD_SETTINGS = new NerdSketchSettings<>();
 
 		if (p_rendererClass == PGraphics2D.class)
@@ -83,16 +89,24 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 			throw new IllegalArgumentException("That's not a real type...");
 	}
 
-	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass,
-			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_sketchConstructor) {
+	protected NerdSketchBuilder(
+			final Class<? extends PGraphics> p_rendererClass,
+			final NerdSketchBuilder.NerdSketchConstructorFunction<SketchPGraphicsT> p_sketchConstructor) {
 		this(p_rendererClass);
 		this.sketchConstructor = p_sketchConstructor;
 	}
 
 	protected NerdSketchBuilder(
 			final Class<? extends PGraphics> p_rendererClass,
-			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_sketchConstructor,
-			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>> p_modulesSet) {
+			final NerdSketchModulesSetConsumer<SketchPGraphicsT> p_modulesSet) {
+		this(p_rendererClass);
+		this.modulesConsumer = p_modulesSet;
+	}
+
+	protected NerdSketchBuilder(
+			final Class<? extends PGraphics> p_rendererClass,
+			final NerdSketchConstructorFunction<SketchPGraphicsT> p_sketchConstructor,
+			final NerdSketchModulesSetConsumer<SketchPGraphicsT> p_modulesSet) {
 		this(p_rendererClass);
 		this.modulesConsumer = p_modulesSet;
 		this.sketchConstructor = p_sketchConstructor;
@@ -100,16 +114,17 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	// endregion
 
 	// region Building.
-	// Getting `p_javaMainArgs` passed in here to allow for fake arguments.
+	// Getting `p_sketchArgs` passed in here to allow for fake arguments.
 	// I know `sun.java.command` exists!
 	// (System property containing the strings passed to `main` with spaces between
 	// them. Accessible via `System.getProperty()` like all other ones!)
 
 	public final NerdSketch<SketchPGraphicsT> build() {
-		return this.build(new String[0]);
+		// Faster than passing an empty array:
+		return this.build(null); // this.build(new String[0]);
 	}
 
-	public final NerdSketch<SketchPGraphicsT> build(final String[] p_javaMainArgs) {
+	public final NerdSketch<SketchPGraphicsT> build(final String[] p_sketchArgs) {
 		// `NerdModule`s are constructed by the `NerdSketch<SketchPGraphicsT>`
 		// constructor.
 
@@ -130,15 +145,16 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 				s.add(f);
 		};
 
-		final NerdSketch<SketchPGraphicsT> constructedSketch = this
-				.createNerdSketch(this.BUILD_SETTINGS);
-		NerdSketchBuilder.runSketch(constructedSketch, p_javaMainArgs);
+		final NerdSketch<SketchPGraphicsT> constructedSketch
+		/*   */ = this.createNerdSketch(this.BUILD_SETTINGS);
+
+		NerdSketchBuilder.runSketch(constructedSketch, p_sketchArgs);
 		return constructedSketch;
 	}
 
 	private LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>> supplyDefaultModules() {
-		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>> toRet = new LinkedHashSet<>(
-				5);
+		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
+		/*   */ toRet = new LinkedHashSet<>(5);
 
 		toRet.add(NerdSketch.NerdSketchOnlyAssetsModule::new);
 
@@ -151,19 +167,19 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return toRet;
 	}
 
-	public static <SketchPGraphicsT extends PGraphics> NerdSketch<SketchPGraphicsT> runSketch(
-			final NerdSketch<SketchPGraphicsT> p_sketch) {
+	public static <SketchPGraphicsT extends PGraphics> NerdSketch<SketchPGraphicsT> //
+			runSketch(final NerdSketch<SketchPGraphicsT> p_sketch) {
 		return NerdSketchBuilder.runSketch(p_sketch, null);
 	}
 
-	public static <SketchPGraphicsT extends PGraphics> NerdSketch<SketchPGraphicsT> runSketch(
-			final NerdSketch<SketchPGraphicsT> p_sketch, final String[] p_javaMainArgs) {
+	public static <SketchPGraphicsT extends PGraphics> NerdSketch<SketchPGraphicsT> //
+			runSketch(final NerdSketch<SketchPGraphicsT> p_sketch, final String[] p_sketchArgs) {
 		final String[] args = new String[] { p_sketch.getClass().getName() };
 
-		if (p_javaMainArgs == null || p_javaMainArgs.length == 0)
+		if (p_sketchArgs == null || p_sketchArgs.length == 0)
 			PApplet.runSketch(args, p_sketch);
 		else
-			PApplet.runSketch(PApplet.concat(args, p_javaMainArgs), p_sketch);
+			PApplet.runSketch(PApplet.concat(args, p_sketchArgs), p_sketch);
 		return p_sketch;
 	}
 	// endregion

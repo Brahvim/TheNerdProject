@@ -1,12 +1,6 @@
 package com.brahvim.nerd.processing_wrapper.sketch_builders.special;
 
-import java.util.LinkedHashSet;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import com.brahvim.nerd.processing_wrapper.NerdModule;
-import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.NerdSketchSettings;
+import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
 import com.brahvim.nerd.processing_wrapper.sketch_builders.NerdJava2dSketchBuilder;
 import com.brahvim.nerd.processing_wrapper.sketches.special.NerdJava2dUndecoratedWindowSketch;
 
@@ -20,13 +14,18 @@ public class NerdJava2dUndecoratedWindowSketchBuilder extends NerdJava2dSketchBu
     }
 
     public NerdJava2dUndecoratedWindowSketchBuilder(
-            final Function<NerdSketchSettings<PGraphicsJava2D>, NerdSketch<PGraphicsJava2D>> p_sketchConstructor) {
+            final NerdSketchBuilder.NerdSketchModulesSetConsumer<PGraphicsJava2D> p_modulesSet) {
+        super(p_modulesSet);
+    }
+
+    public NerdJava2dUndecoratedWindowSketchBuilder(
+            final NerdSketchBuilder.NerdSketchConstructorFunction<PGraphicsJava2D> p_sketchConstructor) {
         super(p_sketchConstructor);
     }
 
     public NerdJava2dUndecoratedWindowSketchBuilder(
-            final Function<NerdSketchSettings<PGraphicsJava2D>, NerdSketch<PGraphicsJava2D>> p_sketchConstructor,
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsJava2D>, NerdModule<PGraphicsJava2D>>>> p_modulesSet) {
+            final NerdSketchBuilder.NerdSketchConstructorFunction<PGraphicsJava2D> p_sketchConstructor,
+            final NerdSketchBuilder.NerdSketchModulesSetConsumer<PGraphicsJava2D> p_modulesSet) {
         super(p_sketchConstructor, p_modulesSet);
     }
 

@@ -34,12 +34,12 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	public class Push implements AutoCloseable {
 
 		public Push() {
-			NerdAbstractGraphics.this.GRAPHICS.push();
+			NerdAbstractGraphics.this.push();
 		}
 
 		@Override
 		public void close() throws Exception {
-			NerdAbstractGraphics.this.GRAPHICS.pop();
+			NerdAbstractGraphics.this.pop();
 		}
 
 	}
@@ -47,12 +47,12 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	public class StylePush implements AutoCloseable {
 
 		public StylePush() {
-			NerdAbstractGraphics.this.GRAPHICS.pushStyle();
+			NerdAbstractGraphics.this.pushStyle();
 		}
 
 		@Override
 		public void close() throws Exception {
-			NerdAbstractGraphics.this.GRAPHICS.popStyle();
+			NerdAbstractGraphics.this.popStyle();
 		}
 
 	}
@@ -60,12 +60,12 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	public class MatrixPush implements AutoCloseable {
 
 		public MatrixPush() {
-			NerdAbstractGraphics.this.GRAPHICS.pushMatrix();
+			NerdAbstractGraphics.this.pushMatrix();
 		}
 
 		@Override
 		public void close() throws Exception {
-			NerdAbstractGraphics.this.GRAPHICS.popMatrix();
+			NerdAbstractGraphics.this.popMatrix();
 		}
 
 	}
@@ -121,42 +121,35 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 
 	// region Utilitarian constructors.
-	@SuppressWarnings("unchecked")
 	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
 			final String p_renderer, final String p_path) {
-		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height, p_renderer, p_path));
+		this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer, p_path));
 	}
 
-	@SuppressWarnings("unchecked")
 	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
 			final String p_renderer) {
-		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height, p_renderer));
+		this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer));
 	}
 
-	@SuppressWarnings("unchecked")
 	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height) {
-		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height));
+		this(p_sketch, p_sketch.createGraphics(p_width, p_height));
 	}
 
-	@SuppressWarnings("unchecked")
 	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_width,
 			final float p_height) {
-		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height));
+		this(p_sketch, p_sketch.createGraphics(p_width, p_height));
 	}
 
-	@SuppressWarnings("unchecked")
 	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_size) {
-		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_size));
+		this(p_sketch, p_sketch.createGraphics(p_size));
 	}
 
-	@SuppressWarnings("unchecked")
 	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_size) {
-		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_size));
+		this(p_sketch, p_sketch.createGraphics(p_size));
 	}
 
-	@SuppressWarnings("unchecked")
 	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch) {
-		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics());
+		this(p_sketch, p_sketch.createGraphics());
 	}
 	// endregion
 
@@ -176,16 +169,29 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.SKETCH.NERD_GRAPHICS_TO_PGRAPHICS_MAP.put(this, p_pGraphicsToWrap);
 	}
 
-	/* `package` */ final void draw() {
+	/* `package` */ final void preDraw() {
 		this.updateParameters();
 		this.recordCurrentParameters();
+		this.preDrawImpl();
+	}
 
+	/* `package` */ final void draw() {
 		// Callback into subclass code!:
 		this.drawImpl();
 	}
 
+	/* `package` */ final void postDraw() {
+		this.postDrawImpl();
+	}
+
 	// For subclasses:
+	protected void preDrawImpl() {
+	}
+
 	protected void drawImpl() {
+	}
+
+	protected void postDrawImpl() {
 	}
 
 	private void updateParameters() {
@@ -802,23 +808,6 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		p_code.run();
 		this.GRAPHICS.popStyle();
 	}
-
-	// region `AutoCloseable` returning implementations.
-	// public AutoCloseable withPush() {
-	// this.GRAPHICS.push();
-	// return this.new NerdAbstractGraphicsCompletePusher();
-	// }
-
-	// public AutoCloseable withMatrixPushed() {
-	// this.GRAPHICS.pushMatrix();
-	// return this.new NerdAbstractGraphicsMatrixPusher();
-	// }
-
-	// public AutoCloseable withStylePushed() {
-	// this.GRAPHICS.pushStyle();
-	// return this.new NerdAbstractGraphicsStylePusher();
-	// }
-	// endregion
 	// endregion
 	// endregion
 

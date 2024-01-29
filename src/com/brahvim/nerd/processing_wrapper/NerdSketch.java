@@ -277,6 +277,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	@Override
 	public void preDraw() {
+		this.NERD_GRAPHICS_TO_PGRAPHICS_MAP.keySet().forEach(NerdAbstractGraphics::preDraw);
 		this.forEachNerdModule(NerdModule::preDraw);
 	}
 
@@ -285,10 +286,10 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		// try (NerdMillisTimer millisTimer = new
 		// NerdMillisTimer("`NerdSketch::draw()`")) {
 
-		for (final NerdAbstractGraphics<SketchPGraphicsT> g : this.NERD_GRAPHICS_TO_PGRAPHICS_MAP.keySet())
-			g.draw();
-
+		this.preDraw();
+		this.NERD_GRAPHICS_TO_PGRAPHICS_MAP.keySet().forEach(NerdAbstractGraphics::draw);
 		this.forEachNerdModule(NerdModule::draw);
+		this.postDraw();
 
 		// } catch (final Exception e) {
 		// this.e.printStackTrace();
@@ -297,6 +298,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	@Override
 	public void postDraw() {
+		this.NERD_GRAPHICS_TO_PGRAPHICS_MAP.keySet().forEach(NerdAbstractGraphics::postDraw);
 		this.forEachNerdModule(NerdModule::postDraw);
 	}
 
@@ -361,7 +363,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 			if (this.SKETCH_SETTINGS.canAltEnterFullscreen
 					&& super.keyCode == KeyEvent.VK_ENTER
-					&& this.INPUT.anyGivenKeyIsPressed(KeyEvent.VK_ALT, 19))
+					&& this.INPUT.keysPressedIsEither(KeyEvent.VK_ALT, 19))
 				this.GENERIC_WINDOW.fullscreen = !this.GENERIC_WINDOW.fullscreen;
 
 			else if (this.SKETCH_SETTINGS.canF11Fullscreen) {
@@ -588,37 +590,38 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// region `createGraphics()` overrides and overloads.
 	// region Actual overrides.
 	@Override
-	public PGraphics createGraphics(
+	@SuppressWarnings("unchecked")
+	public SketchPGraphicsT createGraphics(
 			final int p_width, final int p_height, final String p_renderer, final String p_path) {
-		return super.makeGraphics(p_width, p_height, p_renderer, p_path, false);
+		return (SketchPGraphicsT) super.makeGraphics(p_width, p_height, p_renderer, p_path, false);
 	}
 
 	@Override
-	public PGraphics createGraphics(final int p_width, final int p_height, final String p_renderer) {
+	public SketchPGraphicsT createGraphics(final int p_width, final int p_height, final String p_renderer) {
 		return this.createGraphics(p_width, p_height, p_renderer, NerdSketch.EXEC_DIR_PATH);
 	}
 
 	@Override
-	public PGraphics createGraphics(final int p_width, final int p_height) {
+	public SketchPGraphicsT createGraphics(final int p_width, final int p_height) {
 		return this.createGraphics(p_width, p_height, super.sketchRenderer());
 	}
 	// endregion
 
 	// region Utilitarian overloads.
-	public PGraphics createGraphics(final float p_width, final float p_height) {
+	public SketchPGraphicsT createGraphics(final float p_width, final float p_height) {
 		return this.createGraphics((int) p_width, (int) p_height, super.sketchRenderer());
 	}
 
-	public PGraphics createGraphics(final float p_size) {
+	public SketchPGraphicsT createGraphics(final float p_size) {
 		final int size = (int) p_size;
 		return this.createGraphics(size, size, super.sketchRenderer());
 	}
 
-	public PGraphics createGraphics(final int p_size) {
+	public SketchPGraphicsT createGraphics(final int p_size) {
 		return this.createGraphics(p_size, p_size, super.sketchRenderer());
 	}
 
-	public PGraphics createGraphics() {
+	public SketchPGraphicsT createGraphics() {
 		return this.createGraphics(super.width, super.height, super.sketchRenderer());
 	}
 	// endregion

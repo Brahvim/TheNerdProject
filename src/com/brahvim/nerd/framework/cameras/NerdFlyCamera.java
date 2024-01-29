@@ -123,6 +123,12 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		return this.pholdMouse;
 	}
 
+	public void moveVec(final PVector p_speed) {
+		this.moveX(p_speed.x);
+		this.moveY(p_speed.y);
+		this.moveZ(p_speed.z);
+	}
+
 	public void moveX(final float p_velX) {
 		super.pos.add(
 				PVector.mult(
@@ -140,7 +146,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		super.pos.sub(PVector.mult(this.front, p_velZ));
 	}
 
-	public void roll(final float p_roll) {
+	public void addRoll(final float p_roll) {
 		super.up.x += p_roll;
 	}
 

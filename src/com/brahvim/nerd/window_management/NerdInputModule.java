@@ -278,6 +278,31 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 	// endregion
 
 	// region Keyboard utilities!
+	public char getTypedKey() {
+		if (NerdInputModule.isTypeable(super.SKETCH.key))
+			return super.SKETCH.key;
+
+		// New way to do this in Java!:
+		// (...as seen in [`java.lang.`]`Long.class`, on line 217, in OpenJDK `17`!)
+		return switch (super.SKETCH.keyCode) {
+			case PConstants.BACKSPACE -> '\b';
+			case PConstants.RETURN -> '\n';
+			case PConstants.ENTER -> '\n';
+			default -> '\0';
+		};
+
+		// """"""""Slow"""""""":
+		/*
+		 * if (keyCode == BACKSPACE)
+		 * return '\b';
+		 * else if (keyCode == RETURN || keyCode == ENTER)
+		 * return '%n';
+		 * else if (isTypeable(key))
+		 * return key;
+		 * else return '\0';
+		 */
+	}
+
 	public Integer[] getHeldKeysArray() {
 		return this.KEYS_HELD.toArray(new Integer[0]);
 	}
@@ -302,118 +327,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 		return this.PREV_FRAME_KEYS_HELD.toString();
 	}
 
-	public boolean onlyKeyPressedIs(final int p_keyCode) {
-		return this.KEYS_HELD.size() == 1 && this.KEYS_HELD.contains(p_keyCode);
-	}
-
-	public boolean onlyKeyPressedWas(final int p_keyCode) {
-		return this.PREV_FRAME_KEYS_HELD.size() == 1 && this.PREV_FRAME_KEYS_HELD.contains(p_keyCode);
-	}
-
-	public boolean onlyKeysPressedAre(final int... p_keyCodes) {
-		boolean toRet = this.KEYS_HELD.size() == p_keyCodes.length;
-
-		if (!toRet)
-			return false;
-
-		for (final int i : p_keyCodes)
-			toRet &= this.KEYS_HELD.contains(i);
-
-		return toRet;
-	}
-
-	public boolean onlyKeysPressedWere(final int... p_keyCodes) {
-		boolean toRet = this.PREV_FRAME_KEYS_HELD.size() == p_keyCodes.length;
-
-		if (!toRet)
-			return false;
-
-		for (final int i : p_keyCodes)
-			toRet &= this.PREV_FRAME_KEYS_HELD.contains(i);
-
-		return toRet;
-	}
-
-	public boolean areKeysPressedAreOrdered(final int... p_keyCodes) {
-		final int paramArrLen = p_keyCodes.length;
-		final int ownArrLen = this.KEYS_HELD.size();
-
-		int paramArrId = 0;
-
-		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; i++) {
-			if (p_keyCodes[paramArrId] == this.KEYS_HELD.get(i))
-				paramArrId++;
-		}
-
-		return paramArrId == paramArrLen;
-	}
-
-	public boolean keysPressedWereOrdered(final int... p_keyCodes) {
-		final int paramArrLen = p_keyCodes.length;
-		final int ownArrLen = this.PREV_FRAME_KEYS_HELD.size();
-
-		int paramArrId = 0;
-
-		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; i++) {
-			if (p_keyCodes[paramArrId] == this.PREV_FRAME_KEYS_HELD.get(i))
-				paramArrId++;
-		}
-
-		return paramArrId == paramArrLen;
-	}
-
-	public boolean keysPressedAre(final int... p_keyCodes) {
-		// this.keysHeld.contains(p_keyCodes); // Causes a totally unique error
-		// :O
-
-		for (final int i : p_keyCodes)
-			if (!this.KEYS_HELD.contains(i))
-				return false;
-		return true;
-
-		// I have no idea why Nerd still uses this. Didn't I change that..?:
-		/*
-		 * boolean flag = true;
-		 * for (int i : p_keyCodes)
-		 * flag &= this.keysHeld.contains(i); // ...yeah, `|=` and not `&=`...
-		 * return flag;
-		 */
-		// An article once said: `boolean` flags are bad.
-	}
-
-	public boolean keysGivenWerePressedLastFrame(final int... p_keyCodes) {
-		for (final int i : p_keyCodes)
-			if (!this.PREV_FRAME_KEYS_HELD.contains(i))
-				return false;
-		return true;
-	}
-
-	public char getTypedKey() {
-		if (NerdInputModule.isTypeable(super.SKETCH.key))
-			return super.SKETCH.key;
-
-		// New way to do this in Java!:
-		// (...as seen in [`java.lang.`]`Long.class`, on line 217, in OpenJDK `17`!)
-		return switch (super.SKETCH.keyCode) {
-			case PConstants.BACKSPACE -> '\b';
-			case PConstants.RETURN -> '\n';
-			case PConstants.ENTER -> '\n';
-			default -> '\0';
-		};
-
-		// """"""""Slow"""""""":
-		/*
-		 * if (keyCode == BACKSPACE)
-		 * return '\b';
-		 * else if (keyCode == RETURN || keyCode == ENTER)
-		 * return '%n';
-		 * else if (isTypeable(key))
-		 * return key;
-		 * else return '\0';
-		 */
-
-	}
-
+	// region Current frame.
 	public String addTypedKeyTo(final String p_str) {
 		final char typedChar = this.getTypedKey();
 		final int strLen = p_str.length();
@@ -434,22 +348,46 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 			p_str.append(Character.toString(typedChar));
 	}
 
+	public boolean keyPressedIsOnly(final int p_keyCode) {
+		return this.KEYS_HELD.size() == 1 && this.KEYS_HELD.contains(p_keyCode);
+	}
+
 	public boolean keyGivenIsPressed(final int p_keyCode) {
 		return this.KEYS_HELD.contains(p_keyCode);
 	}
 
-	public boolean keyGivenWasPressed(final int p_keyCode) {
-		return this.PREV_FRAME_KEYS_HELD.contains(p_keyCode);
+	public boolean keysPressedAreOnly(final int... p_keyCodes) {
+		boolean toRet = this.KEYS_HELD.size() == p_keyCodes.length;
+
+		if (!toRet)
+			return false;
+
+		for (final int i : p_keyCodes)
+			toRet &= this.KEYS_HELD.contains(i);
+
+		return toRet;
 	}
 
-	public static boolean isTypeable(final char p_char) {
-		return Character.isDigit(p_char) ||
-				Character.isLetter(p_char) ||
-				Character.isWhitespace(p_char) ||
-				NerdInputModule.givenKeyIsStandardKeyboardSymbol(p_char);
+	public boolean keysGivenArePressed(final int... p_keyCodes) {
+		// this.keysHeld.contains(p_keyCodes); // Causes a totally unique error
+		// :O
+
+		for (final int i : p_keyCodes)
+			if (!this.KEYS_HELD.contains(i))
+				return false;
+		return true;
+
+		// I have no idea why Nerd still uses this. Didn't I change that..?:
+		/*
+		 * boolean flag = true;
+		 * for (int i : p_keyCodes)
+		 * flag &= this.keysHeld.contains(i); // ...yeah, `|=` and not `&=`...
+		 * return flag;
+		 */
+		// An article once said: `boolean` flags are bad.
 	}
 
-	public boolean anyGivenKeyIsPressed(final int... p_keyCodes) {
+	public boolean keysPressedIsEither(final int... p_keyCodes) {
 		for (final int i : p_keyCodes)
 			if (this.KEYS_HELD.contains(i))
 				return true;
@@ -457,7 +395,50 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 		return false;
 	}
 
-	public boolean anyGivenKeyWasPressed(final int... p_keyCodes) {
+	public boolean keysPressedAreOrdered(final int... p_keyCodes) {
+		final int paramArrLen = p_keyCodes.length;
+		final int ownArrLen = this.KEYS_HELD.size();
+
+		int paramArrId = 0;
+
+		for (int i = 0; paramArrId < paramArrLen || i < ownArrLen; i++) {
+			if (p_keyCodes[paramArrId] == this.KEYS_HELD.get(i))
+				paramArrId++;
+		}
+
+		return paramArrId == paramArrLen;
+	}
+	// endregion
+
+	// region Previous frame.
+	public boolean keyGivenWasPressed(final int p_keyCode) {
+		return this.PREV_FRAME_KEYS_HELD.contains(p_keyCode);
+	}
+
+	public boolean keyPressedWasOnly(final int p_keyCode) {
+		return this.PREV_FRAME_KEYS_HELD.size() == 1 && this.PREV_FRAME_KEYS_HELD.contains(p_keyCode);
+	}
+
+	public boolean keysPressedWereOnly(final int... p_keyCodes) {
+		boolean toRet = this.PREV_FRAME_KEYS_HELD.size() == p_keyCodes.length;
+
+		if (!toRet)
+			return false;
+
+		for (final int i : p_keyCodes)
+			toRet &= this.PREV_FRAME_KEYS_HELD.contains(i);
+
+		return toRet;
+	}
+
+	public boolean keysGivenWerePressed(final int... p_keyCodes) {
+		for (final int i : p_keyCodes)
+			if (!this.PREV_FRAME_KEYS_HELD.contains(i))
+				return false;
+		return true;
+	}
+
+	public boolean keyPressedWasEither(final int... p_keyCodes) {
 		for (final int i : p_keyCodes)
 			if (this.PREV_FRAME_KEYS_HELD.contains(i))
 				return true;
@@ -465,22 +446,53 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 		return false;
 	}
 
-	public static boolean givenKeyIsStandardKeyboardSymbol(final char p_char) {
-		// boolean is = false;
-		for (final char ch : NerdInputModule.STANDARD_KEYBOARD_SYMBOLS)
-			// Can't use this!:
-			// return ch == p_char;
-			// What if the array being examined is empty?!
+	public boolean keysPressedWereOrdered(final int... p_keyCodes) {
+		final int paramArrLen = p_keyCodes.length;
+		final int ownArrLen = this.PREV_FRAME_KEYS_HELD.size();
 
-			if (ch == p_char)
-				return true;
+		int paramArrId = 0;
 
-		// These used to be in the loop:
-		// is = ch == p_char;
-		// is |= ch == p_char;
-		// return is;
+		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; i++) {
+			if (p_keyCodes[paramArrId] == this.PREV_FRAME_KEYS_HELD.get(i))
+				paramArrId++;
+		}
 
-		return false;
+		return paramArrId == paramArrLen;
+	}
+	// endregion
+
+	// region "No Longer" (previous frame but not current frame).
+	public boolean keyGivenIsNoLongerPressed(final int p_keyCode) {
+		return !this.keyGivenIsPressed(p_keyCode) && this.keyGivenWasPressed(p_keyCode);
+	}
+
+	public boolean keyNoLongerPressedIsOnly(final int p_keyCode) {
+		return !this.keyPressedIsOnly(p_keyCode) && this.keyPressedWasOnly(p_keyCode);
+	}
+
+	public boolean keyPressedNoLongerIsEither(final int... p_keyCodes) {
+		return !this.keysPressedIsEither(p_keyCodes) && this.keyPressedWasEither(p_keyCodes);
+	}
+
+	public boolean keysPressedNoLongerAreOnly(final int... p_keyCodes) {
+		return !this.keysPressedAreOnly(p_keyCodes) && this.keysPressedWereOnly(p_keyCodes);
+	}
+
+	public boolean keysGivenAreNoLongerPressed(final int... p_keyCodes) {
+		return !this.keysGivenArePressed(p_keyCodes) && this.keysGivenWerePressed(p_keyCodes);
+	}
+
+	public boolean keysPressedAreNoLongerOrdered(final int... p_keyCodes) {
+		return !this.keysPressedAreOrdered(p_keyCodes) && this.keysPressedWereOrdered(p_keyCodes);
+	}
+	// endregion
+
+	// region "`is*()`"".
+	public static boolean isTypeable(final char p_char) {
+		return Character.isDigit(p_char) ||
+				Character.isLetter(p_char) ||
+				Character.isWhitespace(p_char) ||
+				NerdInputModule.isStandardKeyboardSymbol(p_char);
 	}
 
 	/**
@@ -514,6 +526,25 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 				|| p_keyCode == 157 // "Meta"/"Super", AKA the "OS key".
 		);
 	}
+
+	public static boolean isStandardKeyboardSymbol(final char p_char) {
+		// boolean is = false;
+		for (final char ch : NerdInputModule.STANDARD_KEYBOARD_SYMBOLS)
+			// Can't use this!:
+			// return ch == p_char;
+			// What if the array being examined is empty?!
+
+			if (ch == p_char)
+				return true;
+
+		// These used to be in the loop:
+		// is = ch == p_char;
+		// is |= ch == p_char;
+		// return is;
+
+		return false;
+	}
+	// endregion
 	// endregion
 
 }

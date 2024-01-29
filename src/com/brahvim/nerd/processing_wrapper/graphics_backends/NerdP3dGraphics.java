@@ -17,11 +17,26 @@ import processing.opengl.PGraphics3D;
 
 public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
+    // region Inner classes.
+    public class TwoDimensionalPush implements AutoCloseable {
+
+        public TwoDimensionalPush() {
+            NerdP3dGraphics.this.begin2d();
+        }
+
+        @Override
+        public void close() throws Exception {
+            NerdP3dGraphics.this.end2d();
+        }
+
+    }
+    // endregion
+
     protected final NerdUnprojector UNPROJECTOR;
     protected final NerdAbstractCamera DEFAULT_CAMERA;
     protected final NerdBasicCamera DEFAULT_CAMERA_BASIC;
 
-    protected boolean applyLighting, applyCameraMatrix = true;
+    protected boolean applyLighting = true, applyCameraMatrix = true;
 
     /** To be assigned to in the constructor. */
     protected NerdAbstractCamera currentCamera, previousCamera; // CAMERA! wher lite?! wher accsunn?!
@@ -30,30 +45,30 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height,
             final String p_renderer) {
-        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_width, p_height, p_renderer));
+        this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer));
     }
 
     protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height) {
-        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_width, p_height));
+        this(p_sketch, p_sketch.createGraphics(p_width, p_height));
     }
 
     protected NerdP3dGraphics(
             final NerdSketch<PGraphics3D> p_sketch,
             final float p_width,
             final float p_height) {
-        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_width, p_height));
+        this(p_sketch, p_sketch.createGraphics(p_width, p_height));
     }
 
     protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final float p_size) {
-        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_size));
+        this(p_sketch, p_sketch.createGraphics(p_size));
     }
 
     protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_size) {
-        this(p_sketch, (PGraphics3D) p_sketch.createGraphics(p_size));
+        this(p_sketch, p_sketch.createGraphics(p_size));
     }
 
     protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch) {
-        this(p_sketch, (PGraphics3D) p_sketch.createGraphics());
+        this(p_sketch, p_sketch.createGraphics());
     }
     // endregion
 
@@ -74,12 +89,15 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     }
 
     @Override
+    protected void preDrawImpl() {
+        if (this.applyLighting)
+            super.GRAPHICS.lights();
+    }
+
+    @Override
     protected void drawImpl() {
         if (this.applyCameraMatrix)
             this.applyCurrentCamera();
-
-        if (this.applyLighting)
-            super.GRAPHICS.lights();
     }
 
     // region Lighting toggles.
@@ -95,7 +113,7 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         this.applyLighting = false;
     }
 
-    public void setLightingStatus(final boolean p_status) {
+    public void setLights(final boolean p_status) {
         this.applyLighting = p_status;
     }
     // endregion
