@@ -15,7 +15,7 @@ public abstract class NerdAbstractTimer implements AutoCloseable {
     protected AtomicBoolean active = new AtomicBoolean();
 
     public static <TimerT extends NerdAbstractTimer> TimerT performBenchmark(
-            Runnable p_codeToBench,
+            final Runnable p_codeToBench,
             final Class<TimerT> p_timerClass) {
         TimerT timer = null;
 
@@ -36,7 +36,7 @@ public abstract class NerdAbstractTimer implements AutoCloseable {
     }
 
     public static <TimerT extends NerdAbstractTimer> TimerT performBenchmark(
-            Runnable p_codeToBench,
+            final Runnable p_codeToBench,
             final Class<TimerT> p_timerClass,
             final String p_eventNameToLog) {
         TimerT timer = null;
@@ -58,7 +58,7 @@ public abstract class NerdAbstractTimer implements AutoCloseable {
     }
 
     public static <TimerT extends NerdAbstractTimer> TimerT performBenchmark(
-            Runnable p_codeToBench,
+            final Runnable p_codeToBench,
             final Class<TimerT> p_timerClass,
             final String p_eventNameToLog,
             final PrintStream p_streamToLogTo) {
@@ -111,6 +111,7 @@ public abstract class NerdAbstractTimer implements AutoCloseable {
     public abstract String supplyUnitName();
 
     // region State manipulation!
+    @Override
     public void close() {
         // First, prevent race conditions from letting `get()` return incorrect values
         // based on `endTime`!

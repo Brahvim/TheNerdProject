@@ -46,7 +46,8 @@ public class NerdSineEaseOld extends NerdEasingFunction {
 	 * incrementing the amount of time it takes! <i>But do note</i>, that by using
 	 * this method, any calculations made by the
 	 * {@link NerdSineEaseOld#endWhenAngleIncrementsBy(float)} and
-	 * {@link NerdSineEaseOld#endWhenAngleIncrementsToWithin(float, float)} methods are
+	 * {@link NerdSineEaseOld#endWhenAngleIncrementsToWithin(float, float)} methods
+	 * are
 	 * ignored, and the wave will no longer end at the angle you specified there.
 	 *
 	 * @param p_millis is the amount of time the angle parameter will be incremented
@@ -96,7 +97,8 @@ public class NerdSineEaseOld extends NerdEasingFunction {
 	 * @param p_angle                  is the angle, <i>in radians,</i> that the
 	 *                                 wave will reach, and,
 	 * @param p_timeConstraintDistance is the amount of time this
-	 *                                 {@link NerdSineEaseOld} will stop after, at the
+	 *                                 {@link NerdSineEaseOld} will stop after, at
+	 *                                 the
 	 *                                 very angle you've given!
 	 */
 	// Method to put the wave at a given angle within given time.
@@ -117,7 +119,8 @@ public class NerdSineEaseOld extends NerdEasingFunction {
 
 	/**
 	 * By calling this method, you can modify the time it takes this
-	 * {@link NerdSineEaseOld} instance to deactivate automatically - by incrementing
+	 * {@link NerdSineEaseOld} instance to deactivate automatically - by
+	 * incrementing
 	 * the angle parameter <i>(passed to the sine-based function)</i>! Passing
 	 * negative numbers decreases it instead.
 	 *

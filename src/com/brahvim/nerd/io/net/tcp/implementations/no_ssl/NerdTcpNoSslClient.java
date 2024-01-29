@@ -59,7 +59,8 @@ public class NerdTcpNoSslClient extends NerdAbstractTcpClient {
 		super(p_port);
 	}
 
-	public NerdTcpNoSslClient(final int p_port, final Consumer<NerdTcpNoSslClient.NerdServerSentTcpPacket> p_messageCallback) {
+	public NerdTcpNoSslClient(final int p_port,
+			final Consumer<NerdTcpNoSslClient.NerdServerSentTcpPacket> p_messageCallback) {
 		this(p_port);
 		this.startMessageThread(p_messageCallback);
 	}

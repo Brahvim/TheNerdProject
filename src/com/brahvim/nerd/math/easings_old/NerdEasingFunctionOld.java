@@ -38,10 +38,12 @@ public abstract class NerdEasingFunctionOld {
 	public float inactValue = 0;
 
 	/**
-	 * Determines if an {@link NerdEasingFunctionOld} object is doing calculations or
+	 * Determines if an {@link NerdEasingFunctionOld} object is doing calculations
+	 * or
 	 * not.
 	 *
-	 * @apiNote {@code false} by default. Call {@link NerdEasingFunctionOld#start()} to
+	 * @apiNote {@code false} by default. Call {@link NerdEasingFunctionOld#start()}
+	 *          to
 	 *          make the function actively processing again.
 	 */
 	public boolean active = false;
