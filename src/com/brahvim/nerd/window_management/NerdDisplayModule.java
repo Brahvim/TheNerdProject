@@ -14,6 +14,7 @@ import processing.core.PGraphics;
 public class NerdDisplayModule<SketchPGraphicsT extends PGraphics> extends NerdModule<SketchPGraphicsT> {
 
 	// region Fields!
+	protected boolean monitorChanged, pmonitorChange;
 	protected NerdInputModule<SketchPGraphicsT> input;
 	protected NerdWindowModule<SketchPGraphicsT> window;
 	protected GraphicsDevice previousMonitor, currentMonitor;
@@ -87,6 +88,7 @@ public class NerdDisplayModule<SketchPGraphicsT extends PGraphics> extends NerdM
 		this.ppixelWidth = this.pixelWidth;
 		this.ppixelHeight = this.pixelHeight;
 		this.ppixelDensity = this.pixelDensity;
+		this.pmonitorChange = this.monitorChanged;
 		this.pdisplayRefreshRate = this.displayRefreshRate;
 
 		this.pdisplayWidthTwice = this.displayWidthTwice;
@@ -128,16 +130,19 @@ public class NerdDisplayModule<SketchPGraphicsT extends PGraphics> extends NerdM
 		this.updateDisplayParameters();
 		this.updateSketchAwtGlobals();
 
-		if (this.previousMonitor != this.currentMonitor)
+		// this.hasMonitorChanged = this.previousMonitor != this.currentMonitor;
+
+		if (this.monitorChanged) {
 			this.onWindowMonitorChange();
 
-		if (super.SKETCH.focused)
-			this.currentMonitor = this.getGraphicsDeviceAt(this.input.GLOBAL_MOUSE_POINT);
+			if (super.SKETCH.focused)
+				this.currentMonitor = this.getGraphicsDeviceAt(this.input.GLOBAL_MOUSE_POINT);
+		}
 
 		this.updatePAppletDisplayDimensionsIfNotDefault();
 	}
 
-	// Internal callback. `protected` so it can be extended further!
+	/** Internal callback. `protected` so it can be extended further! */
 	protected void onWindowMonitorChange() {
 		this.previousMonitor = this.currentMonitor;
 

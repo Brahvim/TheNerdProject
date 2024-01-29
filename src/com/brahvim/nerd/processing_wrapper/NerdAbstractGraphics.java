@@ -30,6 +30,47 @@ import processing.svg.PGraphicsSVG;
 
 public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 
+	// region Inner classes.
+	public class Push implements AutoCloseable {
+
+		public Push() {
+			NerdAbstractGraphics.this.GRAPHICS.push();
+		}
+
+		@Override
+		public void close() throws Exception {
+			NerdAbstractGraphics.this.GRAPHICS.pop();
+		}
+
+	}
+
+	public class StylePush implements AutoCloseable {
+
+		public StylePush() {
+			NerdAbstractGraphics.this.GRAPHICS.pushStyle();
+		}
+
+		@Override
+		public void close() throws Exception {
+			NerdAbstractGraphics.this.GRAPHICS.popStyle();
+		}
+
+	}
+
+	public class MatrixPush implements AutoCloseable {
+
+		public MatrixPush() {
+			NerdAbstractGraphics.this.GRAPHICS.pushMatrix();
+		}
+
+		@Override
+		public void close() throws Exception {
+			NerdAbstractGraphics.this.GRAPHICS.popMatrix();
+		}
+
+	}
+	// endregion
+
 	// region Instance fields.
 	protected final SketchPGraphicsT GRAPHICS;
 	protected final NerdSketch<SketchPGraphicsT> SKETCH;
@@ -135,7 +176,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.SKETCH.NERD_GRAPHICS_TO_PGRAPHICS_MAP.put(this, p_pGraphicsToWrap);
 	}
 
-	public final void draw() {
+	/* `package` */ final void draw() {
 		this.updateParameters();
 		this.recordCurrentParameters();
 
@@ -742,6 +783,42 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.popStyle();
 		this.GRAPHICS.popMatrix();
 	}
+
+	// ...AND added these!:
+	public void withPush(final Runnable p_code) {
+		this.GRAPHICS.push();
+		p_code.run();
+		this.GRAPHICS.pop();
+	}
+
+	public void withMatrixPushed(final Runnable p_code) {
+		this.GRAPHICS.pushMatrix();
+		p_code.run();
+		this.GRAPHICS.popMatrix();
+	}
+
+	public void withStylePushed(final Runnable p_code) {
+		this.GRAPHICS.pushStyle();
+		p_code.run();
+		this.GRAPHICS.popStyle();
+	}
+
+	// region `AutoCloseable` returning implementations.
+	// public AutoCloseable withPush() {
+	// this.GRAPHICS.push();
+	// return this.new NerdAbstractGraphicsCompletePusher();
+	// }
+
+	// public AutoCloseable withMatrixPushed() {
+	// this.GRAPHICS.pushMatrix();
+	// return this.new NerdAbstractGraphicsMatrixPusher();
+	// }
+
+	// public AutoCloseable withStylePushed() {
+	// this.GRAPHICS.pushStyle();
+	// return this.new NerdAbstractGraphicsStylePusher();
+	// }
+	// endregion
 	// endregion
 	// endregion
 

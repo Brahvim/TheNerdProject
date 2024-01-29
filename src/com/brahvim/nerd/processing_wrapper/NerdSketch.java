@@ -92,8 +92,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	// region Necessary `NerdModule`s:
 	public final NerdInputModule<SketchPGraphicsT> INPUT;
-	public final NerdDisplayModule<SketchPGraphicsT> DISPLAY; // NOSONAR!
-	// `PApplet::display` is not even visible here, brotha'!
+	public final NerdDisplayModule<SketchPGraphicsT> DISPLAY;
 	public final NerdWindowModule<SketchPGraphicsT> GENERIC_WINDOW;
 	public final NerdSketchSettings<SketchPGraphicsT> SKETCH_SETTINGS;
 	public final NerdSketch.NerdSketchOnlyAssetsModule<SketchPGraphicsT> ASSETS;
@@ -108,8 +107,11 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	protected PFont defaultFont;
 	protected NerdStringsTable globalStringTable;
-	protected int frameStartTime, pframeStartTime, deltaTime; // Timers! (`millis()` returns `int`s!).
 	protected NerdAbstractGraphics<SketchPGraphicsT> nerdGenericGraphics;
+
+	// Timers! (`millis()` returns `int`s!):
+	protected int frameStartTime, pframeStartTime, frameTime, pframeTime;
+	protected float inverseFrameRate, pframeRate, pinverseFrameRate;
 	// endregion
 	// endregion
 
@@ -259,9 +261,17 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	@Override
 	public void pre() {
+		final int timestamp = super.millis(); // Timestamp!
+
+		this.pinverseFrameRate = this.inverseFrameRate;
+		this.inverseFrameRate = 1.0f / super.frameRate;
+
 		this.pframeStartTime = this.frameStartTime;
-		this.frameStartTime = super.millis(); // Timestamp!
-		this.deltaTime = this.frameStartTime - this.pframeStartTime;
+		this.frameStartTime = timestamp;
+
+		this.pframeTime = this.frameTime;
+		this.frameTime = this.frameStartTime - this.pframeStartTime;
+
 		this.forEachNerdModule(NerdModule::pre);
 	}
 
@@ -275,13 +285,13 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		// try (NerdMillisTimer millisTimer = new
 		// NerdMillisTimer("`NerdSketch::draw()`")) {
 
-		for (final var g : this.NERD_GRAPHICS_TO_PGRAPHICS_MAP.keySet())
+		for (final NerdAbstractGraphics<SketchPGraphicsT> g : this.NERD_GRAPHICS_TO_PGRAPHICS_MAP.keySet())
 			g.draw();
 
 		this.forEachNerdModule(NerdModule::draw);
 
 		// } catch (final Exception e) {
-		// e.printStackTrace();
+		// this.e.printStackTrace();
 		// }
 	}
 
@@ -497,20 +507,40 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	// region Utilities!
 	// region Getters.
-	public int getDeltaTime() {
-		return this.deltaTime;
-	}
-
-	public int getPframeStartTime() {
-		return this.pframeStartTime;
+	public int getFrameTime() {
+		return this.frameTime;
 	}
 
 	public PFont getDefaultFont() {
 		return this.defaultFont;
 	}
 
+	public int getPframeStartTime() {
+		return this.pframeStartTime;
+	}
+
+	public int getPreviousFrameTime() {
+		return this.pframeTime;
+	}
+
+	public float getInverseFrameRate() {
+		return this.inverseFrameRate;
+	}
+
+	public float getPreviousFrameRate() {
+		return this.pframeRate;
+	}
+
 	public final int getFrameStartTime() {
 		return this.frameStartTime;
+	}
+
+	public float getPreviousDeltaTimeFactor() {
+		return this.pinverseFrameRate;
+	}
+
+	public float getPreviousInverseFrameRate() {
+		return this.pinverseFrameRate;
 	}
 
 	public NerdStringsTable getGlobalStringsTable() {

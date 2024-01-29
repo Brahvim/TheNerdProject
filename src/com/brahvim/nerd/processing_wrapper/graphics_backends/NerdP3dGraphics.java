@@ -21,6 +21,8 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     protected final NerdAbstractCamera DEFAULT_CAMERA;
     protected final NerdBasicCamera DEFAULT_CAMERA_BASIC;
 
+    protected boolean applyLighting, applyCameraMatrix = true;
+
     /** To be assigned to in the constructor. */
     protected NerdAbstractCamera currentCamera, previousCamera; // CAMERA! wher lite?! wher accsunn?!
 
@@ -73,32 +75,54 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     @Override
     protected void drawImpl() {
-        this.applyCameraIfCan();
+        if (this.applyCameraMatrix)
+            this.applyCurrentCamera();
+
+        if (this.applyLighting)
+            super.GRAPHICS.lights();
     }
+
+    // region Lighting toggles.
+    public void toggleLights() {
+        this.applyLighting = !this.applyLighting;
+    }
+
+    public void enableLights() {
+        this.applyLighting = true;
+    }
+
+    public void disableLights() {
+        this.applyLighting = false;
+    }
+
+    public void setLightingStatus(final boolean p_status) {
+        this.applyLighting = p_status;
+    }
+    // endregion
 
     // region Dealing with `NerdAbstractCamera` subclasses.
-    // Applies the camera as well.
-    @Override
-    public void beginDraw() {
-        super.beginDraw();
-        this.applyCameraIfCan();
-    }
-
-    protected void applyCameraIfCan() {
+    public void applyCurrentCamera() {
         // This was moved to the constructor:
         // if (!this.SKETCH.USES_OPENGL)
         // return;
 
         // If the current camera is `null`, use the default one instead:
-        if (this.currentCamera != null)
-            this.currentCamera.apply();
-        else {
-            this.DEFAULT_CAMERA.apply();
+        // if (this.currentCamera != null)
+        // this.currentCamera.apply();
+        // else {
+        // this.DEFAULT_CAMERA.apply();
+        //
+        // // If the current camera is null, but wasn't, notify!:
+        // if (this.currentCamera != this.previousCamera)
+        // System.out.printf("`%s` has no camera! Consider adding one...?", this);
+        // }
 
-            // If the current camera is null, but wasn't, notify!:
-            if (this.currentCamera != this.previousCamera)
-                System.out.printf("`%s` has no camera! Consider adding one...?", this);
-        }
+        // ...
+        // - `NerdP3dGraphics::currentCamera`, and-
+        // - `NerdP3dGraphics::previousCamera`,
+        // ...can never be `null`. So...:
+
+        this.currentCamera.apply();
     }
 
     /**
