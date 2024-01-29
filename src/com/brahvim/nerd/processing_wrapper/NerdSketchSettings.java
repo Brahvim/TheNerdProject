@@ -84,7 +84,7 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	 * <p>
 	 * {@code true} by default.
 	 */
-	public Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> nerdModulesInstantiator;
+	public Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>> nerdModulesInstantiator;
 
 	/**
 	 * This holds the {@link NerdModuleSettings} of the {@link NerdModule}s you want
@@ -97,7 +97,8 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	 *           new HashMap<>(0);
 	 *           </pre>
 	 */
-	public Map<Class<? extends NerdModule>, NerdModuleSettings<?>> nerdModulesSettings = new HashMap<>(0);
+	public Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModuleSettings<SketchPGraphicsT, ? extends NerdModule<SketchPGraphicsT>>>
+	/*   */ nerdModulesSettings = new HashMap<>(0);
 	// endregion
 
 	// region Booleans.

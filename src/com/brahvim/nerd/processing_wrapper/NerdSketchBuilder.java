@@ -42,7 +42,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	// region Fields and constructor!
 	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
 	protected Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> sketchConstructor = null;
-	protected Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> modulesConsumer = null;
+	protected Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>> modulesConsumer = null;
 	protected final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
 
 	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass) {
@@ -92,7 +92,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	protected NerdSketchBuilder(
 			final Class<? extends PGraphics> p_rendererClass,
 			final Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> p_sketchConstructor,
-			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>> p_modulesSet) {
+			final Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>> p_modulesSet) {
 		this(p_rendererClass);
 		this.modulesConsumer = p_modulesSet;
 		this.sketchConstructor = p_sketchConstructor;
@@ -118,14 +118,15 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		// them ready, beforehand!:
 
 		this.BUILD_SETTINGS.nerdModulesInstantiator = s -> {
-			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>
+			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
 			/*	*/ userDefinedModules = new LinkedHashSet<>(0, 1);
 			this.supplyUserDefinedModules(userDefinedModules);
 
-			for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule> f : this.supplyDefaultModules())
+			for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> f : this
+					.supplyDefaultModules())
 				s.add(f);
 
-			for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule> f : userDefinedModules)
+			for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> f : userDefinedModules)
 				s.add(f);
 		};
 
@@ -135,8 +136,9 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return constructedSketch;
 	}
 
-	private LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> supplyDefaultModules() {
-		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> toRet = new LinkedHashSet<>(5);
+	private LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>> supplyDefaultModules() {
+		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>> toRet = new LinkedHashSet<>(
+				5);
 
 		toRet.add(NerdSketch.NerdSketchOnlyAssetsModule::new);
 
@@ -187,7 +189,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 *          NerdSketchBuilder::modulesConsumer} if it isn't {@code null}.
 	 */
 	protected void supplyUserDefinedModules(
-			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>> p_modulesSet) {
+			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>> p_modulesSet) {
 	}
 
 	/**
@@ -243,31 +245,34 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return this;
 	}
 
-	public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
-			final NerdModuleSettings<ModuleT> p_settings) {
+	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
+			final NerdModuleSettings<SketchPGraphicsT, ModuleT> p_settings) {
 		this.BUILD_SETTINGS.nerdModulesSettings.put(p_settings.getModuleClass(), p_settings);
 		return this;
 	}
 
-	public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
-			final Supplier<NerdModuleSettings<ModuleT>> p_settingsSupplier) {
-		final NerdModuleSettings<ModuleT> settings = p_settingsSupplier.get();
+	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
+			final Supplier<NerdModuleSettings<SketchPGraphicsT, ModuleT>> p_settingsSupplier) {
+		final NerdModuleSettings<SketchPGraphicsT, ModuleT> settings = p_settingsSupplier.get();
 		this.BUILD_SETTINGS.nerdModulesSettings.put(settings.getModuleClass(), settings);
 		return this;
 	}
 
-	// public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT>
+	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
+	// NerdSketchBuilder<SketchPGraphicsT>
 	// setNerdModuleSettings(
-	// final Class<ModuleT> p_moduleClass, final NerdModuleSettings<ModuleT>
+	// final Class<ModuleT> p_moduleClass, final
+	// NerdModuleSettings<SketchPGraphicsT, ModuleT>
 	// p_settings) {
 	// this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass, p_settings);
 	// return this;
 	// }
 
-	// public <ModuleT extends NerdModule> NerdSketchBuilder<SketchPGraphicsT>
+	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
+	// NerdSketchBuilder<SketchPGraphicsT>
 	// setNerdModuleSettings(
 	// final Class<ModuleT> p_moduleClass, final
-	// Supplier<NerdModuleSettings<ModuleT>> p_settingsSupplier) {
+	// Supplier<NerdModuleSettings<SketchPGraphicsT, ModuleT>> p_settingsSupplier) {
 	// this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass,
 	// p_settingsSupplier.get());
 	// return this;

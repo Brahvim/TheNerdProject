@@ -26,7 +26,7 @@ public class NerdFx2dSketchBuilder extends NerdSketchBuilder<PGraphicsFX2D> {
 
     public NerdFx2dSketchBuilder(
             final Function<NerdSketchSettings<PGraphicsFX2D>, NerdSketch<PGraphicsFX2D>> p_sketchConstructor,
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsFX2D>, NerdModule>>> p_modulesSet) {
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsFX2D>, NerdModule<PGraphicsFX2D>>>> p_modulesSet) {
         super(PGraphicsFX2D.class, p_sketchConstructor, p_modulesSet);
     }
 

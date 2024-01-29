@@ -4,14 +4,16 @@ import java.io.File;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-public abstract class NerdAssetLoader<AssetT> {
+import processing.core.PGraphics;
+
+public abstract class NerdAssetLoader<SketchPGraphicsT extends PGraphics, AssetT> {
 
 	/**
 	 * @throws NerdAssetLoaderException when a failure occurs.
 	 * @throws IllegalArgumentException if the options passed to the loader
 	 *                                  weren't meant for it.
 	 */
-	protected abstract AssetT fetchData(final NerdSketch<?> p_sketch)
+	protected abstract AssetT fetchData(final NerdSketch<SketchPGraphicsT> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException;
 
 	/**
@@ -31,7 +33,7 @@ public abstract class NerdAssetLoader<AssetT> {
 	 */
 	protected abstract String getAssetName();
 
-	protected String findNameFromPath(final String p_path) {
+	public static String findNameFromPath(final String p_path) {
 		if (p_path == null)
 			return "";
 

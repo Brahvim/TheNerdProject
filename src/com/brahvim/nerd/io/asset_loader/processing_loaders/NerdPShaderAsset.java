@@ -4,9 +4,10 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
+import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PShader;
 
-public class NerdPShaderAsset extends NerdAssetLoader<PShader> {
+public class NerdPShaderAsset extends NerdAssetLoader<PGraphicsOpenGL, PShader> implements NerdProcessingAsset {
 
 	private final String vertPath, fragPath;
 
@@ -21,8 +22,8 @@ public class NerdPShaderAsset extends NerdAssetLoader<PShader> {
 	}
 	// endregion
 
-	@Override
-	protected PShader fetchData(final NerdSketch<?> p_sketch)
+	@Override // Apparently `P2D` supports shaders too! :O
+	protected PShader fetchData(final NerdSketch<PGraphicsOpenGL> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
 		final PShader shader = this.vertPath == null
 				? p_sketch.loadShader(this.fragPath)

@@ -9,11 +9,13 @@ import java.util.Arrays;
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-public class NerdDisplayModule extends NerdModule {
+import processing.core.PGraphics;
+
+public class NerdDisplayModule<SketchPGraphicsT extends PGraphics> extends NerdModule<SketchPGraphicsT> {
 
 	// region Fields!
-	protected NerdInputModule input;
-	protected NerdWindowModule<?> window;
+	protected NerdInputModule<SketchPGraphicsT> input;
+	protected NerdWindowModule<SketchPGraphicsT> window;
 	protected GraphicsDevice previousMonitor, currentMonitor;
 
 	// region Display properties.
@@ -40,15 +42,16 @@ public class NerdDisplayModule extends NerdModule {
 	// endregion
 	// endregion
 
-	public NerdDisplayModule(final NerdSketch<?> p_sketch) {
+	public NerdDisplayModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
 		super(p_sketch);
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void preSetup() {
 		this.currentMonitor = super.SKETCH.DEFAULT_JAVA_SCREEN;
-		this.input = (NerdInputModule) super.SKETCH.getNerdModule(NerdInputModule.class);
-		this.window = (NerdWindowModule<?>) super.SKETCH.getNerdModule(NerdWindowModule.class);
+		this.input = super.SKETCH.getNerdModule(NerdInputModule.class);
+		this.window = super.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
 	public void updateDisplayParameters() {

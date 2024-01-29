@@ -10,10 +10,11 @@ import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
-public class NerdInputModule extends NerdModule {
+public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdModule<SketchPGraphicsT> {
 
 	// region Fields.
 	// region Standard keyboard codes.
@@ -115,11 +116,12 @@ public class NerdInputModule extends NerdModule {
 	protected NerdWindowModule<?> window;
 	// endregion
 
-	public NerdInputModule(final NerdSketch<?> p_sketch) {
+	public NerdInputModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
 		super(p_sketch);
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void preSetup() {
 		this.window = super.SKETCH.getNerdModule(NerdWindowModule.class);
 	}

@@ -2,16 +2,16 @@ package com.brahvim.nerd.io.asset_loader;
 
 public class NerdAssetLoaderException extends RuntimeException {
 
-	public NerdAssetLoaderException(final NerdAssetLoader<?> p_assetLoader) {
+	public NerdAssetLoaderException(final NerdAssetLoader<?, ?> p_assetLoader) {
 		super(String.format("Failed to load asset `%s`!", p_assetLoader.getAssetName()));
 	}
 
-	public NerdAssetLoaderException(final NerdAssetLoader<?> p_assetLoader, final String p_reason) {
+	public NerdAssetLoaderException(final NerdAssetLoader<?, ?> p_assetLoader, final String p_reason) {
 		super(String.format("Failed to load asset `%s`! Reason: %s", p_assetLoader.getAssetName(), p_reason));
 	}
 
 	public NerdAssetLoaderException(
-			final NerdAssetLoader<?> p_assetLoader, final Exception p_cause) {
+			final NerdAssetLoader<?, ?> p_assetLoader, final Exception p_cause) {
 		super(String.format("""
 				Failed to load asset `%s`!
 				Stacktrace:
@@ -20,7 +20,7 @@ public class NerdAssetLoaderException extends RuntimeException {
 	}
 
 	public NerdAssetLoaderException(
-			final NerdAssetLoader<?> p_assetLoader, final String p_reason, final Exception p_cause) {
+			final NerdAssetLoader<?, ?> p_assetLoader, final String p_reason, final Exception p_cause) {
 		super(String.format("""
 				Failed to load asset `%s`!
 				Reason: %s

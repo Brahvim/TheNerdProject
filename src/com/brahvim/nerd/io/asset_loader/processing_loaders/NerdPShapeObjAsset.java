@@ -4,24 +4,24 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetLoaderException;
 import com.brahvim.nerd.io.asset_loader.NerdSinglePathAssetLoader;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.core.PGraphics;
+import processing.core.PShape;
+import processing.opengl.PGraphics3D;
 
-public class NerdPBytesAsset<SketchPGraphicsT extends PGraphics>
-		extends NerdSinglePathAssetLoader<SketchPGraphicsT, byte[]> {
+public class NerdPShapeObjAsset extends NerdSinglePathAssetLoader<PGraphics3D, PShape> implements NerdProcessingAsset {
 
-	public NerdPBytesAsset(final String p_path) {
+	public NerdPShapeObjAsset(final String p_path) {
 		super(p_path);
 	}
 
 	@Override
-	protected byte[] fetchData(final NerdSketch<SketchPGraphicsT> p_sketch)
+	protected PShape fetchData(final NerdSketch<PGraphics3D> p_sketch)
 			throws NerdAssetLoaderException, IllegalArgumentException {
-		final byte[] bytes = p_sketch.loadBytes(super.path);
+		final PShape shape = p_sketch.loadShape(super.path);
 
-		if (bytes == null)
+		if (shape == null)
 			throw new NerdAssetLoaderException(this);
 
-		return bytes;
+		return shape;
 	}
 
 }

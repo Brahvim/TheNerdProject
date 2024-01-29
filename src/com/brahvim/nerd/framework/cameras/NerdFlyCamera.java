@@ -9,6 +9,7 @@ import com.jogamp.newt.opengl.GLWindow;
 
 import processing.core.PApplet;
 import processing.core.PVector;
+import processing.opengl.PGraphics3D;
 
 public class NerdFlyCamera extends NerdAbstractCamera {
 	// Mathematics, thanks to https://learnopengl.com/Getting-started/Camera!
@@ -22,28 +23,30 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	public PVector front = new PVector(), defaultCamFront = new PVector();
 	public float mouseSensitivity = NerdFlyCamera.DEFAULT_MOUSE_SENSITIVITY;
 
-	protected final NerdDisplayModule DISPLAY;
+	protected final NerdDisplayModule<PGraphics3D> DISPLAY;
 
 	private boolean pholdMouse;
 	// endregion
 
 	// region Construction.
 	// Nope! Can't merge the two o' these:
+	@SuppressWarnings("unchecked")
 	public NerdFlyCamera(final NerdP3dGraphics p_graphics) {
 		super(p_graphics);
-		this.front = super.pos.copy();
 		this.DISPLAY = super.SKETCH.getNerdModule(NerdDisplayModule.class);
-
 		super.WINDOW.cursorVisible = false;
+
+		this.front = super.pos.copy();
 		this.defaultCamFront = this.front.copy();
 	}
 
+	@SuppressWarnings("unchecked")
 	public NerdFlyCamera(final NerdP3dGraphics p_graphics, final PVector p_defaultFront) {
 		super(p_graphics);
-		this.front.set(p_defaultFront);
 		this.DISPLAY = super.SKETCH.getNerdModule(NerdDisplayModule.class);
-
 		super.WINDOW.cursorVisible = false;
+
+		this.front.set(p_defaultFront);
 		this.defaultCamFront.set(p_defaultFront);
 	}
 
@@ -162,7 +165,8 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 			// window.warpPointer(mouseLockPos.x, mouseLockPos.y);
 			window.warpPointer(window.getSurfaceWidth() / 2, window.getSurfaceHeight() / 2);
 
-			final var input = super.SKETCH.getNerdModule(NerdInputModule.class);
+			@SuppressWarnings("unchecked")
+			final NerdInputModule<PGraphics3D> input = super.SKETCH.getNerdModule(NerdInputModule.class);
 
 			// Should use our own `Robot` instance anyway!:
 			// super.SKETCH.ROBOT.mouseMove(mouseLockPos.x, mouseLockPos.y);

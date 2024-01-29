@@ -26,9 +26,9 @@ import processing.svg.PGraphicsSVG;
 public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 
 	// region Instance fields.
-	protected final NerdInputModule INPUT;
 	protected final SketchPGraphicsT GRAPHICS;
 	protected final NerdSketch<SketchPGraphicsT> SKETCH;
+	protected final NerdInputModule<SketchPGraphicsT> INPUT;
 	protected final NerdWindowModule<SketchPGraphicsT> WINDOW;
 
 	// Dimensions for the current and previous frames:

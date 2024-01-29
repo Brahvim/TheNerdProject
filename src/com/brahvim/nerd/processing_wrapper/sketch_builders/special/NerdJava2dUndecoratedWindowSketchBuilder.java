@@ -26,7 +26,7 @@ public class NerdJava2dUndecoratedWindowSketchBuilder extends NerdJava2dSketchBu
 
     public NerdJava2dUndecoratedWindowSketchBuilder(
             final Function<NerdSketchSettings<PGraphicsJava2D>, NerdSketch<PGraphicsJava2D>> p_sketchConstructor,
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsJava2D>, NerdModule>>> p_modulesSet) {
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsJava2D>, NerdModule<PGraphicsJava2D>>>> p_modulesSet) {
         super(p_sketchConstructor, p_modulesSet);
     }
 

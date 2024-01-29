@@ -26,7 +26,7 @@ public class NerdPdfSketchBuilder extends NerdSketchBuilder<PGraphicsPDF> {
 
     public NerdPdfSketchBuilder(
             final Function<NerdSketchSettings<PGraphicsPDF>, NerdSketch<PGraphicsPDF>> p_sketchConstructor,
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsPDF>, NerdModule>>> p_modulesSet) {
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphicsPDF>, NerdModule<PGraphicsPDF>>>> p_modulesSet) {
         super(PGraphicsPDF.class, p_sketchConstructor, p_modulesSet);
     }
 

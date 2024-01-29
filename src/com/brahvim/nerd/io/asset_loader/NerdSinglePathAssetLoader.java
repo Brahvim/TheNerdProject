@@ -1,6 +1,9 @@
 package com.brahvim.nerd.io.asset_loader;
 
-public abstract class NerdSinglePathAssetLoader<AssetT> extends NerdAssetLoader<AssetT> {
+import processing.core.PGraphics;
+
+public abstract class NerdSinglePathAssetLoader<SketchPGraphicsT extends PGraphics, AssetT>
+		extends NerdAssetLoader<SketchPGraphicsT, AssetT> {
 
 	protected NerdSinglePathAssetLoader(final String p_path) {
 		this.path = p_path;

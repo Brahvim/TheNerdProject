@@ -25,7 +25,7 @@ import processing.opengl.PGraphicsOpenGL;
  * NerdWindowModule::createWindowModule(NerdSketch)} to create instances
  * specific to your {@link NerdSketch}'s renderer.
  */
-public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> extends NerdModule {
+public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> extends NerdModule<SketchPGraphicsT> {
 
 	// region Instance fields.
 	/** Position of the window relative to the monitor. */
@@ -45,7 +45,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 
 	protected PImage iconImage;
 	protected PSurface sketchSurface;
-	protected NerdDisplayModule displays;
+	protected NerdDisplayModule<SketchPGraphicsT> displays;
 	// endregion
 
 	// region Construction and initialization.
@@ -55,6 +55,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public final void preSetup() {
 		this.sketchSurface = super.SKETCH.getSurface();
 		this.displays = super.SKETCH.getNerdModule(NerdDisplayModule.class);
@@ -68,8 +69,12 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	}
 	// endregion
 
-	public static NerdWindowModule<?> createWindowModule(final NerdSketch<?> p_sketch) {
-		final NerdWindowModule<?> toRet = NerdWindowModule.supplyWindowModuleForSketch(p_sketch);
+	@SuppressWarnings("unchecked")
+	public static <RetModulePGraphicsT extends PGraphics> NerdWindowModule<RetModulePGraphicsT> createWindowModule(
+			final NerdSketch<RetModulePGraphicsT> p_sketch) {
+		final NerdWindowModule<RetModulePGraphicsT> toRet
+		/*   */ = (NerdWindowModule<RetModulePGraphicsT>)
+		/*   */ NerdWindowModule.supplyWindowModuleForSketch(p_sketch);
 
 		if (toRet == null)
 			throw new IllegalArgumentException("Please write your own `PGraphics` subclass for this one!");

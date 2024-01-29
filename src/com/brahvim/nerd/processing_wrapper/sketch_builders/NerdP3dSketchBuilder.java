@@ -26,7 +26,7 @@ public class NerdP3dSketchBuilder extends NerdSketchBuilder<PGraphics3D> {
 
     public NerdP3dSketchBuilder(
             final Function<NerdSketchSettings<PGraphics3D>, NerdSketch<PGraphics3D>> p_sketchConstructor,
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics3D>, NerdModule>>> p_modulesSet) {
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics3D>, NerdModule<PGraphics3D>>>> p_modulesSet) {
         super(PGraphics3D.class, p_sketchConstructor, p_modulesSet);
     }
 

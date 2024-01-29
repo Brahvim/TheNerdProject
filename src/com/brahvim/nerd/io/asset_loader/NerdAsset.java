@@ -2,14 +2,16 @@ package com.brahvim.nerd.io.asset_loader;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-public class NerdAsset {
+import processing.core.PGraphics;
+
+public class NerdAsset<SketchPGraphicsT extends PGraphics> {
 
 	// region Fields!
 	public final String NAME;
 
-	private final NerdSketch<?> SKETCH;
-	private final NerdAssetsModule ASSETS;
-	private final NerdAssetLoader<?> LOADER;
+	private final NerdSketch<SketchPGraphicsT> SKETCH;
+	private final NerdAssetsModule<SketchPGraphicsT> ASSETS;
+	private final NerdAssetLoader<SketchPGraphicsT, ?> LOADER;
 
 	private int frame;
 	private Object data;
@@ -19,30 +21,34 @@ public class NerdAsset {
 	// endregion
 
 	// region Construction.
-	/* `package` */ NerdAsset(final NerdAssetsModule p_sketch, final NerdAssetLoader<?> p_type) {
+	public NerdAsset(
+			final NerdAssetsModule<SketchPGraphicsT> p_assetsModule,
+			final NerdAssetLoader<SketchPGraphicsT, ?> p_type) {
 		if (p_type == null)
 			throw new IllegalArgumentException("`NerdAsset`s need to know their type!");
 
 		this.LOADER = p_type;
-		this.ASSETS = p_sketch;
+		this.ASSETS = p_assetsModule;
 		this.SKETCH = this.ASSETS.getSketch();
 		this.NAME = this.LOADER.getAssetName();
 	}
 
-	public NerdAsset(final NerdAssetsModule p_assetsModule, final NerdAssetLoader<?> p_type, final Runnable p_onLoad) {
+	public NerdAsset(
+			final NerdAssetsModule<SketchPGraphicsT> p_assetsModule,
+			final NerdAssetLoader<SketchPGraphicsT, ?> p_type, final Runnable p_onLoad) {
 		this(p_assetsModule, p_type);
 		this.onLoad = p_onLoad;
 	}
 	// endregion
 
 	// region Load status requests.
-	public NerdAsset setLoadCallback(final Runnable p_onLoad) {
+	public NerdAsset<SketchPGraphicsT> setLoadCallback(final Runnable p_onLoad) {
 		this.onLoad = p_onLoad;
 		return this;
 	}
 
 	// ...will cause a surge in CPU usage! Careful!...
-	public NerdAsset completeLoad() throws InterruptedException {
+	public NerdAsset<SketchPGraphicsT> completeLoad() throws InterruptedException {
 		while (!this.loaded) {
 			System.out.println("Waiting for `" + this.NAME + "` to load...");
 
@@ -131,7 +137,7 @@ public class NerdAsset {
 		return (RetT) this.data;
 	}
 
-	public NerdAssetLoader<?> getLoader() {
+	public NerdAssetLoader<SketchPGraphicsT, ?> getLoader() {
 		return this.LOADER;
 	}
 	// endregion

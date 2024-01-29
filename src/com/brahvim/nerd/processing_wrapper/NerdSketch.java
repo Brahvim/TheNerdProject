@@ -39,22 +39,24 @@ import processing.opengl.PJOGL;
 public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet implements NerdSketchAllWorkflowsListener {
 
 	// region Inner classes.
-	protected static final class NerdSketchOnlyAssetsModule extends NerdAssetsModule {
+	protected static final class NerdSketchOnlyAssetsModule<SketchPGraphicsT extends PGraphics>
+			extends NerdAssetsModule<SketchPGraphicsT> {
 
-		protected NerdSketchOnlyAssetsModule(final NerdSketch<?> p_sketch) {
+		protected NerdSketchOnlyAssetsModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
 			super(p_sketch);
 		}
 
 		@Override
-		public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type) {
-			final NerdAsset toRet = super.addAsset(p_type);
+		public NerdAsset<SketchPGraphicsT> addAsset(final NerdAssetLoader<SketchPGraphicsT, ?> p_type) {
+			final NerdAsset<SketchPGraphicsT> toRet = super.addAsset(p_type);
 			toRet.startLoading();
 			return toRet;
 		}
 
 		@Override
-		public <AssetT> NerdAsset addAsset(final NerdAssetLoader<AssetT> p_type, final Runnable p_onLoad) {
-			final NerdAsset toRet = super.addAsset(p_type, p_onLoad);
+		public NerdAsset<SketchPGraphicsT> addAsset(final NerdAssetLoader<SketchPGraphicsT, ?> p_type,
+				final Runnable p_onLoad) {
+			final NerdAsset<SketchPGraphicsT> toRet = super.addAsset(p_type, p_onLoad);
 			toRet.startLoading();
 			return toRet;
 		}
@@ -90,16 +92,17 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// endregion
 
 	// region Necessary `NerdModule`s:
-	public final NerdInputModule INPUT;
-	public final NerdDisplayModule DISPLAY; // NOSONAR! `PApplet::display` is not even visible here, brotha'!
-	public final NerdSketch.NerdSketchOnlyAssetsModule ASSETS;
+	public final NerdInputModule<SketchPGraphicsT> INPUT;
+	public final NerdDisplayModule<SketchPGraphicsT> DISPLAY; // NOSONAR!
+	// `PApplet::display` is not even visible here, brotha'!
 	public final NerdWindowModule<SketchPGraphicsT> GENERIC_WINDOW;
 	public final NerdSketchSettings<SketchPGraphicsT> SKETCH_SETTINGS;
+	public final NerdSketch.NerdSketchOnlyAssetsModule<SketchPGraphicsT> ASSETS;
 	// endregion
 
 	// region `protected` fields.
-	protected final List<NerdModule> MODULES;
-	protected final Map<Class<? extends NerdModule>, NerdModule>
+	protected final List<NerdModule<SketchPGraphicsT>> MODULES;
+	protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>>
 	/* */ CLASSES_TO_MODULES_MAP = new HashMap<>(5);
 	protected final Map<? extends NerdGenericGraphics<?>, ? extends PGraphics>
 	/* */ NERD_GRAPHICS_TO_PGRAPHICS_MAP = new HashMap<>(1);
@@ -126,8 +129,8 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		// region Stuff involving modules.
 		this.MODULES = this.createAndSortModules(p_settings);
 
-		for (final NerdModule m : this.MODULES) {
-			this.CLASSES_TO_MODULES_MAP.put(m.getClass(), m);
+		for (final NerdModule<SketchPGraphicsT> m : this.MODULES) {
+			this.CLASSES_TO_MODULES_MAP.put((Class<NerdModule<SketchPGraphicsT>>) m.getClass(), m);
 			m.sketchConstructed(p_settings);
 			m.assignModuleSettings(p_settings.nerdModulesSettings.get(m.getClass()));
 		}
@@ -149,24 +152,27 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// This method will break *any second* Nerd decides to not use "modules".
 	// Oh God, do I hope that never happens! (Phew! It likely never will!)
 	// (The entire engine is built on this *evolutionary* idea, Brahvim! You idiot!)
-	private List<NerdModule> createAndSortModules(final NerdSketchSettings<SketchPGraphicsT> p_settings) {
-		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule>>
+	private List<NerdModule<SketchPGraphicsT>> createAndSortModules(
+			final NerdSketchSettings<SketchPGraphicsT> p_settings) {
+		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
 		/*   */ nerdModulesToAssign = new LinkedHashSet<>(0);
 		p_settings.nerdModulesInstantiator.accept(nerdModulesToAssign);
 
-		final List<NerdModule> toRet = new ArrayList<>(nerdModulesToAssign.size());
+		final List<NerdModule<SketchPGraphicsT>> toRet = new ArrayList<>(nerdModulesToAssign.size());
 
 		// Construct modules using the provided `Function`s, and add them to the map:
-		for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule> f : nerdModulesToAssign)
+		for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> f : nerdModulesToAssign)
 			try {
 				Objects.requireNonNull(f,
 						"Could not instantiate a `NerdModule` due to the supplying function being `null`.");
 
-				final NerdModule module = f.apply(this);
+				final NerdModule<SketchPGraphicsT> module = f.apply(this);
 				Objects.requireNonNull(module,
 						"Could not include a `NerdModule` due to the it being `null`.");
 
-				final Class<? extends NerdModule> moduleClass = module.getClass();
+				@SuppressWarnings("unchecked")
+				final Class<? extends NerdModule<SketchPGraphicsT>>
+				/*   */ moduleClass = (Class<? extends NerdModule<SketchPGraphicsT>>) module.getClass();
 
 				// If we already have a certain `NerdModule`,
 				if (this.CLASSES_TO_MODULES_MAP.get(moduleClass) != null) {
@@ -421,8 +427,26 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// endregion
 
 	// region `NerdModule` management.
-	public <RetT extends NerdModule> RetT getNerdModule(final Class<RetT> p_moduleClass) {
-		for (final NerdModule m : this.MODULES)
+	// // @SuppressWarnings("unchecked")
+	// public <RetModulePGraphicsT extends PGraphics, RetModuleT extends
+	// NerdModule<RetModulePGraphicsT>>
+	// /* */ RetModuleT getNerdModule(final Class<? extends RetModuleT>
+	// p_moduleClass) {
+	// for (final NerdModule<SketchPGraphicsT> m : this.MODULES)
+	// if (p_moduleClass.isInstance(m))
+	// return (RetModuleT) p_moduleClass.cast(m);
+	//
+	// throw new NoSuchElementException(String.format(
+	// "No `%s` of type `%s` was found.",
+	// NerdModule.class.getSimpleName(),
+	// p_moduleClass.getSimpleName()));
+	// }
+
+	// @SuppressWarnings("unchecked")
+	public <RetModuleT extends NerdModule<SketchPGraphicsT>>
+	/*   */ RetModuleT getNerdModule(
+			final Class<? extends RetModuleT> p_moduleClass) {
+		for (final NerdModule<SketchPGraphicsT> m : this.MODULES)
 			if (p_moduleClass.isInstance(m))
 				return p_moduleClass.cast(m);
 
@@ -432,7 +456,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 				p_moduleClass.getSimpleName()));
 	}
 
-	public void forEachNerdModule(final Consumer<NerdModule> p_task) {
+	public void forEachNerdModule(final Consumer<NerdModule<SketchPGraphicsT>> p_task) {
 		if (p_task == null)
 			return;
 
@@ -440,19 +464,19 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	}
 
 	public <OtherArgT> void forEachNerdModule(
-			final BiConsumer<NerdModule, OtherArgT> p_task, final OtherArgT p_otherArg) {
+			final BiConsumer<NerdModule<SketchPGraphicsT>, OtherArgT> p_task, final OtherArgT p_otherArg) {
 		if (p_task == null)
 			return;
 
-		for (final NerdModule m : this.MODULES)
+		for (final NerdModule<SketchPGraphicsT> m : this.MODULES)
 			p_task.accept(m, p_otherArg);
 	}
 
-	public NerdAssetsModule getGlobalNerdAssetsModule() {
+	public NerdAssetsModule<SketchPGraphicsT> getGlobalNerdAssetsModule() {
 		return this.ASSETS;
 	}
 
-	public NerdDisplayModule getNerdDisplayModule() {
+	public NerdDisplayModule<SketchPGraphicsT> getNerdDisplayModule() {
 		return this.DISPLAY;
 	}
 
@@ -460,7 +484,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		return this.GENERIC_WINDOW;
 	}
 
-	public NerdInputModule getNerdInputModule() {
+	public NerdInputModule<SketchPGraphicsT> getNerdInputModule() {
 		return this.INPUT;
 	}
 	// endregion

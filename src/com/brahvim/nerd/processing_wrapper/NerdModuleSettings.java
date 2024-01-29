@@ -1,10 +1,12 @@
 package com.brahvim.nerd.processing_wrapper;
 
-public abstract class NerdModuleSettings<ModuleT extends NerdModule> { // NOSONAR
+import processing.core.PGraphics;
 
-    @SuppressWarnings("unchecked")
+public abstract class NerdModuleSettings<SketchPGraphicsT extends PGraphics, ModuleT extends NerdModule<SketchPGraphicsT>> { // NOSONAR
+
+    // @SuppressWarnings("unchecked")
     public <RetModuleClassT extends ModuleT> Class<RetModuleClassT> getModuleClass() {
-        return (Class<RetModuleClassT>) NerdModule.class;
+        return null; // (Class<RetModuleClassT>) NerdModule.class;
     }
 
 }

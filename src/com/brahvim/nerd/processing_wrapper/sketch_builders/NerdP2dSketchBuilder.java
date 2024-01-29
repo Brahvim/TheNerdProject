@@ -27,7 +27,7 @@ public class NerdP2dSketchBuilder extends NerdSketchBuilder<PGraphics2D> {
 
     public NerdP2dSketchBuilder(
             final Function<NerdSketchSettings<PGraphics2D>, NerdSketch<PGraphics2D>> p_sketchConstructor,
-            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics2D>, NerdModule>>> p_modulesSet) {
+            final Consumer<LinkedHashSet<Function<NerdSketch<PGraphics2D>, NerdModule<PGraphics2D>>>> p_modulesSet) {
         super(PGraphicsJava2D.class, p_sketchConstructor, p_modulesSet);
     }
 

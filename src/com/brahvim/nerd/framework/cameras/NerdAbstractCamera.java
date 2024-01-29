@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
+import com.brahvim.nerd.window_management.NerdWindowModule;
 import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule;
 
 import processing.core.PApplet;
@@ -63,17 +64,19 @@ public abstract class NerdAbstractCamera {
 			defaultCamUp = new PVector(0, 1, 0);
 	// endregion
 
+	@SuppressWarnings("unchecked")
 	protected NerdAbstractCamera(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
 		this.SKETCH = Objects.requireNonNull(p_sketch, "The parameter `p_sketch` was `null`!");
-		this.WINDOW = this.SKETCH.getNerdModule(NerdGlWindowModule.class);
+		this.WINDOW = (NerdGlWindowModule) this.SKETCH.getNerdModule(NerdWindowModule.class);
 		this.GRAPHICS = new NerdP3dGraphics(this.SKETCH,
 				Objects.requireNonNull(p_graphics, "The parameter `p_graphics` was `null`!"));
 	}
 
+	@SuppressWarnings("unchecked")
 	protected NerdAbstractCamera(final NerdP3dGraphics p_graphics) {
 		this.GRAPHICS = Objects.requireNonNull(p_graphics, "The parameter `p_graphics` was `null`!");
 		this.SKETCH = this.GRAPHICS.getSketch();
-		this.WINDOW = this.SKETCH.getNerdModule(NerdGlWindowModule.class);
+		this.WINDOW = (NerdGlWindowModule) this.SKETCH.getNerdModule(NerdWindowModule.class);
 	}
 
 	public abstract void applyMatrix();

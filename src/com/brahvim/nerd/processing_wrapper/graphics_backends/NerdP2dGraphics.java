@@ -129,7 +129,7 @@ public class NerdP2dGraphics extends NerdGlGenericGraphics<PGraphics2D> {
     // This two-`float` overload ain't in the docs, that scares me!
 
     // ...ACTUALLY,
-    // https://github.com/SKETCHssing/SKETCHssing/blob/459853d0dcdf1e1648b1049d3fdbb4bf233fded8/core/src/SKETCHssing/opengl/PGraphicsOpenGL.java#L4611
+    // https://github.com/processing/processing/blob/459853d0dcdf1e1648b1049d3fdbb4bf233fded8/core/src/processing/opengl/PGraphicsOpenGL.java#L4611
     // ..."they rely on the JIT too!" (no, they don't optimize this at all. They
     // just put the `0` themselves, LOL.) 😂
 
