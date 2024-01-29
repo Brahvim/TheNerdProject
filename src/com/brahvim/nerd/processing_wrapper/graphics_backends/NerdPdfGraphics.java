@@ -1,10 +1,11 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
+import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.pdf.PGraphicsPDF;
 
-public class NerdPdfGraphics extends NerdGenericGraphics<PGraphicsPDF> {
+public class NerdPdfGraphics extends NerdAbstractGraphics<PGraphicsPDF> {
 
     // region Utilitarian constructors.
     protected NerdPdfGraphics(

@@ -71,6 +71,11 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         this.previousCamera = this.DEFAULT_CAMERA;
     }
 
+    @Override
+    protected void drawImpl() {
+        this.applyCameraIfCan();
+    }
+
     // region Dealing with `NerdAbstractCamera` subclasses.
     // Applies the camera as well.
     @Override

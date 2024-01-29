@@ -1,10 +1,11 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
+import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.svg.PGraphicsSVG;
 
-public class NerdSvgGraphics extends NerdGenericGraphics<PGraphicsSVG> {
+public class NerdSvgGraphics extends NerdAbstractGraphics<PGraphicsSVG> {
 
     // region Utilitarian constructors.
     protected NerdSvgGraphics(

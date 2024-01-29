@@ -21,7 +21,6 @@ import com.brahvim.nerd.io.NerdStringsTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdGenericGraphics;
 import com.brahvim.nerd.useless_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.utils.NerdAwtUtils;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
@@ -104,13 +103,13 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	protected final List<NerdModule<SketchPGraphicsT>> MODULES;
 	protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>>
 	/* */ CLASSES_TO_MODULES_MAP = new HashMap<>(5);
-	protected final Map<? extends NerdGenericGraphics<?>, ? extends PGraphics>
+	public final Map<NerdAbstractGraphics<SketchPGraphicsT>, SketchPGraphicsT>
 	/* */ NERD_GRAPHICS_TO_PGRAPHICS_MAP = new HashMap<>(1);
 
 	protected PFont defaultFont;
 	protected NerdStringsTable globalStringTable;
 	protected int frameStartTime, pframeStartTime, deltaTime; // Timers! (`millis()` returns `int`s!).
-	protected NerdGenericGraphics<SketchPGraphicsT> nerdGenericGraphics;
+	protected NerdAbstractGraphics<SketchPGraphicsT> nerdGenericGraphics;
 	// endregion
 	// endregion
 
@@ -221,8 +220,10 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	@Override
 	@SuppressWarnings("unchecked")
 	public void setup() {
-		this.nerdGenericGraphics = (NerdGenericGraphics<SketchPGraphicsT>)
-		/*   */ NerdGenericGraphics.createNerdGenericGraphicsWrapperForSketch(this);
+		this.nerdGenericGraphics = (NerdAbstractGraphics<SketchPGraphicsT>)
+		/*   */ NerdAbstractGraphics.createNerdGenericGraphicsWrapperForSketch(this);
+		this.NERD_GRAPHICS_TO_PGRAPHICS_MAP.put(
+				this.nerdGenericGraphics, (SketchPGraphicsT) super.g);
 
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
 		this.forEachNerdModule(NerdModule::preSetup);
@@ -273,7 +274,12 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	public void draw() {
 		// try (NerdMillisTimer millisTimer = new
 		// NerdMillisTimer("`NerdSketch::draw()`")) {
+
+		for (final var g : this.NERD_GRAPHICS_TO_PGRAPHICS_MAP.keySet())
+			g.draw();
+
 		this.forEachNerdModule(NerdModule::draw);
+
 		// } catch (final Exception e) {
 		// e.printStackTrace();
 		// }
@@ -511,7 +517,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		return this.globalStringTable;
 	}
 
-	public NerdGenericGraphics<SketchPGraphicsT> getNerdGenericGraphics() {
+	public NerdAbstractGraphics<SketchPGraphicsT> getNerdGenericGraphics() {
 		return this.nerdGenericGraphics;
 	}
 	// endregion
@@ -552,8 +558,8 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// region `createGraphics()` overrides and overloads.
 	// region Actual overrides.
 	@Override
-	public PGraphics createGraphics(final int p_width, final int p_height, final String p_renderer,
-			final String p_path) {
+	public PGraphics createGraphics(
+			final int p_width, final int p_height, final String p_renderer, final String p_path) {
 		return super.makeGraphics(p_width, p_height, p_renderer, p_path, false);
 	}
 

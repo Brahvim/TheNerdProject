@@ -1,11 +1,12 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
+import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PImage;
 import processing.javafx.PGraphicsFX2D;
 
-public class NerdFx2dGraphics extends NerdGenericGraphics<PGraphicsFX2D> {
+public class NerdFx2dGraphics extends NerdAbstractGraphics<PGraphicsFX2D> {
 
     // region Utilitarian constructors.
     protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final int p_width, final int p_height,

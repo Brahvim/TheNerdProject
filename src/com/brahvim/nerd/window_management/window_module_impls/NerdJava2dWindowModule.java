@@ -10,6 +10,7 @@ import com.brahvim.nerd.window_management.NerdWindowModule;
 
 import processing.awt.PGraphicsJava2D;
 import processing.awt.PSurfaceAWT;
+import processing.core.PImage;
 import processing.core.PVector;
 
 public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
@@ -66,6 +67,12 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 
 	public Image getIcon() {
 		return this.frame.getIconImage();
+	}
+
+	public PImage getIconAsPImage() {
+		// Not caching this since people might just hack in and change the image on the
+		// `JFrame` without us knowing!:
+		return new PImage(this.getIcon());
 	}
 
 	@Override

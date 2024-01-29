@@ -1,9 +1,14 @@
-package com.brahvim.nerd.processing_wrapper.graphics_backends;
+package com.brahvim.nerd.processing_wrapper;
 
 import java.awt.Image;
 import java.util.Objects;
 
-import com.brahvim.nerd.processing_wrapper.NerdSketch;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdFx2dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdJava2dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP2dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdPdfGraphics;
+import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdSvgGraphics;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
@@ -23,7 +28,7 @@ import processing.opengl.PGraphics3D;
 import processing.pdf.PGraphicsPDF;
 import processing.svg.PGraphicsSVG;
 
-public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
+public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 
 	// region Instance fields.
 	protected final SketchPGraphicsT GRAPHICS;
@@ -38,8 +43,8 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 
 	// region Static methods.
-	public static NerdGenericGraphics<?> createNerdGenericGraphicsWrapperForSketch(final NerdSketch<?> p_sketch) {
-		final NerdGenericGraphics<?> toRet = NerdGenericGraphics.supplySubModuleForSketch(p_sketch);
+	protected static NerdAbstractGraphics<?> createNerdGenericGraphicsWrapperForSketch(final NerdSketch<?> p_sketch) {
+		final NerdAbstractGraphics<?> toRet = NerdAbstractGraphics.supplySubModuleForSketch(p_sketch);
 
 		if (toRet == null)
 			throw new IllegalArgumentException("Please write your own `NerdGenericGraphics` subclass for this one!");
@@ -48,7 +53,7 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <RetGraphicsT extends PGraphics> NerdGenericGraphics<?> supplySubModuleForSketch(
+	protected static <RetGraphicsT extends PGraphics> NerdAbstractGraphics<?> supplySubModuleForSketch(
 			final NerdSketch<RetGraphicsT> p_sketch) {
 		return switch (p_sketch.SKETCH_SETTINGS.renderer) {
 			case PConstants.P2D -> new NerdP2dGraphics(
@@ -76,46 +81,46 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 
 	// region Utilitarian constructors.
 	@SuppressWarnings("unchecked")
-	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
+	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
 			final String p_renderer, final String p_path) {
 		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height, p_renderer, p_path));
 	}
 
 	@SuppressWarnings("unchecked")
-	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
+	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
 			final String p_renderer) {
 		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height, p_renderer));
 	}
 
 	@SuppressWarnings("unchecked")
-	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height) {
+	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height) {
 		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height));
 	}
 
 	@SuppressWarnings("unchecked")
-	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_width,
+	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_width,
 			final float p_height) {
 		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_width, p_height));
 	}
 
 	@SuppressWarnings("unchecked")
-	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_size) {
+	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_size) {
 		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_size));
 	}
 
 	@SuppressWarnings("unchecked")
-	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_size) {
+	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_size) {
 		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics(p_size));
 	}
 
 	@SuppressWarnings("unchecked")
-	protected NerdGenericGraphics(final NerdSketch<SketchPGraphicsT> p_sketch) {
+	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch) {
 		this(p_sketch, (SketchPGraphicsT) p_sketch.createGraphics());
 	}
 	// endregion
 
 	@SuppressWarnings("unchecked")
-	protected NerdGenericGraphics(
+	protected NerdAbstractGraphics(
 			final NerdSketch<SketchPGraphicsT> p_sketch,
 			final SketchPGraphicsT p_pGraphicsToWrap) {
 		this.SKETCH = p_sketch;
@@ -127,9 +132,57 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 						+ "` instance!");
 		this.INPUT = this.SKETCH.getNerdModule(NerdInputModule.class);
 		this.WINDOW = this.SKETCH.getNerdModule(NerdWindowModule.class);
+		this.SKETCH.NERD_GRAPHICS_TO_PGRAPHICS_MAP.put(this, p_pGraphicsToWrap);
 	}
 
-	public void draw() {
+	public final void draw() {
+		this.updateParameters();
+		this.recordCurrentParameters();
+
+		// Callback into subclass code!:
+		this.drawImpl();
+	}
+
+	// For subclasses:
+	protected void drawImpl() {
+	}
+
+	private void updateParameters() {
+		this.width = this.GRAPHICS.width;
+		this.height = this.GRAPHICS.height;
+
+		this.dbx = this.width * 2.0f;
+		this.dby = this.height * 2.0f;
+
+		this.cx = this.width * 0.5f;
+		this.cy = this.height * 0.5f;
+
+		this.qx = this.cx * 0.5f;
+		this.qy = this.cy * 0.5f;
+
+		this.q3x = this.cx + this.qx;
+		this.q3y = this.cy + this.qy;
+
+		this.scr = (float) this.width / (float) this.height;
+	}
+
+	private void recordCurrentParameters() {
+		this.pwidth = this.width;
+		this.pheight = this.height;
+
+		this.pdbx = this.dbx;
+		this.pdby = this.dby;
+
+		this.pcx = this.cx;
+		this.pcy = this.cy;
+
+		this.pqx = this.qx;
+		this.pqy = this.qy;
+
+		this.pq3x = this.q3x;
+		this.pq3y = this.q3y;
+
+		this.pscr = this.scr;
 	}
 
 	public NerdSketch<SketchPGraphicsT> getSketch() {
@@ -630,32 +683,32 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 
 	// region For `NerdGraphics`.
-	public void image(final NerdGenericGraphics<SketchPGraphicsT> p_graphics) {
+	public void image(final NerdAbstractGraphics<SketchPGraphicsT> p_graphics) {
 		this.GRAPHICS.image(p_graphics.getUnderlyingBuffer(), 0, 0);
 	}
 
-	public void image(final NerdGenericGraphics<SketchPGraphicsT> p_graphics, final float p_x, final float p_y,
+	public void image(final NerdAbstractGraphics<SketchPGraphicsT> p_graphics, final float p_x, final float p_y,
 			final float p_width,
 			final float p_height) {
 		this.GRAPHICS.image(p_graphics.getUnderlyingBuffer(), p_x, p_y, p_width, p_height);
 	}
 
-	public void image(final NerdGenericGraphics<SketchPGraphicsT> p_graphics, final PVector p_pos) {
+	public void image(final NerdAbstractGraphics<SketchPGraphicsT> p_graphics, final PVector p_pos) {
 		this.GRAPHICS.pushMatrix();
 		this.GRAPHICS.translate(p_pos.x, p_pos.y, p_pos.z);
 		this.GRAPHICS.image(p_graphics.getUnderlyingBuffer(), 0, 0);
 		this.GRAPHICS.popMatrix();
 	}
 
-	public void image(final NerdGenericGraphics<SketchPGraphicsT> p_graphics, final float p_scale) {
+	public void image(final NerdAbstractGraphics<SketchPGraphicsT> p_graphics, final float p_scale) {
 		this.GRAPHICS.image(p_graphics.getUnderlyingBuffer(), 0, 0, p_scale, p_scale);
 	}
 
-	public void image(final NerdGenericGraphics<SketchPGraphicsT> p_graphics, final float p_x, final float p_y) {
+	public void image(final NerdAbstractGraphics<SketchPGraphicsT> p_graphics, final float p_x, final float p_y) {
 		this.image(p_graphics.getUnderlyingBuffer(), p_x, p_y);
 	}
 
-	public void image(final NerdGenericGraphics<SketchPGraphicsT> p_graphics, final PVector p_pos,
+	public void image(final NerdAbstractGraphics<SketchPGraphicsT> p_graphics, final PVector p_pos,
 			final float p_scale) {
 		this.GRAPHICS.pushMatrix();
 		this.GRAPHICS.translate(p_pos.x, p_pos.y, p_pos.z);
@@ -663,12 +716,12 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.popMatrix();
 	}
 
-	public void image(final NerdGenericGraphics<SketchPGraphicsT> p_graphics, final float p_x, final float p_y,
+	public void image(final NerdAbstractGraphics<SketchPGraphicsT> p_graphics, final float p_x, final float p_y,
 			final float p_z) {
 		this.image((PImage) p_graphics.getUnderlyingBuffer(), p_x, p_y, p_z);
 	}
 
-	public void image(final NerdGenericGraphics<SketchPGraphicsT> p_graphics, final PVector p_pos, final float p_width,
+	public void image(final NerdAbstractGraphics<SketchPGraphicsT> p_graphics, final PVector p_pos, final float p_width,
 			final float p_height) {
 		this.GRAPHICS.pushMatrix();
 		this.GRAPHICS.translate(p_pos.x, p_pos.y, p_pos.z);
@@ -691,45 +744,6 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	}
 	// endregion
 	// endregion
-
-	// TODO: Get these bois going:
-	private void updateParameters() {
-		this.width = this.GRAPHICS.width;
-		this.height = this.GRAPHICS.height;
-
-		this.dbx = this.width * 2.0f;
-		this.dby = this.height * 2.0f;
-
-		this.cx = this.width * 0.5f;
-		this.cy = this.height * 0.5f;
-
-		this.qx = this.cx * 0.5f;
-		this.qy = this.cy * 0.5f;
-
-		this.q3x = this.cx + this.qx;
-		this.q3y = this.cy + this.qy;
-
-		this.scr = (float) this.width / (float) this.height;
-	}
-
-	private void recordCurrentParameters() {
-		this.pwidth = this.width;
-		this.pheight = this.height;
-
-		this.pdbx = this.dbx;
-		this.pdby = this.dby;
-
-		this.pcx = this.cx;
-		this.pcy = this.cy;
-
-		this.pqx = this.qx;
-		this.pqy = this.qy;
-
-		this.pq3x = this.q3x;
-		this.pq3y = this.q3y;
-
-		this.pscr = this.scr;
-	}
 
 	// region `translateToCenter()` and `translateFromCenter()`.
 	public void translateToCenter() {
@@ -772,7 +786,7 @@ public abstract class NerdGenericGraphics<SketchPGraphicsT extends PGraphics> {
 	 *
 	 * @param p_text is the text to render.
 	 *
-	 * @see {@linkplain NerdGenericGraphics#textHeight()
+	 * @see {@linkplain NerdAbstractGraphics#textHeight()
 	 *      NerdGenericGraphics::textHeight()},
 	 * @see {@linkplain PGraphics#textWidth(String) PGraphics::textWidth(String)}.
 	 */

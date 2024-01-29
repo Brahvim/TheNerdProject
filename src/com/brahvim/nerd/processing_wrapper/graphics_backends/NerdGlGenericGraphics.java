@@ -1,5 +1,6 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
+import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PConstants;
@@ -12,7 +13,7 @@ import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PShader;
 
 public abstract class NerdGlGenericGraphics<SketchPGraphicsT extends PGraphicsOpenGL>
-        extends NerdGenericGraphics<SketchPGraphicsT> {
+        extends NerdAbstractGraphics<SketchPGraphicsT> {
 
     protected NerdGlGenericGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch,
