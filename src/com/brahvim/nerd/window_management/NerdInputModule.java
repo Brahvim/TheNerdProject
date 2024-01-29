@@ -401,7 +401,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 
 		int paramArrId = 0;
 
-		for (int i = 0; paramArrId < paramArrLen || i < ownArrLen; i++) {
+		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; i++) {
 			if (p_keyCodes[paramArrId] == this.KEYS_HELD.get(i))
 				paramArrId++;
 		}

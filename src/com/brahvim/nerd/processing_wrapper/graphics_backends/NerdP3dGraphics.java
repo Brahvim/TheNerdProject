@@ -90,14 +90,11 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     @Override
     protected void preDrawImpl() {
-        if (this.applyLighting)
-            super.GRAPHICS.lights();
-    }
-
-    @Override
-    protected void drawImpl() {
         if (this.applyCameraMatrix)
             this.applyCurrentCamera();
+
+        if (this.applyLighting)
+            this.lights();
     }
 
     // region Lighting toggles.
