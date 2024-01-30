@@ -77,18 +77,6 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// region Instance constants.
 	public final Robot ROBOT;
 	public final boolean USES_OPENGL;
-	// public final NerdAssetsModule ASSETS;
-
-	// region `java.awt` constants.
-	public final GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	public GraphicsDevice DEFAULT_JAVA_SCREEN = this.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
-	public GraphicsDevice[] JAVA_SCREENS = this.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
-	public DisplayMode DEFAULT_JAVA_SCREEN_MODE = this.DEFAULT_JAVA_SCREEN.getDisplayMode();
-	public int DEFAULT_REFRESH_RATE = this.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
-	// endregion
-	// endregion
-	// endregion
-	// endregion
 
 	// region Necessary `NerdModule`s:
 	public final NerdInputModule<SketchPGraphicsT> INPUT;
@@ -96,6 +84,17 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	public final NerdWindowModule<SketchPGraphicsT> GENERIC_WINDOW;
 	public final NerdSketchSettings<SketchPGraphicsT> SKETCH_SETTINGS;
 	public final NerdSketch.NerdSketchOnlyAssetsModule<SketchPGraphicsT> ASSETS;
+	// endregion
+
+	// region `java.awt` objects (some not constant).
+	public final GraphicsEnvironment LOCAL_GRAPHICS_ENVIRONMENT = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	public GraphicsDevice DEFAULT_JAVA_SCREEN = this.LOCAL_GRAPHICS_ENVIRONMENT.getDefaultScreenDevice();
+	public final GraphicsDevice[] JAVA_SCREENS = this.LOCAL_GRAPHICS_ENVIRONMENT.getScreenDevices();
+	public DisplayMode DEFAULT_JAVA_SCREEN_MODE = this.DEFAULT_JAVA_SCREEN.getDisplayMode();
+	public int DEFAULT_REFRESH_RATE = this.DEFAULT_JAVA_SCREEN_MODE.getRefreshRate();
+	// endregion
+	// endregion
+	// endregion
 	// endregion
 
 	// region `protected` fields.
