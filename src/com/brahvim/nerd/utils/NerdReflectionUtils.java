@@ -11,7 +11,7 @@ import com.brahvim.nerd.utils.java_function_extensions.NerdTriConsumer;
 public class NerdReflectionUtils {
 
 	private NerdReflectionUtils() {
-		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 	}
 
 	/**

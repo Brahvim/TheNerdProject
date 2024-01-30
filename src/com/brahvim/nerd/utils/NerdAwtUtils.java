@@ -6,7 +6,7 @@ import java.awt.Robot;
 public class NerdAwtUtils {
 
     private NerdAwtUtils() {
-        NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+        NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
     }
 
     public static Robot createAwtRobot() {

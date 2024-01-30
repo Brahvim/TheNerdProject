@@ -9,7 +9,7 @@ import processing.core.PConstants;
 public class NerdEasingFunctions {
 
 	private NerdEasingFunctions() {
-		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 
 	}
 

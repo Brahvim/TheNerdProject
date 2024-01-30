@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 public class NerdByteSerialUtils {
 
 	private NerdByteSerialUtils() {
-		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class NerdByteSerialUtils {
 					|| (f.getModifiers() & p_fieldExclusionFlagsEnum) != 0);
 
 			if (editable) { // ..that is not the `serialVersionUID`, ~~nor `static`, nor `transient`~~...
-				f.setAccessible(true); // ..making sure it is accessible, if it is not...
+				f.setAccessible(true); // ..making sure it is accessible, if it is not... NOSONAR!
 				try {
 					final Object value = f.get(p_from); // ...we get the value of.
 					// ...Upon checking the types, if the the field, from the object to copy from,
@@ -99,7 +99,7 @@ public class NerdByteSerialUtils {
 								f.getType().getName(),
 								value.getClass().getName()));
 					// But if it shows the slightest of similarities, we go on:
-					f.set(p_to, value);
+					f.set(p_to, value); // NOSONAR! Let me do this!
 				} catch (final IllegalAccessException e) {
 					// Bruh I wrote some scripture up there x)
 					e.printStackTrace();

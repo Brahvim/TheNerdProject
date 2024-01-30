@@ -9,7 +9,7 @@ import processing.core.PVector;
 public class NerdCollisionAlgorithms {
 
 	private NerdCollisionAlgorithms() {
-		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 	}
 
 	public static boolean ptPoly(final float p_x, final float p_y, final PVector... p_poly) {

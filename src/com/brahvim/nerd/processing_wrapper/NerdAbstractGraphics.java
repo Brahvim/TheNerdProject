@@ -861,6 +861,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	}
 
 	// region Coordinate-less overloads.
+	// region At current model space coordinates.
 	public void text(final char c) {
 		this.GRAPHICS.text(c, 0, 0);
 	}
@@ -880,6 +881,30 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	public void text(final char[] p_charArray) {
 		this.GRAPHICS.text(p_charArray, 0, p_charArray.length, 0, 0);
 	}
+
+	// endregion
+
+	// region At 2D center of the screen.
+	public void textAt2dCenter(final char c) {
+		this.GRAPHICS.text(c, this.cx, this.cy);
+	}
+
+	public void textAt2dCenter(final String str) {
+		this.GRAPHICS.text(str, this.cx, this.cy);
+	}
+
+	public void textAt2dCenter(final int num) {
+		this.GRAPHICS.text(num, this.cx, this.cy);
+	}
+
+	public void textAt2dCenter(final float num) {
+		this.GRAPHICS.text(num, this.cx, this.cy);
+	}
+
+	public void textAt2dCenter(final char[] p_charArray) {
+		this.GRAPHICS.text(p_charArray, 0, p_charArray.length, this.cx, this.cy);
+	}
+	// endregion
 	// endregion
 
 	// That one array-length based overload:

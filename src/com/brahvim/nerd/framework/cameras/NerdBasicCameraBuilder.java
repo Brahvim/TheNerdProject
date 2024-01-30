@@ -154,8 +154,8 @@ public class NerdBasicCameraBuilder {
 		return this;
 	}
 
-	public NerdBasicCameraBuilder setNear(final float p_fov) {
-		this.BUILD.near = p_fov;
+	public NerdBasicCameraBuilder setNear(final float p_near) {
+		this.BUILD.near = p_near;
 		return this;
 	}
 

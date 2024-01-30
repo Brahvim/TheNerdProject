@@ -5,7 +5,7 @@ import processing.core.PVector;
 public final class NerdPVectorUtils {
 
 	private NerdPVectorUtils() {
-		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 	}
 
 	// region Conversions.

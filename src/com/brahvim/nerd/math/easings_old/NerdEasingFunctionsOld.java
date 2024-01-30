@@ -1,13 +1,13 @@
 package com.brahvim.nerd.math.easings_old;
 
+import com.brahvim.nerd.utils.NerdReflectionUtils;
+
 // Thanks to `easings.net`!
 
 public class NerdEasingFunctionsOld {
 
 	private NerdEasingFunctionsOld() {
-		throw new Error("Sorry, but `"
-				+ this.getClass().getCanonicalName()
-				+ "` is an uninstantiable, helper class.");
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 	}
 
 	public static float cubic(final float x) {

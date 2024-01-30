@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 public final class NerdBufferUtils {
 
 	private NerdBufferUtils() {
-		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 	}
 
 	// region Integers.

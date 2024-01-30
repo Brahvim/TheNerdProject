@@ -15,7 +15,7 @@ public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 	@SuppressWarnings("unused")
 	private NerdModule() {
 		this.SKETCH = null;
-		NerdReflectionUtils.rejectStaticClassInstantiationFor(this.getClass());
+		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 	}
 
 	protected NerdModule(final NerdSketch<SketchPGraphicsT> p_sketch) {

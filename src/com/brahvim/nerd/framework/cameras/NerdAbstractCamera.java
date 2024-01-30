@@ -20,7 +20,7 @@ public abstract class NerdAbstractCamera {
 	// region `public` fields.
 	public static final float
 	/*   */ DEFAULT_FOV = PApplet.radians(60),
-			DEFAULT_NEAR = 0.05f,
+			DEFAULT_NEAR = 0.1f,
 			DEFAULT_FAR = 10_000,
 			DEFAULT_MOUSE_Z = 1;
 
