@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.brahvim.nerd.processing_wrapper.NerdSketch.NerdSketchOnlyAssetsModule;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
@@ -47,7 +48,12 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 			extends Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> {
 	}
 
-	// region Fields and constructor!
+	// region Fields and constructor!The method addNerdModule(Class<? extends
+	// NerdModule<SketchPGraphicsT>>) in the type
+	// NerdSketchSettings<SketchPGraphicsT>.NerdModulesAndSettingsMap is not
+	// applicable for the arguments
+	// (Class<NerdSketch.NerdSketchOnlyAssetsModule>)Java(67108979)
+
 	protected static final String NULL_SETTS_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
 
 	protected final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
@@ -55,14 +61,8 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	protected NerdSketchModulesSetConsumer<SketchPGraphicsT> modulesConsumer = null;
 	protected NerdSketchConstructorFunction<SketchPGraphicsT> sketchConstructor = null;
 
-	/**
-	 * @see {@linkplain NerdSketchBuilder#supplyDefaultModules()
-	 *      NerdSketchBuilder::supplyDefaultModules()}.
-	 */
-	private static final int NUM_DEFAULT_MODULES = 4;
-
 	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass) {
-		this.BUILD_SETTINGS = new NerdSketchSettings<>();
+		this.BUILD_SETTINGS = new NerdSketchSettings<>(this.getNumDefaultModules());
 
 		if (p_rendererClass == PGraphics2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.P2D;
@@ -93,6 +93,14 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 			throw new IllegalArgumentException("Those renderers are not real!");
 		else
 			throw new IllegalArgumentException("That's not a real type...");
+	}
+
+	/**
+	 * This is present only in the form of a method so the value can be modified
+	 * without being passed into the constructor.
+	 */
+	protected int getNumDefaultModules() {
+		return 4;
 	}
 
 	protected NerdSketchBuilder(
@@ -126,55 +134,23 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	// them. Accessible via `System.getProperty()` like all other ones!)
 
 	public final NerdSketch<SketchPGraphicsT> build() {
-		// Faster than passing an empty array:
+		// Faster than passing an empty array/:
 		return this.build(null); // this.build(new String[0]);
 	}
 
+	@SuppressWarnings("unchecked")
 	public final NerdSketch<SketchPGraphicsT> build(final String[] p_sketchArgs) {
-		// `NerdModule`s are constructed by the `NerdSketch<SketchPGraphicsT>`
-		// constructor.
+		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(NerdSketchOnlyAssetsModule.class);	
+		this.BUILD_SETTINGS.nerdModulesAndSettings
+				.addNerdModule((Class<? extends NerdModule<SketchPGraphicsT>>) NerdDisplayModule.class);
+		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(
+				(Class<? extends NerdModule<SketchPGraphicsT>>) NerdWindowModule.class,
+				NerdWindowModule::createWindowModule);
+		this.BUILD_SETTINGS.nerdModulesAndSettings
+				.addNerdModule((Class<? extends NerdModule<SketchPGraphicsT>>) NerdInputModule.class);
 
-		// In order to decrease code over there, and make it easier to modify
-		// the `NerdModule`s used, ...or their order, we keep the code for initializing
-		// them ready, beforehand!:
-
-		this.BUILD_SETTINGS.nerdModulesInstantiator = s -> {
-			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
-			/*	*/ userDefinedModules = new LinkedHashSet<>(0, 1);
-			this.supplyUserDefinedModules(userDefinedModules);
-
-			for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> f : this
-					.supplyDefaultModules())
-				s.add(f);
-
-			for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> f : userDefinedModules)
-				s.add(f);
-		};
-
-		final NerdSketch<SketchPGraphicsT>
-		/*   */ constructedSketch = this.createNerdSketch(this.BUILD_SETTINGS);
-
-		NerdSketchBuilder.runSketch(constructedSketch, p_sketchArgs);
-		return constructedSketch;
-	}
-
-	protected static int getNumDefaultModules() {
-		return NerdSketchBuilder.NUM_DEFAULT_MODULES;
-	}
-
-	private LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>> supplyDefaultModules() {
-		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
-		/*   */ toRet = new LinkedHashSet<>(NerdSketchBuilder.getNumDefaultModules());
-
-		toRet.add(NerdSketch.NerdSketchOnlyAssetsModule::new);
-
-		toRet.add(NerdDisplayModule::new);
-
-		toRet.add(NerdWindowModule::createWindowModule);
-
-		toRet.add(NerdInputModule::new);
-
-		return toRet;
+		// `NerdModule`s are constructed by the `NerdSketch` constructor:
+		return NerdSketchBuilder.runSketch(this.createNerdSketch(this.BUILD_SETTINGS), p_sketchArgs);
 	}
 
 	public static <SketchPGraphicsT extends PGraphics> NerdSketch<SketchPGraphicsT> //
@@ -243,7 +219,37 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return this.sketchConstructor.apply(p_settings);
 	}
 
-	// region `set()`.
+	// region Adding `NerdModule`s.
+	public NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
+			final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass) {
+		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(p_moduleClass);
+		return this;
+	}
+
+	public NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
+			final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+			final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
+		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(p_moduleClass, p_moduleSupplier);
+		return this;
+	}
+
+	public NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
+			final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+			final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
+		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(p_moduleClass, p_settings);
+		return this;
+	}
+
+	public NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
+			final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+			final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier,
+			final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
+		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(p_moduleClass, p_settings, p_moduleSupplier);
+		return this;
+	}
+	// endregion
+
+	// region `set*()`.
 	// region Window settings!
 	public NerdSketchBuilder<SketchPGraphicsT> setWidth(final int p_width) {
 		this.BUILD_SETTINGS.width = p_width;
@@ -261,6 +267,20 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	}
 	// endregion
 
+	public NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
+			final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
+		this.BUILD_SETTINGS.nerdModulesAndSettings
+				.setNerdModuleSettings(p_settings);
+		return this;
+	}
+
+	public NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
+			final Supplier<NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>> p_settingsSupplier) {
+		this.BUILD_SETTINGS.nerdModulesAndSettings
+				.setNerdModuleSettings(p_settingsSupplier.get());
+		return this;
+	}
+
 	public NerdSketchBuilder<SketchPGraphicsT> setFrameRateLimit(final int p_value) {
 		this.BUILD_SETTINGS.frameRateLimit = p_value;
 		return this;
@@ -270,39 +290,6 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		this.BUILD_SETTINGS.antiAliasing = p_value;
 		return this;
 	}
-
-	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
-			final NerdModuleSettings<SketchPGraphicsT, ModuleT> p_settings) {
-		this.BUILD_SETTINGS.nerdModulesSettings.put(p_settings.getModuleClass(), p_settings);
-		return this;
-	}
-
-	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
-			final Supplier<NerdModuleSettings<SketchPGraphicsT, ModuleT>> p_settingsSupplier) {
-		final NerdModuleSettings<SketchPGraphicsT, ModuleT> settings = p_settingsSupplier.get();
-		this.BUILD_SETTINGS.nerdModulesSettings.put(settings.getModuleClass(), settings);
-		return this;
-	}
-
-	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
-	// NerdSketchBuilder<SketchPGraphicsT>
-	// setNerdModuleSettings(
-	// final Class<ModuleT> p_moduleClass, final
-	// NerdModuleSettings<SketchPGraphicsT, ModuleT>
-	// p_settings) {
-	// this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass, p_settings);
-	// return this;
-	// }
-
-	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
-	// NerdSketchBuilder<SketchPGraphicsT>
-	// setNerdModuleSettings(
-	// final Class<ModuleT> p_moduleClass, final
-	// Supplier<NerdModuleSettings<SketchPGraphicsT, ModuleT>> p_settingsSupplier) {
-	// this.BUILD_SETTINGS.nerdModulesSettings.put(p_moduleClass,
-	// p_settingsSupplier.get());
-	// return this;
-	// }
 	// endregion
 
 	// region Window behaviors and properties.

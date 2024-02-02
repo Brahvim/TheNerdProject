@@ -10,8 +10,7 @@ public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 
 	protected final NerdSketch<SketchPGraphicsT> SKETCH;
 
-	protected NerdModule(
-			final NerdSketch<SketchPGraphicsT> p_sketch
+	protected NerdModule(final NerdSketch<SketchPGraphicsT> p_sketch
 	// , final NerdModuleSettings<SketchPGraphicsT, ? extends
 	// NerdModule<SketchPGraphicsT>>
 	// /* */ p_settings /* NOSONAR! I need this parameter. */

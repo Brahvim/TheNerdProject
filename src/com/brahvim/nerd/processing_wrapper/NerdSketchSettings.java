@@ -1,10 +1,8 @@
 package com.brahvim.nerd.processing_wrapper;
 
-import java.util.HashMap;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.brahvim.nerd.io.NerdStringsTable;
@@ -15,26 +13,73 @@ import processing.core.PGraphics;
 
 public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 
-	public class NerdModulesAndSettingsMap {
+	/**
+	 * @see {@linkplain NerdSketchBuilder#supplyDefaultModules()
+	 *      NerdSketchBuilder::supplyDefaultModules()}.
+	 */
+	protected final int NUM_DEFAULT_MODULES;
 
-		protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>>
-		/*   */ CLASSES_TO_MODULES_MAP = new LinkedHashMap<>(NerdSketchBuilder.getNumDefaultModules());
-		protected final Map<NerdModule<SketchPGraphicsT>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>>
-		/*   */ MODULES_TO_SETTINGS_MAP = new LinkedHashMap<>(NerdSketchBuilder.getNumDefaultModules());
+	public NerdSketchSettings(final int p_numModules) {
+		this.NUM_DEFAULT_MODULES = p_numModules;
+	}
 
-		// public NerdModulesAndSettingsMap() { }
+	public final class NerdModulesAndSettingsMap {
 
-		@SuppressWarnings("unchecked")
-		public void addModule(final NerdModule<SketchPGraphicsT> p_module) {
-			this.CLASSES_TO_MODULES_MAP.put(
-					(Class<? extends NerdModule<SketchPGraphicsT>>) p_module.getClass(), p_module);
+		private final Map<Class<?>, Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
+		/*   */ CLASSES_TO_MODULES_MAP = new LinkedHashMap<>(NerdSketchSettings.this.NUM_DEFAULT_MODULES);
+		private final Map<Class<?>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>>
+		/*   */ MODULE_CLASSES_TO_SETTINGS_MAP = new LinkedHashMap<>(NerdSketchSettings.this.NUM_DEFAULT_MODULES);
+
+		@SafeVarargs
+		public final void addNerdModules(final Class<? extends NerdModule<SketchPGraphicsT>>... p_moduleClasses) {
+			for (final var c : p_moduleClasses)
+				this.addNerdModule(c);
 		}
 
-		public void addSettings(
+		@SafeVarargs
+		public final void setNerdModuleSettings(
+				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>... p_settings) {
+			for (final var i : p_settings)
+				this.setNerdModuleSettings(i);
+		}
+
+		public void setNerdModuleSettings(
+				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
+			this.MODULE_CLASSES_TO_SETTINGS_MAP.put(p_settings.getNerdModuleClass(), p_settings);
+		}
+
+		public void addNerdModule(final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass) {
+			this.CLASSES_TO_MODULES_MAP.put(p_moduleClass,
+					s -> {
+						try {
+							return p_moduleClass.getDeclaredConstructor(NerdSketch.class).newInstance(s);
+						} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+								| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+							e.printStackTrace();
+						}
+						return null;
+					});
+		}
+
+		public void addNerdModule(
 				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
 				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
-			this.MODULES_TO_SETTINGS_MAP.put(
-					this.CLASSES_TO_MODULES_MAP.get(p_moduleClass), p_settings);
+			this.addNerdModule(p_moduleClass);
+			this.MODULE_CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
+		}
+
+		public void addNerdModule(
+				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+				final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
+			this.CLASSES_TO_MODULES_MAP.put(p_moduleClass, p_moduleSupplier);
+		}
+
+		public void addNerdModule(
+				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings,
+				final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
+			this.CLASSES_TO_MODULES_MAP.put(p_moduleClass, p_moduleSupplier);
+			this.MODULE_CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
 		}
 
 	}
@@ -104,26 +149,10 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	public String renderer = PConstants.P3D;
 
 	/**
-	 * Holds the method that is called when the {@link NerdSketch} needs to know
-	 * what {@link NerdModule}s are to be loaded.
-	 * <p>
-	 * {@code true} by default.
+	 * This holds the {@link NerdModule} {@link NerdModuleSettings} of the
+	 * {@link NerdModule}s you want the engine to use.
 	 */
-	public Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>> nerdModulesInstantiator;
-
-	/**
-	 * This holds the {@link NerdModuleSettings} of the {@link NerdModule}s you want
-	 * the engine to use.
-	 *
-	 * @implNote Initialize using a {@link HashMap} with no allocation
-	 *           ({@code 0} elements' worth of allocation):
-	 *
-	 *           <pre>
-	 *           new HashMap<>(0);
-	 *           </pre>
-	 */
-	public Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModuleSettings<SketchPGraphicsT, ? extends NerdModule<SketchPGraphicsT>>>
-	/*   */ nerdModulesSettings = new HashMap<>(NerdSketchBuilder.getNumDefaultModules());
+	public NerdSketchSettings<SketchPGraphicsT>.NerdModulesAndSettingsMap nerdModulesAndSettings = this.new NerdModulesAndSettingsMap();
 	// endregion
 
 	// region Booleans.

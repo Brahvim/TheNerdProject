@@ -41,7 +41,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	protected static final class NerdSketchOnlyAssetsModule<SketchPGraphicsT extends PGraphics>
 			extends NerdAssetsModule<SketchPGraphicsT> {
 
-		protected NerdSketchOnlyAssetsModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
+		public NerdSketchOnlyAssetsModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
 			super(p_sketch);
 		}
 
@@ -176,7 +176,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 				// If we already have a certain `NerdModule`,
 				if (this.CLASSES_TO_MODULES_MAP.get(moduleClass) != null) {
-					// ..We replace the existing one,
+					// ...We replace the existing one,
 					toRet.removeIf(m -> m.getClass().equals(moduleClass));
 
 					// ..Add the new one at the end:

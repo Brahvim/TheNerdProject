@@ -7,9 +7,6 @@ public abstract class NerdModuleSettings<SketchPGraphicsT extends PGraphics, Mod
     protected NerdModuleSettings() {
     }
 
-    // @SuppressWarnings("unchecked")
-    public <RetModuleClassT extends ModuleT> Class<RetModuleClassT> getModuleClass() {
-        return null; // (Class<RetModuleClassT>) NerdModule.class;
-    }
+    public abstract <RetModuleClassT extends ModuleT> Class<RetModuleClassT> getNerdModuleClass();
 
 }
