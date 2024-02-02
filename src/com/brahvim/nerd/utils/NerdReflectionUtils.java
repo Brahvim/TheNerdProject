@@ -82,7 +82,7 @@ public class NerdReflectionUtils {
 				return (Class<? extends RetT>) typeArguments[0];
 		}
 
-		throw new IllegalArgumentException("Unable to determine the type parameter!");
+		throw new IllegalStateException("Unable to determine the type parameter!");
 	}
 
 	public static Type[] getTypeArgsAsTypes(final Object p_object) {

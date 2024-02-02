@@ -69,32 +69,31 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	}
 	// endregion
 
-	@SuppressWarnings("unchecked")
-	public static <RetModulePGraphicsT extends PGraphics> NerdWindowModule<RetModulePGraphicsT> createWindowModule(
-			final NerdSketch<RetModulePGraphicsT> p_sketch) {
-		final NerdWindowModule<RetModulePGraphicsT> toRet
-		/*   */ = (NerdWindowModule<RetModulePGraphicsT>)
-		/*   */ NerdWindowModule.supplyWindowModuleForSketch(p_sketch);
+	public static <RetModulePGraphicsT extends PGraphics>
+	/*   */ NerdWindowModule<RetModulePGraphicsT> createWindowModule(final NerdSketch<RetModulePGraphicsT> p_sketch) {
+		final NerdWindowModule<RetModulePGraphicsT>
+		/*   */ toRet = NerdWindowModule.supplyWindowModuleForSketch(p_sketch);
 
 		if (toRet == null)
-			throw new IllegalArgumentException("Please write your own `PGraphics` subclass for this one!");
+			throw new IllegalArgumentException(
+					"Please write your own `PGraphics` subclass for this one!");
 
 		return toRet;
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <RetGraphicsT extends PGraphics> NerdWindowModule<?> supplyWindowModuleForSketch(
-			final NerdSketch<RetGraphicsT> p_sketch) {
-		return switch (p_sketch.SKETCH_SETTINGS.renderer) {
+	protected static <RetGraphicsT extends PGraphics>
+	/*   */ NerdWindowModule<RetGraphicsT> supplyWindowModuleForSketch(final NerdSketch<RetGraphicsT> p_sketch) {
+		// return switch (p_sketch.SKETCH_SETTINGS.renderer) {
+		return (NerdWindowModule<RetGraphicsT>) (switch (p_sketch.sketchRenderer()) {
 			case PConstants.P2D -> new NerdGlWindowModule((NerdSketch<PGraphicsOpenGL>) p_sketch);
 			case PConstants.P3D -> new NerdGlWindowModule((NerdSketch<PGraphicsOpenGL>) p_sketch);
 			case PConstants.PDF -> new NerdJava2dWindowModule((NerdSketch<PGraphicsJava2D>) p_sketch);
 			case PConstants.SVG -> new NerdJava2dWindowModule((NerdSketch<PGraphicsJava2D>) p_sketch);
 			case PConstants.FX2D -> new NerdFx2dWindowModule((NerdSketch<PGraphicsFX2D>) p_sketch);
 			case PConstants.JAVA2D -> new NerdJava2dWindowModule((NerdSketch<PGraphicsJava2D>) p_sketch);
-
 			default -> null;
-		};
+		});
 	}
 
 	// region Taking the window to the center.

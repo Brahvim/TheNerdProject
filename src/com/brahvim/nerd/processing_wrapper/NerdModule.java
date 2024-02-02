@@ -3,8 +3,6 @@ package com.brahvim.nerd.processing_wrapper;
 import java.util.List;
 import java.util.Map;
 
-import com.brahvim.nerd.utils.NerdReflectionUtils;
-
 import processing.core.PGraphics;
 import processing.event.MouseEvent;
 
@@ -12,14 +10,17 @@ public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 
 	protected final NerdSketch<SketchPGraphicsT> SKETCH;
 
-	@SuppressWarnings("unused")
-	private NerdModule() {
-		this.SKETCH = null;
-		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
+	protected NerdModule(
+			final NerdSketch<SketchPGraphicsT> p_sketch
+	// , final NerdModuleSettings<SketchPGraphicsT, ? extends
+	// NerdModule<SketchPGraphicsT>>
+	// /* */ p_settings /* NOSONAR! I need this parameter. */
+	) {
+		this.SKETCH = p_sketch;
 	}
 
-	protected NerdModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
-		this.SKETCH = p_sketch;
+	protected void assignModuleSettings(
+			final NerdModuleSettings<SketchPGraphicsT, ? extends NerdModule<SketchPGraphicsT>> p_settings) {
 	}
 
 	public NerdSketch<SketchPGraphicsT> getSketch() {
@@ -59,10 +60,6 @@ public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 
 	protected Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>> getSketchModulesMap() {
 		return this.SKETCH.CLASSES_TO_MODULES_MAP;
-	}
-
-	protected void assignModuleSettings(
-			final NerdModuleSettings<SketchPGraphicsT, ? extends NerdModule<SketchPGraphicsT>> p_settings) {
 	}
 
 	// region Callbacks for `NerdSketch<?>` to call!1!!!

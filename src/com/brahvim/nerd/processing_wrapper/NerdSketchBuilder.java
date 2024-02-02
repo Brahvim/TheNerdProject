@@ -48,12 +48,18 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	}
 
 	// region Fields and constructor!
-	public static final String NULL_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
-
-	protected NerdSketchConstructorFunction<SketchPGraphicsT> sketchConstructor = null;
-	protected NerdSketchModulesSetConsumer<SketchPGraphicsT> modulesConsumer = null;
+	protected static final String NULL_SETTS_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
 
 	protected final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
+
+	protected NerdSketchModulesSetConsumer<SketchPGraphicsT> modulesConsumer = null;
+	protected NerdSketchConstructorFunction<SketchPGraphicsT> sketchConstructor = null;
+
+	/**
+	 * @see {@linkplain NerdSketchBuilder#supplyDefaultModules()
+	 *      NerdSketchBuilder::supplyDefaultModules()}.
+	 */
+	private static final int NUM_DEFAULT_MODULES = 4;
 
 	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass) {
 		this.BUILD_SETTINGS = new NerdSketchSettings<>();
@@ -145,16 +151,20 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 				s.add(f);
 		};
 
-		final NerdSketch<SketchPGraphicsT> constructedSketch
-		/*   */ = this.createNerdSketch(this.BUILD_SETTINGS);
+		final NerdSketch<SketchPGraphicsT>
+		/*   */ constructedSketch = this.createNerdSketch(this.BUILD_SETTINGS);
 
 		NerdSketchBuilder.runSketch(constructedSketch, p_sketchArgs);
 		return constructedSketch;
 	}
 
+	protected static int getNumDefaultModules() {
+		return NerdSketchBuilder.NUM_DEFAULT_MODULES;
+	}
+
 	private LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>> supplyDefaultModules() {
 		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
-		/*   */ toRet = new LinkedHashSet<>(5);
+		/*   */ toRet = new LinkedHashSet<>(NerdSketchBuilder.getNumDefaultModules());
 
 		toRet.add(NerdSketch.NerdSketchOnlyAssetsModule::new);
 

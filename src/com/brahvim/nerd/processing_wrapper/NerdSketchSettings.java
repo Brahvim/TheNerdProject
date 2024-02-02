@@ -1,6 +1,7 @@
 package com.brahvim.nerd.processing_wrapper;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -13,6 +14,30 @@ import processing.core.PConstants;
 import processing.core.PGraphics;
 
 public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
+
+	public class NerdModulesAndSettingsMap {
+
+		protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>>
+		/*   */ CLASSES_TO_MODULES_MAP = new LinkedHashMap<>(NerdSketchBuilder.getNumDefaultModules());
+		protected final Map<NerdModule<SketchPGraphicsT>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>>
+		/*   */ MODULES_TO_SETTINGS_MAP = new LinkedHashMap<>(NerdSketchBuilder.getNumDefaultModules());
+
+		// public NerdModulesAndSettingsMap() { }
+
+		@SuppressWarnings("unchecked")
+		public void addModule(final NerdModule<SketchPGraphicsT> p_module) {
+			this.CLASSES_TO_MODULES_MAP.put(
+					(Class<? extends NerdModule<SketchPGraphicsT>>) p_module.getClass(), p_module);
+		}
+
+		public void addSettings(
+				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
+			this.MODULES_TO_SETTINGS_MAP.put(
+					this.CLASSES_TO_MODULES_MAP.get(p_moduleClass), p_settings);
+		}
+
+	}
 
 	// region Non-Boolean settings.
 	/**
@@ -98,7 +123,7 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	 *           </pre>
 	 */
 	public Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModuleSettings<SketchPGraphicsT, ? extends NerdModule<SketchPGraphicsT>>>
-	/*   */ nerdModulesSettings = new HashMap<>(0);
+	/*   */ nerdModulesSettings = new HashMap<>(NerdSketchBuilder.getNumDefaultModules());
 	// endregion
 
 	// region Booleans.
