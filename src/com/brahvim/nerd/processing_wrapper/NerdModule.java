@@ -14,10 +14,6 @@ public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 		this.SKETCH = p_sketch;
 	}
 
-	protected void assignModuleSettings(
-			final NerdModuleSettings<SketchPGraphicsT, ? extends NerdModule<SketchPGraphicsT>> p_settings) {
-	}
-
 	public NerdSketch<SketchPGraphicsT> getSketch() {
 		return this.SKETCH;
 	}
@@ -59,9 +55,6 @@ public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 
 	// region Callbacks for `NerdSketch<?>` to call!1!!!
 	// region Workflow callbacks!
-	protected void sketchConstructed(final NerdSketchSettings<?> p_settings) {
-	}
-
 	protected void settings() {
 	}
 

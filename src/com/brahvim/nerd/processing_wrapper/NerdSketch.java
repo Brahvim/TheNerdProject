@@ -124,15 +124,8 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 		this.USES_OPENGL = PConstants.P3D.equals(p_settings.renderer);
 
-		// region Stuff involving modules.
+		// region Stuff involving `NerdModule`s.
 		this.MODULES = this.createAndSortModules(p_settings);
-
-		for (final NerdModule<SketchPGraphicsT> m : this.MODULES) {
-			this.CLASSES_TO_MODULES_MAP.put((Class<NerdModule<SketchPGraphicsT>>) m.getClass(), m);
-			m.sketchConstructed(p_settings);
-			// m.assignModuleSettings(p_settings.nerdModulesSettings.get(m.getClass()));
-		}
-
 		this.ASSETS = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
 		this.GENERIC_WINDOW = this.getNerdModule(NerdWindowModule.class);
 		this.DISPLAY = this.getNerdModule(NerdDisplayModule.class);
@@ -188,8 +181,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 					continue;
 				}
 
-				// Otherwise, just add as usual.
-
+				// Otherwise, just add as usual:
 				toRet.add(module);
 				this.CLASSES_TO_MODULES_MAP.put(moduleClass, module);
 			} catch (final Exception e) {

@@ -1,5 +1,6 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,6 +54,8 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 			return (sketch, settings) -> {
 				NerdModule<SketchPGraphicsT> toRet = null;
 
+				// Funny!:
+
 				try {
 					toRet = this.getModuleConstructorGivenSettings(p_moduleClass, sketch, settings);
 				} catch (final NoSuchMethodException e) {
@@ -61,6 +64,35 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 
 				return toRet;
 			};
+		}
+
+		protected NerdModule<SketchPGraphicsT> getModuleFromConstructor(
+				final NerdSketch<SketchPGraphicsT> p_sketch,
+				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
+			// Find the constructor which takes `NerdModuleSettings`:
+			for (final Constructor<?> constructor : p_settings.getClass().getDeclaredConstructors())
+				this.getModuleFromConstructorsAvailable(constructor, p_sketch, p_settings);
+
+			return null; // No constructors found. Impossible!
+		}
+
+		@SuppressWarnings("unchecked")
+		protected NerdModule<SketchPGraphicsT> getModuleFromConstructorsAvailable(
+				final Constructor<?> p_constructor,
+				final NerdSketch<SketchPGraphicsT> p_sketch,
+				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
+			// Any of 'em constructors takes a `NerdModuleSettings` subclass instance?:
+			for (final Class<?> parameterType : p_constructor.getParameterTypes()) {
+				if (NerdModuleSettings.class.isAssignableFrom(parameterType)) {
+					try {
+						return (NerdModule<SketchPGraphicsT>) p_constructor.newInstance(p_sketch, p_settings);
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			return null;
 		}
 
 		protected NerdModule<SketchPGraphicsT> getModuleConstructorGivenSettings(
