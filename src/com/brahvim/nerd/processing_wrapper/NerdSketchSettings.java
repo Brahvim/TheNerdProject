@@ -23,11 +23,11 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 		this.NUM_DEFAULT_MODULES = p_numModules;
 	}
 
-	public final class NerdModulesAndSettingsMap {
+	protected final class NerdModulesAndSettingsMap {
 
-		private final Map<Class<?>, Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
+		protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
 		/*   */ CLASSES_TO_MODULES_MAP = new LinkedHashMap<>(NerdSketchSettings.this.NUM_DEFAULT_MODULES);
-		private final Map<Class<?>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>>
+		protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>>
 		/*   */ MODULE_CLASSES_TO_SETTINGS_MAP = new LinkedHashMap<>(NerdSketchSettings.this.NUM_DEFAULT_MODULES);
 
 		@SafeVarargs

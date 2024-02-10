@@ -132,7 +132,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		for (final NerdModule<SketchPGraphicsT> m : this.MODULES) {
 			this.CLASSES_TO_MODULES_MAP.put((Class<NerdModule<SketchPGraphicsT>>) m.getClass(), m);
 			m.sketchConstructed(p_settings);
-			m.assignModuleSettings(p_settings.nerdModulesSettings.get(m.getClass()));
+			// m.assignModuleSettings(p_settings.nerdModulesSettings.get(m.getClass()));
 		}
 
 		this.ASSETS = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
