@@ -49,13 +49,13 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 				final NerdSketch<SketchPGraphicsT> p_sketch,
 				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
 			// Find the constructor which takes `NerdModuleSettings`:
-			Constructor<?> defaultConstructor = null, settingsConstructor = null;
+			Constructor<?> sketchConstructor = null, settingsConstructor = null;
 			for (final Constructor<?> c : p_settings.getClass().getDeclaredConstructors()) {
 
 				if (c.getParameterTypes().length == 1)
 					if (c.getParameterTypes()[0] == NerdSketch.class) {
-						defaultConstructor = c;
-						continue;
+						sketchConstructor = c;
+						continue; // We're exiting, thus no `else`.
 					}
 
 				// Any of 'em constructors takes a `NerdModuleSettings` subclass instance?:
@@ -66,24 +66,26 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 
 			// We 'prefer' the 'settings constructor' around here.
 			// (I mean... the module developer does, okay!? Hence this mess!).
-
+			// ...
 			// If Mr. Settings Constructor isn't around (*id est, is `null`*), look for
 			// Mrs. Sketch Constructor instead - she takes just the `NerdSketch`!
 			// (Not exactly what we're looking for, but there will always be at least *one*
 			// constructor taking *one* `NerdSketch` since `NerdModule` requires that.)
+			// (...and I just felt like using funny names, LOL.)
 
 			try {
 				if (settingsConstructor == null) {
-					if (defaultConstructor != null)
-						return (NerdModule<SketchPGraphicsT>) defaultConstructor.newInstance(p_sketch);
+					if (sketchConstructor != null)
+						return (NerdModule<SketchPGraphicsT>) sketchConstructor.newInstance(p_sketch);
 				} else
 					return (NerdModule<SketchPGraphicsT>) settingsConstructor.newInstance(p_sketch, p_settings);
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
+			} catch (InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
 
-			return null;
+			return null; // Shouldn't happen, 'cause `NerdModuleSettings` exist to pass extra parameters!
+			// ...Buuuuut the *person* writing the `NerdModule` decides! Haha.
 		}
 
 		public void addNerdModule(
