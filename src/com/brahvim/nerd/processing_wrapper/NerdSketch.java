@@ -153,6 +153,12 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		// Construct `NerdModule`s using the provided constructors, then add them:
 		for (final var entry : nerdModulesAndSettings.CLASSES_TO_CONSTRUCTORS_MAP.entrySet())
 			try {
+				if (entry == null) {
+					System.out.println(
+							"`null` entry in the `NerdModulesBuilderRegistry::CLASSES_TO_CONSTRUCTORS_MAP`!");
+					continue;
+				}
+
 				Objects.requireNonNull(entry,
 						"Could not instantiate a `NerdModule` due to the supplying function being `null`.");
 
@@ -163,8 +169,10 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 				final NerdModule<SketchPGraphicsT> module = entry.getValue().apply(this,
 						nerdModulesAndSettings.CLASSES_TO_SETTINGS_MAP.get(moduleClass));
 
-				Objects.requireNonNull(module,
-						"Could not include a `NerdModule` due to the it being `null`.");
+				if (module == null) {
+					System.out.println("Could not include a `NerdModule` due to it being `null`.");
+					continue;
+				}
 
 				// If we already have a certain `NerdModule`,
 				if (this.CLASSES_TO_MODULES_MAP.get(moduleClass) != null) {

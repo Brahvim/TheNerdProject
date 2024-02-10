@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import com.brahvim.nerd.processing_wrapper.NerdSketch.NerdSketchOnlyAssetsModule;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
-import com.brahvim.nerd.window_management.NerdWindowModule;
 
 import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
@@ -146,7 +145,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 		this.addNerdModule(NerdSketchOnlyAssetsModule.class);
 		this.addNerdModule(NerdDisplayModule.class);
-		this.addNerdModule(NerdWindowModule.class, NerdWindowModule::createWindowModule);
+		// this.addNerdModule(NerdWindowModule.class, NerdWindowModule::createWindowModule);
 		this.addNerdModule(NerdInputModule.class);
 
 		// `NerdModule`s are constructed by the `NerdSketch` constructor:
@@ -226,10 +225,46 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return this;
 	}
 
-	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
-			final Class<ModuleT> p_moduleClass,
-			final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
-		this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass, p_settings);
+	// @SuppressWarnings("unchecked")
+	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
+	// NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
+	// final Class<ModuleT> p_moduleClass,
+	// final NerdModuleSettings<SketchPGraphicsT, ModuleT> p_settings) {
+	// this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass,
+	// (NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>)
+	// p_settings);
+	// return this;
+	// }
+
+	// @SuppressWarnings("unchecked")
+	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
+	// NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
+	// final Class<ModuleT> p_moduleClass,
+	// final NerdModuleSettings<SketchPGraphicsT, ModuleT> p_settings) {
+	// this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass,
+	// (NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>) //
+	// p_settings);
+	// return this;
+	// }
+
+	// @SuppressWarnings("unchecked")
+	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
+	// NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
+	// final Class<ModuleT> p_moduleClass,
+	// final NerdModuleSettings<SketchPGraphicsT, ?> p_settings) {
+	// this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass,
+	// (NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>)
+	// p_settings);
+	// return this;
+	// }
+
+	@SuppressWarnings("unchecked")
+	public <ModuleT extends NerdModule<SketchPGraphicsT>, //
+			SettingsT extends NerdModuleSettings<SketchPGraphicsT, ModuleT>> //
+	NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
+			final Class<ModuleT> p_moduleClass, final SettingsT p_settings) {
+		this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass,
+				(NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>) p_settings);
 		return this;
 	}
 

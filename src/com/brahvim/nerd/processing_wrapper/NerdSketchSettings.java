@@ -41,16 +41,24 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 		}
 
 		public void addNerdModule(final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass) {
-			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, this::getModuleFromConstructor);
+			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, this.createModuleFromConstructor(p_moduleClass));
+		}
+
+		private BiFunction<NerdSketch<SketchPGraphicsT>, //
+				NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>> //
+				/*   */ createModuleFromConstructor(
+						final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass) {
+			return (sketch, settings) -> this.getModuleValidConstructor(sketch, p_moduleClass, settings);
 		}
 
 		@SuppressWarnings("unchecked")
-		protected NerdModule<SketchPGraphicsT> getModuleFromConstructor(
+		protected NerdModule<SketchPGraphicsT> getModuleValidConstructor(
 				final NerdSketch<SketchPGraphicsT> p_sketch,
+				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
 				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
 			// Find the constructor which takes `NerdModuleSettings`:
 			Constructor<?> sketchConstructor = null, settingsConstructor = null;
-			for (final Constructor<?> c : p_settings.getClass().getDeclaredConstructors()) {
+			for (final Constructor<?> c : p_moduleClass.getDeclaredConstructors()) {
 
 				if (c.getParameterTypes().length == 1)
 					if (c.getParameterTypes()[0] == NerdSketch.class) {
@@ -95,7 +103,7 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 			this.CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
 		}
 
-		// For constructors without `NerdModuleSettings`:
+		// Constructors without `NerdModuleSettings`:
 
 		public void addNerdModule(
 				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
@@ -111,7 +119,7 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 			this.CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
 		}
 
-		// For constructors with `NerdModuleSettings`:
+		// Constructors with `NerdModuleSettings`:
 
 		public void addNerdModule(
 				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
