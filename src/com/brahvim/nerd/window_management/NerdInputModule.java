@@ -193,8 +193,6 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 
 	@Override
 	public void keyReleased() {
-		this.pmouseButton = this.mouseButton;
-
 		this.key = super.SKETCH.key;
 		this.keyCode = super.SKETCH.keyCode;
 		this.keyPressed = super.SKETCH.keyPressed;

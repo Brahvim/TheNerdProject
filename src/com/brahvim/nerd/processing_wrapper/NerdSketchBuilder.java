@@ -50,12 +50,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 			extends Function<NerdSketchSettings<SketchPGraphicsT>, NerdSketch<SketchPGraphicsT>> {
 	}
 
-	// region Fields and constructor!The method addNerdModule(Class<? extends
-	// NerdModule<SketchPGraphicsT>>) in the type
-	// NerdSketchSettings<SketchPGraphicsT>.NerdModulesAndSettingsMap is not
-	// applicable for the arguments
-	// (Class<NerdSketch.NerdSketchOnlyAssetsModule>)Java(67108979)
-
+	// region Fields and constructor!
 	protected static final String NULL_SETTS_ERR_MSG = "A listener passed to `NerdSketchSettings` cannot be `null`";
 
 	protected final NerdSketchSettings<SketchPGraphicsT> BUILD_SETTINGS;
@@ -65,7 +60,11 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	protected NerdSketchBuilder(final Class<? extends PGraphics> p_rendererClass) {
 		this.BUILD_SETTINGS = new NerdSketchSettings<>(this.getNumDefaultModules());
+		this.verifyRenderer(p_rendererClass);
+		this.addDefaultModules();
+	}
 
+	protected void verifyRenderer(final Class<? extends PGraphics> p_rendererClass) {
 		if (p_rendererClass == PGraphics2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.P2D;
 		else if (p_rendererClass == PGraphics3D.class)
@@ -95,6 +94,16 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 			throw new IllegalArgumentException("Those renderers are not real!");
 		else
 			throw new IllegalArgumentException("That's not a real type...");
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void addDefaultModules() {
+		// TODO: Get renderer-specific instances of these via abstract methods:
+
+		this.addNerdModule(NerdSketchOnlyAssetsModule.class);
+		this.addNerdModule(NerdDisplayModule.class);
+		this.addNerdModule(NerdWindowModule.class, NerdWindowModule::createWindowModule);
+		this.addNerdModule(NerdInputModule.class);
 	}
 
 	/**
@@ -140,15 +149,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return this.build(null); // this.build(new String[0]);
 	}
 
-	@SuppressWarnings("unchecked")
 	public final NerdSketch<SketchPGraphicsT> build(final String[] p_sketchArgs) {
-		// TODO: Get renderer-specific instances of these via abstract methods:
-
-		this.addNerdModule(NerdSketchOnlyAssetsModule.class);
-		this.addNerdModule(NerdDisplayModule.class);
-		this.addNerdModule(NerdWindowModule.class, NerdWindowModule::createWindowModule);
-		this.addNerdModule(NerdInputModule.class);
-
 		// `NerdModule`s are constructed by the `NerdSketch` constructor:
 		return NerdSketchBuilder.runSketch(this.createNerdSketch(this.BUILD_SETTINGS), p_sketchArgs);
 	}
@@ -213,6 +214,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 */
 	protected NerdSketch<SketchPGraphicsT> createNerdSketch(
 			final NerdSketchSettings<SketchPGraphicsT> p_settings) {
+		// TODO
 		if (this.sketchConstructor == null)
 			return new NerdSketch<>(p_settings);
 
