@@ -226,43 +226,9 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		return this;
 	}
 
-	// @SuppressWarnings("unchecked")
-	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
-	// NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
-	// final Class<ModuleT> p_moduleClass,
-	// final NerdModuleSettings<SketchPGraphicsT, ModuleT> p_settings) {
-	// this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass,
-	// (NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>)
-	// p_settings);
-	// return this;
-	// }
-
-	// @SuppressWarnings("unchecked")
-	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
-	// NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
-	// final Class<ModuleT> p_moduleClass,
-	// final NerdModuleSettings<SketchPGraphicsT, ModuleT> p_settings) {
-	// this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass,
-	// (NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>) //
-	// p_settings);
-	// return this;
-	// }
-
-	// @SuppressWarnings("unchecked")
-	// public <ModuleT extends NerdModule<SketchPGraphicsT>>
-	// NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
-	// final Class<ModuleT> p_moduleClass,
-	// final NerdModuleSettings<SketchPGraphicsT, ?> p_settings) {
-	// this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass,
-	// (NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>)
-	// p_settings);
-	// return this;
-	// }
-
-	// @SuppressWarnings("unchecked")
-	public <SettingsT extends NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>> //
-	NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
-			final Class<NerdModule<SketchPGraphicsT>> p_moduleClass, final SettingsT p_settings) {
+	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> addNerdModule(
+			final Class<ModuleT> p_moduleClass,
+			final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
 		this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass, p_settings);
 		return this;
 	}
