@@ -8,14 +8,12 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import com.brahvim.nerd.io.NerdStringsTable;
 import com.brahvim.nerd.io.asset_loader.NerdAsset;
@@ -154,25 +152,26 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// (The entire engine is built on this *evolutionary* idea, Brahvim! You idiot!)
 	private List<NerdModule<SketchPGraphicsT>> createAndSortModules(
 			final NerdSketchSettings<SketchPGraphicsT> p_settings) {
-		final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
-		/*   */ nerdModulesToAssign = new LinkedHashSet<>(0);
-		p_settings.nerdModulesInstantiator.accept(nerdModulesToAssign);
+		final NerdSketchSettings<SketchPGraphicsT>.NerdModulesBuilderRegistry nerdModulesAndSettings
+		/*   */ = p_settings.nerdModulesBuilderRegistry;
+		final List<NerdModule<SketchPGraphicsT>> toRet = new ArrayList<>(
+				nerdModulesAndSettings.CLASSES_TO_CONSTRUCTORS_MAP.size());
 
-		final List<NerdModule<SketchPGraphicsT>> toRet = new ArrayList<>(nerdModulesToAssign.size());
-
-		// Construct modules using the provided `Function`s, and add them to the map:
-		for (final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> f : nerdModulesToAssign)
+		// Construct `NerdModule`s using the provided constructors, then add them:
+		for (final var entry : nerdModulesAndSettings.CLASSES_TO_CONSTRUCTORS_MAP.entrySet())
 			try {
-				Objects.requireNonNull(f,
+				Objects.requireNonNull(entry,
 						"Could not instantiate a `NerdModule` due to the supplying function being `null`.");
 
-				final NerdModule<SketchPGraphicsT> module = f.apply(this);
+				// "Classes to constructors map", remember? The key is the class:
+				final Class<? extends NerdModule<SketchPGraphicsT>> moduleClass = entry.getKey();
+
+				// ...and the value? The constructor:
+				final NerdModule<SketchPGraphicsT> module = entry.getValue().apply(this,
+						nerdModulesAndSettings.CLASSES_TO_SETTINGS_MAP.get(moduleClass));
+
 				Objects.requireNonNull(module,
 						"Could not include a `NerdModule` due to the it being `null`.");
-
-				@SuppressWarnings("unchecked")
-				final Class<? extends NerdModule<SketchPGraphicsT>>
-				/*   */ moduleClass = (Class<? extends NerdModule<SketchPGraphicsT>>) module.getClass();
 
 				// If we already have a certain `NerdModule`,
 				if (this.CLASSES_TO_MODULES_MAP.get(moduleClass) != null) {
@@ -542,6 +541,10 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		return this.pinverseFrameRate;
 	}
 
+	public String getRendererPConstantString() {
+		return this.SKETCH_SETTINGS.renderer;
+	}
+
 	public NerdStringsTable getGlobalStringsTable() {
 		return this.globalStringTable;
 	}
@@ -600,26 +603,26 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	@Override
 	public SketchPGraphicsT createGraphics(final int p_width, final int p_height) {
-		return this.createGraphics(p_width, p_height, super.sketchRenderer());
+		return this.createGraphics(p_width, p_height, this.getRendererPConstantString());
 	}
 	// endregion
 
 	// region Utilitarian overloads.
 	public SketchPGraphicsT createGraphics(final float p_width, final float p_height) {
-		return this.createGraphics((int) p_width, (int) p_height, super.sketchRenderer());
+		return this.createGraphics((int) p_width, (int) p_height, this.getRendererPConstantString());
 	}
 
 	public SketchPGraphicsT createGraphics(final float p_size) {
 		final int size = (int) p_size;
-		return this.createGraphics(size, size, super.sketchRenderer());
+		return this.createGraphics(size, size, this.getRendererPConstantString());
 	}
 
 	public SketchPGraphicsT createGraphics(final int p_size) {
-		return this.createGraphics(p_size, p_size, super.sketchRenderer());
+		return this.createGraphics(p_size, p_size, this.getRendererPConstantString());
 	}
 
 	public SketchPGraphicsT createGraphics() {
-		return this.createGraphics(super.width, super.height, super.sketchRenderer());
+		return this.createGraphics(super.width, super.height, this.getRendererPConstantString());
 	}
 	// endregion
 	// endregion

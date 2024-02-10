@@ -10,11 +10,13 @@ public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 
 	protected final NerdSketch<SketchPGraphicsT> SKETCH;
 
-	protected NerdModule(final NerdSketch<SketchPGraphicsT> p_sketch
-	// , final NerdModuleSettings<SketchPGraphicsT, ? extends
-	// NerdModule<SketchPGraphicsT>>
-	// /* */ p_settings /* NOSONAR! I need this parameter. */
-	) {
+	protected NerdModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
+		this.SKETCH = p_sketch;
+	}
+
+	protected NerdModule(final NerdSketch<SketchPGraphicsT> p_sketch,
+			final NerdModuleSettings<SketchPGraphicsT, ? extends NerdModule<SketchPGraphicsT>>
+			/* */ p_settings /* NOSONAR! I need this parameter. */) {
 		this.SKETCH = p_sketch;
 	}
 

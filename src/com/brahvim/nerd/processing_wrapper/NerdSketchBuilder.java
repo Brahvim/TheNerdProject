@@ -1,6 +1,7 @@
 package com.brahvim.nerd.processing_wrapper;
 
 import java.util.LinkedHashSet;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -41,7 +42,8 @@ import processing.svg.PGraphicsSVG;
 public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	public static interface NerdSketchModulesSetConsumer<SketchPGraphicsT extends PGraphics>
-			extends Consumer<LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>> {
+			extends
+			Consumer<LinkedHashSet<BiFunction<NerdSketch<SketchPGraphicsT>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>>>> {
 	}
 
 	public static interface NerdSketchConstructorFunction<SketchPGraphicsT extends PGraphics>
@@ -144,7 +146,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 		this.addNerdModule(NerdDisplayModule.class);
 		this.addNerdModule(
 				NerdWindowModule.class,
-				NerdWindowModule::createWindowModule);
+				(sk, set) -> NerdWindowModule.createWindowModule(sk));
 		this.addNerdModule(NerdInputModule.class);
 
 		// `NerdModule`s are constructed by the `NerdSketch` constructor:
@@ -189,7 +191,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 *          NerdSketchBuilder::modulesConsumer} if it isn't {@code null}.
 	 */
 	protected void supplyUserDefinedModules(
-			final LinkedHashSet<Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>> p_modulesSet) {
+			final LinkedHashSet<BiFunction<NerdSketch<SketchPGraphicsT>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>>> p_modulesSet) {
 	}
 
 	/**
@@ -226,29 +228,29 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> //
 			addNerdModule(final Class<ModuleT> moduleClass) {
-		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(moduleClass);
+		this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(moduleClass);
 		return this;
 	}
 
 	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> //
 			addNerdModule(final Class<ModuleT> p_moduleClass,
-					final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
-		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(p_moduleClass, p_moduleSupplier);
+					final BiFunction<NerdSketch<SketchPGraphicsT>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
+		this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass, p_moduleSupplier);
 		return this;
 	}
 
 	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> //
 			addNerdModule(final Class<ModuleT> p_moduleClass,
 					final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
-		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(p_moduleClass, p_settings);
+		this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass, p_settings);
 		return this;
 	}
 
 	public <ModuleT extends NerdModule<SketchPGraphicsT>> NerdSketchBuilder<SketchPGraphicsT> //
 			addNerdModule(final Class<ModuleT> p_moduleClass,
 					final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings,
-					final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
-		this.BUILD_SETTINGS.nerdModulesAndSettings.addNerdModule(p_moduleClass, p_settings, p_moduleSupplier);
+					final BiFunction<NerdSketch<SketchPGraphicsT>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
+		this.BUILD_SETTINGS.nerdModulesBuilderRegistry.addNerdModule(p_moduleClass, p_settings, p_moduleSupplier);
 		return this;
 	}
 	// endregion
@@ -273,14 +275,14 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	public NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
 			final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
-		this.BUILD_SETTINGS.nerdModulesAndSettings
+		this.BUILD_SETTINGS.nerdModulesBuilderRegistry
 				.setNerdModuleSettings(p_settings);
 		return this;
 	}
 
 	public NerdSketchBuilder<SketchPGraphicsT> setNerdModuleSettings(
 			final Supplier<NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>> p_settingsSupplier) {
-		this.BUILD_SETTINGS.nerdModulesAndSettings
+		this.BUILD_SETTINGS.nerdModulesBuilderRegistry
 				.setNerdModuleSettings(p_settingsSupplier.get());
 		return this;
 	}

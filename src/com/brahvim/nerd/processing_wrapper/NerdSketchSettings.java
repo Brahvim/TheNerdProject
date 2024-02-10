@@ -3,7 +3,7 @@ package com.brahvim.nerd.processing_wrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import com.brahvim.nerd.io.NerdStringsTable;
 
@@ -13,22 +13,12 @@ import processing.core.PGraphics;
 
 public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 
-	/**
-	 * @see {@linkplain NerdSketchBuilder#supplyDefaultModules()
-	 *      NerdSketchBuilder::supplyDefaultModules()}.
-	 */
-	protected final int NUM_DEFAULT_MODULES;
+	protected final class NerdModulesBuilderRegistry {
 
-	public NerdSketchSettings(final int p_numModules) {
-		this.NUM_DEFAULT_MODULES = p_numModules;
-	}
-
-	protected final class NerdModulesAndSettingsMap {
-
-		protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>>>
-		/*   */ CLASSES_TO_MODULES_MAP = new LinkedHashMap<>(NerdSketchSettings.this.NUM_DEFAULT_MODULES);
+		protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, BiFunction<NerdSketch<SketchPGraphicsT>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>>>
+		/*   */ CLASSES_TO_CONSTRUCTORS_MAP = new LinkedHashMap<>(NerdSketchSettings.this.NUM_DEFAULT_MODULES);
 		protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>>
-		/*   */ MODULE_CLASSES_TO_SETTINGS_MAP = new LinkedHashMap<>(NerdSketchSettings.this.NUM_DEFAULT_MODULES);
+		/*   */ CLASSES_TO_SETTINGS_MAP = new LinkedHashMap<>(NerdSketchSettings.this.NUM_DEFAULT_MODULES);
 
 		@SafeVarargs
 		public final void addNerdModules(final Class<? extends NerdModule<SketchPGraphicsT>>... p_moduleClasses) {
@@ -45,43 +35,69 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 
 		public void setNerdModuleSettings(
 				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
-			this.MODULE_CLASSES_TO_SETTINGS_MAP.put(p_settings.getNerdModuleClass(), p_settings);
+			this.CLASSES_TO_SETTINGS_MAP.put(p_settings.getNerdModuleClass(), p_settings);
 		}
 
 		public void addNerdModule(final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass) {
-			this.CLASSES_TO_MODULES_MAP.put(p_moduleClass,
-					s -> {
-						try {
-							return p_moduleClass.getDeclaredConstructor(NerdSketch.class).newInstance(s);
-						} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-								| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-							e.printStackTrace();
-						}
-						return null;
-					});
+			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, (sk, set) -> {
+				try {
+					return p_moduleClass
+							.getDeclaredConstructor(NerdSketch.class, NerdModuleSettings.class)
+							.newInstance(sk, set);
+
+				} catch (final NoSuchMethodException e1) {
+
+					// region NESTED TRY-CATCH!:
+					try {
+						return p_moduleClass
+								.getDeclaredConstructor(NerdSketch.class)
+								.newInstance(sk);
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+							| InvocationTargetException | NoSuchMethodException | SecurityException e2) {
+						e2.printStackTrace();
+					}
+					// endregion End of the nested try-catch...
+
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | SecurityException e) {
+					e.printStackTrace();
+				}
+
+				return null;
+			});
 		}
 
 		public void addNerdModule(
 				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
 				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
 			this.addNerdModule(p_moduleClass);
-			this.MODULE_CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
+			this.CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
 		}
 
 		public void addNerdModule(
 				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
-				final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
-			this.CLASSES_TO_MODULES_MAP.put(p_moduleClass, p_moduleSupplier);
+				final BiFunction<NerdSketch<SketchPGraphicsT>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
+			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, p_moduleSupplier);
 		}
 
 		public void addNerdModule(
 				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
 				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings,
-				final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
-			this.CLASSES_TO_MODULES_MAP.put(p_moduleClass, p_moduleSupplier);
-			this.MODULE_CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
+				final BiFunction<NerdSketch<SketchPGraphicsT>, NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
+			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, p_moduleSupplier);
+			this.CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
 		}
 
+	}
+
+	/**
+	 * @see {@linkplain NerdSketchBuilder#supplyDefaultModules()
+	 *      NerdSketchBuilder::supplyDefaultModules()}.
+	 */
+	protected final int NUM_DEFAULT_MODULES;
+
+	public NerdSketchSettings(final int p_numModules) {
+		this.NUM_DEFAULT_MODULES = p_numModules;
 	}
 
 	// region Non-Boolean settings.
@@ -152,7 +168,7 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	 * This holds the {@link NerdModule} {@link NerdModuleSettings} of the
 	 * {@link NerdModule}s you want the engine to use.
 	 */
-	public NerdSketchSettings<SketchPGraphicsT>.NerdModulesAndSettingsMap nerdModulesAndSettings = this.new NerdModulesAndSettingsMap();
+	public NerdSketchSettings<SketchPGraphicsT>.NerdModulesBuilderRegistry nerdModulesBuilderRegistry = this.new NerdModulesBuilderRegistry();
 	// endregion
 
 	// region Booleans.

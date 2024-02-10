@@ -96,7 +96,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	@SuppressWarnings("unchecked")
 	protected static <RetGraphicsT extends PGraphics> NerdAbstractGraphics<?> supplySubModuleForSketch(
 			final NerdSketch<RetGraphicsT> p_sketch) {
-		return switch (p_sketch.SKETCH_SETTINGS.renderer) {
+		return switch (p_sketch.getRendererPConstantString()) {
 			case PConstants.P2D -> new NerdP2dGraphics(
 					(NerdSketch<PGraphics2D>) p_sketch, (PGraphics2D) p_sketch.getGraphics());
 
