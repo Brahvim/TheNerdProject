@@ -25,8 +25,8 @@ public class NerdReflectionUtils {
 	 * @throws IllegalAccessError
 	 *
 	 */
-	public static void rejectStaticClassInstantiationFor(final Object p_object) throws IllegalAccessError {
-		throw new IllegalAccessError("Please instantiate `" + p_object.getClass().getSimpleName()
+	public static void rejectStaticClassInstantiationFor(final Object p_object) throws InstantiationError {
+		throw new InstantiationError("Please instantiate `" + p_object.getClass().getSimpleName()
 				+ "`es the way they're supposed to be! Sorry...");
 	}
 

@@ -41,87 +41,45 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 		}
 
 		public void addNerdModule(final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass) {
-			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, this.getAvailableConstructorForModule(p_moduleClass));
+			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, this::getModuleFromConstructor);
 		}
 
-		protected BiFunction<NerdSketch<SketchPGraphicsT>,
-				// The function ^^^ takes a `NerdSketch` ^^^,
-				// ...and `NerdModuleSettings`,
-				NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, //
-				// ...and returns said `NerdModule`, constructed!:
-				NerdModule<SketchPGraphicsT>> getAvailableConstructorForModule(
-						final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass) {
-			return (sketch, settings) -> {
-				NerdModule<SketchPGraphicsT> toRet = null;
-
-				// Funny!:
-
-				try {
-					toRet = this.getModuleConstructorGivenSettings(p_moduleClass, sketch, settings);
-				} catch (final NoSuchMethodException e) {
-					toRet = this.getModuleConstructorWithoutSettings(p_moduleClass, sketch);
-				}
-
-				return toRet;
-			};
-		}
-
+		@SuppressWarnings("unchecked")
 		protected NerdModule<SketchPGraphicsT> getModuleFromConstructor(
 				final NerdSketch<SketchPGraphicsT> p_sketch,
 				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
 			// Find the constructor which takes `NerdModuleSettings`:
-			for (final Constructor<?> constructor : p_settings.getClass().getDeclaredConstructors())
-				this.getModuleFromConstructorsAvailable(constructor, p_sketch, p_settings);
+			Constructor<?> defaultConstructor = null, settingsConstructor = null;
+			for (final Constructor<?> c : p_settings.getClass().getDeclaredConstructors()) {
 
-			return null; // No constructors found. Impossible!
-		}
-
-		@SuppressWarnings("unchecked")
-		protected NerdModule<SketchPGraphicsT> getModuleFromConstructorsAvailable(
-				final Constructor<?> p_constructor,
-				final NerdSketch<SketchPGraphicsT> p_sketch,
-				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
-			// Any of 'em constructors takes a `NerdModuleSettings` subclass instance?:
-			for (final Class<?> parameterType : p_constructor.getParameterTypes()) {
-				if (NerdModuleSettings.class.isAssignableFrom(parameterType)) {
-					try {
-						return (NerdModule<SketchPGraphicsT>) p_constructor.newInstance(p_sketch, p_settings);
-					} catch (final Exception e) {
-						e.printStackTrace();
+				if (c.getParameterTypes().length == 1)
+					if (c.getParameterTypes()[0] == NerdSketch.class) {
+						defaultConstructor = c;
+						continue;
 					}
-				}
+
+				// Any of 'em constructors takes a `NerdModuleSettings` subclass instance?:
+				for (final Class<?> parameterType : c.getParameterTypes())
+					if (NerdModuleSettings.class.isAssignableFrom(parameterType))
+						settingsConstructor = c;
 			}
 
-			return null;
-		}
+			// We 'prefer' the 'settings constructor' around here.
+			// (I mean... the module developer does, okay!? Hence this mess!).
 
-		protected NerdModule<SketchPGraphicsT> getModuleConstructorGivenSettings(
-				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
-				final NerdSketch<SketchPGraphicsT> p_sketch,
-				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings)
-				// -------------------------
-				throws NoSuchMethodException {
+			// If Mr. Settings Constructor isn't around (*id est, is `null`*), look for
+			// Mrs. Sketch Constructor instead - she takes just the `NerdSketch`!
+			// (Not exactly what we're looking for, but there will always be at least *one*
+			// constructor taking *one* `NerdSketch` since `NerdModule` requires that.)
+
 			try {
-				return p_moduleClass
-						.getDeclaredConstructor(NerdSketch.class, NerdModuleSettings.class)
-						.newInstance(p_sketch, p_settings);
+				if (settingsConstructor == null) {
+					if (defaultConstructor != null)
+						return (NerdModule<SketchPGraphicsT>) defaultConstructor.newInstance(p_sketch);
+				} else
+					return (NerdModule<SketchPGraphicsT>) settingsConstructor.newInstance(p_sketch, p_settings);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | SecurityException e) {
-				e.printStackTrace();
-			}
-
-			return null;
-		}
-
-		protected NerdModule<SketchPGraphicsT> getModuleConstructorWithoutSettings(
-				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
-				final NerdSketch<SketchPGraphicsT> p_sketch) {
-			try {
-				return p_moduleClass
-						.getDeclaredConstructor(NerdSketch.class)
-						.newInstance(p_sketch);
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					| InvocationTargetException e) {
 				e.printStackTrace();
 			}
 
