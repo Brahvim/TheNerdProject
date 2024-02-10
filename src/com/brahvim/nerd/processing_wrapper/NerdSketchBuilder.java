@@ -98,10 +98,10 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 
 	@SuppressWarnings("unchecked")
 	protected void addDefaultModules() {
-		// TODO: Get renderer-specific instances of these via abstract methods:
 
 		this.addNerdModule(NerdSketchOnlyAssetsModule.class);
 		this.addNerdModule(NerdDisplayModule.class);
+		// TODO: Get renderer-specific ver. of `NerdWindowModule` via abstract methods:
 		this.addNerdModule(NerdWindowModule.class, NerdWindowModule::createWindowModule);
 		this.addNerdModule(NerdInputModule.class);
 	}
@@ -212,9 +212,7 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	 *          NerdSketch::NerdSketch(NerdSketchSettings)} is called, and the
 	 *          created instance is returned - no custom classes!
 	 */
-	protected NerdSketch<SketchPGraphicsT> createNerdSketch(
-			final NerdSketchSettings<SketchPGraphicsT> p_settings) {
-		// TODO
+	protected NerdSketch<SketchPGraphicsT> createNerdSketch(final NerdSketchSettings<SketchPGraphicsT> p_settings) {
 		if (this.sketchConstructor == null)
 			return new NerdSketch<>(p_settings);
 
