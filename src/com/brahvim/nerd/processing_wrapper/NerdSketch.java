@@ -204,17 +204,22 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// region Processing sketch workflow.
 	@Override
 	public void settings() {
+		// TODO: Move these to `NerdWindowModule`.
+
 		// Placed first, since this restarts the sketch:
 		super.orientation(this.SKETCH_SETTINGS.shouldStartPortraitMode
 				? PConstants.PORTRAIT
 				: PConstants.LANDSCAPE);
 
+		// TODO: Should get this via an `enum` w/ a method via an interface.
 		super.smooth(this.SKETCH_SETTINGS.antiAliasing);
 
 		if (this.SKETCH_SETTINGS.shouldStartFullscreen)
 			super.fullScreen(this.SKETCH_SETTINGS.renderer);
 		else
 			super.size(this.SKETCH_SETTINGS.width, this.SKETCH_SETTINGS.height, this.SKETCH_SETTINGS.renderer);
+
+		this.forEachNerdModule(NerdModule::settings);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import com.brahvim.nerd.io.NerdStringsTable;
 
@@ -39,32 +40,60 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 		}
 
 		public void addNerdModule(final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass) {
-			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, (sk, set) -> {
+			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, this.getAvailableConstructorForModule(p_moduleClass));
+		}
+
+		protected BiFunction<NerdSketch<SketchPGraphicsT>,
+				// The function ^^^ takes a `NerdSketch` ^^^,
+				// ...and `NerdModuleSettings`,
+				NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>>, //
+				// ...and returns said `NerdModule`, constructed!:
+				NerdModule<SketchPGraphicsT>> getAvailableConstructorForModule(
+						final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass) {
+			return (sketch, settings) -> {
+				NerdModule<SketchPGraphicsT> toRet = null;
+
 				try {
-					return p_moduleClass
-							.getDeclaredConstructor(NerdSketch.class, NerdModuleSettings.class)
-							.newInstance(sk, set);
-
-				} catch (final NoSuchMethodException e1) {
-
-					// region NESTED TRY-CATCH!:
-					try {
-						return p_moduleClass
-								.getDeclaredConstructor(NerdSketch.class)
-								.newInstance(sk);
-					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException | NoSuchMethodException | SecurityException e2) {
-						e2.printStackTrace();
-					}
-					// endregion End of the nested try-catch...
-
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException | SecurityException e) {
-					e.printStackTrace();
+					toRet = this.getModuleConstructorGivenSettings(p_moduleClass, sketch, settings);
+				} catch (final NoSuchMethodException e) {
+					toRet = this.getModuleConstructorWithoutSettings(p_moduleClass, sketch);
 				}
 
-				return null;
-			});
+				return toRet;
+			};
+		}
+
+		protected NerdModule<SketchPGraphicsT> getModuleConstructorGivenSettings(
+				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+				final NerdSketch<SketchPGraphicsT> p_sketch,
+				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings)
+				// -------------------------
+				throws NoSuchMethodException {
+			try {
+				return p_moduleClass
+						.getDeclaredConstructor(NerdSketch.class, NerdModuleSettings.class)
+						.newInstance(p_sketch, p_settings);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | SecurityException e) {
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		protected NerdModule<SketchPGraphicsT> getModuleConstructorWithoutSettings(
+				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+				final NerdSketch<SketchPGraphicsT> p_sketch) {
+			try {
+				return p_moduleClass
+						.getDeclaredConstructor(NerdSketch.class)
+						.newInstance(p_sketch);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}
+
+			return null;
 		}
 
 		public void addNerdModule(
@@ -73,6 +102,24 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 			this.addNerdModule(p_moduleClass);
 			this.CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
 		}
+
+		// For constructors without `NerdModuleSettings`:
+
+		public void addNerdModule(
+				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+				final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
+			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, (sketch, settings) -> p_moduleSupplier.apply(sketch));
+		}
+
+		public void addNerdModule(
+				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
+				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings,
+				final Function<NerdSketch<SketchPGraphicsT>, NerdModule<SketchPGraphicsT>> p_moduleSupplier) {
+			this.CLASSES_TO_CONSTRUCTORS_MAP.put(p_moduleClass, (sketch, settings) -> p_moduleSupplier.apply(sketch));
+			this.CLASSES_TO_SETTINGS_MAP.put(p_moduleClass, p_settings);
+		}
+
+		// For constructors with `NerdModuleSettings`:
 
 		public void addNerdModule(
 				final Class<? extends NerdModule<SketchPGraphicsT>> p_moduleClass,
@@ -100,7 +147,15 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 		this.NUM_DEFAULT_MODULES = p_numModules;
 	}
 
+	// TODO: Refactor these as necessary `NerdModule`s' `NerdModuleSettings`!
+
 	// region Non-Boolean settings.
+	/**
+	 * One of the initial dimensions for the sketch's window - they're
+	 * {@code 640x480} by default!
+	 */
+	public int width = 640, height = 480;
+
 	/**
 	 * What {@linkplain NerdSketch#setup() NerdSketch::setup()}
 	 * passes to {@linkplain PApplet#frameRate() PApplet::frameRate()}.
@@ -126,12 +181,6 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	public int antiAliasing = 2;
 
 	/**
-	 * One of the initial dimensions for the sketch's window - they're
-	 * {@code 640x480} by default!
-	 */
-	public int width = 640, height = 480;
-
-	/**
 	 * The path to the icon for the window started by Processing.
 	 * <p>
 	 * {@code ""} by default.
@@ -147,13 +196,6 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	public String stringTablePath = "";
 
 	/**
-	 * The title of the window in the beginning.
-	 * <p>
-	 * {@code "The Nerd Project"} by default.
-	 */
-	public String initialWindowTitle = "The Nerd Project";
-
-	/**
 	 * The {@code PConstants} constant that describes what renderer the sketch will
 	 * use. {@linkplain NerdSketch#sketchRenderer() NerdSketch::sketchRenderer()}
 	 * a.k.a. {@linkplain PApplet#sketchRenderer() PApplet::sketchRenderer()}
@@ -163,6 +205,13 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 	 * {@linkplain PConstants#P3D PConstants.P3D} by default.
 	 */
 	public String renderer = PConstants.P3D;
+
+	/**
+	 * The title of the window in the beginning.
+	 * <p>
+	 * {@code "The Nerd Project"} by default.
+	 */
+	public String initialWindowTitle = "The Nerd Project";
 
 	/**
 	 * This holds the {@link NerdModule} {@link NerdModuleSettings} of the
