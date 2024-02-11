@@ -43,19 +43,15 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 			super(p_sketch);
 		}
 
-		@Override
-		public NerdAsset<SketchPGraphicsT> addAsset(final NerdAssetLoader<SketchPGraphicsT, ?> p_type) {
-			final NerdAsset<SketchPGraphicsT> toRet = super.addAsset(p_type);
-			toRet.startLoading();
-			return toRet;
+		public <AssetT> NerdAsset<SketchPGraphicsT, AssetT> addAssetAndStartLoading(
+				final NerdAssetLoader<SketchPGraphicsT, AssetT> p_type) {
+			return super.addAsset(p_type).startLoading();
 		}
 
-		@Override
-		public NerdAsset<SketchPGraphicsT> addAsset(final NerdAssetLoader<SketchPGraphicsT, ?> p_type,
+		public <AssetT> NerdAsset<SketchPGraphicsT, AssetT> addAssetAndStartLoading(
+				final NerdAssetLoader<SketchPGraphicsT, AssetT> p_type,
 				final Runnable p_onLoad) {
-			final NerdAsset<SketchPGraphicsT> toRet = super.addAsset(p_type, p_onLoad);
-			toRet.startLoading();
-			return toRet;
+			return super.addAsset(p_type, p_onLoad).startLoading();
 		}
 
 	}
@@ -212,6 +208,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 				: PConstants.LANDSCAPE);
 
 		// TODO: Should get this via an `enum` w/ a method via an interface.
+		// TODO: See [ https://processing.org/reference/smooth_.html ].
 		super.smooth(this.SKETCH_SETTINGS.antiAliasing);
 
 		if (this.SKETCH_SETTINGS.shouldStartFullscreen)

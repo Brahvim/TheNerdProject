@@ -17,7 +17,7 @@ import processing.core.PGraphics;
 public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdModule<SketchPGraphicsT> {
 
 	// The ONLY field!:
-	private final Set<NerdAsset<SketchPGraphicsT>> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
+	private final Set<NerdAsset<SketchPGraphicsT, ?>> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
 	// Do we even *need* assets in any scene from the very beginning?
 
 	@SuppressWarnings("unchecked")
@@ -31,20 +31,23 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	}
 
 	// region `NerdAsset`-operations!
-	private NerdAsset<SketchPGraphicsT> makeAsset(final NerdAssetLoader<SketchPGraphicsT, ?> p_type) {
+	protected final <AssetT> NerdAsset<SketchPGraphicsT, AssetT> makeAsset(
+			final NerdAssetLoader<SketchPGraphicsT, AssetT> p_type) {
 		return new NerdAsset<>(this, p_type);
 	}
 
 	// region `add()` overloads.
-	public NerdAsset<SketchPGraphicsT> addAsset(final NerdAssetLoader<SketchPGraphicsT, ?> p_type) {
-		final NerdAsset<SketchPGraphicsT> toRet = this.makeAsset(p_type);
+	public <AssetT> NerdAsset<SketchPGraphicsT, AssetT> addAsset(
+			final NerdAssetLoader<SketchPGraphicsT, AssetT> p_type) {
+		final NerdAsset<SketchPGraphicsT, AssetT> toRet = this.makeAsset(p_type);
 		this.ASSETS.add(toRet);
 		return toRet;
 	}
 
-	public NerdAsset<SketchPGraphicsT> addAsset(final NerdAssetLoader<SketchPGraphicsT, ?> p_type,
+	public <AssetT> NerdAsset<SketchPGraphicsT, AssetT> addAsset(
+			final NerdAssetLoader<SketchPGraphicsT, AssetT> p_type,
 			final Runnable p_onLoad) {
-		final NerdAsset<SketchPGraphicsT> toRet = this.addAsset(p_type);
+		final NerdAsset<SketchPGraphicsT, AssetT> toRet = this.addAsset(p_type);
 		toRet.setLoadCallback(p_onLoad);
 		return toRet;
 	}
@@ -64,27 +67,28 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	public boolean contains(final String p_fileName) {
 		return this.get(p_fileName) != null;
 
-		// for (final NerdAsset<SketchPGraphicsT> a : this.ASSETS)
+		// for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
 		// if (a.NAME.equals(p_fileName))
 		// return true;
 		// return false;
 	}
 
-	public NerdAsset<SketchPGraphicsT> get(final String p_fileName) {
-		for (final NerdAsset<SketchPGraphicsT> a : this.ASSETS)
+	@SuppressWarnings("unchecked")
+	public <AssetT> NerdAsset<SketchPGraphicsT, AssetT> get(final String p_fileName) {
+		for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
 			if (a.NAME.equals(p_fileName))
-				return a;
+				return (NerdAsset<SketchPGraphicsT, AssetT>) a;
 		return null;
 	}
 
 	// region `remove()` overloads.
 	@SuppressWarnings("unchecked")
-	public void remove(final NerdAsset<SketchPGraphicsT>... p_assets) {
-		for (final NerdAsset<SketchPGraphicsT> a : p_assets)
+	public void remove(final NerdAsset<SketchPGraphicsT, ?>... p_assets) {
+		for (final NerdAsset<SketchPGraphicsT, ?> a : p_assets)
 			this.ASSETS.remove(a);
 	}
 
-	public void remove(final NerdAsset<SketchPGraphicsT> p_asset) {
+	public void remove(final NerdAsset<SketchPGraphicsT, ?> p_asset) {
 		this.ASSETS.remove(p_asset);
 	}
 	// endregion
@@ -99,14 +103,14 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	 * Has every asset completed loading?
 	 */
 	public boolean hadCompletedLastFrame() {
-		for (final NerdAsset<SketchPGraphicsT> a : this.ASSETS)
+		for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
 			if (!a.wasLoaded())
 				return false;
 		return true;
 	}
 
 	public boolean hasCompleted() {
-		for (final NerdAsset<SketchPGraphicsT> a : this.ASSETS)
+		for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
 			if (!a.hasLoaded())
 				return false;
 		return true;
@@ -116,19 +120,19 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	 * Load assets that haven't been loaded yet.
 	 */
 	public void forceLoading() {
-		for (final NerdAsset<SketchPGraphicsT> a : this.ASSETS)
+		for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
 			if (!a.hasLoaded())
 				a.startLoading();
 	}
 	// endregion
 
-	// region From `HashSet<NerdAsset<SketchPGraphicsT>>`.
+	// region From `HashSet<NerdAsset<SketchPGraphicsT, AssetT>>`.
 	public boolean isEmpty() {
 		return this.ASSETS.isEmpty();
 	}
 
 	// Potential problem: Iterators allow you to remove elements!
-	public Iterator<NerdAsset<SketchPGraphicsT>> iterator() {
+	public Iterator<NerdAsset<SketchPGraphicsT, ?>> iterator() {
 		return this.ASSETS.iterator();
 	}
 
@@ -136,7 +140,7 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		return this.ASSETS.size();
 	}
 
-	public Spliterator<NerdAsset<SketchPGraphicsT>> spliterator() {
+	public Spliterator<NerdAsset<SketchPGraphicsT, ?>> spliterator() {
 		return this.ASSETS.spliterator();
 	}
 
@@ -148,15 +152,15 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		return this.ASSETS.toArray(a);
 	}
 
-	public Stream<NerdAsset<SketchPGraphicsT>> parallelStream() {
+	public Stream<NerdAsset<SketchPGraphicsT, ?>> parallelStream() {
 		return this.ASSETS.parallelStream();
 	}
 
-	public boolean removeIf(final Predicate<? super NerdAsset<SketchPGraphicsT>> p_filter) {
+	public boolean removeIf(final Predicate<? super NerdAsset<SketchPGraphicsT, ?>> p_filter) {
 		return this.ASSETS.removeIf(p_filter);
 	}
 
-	public Stream<NerdAsset<SketchPGraphicsT>> stream() {
+	public Stream<NerdAsset<SketchPGraphicsT, ?>> stream() {
 		return this.ASSETS.stream();
 	}
 
@@ -164,7 +168,7 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 		return this.ASSETS.toArray(p_generator);
 	}
 
-	public void forEach(final Consumer<? super NerdAsset<SketchPGraphicsT>> p_action) {
+	public void forEach(final Consumer<? super NerdAsset<SketchPGraphicsT, ?>> p_action) {
 		this.ASSETS.forEach(p_action);
 	}
 	// endregion

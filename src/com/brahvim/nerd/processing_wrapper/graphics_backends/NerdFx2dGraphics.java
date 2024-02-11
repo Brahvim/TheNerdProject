@@ -1,40 +1,39 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
-import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PImage;
 import processing.javafx.PGraphicsFX2D;
 
-public class NerdFx2dGraphics extends NerdAbstractGraphics<PGraphicsFX2D> {
+public class NerdFx2dGraphics extends Nerd2dGenericGraphics<PGraphicsFX2D> {
 
     // region Utilitarian constructors.
     protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final int p_width, final int p_height,
             final String p_renderer) {
-        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_width, p_height, p_renderer));
+        this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer));
     }
 
     protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final int p_width, final int p_height) {
-        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_width, p_height));
+        this(p_sketch, p_sketch.createGraphics(p_width, p_height));
     }
 
     protected NerdFx2dGraphics(
             final NerdSketch<PGraphicsFX2D> p_sketch,
             final float p_width,
             final float p_height) {
-        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_width, p_height));
+        this(p_sketch, p_sketch.createGraphics(p_width, p_height));
     }
 
     protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final float p_size) {
-        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_size));
+        this(p_sketch, p_sketch.createGraphics(p_size));
     }
 
     protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch, final int p_size) {
-        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics(p_size));
+        this(p_sketch, p_sketch.createGraphics(p_size));
     }
 
     protected NerdFx2dGraphics(final NerdSketch<PGraphicsFX2D> p_sketch) {
-        this(p_sketch, (PGraphicsFX2D) p_sketch.createGraphics());
+        this(p_sketch, p_sketch.createGraphics());
     }
     // endregion
 

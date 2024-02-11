@@ -4,17 +4,17 @@ import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PGraphics;
 
-public class NerdAsset<SketchPGraphicsT extends PGraphics> {
+public class NerdAsset<SketchPGraphicsT extends PGraphics, AssetT> {
 
 	// region Fields!
 	public final String NAME;
 
 	private final NerdSketch<SketchPGraphicsT> SKETCH;
-	private final NerdAssetsModule<SketchPGraphicsT> ASSETS;
-	private final NerdAssetLoader<SketchPGraphicsT, ?> LOADER;
+	private final NerdAssetsModule<SketchPGraphicsT> MANAGER;
+	private final NerdAssetLoader<SketchPGraphicsT, AssetT> LOADER;
 
 	private int frame;
-	private Object data;
+	private AssetT data;
 	private Runnable onLoad;
 	private long millis = -1;
 	protected boolean loaded, ploaded, failure;
@@ -23,32 +23,52 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics> {
 	// region Construction.
 	public NerdAsset(
 			final NerdAssetsModule<SketchPGraphicsT> p_assetsModule,
-			final NerdAssetLoader<SketchPGraphicsT, ?> p_type) {
-		if (p_type == null)
+			final NerdAssetLoader<SketchPGraphicsT, AssetT> p_loader) {
+		if (p_loader == null)
 			throw new IllegalArgumentException("`NerdAsset`s need to know their type!");
 
-		this.LOADER = p_type;
-		this.ASSETS = p_assetsModule;
-		this.SKETCH = this.ASSETS.getSketch();
+		this.LOADER = p_loader;
+		this.MANAGER = p_assetsModule;
+		this.SKETCH = this.MANAGER.getSketch();
 		this.NAME = this.LOADER.getAssetName();
 	}
 
 	public NerdAsset(
 			final NerdAssetsModule<SketchPGraphicsT> p_assetsModule,
-			final NerdAssetLoader<SketchPGraphicsT, ?> p_type, final Runnable p_onLoad) {
-		this(p_assetsModule, p_type);
+			final NerdAssetLoader<SketchPGraphicsT, AssetT> p_loader,
+			final Runnable p_onLoad) {
+		this(p_assetsModule, p_loader);
 		this.onLoad = p_onLoad;
+	}
+
+	public NerdAsset(
+			final NerdAsset<SketchPGraphicsT, AssetT> p_asset,
+			final NerdSketch<SketchPGraphicsT> p_sketch,
+			final NerdAssetsModule<SketchPGraphicsT> p_assetsModule,
+			final NerdAssetLoader<SketchPGraphicsT, AssetT> p_loader) {
+		this.LOADER = p_loader;
+		this.SKETCH = p_sketch;
+		this.NAME = p_asset.NAME;
+		this.MANAGER = p_assetsModule;
+
+		this.data = p_asset.data;
+		this.frame = p_asset.frame;
+		this.onLoad = p_asset.onLoad;
+		this.millis = p_asset.millis;
+		this.loaded = p_asset.loaded;
+		this.ploaded = p_asset.ploaded;
+		this.failure = p_asset.failure;
 	}
 	// endregion
 
 	// region Load status requests.
-	public NerdAsset<SketchPGraphicsT> setLoadCallback(final Runnable p_onLoad) {
+	public NerdAsset<SketchPGraphicsT, AssetT> setLoadCallback(final Runnable p_onLoad) {
 		this.onLoad = p_onLoad;
 		return this;
 	}
 
 	// ...will cause a surge in CPU usage! Careful!...
-	public NerdAsset<SketchPGraphicsT> completeLoad() throws InterruptedException {
+	public NerdAsset<SketchPGraphicsT, AssetT> completeLoad() throws InterruptedException {
 		while (!this.loaded) {
 			System.out.println("Waiting for `" + this.NAME + "` to load...");
 
@@ -64,7 +84,10 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics> {
 		return this;
 	}
 
-	public void startLoading() {
+	public NerdAsset<SketchPGraphicsT, AssetT> startLoading() {
+		if (this.loaded)
+			return this;
+
 		// Adding callbacks for each asset since `AssetModule`s don't handle loading.
 		// final Consumer<NerdSketch> postCallback = s -> this.ploaded = this.loaded;
 		// this.SKETCH.callbacks.addPostListener(postCallback);
@@ -73,6 +96,10 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics> {
 
 		if (this.onLoad != null)
 			this.onLoad.run();
+
+		return this;
+
+		// The following, is my childhood ; v ;)
 
 		// Once the asset has loaded, `loaded` is set to `true` and `postCallback`
 		// is no longer necessary.
@@ -124,8 +151,7 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics> {
 	 * final PImage image = ASSETS.get("my_sprite_image").getData();
 	 * </pre>
 	 */
-	@SuppressWarnings("unchecked")
-	public <RetT> RetT getData() {
+	public AssetT getData() {
 		try {
 			this.completeLoad();
 		} catch (final InterruptedException e) {
@@ -133,8 +159,7 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics> {
 			// TODO: Investigate this and `NerdAsset::completeLoad()`'s interrupt behavior.
 			Thread.currentThread().interrupt();
 		}
-
-		return (RetT) this.data;
+		return this.data;
 	}
 
 	public NerdAssetLoader<SketchPGraphicsT, ?> getLoader() {
@@ -142,6 +167,27 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics> {
 	}
 	// endregion
 	// endregion
+
+	public <RetSketchPGraphicsT extends PGraphics> NerdAsset<RetSketchPGraphicsT, AssetT> castForAnotherSketch(
+			final NerdAsset<RetSketchPGraphicsT, AssetT> p_asset,
+			final NerdSketch<RetSketchPGraphicsT> p_sketch,
+			final NerdAssetsModule<RetSketchPGraphicsT> p_module,
+			final NerdAssetLoader<RetSketchPGraphicsT, AssetT> p_assetLoader,
+			final Runnable p_immediatelyRunOnLoadCallback) {
+		final NerdAsset<RetSketchPGraphicsT, AssetT> a = this
+				.castForAnotherSketch(p_asset, p_sketch, p_module, p_assetLoader);
+		a.onLoad = p_immediatelyRunOnLoadCallback;
+		p_immediatelyRunOnLoadCallback.run();
+		return a;
+	}
+
+	public <RetSketchPGraphicsT extends PGraphics> NerdAsset<RetSketchPGraphicsT, AssetT> castForAnotherSketch(
+			final NerdAsset<RetSketchPGraphicsT, AssetT> p_asset,
+			final NerdSketch<RetSketchPGraphicsT> p_sketch,
+			final NerdAssetsModule<RetSketchPGraphicsT> p_module,
+			final NerdAssetLoader<RetSketchPGraphicsT, AssetT> p_assetLoader) {
+		return new NerdAsset<>(p_asset, p_sketch, p_module, p_assetLoader);
+	}
 
 	private void fetchData() {
 		try {
