@@ -1,5 +1,7 @@
 package com.brahvim.nerd.processing_wrapper;
 
-public abstract class NerdModuleCallback {
+public interface NerdModuleCallback<ParameterT, ReturnT> {
+
+    public ReturnT call(ParameterT p_parameters);
 
 }

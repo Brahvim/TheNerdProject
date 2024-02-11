@@ -1,5 +1,6 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import processing.event.MouseEvent;
 public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 
 	protected final NerdSketch<SketchPGraphicsT> SKETCH;
+	protected final Map<NerdModuleCallbackNameEnum, NerdModuleCallback<SketchPGraphicsT, ?>> a = new HashMap<>(0);
 
 	protected NerdModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
 		this.SKETCH = p_sketch;

@@ -62,7 +62,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 		this.iconImage = super.SKETCH.loadImage(super.SKETCH.SKETCH_SETTINGS.windowIconPath);
 
 		this.preSetupImpl();
-		this.updateWindowParameters();
+		this.recordAndUpdateWindowParameters();
 	}
 
 	protected void preSetupImpl() {
@@ -99,7 +99,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	public void centerWindow() {
 		// You called this function when the window changed its size or position, right?
 		// Remember: Computers with multiple displays exist! We shouldn't cache this:
-		this.updateWindowParameters();
+		this.recordAndUpdateWindowParameters();
 		this.centerWindowImpl();
 
 		// this.surface.setLocation(winX, winY);
@@ -110,7 +110,12 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	// endregion
 
 	// region Updates!
-	private void updateWindowParameters() {
+	protected final void recordAndUpdateWindowParameters() {
+		this.recordCurrentWindowParameters();
+		this.updateWindowParameters();
+	}
+
+	protected final void updateWindowParameters() {
 		this.width = this.getWidth();
 		this.height = this.getHeight();
 
@@ -129,7 +134,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 		this.scr = (float) this.width / (float) this.height;
 	}
 
-	private void recordCurrentWindowParameters() {
+	protected final void recordCurrentWindowParameters() {
 		this.pwidth = this.width;
 		this.pheight = this.height;
 		this.pfocused = this.focused;
@@ -209,7 +214,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	@Override
 	public final void pre() {
 		this.preImpl();
-		this.recordCurrentWindowParameters();
+		this.recordCurrentWindowParameters(); // Somebody could change them! We gotta' record!
 
 		// Current state:
 		this.width = super.SKETCH.width;
@@ -221,7 +226,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 
 		// When the window is resized, do the following!:
 		if (!(this.pwidth == this.width || this.pheight == this.height)) {
-			this.updateWindowParameters();
+			this.updateWindowParameters(); // *Our* updates occur here, and here only.
 			super.SKETCH.fullscreenChanged(this.fullscreen);
 		}
 	}

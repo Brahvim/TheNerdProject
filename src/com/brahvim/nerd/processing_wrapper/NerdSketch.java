@@ -21,6 +21,7 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.useless_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.utils.NerdAwtUtils;
+import com.brahvim.nerd.utils.NerdSingleAssignmentBox;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
@@ -98,8 +99,8 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	public final Map<NerdAbstractGraphics<SketchPGraphicsT>, SketchPGraphicsT>
 	/* */ NERD_GRAPHICS_TO_PGRAPHICS_MAP = new HashMap<>(1);
 
-	protected PFont defaultFont;
 	protected NerdStringsTable globalStringTable;
+	protected NerdSingleAssignmentBox<PFont> defaultFont = new NerdSingleAssignmentBox<>();
 	protected NerdAbstractGraphics<SketchPGraphicsT> nerdGenericGraphics;
 
 	// Timers! (`millis()` returns `int`s!):
@@ -220,13 +221,18 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	}
 
 	@Override
+	public void preSetup() {
+		this.forEachNerdModule(NerdModule::preSetup);
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setup() {
 		this.nerdGenericGraphics = (NerdAbstractGraphics<SketchPGraphicsT>)
 		/*   */ NerdAbstractGraphics.createNerdGenericGraphicsWrapperForSketch(this);
 
 		super.surface.setResizable(this.SKETCH_SETTINGS.canResize);
-		this.forEachNerdModule(NerdModule::preSetup);
+		this.preSetup();
 
 		super.registerMethod("pre", this);
 		super.registerMethod("post", this);
@@ -235,12 +241,14 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 				: this.SKETCH_SETTINGS.frameRateLimit);
 		super.surface.setTitle(this.SKETCH_SETTINGS.initialWindowTitle);
 
-		this.defaultFont = super.createFont("SansSerif",
-				72 * ((float) super.displayWidth / (float) super.displayHeight));
+		this.defaultFont.assign(
+				super.createFont("SansSerif", 72 * this.GENERIC_WINDOW.scr));
 
 		// ...Also makes these changes to `this.NerdGenericGraphics`, haha:
 		super.background(0); // ..This, instead of `NerdAbstractCamera::clear()`.
-		super.textFont(this.defaultFont);
+		// ...Also makes these changes to `this.NerdGenericGraphics`, haha:
+		super.background(0); // ..This, instead of `NerdAbstractCamera::clear()`.
+		super.textFont(this.defaultFont.getValue());
 		super.rectMode(PConstants.CENTER);
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
@@ -512,7 +520,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	}
 
 	public PFont getDefaultFont() {
-		return this.defaultFont;
+		return this.defaultFont.getValue();
 	}
 
 	public int getPframeStartTime() {

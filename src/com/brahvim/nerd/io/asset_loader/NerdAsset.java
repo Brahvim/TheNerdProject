@@ -88,9 +88,6 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics, AssetT> {
 		if (this.loaded)
 			return this;
 
-		// Adding callbacks for each asset since `AssetModule`s don't handle loading.
-		// final Consumer<NerdSketch> postCallback = s -> this.ploaded = this.loaded;
-		// this.SKETCH.callbacks.addPostListener(postCallback);
 		this.fetchData();
 		this.loaded = true;
 
@@ -98,24 +95,6 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics, AssetT> {
 			this.onLoad.run();
 
 		return this;
-
-		// The following, is my childhood ; v ;)
-
-		// Once the asset has loaded, `loaded` is set to `true` and `postCallback`
-		// is no longer necessary.
-		// However, we need to update `ploaded` for one last frame.
-		// To do so, we add a "self-removing" callback!:
-
-		// final Consumer<NerdSketch> whenLoaded = new Consumer<NerdSketch>() {
-		// @Override
-		// public void accept(final NerdSketch<?> p_sketch) {
-		// NerdAsset.this.ploaded = true;
-		// // p_sketch.callbacks.removePostListener(this);
-		// }
-		// };
-
-		// this.SKETCH.callbacks.addPostListener(whenLoaded);
-		// this.SKETCH.callbacks.removePostListener(postCallback);
 	}
 
 	// region "Yes/No" questions.

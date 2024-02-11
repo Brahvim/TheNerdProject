@@ -1,5 +1,5 @@
 package com.brahvim.nerd.processing_wrapper;
 
-public class NerdModuleCallbackRegister {
-    
+public interface NerdModuleCallbackNameEnum {
+
 }
