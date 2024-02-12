@@ -15,6 +15,26 @@ import processing.opengl.PShader;
 public abstract class NerdGlGenericGraphics<SketchPGraphicsT extends PGraphicsOpenGL>
         extends NerdAbstractGraphics<SketchPGraphicsT> {
 
+    // region Inner classes.
+    /**
+     * Performs
+     */
+    public class PglPush implements AutoCloseable {
+
+        public final PGL pgl;
+
+        public PglPush() {
+            this.pgl = NerdGlGenericGraphics.this.beginPGL();
+        }
+
+        @Override
+        public void close() throws Exception {
+            NerdGlGenericGraphics.this.endPGL();
+        }
+
+    }
+    // endregion
+
     protected NerdGlGenericGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch,
             final SketchPGraphicsT p_pGraphicsToWrap) {
@@ -146,12 +166,12 @@ public abstract class NerdGlGenericGraphics<SketchPGraphicsT extends PGraphicsOp
         this.GRAPHICS.attribPosition(name, x, y, z);
     }
 
-    public void beginCamera() {
-        this.GRAPHICS.beginCamera();
-    }
-
     public PGL beginPGL() {
         return this.GRAPHICS.beginPGL();
+    }
+
+    public void endPGL() {
+        this.GRAPHICS.endPGL();
     }
 
     public void curveVertex(final float x, final float y, final float z) {

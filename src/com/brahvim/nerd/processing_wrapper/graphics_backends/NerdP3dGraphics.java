@@ -30,6 +30,19 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         }
 
     }
+
+    public class CameraPush implements AutoCloseable {
+
+        public CameraPush() {
+            NerdP3dGraphics.this.beginCamera();
+        }
+
+        @Override
+        public void close() throws Exception {
+            NerdP3dGraphics.this.endCamera();
+        }
+
+    }
     // endregion
 
     protected final NerdUnprojector UNPROJECTOR;
@@ -727,6 +740,14 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         this.end2d();
     }
     // endregion
+
+    public void beginCamera() {
+        this.GRAPHICS.beginCamera();
+    }
+
+    public void endCamera() {
+        this.GRAPHICS.endCamera();
+    }
 
     public void bezier(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
             final float x3, final float y3, final float z3, final float x4, final float y4, final float z4) {

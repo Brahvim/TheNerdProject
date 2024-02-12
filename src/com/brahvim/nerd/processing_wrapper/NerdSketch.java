@@ -253,6 +253,11 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
+		if (PConstants.P3D.equals(this.getRendererPConstantString())) {
+			// super.textureWrap(PConstants.CLAMP);
+			// super.textureMode(PConstants.NORMAL);
+		}
+
 		if (this.SKETCH_SETTINGS.canResize)
 			this.GENERIC_WINDOW.setResizable(true);
 		this.GENERIC_WINDOW.centerWindow();

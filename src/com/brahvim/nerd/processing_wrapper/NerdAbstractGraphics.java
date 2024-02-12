@@ -31,6 +31,35 @@ import processing.svg.PGraphicsSVG;
 public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 
 	// region Inner classes.
+	// region Shaping and contouring.
+	public class Shape implements AutoCloseable {
+
+		public Shape() {
+			NerdAbstractGraphics.this.beginShape();
+		}
+
+		@Override
+		public void close() throws Exception {
+			NerdAbstractGraphics.this.endShape();
+		}
+
+	}
+
+	public class Contour implements AutoCloseable {
+
+		public Contour() {
+			NerdAbstractGraphics.this.beginContour();
+		}
+
+		@Override
+		public void close() throws Exception {
+			NerdAbstractGraphics.this.endContour();
+		}
+
+	}
+	// endregion
+
+	// region Transformation stack modifiers.
 	public class Push implements AutoCloseable {
 
 		public Push() {
@@ -69,6 +98,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		}
 
 	}
+	// endregion
 	// endregion
 
 	// region Instance fields.
@@ -1270,9 +1300,10 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.emissive(v1, v2, v3);
 	}
 
-	public void endCamera() {
-		this.GRAPHICS.endCamera();
-	}
+	// OpenGL-specific:
+	// public void endCamera() {
+	// this.GRAPHICS.endCamera();
+	// }
 
 	public void endContour() {
 		this.GRAPHICS.endContour();
@@ -1282,9 +1313,10 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.endDraw();
 	}
 
-	public void endPGL() {
-		this.GRAPHICS.endPGL();
-	}
+	// OpenGL-specific:
+	// public void endPGL() {
+	// this.GRAPHICS.endPGL();
+	// }
 
 	public void endRaw() {
 		this.GRAPHICS.endRaw();
