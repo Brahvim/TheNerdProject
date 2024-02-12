@@ -244,19 +244,16 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		this.defaultFont.assign(
 				super.createFont("SansSerif", 72 * this.GENERIC_WINDOW.scr));
 
-		// ...Also makes these changes to `this.NerdGenericGraphics`, haha:
-		super.background(0); // ..This, instead of `NerdAbstractCamera::clear()`.
-		// ...Also makes these changes to `this.NerdGenericGraphics`, haha:
+		// ...Also makes these changes to `this.nerdGenericGraphics`, haha:
 		super.background(0); // ..This, instead of `NerdAbstractCamera::clear()`.
 		super.textFont(this.defaultFont.getValue());
 		super.rectMode(PConstants.CENTER);
 		super.imageMode(PConstants.CENTER);
 		super.textAlign(PConstants.CENTER, PConstants.CENTER);
 
-		if (PConstants.P3D.equals(this.getRendererPConstantString())) {
-			// super.textureWrap(PConstants.CLAMP);
-			// super.textureMode(PConstants.NORMAL);
-		}
+		// Texturing settings:
+		// super.textureWrap(PConstants.CLAMP);
+		// super.textureMode(PConstants.NORMAL);
 
 		if (this.SKETCH_SETTINGS.canResize)
 			this.GENERIC_WINDOW.setResizable(true);

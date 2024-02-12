@@ -5,7 +5,7 @@ import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
 
-public abstract class NerdLight {
+public abstract class NerdAbstractLight {
 
 	// region Fields.
 	public boolean active = true;
@@ -17,36 +17,36 @@ public abstract class NerdLight {
 	// endregion
 
 	// region Constructors.
-	protected NerdLight(final PGraphics3D p_buffer) {
+	protected NerdAbstractLight(final PGraphics3D p_buffer) {
 		this.GRAPHICS = p_buffer;
 		this.pos = new PVector();
 		this.color = new PVector();
 	}
 
-	protected NerdLight(final NerdP3dGraphics p_buffer) {
+	protected NerdAbstractLight(final NerdP3dGraphics p_buffer) {
 		this.pos = new PVector();
 		this.color = new PVector(255, 255, 255);
 		this.GRAPHICS = p_buffer.getUnderlyingBuffer();
 	}
 
-	protected NerdLight(final PGraphics3D p_buffer, final PVector p_pos) {
+	protected NerdAbstractLight(final PGraphics3D p_buffer, final PVector p_pos) {
 		this.pos = p_pos;
 		this.GRAPHICS = p_buffer;
 		this.color = new PVector(255, 255, 255);
 	}
 
-	protected NerdLight(final NerdP3dGraphics p_buffer, final PVector p_pos) {
+	protected NerdAbstractLight(final NerdP3dGraphics p_buffer, final PVector p_pos) {
 		this(p_buffer);
 		this.pos = p_pos;
 	}
 
-	protected NerdLight(final PGraphics3D p_buffer, final PVector p_pos, final PVector p_color) {
+	protected NerdAbstractLight(final PGraphics3D p_buffer, final PVector p_pos, final PVector p_color) {
 		this.pos = p_pos;
 		this.color = p_color;
 		this.GRAPHICS = p_buffer;
 	}
 
-	protected NerdLight(final NerdP3dGraphics p_buffer, final PVector p_pos, final PVector p_color) {
+	protected NerdAbstractLight(final NerdP3dGraphics p_buffer, final PVector p_pos, final PVector p_color) {
 		this(p_buffer);
 		this.pos = p_pos;
 		this.color = p_color;

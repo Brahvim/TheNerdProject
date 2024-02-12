@@ -5,7 +5,7 @@ import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
 
-public class NerdDirectionalLight extends NerdLight {
+public class NerdDirectionalLight extends NerdAbstractLight {
 
 	// region Constructors.
 	public NerdDirectionalLight(final PGraphics3D p_buffer) {

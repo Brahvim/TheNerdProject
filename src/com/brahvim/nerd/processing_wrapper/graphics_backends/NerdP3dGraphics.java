@@ -45,6 +45,7 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     }
     // endregion
 
+    // region Fields.
     protected final NerdUnprojector UNPROJECTOR;
     protected final NerdAbstractCamera DEFAULT_CAMERA;
     protected final NerdBasicCamera DEFAULT_CAMERA_BASIC;
@@ -55,34 +56,44 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
 
     /** To be assigned to in the constructor. */
     protected NerdAbstractCamera currentCamera, previousCamera; // CAMERA! wher lite?! wher accsunn?!
+    // endregion
 
     // region Utilitarian constructors.
+    public NerdP3dGraphics(
+            final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height,
+            final String p_renderer, final String p_path) {
+        this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer, p_path));
+    }
 
-    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height,
+    public NerdP3dGraphics(
+            final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height,
             final String p_renderer) {
         this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer));
     }
 
-    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height) {
+    public NerdP3dGraphics(
+            final NerdSketch<PGraphics3D> p_sketch, final int p_width, final int p_height) {
         this(p_sketch, p_sketch.createGraphics(p_width, p_height));
     }
 
-    protected NerdP3dGraphics(
-            final NerdSketch<PGraphics3D> p_sketch,
-            final float p_width,
+    public NerdP3dGraphics(
+            final NerdSketch<PGraphics3D> p_sketch, final float p_width,
             final float p_height) {
         this(p_sketch, p_sketch.createGraphics(p_width, p_height));
     }
 
-    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final float p_size) {
+    public NerdP3dGraphics(
+            final NerdSketch<PGraphics3D> p_sketch, final float p_size) {
         this(p_sketch, p_sketch.createGraphics(p_size));
     }
 
-    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final int p_size) {
+    public NerdP3dGraphics(
+            final NerdSketch<PGraphics3D> p_sketch, final int p_size) {
         this(p_sketch, p_sketch.createGraphics(p_size));
     }
 
-    protected NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch) {
+    public NerdP3dGraphics(
+            final NerdSketch<PGraphics3D> p_sketch) {
         this(p_sketch, p_sketch.createGraphics());
     }
     // endregion

@@ -35,6 +35,45 @@ public abstract class NerdGlGenericGraphics<SketchPGraphicsT extends PGraphicsOp
     }
     // endregion
 
+    // region Utilitarian constructors.
+    protected NerdGlGenericGraphics(
+            final NerdSketch<SketchPGraphicsT> p_sketch,
+            final int p_width, final int p_height, final String p_renderer, final String p_path) {
+        super(p_sketch, p_width, p_height, p_renderer, p_path);
+    }
+
+    protected NerdGlGenericGraphics(
+            final NerdSketch<SketchPGraphicsT> p_sketch,
+            final int p_width, final int p_height, final String p_renderer) {
+        super(p_sketch, p_width, p_height, p_renderer);
+    }
+
+    protected NerdGlGenericGraphics(
+            final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height) {
+        super(p_sketch, p_width, p_height);
+    }
+
+    protected NerdGlGenericGraphics(
+            final NerdSketch<SketchPGraphicsT> p_sketch, final float p_width, final float p_height) {
+        super(p_sketch, p_width, p_height);
+    }
+
+    protected NerdGlGenericGraphics(
+            final NerdSketch<SketchPGraphicsT> p_sketch, final float p_size) {
+        super(p_sketch, p_size);
+    }
+
+    protected NerdGlGenericGraphics(
+            final NerdSketch<SketchPGraphicsT> p_sketch, final int p_size) {
+        super(p_sketch, p_size);
+    }
+
+    protected NerdGlGenericGraphics(
+            final NerdSketch<SketchPGraphicsT> p_sketch) {
+        super(p_sketch);
+    }
+    // endregion
+
     protected NerdGlGenericGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch,
             final SketchPGraphicsT p_pGraphicsToWrap) {

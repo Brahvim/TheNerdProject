@@ -31,11 +31,87 @@ import processing.svg.PGraphicsSVG;
 public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 
 	// region Inner classes.
-	// region Shaping and contouring.
+	// region Shaping classes.
+	protected interface ProcessingShape {
+		public int getPConstant();
+	}
+
+	public enum StandardProcessingShape implements ProcessingShape {
+
+		QUADS(PConstants.QUADS),
+		LINES(PConstants.LINES),
+		POINTS(PConstants.POINTS),
+		TRIANGLES(PConstants.TRIANGLES),
+		QUAD_STRIP(PConstants.QUAD_STRIP),
+		TRIANGLE_FAN(PConstants.TRIANGLE_FAN),
+		TRIANGLE_STRIP(PConstants.TRIANGLE_STRIP);
+
+		// region Class stuff.
+		private int processingConstant;
+
+		private StandardProcessingShape(int a) {
+			this.processingConstant = a;
+		}
+
+		@Override
+		public int getPConstant() {
+			return this.processingConstant;
+		}
+		// endregion
+
+	}
+
+	public class ClosedShape implements AutoCloseable {
+
+		public class Contour implements AutoCloseable {
+
+			public Contour() {
+				NerdAbstractGraphics.this.beginContour();
+			}
+
+			@Override
+			public void close() throws Exception {
+				NerdAbstractGraphics.this.endContour();
+			}
+
+		}
+
+		public ClosedShape() {
+			NerdAbstractGraphics.this.beginShape();
+		}
+
+		public ClosedShape(final StandardProcessingShape p_shape) {
+			NerdAbstractGraphics.this.beginShape(p_shape.getPConstant());
+		}
+
+		@Override
+		public void close() throws Exception {
+			NerdAbstractGraphics.this.endShape(PConstants.CLOSE);
+		}
+
+	}
+
 	public class Shape implements AutoCloseable {
+
+		public class Contour implements AutoCloseable {
+
+			public Contour() {
+				NerdAbstractGraphics.this.beginContour();
+			}
+
+			@Override
+			public void close() throws Exception {
+				NerdAbstractGraphics.this.endContour();
+			}
+
+		}
 
 		public Shape() {
 			NerdAbstractGraphics.this.beginShape();
+		}
+
+		public Shape(final StandardProcessingShape p_shape) {
+			NerdAbstractGraphics.this.beginShape(p_shape.getPConstant());
 		}
 
 		@Override
@@ -44,20 +120,20 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		}
 
 	}
+	// endregion
 
-	public class Contour implements AutoCloseable {
+	public class DrawCall implements AutoCloseable {
 
-		public Contour() {
-			NerdAbstractGraphics.this.beginContour();
+		public DrawCall() {
+			NerdAbstractGraphics.this.beginDraw();
 		}
 
 		@Override
 		public void close() throws Exception {
-			NerdAbstractGraphics.this.endContour();
+			NerdAbstractGraphics.this.endDraw();
 		}
 
 	}
-	// endregion
 
 	// region Transformation stack modifiers.
 	public class Push implements AutoCloseable {
@@ -151,34 +227,41 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 
 	// region Utilitarian constructors.
-	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
+	protected NerdAbstractGraphics(
+			final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
 			final String p_renderer, final String p_path) {
 		this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer, p_path));
 	}
 
-	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
+	protected NerdAbstractGraphics(
+			final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height,
 			final String p_renderer) {
 		this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer));
 	}
 
-	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height) {
+	protected NerdAbstractGraphics(
+			final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height) {
 		this(p_sketch, p_sketch.createGraphics(p_width, p_height));
 	}
 
-	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_width,
+	protected NerdAbstractGraphics(
+			final NerdSketch<SketchPGraphicsT> p_sketch, final float p_width,
 			final float p_height) {
 		this(p_sketch, p_sketch.createGraphics(p_width, p_height));
 	}
 
-	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final float p_size) {
+	protected NerdAbstractGraphics(
+			final NerdSketch<SketchPGraphicsT> p_sketch, final float p_size) {
 		this(p_sketch, p_sketch.createGraphics(p_size));
 	}
 
-	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch, final int p_size) {
+	protected NerdAbstractGraphics(
+			final NerdSketch<SketchPGraphicsT> p_sketch, final int p_size) {
 		this(p_sketch, p_sketch.createGraphics(p_size));
 	}
 
-	protected NerdAbstractGraphics(final NerdSketch<SketchPGraphicsT> p_sketch) {
+	protected NerdAbstractGraphics(
+			final NerdSketch<SketchPGraphicsT> p_sketch) {
 		this(p_sketch, p_sketch.createGraphics());
 	}
 	// endregion
@@ -214,7 +297,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.postDrawImpl();
 	}
 
-	// For subclasses:
+	// region For subclasses.
 	protected void preDrawImpl() {
 	}
 
@@ -431,6 +514,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.line(p_from.x, p_from.y, p_to.x, p_to.y, p_from.z, p_to.y);
 	}
 
+	// TODO: What?: `NerdAbstractGraphics::lineInDir()`? Does it even work?
 	public void lineInDir/* `lineInDirOfLength` */(final PVector p_start, final PVector p_dir, final float p_length) {
 		// `z`-coordinate of first and THEN the second point!:
 		this.GRAPHICS.line(p_start.x, p_start.y, p_start.x + p_dir.x * p_length, p_start.y + p_dir.y * p_length,
@@ -622,6 +706,10 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	}
 	// endregion
 
+	public void square(final float p_size) {
+		this.GRAPHICS.square(0, 0, p_size);
+	}
+
 	public void square(final PVector p_pos, final float p_size) {
 		this.GRAPHICS.pushMatrix();
 		this.GRAPHICS.translate(p_pos.x, p_pos.y, p_pos.z);
@@ -683,6 +771,10 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.rotateZ(p_z);
 	}
 	// endregion
+
+	public void texture(final NerdAbstractGraphics<SketchPGraphicsT> p_nerdGraphics) {
+		this.GRAPHICS.texture(p_nerdGraphics.getUnderlyingBuffer());
+	}
 
 	// region The billion `image()` overloads. Help me make "standards"?
 	// region For `PImage`s.
@@ -842,7 +934,11 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 
 	// region `translateToCenter()` and `translateFromCenter()`.
-	public void translateToCenter() {
+	public void translateFromCenterNegatively() {
+		this.GRAPHICS.translate(-this.cx, -this.cy);
+	}
+
+	public void translateFromCenter() {
 		this.GRAPHICS.translate(this.cx, this.cy);
 	}
 
@@ -2194,6 +2290,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	public String toString() {
 		return this.GRAPHICS.toString();
 	}
+	// endregion
 	// endregion
 
 }

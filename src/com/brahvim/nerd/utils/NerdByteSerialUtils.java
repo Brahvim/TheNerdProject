@@ -43,8 +43,8 @@ public class NerdByteSerialUtils {
 		if (p_object == null)
 			return new byte[0];
 
-		try (final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				final ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+		try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(bos)) {
 			oos.writeObject(p_object);
 			oos.flush();
 			bos.flush();
@@ -223,8 +223,8 @@ public class NerdByteSerialUtils {
 	}
 
 	private static Object fromBytesImpl(final byte[] p_data) throws IOException, ClassNotFoundException {
-		try (final ByteArrayInputStream bis = new ByteArrayInputStream(p_data);
-				final ObjectInputStream ois = new ObjectInputStream(bis)) {
+		try (ByteArrayInputStream bis = new ByteArrayInputStream(p_data);
+				ObjectInputStream ois = new ObjectInputStream(bis)) {
 			return ois.readObject();
 		}
 	}
@@ -478,7 +478,7 @@ public class NerdByteSerialUtils {
 	 */
 	@Deprecated
 	public static void fromFileAssigning(final File p_file, final Object p_object) {
-		try (final FileInputStream fis = new FileInputStream(p_file);) {
+		try (FileInputStream fis = new FileInputStream(p_file);) {
 			final byte[] objectData = fis.readAllBytes();
 			NerdByteSerialUtils.fromBytesAssigning(objectData, p_object);
 		} catch (final IOException e) {
@@ -488,8 +488,8 @@ public class NerdByteSerialUtils {
 
 	@SuppressWarnings("unchecked")
 	private static <T> T fromFileImpl(final File p_file) throws IOException, ClassNotFoundException {
-		try (final FileInputStream fis = new FileInputStream(p_file);
-				final ObjectInputStream ois = new ObjectInputStream(fis);) {
+		try (FileInputStream fis = new FileInputStream(p_file);
+				ObjectInputStream ois = new ObjectInputStream(fis);) {
 			return (T) ois.readObject();
 		}
 	}
@@ -514,8 +514,8 @@ public class NerdByteSerialUtils {
 		if (p_object == null)
 			return;
 
-		try (final FileOutputStream fos = new FileOutputStream(p_file);
-				final ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+		try (FileOutputStream fos = new FileOutputStream(p_file);
+				ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 			oos.writeObject(p_object);
 		} catch (final IOException e) {
 			if (p_onIo == null)

@@ -174,10 +174,11 @@ public abstract class NerdAbstractCamera {
 		if (this.doClearWithImage) {
 			if (this.clearImage != null) // No `null`-bombs, right?!
 				this.GRAPHICS.background(this.clearImage); // GO!!!
-		} else // Else, ...just use colors.
+		} else { // Else, ...just use colors.
 			this.GRAPHICS.background(
 					this.clearColorParam1, this.clearColorParam2,
 					this.clearColorParam3, this.clearColorParamAlpha);
+		}
 	}
 
 	public void apply() {

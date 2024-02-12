@@ -5,7 +5,7 @@ import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
 
-public class NerdSpotLight extends NerdLight {
+public class NerdSpotLight extends NerdAbstractLight {
 
 	// region Fields.
 	public PVector dir;

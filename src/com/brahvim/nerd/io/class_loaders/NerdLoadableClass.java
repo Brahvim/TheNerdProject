@@ -8,19 +8,14 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.brahvim.nerd.framework.scene_layer_api.NerdScene;
-
-import processing.core.PGraphics;
-
 public class NerdLoadableClass<ClassT> {
 
 	// region Fields.
-	private static final List<NerdLoadableClass<?>> ALL_LOADABLE_CLASSES = new ArrayList<>();
+	private static final List<NerdLoadableClass<?>> ALL_LOADABLE_CLASSES = new ArrayList<>(0);
 
-	public URL url;
-	public String qualifiedName;
-
-	private Class<? extends ClassT> loadedClass;
+	protected URL url;
+	protected String qualifiedName;
+	protected Class<? extends ClassT> loadedClass;
 	// endregion
 
 	// region Constructors.
@@ -64,13 +59,17 @@ public class NerdLoadableClass<ClassT> {
 		NerdLoadableClass.ALL_LOADABLE_CLASSES.add(this);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <RetScenePGraphicsT extends PGraphics> Class<? extends NerdScene<RetScenePGraphicsT>> getLoadedClass() {
-		return (Class<NerdScene<RetScenePGraphicsT>>) this.loadedClass;
+	public Class<?> getLoadedClass() {
+		return this.loadedClass;
 	}
 
 	public URL getUrl() {
-		return this.url;
+		try {
+			return new URL(this.url.toString());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	// endregion
 

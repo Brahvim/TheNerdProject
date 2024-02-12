@@ -8,13 +8,12 @@ public enum NerdSketchRenderer {
     GENERIC(""),
     P3D(PConstants.P3D),
     P2D(PConstants.P2D),
-    JAVA2D(PConstants.JAVA2D),
-    FX2D(PConstants.FX2D),
+    PDF(PConstants.PDF),
     SVG(PConstants.SVG),
-    PDF(PConstants.PDF);
+    FX2D(PConstants.FX2D),
+    JAVA2D(PConstants.JAVA2D);
 
-    // Class stuff:
-
+    // region Class stuff.
     private final String processingConstant;
 
     private NerdSketchRenderer(final String p_processingConstant) {
@@ -24,5 +23,6 @@ public enum NerdSketchRenderer {
     public String getPConstant() {
         return this.processingConstant;
     }
+    // endregion
 
 }
