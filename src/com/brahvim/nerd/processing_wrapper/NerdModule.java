@@ -1,7 +1,7 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import processing.core.PGraphics;
@@ -20,12 +20,12 @@ public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 		return this.SKETCH;
 	}
 
-	public List<NerdModule<SketchPGraphicsT>> getSketchModules() {
-		return this.SKETCH.MODULES;
-	}
-
 	public NerdSketchSettings<SketchPGraphicsT> getSketchSettings() {
 		return this.SKETCH.SKETCH_SETTINGS;
+	}
+
+	public Collection<NerdModule<SketchPGraphicsT>> getSketchModules() {
+		return this.SKETCH.MODULES;
 	}
 
 	// interface NerdModuleRelinkBehavior { }

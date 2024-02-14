@@ -285,6 +285,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	/* `package` */ final void preDraw() {
 		this.updateParameters();
 		this.recordCurrentParameters();
+
 		this.preDrawImpl();
 	}
 

@@ -51,7 +51,8 @@ public abstract class NerdAbstractCamera {
 	public boolean
 	/*   */ doAutoClear = true,
 			doAutoAspect = true,
-			doClearWithImage = true;
+			doClearWithImage = true,
+			doClearWithColors = true;
 	// endregion
 
 	protected final NerdP3dGraphics GRAPHICS;
@@ -107,8 +108,8 @@ public abstract class NerdAbstractCamera {
 
 	protected void applyOrtho() {
 		this.GRAPHICS.ortho(
-				-this.WINDOW.cx, this.WINDOW.cx,
-				-this.WINDOW.cy, this.WINDOW.cy,
+				-this.GRAPHICS.cx, this.GRAPHICS.cx,
+				-this.GRAPHICS.cy, this.GRAPHICS.cy,
 				this.near, this.far);
 	}
 
@@ -170,11 +171,16 @@ public abstract class NerdAbstractCamera {
 	}
 
 	public void clear() {
-		// Did they explicitly state they wanted to use images?:
-		if (this.doClearWithImage) {
-			if (this.clearImage != null) // No `null`-bombs, right?!
+		// TODO: Investigate!
+		// For some reason, swapping these conditions causes `DemoScene3` to crash when
+		// a scene-switch occurs (only test scene using an image background).
+
+		if (this.doClearWithImage) { // No `null`-bombs, right?!
+			if (this.clearImage != null)
+				// if (this.clearImage.width == this.GRAPHICS.width
+				// && this.clearImage.height == this.GRAPHICS.height)
 				this.GRAPHICS.background(this.clearImage); // GO!!!
-		} else { // Else, ...just use colors.
+		} else if (this.doClearWithColors) { // Clear with colors.
 			this.GRAPHICS.background(
 					this.clearColorParam1, this.clearColorParam2,
 					this.clearColorParam3, this.clearColorParamAlpha);
@@ -187,12 +193,13 @@ public abstract class NerdAbstractCamera {
 			// if (!(this.SKETCH.pwidth == this.SKETCH.width
 			// || this.SKETCH.pheight == this.SKETCH.height))
 			// A simple divide instruction is enough!
-			this.aspect = this.WINDOW.scr;
+			this.aspect = this.GRAPHICS.scr;
 
-		// #JIT_FTW!:
-		this.clear();
-		this.applyProjection();
+		if (this.doAutoClear)
+			this.clear();
+
 		this.applyMatrix();
+		this.applyProjection();
 	}
 
 	public void reset() {

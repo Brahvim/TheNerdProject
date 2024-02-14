@@ -7,7 +7,9 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -93,9 +95,10 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// endregion
 
 	// region `protected` fields.
-	protected final List<NerdModule<SketchPGraphicsT>> MODULES;
 	protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>>
-	/* */ CLASSES_TO_MODULES_MAP = new HashMap<>(5);
+	/* */ CLASSES_TO_MODULES_MAP = new LinkedHashMap<>(5);
+	protected final Collection<NerdModule<SketchPGraphicsT>>
+	/* */ MODULES = this.CLASSES_TO_MODULES_MAP.values();
 	public final Map<NerdAbstractGraphics<SketchPGraphicsT>, SketchPGraphicsT>
 	/* */ NERD_GRAPHICS_TO_PGRAPHICS_MAP = new HashMap<>(1);
 
@@ -122,7 +125,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		this.USES_OPENGL = PConstants.P3D.equals(p_settings.renderer);
 
 		// region Stuff involving `NerdModule`s.
-		this.MODULES = this.createAndSortModules(p_settings);
+		this.createAndSortModules(p_settings);
 		this.ASSETS = this.getNerdModule(NerdSketch.NerdSketchOnlyAssetsModule.class);
 		this.GENERIC_WINDOW = this.getNerdModule(NerdWindowModule.class);
 		this.DISPLAY = this.getNerdModule(NerdDisplayModule.class);
