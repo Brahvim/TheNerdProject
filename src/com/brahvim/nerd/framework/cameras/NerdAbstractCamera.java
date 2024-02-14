@@ -9,7 +9,6 @@ import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule
 
 import processing.core.PApplet;
 import processing.core.PConstants;
-import processing.core.PImage;
 import processing.core.PVector;
 import processing.opengl.PGraphics3D;
 
@@ -18,6 +17,7 @@ public abstract class NerdAbstractCamera {
 
 	// region Fields.
 	// region `public` fields.
+	// region `static` fields.
 	public static final float
 	/*   */ DEFAULT_FOV = PApplet.radians(60),
 			DEFAULT_NEAR = 0.1f,
@@ -32,36 +32,33 @@ public abstract class NerdAbstractCamera {
 			DEFAULT_ORIENTATION_X = 0,
 			DEFAULT_ORIENTATION_Y = 1,
 			DEFAULT_ORIENTATION_Z = 0;
+	// endregion
 
-	public final PVector // These should NEVER change!
-	/*   */ POSITION, // What if somebody...
-			ORIENTATION, // ...takes a reference to them?
-			DEFAULT_POSITION, // ...and wants to rely on it?
+	// These should never point to a different object!
+	// What if somebody took a reference to them and wanted to *rely* on it!?:
+	public final PVector
+	/*   */ POSITION,
+			ORIENTATION,
+			DEFAULT_POSITION,
 			DEFAULT_ORIENTATION;
 
-	// ...yeah, for some reason `PApplet::color()` fails. No ARGB!
-	public float clearColorParam1, clearColorParam2, clearColorParam3, clearColorParamAlpha;
-	public float fov = NerdAbstractCamera.DEFAULT_FOV,
+	public float
+	/*   */ aspect /* `= 1`? */,
+			fov = NerdAbstractCamera.DEFAULT_FOV,
 			far = NerdAbstractCamera.DEFAULT_FAR,
 			near = NerdAbstractCamera.DEFAULT_NEAR,
-			mouseZ = NerdAbstractCamera.DEFAULT_MOUSE_Z,
-			aspect /* `= 1`? */;
-	public int projection = PConstants.PERSPECTIVE;
+			mouseZ = NerdAbstractCamera.DEFAULT_MOUSE_Z;
 
-	public boolean
-	/*   */ doAutoClear = true,
-			doAutoAspect = true,
-			doClearWithImage = true,
-			doClearWithColors = true;
+	public int projection = PConstants.PERSPECTIVE;
+	public boolean doAutoAspect = true;
 	// endregion
 
 	protected final NerdP3dGraphics GRAPHICS;
 	protected final NerdGlWindowModule WINDOW;
 	protected final NerdSketch<PGraphics3D> SKETCH;
-
-	protected PImage clearImage; // "Clear, Clear! Crystal-Clear!"
 	// endregion
 
+	// region Constructors.
 	@SuppressWarnings("unchecked")
 	protected NerdAbstractCamera(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
 		this.SKETCH = Objects.requireNonNull(p_sketch, "The parameter `p_sketch` was `null`!");
@@ -71,7 +68,7 @@ public abstract class NerdAbstractCamera {
 
 		this.POSITION = new PVector();
 		this.DEFAULT_POSITION = new PVector();
-		this.ORIENTATION = new PVector(
+		this.ORIENTATION = new PVector( // Yes, this represents the "up" vector.
 				NerdAbstractCamera.DEFAULT_ORIENTATION_X,
 				NerdAbstractCamera.DEFAULT_ORIENTATION_Y,
 				NerdAbstractCamera.DEFAULT_ORIENTATION_Z);
@@ -89,14 +86,19 @@ public abstract class NerdAbstractCamera {
 
 		this.POSITION = new PVector();
 		this.DEFAULT_POSITION = new PVector();
-		this.ORIENTATION = new PVector(0, 1, 0);
-		this.DEFAULT_ORIENTATION = new PVector(0, 1, 0);
+		this.ORIENTATION = new PVector( // Yes, this represents the "up" vector.
+				NerdAbstractCamera.DEFAULT_ORIENTATION_X,
+				NerdAbstractCamera.DEFAULT_ORIENTATION_Y,
+				NerdAbstractCamera.DEFAULT_ORIENTATION_Z);
+		this.DEFAULT_ORIENTATION = new PVector( // Yes, these are meant to be the exact same.
+				NerdAbstractCamera.DEFAULT_ORIENTATION_X,
+				NerdAbstractCamera.DEFAULT_ORIENTATION_Y,
+				NerdAbstractCamera.DEFAULT_ORIENTATION_Z);
 	}
 
 	@SuppressWarnings("unchecked")
 	protected NerdAbstractCamera(final NerdAbstractCamera p_camera) {
-		this.GRAPHICS = Objects.requireNonNull(p_camera,
-				"The parameter `p_camera` was `null`!").GRAPHICS;
+		this.GRAPHICS = Objects.requireNonNull(p_camera, "The parameter `p_camera` was `null`!").GRAPHICS;
 		this.SKETCH = this.GRAPHICS.getSketch();
 		this.WINDOW = (NerdGlWindowModule) this.SKETCH.getNerdModule(NerdWindowModule.class);
 
@@ -105,6 +107,7 @@ public abstract class NerdAbstractCamera {
 		this.DEFAULT_POSITION = p_camera.DEFAULT_POSITION.copy();
 		this.DEFAULT_ORIENTATION = p_camera.DEFAULT_ORIENTATION.copy();
 	}
+	// endregion
 
 	protected void applyOrtho() {
 		this.GRAPHICS.ortho(
@@ -120,42 +123,6 @@ public abstract class NerdAbstractCamera {
 	}
 
 	// region `public` methods.
-	// region `setClearColor()` overloads.
-	public void setClearColor(final int p_color) {
-		this.clearColorParam1 = this.SKETCH.red(p_color);
-		this.clearColorParam2 = this.SKETCH.green(p_color);
-		this.clearColorParam3 = this.SKETCH.blue(p_color);
-		this.clearColorParamAlpha = 255; // I have to do this!
-		// this.alpha = this.SKETCH.alpha(p_color);
-	}
-
-	public void setClearColor(final float p_grey, final float p_alpha) {
-		this.clearColorParam1 = p_grey;
-		this.clearColorParam2 = p_grey;
-		this.clearColorParam3 = p_grey;
-		this.clearColorParamAlpha = p_alpha;
-	}
-
-	public void setClearColor(final float p_v1, final float p_v2, final float p_v3) {
-		this.clearColorParam1 = p_v1;
-		this.clearColorParam2 = p_v2;
-		this.clearColorParam3 = p_v3;
-		this.clearColorParamAlpha = 255;
-	}
-
-	public void setClearColor(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
-		this.clearColorParam1 = p_v1;
-		this.clearColorParam2 = p_v2;
-		this.clearColorParam3 = p_v3;
-		this.clearColorParamAlpha = p_alpha;
-	}
-	// endregion
-
-	public void setClearImage(final PImage p_image) {
-		Objects.requireNonNull(p_image);
-		this.clearImage = p_image;
-	}
-
 	public abstract void applyMatrix();
 
 	public void applyProjection() {
@@ -163,27 +130,9 @@ public abstract class NerdAbstractCamera {
 		switch (this.projection) {
 			case PConstants.ORTHOGRAPHIC -> this.applyOrtho();
 			case PConstants.PERSPECTIVE -> this.applyPerspective();
-
-			default -> throw new UnsupportedOperationException(
-					"`NerdCamera::projection` can only be either" +
-							"`PConstants.PERSPECTIVE` or `PConstants.ORTHOGRAPHIC`.");
-		}
-	}
-
-	public void clear() {
-		// TODO: Investigate! Perhaps move this to `NerdAbstractGraphics`!
-		// For some reason, swapping these conditions causes `DemoScene3` to crash when
-		// a scene-switch occurs (only test scene using an image background).
-
-		if (this.doClearWithImage) { // No `null`-bombs, right?!
-			if (this.clearImage != null)
-				// if (this.clearImage.width == this.GRAPHICS.width
-				// && this.clearImage.height == this.GRAPHICS.height)
-				this.GRAPHICS.background(this.clearImage); // GO!!!
-		} else if (this.doClearWithColors) { // Clear with colors.6
-			this.GRAPHICS.background(
-					this.clearColorParam1, this.clearColorParam2,
-					this.clearColorParam3, this.clearColorParamAlpha);
+			// default -> throw new UnsupportedOperationException(
+			// "`NerdCamera::projection` can only be either" +
+			// "`PConstants.PERSPECTIVE` or `PConstants.ORTHOGRAPHIC`.");
 		}
 	}
 
@@ -195,26 +144,15 @@ public abstract class NerdAbstractCamera {
 			// A simple divide instruction is enough!
 			this.aspect = this.GRAPHICS.scr;
 
-		if (this.doAutoClear)
-			this.clear();
-
 		this.applyMatrix();
 		this.applyProjection();
 	}
 
 	public void reset() {
-		// region Parameters and `NerdAbstractCamera`-only vectors.
-		this.clearColorParam1 = 0;
-		this.clearColorParam2 = 0;
-		this.clearColorParam3 = 0;
-		this.clearColorParamAlpha = 255;
-
 		this.POSITION.set(this.DEFAULT_POSITION);
 		this.ORIENTATION.set(this.DEFAULT_ORIENTATION);
-		// endregion
 
 		// region Settings.
-		this.doAutoClear = true;
 		this.projection = PConstants.PERSPECTIVE;
 		this.far = NerdAbstractCamera.DEFAULT_FAR;
 		this.fov = NerdAbstractCamera.DEFAULT_FOV;

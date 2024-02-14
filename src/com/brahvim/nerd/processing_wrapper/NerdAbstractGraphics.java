@@ -178,18 +178,95 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 
 	// region Instance fields.
+	// region Current frame dimensions.
+	/** Dimension of the {@code PGraphics} buffer. */
+	public int width, height;
+
+	/** Twice the dimension of the {@code PGraphics} buffer. */
+	public float dbx, dby;
+
+	/** Third-quarter of the dimension of the {@code PGraphics} buffer. */
+	public float q3x, q3y;
+
+	/** Half of the dimension of the {@code PGraphics} buffer. */
+	public float cx, cy;
+
+	/** Quarter of the dimension of the {@code PGraphics} buffer. */
+	public float qx, qy;
+
+	/**
+	 * Ratio of the dimensions of the {@code PGraphics} buffer.
+	 * Calculated using {@code NerdAbstractGraphics::width /
+	 * NerdAbstractGraphics::height}.
+	 */
+	public float scr;
+	// endregion
+
+	// region Previous frame dimensions.
+	/** Dimension of the {@code PGraphics} buffer, <b>previous frame.</b> */
+	public int pwidth, pheight;
+
+	/**
+	 * Twice the dimension of the {@code PGraphics} buffer, <b>previous frame.</b>
+	 */
+	public float pdbx, pdby;
+
+	/**
+	 * Third-quarter of the dimension of the {@code PGraphics} buffer,
+	 * <b>previous frame.</b>
+	 */
+	public float pq3x, pq3y;
+
+	/**
+	 * Half of the dimension of the {@code PGraphics} buffer, <b>previous frame.</b>
+	 */
+	public float pcx, pcy;
+
+	/**
+	 * Quarter of the dimension of the {@code PGraphics} buffer, <b>previous
+	 * frame.</b>
+	 */
+	public float pqx, pqy;
+
+	/**
+	 * Ratio of the dimensions of the {@code PGraphics} buffer.
+	 * Calculated using {@code NerdAbstractGraphics::width /
+	 * NerdAbstractGraphics::height}, <b>previous frame.</b>
+	 */
+	public float pscr;
+	// endregion
+
+	// region `protected` fields.
+	protected boolean
+	/*   */ doAutoClear = false,
+			doClearWithImage = true,
+			doClearWithColor = true;
+
+	// region Frame auto-clear info.
+	/**
+	 * Used to clear the screen using colors when
+	 * {@linkplain NerdAbstractGraphics#doAutoClear
+	 * NerdAbstractGraphics::doAutoClear} as well as
+	 * {@linkplain NerdAbstractGraphics#doClearWithColor
+	 * NerdAbstractGraphics::doClearWithColors} are {@code true}.
+	 */
+	protected float // ...yeah, for some reason `PApplet::color()` fails. No ARGB!
+	/*   */ clearColorParam1,
+			clearColorParam2,
+			clearColorParam3,
+			clearColorParamAlpha = 255;
+
+	// "Clear, Clear! Crystal-Clear!" 😂:
+	protected PImage clearImage;
+	// endregion
+
 	protected final SketchPGraphicsT GRAPHICS;
 	protected final NerdSketch<SketchPGraphicsT> SKETCH;
 	protected final NerdInputModule<SketchPGraphicsT> INPUT;
 	protected final NerdWindowModule<SketchPGraphicsT> WINDOW;
-
-	// Dimensions for the current and previous frames:
-	public float pdbx, pdby, pcx, pcy, pqx, pqy, pq3x, pq3y, pscr;
-	public float dbx, dby, cx, cy, qx, qy, q3x, q3y, scr;
-	public int width, height, pwidth, pheight;
 	// endregion
 
-	// region Static methods.
+	// region `static` methods.
 	protected static NerdAbstractGraphics<?> createNerdGenericGraphicsWrapperForSketch(final NerdSketch<?> p_sketch) {
 		final NerdAbstractGraphics<?> toRet = NerdAbstractGraphics.supplySubModuleForSketch(p_sketch);
 
@@ -282,21 +359,26 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.SKETCH.NERD_GRAPHICS_TO_PGRAPHICS_MAP.put(this, p_pGraphicsToWrap);
 	}
 
-	/* `package` */ final void preDraw() {
+	// region Callbacks.
+	public final void preDraw() {
 		this.updateParameters();
 		this.recordCurrentParameters();
+
+		if (this.doAutoClear)
+			this.performAutoClear();
 
 		this.preDrawImpl();
 	}
 
-	/* `package` */ final void draw() {
+	public final void draw() {
 		// Callback into subclass code!:
 		this.drawImpl();
 	}
 
-	/* `package` */ final void postDraw() {
+	public final void postDraw() {
 		this.postDrawImpl();
 	}
+	// endregion
 
 	// region For subclasses.
 	protected void preDrawImpl() {
@@ -308,7 +390,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	protected void postDrawImpl() {
 	}
 
-	private void updateParameters() {
+	protected final void updateParameters() {
 		this.width = this.GRAPHICS.width;
 		this.height = this.GRAPHICS.height;
 
@@ -327,7 +409,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.scr = (float) this.width / (float) this.height;
 	}
 
-	private void recordCurrentParameters() {
+	protected final void recordCurrentParameters() {
 		this.pwidth = this.width;
 		this.pheight = this.height;
 
@@ -345,14 +427,107 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 
 		this.pscr = this.scr;
 	}
+	// endregion
 
+	// region Custom getters and setters.
 	public NerdSketch<SketchPGraphicsT> getSketch() {
 		return this.SKETCH;
 	}
 
-	// region Rendering utilities!
+	public int[] getPixels() {
+		return this.GRAPHICS.pixels;
+	}
+
 	public final SketchPGraphicsT getUnderlyingBuffer() {
 		return this.GRAPHICS;
+	}
+
+	public void setClearImageFlag(final boolean p_clearWithImage) {
+		this.doClearWithImage = p_clearWithImage;
+	}
+
+	public void setClearColorFlag(final boolean p_clearWithColor) {
+		this.doClearWithColor = p_clearWithColor;
+	}
+
+	public void setAutoClearFlag(final boolean p_doAutoClear) {
+		this.doAutoClear = p_doAutoClear;
+	}
+
+	public void removeClearImage() {
+		this.doClearWithImage = false;
+		this.doClearWithColor = true;
+		this.clearImage = null;
+	}
+
+	public void setClearImage(final PImage p_image) {
+		this.doAutoClear = true;
+		this.clearImage = p_image;
+		this.doClearWithImage = true;
+		this.doClearWithColor = false;
+	}
+
+	// region `setClearColor()` overloads.
+	public void setClearColor(final int p_color) {
+		this.clearColorParam1 = this.SKETCH.red(p_color);
+		this.clearColorParam2 = this.SKETCH.green(p_color);
+		this.clearColorParam3 = this.SKETCH.blue(p_color);
+		this.clearColorParamAlpha = 255; // I have to do this!
+		// this.clearColorParamAlpha = this.SKETCH.alpha(p_color);
+		this.doClearWithColor = true;
+		this.doAutoClear = true;
+	}
+
+	public void setClearColor(final float p_grey, final float p_alpha) {
+		this.clearColorParam1 = p_grey;
+		this.clearColorParam2 = p_grey;
+		this.clearColorParam3 = p_grey;
+		this.clearColorParamAlpha = p_alpha;
+		this.doClearWithColor = true;
+	}
+
+	public void setClearColor(final float p_v1, final float p_v2, final float p_v3) {
+		this.clearColorParam1 = p_v1;
+		this.clearColorParam2 = p_v2;
+		this.clearColorParam3 = p_v3;
+		this.clearColorParamAlpha = 255;
+		this.doClearWithColor = true;
+		this.doAutoClear = true;
+	}
+
+	public void setClearColor(final float p_v1, final float p_v2, final float p_v3, final float p_alpha) {
+		this.clearColorParam1 = p_v1;
+		this.clearColorParam2 = p_v2;
+		this.clearColorParam3 = p_v3;
+		this.clearColorParamAlpha = p_alpha;
+		this.doClearWithColor = true;
+	}
+	// endregion
+	// endregion
+
+	// region Rendering utilities!
+	public final void performAutoClear() {
+		// "Will Processing throw an exception when passed this image?":
+		boolean canClearWithImage = //
+				// It won't throw if the image is not `null`:
+				this.clearImage != null &&
+				// It won't throw if the image is the right size.
+				// This check simply gets skipped by the JVM if the image **was** `null`:
+				/*      */ this.clearImage.width == this.GRAPHICS.width
+						&& this.clearImage.height == this.GRAPHICS.height;
+		// (Why does it get skipped? Look up "short-circuiting"! :)
+
+		if (this.doClearWithImage && canClearWithImage)
+			this.GRAPHICS.background(this.clearImage);
+
+		// ...And we instead clear with colors, if:
+		// - There was no valid image to clear the frame with, or,
+		// - We were explicitly requested to use colors and not the image.
+		if (!canClearWithImage || this.doClearWithColor) {
+			this.GRAPHICS.background(
+					this.clearColorParam1, this.clearColorParam2,
+					this.clearColorParam3, this.clearColorParamAlpha);
+		}
 	}
 
 	// region From `PGraphics`.
@@ -370,7 +545,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// this.GRAPHICS.popMatrix();
 	// }
 
-	public void drawShape(final float p_x, final float p_y, final int p_shapeType, final Runnable p_shapingFxn) {
+	public void drawClosedShape(final float p_x, final float p_y, final int p_shapeType, final Runnable p_shapingFxn) {
 		this.GRAPHICS.pushMatrix();
 		this.translate(p_x, p_y);
 		this.SKETCH.beginShape(p_shapeType);
@@ -379,7 +554,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.popMatrix();
 	}
 
-	public void drawShape(final PVector p_pos, final int p_shapeType, final Runnable p_shapingFxn) {
+	public void drawClosedShape(final PVector p_pos, final int p_shapeType, final Runnable p_shapingFxn) {
 		this.GRAPHICS.pushMatrix();
 		this.translate(p_pos);
 		this.SKETCH.beginShape(p_shapeType);
@@ -388,7 +563,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.popMatrix();
 	}
 
-	public void drawShape(final int p_shapeType, final Runnable p_shapingFxn) {
+	public void drawClosedShape(final int p_shapeType, final Runnable p_shapingFxn) {
 		this.SKETCH.beginShape(p_shapeType);
 		p_shapingFxn.run();
 		this.SKETCH.endShape(PConstants.CLOSE);
@@ -433,7 +608,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	}
 	// endregion
 
-	public void drawContour(final Runnable p_contouringFxn) {
+	public void beginContour(final Runnable p_contouringFxn) {
 		this.GRAPHICS.beginContour();
 		p_contouringFxn.run();
 		this.GRAPHICS.endContour();
@@ -777,14 +952,50 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.texture(p_nerdGraphics.getUnderlyingBuffer());
 	}
 
+	public void set(final PImage p_image) {
+		this.GRAPHICS.set(0, 0, p_image);
+	}
+
+	public void set(final NerdAbstractGraphics<SketchPGraphicsT> p_nerdGraphics) {
+		this.GRAPHICS.set(0, 0, p_nerdGraphics.getUnderlyingBuffer());
+	}
+
+	public void set(final int p_x, final int p_y, final NerdAbstractGraphics<SketchPGraphicsT> p_nerdGraphics) {
+		this.GRAPHICS.set(p_x, p_y, p_nerdGraphics.getUnderlyingBuffer());
+	}
+
 	// region The billion `image()` overloads. Help me make "standards"?
 	// region For `PImage`s.
+	/**
+	 * @param p_image is the {@code PImage} you want drawn onto a quad. That's all.
+	 *
+	 * @apiNote
+	 *          Have you ever tried
+	 *          <a href="https://processing.org/reference/set_.html">
+	 *          PGraphics::set()</a>/{@linkplain NerdAbstractGraphics#set(PImage)
+	 *          NerdAbstractGraphics::set()} by the way? It textures the
+	 *          <i>entire</i> buffer <b><i>fast!</i></b>
+	 *
+	 *          <p>
+	 *          When called like, {@code set(0, 0, img)}
+	 *
+	 *          <p>
+	 *          (...or <i>just</i> {@code set(img)} in the case of
+	 *          {@linkplain NerdAbstractGraphics#set(PImage)
+	 *          NerdAbstractGraphics::set()}), it is faster than
+	 *          <a href="https://processing.org/reference/image_.html">
+	 *          PGraphics::image()</a>.
+	 *
+	 *          <p>
+	 *          <i>Do remember though</i>, that it <u>doesn't texture the image
+	 *          onto geometry</u>; transformations don't apply.
+	 *          In fact, use it only to texture the entire buffer with an image.
+	 *
+	 *          <p>
+	 *          I don't think <a href="https://processing.org/reference/tint_.html">
+	 *          PGraphics::tint()</a> effects work either.
+	 */
 	public void image(final PImage p_image) {
-		// https://processing.org/reference/set_.html.
-		// Faster than `image()`!:
-		// `this.GRAPHICS.set(0, 0, p_image);`
-		// However, we also need to remember that it doesn't render the image on to a
-		// quad, meaning that transformations won't apply.
 		this.GRAPHICS.image(p_image, 0, 0);
 	}
 
@@ -797,6 +1008,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 
 	public void image(final PImage p_image, final PVector p_pos) {
 		this.GRAPHICS.pushMatrix();
+		// if (p_pos != null) // Well, let it crash if so...
 		this.GRAPHICS.translate(p_pos.x, p_pos.y, p_pos.z);
 		this.GRAPHICS.image(p_image, 0, 0);
 		this.GRAPHICS.popMatrix();
@@ -852,7 +1064,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	}
 	// endregion
 
-	// region For `NerdGraphics`.
+	// region For `NerdAbstractGraphics`.
 	public void image(final NerdAbstractGraphics<SketchPGraphicsT> p_graphics) {
 		this.GRAPHICS.image(p_graphics.getUnderlyingBuffer(), 0, 0);
 	}
@@ -993,10 +1205,6 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.text(c, 0, 0);
 	}
 
-	public void text(final String str) {
-		this.GRAPHICS.text(str, 0, 0);
-	}
-
 	public void text(final int num) {
 		this.GRAPHICS.text(num, 0, 0);
 	}
@@ -1005,31 +1213,12 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.text(num, 0, 0);
 	}
 
+	public void text(final String str) {
+		this.GRAPHICS.text(str, 0, 0);
+	}
+
 	public void text(final char[] p_charArray) {
 		this.GRAPHICS.text(p_charArray, 0, p_charArray.length, 0, 0);
-	}
-
-	// endregion
-
-	// region At 2D center of the screen.
-	public void textAt2dCenter(final char c) {
-		this.GRAPHICS.text(c, this.cx, this.cy);
-	}
-
-	public void textAt2dCenter(final String str) {
-		this.GRAPHICS.text(str, this.cx, this.cy);
-	}
-
-	public void textAt2dCenter(final int num) {
-		this.GRAPHICS.text(num, this.cx, this.cy);
-	}
-
-	public void textAt2dCenter(final float num) {
-		this.GRAPHICS.text(num, this.cx, this.cy);
-	}
-
-	public void textAt2dCenter(final char[] p_charArray) {
-		this.GRAPHICS.text(p_charArray, 0, p_charArray.length, this.cx, this.cy);
 	}
 	// endregion
 	// endregion
@@ -2276,7 +2465,6 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// {
 	// this.GRAPHICS.updatePixels(x, y, w, h);
 	// }
-	// endregion
 	// endregion
 
 }

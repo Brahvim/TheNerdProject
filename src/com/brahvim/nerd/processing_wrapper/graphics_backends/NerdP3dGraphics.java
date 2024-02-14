@@ -205,6 +205,26 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
         this.GRAPHICS.translate(this.cx, this.cy, p_value);
     }
 
+    public void drawClosedShape(final float p_x, final float p_y, final float p_z,
+            final int p_shapeType, final Runnable p_shapingFxn) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_x, p_y, p_z);
+        this.SKETCH.beginShape(p_shapeType);
+        p_shapingFxn.run();
+        this.SKETCH.endShape(PConstants.CLOSE);
+        this.GRAPHICS.popMatrix();
+    }
+
+    public void drawOpenShape(final float p_x, final float p_y, final float p_z,
+            final int p_shapeType, final Runnable p_shapingFxn) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_x, p_y, p_z);
+        this.SKETCH.beginShape(p_shapeType);
+        p_shapingFxn.run();
+        this.SKETCH.endShape();
+        this.GRAPHICS.popMatrix();
+    }
+
     // region `modelVec()` and `screenVec()`.
     public PVector modelVec() {
         return new PVector(
@@ -752,6 +772,7 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
     }
     // endregion
 
+    // region `P3D`-only methods from `PGraphics`.
     public void beginCamera() {
         this.GRAPHICS.beginCamera();
     }
@@ -779,5 +800,6 @@ public class NerdP3dGraphics extends NerdGlGenericGraphics<PGraphics3D> {
             final float nz) {
         this.GRAPHICS.directionalLight(v1, v2, v3, nx, ny, nz);
     }
+    // endregion
 
 }

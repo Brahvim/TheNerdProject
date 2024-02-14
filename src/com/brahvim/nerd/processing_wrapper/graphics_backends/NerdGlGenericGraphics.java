@@ -3,7 +3,6 @@ package com.brahvim.nerd.processing_wrapper.graphics_backends;
 import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.core.PConstants;
 import processing.core.PMatrix;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
@@ -78,28 +77,6 @@ public abstract class NerdGlGenericGraphics<SketchPGraphicsT extends PGraphicsOp
             final NerdSketch<SketchPGraphicsT> p_sketch,
             final SketchPGraphicsT p_pGraphicsToWrap) {
         super(p_sketch, p_pGraphicsToWrap);
-    }
-
-    public void drawShape(final float p_x, final float p_y, final float p_z,
-            final int p_shapeType,
-            final Runnable p_shapingFxn) {
-        this.GRAPHICS.pushMatrix();
-        this.translate(p_x, p_y, p_z);
-        this.SKETCH.beginShape(p_shapeType);
-        p_shapingFxn.run();
-        this.SKETCH.endShape(PConstants.CLOSE);
-        this.GRAPHICS.popMatrix();
-    }
-
-    public void drawOpenShape(final float p_x, final float p_y, final float p_z,
-            final int p_shapeType,
-            final Runnable p_shapingFxn) {
-        this.GRAPHICS.pushMatrix();
-        this.translate(p_x, p_y, p_z);
-        this.SKETCH.beginShape(p_shapeType);
-        p_shapingFxn.run();
-        this.SKETCH.endShape();
-        this.GRAPHICS.popMatrix();
     }
 
     public void ellipse(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height) {
@@ -280,16 +257,16 @@ public abstract class NerdGlGenericGraphics<SketchPGraphicsT extends PGraphicsOp
         this.GRAPHICS.text(c, x, y, z);
     }
 
-    public void text(final String str, final float x, final float y, final float z) {
-        this.GRAPHICS.text(str, x, y, z);
-    }
-
     public void text(final int num, final float x, final float y, final float z) {
         this.GRAPHICS.text(num, x, y, z);
     }
 
     public void text(final float num, final float x, final float y, final float z) {
         this.GRAPHICS.text(num, x, y, z);
+    }
+
+    public void text(final String str, final float x, final float y, final float z) {
+        this.GRAPHICS.text(str, x, y, z);
     }
 
     public void text(final char[] chars, final int start, final int stop, final float x, final float y, final float z) {
