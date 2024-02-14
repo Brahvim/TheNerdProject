@@ -171,7 +171,7 @@ public abstract class NerdAbstractCamera {
 	}
 
 	public void clear() {
-		// TODO: Investigate!
+		// TODO: Investigate! Perhaps move this to `NerdAbstractGraphics`!
 		// For some reason, swapping these conditions causes `DemoScene3` to crash when
 		// a scene-switch occurs (only test scene using an image background).
 
@@ -180,7 +180,7 @@ public abstract class NerdAbstractCamera {
 				// if (this.clearImage.width == this.GRAPHICS.width
 				// && this.clearImage.height == this.GRAPHICS.height)
 				this.GRAPHICS.background(this.clearImage); // GO!!!
-		} else if (this.doClearWithColors) { // Clear with colors.
+		} else if (this.doClearWithColors) { // Clear with colors.6
 			this.GRAPHICS.background(
 					this.clearColorParam1, this.clearColorParam2,
 					this.clearColorParam3, this.clearColorParamAlpha);

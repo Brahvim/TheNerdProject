@@ -2276,21 +2276,6 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// {
 	// this.GRAPHICS.updatePixels(x, y, w, h);
 	// }
-
-	@Override
-	public boolean equals(final Object obj) {
-		return this.GRAPHICS.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return this.GRAPHICS.hashCode();
-	}
-
-	@Override
-	public String toString() {
-		return this.GRAPHICS.toString();
-	}
 	// endregion
 	// endregion
 
