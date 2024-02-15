@@ -3,6 +3,7 @@ package com.brahvim.nerd.framework.cameras;
 import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 
 public class NerdFpsCamera extends NerdFlyCamera {
+
 	private float height;
 
 	public NerdFpsCamera(final NerdP3dGraphics p_graphics) {
@@ -25,7 +26,7 @@ public class NerdFpsCamera extends NerdFlyCamera {
 	}
 
 	@Override
-    public void setHeight(final float p_height) {
+	public void setHeight(final float p_height) {
 		this.height = p_height;
 	}
 
