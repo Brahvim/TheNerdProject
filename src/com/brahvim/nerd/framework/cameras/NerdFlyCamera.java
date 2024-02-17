@@ -12,7 +12,7 @@ import processing.core.PVector;
 import processing.opengl.PGraphics3D;
 
 public class NerdFlyCamera extends NerdAbstractCamera {
-	// Mathematics, thanks to https://learnopengl.com/Getting-started/Camera!
+	// Mathematics, thanks to [ https://learnopengl.com/Getting-started/Camera ]!
 
 	// region Fields.
 	public static final float DEFAULT_MOUSE_SENSITIVITY = 0.18f;

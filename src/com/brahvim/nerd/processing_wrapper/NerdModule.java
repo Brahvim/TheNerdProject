@@ -28,29 +28,6 @@ public abstract class NerdModule<SketchPGraphicsT extends PGraphics> {
 		return this.SKETCH.MODULES;
 	}
 
-	// interface NerdModuleRelinkBehavior { }
-	// enum NerdModuleDefaultRelinkBehavior { }
-
-	// /**
-	// * Removes this {@link NerdModule} instance from the {@link NerdSketch} it was
-	// * instantiated and stored by.
-	// *
-	// * @return The {@link NerdSketch} this {@link NerdModule} was instantiated by.
-	// */
-	// protected NerdSketch<?> unlinkFromSketch() {
-	// this.SKETCH.CLASSES_TO_MODULES_MAP.remove(this.getClass());
-	// return this.SKETCH;
-	// }
-
-	// protected NerdSketch<?> linkToSketch(NerdSketch<?> p_sketch) {
-	// if (p_sketch == this.SKETCH)
-	// return this.SKETCH;
-
-	// this.unlinkFromSketch();
-	// p_sketch.CLASSES_TO_MODULES_MAP.remove(this.getClass());
-	// return this.SKETCH;
-	// }
-
 	protected Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>> getSketchModulesMap() {
 		return this.SKETCH.CLASSES_TO_MODULES_MAP;
 	}
