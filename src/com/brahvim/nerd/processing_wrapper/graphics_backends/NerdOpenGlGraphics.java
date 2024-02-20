@@ -1,8 +1,8 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
-import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
+import processing.core.PImage;
 import processing.core.PMatrix;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
@@ -11,8 +11,8 @@ import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PShader;
 
-public abstract class NerdGlGenericGraphics<SketchPGraphicsT extends PGraphicsOpenGL>
-        extends NerdAbstractGraphics<SketchPGraphicsT> {
+public abstract class NerdOpenGlGraphics<SketchPGraphicsT extends PGraphicsOpenGL>
+        extends NerdFramebufferBackedGraphics<SketchPGraphicsT> {
 
     // region Inner classes.
     /**
@@ -23,57 +23,57 @@ public abstract class NerdGlGenericGraphics<SketchPGraphicsT extends PGraphicsOp
         public final PGL pgl;
 
         public PglPush() {
-            this.pgl = NerdGlGenericGraphics.this.beginPGL();
+            this.pgl = NerdOpenGlGraphics.this.beginPGL();
         }
 
         @Override
         public void close() throws Exception {
-            NerdGlGenericGraphics.this.endPGL();
+            NerdOpenGlGraphics.this.endPGL();
         }
 
     }
     // endregion
 
     // region Utilitarian constructors.
-    protected NerdGlGenericGraphics(
+    protected NerdOpenGlGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch,
             final int p_width, final int p_height, final String p_renderer, final String p_path) {
         super(p_sketch, p_width, p_height, p_renderer, p_path);
     }
 
-    protected NerdGlGenericGraphics(
+    protected NerdOpenGlGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch,
             final int p_width, final int p_height, final String p_renderer) {
         super(p_sketch, p_width, p_height, p_renderer);
     }
 
-    protected NerdGlGenericGraphics(
+    protected NerdOpenGlGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch, final int p_width, final int p_height) {
         super(p_sketch, p_width, p_height);
     }
 
-    protected NerdGlGenericGraphics(
+    protected NerdOpenGlGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch, final float p_width, final float p_height) {
         super(p_sketch, p_width, p_height);
     }
 
-    protected NerdGlGenericGraphics(
+    protected NerdOpenGlGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch, final float p_size) {
         super(p_sketch, p_size);
     }
 
-    protected NerdGlGenericGraphics(
+    protected NerdOpenGlGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch, final int p_size) {
         super(p_sketch, p_size);
     }
 
-    protected NerdGlGenericGraphics(
+    protected NerdOpenGlGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch) {
         super(p_sketch);
     }
     // endregion
 
-    protected NerdGlGenericGraphics(
+    protected NerdOpenGlGraphics(
             final NerdSketch<SketchPGraphicsT> p_sketch,
             final SketchPGraphicsT p_pGraphicsToWrap) {
         super(p_sketch, p_pGraphicsToWrap);
@@ -417,5 +417,92 @@ public abstract class NerdGlGenericGraphics<SketchPGraphicsT extends PGraphicsOp
     public void sphereDetail(final int ures, final int vres) {
         this.GRAPHICS.sphereDetail(ures, vres);
     }
+
+    @Override
+    public void updatePixels(final int x, final int y, final int w, final int h) {
+        this.GRAPHICS.updatePixels(x, y, w, h);
+    }
+
+    @Override
+    public int[] loadPixels() {
+        super.GRAPHICS.loadPixels();
+        return super.GRAPHICS.pixels;
+    }
+
+    @Override
+    public void updatePixels() {
+        super.GRAPHICS.updatePixels();
+    }
+
+    // region Not in `SVG`/`PDF`, but are here.
+    @Override
+    public boolean save(final String filename) {
+        return this.GRAPHICS.save(filename);
+    }
+
+    @Override
+    public void blend(final int sx, final int sy, final int sw, final int sh,
+            final int dx, final int dy, final int dw,
+            final int dh, final int mode) {
+        this.GRAPHICS.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    }
+
+    @Override
+    public void blend(final PImage src, final int sx, final int sy, final int sw,
+            final int sh, final int dx,
+            final int dy, final int dw, final int dh, final int mode) {
+        this.GRAPHICS.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
+    }
+
+    @Override
+    public void copy(final int sx, final int sy, final int sw, final int sh,
+            final int dx, final int dy, final int dw,
+            final int dh) {
+        this.GRAPHICS.copy(sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+
+    @Override
+    public void copy(final PImage src, final int sx, final int sy, final int sw,
+            final int sh, final int dx,
+            final int dy, final int dw, final int dh) {
+        this.GRAPHICS.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+
+    @Override
+    public void filter(final int kind) {
+        this.GRAPHICS.filter(kind);
+    }
+
+    @Override
+    public void filter(final int kind, final float param) {
+        this.GRAPHICS.filter(kind, param);
+    }
+
+    @Override
+    public PImage get() {
+        return this.GRAPHICS.get();
+    }
+
+    @Override
+    public int get(final int x, final int y) {
+        return this.GRAPHICS.get(x, y);
+    }
+
+    @Override
+    public PImage get(final int x, final int y, final int w, final int h) {
+        return this.GRAPHICS.get(x, y, w, h);
+
+    }
+
+    @Override
+    public void mask(final int[] maskArray) {
+        this.GRAPHICS.mask(maskArray);
+    }
+
+    @Override
+    public void mask(final PImage img) {
+        this.GRAPHICS.mask(img);
+    }
+    // endregion
 
 }

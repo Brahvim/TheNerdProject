@@ -47,9 +47,9 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		TRIANGLE_STRIP(PConstants.TRIANGLE_STRIP);
 
 		// region Class stuff.
-		private int processingConstant;
+		private final int processingConstant;
 
-		private StandardProcessingShape(int a) {
+		private StandardProcessingShape(final int a) {
 			this.processingConstant = a;
 		}
 
@@ -508,7 +508,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// region Rendering utilities!
 	public final void performAutoClear() {
 		// "Will Processing throw an exception when passed this image?":
-		boolean canClearWithImage = //
+		final boolean canClearWithImage = //
 				// It won't throw if the image is not `null`:
 				this.clearImage != null &&
 				// It won't throw if the image is the right size.

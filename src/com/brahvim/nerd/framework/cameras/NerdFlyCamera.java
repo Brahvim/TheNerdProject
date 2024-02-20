@@ -138,12 +138,16 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	}
 
 	public void addRoll(final float p_roll) {
-		super.ORIENTATION.x += p_roll;
+		super.ORIENTATION.z += p_roll;
 	}
 
 	// Setters for movement:
 	public void setRoll(final float p_roll) {
-		super.ORIENTATION.x = p_roll;
+		super.ORIENTATION.z = p_roll;
+	}
+
+	public void addHeight(final float p_height) {
+		super.POSITION.y += p_height;
 	}
 
 	public void setHeight(final float p_height) {
