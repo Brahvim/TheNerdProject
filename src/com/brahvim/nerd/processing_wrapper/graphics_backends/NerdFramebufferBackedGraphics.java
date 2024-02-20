@@ -7,7 +7,7 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 
 public abstract class NerdFramebufferBackedGraphics<SketchPGraphicsT extends PGraphics>
-        extends NerdAbstractGraphics<SketchPGraphicsT> implements NerdPixelOperationGraphics {
+        extends NerdAbstractGraphics<SketchPGraphicsT> {
 
     public class PixelOperation implements AutoCloseable {
 
@@ -126,13 +126,11 @@ public abstract class NerdFramebufferBackedGraphics<SketchPGraphicsT extends PGr
         this.GRAPHICS.mask(img);
     }
 
-    @Override
     public int[] loadPixels() {
         super.GRAPHICS.loadPixels();
         return super.GRAPHICS.pixels;
     }
 
-    @Override
     public void updatePixels() {
         super.GRAPHICS.updatePixels();
     }
