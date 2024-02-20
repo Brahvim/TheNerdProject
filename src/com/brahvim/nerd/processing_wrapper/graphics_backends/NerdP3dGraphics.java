@@ -17,6 +17,10 @@ import processing.opengl.PGraphics3D;
 
 public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 
+    // TODO: Processing! Max lights `8`! Cameras! HERE! Inner classes!
+    // (Cameras are best implemented using DOD! Write a camera 'manager' here.
+    // Use that guy! Let people extend 'im! He'll act in your best interest, trust!)
+
     // region Inner classes.
     public class TwoDimensionalPush implements AutoCloseable {
 
