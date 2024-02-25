@@ -527,12 +527,12 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 
 	public static boolean isStandardKeyboardSymbol(final char p_char) {
 		// boolean is = false;
-		for (final var ch : NerdInputModule.STANDARD_KEYBOARD_SYMBOLS)
+		for (final var c : NerdInputModule.STANDARD_KEYBOARD_SYMBOLS)
 			// Can't use this!:
 			// return ch == p_char;
 			// What if the array being examined is empty?!
 
-			if (ch == p_char)
+			if (c == p_char)
 				return true;
 
 		// These used to be in the loop:

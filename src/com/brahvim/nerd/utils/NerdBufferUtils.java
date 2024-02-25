@@ -9,18 +9,36 @@ public final class NerdBufferUtils {
 		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 	}
 
-	public static void arrayCopy(final Object src, final int srcPosition, final Object dst, final int dstPosition,
-			final int length) {
-		System.arraycopy(src, srcPosition, dst, dstPosition, length);
+	// The type parameters (`<SrcT, DestT extends SrcT>`) literally do not matter
+	// LOL. Even just `SrcT` would've worked.
+
+	public static <SrcT, DestT extends SrcT> void arrayCopy(
+			final SrcT[] p_sourceArray,
+			final int p_sourceArrayFirstElementPosition,
+			final DestT[] p_destinationArray,
+			final int p_destinationArrayFirstElementPosition,
+			final int p_numElementsToCopy) {
+		System.arraycopy(p_sourceArray,
+				p_sourceArrayFirstElementPosition, p_destinationArray,
+				p_destinationArrayFirstElementPosition, p_numElementsToCopy);
 	}
 
-	public static void arrayCopy(final Object src, final Object dst, final int length) {
-		System.arraycopy(src, 0, dst, 0, length);
+	public static <SrcT, DestT extends SrcT> void arrayCopy(
+			final SrcT[] p_sourceArray, final DestT[] p_destinationArray, final int p_numElementsToCopy) {
+		System.arraycopy(p_sourceArray, 0, p_destinationArray, 0, p_numElementsToCopy);
 	}
 
-	public static void arrayCopy(final Object src, final Object dst) {
-		System.arraycopy(src, 0, dst, 0, Array.getLength(src));
+	public static <SrcT, DestT extends SrcT> void arrayCopy(
+			final SrcT[] p_sourceArray, final DestT[] p_destinationArray) {
+		System.arraycopy(p_sourceArray, 0, p_destinationArray, 0,
+				Array.getLength(p_sourceArray));
 	}
+
+	// public static void arrayCopy(
+	// final Object[] p_sourceArray, final Object[] p_destinationArray) {
+	// System.arraycopy(p_sourceArray, 0, p_destinationArray, 0,
+	// Array.getLength(p_sourceArray));
+	// }
 
 	// region Integers.
 	public static byte[] toByteArray(final int p_number) {

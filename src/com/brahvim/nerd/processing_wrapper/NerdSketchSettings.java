@@ -67,8 +67,8 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 					}
 
 				// Any of 'em constructors takes a `NerdModuleSettings` subclass instance?:
-				for (final var parameterType : c.getParameterTypes())
-					if (NerdModuleSettings.class.isAssignableFrom(parameterType))
+				for (final var t : c.getParameterTypes())
+					if (NerdModuleSettings.class.isAssignableFrom(t))
 						settingsConstructor = c;
 			}
 
