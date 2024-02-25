@@ -9,13 +9,14 @@ public final class NerdBufferUtils {
 		NerdReflectionUtils.rejectStaticClassInstantiationFor(this);
 	}
 
-	// The type parameters (`<SrcT, DestT extends SrcT>`) literally do not matter
-	// LOL. Even just `SrcT` would've worked.
+	// Generics won't make a difference LOL.
+	// By the way, `Object[]` STILL disallow `Object`s, which is awesome!
 
-	public static <SrcT, DestT extends SrcT> void arrayCopy(
-			final SrcT[] p_sourceArray,
+	// region Array-copying.
+	public static void arrayCopy(
+			final Object[] p_sourceArray,
 			final int p_sourceArrayFirstElementPosition,
-			final DestT[] p_destinationArray,
+			final Object[] p_destinationArray,
 			final int p_destinationArrayFirstElementPosition,
 			final int p_numElementsToCopy) {
 		System.arraycopy(p_sourceArray,
@@ -23,22 +24,17 @@ public final class NerdBufferUtils {
 				p_destinationArrayFirstElementPosition, p_numElementsToCopy);
 	}
 
-	public static <SrcT, DestT extends SrcT> void arrayCopy(
-			final SrcT[] p_sourceArray, final DestT[] p_destinationArray, final int p_numElementsToCopy) {
+	public static void arrayCopy(
+			final Object[] p_sourceArray, final Object[] p_destinationArray, final int p_numElementsToCopy) {
 		System.arraycopy(p_sourceArray, 0, p_destinationArray, 0, p_numElementsToCopy);
 	}
 
-	public static <SrcT, DestT extends SrcT> void arrayCopy(
-			final SrcT[] p_sourceArray, final DestT[] p_destinationArray) {
+	public static void arrayCopy(
+			final Object[] p_sourceArray, final Object[] p_destinationArray) {
 		System.arraycopy(p_sourceArray, 0, p_destinationArray, 0,
 				Array.getLength(p_sourceArray));
 	}
-
-	// public static void arrayCopy(
-	// final Object[] p_sourceArray, final Object[] p_destinationArray) {
-	// System.arraycopy(p_sourceArray, 0, p_destinationArray, 0,
-	// Array.getLength(p_sourceArray));
-	// }
+	// endregion
 
 	// region Integers.
 	public static byte[] toByteArray(final int p_number) {
