@@ -1,6 +1,5 @@
 package com.brahvim.nerd.utils;
 
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
 public final class NerdBufferUtils {
@@ -13,26 +12,28 @@ public final class NerdBufferUtils {
 	// By the way, `Object[]` STILL disallow `Object`s, which is awesome!
 
 	// region Array-copying.
-	public static void arrayCopy(
-			final Object[] p_sourceArray,
+	public static <ArrayT> ArrayT[] arrayCopy(
+			final ArrayT[] p_sourceArray,
 			final int p_sourceArrayFirstElementPosition,
-			final Object[] p_destinationArray,
+			final ArrayT[] p_destinationArray,
 			final int p_destinationArrayFirstElementPosition,
 			final int p_numElementsToCopy) {
 		System.arraycopy(p_sourceArray,
 				p_sourceArrayFirstElementPosition, p_destinationArray,
 				p_destinationArrayFirstElementPosition, p_numElementsToCopy);
+		return p_destinationArray;
 	}
 
-	public static void arrayCopy(
-			final Object[] p_sourceArray, final Object[] p_destinationArray, final int p_numElementsToCopy) {
+	public static <ArrayT> ArrayT[] arrayCopy(
+			final ArrayT[] p_sourceArray, final ArrayT[] p_destinationArray, final int p_numElementsToCopy) {
 		System.arraycopy(p_sourceArray, 0, p_destinationArray, 0, p_numElementsToCopy);
+		return p_destinationArray;
 	}
 
-	public static void arrayCopy(
-			final Object[] p_sourceArray, final Object[] p_destinationArray) {
-		System.arraycopy(p_sourceArray, 0, p_destinationArray, 0,
-				Array.getLength(p_sourceArray));
+	public static <ArrayT> ArrayT[] arrayCopy(
+			final ArrayT[] p_sourceArray, final ArrayT[] p_destinationArray) {
+		System.arraycopy(p_sourceArray, 0, p_destinationArray, 0, p_sourceArray.length);
+		return p_destinationArray;
 	}
 	// endregion
 
