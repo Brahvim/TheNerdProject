@@ -360,7 +360,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 		if (!toRet)
 			return false;
 
-		for (final int i : p_keyCodes)
+		for (final var i : p_keyCodes)
 			toRet &= this.KEYS_HELD.contains(i);
 
 		return toRet;
@@ -370,7 +370,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 		// this.keysHeld.contains(p_keyCodes); // Causes a totally unique error
 		// :O
 
-		for (final int i : p_keyCodes)
+		for (final var i : p_keyCodes)
 			if (!this.KEYS_HELD.contains(i))
 				return false;
 		return true;
@@ -386,7 +386,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 	}
 
 	public boolean keysPressedIsEither(final int... p_keyCodes) {
-		for (final int i : p_keyCodes)
+		for (final var i : p_keyCodes)
 			if (this.KEYS_HELD.contains(i))
 				return true;
 
@@ -423,21 +423,21 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 		if (!toRet)
 			return false;
 
-		for (final int i : p_keyCodes)
+		for (final var i : p_keyCodes)
 			toRet &= this.PREV_FRAME_KEYS_HELD.contains(i);
 
 		return toRet;
 	}
 
 	public boolean keysGivenWerePressed(final int... p_keyCodes) {
-		for (final int i : p_keyCodes)
+		for (final var i : p_keyCodes)
 			if (!this.PREV_FRAME_KEYS_HELD.contains(i))
 				return false;
 		return true;
 	}
 
 	public boolean keyPressedWasEither(final int... p_keyCodes) {
-		for (final int i : p_keyCodes)
+		for (final var i : p_keyCodes)
 			if (this.PREV_FRAME_KEYS_HELD.contains(i))
 				return true;
 
@@ -527,7 +527,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 
 	public static boolean isStandardKeyboardSymbol(final char p_char) {
 		// boolean is = false;
-		for (final char ch : NerdInputModule.STANDARD_KEYBOARD_SYMBOLS)
+		for (final var ch : NerdInputModule.STANDARD_KEYBOARD_SYMBOLS)
 			// Can't use this!:
 			// return ch == p_char;
 			// What if the array being examined is empty?!

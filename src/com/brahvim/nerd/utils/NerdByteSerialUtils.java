@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.function.Consumer;
 
 // Brought to you, from my other (currently supa'-dupa' secret, ";P!) project, "AGC"!:
@@ -54,79 +53,6 @@ public class NerdByteSerialUtils {
 		}
 
 		return new byte[0];
-	}
-
-	/** @deprecated Broken! Bummer... */
-	@Deprecated
-	public static void copyFieldValues(final Object p_from, final Object p_to) {
-		NerdByteSerialUtils.copyFieldValues(p_from, p_to, new String[0], 0);
-	}
-
-	/** @deprecated Broken! Bummer... */
-	@Deprecated
-	public static void copyFieldValues(
-			final Object p_from,
-			final Object p_to,
-			final String[] p_fieldsToSkip,
-			final int p_fieldExclusionFlagsEnum) {
-		if (!p_from.getClass().isAssignableFrom(p_to.getClass()))
-			throw new UnsupportedOperationException("Cannot copy fields of objects from different hierarchies!");
-
-		// For each field in the object to copy to...
-		loop1: for (final Field f : p_to.getClass().getFields()) {
-			final String name = f.getName();
-
-			for (final String s : p_fieldsToSkip)
-				if (name.equals(s))
-					continue loop1;
-
-			final boolean editable = !("serialVersionUID".equals(name)
-					// || Modifier.isTransient(fieldModifiers)
-					// || Modifier.isPublic(fieldModifiers)
-					|| (f.getModifiers() & p_fieldExclusionFlagsEnum) != 0);
-
-			if (editable) { // ..that is not the `serialVersionUID`, ~~nor `static`, nor `transient`~~...
-				f.setAccessible(true); // ..making sure it is accessible, if it is not... NOSONAR!
-				try {
-					final Object value = f.get(p_from); // ...we get the value of.
-					// ...Upon checking the types, if the the field, from the object to copy from,
-					// has a hierarchy that differs from the other...
-					if ( // value != null && // What if the value is actually `null`?!
-					!f.getType().isAssignableFrom(value.getClass()))
-						// ...we work no longer.
-						throw new IllegalArgumentException(String.format(
-								"Incompatible field types: `%s` and `%s`!",
-								f.getType().getName(),
-								value.getClass().getName()));
-					// But if it shows the slightest of similarities, we go on:
-					f.set(p_to, value); // NOSONAR! Let me do this!
-				} catch (final IllegalAccessException e) {
-					// Bruh I wrote some scripture up there x)
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	/**
-	 * <p>
-	 * Suppose we have a class, {@code C}, which extends {@code B}, which extends
-	 * {@code A}. This method will therefore
-	 * return {@code 3} when given an object of class {@code C}.
-	 *
-	 * @param p_object is the object whose class hierarchy depth is to be found.
-	 * @return Returns the depth of the hierarchy of the class of the given object.
-	 */
-	public static int getClassHierarchyDepthOf(final Object p_object) {
-		int depth = 0;
-		Class<?> currentClass = p_object.getClass();
-
-		while (currentClass.getSuperclass() != null) {
-			currentClass = currentClass.getSuperclass();
-			depth++;
-		}
-
-		return depth;
 	}
 
 	// region From bytes!
@@ -216,7 +142,7 @@ public class NerdByteSerialUtils {
 	public static void fromBytesAssigning(final byte[] p_data, final Object p_object) {
 		try { // Deserialize the object:
 			final Object deserialized = NerdByteSerialUtils.fromBytesImpl(p_data);
-			NerdByteSerialUtils.copyFieldValues(p_object, deserialized);
+			NerdReflectionUtils.copyFieldValues(p_object, deserialized);
 		} catch (final IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}

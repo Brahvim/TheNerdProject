@@ -130,7 +130,7 @@ public abstract class NerdAbstractTcpServer implements NerdServerSocket, AutoClo
 						// System.out.println("""
 						// `NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` \
 						// entered the synced block.""");
-						for (final Consumer<NerdClientSentTcpPacket> c : this.MESSAGE_CALLBACKS)
+						for (final var c : this.MESSAGE_CALLBACKS)
 							try { // [ NOSONAR ] This is too short to be confusing, right?
 								c.accept(packet);
 								// System.out.println("""
@@ -335,7 +335,7 @@ public abstract class NerdAbstractTcpServer implements NerdServerSocket, AutoClo
 					continue;
 				}
 
-				for (final Consumer<NerdClientSentTcpPacket> c : NerdAbstractTcpServer.this.NEW_CONNECTION_CALLBACKS)
+				for (final var c : NerdAbstractTcpServer.this.NEW_CONNECTION_CALLBACKS)
 					client.addMessageCallback(c);
 				client.startCommunicationsThread();
 			} catch (final IOException e) {
@@ -522,7 +522,7 @@ public abstract class NerdAbstractTcpServer implements NerdServerSocket, AutoClo
 
 	public NerdAbstractTcpServer sendToAll(final byte[] p_data) {
 		synchronized (this.CLIENTS) {
-			for (final NerdTcpServerClient c : this.CLIENTS)
+			for (final var c : this.CLIENTS)
 				c.send(p_data);
 		}
 

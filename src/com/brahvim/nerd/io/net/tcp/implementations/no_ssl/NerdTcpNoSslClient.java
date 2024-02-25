@@ -127,7 +127,7 @@ public class NerdTcpNoSslClient extends NerdAbstractTcpClient {
 				// change the contents of the packet.
 
 				synchronized (this.MESSAGE_CALLBACKS) {
-					for (final Consumer<NerdServerSentTcpPacket> c : this.MESSAGE_CALLBACKS)
+					for (final var c : this.MESSAGE_CALLBACKS)
 						try {// NOSONAR
 								// I want this to skip an iteration when something goes wrong, not
 								// completely break the loop!

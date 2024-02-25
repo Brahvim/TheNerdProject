@@ -30,6 +30,7 @@ public class NerdReflectionUtils {
 				+ "`es the way they're supposed to be! Sorry...");
 	}
 
+	// region Call method if object isn't `null`.
 	public static <ObjectT> void callIfNotNull(final ObjectT p_object, final Consumer<ObjectT> p_methodReference) {
 		if (!(p_object == null || p_methodReference == null))
 			p_methodReference.accept(p_object);
@@ -53,6 +54,82 @@ public class NerdReflectionUtils {
 			final SecondArgT p_arg2, final ThirdArgT p_arg3) {
 		if (!(p_object == null || p_methodReference == null))
 			p_methodReference.accept(p_object, p_arg1, p_arg2, p_arg3);
+	}
+	// endregion
+
+	// region Copy field values (like serialization! This guy got deprecated...)
+	/** @deprecated Broken! Bummer... */
+	@Deprecated
+	public static void copyFieldValues(final Object p_from, final Object p_to) {
+		NerdReflectionUtils.copyFieldValues(p_from, p_to, new String[0], 0);
+	}
+
+	/** @deprecated Broken! Bummer... */
+	@Deprecated
+	public static void copyFieldValues(
+			final Object p_from,
+			final Object p_to,
+			final String[] p_fieldsToSkip,
+			final int p_fieldExclusionFlagsEnum) {
+		if (!p_from.getClass().isAssignableFrom(p_to.getClass()))
+			throw new UnsupportedOperationException("Cannot copy fields of objects from different hierarchies!");
+
+		// For each field in the object to copy to...
+		loop1: for (final var f : p_to.getClass().getFields()) {
+			final String name = f.getName();
+
+			for (final var s : p_fieldsToSkip)
+				if (name.equals(s))
+					continue loop1;
+
+			final boolean editable = !("serialVersionUID".equals(name)
+					// || Modifier.isTransient(fieldModifiers)
+					// || Modifier.isPublic(fieldModifiers)
+					|| (f.getModifiers() & p_fieldExclusionFlagsEnum) != 0);
+
+			if (editable) { // ..that is not the `serialVersionUID`, ~~nor `static`, nor `transient`~~...
+				f.setAccessible(true); // ..making sure it is accessible, if it is not... NOSONAR!
+				try {
+					final Object value = f.get(p_from); // ...we get the value of.
+					// ...Upon checking the types, if the the field, from the object to copy from,
+					// has a hierarchy that differs from the other...
+					if ( // value != null && // What if the value is actually `null`?!
+					!f.getType().isAssignableFrom(value.getClass()))
+						// ...we work no longer.
+						throw new IllegalArgumentException(String.format(
+								"Incompatible field types: `%s` and `%s`!",
+								f.getType().getName(),
+								value.getClass().getName()));
+					// But if it shows the slightest of similarities, we go on:
+					f.set(p_to, value); // NOSONAR! Let me do this!
+				} catch (final IllegalAccessException e) {
+					// Bruh I wrote some scripture up there x)
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	// endregion
+
+	/**
+	 * <p>
+	 * Suppose we have a class, {@code C}, which extends {@code B}, which extends
+	 * {@code A}. This method will therefore
+	 * return {@code 3} when given an object of class {@code C}.
+	 *
+	 * @param p_object is the object whose class hierarchy depth is to be found.
+	 * @return Returns the depth of the hierarchy of the class of the given object.
+	 */
+	public static int getClassHierarchyDepthOf(final Object p_object) {
+		int depth = 0;
+		Class<?> currentClass = p_object.getClass();
+
+		while (currentClass.getSuperclass() != null) {
+			currentClass = currentClass.getSuperclass();
+			depth++;
+		}
+
+		return depth;
 	}
 
 	@SafeVarargs

@@ -390,7 +390,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 		}
 
-		// for (final NerdModule m : this.MODULES)
+		// for (final var m : this.MODULES)
 		// m.keyPressed(); // If things slow down too much, this guy's your bud.
 
 		this.forEachNerdModule(NerdModule::keyPressed);
@@ -461,7 +461,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// NerdModule<RetModulePGraphicsT>>
 	// /* */ RetModuleT getNerdModule(final Class<? extends RetModuleT>
 	// p_moduleClass) {
-	// for (final NerdModule<SketchPGraphicsT> m : this.MODULES)
+	// for (final var m : this.MODULES)
 	// if (p_moduleClass.isInstance(m))
 	// return (RetModuleT) p_moduleClass.cast(m);
 	//
@@ -475,7 +475,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	public <RetModuleT extends NerdModule<SketchPGraphicsT>>
 	/*   */ RetModuleT getNerdModule(
 			final Class<? extends RetModuleT> p_moduleClass) {
-		for (final NerdModule<SketchPGraphicsT> m : this.MODULES)
+		for (final var m : this.MODULES)
 			if (p_moduleClass.isInstance(m))
 				return p_moduleClass.cast(m);
 
@@ -497,7 +497,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		if (p_task == null)
 			return;
 
-		for (final NerdModule<SketchPGraphicsT> m : this.MODULES)
+		for (final var m : this.MODULES)
 			p_task.accept(m, p_otherArg);
 	}
 

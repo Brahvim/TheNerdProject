@@ -58,7 +58,7 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 				final NerdModuleSettings<SketchPGraphicsT, NerdModule<SketchPGraphicsT>> p_settings) {
 			// Find the constructor which takes `NerdModuleSettings`:
 			Constructor<?> sketchConstructor = null, settingsConstructor = null;
-			for (final Constructor<?> c : p_moduleClass.getDeclaredConstructors()) {
+			for (final var c : p_moduleClass.getDeclaredConstructors()) {
 
 				if (c.getParameterTypes().length == 1)
 					if (c.getParameterTypes()[0] == NerdSketch.class) {
@@ -67,7 +67,7 @@ public class NerdSketchSettings<SketchPGraphicsT extends PGraphics> {
 					}
 
 				// Any of 'em constructors takes a `NerdModuleSettings` subclass instance?:
-				for (final Class<?> parameterType : c.getParameterTypes())
+				for (final var parameterType : c.getParameterTypes())
 					if (NerdModuleSettings.class.isAssignableFrom(parameterType))
 						settingsConstructor = c;
 			}

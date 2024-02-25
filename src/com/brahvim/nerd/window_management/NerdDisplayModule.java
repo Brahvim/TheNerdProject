@@ -1,7 +1,6 @@
 package com.brahvim.nerd.window_management;
 
 import java.awt.DisplayMode;
-import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.Point;
 import java.util.Arrays;
@@ -168,8 +167,8 @@ public class NerdDisplayModule<SketchPGraphicsT extends PGraphics> extends NerdM
 	// but https://stackoverflow.com/a/1248865/ was what worked.
 	// And yes, I modified it.
 	public GraphicsDevice getGraphicsDeviceAt(final Point p_pos) {
-		for (final GraphicsDevice d : super.SKETCH.JAVA_SCREENS)
-			for (final GraphicsConfiguration c : d.getConfigurations())
+		for (final var d : super.SKETCH.JAVA_SCREENS)
+			for (final var c : d.getConfigurations())
 				if (c.getBounds().contains(p_pos))
 					return d;
 

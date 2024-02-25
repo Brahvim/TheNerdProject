@@ -67,7 +67,7 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	public boolean contains(final String p_fileName) {
 		return this.get(p_fileName) != null;
 
-		// for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
+		// for (final var a : this.ASSETS)
 		// if (a.NAME.equals(p_fileName))
 		// return true;
 		// return false;
@@ -75,7 +75,7 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 
 	@SuppressWarnings("unchecked")
 	public <AssetT> NerdAsset<SketchPGraphicsT, AssetT> get(final String p_fileName) {
-		for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
+		for (final var a : this.ASSETS)
 			if (a.NAME.equals(p_fileName))
 				return (NerdAsset<SketchPGraphicsT, AssetT>) a;
 		return null;
@@ -84,7 +84,7 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	// region `remove()` overloads.
 	@SuppressWarnings("unchecked")
 	public void remove(final NerdAsset<SketchPGraphicsT, ?>... p_assets) {
-		for (final NerdAsset<SketchPGraphicsT, ?> a : p_assets)
+		for (final var a : p_assets)
 			this.ASSETS.remove(a);
 	}
 
@@ -103,14 +103,14 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	 * Has every asset completed loading?
 	 */
 	public boolean hadCompletedLastFrame() {
-		for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
+		for (final var a : this.ASSETS)
 			if (!a.wasLoaded())
 				return false;
 		return true;
 	}
 
 	public boolean hasCompleted() {
-		for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
+		for (final var a : this.ASSETS)
 			if (!a.hasLoaded())
 				return false;
 		return true;
@@ -120,7 +120,7 @@ public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdMo
 	 * Load assets that haven't been loaded yet.
 	 */
 	public void forceLoading() {
-		for (final NerdAsset<SketchPGraphicsT, ?> a : this.ASSETS)
+		for (final var a : this.ASSETS)
 			if (!a.hasLoaded())
 				a.startLoading();
 	}
