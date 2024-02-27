@@ -21,6 +21,27 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     // (Cameras are best implemented using DOD! Write a camera 'manager' here.
     // Use that guy! Let people extend 'im! He'll act in your best interest, trust!)
 
+    protected class NerdLightSlot {
+
+    }
+
+    public final NerdLightSlot
+    /*   */ LIGHT_ONE = new NerdLightSlot(),
+            LIGHT_TWO = new NerdLightSlot(),
+            LIGHT_THREE = new NerdLightSlot(),
+            LIGHT_FOUR = new NerdLightSlot(),
+            LIGHT_FIVE = new NerdLightSlot(),
+            LIGHT_SIX = new NerdLightSlot(),
+            LIGHT_SEVEN = new NerdLightSlot(),
+            LIGHT_EIGHT = new NerdLightSlot();
+
+    public final NerdLightSlot[] LIGHTS_SLOTS_ARRAY = new NerdLightSlot[8];
+
+    protected final NerdLightSlot[] DIRECTIONAL_LIGHTS = new NerdLightSlot[8];
+    protected final NerdLightSlot[] AMBIENT_LIGHTS = new NerdLightSlot[8];
+    protected final NerdLightSlot[] POINT_LIGHTS = new NerdLightSlot[8];
+    protected final NerdLightSlot[] SPOT_LIGHTS = new NerdLightSlot[8];
+
     // region Inner classes.
     public class TwoDimensionalPush implements AutoCloseable {
 
