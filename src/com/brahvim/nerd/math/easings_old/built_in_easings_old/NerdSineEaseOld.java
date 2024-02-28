@@ -3,8 +3,6 @@ package com.brahvim.nerd.math.easings_old.built_in_easings_old;
 import com.brahvim.nerd.math.easings.NerdEasingFunction;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.core.PApplet;
-
 public class NerdSineEaseOld extends NerdEasingFunction {
 
 	/**
@@ -136,7 +134,7 @@ public class NerdSineEaseOld extends NerdEasingFunction {
 
 	@Override
 	protected float apply() {
-		return PApplet.sin(super.aliveTime * this.parameterCoef + super.parameterOffset);
+		return (float) Math.sin(super.aliveTime * this.parameterCoef + super.parameterOffset);
 	}
 
 }

@@ -1,8 +1,8 @@
 package com.brahvim.nerd.window_management;
 
 import java.awt.Point;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.brahvim.nerd.processing_wrapper.NerdModule;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
@@ -41,7 +41,7 @@ public abstract class NerdWindowModule<SketchPGraphicsT extends PGraphics> exten
 	public float dbx, dby, cx, cy, qx, qy, q3x, q3y, scr;
 	public int width, height, pwidth, pheight;
 
-	protected final Set<NerdWindowListener> windowListeners = new LinkedHashSet<>(1);
+	protected final List<NerdWindowListener> WINDOW_LISTENERS = new ArrayList<>(1);
 
 	protected PImage iconImage;
 	protected PSurface sketchSurface;
