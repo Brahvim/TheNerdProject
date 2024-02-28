@@ -1,6 +1,7 @@
 package com.brahvim.nerd.utils;
 
 import java.nio.ByteBuffer;
+import java.util.function.IntFunction;
 
 public final class NerdBufferUtils {
 
@@ -33,6 +34,19 @@ public final class NerdBufferUtils {
 	public static <ArrayT> ArrayT[] arrayCopy(
 			final ArrayT[] p_sourceArray, final ArrayT[] p_destinationArray) {
 		System.arraycopy(p_sourceArray, 0, p_destinationArray, 0, p_sourceArray.length);
+		return p_destinationArray;
+	}
+
+	public static <ArrayT> ArrayT[][] arrayCopy(
+			final ArrayT[][] p_sourceArray,
+			final ArrayT[][] p_destinationArray,
+			final IntFunction<ArrayT[]> p_arrayConstructor) {
+		for (int i = 0; i < p_sourceArray.length; i++) {
+			final int columns = p_sourceArray[i].length;
+			p_destinationArray[i] = p_arrayConstructor.apply(columns);
+			System.arraycopy(p_sourceArray[i], 0, p_destinationArray[i], 0, columns);
+		}
+
 		return p_destinationArray;
 	}
 	// endregion
