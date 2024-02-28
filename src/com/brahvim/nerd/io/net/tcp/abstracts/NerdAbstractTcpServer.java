@@ -469,7 +469,7 @@ public abstract class NerdAbstractTcpServer implements NerdServerSocket, AutoClo
 
 	public void disconnectAll() {
 		synchronized (this.CLIENTS) {
-			for (int i = this.CLIENTS.size() - 1; i > -1; i--)
+			for (int i = this.CLIENTS.size() - 1; i > -1; --i)
 				this.CLIENTS.get(i).disconnect();
 		}
 	}

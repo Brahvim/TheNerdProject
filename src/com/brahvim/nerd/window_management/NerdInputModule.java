@@ -314,7 +314,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 		String toRet = "[ ";
 		final int lastId = this.KEYS_HELD.size() - 1;
 
-		for (int i = 0; i < numStrings; i++)
+		for (int i = 0; i < numStrings; ++i)
 			toRet = toRet.concat(KeyEvent.getKeyText(this.KEYS_HELD.get(i)))
 					.concat(i == lastId ? " ]" : ", ");
 
@@ -399,7 +399,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 
 		int paramArrId = 0;
 
-		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; i++) {
+		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; ++i) {
 			if (p_keyCodes[paramArrId] == this.KEYS_HELD.get(i))
 				paramArrId++;
 		}
@@ -450,7 +450,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 
 		int paramArrId = 0;
 
-		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; i++) {
+		for (int i = 0; paramArrId < paramArrLen && i < ownArrLen; ++i) {
 			if (p_keyCodes[paramArrId] == this.PREV_FRAME_KEYS_HELD.get(i))
 				paramArrId++;
 		}

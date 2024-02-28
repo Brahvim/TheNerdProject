@@ -48,7 +48,7 @@ public class NerdSpriteSheet {
 	 * worry less about performance!
 	 */
 	public PImage getSprite(final int p_x, final int p_y, final int p_width, final int p_height) {
-		for (int i = this.poses.size() - 1; i != -1; i--) {
+		for (int i = this.poses.size() - 1; i != -1; --i) {
 			final SpritePos p = this.poses.get(i);
 			if (p.x == p_x && p.y == p_y)
 				return this.sprites.get(i);

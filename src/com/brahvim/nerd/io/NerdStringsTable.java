@@ -120,7 +120,7 @@ public class NerdStringsTable {
 		JSONObject lastObject = null;
 
 		// Iterate till we see our query's second-last object,
-		for (int i = 0; i != secondLastObjectId; i++)
+		for (int i = 0; i != secondLastObjectId; ++i)
 			synchronized (this.json) {
 				lastObject = this.json.getJSONObject(keys[i]);
 			}
@@ -160,7 +160,7 @@ public class NerdStringsTable {
 		JSONObject lastObject = null;
 
 		// Iterate till we see our query's second-last object,
-		for (int i = 0; i != secondLastObjectId; i++) {
+		for (int i = 0; i != secondLastObjectId; ++i) {
 			synchronized (this.json) {
 				lastObject = this.json.getJSONObject(keys[i]);
 			}
@@ -217,7 +217,7 @@ public class NerdStringsTable {
 		JSONObject lastObject = null;
 
 		// Iterate till we see our query's second-last object,
-		for (int i = 0; i != secondLastObjectId; i++)
+		for (int i = 0; i != secondLastObjectId; ++i)
 			synchronized (this.json) {
 				lastObject = this.json.getJSONObject(keys[i]);
 			}

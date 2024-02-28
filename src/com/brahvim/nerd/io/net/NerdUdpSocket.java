@@ -130,7 +130,7 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 						// Don't worry, this won't crash. *I hope.*
 						System.arraycopy(this.byteData, 0, copy, 0, copy.length);
 						// Super slow `memset()`...
-						// for (int i = 0; i < byteData.length; i++)
+						// for (int i = 0; i < byteData.length; ++i)
 						// byteData[i] = 0;
 
 						// ~~...but I just didn't want to use `System.arraycopy()`

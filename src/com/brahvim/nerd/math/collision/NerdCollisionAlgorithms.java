@@ -38,7 +38,7 @@ public class NerdCollisionAlgorithms {
 		int next;
 		boolean ret = false;
 
-		for (int i = 0; i < p_poly.length; i++) {
+		for (int i = 0; i < p_poly.length; ++i) {
 			next = i + 1;
 
 			if (next > p_poly.length)
