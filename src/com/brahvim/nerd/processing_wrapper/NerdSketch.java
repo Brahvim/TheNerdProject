@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -27,16 +28,12 @@ import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
-import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PShape;
-import processing.javafx.PGraphicsFX2D;
-import processing.opengl.PGraphics2D;
-import processing.opengl.PGraphics3D;
 import processing.opengl.PJOGL;
 
 public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet implements NerdSketchAllWorkflowsListener {
@@ -99,13 +96,11 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	// region `protected` fields.
 	protected final Map<Class<? extends NerdModule<SketchPGraphicsT>>, NerdModule<SketchPGraphicsT>>
-	/* */ CLASSES_TO_MODULES_MAP = new HashMap<>(5);
+	/* */ CLASSES_TO_MODULES_MAP = new LinkedHashMap<>(5);
 	protected final Collection<NerdModule<SketchPGraphicsT>>
 	/* */ MODULES = this.CLASSES_TO_MODULES_MAP.values();
-	protected final Map<NerdAbstractGraphics<SketchPGraphicsT>, SketchPGraphicsT>
+	public final Map<NerdAbstractGraphics<SketchPGraphicsT>, SketchPGraphicsT>
 	/* */ NERD_GRAPHICS_TO_PGRAPHICS_MAP = new HashMap<>(1);
-
-	protected String sketchRendererPConstantString;
 
 	protected NerdStringsTable globalStringTable;
 	protected NerdSingleAssignmentBox<PFont> defaultFont = new NerdSingleAssignmentBox<>();
@@ -127,8 +122,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 				NerdSketchSettings.class.getSimpleName(),
 				this.getClass().getSimpleName()));
 
-		this.sketchRendererPConstantString = NerdSketch.mapPGraphicsToPConstantRendererString(super.g);
-		this.USES_OPENGL = PConstants.P3D.equals(this.sketchRendererPConstantString);
+		this.USES_OPENGL = PConstants.P3D.equals(p_settings.renderer);
 
 		// region Stuff involving `NerdModule`s.
 		this.createAndSortModules(p_settings);
@@ -562,12 +556,12 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 		return this.pinverseFrameRate;
 	}
 
-	public NerdStringsTable getGlobalStringsTable() {
-		return this.globalStringTable;
+	public String getRendererPConstantString() {
+		return this.SKETCH_SETTINGS.renderer;
 	}
 
-	public String getSketchRendererPConstantString() {
-		return this.sketchRendererPConstantString;
+	public NerdStringsTable getGlobalStringsTable() {
+		return this.globalStringTable;
 	}
 
 	public NerdAbstractGraphics<SketchPGraphicsT> getNerdGenericGraphics() {
@@ -592,47 +586,6 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// endregion
 
 	// region Rendering utilities!
-	protected static String mapPGraphicsToPConstantRendererString(final PGraphics p_processingGraphics) {
-		final Class<? extends PGraphics> rendererClass = p_processingGraphics.getClass();
-
-		if (rendererClass == PGraphics2D.class)
-			return PConstants.P2D;
-		else if (rendererClass == PGraphics3D.class)
-			return PConstants.P3D;
-		else if (rendererClass == PGraphicsJava2D.class)
-			return PConstants.JAVA2D;
-		else if (rendererClass == PGraphicsFX2D.class)
-			return PConstants.FX2D;
-		else
-			return null;
-
-		/*
-		 * // Unsupported renderers!...:
-		 * else if (rendererClass == PGraphicsSVG.class) {
-		 * // return PConstants.SVG;
-		 * throw new IllegalArgumentException(String.format(
-		 * "`%s` is an unsupported renderer. Sorry.",
-		 * PGraphicsSVG.class.getName()));
-		 * }
-		 * 
-		 * else if (rendererClass == PGraphicsPDF.class) {
-		 * // return PConstants.PDF;
-		 * throw new IllegalArgumentException(String.format(
-		 * "`%s` is an unsupported renderer. Sorry.",
-		 * PGraphicsPDF.class.getName()));
-		 * }
-		 * 
-		 * // ...
-		 * // ...Unreal:
-		 * else if (rendererClass == PGraphics.class)
-		 * throw new IllegalArgumentException("Those renderers are not real!");
-		 * else if (rendererClass == PGraphicsOpenGL.class)
-		 * throw new IllegalArgumentException("Those renderers are not real!");
-		 * else
-		 * throw new IllegalArgumentException("That's not a real type...");
-		 */
-	}
-
 	public PImage svgToImage(final PShape p_shape, final float p_width, final float p_height) {
 		if (p_shape == null)
 			throw new NullPointerException("`svgToImage(null , p_width, p_height)` won't work.");
@@ -665,28 +618,27 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 
 	@Override
 	public SketchPGraphicsT createGraphics(final int p_width, final int p_height) {
-		return this.createGraphics(p_width, p_height, this.getSketchRendererPConstantString());
+		return this.createGraphics(p_width, p_height, this.getRendererPConstantString());
 	}
 	// endregion
 
 	// region Utilitarian overloads.
 	public SketchPGraphicsT createGraphics(final float p_width, final float p_height) {
-		return this.createGraphics((int) p_width, (int) p_height, this.getSketchRendererPConstantString());
+		return this.createGraphics((int) p_width, (int) p_height, this.getRendererPConstantString());
 	}
 
 	public SketchPGraphicsT createGraphics(final float p_size) {
 		final int size = (int) p_size;
-		return this.createGraphics(size, size, this.getSketchRendererPConstantString());
+		return this.createGraphics(size, size, this.getRendererPConstantString());
 	}
 
 	public SketchPGraphicsT createGraphics(final int p_size) {
-		return this.createGraphics(p_size, p_size, this.getSketchRendererPConstantString());
+		return this.createGraphics(p_size, p_size, this.getRendererPConstantString());
 	}
 
 	public SketchPGraphicsT createGraphics() {
-		return this.createGraphics(super.width, super.height, this.getSketchRendererPConstantString());
+		return this.createGraphics(super.width, super.height, this.getRendererPConstantString());
 	}
-	// endregion
 	// endregion
 	// endregion
 
@@ -698,6 +650,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	public static String fromDataDir(final String p_path) {
 		return NerdSketch.DATA_DIR_PATH + p_path;
 	}
+	// endregion
 	// endregion
 	// endregion
 
