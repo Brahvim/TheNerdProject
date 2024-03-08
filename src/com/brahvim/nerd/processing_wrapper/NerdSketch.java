@@ -23,7 +23,7 @@ import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.useless_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;
 import com.brahvim.nerd.utils.NerdAwtUtils;
-import com.brahvim.nerd.utils.NerdSingleAssignmentBox;
+import com.brahvim.nerd.utils.immutability_boxes.NerdSingleAssignmentBox;
 import com.brahvim.nerd.window_management.NerdDisplayModule;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;

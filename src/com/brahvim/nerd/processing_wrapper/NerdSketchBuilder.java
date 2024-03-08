@@ -18,9 +18,6 @@ import processing.core.PGraphics;
 import processing.javafx.PGraphicsFX2D;
 import processing.opengl.PGraphics2D;
 import processing.opengl.PGraphics3D;
-import processing.opengl.PGraphicsOpenGL;
-import processing.pdf.PGraphicsPDF;
-import processing.svg.PGraphicsSVG;
 
 /**
  * Want to hack into the {@link NerdSketch} class and control its inner workings
@@ -65,35 +62,37 @@ public abstract class NerdSketchBuilder<SketchPGraphicsT extends PGraphics> {
 	}
 
 	protected void verifyRenderer(final Class<? extends PGraphics> p_rendererClass) {
-		if (p_rendererClass == PGraphics2D.class)
-			this.BUILD_SETTINGS.renderer = PConstants.P2D;
-		else if (p_rendererClass == PGraphics3D.class)
+		if (p_rendererClass == PGraphics3D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.P3D;
 		else if (p_rendererClass == PGraphicsJava2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.JAVA2D;
+		else if (p_rendererClass == PGraphics2D.class)
+			this.BUILD_SETTINGS.renderer = PConstants.P2D;
 		else if (p_rendererClass == PGraphicsFX2D.class)
 			this.BUILD_SETTINGS.renderer = PConstants.FX2D;
 
-		// Unsupported renderers!...:
-		else if (p_rendererClass == PGraphicsSVG.class)
-			// this.BUILD_SETTINGS.renderer = PConstants.SVG;
-			throw new IllegalArgumentException(String.format(
-					"`%s` is an unsupported renderer. Sorry.",
-					PGraphicsSVG.class.getName()));
-
-		else if (p_rendererClass == PGraphicsPDF.class)
-			// this.BUILD_SETTINGS.renderer = PConstants.PDF;
-			throw new IllegalArgumentException(String.format(
-					"`%s` is an unsupported renderer. Sorry.",
-					PGraphicsPDF.class.getName()));
-		// ...
-		// ...Unreal:
-		else if (p_rendererClass == PGraphics.class)
-			throw new IllegalArgumentException("Those renderers are not real!");
-		else if (p_rendererClass == PGraphicsOpenGL.class)
-			throw new IllegalArgumentException("Those renderers are not real!");
-		else
-			throw new IllegalArgumentException("That's not a real type...");
+		/*
+		 * // Unsupported renderers!...:
+		 * else if (p_rendererClass == PGraphicsSVG.class)
+		 * // this.BUILD_SETTINGS.renderer = PConstants.SVG;
+		 * throw new IllegalArgumentException(String.format(
+		 * "`%s` is an unsupported renderer. Sorry.",
+		 * PGraphicsSVG.class.getName()));
+		 * 
+		 * else if (p_rendererClass == PGraphicsPDF.class)
+		 * // this.BUILD_SETTINGS.renderer = PConstants.PDF;
+		 * throw new IllegalArgumentException(String.format(
+		 * "`%s` is an unsupported renderer. Sorry.",
+		 * PGraphicsPDF.class.getName()));
+		 * // ...
+		 * // ...Unreal:
+		 * else if (p_rendererClass == PGraphics.class)
+		 * throw new IllegalArgumentException("Those renderers are not real!");
+		 * else if (p_rendererClass == PGraphicsOpenGL.class)
+		 * throw new IllegalArgumentException("Those renderers are not real!");
+		 * else
+		 * throw new IllegalArgumentException("That's not a real type...");
+		 */
 	}
 
 	@SuppressWarnings("unchecked")

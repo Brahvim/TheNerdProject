@@ -1,14 +1,14 @@
-package com.brahvim.nerd.utils;
+package com.brahvim.nerd.utils.immutability_boxes;
 
-public class NerdSingleAssignmentBox<ValueT> {
+public class NerdSingleAssignmentNonNullBox<ValueT> {
 
     protected ValueT value;
     protected boolean assigned;
 
-    public NerdSingleAssignmentBox() {
+    public NerdSingleAssignmentNonNullBox() {
     }
 
-    public NerdSingleAssignmentBox(final ValueT p_value) {
+    public NerdSingleAssignmentNonNullBox(final ValueT p_value) {
         this.assign(p_value);
     }
 
@@ -17,7 +17,8 @@ public class NerdSingleAssignmentBox<ValueT> {
      * @return Does the box already <i>have</i> something in it?
      */
     public boolean assign(final ValueT p_value) {
-        if (!this.assigned) {
+        // Assignment is more likely in most cases:
+        if (!(this.assigned || p_value == null)) {
             this.value = p_value;
             this.assigned = true;
         }

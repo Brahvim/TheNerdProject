@@ -21,19 +21,18 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     // (Cameras are best implemented using DOD! Write a camera 'manager' here.
     // Use that guy! Let people extend 'im! He'll act in your best interest, trust!)
 
-    protected class NerdLightSlot {
+    protected enum NerdLightSlot {
+
+        ONE(),
+        TWO(),
+        THREE(),
+        FOUR(),
+        FIVE(),
+        SIX(),
+        SEVEN(),
+        EIGHT();
 
     }
-
-    public final NerdLightSlot
-    /*   */ LIGHT_ONE = new NerdLightSlot(),
-            LIGHT_TWO = new NerdLightSlot(),
-            LIGHT_THREE = new NerdLightSlot(),
-            LIGHT_FOUR = new NerdLightSlot(),
-            LIGHT_FIVE = new NerdLightSlot(),
-            LIGHT_SIX = new NerdLightSlot(),
-            LIGHT_SEVEN = new NerdLightSlot(),
-            LIGHT_EIGHT = new NerdLightSlot();
 
     public final NerdLightSlot[] LIGHTS_SLOTS_ARRAY = new NerdLightSlot[8];
 
@@ -735,7 +734,8 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
         this.GRAPHICS.endCamera();
     }
 
-    public void bezier(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
+    public void bezier(final float x1, final float y1, final float z1, final float x2, final float y2,
+            final float z2,
             final float x3, final float y3, final float z3, final float x4, final float y4, final float z4) {
         this.GRAPHICS.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
     }
@@ -745,7 +745,8 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
         this.GRAPHICS.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
     }
 
-    public void curve(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
+    public void curve(final float x1, final float y1, final float z1, final float x2, final float y2,
+            final float z2,
             final float x3, final float y3, final float z3, final float x4, final float y4, final float z4) {
         this.GRAPHICS.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
     }
