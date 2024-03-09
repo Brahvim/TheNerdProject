@@ -128,7 +128,7 @@ public class NerdTcpNoSslClient extends NerdAbstractTcpClient {
 
 				synchronized (this.MESSAGE_CALLBACKS) {
 					for (final var c : this.MESSAGE_CALLBACKS)
-						try {// NOSONAR
+						try {// NOSONAR!
 								// I want this to skip an iteration when something goes wrong, not
 								// completely break the loop!
 							c.accept(packet);

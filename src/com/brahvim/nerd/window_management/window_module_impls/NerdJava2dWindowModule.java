@@ -170,7 +170,7 @@ public class NerdJava2dWindowModule extends NerdWindowModule<PGraphicsJava2D> {
 	protected void preSetupImpl() {
 		try {
 			super.iconImage = super.SKETCH.loadImage(super.SKETCH.SKETCH_SETTINGS.windowIconPath);
-		} catch (final Exception e) { // NOSONAR
+		} catch (final Exception e) { // NOSONAR!
 		}
 
 		if (super.iconImage != null)

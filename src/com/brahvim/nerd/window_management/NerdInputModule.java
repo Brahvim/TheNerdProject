@@ -92,10 +92,10 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 	public int mouseButton, pmouseButton;
 
 	/** Updated during appropriate event callbacks - not in a loop. */
-	public boolean keyPressed, pkeyPressed; // NOSONAR Processing calls them the same!...
+	public boolean keyPressed, pkeyPressed; // NOSONAR! Processing calls them the same!...
 
 	/** Updated during appropriate event callbacks - not in a loop. */
-	public boolean mousePressed, pmousePressed; // NOSONAR Processing calls them the same!...
+	public boolean mousePressed, pmousePressed; // NOSONAR! Processing calls them the same!...
 
 	/** Updated during appropriate event callbacks - not in a loop. */
 	public float mouseX, mouseY, pmouseX, pmouseY;
@@ -201,7 +201,7 @@ public class NerdInputModule<SketchPGraphicsT extends PGraphics> extends NerdMod
 			synchronized (this.KEYS_HELD) {
 				this.KEYS_HELD.remove((Integer) this.keyCode);
 			}
-		} catch (final IndexOutOfBoundsException e) { // NOSONAR
+		} catch (final IndexOutOfBoundsException e) { // NOSONAR!
 		}
 	}
 	// endregion

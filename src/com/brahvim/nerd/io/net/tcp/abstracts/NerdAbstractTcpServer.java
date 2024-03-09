@@ -131,7 +131,7 @@ public abstract class NerdAbstractTcpServer implements NerdServerSocket, AutoClo
 						// `NerdTcpServer.NerdTcpServerClient::serverCommThread::run()` \
 						// entered the synced block.""");
 						for (final var c : this.MESSAGE_CALLBACKS)
-							try { // [ NOSONAR ] This is too short to be confusing, right?
+							try { // [ NOSONAR! ] This is too short to be confusing, right?
 								c.accept(packet);
 								// System.out.println("""
 								// `NerdTcpServer.NerdTcpServerClient\
@@ -144,7 +144,7 @@ public abstract class NerdAbstractTcpServer implements NerdServerSocket, AutoClo
 				} catch (final IOException e) {
 					// When the client disconnects, this exception is thrown by
 					// `*InputStream::read*()`:
-					if (e instanceof EOFException) // NOSONAR
+					if (e instanceof EOFException) // NOSONAR!
 						this.disconnect();
 					else
 						e.printStackTrace();
@@ -329,8 +329,8 @@ public abstract class NerdAbstractTcpServer implements NerdServerSocket, AutoClo
 
 				// We're already checking for `null`!
 				// No longer does it matter if we're using a boxed type here.
-				// Thus, the "NOSONAR":
-				if (!this.invitationCallback.apply(client)) { // NOSONAR
+				// Thus, the "NOSONAR!":
+				if (!this.invitationCallback.apply(client)) { // NOSONAR!
 					client.disconnect();
 					continue;
 				}

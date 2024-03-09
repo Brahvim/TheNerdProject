@@ -95,10 +95,10 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 						NerdUdpSocket.this.socket.receive(NerdUdpSocket.this.in); // Fetch it well!
 				} catch (final IOException e) {
 					// I just HAVE TO use `instanceof` here. Sorry SonarLint.
-					if (e instanceof SocketTimeoutException) { // NOSONAR
+					if (e instanceof SocketTimeoutException) { // NOSONAR!
 						// ¯\_(ツ)_/¯
 						System.out.println("Timeout ended! Anyway...");
-					} else if (e instanceof SocketException) { // NOSONAR
+					} else if (e instanceof SocketException) { // NOSONAR!
 						this.stop();
 						return;
 					} else {

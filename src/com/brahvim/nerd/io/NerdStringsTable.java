@@ -133,7 +133,7 @@ public class NerdStringsTable {
 
 		// ...get the string of the specified language!
 		final String toRet = lastObject == null ? "" : lastObject.getString(this.language);
-		/* NOSONAR */ lastObject = null; // GC, do you wish to collect it? Please do it now!
+		/* NOSONAR! */ lastObject = null; // GC, do you wish to collect it? Please do it now!
 
 		if (toRet == null) {
 			System.err.printf("""
@@ -186,7 +186,7 @@ public class NerdStringsTable {
 		}
 		// endregion
 
-		/* NOSONAR */ lastObject = null; // GC, do you wish to collect it? Please do it now!
+		/* NOSONAR! */ lastObject = null; // GC, do you wish to collect it? Please do it now!
 
 		String toRet = p_default;
 		// region Get the element if it is available.
@@ -246,7 +246,7 @@ public class NerdStringsTable {
 		// is in memory.
 		// Must clean him upas quick as possible. May benefit from parallel GC timings,
 		// right?
-		/* NOSONAR */ lastObject = null; // GC, do you wish to collect it? Please do it now!
+		/* NOSONAR! */ lastObject = null; // GC, do you wish to collect it? Please do it now!
 
 		return stringArray == null ? ""
 				: stringArray.getString(RandomGenerator.getDefault().nextInt(0, stringArray.size()));
