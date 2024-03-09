@@ -1,8 +1,8 @@
 package com.brahvim.nerd.io.asset_loader;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
@@ -16,9 +16,20 @@ import processing.core.PGraphics;
 
 public class NerdAssetsModule<SketchPGraphicsT extends PGraphics> extends NerdModule<SketchPGraphicsT> {
 
-	// The ONLY field!:
-	private final Set<NerdAsset<SketchPGraphicsT, ?>> ASSETS = new HashSet<>(0); // Start with LITERAL `0`!
-	// Do we even *need* assets in any scene from the very beginning?
+	// region The ONLY field!
+	private final List<NerdAsset<SketchPGraphicsT, ?>> ASSETS = new ArrayList<>(0) { // Start with LITERAL `0`!
+		// Do we even *need* assets in any scene from the very beginning?
+
+		@Override
+		public boolean add(final NerdAsset<SketchPGraphicsT, ?> p_element) {
+			if (super.contains(p_element))
+				return false;
+
+			super.add(p_element);
+			return true;
+		}
+	};
+	// endregion
 
 	@SuppressWarnings("unchecked")
 	public NerdAssetsModule(final NerdSketch<SketchPGraphicsT> p_sketch) {
