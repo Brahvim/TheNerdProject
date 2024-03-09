@@ -12,6 +12,7 @@ import java.net.SocketOption;
 import java.net.SocketTimeoutException;
 import java.nio.channels.DatagramChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -125,10 +126,12 @@ public abstract class NerdUdpSocket implements NerdServerSocket, AutoCloseable {
 					// ..Gotta handle those!:
 
 					try {
-						final byte[] copy = new byte[NerdUdpSocket.this.in.getLength()];
+						final byte[] copy = Arrays.copyOf(this.byteData, NerdUdpSocket.this.in.getLength());
 
 						// Don't worry, this won't crash. *I hope.*
-						System.arraycopy(this.byteData, 0, copy, 0, copy.length);
+						// final byte[] copy = new byte[NerdUdpSocket.this.in.getLength()];
+						// System.arraycopy(this.byteData, 0, copy, 0, copy.length);
+
 						// Super slow `memset()`...
 						// for (int i = 0; i < byteData.length; ++i)
 						// byteData[i] = 0;

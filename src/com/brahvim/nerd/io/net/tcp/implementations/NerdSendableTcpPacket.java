@@ -1,5 +1,7 @@
 package com.brahvim.nerd.io.net.tcp.implementations;
 
+import java.util.Arrays;
+
 import com.brahvim.nerd.io.net.tcp.abstracts.NerdAbstractTcpPacket;
 
 public class NerdSendableTcpPacket extends NerdAbstractTcpPacket {
@@ -15,7 +17,8 @@ public class NerdSendableTcpPacket extends NerdAbstractTcpPacket {
 
 	// (I wonder who'll use this.)
 	public NerdSendableTcpPacket setDataLength(final int p_size) {
-		System.arraycopy(new byte[p_size], 0, super.data, 0, p_size);
+		if (super.data.length != p_size)
+			super.data = Arrays.copyOf(super.data, p_size);
 		return this;
 	}
 
