@@ -2,6 +2,7 @@ package com.brahvim.nerd.utils;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -46,14 +47,16 @@ import java.util.function.UnaryOperator;
  */
 public class NerdObjectPool<PoolObjectT> {
 
-    private final class NerdObjectPoolIterator implements Iterator<PoolObjectT> {
+    private abstract sealed class NerdObjectPoolIterator implements Iterator<PoolObjectT> /* permits a */ {
 
         // `public`! Path to freedom!:
-        public final Iterator<PoolObjectT> ITERATOR;
+        protected final Iterator<PoolObjectT> ITERATOR;
         // Nobody can access it without reflection, though...
 
-        private NerdObjectPoolIterator(final Iterator<PoolObjectT> p_underlyingIterator) {
-            this.ITERATOR = p_underlyingIterator;
+        protected PoolObjectT current;
+
+        private NerdObjectPoolIterator(final Collection<PoolObjectT> p_underlyingCollection) {
+            this.ITERATOR = p_underlyingCollection.iterator();
         }
 
         @Override
@@ -63,8 +66,38 @@ public class NerdObjectPool<PoolObjectT> {
 
         @Override
         public PoolObjectT next() {
-            return this.ITERATOR.next();
+            this.current = this.ITERATOR.next();
+            return this.current;
         }
+
+    }
+
+    private final class NerdObjectPoolPromotedObjectsIterator extends NerdObjectPoolIterator {
+
+        public NerdObjectPoolPromotedObjectsIterator() {
+            super(NerdObjectPool.this.PROMOTED);
+        }
+
+        @Override
+        public void remove() {
+            super.ITERATOR.remove();
+            NerdObjectPool.this.POOL.add(super.current);
+        }
+
+    }
+
+    private final class NerdObjectPoolDemotedObjectsIterator extends NerdObjectPoolIterator {
+
+        public NerdObjectPoolDemotedObjectsIterator() {
+            super(NerdObjectPool.this.POOL);
+        }
+
+        @Override
+        public void remove() {
+            super.ITERATOR.remove();
+            NerdObjectPool.this.PROMOTED.add(super.current);
+        }
+
     }
 
     // region Fields.
@@ -186,17 +219,17 @@ public class NerdObjectPool<PoolObjectT> {
      * the pool.
      */
     public Iterable<PoolObjectT> allDemoted() {
-        return () -> this.new NerdObjectPoolIterator(this.POOL.iterator());
+        return NerdObjectPoolDemotedObjectsIterator::new;
     }
 
     /** Allows [only] forward iteration over all promoted objects. */
     public Iterable<PoolObjectT> allPromoted() {
-        return () -> this.new NerdObjectPoolIterator(this.PROMOTED.iterator());
+        return NerdObjectPoolPromotedObjectsIterator::new;
     }
 
     /** Allows iteration over all demoted objects; objects that are in the pool. */
     public Iterator<PoolObjectT> demotedObjectsIterator() {
-        return this.new NerdObjectPoolIterator(this.POOL.iterator());
+        return this.new NerdObjectPoolDemotedObjectsIterator();
     }
 
     /**
@@ -204,7 +237,7 @@ public class NerdObjectPool<PoolObjectT> {
      * objects from this.
      */
     public Iterator<PoolObjectT> promotedObjectsIterator() {
-        return this.new NerdObjectPoolIterator(this.PROMOTED.iterator());
+        return this.new NerdObjectPoolPromotedObjectsIterator();
     }
     // endregion
 
