@@ -1,4 +1,6 @@
-package com.brahvim.nerd.processing_wrapper;
+package com.brahvim.nerd.framework.shapes;
+
+import com.brahvim.nerd.processing_wrapper.NerdShape;
 
 import processing.core.PGraphics;
 import processing.core.PImage;
@@ -19,7 +21,6 @@ public class NerdObjShape extends NerdShape {
     }
 
     // region `PShapeOBJ` methods.
-
     @Override
     public NerdObjShape addChild(final PShape who) {
         this.OBJ_SHAPE.addChild(who);
