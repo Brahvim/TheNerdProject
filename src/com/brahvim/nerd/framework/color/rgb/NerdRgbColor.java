@@ -1,6 +1,8 @@
-package com.brahvim.nerd.framework.color.rgba;
+package com.brahvim.nerd.framework.color.rgb;
 
-public interface NerdRgbColor {
+import com.brahvim.nerd.framework.color.NerdColor;
+
+public interface NerdRgbColor extends NerdColor {
 
     // region Getters.
     public int getRed();
