@@ -1,17 +1,7 @@
 package com.brahvim.nerd.framework.color.rgb;
 
-public interface NerdArgbColor extends NerdRgbColor {
+import com.brahvim.nerd.framework.color.NerdAlphaColor;
 
-    // Getter:
-    public int getAlpha();
-
-    // Query:
-    public boolean isVisible();
-
-    // region Setters.
-    public NerdArgbColor makeOpaque();
-
-    public NerdArgbColor makeTransparent();
-    // endregion
+public interface NerdArgbColor extends NerdRgbColor, NerdAlphaColor {
 
 }

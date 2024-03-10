@@ -1,0 +1,346 @@
+package com.brahvim.nerd.processing_wrapper;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
+import processing.core.PFont;
+import processing.core.PGraphics;
+import processing.core.PImage;
+import processing.core.PSurface;
+import processing.data.JSONArray;
+import processing.data.JSONObject;
+import processing.data.Table;
+import processing.data.XML;
+import processing.event.Event;
+import processing.event.KeyEvent;
+import processing.event.MouseEvent;
+
+public interface NerdPAppletItf {
+
+    PGraphics beginRaw(String renderer, String filename);
+
+    void beginRecord(PGraphics recorder);
+
+    PGraphics beginRecord(String renderer, String filename);
+
+    void blend(int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int mode);
+
+    void blend(PImage src, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int mode);
+
+    PImage copy();
+
+    void copy(int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh);
+
+    void copy(PImage src, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh);
+
+    PFont createFont(String name, float size);
+
+    PFont createFont(String name, float size, boolean smooth);
+
+    PFont createFont(String name, float size, boolean smooth, char[] charset);
+
+    PGraphics createGraphics(int w, int h);
+
+    PGraphics createGraphics(int w, int h, String renderer);
+
+    PGraphics createGraphics(int w, int h, String renderer, String path);
+
+    PImage createImage(int w, int h, int format);
+
+    InputStream createInput(String filename);
+
+    InputStream createInputRaw(String filename);
+
+    OutputStream createOutput(String filename);
+
+    BufferedReader createReader(String filename);
+
+    PrintWriter createWriter(String filename);
+
+    void cursor();
+
+    void cursor(int kind);
+
+    void cursor(PImage img);
+
+    void cursor(PImage img, int x, int y);
+
+    File dataFile(String where);
+
+    String dataPath(String where);
+
+    void delay(int napTime);
+
+    void die(String what);
+
+    void die(String what, Exception e);
+
+    int displayDensity();
+
+    int displayDensity(int display);
+
+    void draw();
+
+    void endRecord();
+
+    void exit();
+
+    void exitActual();
+
+    boolean exitCalled();
+
+    void filter(int kind);
+
+    void filter(int kind, float param);
+
+    void focusGained();
+
+    void focusLost();
+
+    void frameMoved(int x, int y);
+
+    void frameRate(float fps);
+
+    void frameResized(int w, int h);
+
+    void fullScreen();
+
+    void fullScreen(int display);
+
+    void fullScreen(String renderer);
+
+    void fullScreen(String renderer, int display);
+
+    PImage get();
+
+    int get(int x, int y);
+
+    PImage get(int x, int y, int w, int h);
+
+    PGraphics getGraphics();
+
+    PSurface getSurface();
+
+    void handleDraw();
+
+    String insertFrame(String what);
+
+    boolean isLooping();
+
+    void keyPressed();
+
+    void keyPressed(KeyEvent event);
+
+    void keyReleased();
+
+    void keyReleased(KeyEvent event);
+
+    void keyTyped();
+
+    void keyTyped(KeyEvent event);
+
+    void link(String url);
+
+    File[] listFiles(String path, String... options);
+
+    String[] listPaths(String path, String... options);
+
+    byte[] loadBytes(String filename);
+
+    PFont loadFont(String filename);
+
+    PImage loadImage(String filename);
+
+    PImage loadImage(String filename, String extension);
+
+    JSONArray loadJSONArray(String filename);
+
+    JSONObject loadJSONObject(String filename);
+
+    void loadPixels();
+
+    String[] loadStrings(String filename);
+
+    Table loadTable(String filename);
+
+    Table loadTable(String filename, String options);
+
+    XML loadXML(String filename);
+
+    XML loadXML(String filename, String options);
+
+    void loop();
+
+    void mask(PImage img);
+
+    void method(String name);
+
+    int millis();
+
+    void mouseClicked();
+
+    void mouseClicked(MouseEvent event);
+
+    void mouseDragged();
+
+    void mouseDragged(MouseEvent event);
+
+    void mouseEntered();
+
+    void mouseEntered(MouseEvent event);
+
+    void mouseExited();
+
+    void mouseExited(MouseEvent event);
+
+    void mouseMoved();
+
+    void mouseMoved(MouseEvent event);
+
+    void mousePressed();
+
+    void mousePressed(MouseEvent event);
+
+    void mouseReleased();
+
+    void mouseReleased(MouseEvent event);
+
+    void mouseWheel();
+
+    void mouseWheel(MouseEvent event);
+
+    void noCursor();
+
+    void noLoop();
+
+    float noise(float x);
+
+    float noise(float x, float y);
+
+    float noise(float x, float y, float z);
+
+    void noiseDetail(int lod);
+
+    void noiseDetail(int lod, float falloff);
+
+    void noiseSeed(long seed);
+
+    void orientation(int which);
+
+    JSONArray parseJSONArray(String input);
+
+    JSONObject parseJSONObject(String input);
+
+    XML parseXML(String xmlString);
+
+    XML parseXML(String xmlString, String options);
+
+    void pause();
+
+    void pixelDensity(int density);
+
+    void postEvent(Event pe);
+
+    void redraw();
+
+    void registerMethod(String methodName, Object target);
+
+    PImage requestImage(String filename);
+
+    PImage requestImage(String filename, String extension);
+
+    void resume();
+
+    void save(String filename);
+
+    void saveBytes(String filename, byte[] data);
+
+    File saveFile(String where);
+
+    void saveFrame();
+
+    void saveFrame(String filename);
+
+    boolean saveJSONArray(JSONArray json, String filename);
+
+    boolean saveJSONArray(JSONArray json, String filename, String options);
+
+    boolean saveJSONObject(JSONObject json, String filename);
+
+    boolean saveJSONObject(JSONObject json, String filename, String options);
+
+    String savePath(String where);
+
+    boolean saveStream(String target, String source);
+
+    boolean saveStream(File target, String source);
+
+    boolean saveStream(String target, InputStream source);
+
+    void saveStrings(String filename, String[] data);
+
+    boolean saveTable(Table table, String filename);
+
+    boolean saveTable(Table table, String filename, String options);
+
+    boolean saveXML(XML xml, String filename);
+
+    boolean saveXML(XML xml, String filename, String options);
+
+    void selectFolder(String prompt, String callback);
+
+    void selectFolder(String prompt, String callback, File file);
+
+    void selectFolder(String prompt, String callback, File file, Object callbackObject);
+
+    void selectInput(String prompt, String callback);
+
+    void selectInput(String prompt, String callback, File file);
+
+    void selectInput(String prompt, String callback, File file, Object callbackObject);
+
+    void selectOutput(String prompt, String callback);
+
+    void selectOutput(String prompt, String callback, File file);
+
+    void selectOutput(String prompt, String callback, File file, Object callbackObject);
+
+    void set(int x, int y, int c);
+
+    void set(int x, int y, PImage img);
+
+    void setSize(int width, int height);
+
+    void settings();
+
+    void setup();
+
+    void size(int width, int height);
+
+    void size(int width, int height, String renderer);
+
+    void size(int width, int height, String renderer, String path);
+
+    File sketchFile(String where);
+
+    String sketchPath();
+
+    String sketchPath(String where);
+
+    void smooth(int level);
+
+    void start();
+
+    void stop();
+
+    void thread(String name);
+
+    void unregisterMethod(String name, Object target);
+
+    void updatePixels();
+
+    void updatePixels(int x1, int y1, int x2, int y2);
+}

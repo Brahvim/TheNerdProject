@@ -1,5 +1,7 @@
 package com.brahvim.nerd.framework.color.rgb;
 
+import com.brahvim.nerd.framework.color.NerdAlphaColor;
+
 public class NerdCompactArgbColor implements NerdArgbColor {
 
     public int color;
@@ -54,27 +56,39 @@ public class NerdCompactArgbColor implements NerdArgbColor {
     }
     // endregion
 
-    // region Queries.
+    // Query:
     @Override
     public boolean isGray() {
         return (this.getRed() == this.getGreen()) && (this.getGreen() == this.getBlue());
     }
 
-    @Override
-    public boolean isVisible() {
-        return this.getAlpha() != 0;
-    }
-    // endregion
-
     // region Setters.
     @Override
-    public NerdArgbColor makeOpaque() {
+    public NerdCompactArgbColor setParam1(final float p_value) {
+        this.setRed((int) p_value);
+        return this;
+    }
+
+    @Override
+    public NerdCompactArgbColor setParam2(final float p_value) {
+        this.setGreen((int) p_value);
+        return this;
+    }
+
+    @Override
+    public NerdCompactArgbColor setParam3(final float p_value) {
+        this.setBlue((int) p_value);
+        return this;
+    }
+
+    @Override
+    public NerdAlphaColor makeOpaque() {
         this.setAlpha(255);
         return this;
     }
 
     @Override
-    public NerdArgbColor makeTransparent() {
+    public NerdAlphaColor makeTransparent() {
         this.setAlpha(0);
         return this;
     }

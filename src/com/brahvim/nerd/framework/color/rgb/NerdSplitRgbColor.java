@@ -71,6 +71,24 @@ public class NerdSplitRgbColor implements NerdRgbColor {
 
     // region Setters.
     @Override
+    public NerdSplitRgbColor setParam1(final float p_value) {
+        this.red = (int) p_value;
+        return this;
+    }
+
+    @Override
+    public NerdSplitRgbColor setParam2(final float p_value) {
+        this.green = (int) p_value;
+        return this;
+    }
+
+    @Override
+    public NerdSplitRgbColor setParam3(final float p_value) {
+        this.blue = (int) p_value;
+        return this;
+    }
+
+    @Override
     public NerdSplitRgbColor blackOut() {
         this.red = 0;
         this.green = 0;
@@ -94,6 +112,24 @@ public class NerdSplitRgbColor implements NerdRgbColor {
         this.green = p_gray;
         this.blue = p_gray;
 
+        return this;
+    }
+
+    @Override
+    public NerdSplitRgbColor setRed(final int p_value) {
+        this.red = p_value;
+        return this;
+    }
+
+    @Override
+    public NerdSplitRgbColor setGreen(final int p_value) {
+        this.green = p_value;
+        return this;
+    }
+
+    @Override
+    public NerdSplitRgbColor setBlue(final int p_value) {
+        this.blue = p_value;
         return this;
     }
     // endregion
