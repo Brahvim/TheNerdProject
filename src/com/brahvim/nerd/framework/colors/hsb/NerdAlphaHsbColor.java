@@ -1,7 +1,7 @@
 package com.brahvim.nerd.framework.colors.hsb;
 
 import com.brahvim.nerd.framework.colors.NerdAlphaColor;
-import com.brahvim.nerd.framework.colors.rgb.NerdArgbColor;
+import com.brahvim.nerd.framework.colors.rgb.NerdAlphaRgbColor;
 import com.brahvim.nerd.framework.colors.rgb.NerdRgbColor;
 
 public class NerdAlphaHsbColor implements NerdHsbColor, NerdAlphaColor {
@@ -50,7 +50,7 @@ public class NerdAlphaHsbColor implements NerdHsbColor, NerdAlphaColor {
         this.hue /= 6;
     }
 
-    public NerdAlphaHsbColor(final NerdArgbColor p_argbColor) {
+    public NerdAlphaHsbColor(final NerdAlphaRgbColor p_argbColor) {
         this((NerdRgbColor) p_argbColor);
     }
 

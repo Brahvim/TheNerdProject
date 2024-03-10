@@ -3,6 +3,11 @@ package com.brahvim.nerd.processing_wrapper;
 import java.awt.Image;
 import java.util.Objects;
 
+import com.brahvim.nerd.framework.colors.NerdAlphaColor;
+import com.brahvim.nerd.framework.colors.NerdColorSpace;
+import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
+import com.brahvim.nerd.framework.colors.hsb.NerdAlphaHsbColor;
+import com.brahvim.nerd.framework.colors.rgb.NerdCompactArgbColor;
 import com.brahvim.nerd.framework.graphics_backends.NerdFx2dGraphics;
 import com.brahvim.nerd.framework.graphics_backends.NerdJava2dGraphics;
 import com.brahvim.nerd.framework.graphics_backends.NerdP2dGraphics;
@@ -241,6 +246,8 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	/*   */ doAutoClear = false,
 			doClearWithImage = true,
 			doClearWithColor = true;
+
+	protected NerdColorSpace currentColorMode = NerdColorSpace.RGB;
 
 	// region Frame auto-clear info.
 	/**
@@ -506,6 +513,100 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 
 	// region Rendering utilities!
+	// region Color settings.
+	public void fill(final NerdAlphaColor p_alphaColor) {
+		this.colorMode(p_alphaColor.getColorSpace().getPConstant());
+		this.fill(
+				p_alphaColor.getParam1(), p_alphaColor.getParam2(),
+				p_alphaColor.getParam3(), p_alphaColor.getAlpha());
+	}
+
+	public void fill(final NerdNoAlphaColor p_noAlphaColor) {
+		this.colorMode(p_noAlphaColor.getColorSpace().getPConstant());
+		this.fill(p_noAlphaColor.getParam1(), p_noAlphaColor.getParam2(), p_noAlphaColor.getParam3());
+	}
+
+	public void stroke(final NerdAlphaColor p_alphaColor) {
+		this.colorMode(p_alphaColor.getColorSpace().getPConstant());
+		this.stroke(
+				p_alphaColor.getParam1(), p_alphaColor.getParam2(),
+				p_alphaColor.getParam3(), p_alphaColor.getAlpha());
+	}
+
+	public void stroke(final NerdNoAlphaColor p_noAlphaColor) {
+		this.colorMode(p_noAlphaColor.getColorSpace().getPConstant());
+		this.stroke(p_noAlphaColor.getParam1(), p_noAlphaColor.getParam2(), p_noAlphaColor.getParam3());
+	}
+
+	// region `color()` and `colorMode()`.
+	public int color(final NerdAlphaHsbColor p_hsbColor) {
+		this.colorMode(NerdColorSpace.HSB);
+		final int toRet = this.color(
+				p_hsbColor.getParam1(), p_hsbColor.getParam1(), p_hsbColor.getParam3(), p_hsbColor.getAlpha());
+		this.colorMode(this.currentColorMode);
+		return toRet;
+	}
+
+	public int color(final NerdAlphaColor p_alphaColor) {
+		this.colorMode(NerdColorSpace.HSB);
+		final int toRet = this.color(
+				p_alphaColor.getParam1(), p_alphaColor.getParam1(), p_alphaColor.getParam3(), p_alphaColor.getAlpha());
+		this.colorMode(this.currentColorMode);
+		return toRet;
+	}
+
+	public int color(final NerdNoAlphaColor p_compactArgbColor) {
+		this.colorMode(NerdColorSpace.HSB);
+		final int toRet = this.color(
+				p_compactArgbColor.getParam1(), p_compactArgbColor.getParam1(), p_compactArgbColor.getParam3());
+		this.colorMode(this.currentColorMode);
+		return toRet;
+	}
+
+	public int color(final NerdCompactArgbColor p_compactArgbColor) {
+		// TODO: Does this work...?
+		return p_compactArgbColor.color;
+	}
+
+	public void colorMode(final int mode) {
+		this.setColorSpaceEnum(mode);
+		this.GRAPHICS.colorMode(mode);
+	}
+
+	public void colorMode(final NerdColorSpace p_colorSpaceEnum) {
+		this.setColorSpaceEnum(p_colorSpaceEnum);
+		this.GRAPHICS.colorMode(p_colorSpaceEnum.getPConstant());
+	}
+
+	public void colorMode(final int mode, final float max) {
+		this.setColorSpaceEnum(mode);
+		this.GRAPHICS.colorMode(mode, max);
+	}
+
+	public void colorMode(final int mode, final float max1, final float max2, final float max3) {
+		this.setColorSpaceEnum(mode);
+		this.GRAPHICS.colorMode(mode, max1, max2, max3);
+	}
+
+	public void colorMode(final int mode, final float max1, final float max2, final float max3, final float maxA) {
+		this.setColorSpaceEnum(mode);
+		this.GRAPHICS.colorMode(mode, max1, max2, max3, maxA);
+	}
+
+	protected void setColorSpaceEnum(final int p_colorSpaceEnum) {
+		switch (p_colorSpaceEnum) {
+			case PConstants.RGB -> this.currentColorMode = NerdColorSpace.RGB;
+			case PConstants.HSB -> this.currentColorMode = NerdColorSpace.HSB;
+		}
+	}
+
+	protected void setColorSpaceEnum(final NerdColorSpace p_colorSpaceEnum) {
+		this.currentColorMode = Objects.requireNonNull(p_colorSpaceEnum,
+				"Another thing that wasn't supposed to be `null`...");
+	}
+	// endregion
+	// endregion
+
 	public final void performAutoClear() {
 		// "Will Processing throw an exception when passed this image?":
 		final boolean canClearWithImage = //
@@ -914,17 +1015,6 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// endregion
 	// endregion
 
-	/**
-	 * Draws the {@code p_bgImage} as if it was a background. You may even choose to
-	 * call one of the {@linkplain PApplet#tint() PApplet::tint()} overloads before
-	 * calling this!
-	 */
-	public void background(final PImage p_bgImage) {
-		Objects.requireNonNull(p_bgImage);
-		this.GRAPHICS.image(p_bgImage, this.WINDOW.cx, this.WINDOW.cy, this.WINDOW.width,
-				this.WINDOW.height);
-	}
-
 	// region Transformations!
 	// "Hah! Gott'em with the name alignment!"
 	public void translate(final PVector p_vec) {
@@ -952,6 +1042,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.texture(p_nerdGraphics.getUnderlyingBuffer());
 	}
 
+	// region `set()` overloads.
 	public void set(final PImage p_image) {
 		this.GRAPHICS.set(0, 0, p_image);
 	}
@@ -963,6 +1054,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	public void set(final int p_x, final int p_y, final NerdAbstractGraphics<SketchPGraphicsT> p_nerdGraphics) {
 		this.GRAPHICS.set(p_x, p_y, p_nerdGraphics.getUnderlyingBuffer());
 	}
+	// endregion
 
 	// region The billion `image()` overloads. Help me make "standards"?
 	// region For `PImage`s.
@@ -1229,11 +1321,38 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	}
 	// endregion
 
-	// region `background()`-with-alpha overloads.
+	// region `background()`-related.
 	public void background(final int p_color) {
 		this.push();
 		this.GRAPHICS.fill(p_color);
 		this.backgroundWithAlphaRectRenderingImpl();
+	}
+
+	/**
+	 * Draws the {@code p_bgImage} as if it was a background. You may even choose to
+	 * call one of the {@linkplain PApplet#tint() PApplet::tint()} overloads before
+	 * calling this!
+	 */
+	public void background(final PImage p_bgImage) {
+		Objects.requireNonNull(p_bgImage);
+		this.GRAPHICS.image(p_bgImage, this.WINDOW.cx, this.WINDOW.cy, this.WINDOW.width,
+				this.WINDOW.height);
+	}
+
+	public void background(final NerdAlphaColor p_alphaColor) {
+		final var toRestore = this.currentColorMode;
+		this.colorMode(p_alphaColor.getColorSpace());
+		this.background(
+				p_alphaColor.getParam1(), p_alphaColor.getParam2(),
+				p_alphaColor.getParam3(), p_alphaColor.getAlpha());
+		this.colorMode(toRestore);
+	}
+
+	public void background(final NerdNoAlphaColor p_noAlphaColor) {
+		final var toRestore = this.currentColorMode;
+		this.colorMode(p_noAlphaColor.getColorSpace());
+		this.background(p_noAlphaColor.getParam1(), p_noAlphaColor.getParam2(), p_noAlphaColor.getParam3());
+		this.colorMode(toRestore);
 	}
 
 	public void background(final int p_color, final float p_alpha) {
@@ -1479,20 +1598,20 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.clip(a, b, c, d);
 	}
 
-	public void colorMode(final int mode) {
-		this.GRAPHICS.colorMode(mode);
+	public int color(final int gray) {
+		return this.GRAPHICS.color(gray);
 	}
 
-	public void colorMode(final int mode, final float max) {
-		this.GRAPHICS.colorMode(mode, max);
+	public int color(final int gray, final int alpha) {
+		return this.GRAPHICS.color(gray, alpha);
 	}
 
-	public void colorMode(final int mode, final float max1, final float max2, final float max3) {
-		this.GRAPHICS.colorMode(mode, max1, max2, max3);
+	public int color(final float v1, final float v2, final float v3) {
+		return this.GRAPHICS.color(v1, v2, v3);
 	}
 
-	public void colorMode(final int mode, final float max1, final float max2, final float max3, final float maxA) {
-		this.GRAPHICS.colorMode(mode, max1, max2, max3, maxA);
+	public int color(final float v1, final float v2, final float v3, final float alpha) {
+		return this.GRAPHICS.color(v1, v2, v3, alpha);
 	}
 
 	public PShape createShape() {
@@ -1726,6 +1845,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		return this.GRAPHICS.isGL();
 	}
 
+	// TODO: Overload this for `NerdColor`s.
 	public int lerpColor(final int c1, final int c2, final float amt) {
 		return this.GRAPHICS.lerpColor(c1, c2, amt);
 	}
@@ -2057,6 +2177,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.shininess(shine);
 	}
 
+	// TODO: Remove? This is to be set when the sketch begins, anyway...
 	public void smooth() {
 		this.GRAPHICS.smooth();
 	}
@@ -2065,6 +2186,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.smooth(quality);
 	}
 
+	// TODO: Move all light and material functions to `NerdP3dGraphics`.
 	public void specular(final int rgb) {
 		this.GRAPHICS.specular(rgb);
 	}

@@ -1,5 +1,6 @@
 package com.brahvim.nerd.framework.graphics_backends;
 
+import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
 import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
@@ -69,61 +70,73 @@ public abstract class NerdFramebufferBackedGraphics<SketchPGraphicsT extends PGr
     // endregion
 
     // region Not in `SVG`/`PDF`, but here!
+    public void set(final int x, final int y, final int c) {
+        super.GRAPHICS.set(x, y, c);
+    }
+
+    public void set(final int x, final int y, final NerdNoAlphaColor noAlphaColor) {
+        super.GRAPHICS.set(x, y, super.color(noAlphaColor));
+    }
+
+    public void set(final int x, final int y, final PImage img) {
+        super.GRAPHICS.set(x, y, img);
+    }
+
     public boolean save(final String filename) {
-        return this.GRAPHICS.save(filename);
+        return super.GRAPHICS.save(filename);
     }
 
     public void blend(final int sx, final int sy, final int sw, final int sh,
             final int dx, final int dy, final int dw,
             final int dh, final int mode) {
-        this.GRAPHICS.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
+        super.GRAPHICS.blend(sx, sy, sw, sh, dx, dy, dw, dh, mode);
     }
 
     public void blend(final PImage src, final int sx, final int sy, final int sw,
             final int sh, final int dx,
             final int dy, final int dw, final int dh, final int mode) {
-        this.GRAPHICS.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
+        super.GRAPHICS.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
     }
 
     public void copy(final int sx, final int sy, final int sw, final int sh,
             final int dx, final int dy, final int dw,
             final int dh) {
-        this.GRAPHICS.copy(sx, sy, sw, sh, dx, dy, dw, dh);
+        super.GRAPHICS.copy(sx, sy, sw, sh, dx, dy, dw, dh);
     }
 
     public void copy(final PImage src, final int sx, final int sy, final int sw,
             final int sh, final int dx,
             final int dy, final int dw, final int dh) {
-        this.GRAPHICS.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
+        super.GRAPHICS.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
     }
 
     public void filter(final int kind) {
-        this.GRAPHICS.filter(kind);
+        super.GRAPHICS.filter(kind);
     }
 
     public void filter(final int kind, final float param) {
-        this.GRAPHICS.filter(kind, param);
+        super.GRAPHICS.filter(kind, param);
     }
 
     public PImage get() {
-        return this.GRAPHICS.get();
+        return super.GRAPHICS.get();
     }
 
     public int get(final int x, final int y) {
-        return this.GRAPHICS.get(x, y);
+        return super.GRAPHICS.get(x, y);
     }
 
     public PImage get(final int x, final int y, final int w, final int h) {
-        return this.GRAPHICS.get(x, y, w, h);
+        return super.GRAPHICS.get(x, y, w, h);
 
     }
 
     public void mask(final int[] maskArray) {
-        this.GRAPHICS.mask(maskArray);
+        super.GRAPHICS.mask(maskArray);
     }
 
     public void mask(final PImage img) {
-        this.GRAPHICS.mask(img);
+        super.GRAPHICS.mask(img);
     }
 
     public int[] loadPixels() {
@@ -136,7 +149,7 @@ public abstract class NerdFramebufferBackedGraphics<SketchPGraphicsT extends PGr
     }
 
     public void updatePixels(final int x, final int y, final int w, final int h) {
-        this.GRAPHICS.updatePixels(x, y, w, h);
+        super.GRAPHICS.updatePixels(x, y, w, h);
     }
     // endregion
 

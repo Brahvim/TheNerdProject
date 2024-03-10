@@ -2,7 +2,7 @@ package com.brahvim.nerd.framework.colors.rgb;
 
 import com.brahvim.nerd.framework.colors.NerdAlphaColor;
 
-public class NerdCompactArgbColor implements NerdArgbColor {
+public class NerdCompactArgbColor implements NerdAlphaRgbColor {
 
     public int color;
 

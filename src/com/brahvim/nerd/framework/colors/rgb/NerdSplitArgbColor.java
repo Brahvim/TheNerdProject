@@ -1,6 +1,6 @@
 package com.brahvim.nerd.framework.colors.rgb;
 
-public class NerdSplitArgbColor implements NerdArgbColor {
+public class NerdSplitArgbColor implements NerdAlphaRgbColor {
 
     public int red, green, blue;
     public int alpha = 255;
