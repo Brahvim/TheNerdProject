@@ -78,9 +78,11 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     protected NerdAbstractCamera currentCamera, previousCamera; // CAMERA! wher lite?! wher accsunn?!
 
     // region Light-slots API.
-    // ...These two are lazy-initialized:
-    protected Object[] lightSlots = new Object[0];
-    protected ArrayList<? extends Object>[] lightSlotsArrays = new ArrayList<?>[0];
+    // ...These two are NOT lazy-initialized.
+    // Sometimes, DOD requires storing extras like this so everything is contiguous
+    // and less dynamic:
+    protected Object[] lightSlots = new Object[8];
+    protected ArrayList<? extends Object>[] lightSlotsArrays = new ArrayList<?>[8];
 
     protected final ArrayList<ArrayList<NerdSpotLight>> SPOT_LIGHTS = new ArrayList<>(0);
     protected final ArrayList<ArrayList<NerdPointLight>> POINT_LIGHTS = new ArrayList<>(0);

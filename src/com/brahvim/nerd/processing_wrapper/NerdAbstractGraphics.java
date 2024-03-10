@@ -478,10 +478,10 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.doAutoClear = true;
 	}
 
-	public void setClearColor(final float p_grey, final float p_alpha) {
-		this.clearColorParam1 = p_grey;
-		this.clearColorParam2 = p_grey;
-		this.clearColorParam3 = p_grey;
+	public void setClearColor(final float p_gray, final float p_alpha) {
+		this.clearColorParam1 = p_gray;
+		this.clearColorParam2 = p_gray;
+		this.clearColorParam3 = p_gray;
 		this.clearColorParamAlpha = p_alpha;
 		this.doClearWithColor = true;
 	}
@@ -1242,9 +1242,9 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.backgroundWithAlphaRectRenderingImpl();
 	}
 
-	public void background(final float p_grey, final float p_alpha) {
+	public void background(final float p_gray, final float p_alpha) {
 		this.push();
-		this.GRAPHICS.fill(p_grey, p_alpha);
+		this.GRAPHICS.fill(p_gray, p_alpha);
 		this.backgroundWithAlphaRectRenderingImpl();
 	}
 
