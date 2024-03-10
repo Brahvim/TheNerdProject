@@ -44,11 +44,19 @@ public class NerdSplitArgbColor extends NerdSplitRgbColor implements NerdArgbCol
     }
     // endregion
 
+    // Getter:
+    @Override
+    public int getAlpha() {
+        return this.alpha;
+    }
+
+    // Query:
     @Override
     public boolean isVisible() {
         return this.alpha != 0;
     }
 
+    // region Setters.
     @Override
     public NerdSplitArgbColor blackOut() {
         super.red = 0;
@@ -78,5 +86,6 @@ public class NerdSplitArgbColor extends NerdSplitRgbColor implements NerdArgbCol
         this.alpha = 255;
         return this;
     }
+    // endregion
 
 }

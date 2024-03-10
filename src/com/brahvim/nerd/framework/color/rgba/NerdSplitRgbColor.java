@@ -63,11 +63,13 @@ public class NerdSplitRgbColor implements NerdRgbColor {
     }
     // endregion
 
+    // Query:
     @Override
     public boolean isGray() {
         return this.red == this.green && this.green == this.blue;
     }
 
+    // region Setters.
     @Override
     public NerdSplitRgbColor blackOut() {
         this.red = 0;
@@ -94,5 +96,6 @@ public class NerdSplitRgbColor implements NerdRgbColor {
 
         return this;
     }
+    // endregion
 
 }

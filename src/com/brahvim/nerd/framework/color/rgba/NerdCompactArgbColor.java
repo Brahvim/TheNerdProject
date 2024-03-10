@@ -1,6 +1,6 @@
 package com.brahvim.nerd.framework.color.rgba;
 
-public class NerdCompactArgbColor {
+public class NerdCompactArgbColor implements NerdArgbColor {
 
     public int color;
 
@@ -27,31 +27,78 @@ public class NerdCompactArgbColor {
     // endregion
 
     // region Getters.
+    @Override
     public int getRed() {
         return (this.color >> 16) & 0xFF;
     }
 
-    public int getGreen() {
-        return (this.color >> 8) & 0xFF;
-    }
-
+    @Override
     public int getBlue() {
         return this.color & 0xFF;
     }
 
+    @Override
+    public int getGreen() {
+        return (this.color >> 8) & 0xFF;
+    }
+
+    @Override
     public int getAlpha() {
         return (this.color >>> 24) & 0xFF;
+    }
+
+    /** @return {@code -1} if this color isn't gray, else the gray value. */
+    @Override
+    public int getIfGray() {
+        return this.isGray() ? this.getRed() : -1;
+    }
+    // endregion
+
+    // region Queries.
+    @Override
+    public boolean isGray() {
+        return (this.getRed() == this.getGreen()) && (this.getGreen() == this.getBlue());
+    }
+
+    @Override
+    public boolean isVisible() {
+        return this.getAlpha() != 0;
     }
     // endregion
 
     // region Setters.
+    @Override
+    public NerdArgbColor makeOpaque() {
+        this.setAlpha(255);
+        return this;
+    }
+
+    @Override
+    public NerdArgbColor makeTransparent() {
+        this.setAlpha(0);
+        return this;
+    }
+
+    @Override
+    public NerdCompactArgbColor blackOut() {
+        this.color = 0;
+        return this;
+    }
+
+    @Override
+    public NerdCompactArgbColor whiteOut() {
+        this.color = Integer.MAX_VALUE;
+        return this;
+    }
+
     public NerdCompactArgbColor setRed(final int p_red) {
         this.color = (this.color & 0xFF00FFFF) | ((p_red & 0xFF) << 16);
         return this;
     }
 
-    public NerdCompactArgbColor setGreen(final int p_green) {
-        this.color = (this.color & 0xFFFF00FF) | ((p_green & 0xFF) << 8);
+    @Override
+    public NerdCompactArgbColor setGray(final int p_gray) {
+        this.color = (p_gray & 0xFF) | ((p_gray & 0xFF) << 8) | ((p_gray & 0xFF) << 16);
         return this;
     }
 
@@ -65,6 +112,11 @@ public class NerdCompactArgbColor {
         return this;
     }
 
+    public NerdCompactArgbColor setGreen(final int p_green) {
+        this.color = (this.color & 0xFFFF00FF) | ((p_green & 0xFF) << 8);
+        return this;
+    }
+
     public NerdCompactArgbColor set(final int p_red, final int p_green, final int p_blue) {
         this.color = ((p_red & 0xFF) << 16) | ((p_green & 0xFF) << 8) | (p_blue & 0xFF);
         return this;
@@ -75,29 +127,5 @@ public class NerdCompactArgbColor {
         return this;
     }
     // endregion
-
-    /** @return {@code -1} if this color isn't gray, else the gray value. */
-    public int getIfGray() {
-        return this.isGray() ? this.getRed() : -1;
-    }
-
-    public boolean isGray() {
-        return (this.getRed() == this.getGreen()) && (this.getGreen() == this.getBlue());
-    }
-
-    public NerdCompactArgbColor blackOut() {
-        this.color = 0;
-        return this;
-    }
-
-    public NerdCompactArgbColor whiteOut() {
-        this.color = Integer.MAX_VALUE;
-        return this;
-    }
-
-    public NerdCompactArgbColor setGray(final int p_gray) {
-        this.color = (p_gray & 0xFF) | ((p_gray & 0xFF) << 8) | ((p_gray & 0xFF) << 16);
-        return this;
-    }
 
 }
