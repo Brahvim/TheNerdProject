@@ -1,4 +1,4 @@
-package com.brahvim.nerd.framework.color.rgb;
+package com.brahvim.nerd.framework.colors.rgb;
 
 public class NerdSplitArgbColor implements NerdArgbColor {
 

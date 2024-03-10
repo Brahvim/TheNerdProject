@@ -1,6 +1,6 @@
-package com.brahvim.nerd.framework.color.rgb;
+package com.brahvim.nerd.framework.colors.rgb;
 
-import com.brahvim.nerd.framework.color.NerdAlphaColor;
+import com.brahvim.nerd.framework.colors.NerdAlphaColor;
 
 public class NerdCompactArgbColor implements NerdArgbColor {
 

@@ -1,6 +1,6 @@
-package com.brahvim.nerd.framework.color.rgb;
+package com.brahvim.nerd.framework.colors.rgb;
 
-import com.brahvim.nerd.framework.color.NerdNoAlphaColor;
+import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
 
 public class NerdSplitRgbColor implements NerdRgbColor, NerdNoAlphaColor {
 

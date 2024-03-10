@@ -1,6 +1,6 @@
 package com.brahvim.nerd.framework;
 
-import com.brahvim.nerd.framework.color.NerdNoAlphaColor;
+import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
 
 public class NerdMaterial {
 

@@ -1,7 +1,7 @@
-package com.brahvim.nerd.framework.color.rgb;
+package com.brahvim.nerd.framework.colors.rgb;
 
-import com.brahvim.nerd.framework.color.NerdColor;
-import com.brahvim.nerd.framework.color.NerdColorSpace;
+import com.brahvim.nerd.framework.colors.NerdColor;
+import com.brahvim.nerd.framework.colors.NerdColorSpace;
 
 public interface NerdRgbColor extends NerdColor {
 
