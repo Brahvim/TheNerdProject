@@ -1,11 +1,16 @@
 package com.brahvim.nerd.processing_wrapper.graphics_backends;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
+import com.brahvim.nerd.framework.lights.NerdAmbientLight;
+import com.brahvim.nerd.framework.lights.NerdDirectionalLight;
+import com.brahvim.nerd.framework.lights.NerdPointLight;
+import com.brahvim.nerd.framework.lights.NerdSpotLight;
 import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
@@ -21,7 +26,7 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     // (Cameras are best implemented using DOD! Write a camera 'manager' here.
     // Use that guy! Let people extend 'im! He'll act in your best interest, trust!)
 
-    protected enum NerdLightSlot {
+    public enum NerdLightSlot {
 
         ONE(),
         TWO(),
@@ -33,13 +38,6 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
         EIGHT();
 
     }
-
-    public final NerdLightSlot[] LIGHTS_SLOTS_ARRAY = new NerdLightSlot[8];
-
-    protected final NerdLightSlot[] DIRECTIONAL_LIGHTS = new NerdLightSlot[8];
-    protected final NerdLightSlot[] AMBIENT_LIGHTS = new NerdLightSlot[8];
-    protected final NerdLightSlot[] POINT_LIGHTS = new NerdLightSlot[8];
-    protected final NerdLightSlot[] SPOT_LIGHTS = new NerdLightSlot[8];
 
     // region Inner classes.
     public class TwoDimensionalPush implements AutoCloseable {
@@ -70,16 +68,26 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     // endregion
 
     // region Fields.
+    public boolean autoApplyCameraMatrix = true;
+
     protected final NerdUnprojector UNPROJECTOR;
     protected final NerdAbstractCamera DEFAULT_CAMERA;
     protected final NerdBasicCamera DEFAULT_CAMERA_BASIC;
 
-    protected boolean
-    /*   */ applyCameraMatrix = true,
-            applyDefaultLighting;
-
-    /** To be assigned to in the constructor. */
+    /** To be assigned in the constructor. */
     protected NerdAbstractCamera currentCamera, previousCamera; // CAMERA! wher lite?! wher accsunn?!
+
+    // region Light-slots API.
+    // ...These two are lazy-initialized:
+    protected Object[] lightSlots = new Object[0];
+    protected ArrayList<? extends Object>[] lightSlotsArrays = new ArrayList<?>[0];
+
+    protected final ArrayList<ArrayList<NerdSpotLight>> SPOT_LIGHTS = new ArrayList<>(0);
+    protected final ArrayList<ArrayList<NerdPointLight>> POINT_LIGHTS = new ArrayList<>(0);
+
+    protected final ArrayList<NerdAmbientLight> AMBIENT_LIGHTS = new ArrayList<>(0);
+    protected final ArrayList<NerdDirectionalLight> DIRECTIONAL_LIGHTS = new ArrayList<>(0);
+    // endregion
     // endregion
 
     // region Utilitarian constructors.
@@ -125,11 +133,6 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     public NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
         super(p_sketch, p_graphics);
 
-        if (!this.SKETCH.USES_OPENGL)
-            throw new IllegalStateException("""
-                    DUDE WHO SET `NerdSketch::USES_OPENGL` TO `false`!?
-                    You!? WAS IT YOU? WHO DID IT?!""");
-
         this.DEFAULT_CAMERA_BASIC = new NerdBasicCameraBuilder(this).build();
         this.DEFAULT_CAMERA = this.DEFAULT_CAMERA_BASIC;
         this.UNPROJECTOR = new NerdUnprojector();
@@ -140,28 +143,45 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 
     @Override
     protected void preDrawImpl() {
-        if (this.applyCameraMatrix)
+        if (this.autoApplyCameraMatrix)
             this.applyCurrentCamera();
-
-        if (this.applyDefaultLighting)
-            this.lights();
     }
 
-    // region Lighting toggles.
-    public void toggleDefaultLighting() {
-        this.applyDefaultLighting = !this.applyDefaultLighting;
+    // region Lighting methods.
+    // I'm not going for `public`, `final` instances of `NerdLightSlot`s because
+    // this style allows users to make new types of lights, and use them here
+    // without having to worry that the `NerdLightSlot` instances already exist in
+    // this class, and that access to them cannot be removed entirely.
+    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdDirectionalLight p_light) {
+        // if (!this.lightApiObjectsExist)
+        // this.initLightApiObjects();
+
+        this.lightSlots[p_slot.ordinal()] = p_light;
+        this.lightSlotsArrays[p_slot.ordinal()] = this.DIRECTIONAL_LIGHTS;
     }
 
-    public void enableDefaultLighting() {
-        this.applyDefaultLighting = true;
+    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdAmbientLight p_light) {
+        // if (!this.lightApiObjectsExist)
+        // this.initLightApiObjects();
+
+        this.lightSlots[p_slot.ordinal()] = p_light;
+        this.lightSlotsArrays[p_slot.ordinal()] = this.AMBIENT_LIGHTS;
     }
 
-    public void disableDefaultLighting() {
-        this.applyDefaultLighting = false;
+    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdPointLight p_light) {
+        // if (!this.lightApiObjectsExist)
+        // this.initLightApiObjects();
+
+        this.lightSlots[p_slot.ordinal()] = p_light;
+        this.lightSlotsArrays[p_slot.ordinal()] = this.POINT_LIGHTS;
     }
 
-    public void setDefaultLighting(final boolean p_status) {
-        this.applyDefaultLighting = p_status;
+    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdSpotLight p_light) {
+        // if (!this.lightApiObjectsExist)
+        // this.initLightApiObjects();
+
+        this.lightSlots[p_slot.ordinal()] = p_light;
+        this.lightSlotsArrays[p_slot.ordinal()] = this.SPOT_LIGHTS;
     }
     // endregion
 
@@ -221,6 +241,7 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     }
     // endregion
 
+    // region Translation transform.
     public void translateZ(final float p_value) {
         this.GRAPHICS.translate(0, 0, p_value);
     }
@@ -228,26 +249,7 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     public void translateFromCenterZ(final float p_value) {
         this.GRAPHICS.translate(this.cx, this.cy, p_value);
     }
-
-    public void drawClosedShape(final float p_x, final float p_y, final float p_z,
-            final int p_shapeType, final Runnable p_shapingFxn) {
-        this.GRAPHICS.pushMatrix();
-        this.translate(p_x, p_y, p_z);
-        this.SKETCH.beginShape(p_shapeType);
-        p_shapingFxn.run();
-        this.SKETCH.endShape(PConstants.CLOSE);
-        this.GRAPHICS.popMatrix();
-    }
-
-    public void drawOpenShape(final float p_x, final float p_y, final float p_z,
-            final int p_shapeType, final Runnable p_shapingFxn) {
-        this.GRAPHICS.pushMatrix();
-        this.translate(p_x, p_y, p_z);
-        this.SKETCH.beginShape(p_shapeType);
-        p_shapingFxn.run();
-        this.SKETCH.endShape();
-        this.GRAPHICS.popMatrix();
-    }
+    // endregion
 
     // region `modelVec()` and `screenVec()`.
     public PVector modelVec() {
@@ -540,22 +542,29 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     // endregion
     // endregion
 
-    /**
-     * Draws the {@code p_bgImage} as if it was a background. You may even choose to
-     * call one of the {@linkplain PApplet#tint() PApplet::tint()} overloads before
-     * calling this!
-     */
-    @Override
-    public void background(final PImage p_bgImage) {
-        Objects.requireNonNull(p_bgImage);
-        this.begin2d();
-        this.GRAPHICS.image(p_bgImage,
-                this.WINDOW.cx, this.WINDOW.cy,
-                this.WINDOW.width, this.WINDOW.height);
-        this.end2d();
+    // region 3D shapes (and shapes in general haha).
+    // region `drawClosedShape()` and `drawOpenShape()`.
+    public void drawClosedShape(final float p_x, final float p_y, final float p_z,
+            final int p_shapeType, final Runnable p_shapingFxn) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_x, p_y, p_z);
+        this.SKETCH.beginShape(p_shapeType);
+        p_shapingFxn.run();
+        this.SKETCH.endShape(PConstants.CLOSE);
+        this.GRAPHICS.popMatrix();
     }
 
-    // region 3D shapes.
+    public void drawOpenShape(final float p_x, final float p_y, final float p_z,
+            final int p_shapeType, final Runnable p_shapingFxn) {
+        this.GRAPHICS.pushMatrix();
+        this.translate(p_x, p_y, p_z);
+        this.SKETCH.beginShape(p_shapeType);
+        p_shapingFxn.run();
+        this.SKETCH.endShape();
+        this.GRAPHICS.popMatrix();
+    }
+    // endregion
+
     // region `box()` overloads.
     public void box(final float p_x, final float p_y, final float p_z, final float p_width, final float p_height,
             final float p_depth) {
@@ -706,7 +715,22 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     }
     // endregion
 
-    // region `background()`-with-alpha overloads.
+    // region `background(PImage)` and `background()`-with-alpha overrides.
+    /**
+     * Draws the {@code p_bgImage} as if it was a background. You may even choose to
+     * call one of the {@linkplain PApplet#tint() PApplet::tint()} overloads before
+     * calling this!
+     */
+    @Override
+    public void background(final PImage p_bgImage) {
+        Objects.requireNonNull(p_bgImage);
+        this.begin2d();
+        this.GRAPHICS.image(p_bgImage,
+                this.WINDOW.cx, this.WINDOW.cy,
+                this.WINDOW.width, this.WINDOW.height);
+        this.end2d();
+    }
+
     @Override
     protected void backgroundWithAlphaInitialPushMethod() {
         this.begin2d();
@@ -734,8 +758,7 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
         this.GRAPHICS.endCamera();
     }
 
-    public void bezier(final float x1, final float y1, final float z1, final float x2, final float y2,
-            final float z2,
+    public void bezier(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
             final float x3, final float y3, final float z3, final float x4, final float y4, final float z4) {
         this.GRAPHICS.bezier(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
     }
@@ -745,15 +768,9 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
         this.GRAPHICS.bezierVertex(x2, y2, z2, x3, y3, z3, x4, y4, z4);
     }
 
-    public void curve(final float x1, final float y1, final float z1, final float x2, final float y2,
-            final float z2,
+    public void curve(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2,
             final float x3, final float y3, final float z3, final float x4, final float y4, final float z4) {
         this.GRAPHICS.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-    }
-
-    public void directionalLight(final float v1, final float v2, final float v3, final float nx, final float ny,
-            final float nz) {
-        this.GRAPHICS.directionalLight(v1, v2, v3, nx, ny, nz);
     }
     // endregion
 
