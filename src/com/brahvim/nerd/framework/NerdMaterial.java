@@ -1,11 +1,23 @@
 package com.brahvim.nerd.framework;
 
 import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
+import com.brahvim.nerd.framework.colors.rgb.NerdSplitRgbColor;
 
 public class NerdMaterial {
 
-    public float shininess;
-    public NerdNoAlphaColor ambience, emission, specular;
+    protected float shininess;
+    protected NerdNoAlphaColor
+    /*   */ ambience = new NerdSplitRgbColor(),
+            emission = new NerdSplitRgbColor(),
+            specular = new NerdSplitRgbColor();
+
+    // region Constructors.
+    public NerdMaterial() {
+    }
+
+    public NerdMaterial(final float p_shininess) {
+        this.setShininess(p_shininess);
+    }
 
     public NerdMaterial(
             final float p_shininess,
@@ -17,5 +29,53 @@ public class NerdMaterial {
         this.specular = p_specular;
         this.shininess = p_shininess;
     }
+
+    public NerdMaterial(
+            final NerdNoAlphaColor p_ambience,
+            final NerdNoAlphaColor p_specular) {
+        this.ambience = p_ambience;
+        this.specular = p_specular;
+    }
+    // endregion
+
+    // region Getters.
+    public float getShininess() {
+        return this.shininess;
+    }
+
+    public NerdNoAlphaColor getAmbience() {
+        return this.ambience;
+    }
+
+    public NerdNoAlphaColor getEmission() {
+        return this.emission;
+    }
+
+    public NerdNoAlphaColor getSpecular() {
+        return this.specular;
+    }
+    // endregion
+
+    // region Setters.
+    public NerdMaterial setShininess(final float p_shininess) {
+        this.shininess = p_shininess;
+        return this;
+    }
+
+    public NerdMaterial setAmbience(final NerdNoAlphaColor p_ambience) {
+        this.ambience = p_ambience;
+        return this;
+    }
+
+    public NerdMaterial setEmission(final NerdNoAlphaColor p_emission) {
+        this.emission = p_emission;
+        return this;
+    }
+
+    public NerdMaterial setSpecular(final NerdNoAlphaColor p_specular) {
+        this.specular = p_specular;
+        return this;
+    }
+    // endregion
 
 }
