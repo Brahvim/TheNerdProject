@@ -8,6 +8,8 @@ public interface NerdColor {
 
     public float getParam3();
 
+    public NerdColorSpace getColorSpace();
+
     public NerdColor setParam1(float value);
 
     public NerdColor setParam2(float value);

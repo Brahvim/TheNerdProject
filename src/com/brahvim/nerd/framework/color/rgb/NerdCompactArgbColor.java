@@ -105,6 +105,7 @@ public class NerdCompactArgbColor implements NerdArgbColor {
         return this;
     }
 
+    @Override
     public NerdCompactArgbColor setRed(final int p_red) {
         this.color = (this.color & 0xFF00FFFF) | ((p_red & 0xFF) << 16);
         return this;
@@ -116,6 +117,7 @@ public class NerdCompactArgbColor implements NerdArgbColor {
         return this;
     }
 
+    @Override
     public NerdCompactArgbColor setBlue(final int p_blue) {
         this.color = (this.color & 0xFFFFFF00) | (p_blue & 0xFF);
         return this;
@@ -126,6 +128,7 @@ public class NerdCompactArgbColor implements NerdArgbColor {
         return this;
     }
 
+    @Override
     public NerdCompactArgbColor setGreen(final int p_green) {
         this.color = (this.color & 0xFFFF00FF) | ((p_green & 0xFF) << 8);
         return this;

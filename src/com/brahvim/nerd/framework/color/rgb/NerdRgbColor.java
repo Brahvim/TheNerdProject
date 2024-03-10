@@ -1,8 +1,9 @@
 package com.brahvim.nerd.framework.color.rgb;
 
-import com.brahvim.nerd.framework.color.NerdNoAlphaColor;
+import com.brahvim.nerd.framework.color.NerdColor;
+import com.brahvim.nerd.framework.color.NerdColorSpace;
 
-public interface NerdRgbColor extends NerdNoAlphaColor {
+public interface NerdRgbColor extends NerdColor {
 
     // region Default methods.
     @Override
@@ -45,6 +46,11 @@ public interface NerdRgbColor extends NerdNoAlphaColor {
     public int getBlue();
 
     public int getIfGray();
+
+    @Override
+    default NerdColorSpace getColorSpace() {
+        return NerdColorSpace.RGB;
+    }
     // endregion
 
     // Query:

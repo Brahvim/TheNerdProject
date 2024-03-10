@@ -1,6 +1,7 @@
 package com.brahvim.nerd.framework.color.hsb;
 
 import com.brahvim.nerd.framework.color.NerdColor;
+import com.brahvim.nerd.framework.color.NerdColorSpace;
 
 public interface NerdHsbColor extends NerdColor {
 
@@ -18,6 +19,11 @@ public interface NerdHsbColor extends NerdColor {
     @Override
     public default float getParam3() {
         return this.getBrightness();
+    }
+
+    @Override
+    default NerdColorSpace getColorSpace() {
+        return NerdColorSpace.HSB;
     }
 
     @Override

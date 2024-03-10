@@ -3,7 +3,7 @@ package com.brahvim.nerd.framework.color.hsb;
 import com.brahvim.nerd.framework.color.NerdNoAlphaColor;
 import com.brahvim.nerd.framework.color.rgb.NerdRgbColor;
 
-public class NerdNoAlphaHsbColor implements NerdNoAlphaColor {
+public class NerdNoAlphaHsbColor implements NerdHsbColor, NerdNoAlphaColor {
 
     public float hue, saturation = 255, brightness = 255;
 
@@ -62,36 +62,36 @@ public class NerdNoAlphaHsbColor implements NerdNoAlphaColor {
 
     // region Getters.
     @Override
-    public float getParam1() {
+    public float getHue() {
         return this.hue;
     }
 
     @Override
-    public float getParam2() {
+    public float getSaturation() {
         return this.saturation;
     }
 
     @Override
-    public float getParam3() {
+    public float getBrightness() {
         return this.brightness;
     }
     // endregion
 
     // region Setters.
     @Override
-    public NerdNoAlphaHsbColor setParam1(final float p_value) {
+    public NerdNoAlphaHsbColor setHue(final float p_value) {
         this.hue = p_value;
         return this;
     }
 
     @Override
-    public NerdNoAlphaHsbColor setParam2(final float p_value) {
+    public NerdNoAlphaHsbColor setSaturation(final float p_value) {
         this.saturation = p_value;
         return this;
     }
 
     @Override
-    public NerdNoAlphaHsbColor setParam3(final float p_value) {
+    public NerdNoAlphaHsbColor setBrightness(final float p_value) {
         this.brightness = p_value;
         return this;
     }
