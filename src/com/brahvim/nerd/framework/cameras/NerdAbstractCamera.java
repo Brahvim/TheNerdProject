@@ -2,8 +2,8 @@ package com.brahvim.nerd.framework.cameras;
 
 import java.util.Objects;
 
+import com.brahvim.nerd.framework.graphics_backends.NerdP3dGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 import com.brahvim.nerd.window_management.window_module_impls.NerdGlWindowModule;
 

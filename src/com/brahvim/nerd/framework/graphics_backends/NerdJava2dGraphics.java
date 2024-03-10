@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrapper.graphics_backends;
+package com.brahvim.nerd.framework.graphics_backends;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 

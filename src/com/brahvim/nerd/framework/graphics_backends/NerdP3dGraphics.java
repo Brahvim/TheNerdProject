@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrapper.graphics_backends;
+package com.brahvim.nerd.framework.graphics_backends;
 
 import java.util.ArrayList;
 import java.util.Objects;

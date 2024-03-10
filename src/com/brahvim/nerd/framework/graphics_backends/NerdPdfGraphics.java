@@ -1,15 +1,15 @@
-package com.brahvim.nerd.processing_wrapper.graphics_backends;
+package com.brahvim.nerd.framework.graphics_backends;
 
 import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
-import processing.svg.PGraphicsSVG;
+import processing.pdf.PGraphicsPDF;
 
-public class NerdSvgGraphics extends NerdAbstractGraphics<PGraphicsSVG> {
+public class NerdPdfGraphics extends NerdAbstractGraphics<PGraphicsPDF> {
 
     // region Utilitarian constructors.
-    protected NerdSvgGraphics(
-            final NerdSketch<PGraphicsSVG> p_sketch,
+    protected NerdPdfGraphics(
+            final NerdSketch<PGraphicsPDF> p_sketch,
             final int p_width,
             final int p_height,
             final String p_renderer,
@@ -17,37 +17,38 @@ public class NerdSvgGraphics extends NerdAbstractGraphics<PGraphicsSVG> {
         this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer, p_path));
     }
 
-    protected NerdSvgGraphics(final NerdSketch<PGraphicsSVG> p_sketch, final int p_width, final int p_height,
+    protected NerdPdfGraphics(final NerdSketch<PGraphicsPDF> p_sketch, final int p_width, final int p_height,
             final String p_renderer) {
         this(p_sketch, p_sketch.createGraphics(p_width, p_height, p_renderer));
     }
 
-    protected NerdSvgGraphics(final NerdSketch<PGraphicsSVG> p_sketch, final int p_width, final int p_height) {
+    protected NerdPdfGraphics(final NerdSketch<PGraphicsPDF> p_sketch, final int p_width, final int p_height) {
         this(p_sketch, p_sketch.createGraphics(p_width, p_height));
     }
 
-    protected NerdSvgGraphics(
-            final NerdSketch<PGraphicsSVG> p_sketch,
+    protected NerdPdfGraphics(
+            final NerdSketch<PGraphicsPDF> p_sketch,
             final float p_width,
             final float p_height) {
         this(p_sketch, p_sketch.createGraphics(p_width, p_height));
     }
 
-    protected NerdSvgGraphics(final NerdSketch<PGraphicsSVG> p_sketch, final float p_size) {
+    protected NerdPdfGraphics(final NerdSketch<PGraphicsPDF> p_sketch, final float p_size) {
         this(p_sketch, p_sketch.createGraphics(p_size));
     }
 
-    protected NerdSvgGraphics(final NerdSketch<PGraphicsSVG> p_sketch, final int p_size) {
+    protected NerdPdfGraphics(final NerdSketch<PGraphicsPDF> p_sketch, final int p_size) {
         this(p_sketch, p_sketch.createGraphics(p_size));
     }
 
-    protected NerdSvgGraphics(final NerdSketch<PGraphicsSVG> p_sketch) {
+    protected NerdPdfGraphics(final NerdSketch<PGraphicsPDF> p_sketch) {
         this(p_sketch, p_sketch.createGraphics());
     }
     // endregion
 
-    public NerdSvgGraphics(final NerdSketch<PGraphicsSVG> p_sketch, final PGraphicsSVG p_pGraphicsToWrap) {
+    public NerdPdfGraphics(final NerdSketch<PGraphicsPDF> p_sketch, final PGraphicsPDF p_pGraphicsToWrap) {
         super(p_sketch, p_pGraphicsToWrap);
+        super.GRAPHICS.nextPage();
     }
 
 }

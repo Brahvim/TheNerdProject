@@ -3,12 +3,12 @@ package com.brahvim.nerd.processing_wrapper;
 import java.awt.Image;
 import java.util.Objects;
 
-import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdFx2dGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdJava2dGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP2dGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdP3dGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdPdfGraphics;
-import com.brahvim.nerd.processing_wrapper.graphics_backends.NerdSvgGraphics;
+import com.brahvim.nerd.framework.graphics_backends.NerdFx2dGraphics;
+import com.brahvim.nerd.framework.graphics_backends.NerdJava2dGraphics;
+import com.brahvim.nerd.framework.graphics_backends.NerdP2dGraphics;
+import com.brahvim.nerd.framework.graphics_backends.NerdP3dGraphics;
+import com.brahvim.nerd.framework.graphics_backends.NerdPdfGraphics;
+import com.brahvim.nerd.framework.graphics_backends.NerdSvgGraphics;
 import com.brahvim.nerd.window_management.NerdInputModule;
 import com.brahvim.nerd.window_management.NerdWindowModule;
 
