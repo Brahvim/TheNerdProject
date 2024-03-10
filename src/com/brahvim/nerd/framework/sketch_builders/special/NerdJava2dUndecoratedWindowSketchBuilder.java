@@ -1,8 +1,8 @@
-package com.brahvim.nerd.processing_wrapper.sketch_builders.special;
+package com.brahvim.nerd.framework.sketch_builders.special;
 
+import com.brahvim.nerd.framework.sketch_builders.NerdJava2dSketchBuilder;
+import com.brahvim.nerd.framework.sketches.special.NerdJava2dUndecoratedWindowSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
-import com.brahvim.nerd.processing_wrapper.sketch_builders.NerdJava2dSketchBuilder;
-import com.brahvim.nerd.processing_wrapper.sketches.special.NerdJava2dUndecoratedWindowSketch;
 
 import processing.awt.PGraphicsJava2D;
 

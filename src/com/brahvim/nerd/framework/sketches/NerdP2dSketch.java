@@ -1,4 +1,4 @@
-package com.brahvim.nerd.processing_wrapper.sketches;
+package com.brahvim.nerd.framework.sketches;
 
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchSettings;

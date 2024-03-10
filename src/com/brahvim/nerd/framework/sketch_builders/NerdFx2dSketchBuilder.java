@@ -1,7 +1,7 @@
-package com.brahvim.nerd.processing_wrapper.sketch_builders;
+package com.brahvim.nerd.framework.sketch_builders;
 
+import com.brahvim.nerd.framework.sketches.NerdFx2dSketch;
 import com.brahvim.nerd.processing_wrapper.NerdSketchBuilder;
-import com.brahvim.nerd.processing_wrapper.sketches.NerdFx2dSketch;
 
 import processing.javafx.PGraphicsFX2D;
 
