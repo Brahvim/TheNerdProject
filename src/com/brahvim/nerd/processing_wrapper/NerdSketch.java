@@ -36,6 +36,7 @@ import processing.core.PImage;
 import processing.core.PShape;
 import processing.opengl.PJOGL;
 
+// Should this always've been a wrapper?! Abstraction is difficult...
 public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet implements NerdSketchAllWorkflowsListener {
 
 	// region Inner classes.

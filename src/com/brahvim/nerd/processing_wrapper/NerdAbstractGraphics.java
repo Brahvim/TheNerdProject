@@ -1,9 +1,9 @@
 package com.brahvim.nerd.processing_wrapper;
 
-import java.awt.Image;
 import java.util.Objects;
 
 import com.brahvim.nerd.framework.colors.NerdAlphaColor;
+import com.brahvim.nerd.framework.colors.NerdColor;
 import com.brahvim.nerd.framework.colors.NerdColorSpace;
 import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
 import com.brahvim.nerd.framework.colors.hsb.NerdAlphaHsbColor;
@@ -1693,19 +1693,19 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.ellipseMode(mode);
 	}
 
-	public void emissive(final int rgb) {
-		this.GRAPHICS.emissive(rgb);
-	}
-
-	public void emissive(final float gray) {
-		this.GRAPHICS.emissive(gray);
-	}
-
-	public void emissive(final float v1, final float v2, final float v3) {
-		this.GRAPHICS.emissive(v1, v2, v3);
-	}
-
 	// OpenGL-specific:
+	// public void emissive(final int rgb) {
+	// this.GRAPHICS.emissive(rgb);
+	// }
+
+	// public void emissive(final float gray) {
+	// this.GRAPHICS.emissive(gray);
+	// }
+
+	// public void emissive(final float v1, final float v2, final float v3) {
+	// this.GRAPHICS.emissive(v1, v2, v3);
+	// }
+
 	// public void endCamera() {
 	// this.GRAPHICS.endCamera();
 	// }
@@ -1848,6 +1848,18 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// TODO: Overload this for `NerdColor`s.
 	public int lerpColor(final int c1, final int c2, final float amt) {
 		return this.GRAPHICS.lerpColor(c1, c2, amt);
+	}
+
+	public int lerpColor(final NerdColor p_color1, final NerdColor p_color2, final float p_amount) {
+		// TODO: Deal with optimizing this! Good luck...
+		if (p_color1 instanceof final NerdCompactArgbColor c1
+				&& p_color2 instanceof final NerdCompactArgbColor c2) {
+			return this.lerpColor(c1.color, c2.color, p_amount);
+		} else
+			return this.GRAPHICS.lerpColor(
+					new NerdCompactArgbColor(p_color1),
+					new NerdCompactArgbColor(p_color2),
+					p_amount);
 	}
 
 	// OpenGL-specific:
@@ -2173,33 +2185,33 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.shearY(angle);
 	}
 
-	public void shininess(final float shine) {
-		this.GRAPHICS.shininess(shine);
-	}
+	// OpenGL-specific:
+	// public void shininess(final float shine) {
+	// this.GRAPHICS.shininess(shine);
+	// }
 
-	// TODO: Remove? This is to be set when the sketch begins, anyway...
-	public void smooth() {
-		this.GRAPHICS.smooth();
-	}
+	// Can be set *only* when the sketch begins, so...
+	// public void smooth() {
+	// this.GRAPHICS.smooth();
+	// }
 
-	public void smooth(final int quality) {
-		this.GRAPHICS.smooth(quality);
-	}
-
-	// TODO: Move all light and material functions to `NerdP3dGraphics`.
-	public void specular(final int rgb) {
-		this.GRAPHICS.specular(rgb);
-	}
-
-	public void specular(final float gray) {
-		this.GRAPHICS.specular(gray);
-	}
-
-	public void specular(final float v1, final float v2, final float v3) {
-		this.GRAPHICS.specular(v1, v2, v3);
-	}
+	// public void smooth(final int quality) {
+	// this.GRAPHICS.smooth(quality);
+	// }
 
 	// OpenGL-specific:
+	// public void specular(final int rgb) {
+	// this.GRAPHICS.specular(rgb);
+	// }
+
+	// public void specular(final float gray) {
+	// this.GRAPHICS.specular(gray);
+	// }
+
+	// public void specular(final float v1, final float v2, final float v3) {
+	// this.GRAPHICS.specular(v1, v2, v3);
+	// }
+
 	// public void sphere(final float r) {
 	// this.GRAPHICS.sphere(r);
 	// }
@@ -2212,7 +2224,6 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// this.GRAPHICS.sphereDetail(ures, vres);
 	// }
 
-	// OpenGL-specific:
 	// public void spotLight(final float v1, final float v2, final float v3, final
 	// float x, final float y, final float z,
 	// final float nx, final float ny, final float nz, final float angle, final

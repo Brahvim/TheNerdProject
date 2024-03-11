@@ -1,5 +1,7 @@
 package com.brahvim.nerd.framework;
 
+import java.util.Objects;
+
 import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
 import com.brahvim.nerd.framework.colors.rgb.NerdSplitRgbColor;
 
@@ -10,6 +12,7 @@ public class NerdMaterial {
     /*   */ ambience = new NerdSplitRgbColor(),
             emission = new NerdSplitRgbColor(),
             specular = new NerdSplitRgbColor();
+    public static final String NULL_VALUE_MESSAGE = "Don't put `null`s here!";
 
     // region Constructors.
     public NerdMaterial() {
@@ -58,22 +61,23 @@ public class NerdMaterial {
 
     // region Setters.
     public NerdMaterial setShininess(final float p_shininess) {
+        // I think there's a limit to this, but anyway.
         this.shininess = p_shininess;
         return this;
     }
 
     public NerdMaterial setAmbience(final NerdNoAlphaColor p_ambience) {
-        this.ambience = p_ambience;
+        this.ambience = Objects.requireNonNull(p_ambience, NerdMaterial.NULL_VALUE_MESSAGE);
         return this;
     }
 
     public NerdMaterial setEmission(final NerdNoAlphaColor p_emission) {
-        this.emission = p_emission;
+        this.emission = Objects.requireNonNull(p_emission, NerdMaterial.NULL_VALUE_MESSAGE);
         return this;
     }
 
     public NerdMaterial setSpecular(final NerdNoAlphaColor p_specular) {
-        this.specular = p_specular;
+        this.specular = Objects.requireNonNull(p_specular, NerdMaterial.NULL_VALUE_MESSAGE);
         return this;
     }
     // endregion
