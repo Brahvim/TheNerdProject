@@ -1,9 +1,9 @@
 package com.brahvim.nerd.processing_wrapper;
 
+import java.awt.Image;
 import java.util.Objects;
 
 import com.brahvim.nerd.framework.colors.NerdAlphaColor;
-import com.brahvim.nerd.framework.colors.NerdColor;
 import com.brahvim.nerd.framework.colors.NerdColorSpace;
 import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
 import com.brahvim.nerd.framework.colors.hsb.NerdAlphaHsbColor;
@@ -1850,17 +1850,18 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		return this.GRAPHICS.lerpColor(c1, c2, amt);
 	}
 
-	public int lerpColor(final NerdColor p_color1, final NerdColor p_color2, final float p_amount) {
-		// TODO: Deal with optimizing this! Good luck...
-		if (p_color1 instanceof final NerdCompactArgbColor c1
-				&& p_color2 instanceof final NerdCompactArgbColor c2) {
-			return this.lerpColor(c1.color, c2.color, p_amount);
-		} else
-			return this.GRAPHICS.lerpColor(
-					new NerdCompactArgbColor(p_color1),
-					new NerdCompactArgbColor(p_color2),
-					p_amount);
-	}
+	// public int lerpColor(final NerdColor p_color1, final NerdColor p_color2,
+	// final float p_amount) {
+	// // TODO: Deal with optimizing this! Good luck...
+	// if (p_color1 instanceof final NerdCompactArgbColor c1
+	// && p_color2 instanceof final NerdCompactArgbColor c2) {
+	// return this.lerpColor(c1.color, c2.color, p_amount);
+	// } else
+	// return this.GRAPHICS.lerpColor(
+	// new NerdCompactArgbColor(p_color1),
+	// new NerdCompactArgbColor(p_color2),
+	// p_amount);
+	// }
 
 	// OpenGL-specific:
 	// public void lightFalloff(final float constant, final float linear, final
