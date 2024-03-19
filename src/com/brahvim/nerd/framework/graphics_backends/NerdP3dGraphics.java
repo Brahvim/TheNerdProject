@@ -151,6 +151,8 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 
     @Override
     protected void preDrawImpl() {
+        this.applyLights();
+
         if (this.autoApplyCameraMatrix)
             this.applyCurrentCamera();
     }

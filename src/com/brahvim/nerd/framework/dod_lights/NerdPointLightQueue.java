@@ -1,8 +1,14 @@
 package com.brahvim.nerd.framework.dod_lights;
 
+import java.util.ArrayList;
+
+import com.brahvim.nerd.framework.dod_lights.NerdSpotLightQueue.NerdSpotLight;
+
 import processing.core.PVector;
 
 public class NerdPointLightQueue implements NerdLightSlotEntry {
+
+    private final ArrayList<NerdSpotLight> QUEUE = new ArrayList<>(2);
 
     public static class NerdPointLight implements NerdLightSlotEntry {
 
