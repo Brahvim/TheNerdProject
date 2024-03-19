@@ -81,8 +81,8 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     // ...These two are NOT lazy-initialized.
     // Sometimes, DOD requires storing extras like this so everything is contiguous
     // and less dynamic:
-    protected Object[] lightSlots = new Object[8];
-    protected ArrayList<? extends Object>[] lightSlotsArrays = new ArrayList<?>[8];
+    protected final Object[] lightSlots = new Object[8];
+    protected final ArrayList<? extends Object>[] lightSlotsArrays = new ArrayList<?>[8];
 
     protected final ArrayList<ArrayList<NerdSpotLight>> SPOT_LIGHTS = new ArrayList<>(0);
     protected final ArrayList<ArrayList<NerdPointLight>> POINT_LIGHTS = new ArrayList<>(0);
@@ -158,32 +158,36 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
         // if (!this.lightApiObjectsExist)
         // this.initLightApiObjects();
 
-        this.lightSlots[p_slot.ordinal()] = p_light;
-        this.lightSlotsArrays[p_slot.ordinal()] = this.DIRECTIONAL_LIGHTS;
+        final int slotNumber = p_slot.ordinal();
+        this.lightSlots[slotNumber] = p_light;
+        this.lightSlotsArrays[slotNumber] = this.DIRECTIONAL_LIGHTS;
     }
 
     public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdAmbientLight p_light) {
         // if (!this.lightApiObjectsExist)
         // this.initLightApiObjects();
 
-        this.lightSlots[p_slot.ordinal()] = p_light;
-        this.lightSlotsArrays[p_slot.ordinal()] = this.AMBIENT_LIGHTS;
+        final int slotNumber = p_slot.ordinal();
+        this.lightSlots[slotNumber] = p_light;
+        this.lightSlotsArrays[slotNumber] = this.AMBIENT_LIGHTS;
     }
 
     public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdPointLight p_light) {
         // if (!this.lightApiObjectsExist)
         // this.initLightApiObjects();
 
-        this.lightSlots[p_slot.ordinal()] = p_light;
-        this.lightSlotsArrays[p_slot.ordinal()] = this.POINT_LIGHTS;
+        final int slotNumber = p_slot.ordinal();
+        this.lightSlots[slotNumber] = p_light;
+        this.lightSlotsArrays[slotNumber] = this.POINT_LIGHTS;
     }
 
     public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdSpotLight p_light) {
         // if (!this.lightApiObjectsExist)
         // this.initLightApiObjects();
 
-        this.lightSlots[p_slot.ordinal()] = p_light;
-        this.lightSlotsArrays[p_slot.ordinal()] = this.SPOT_LIGHTS;
+        final int slotNumber = p_slot.ordinal();
+        this.lightSlots[slotNumber] = p_light;
+        this.lightSlotsArrays[slotNumber] = this.SPOT_LIGHTS;
     }
     // endregion
 
