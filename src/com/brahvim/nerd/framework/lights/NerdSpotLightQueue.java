@@ -1,4 +1,4 @@
-package com.brahvim.nerd.framework.dod_lights;
+package com.brahvim.nerd.framework.lights;
 
 import java.util.ArrayList;
 

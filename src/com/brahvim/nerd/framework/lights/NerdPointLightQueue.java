@@ -1,8 +1,8 @@
-package com.brahvim.nerd.framework.dod_lights;
+package com.brahvim.nerd.framework.lights;
 
 import java.util.ArrayList;
 
-import com.brahvim.nerd.framework.dod_lights.NerdSpotLightQueue.NerdSpotLight;
+import com.brahvim.nerd.framework.lights.NerdSpotLightQueue.NerdSpotLight;
 
 import processing.core.PVector;
 
