@@ -7,10 +7,13 @@ import com.brahvim.nerd.framework.cameras.NerdAbstractCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCamera;
 import com.brahvim.nerd.framework.cameras.NerdBasicCameraBuilder;
 import com.brahvim.nerd.framework.cameras.NerdFlyCamera;
-import com.brahvim.nerd.framework.lights.NerdAmbientLight;
-import com.brahvim.nerd.framework.lights.NerdDirectionalLight;
-import com.brahvim.nerd.framework.lights.NerdPointLight;
-import com.brahvim.nerd.framework.lights.NerdSpotLight;
+import com.brahvim.nerd.framework.dod_lights.NerdAmbientLight;
+import com.brahvim.nerd.framework.dod_lights.NerdDirectionalLight;
+import com.brahvim.nerd.framework.dod_lights.NerdLightSlotEntry;
+import com.brahvim.nerd.framework.dod_lights.NerdPointLightQueue;
+import com.brahvim.nerd.framework.dod_lights.NerdPointLightQueue.NerdPointLight;
+import com.brahvim.nerd.framework.dod_lights.NerdSpotLightQueue;
+import com.brahvim.nerd.framework.dod_lights.NerdSpotLightQueue.NerdSpotLight;
 import com.brahvim.nerd.math.NerdUnprojector;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
@@ -79,13 +82,16 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 
     // region Light-slots API.
     // ...These two are NOT lazy-initialized.
-    // Sometimes, DOD requires storing extras like this so everything is contiguous
-    // and less dynamic:
-    protected final Object[] lightSlots = new Object[8];
+    // I'd have done that, and that would've made this code much faster,
+    // but I didn't since it would require a check when adding lights...:
+    protected final NerdLightSlotEntry[] lightSlots = new NerdLightSlotEntry[8];
     protected final ArrayList<? extends Object>[] lightSlotsArrays = new ArrayList<?>[8];
 
-    protected final ArrayList<ArrayList<NerdSpotLight>> SPOT_LIGHTS = new ArrayList<>(0);
-    protected final ArrayList<ArrayList<NerdPointLight>> POINT_LIGHTS = new ArrayList<>(0);
+    protected final ArrayList<NerdSpotLight> SPOT_LIGHTS = new ArrayList<>(0);
+    protected final ArrayList<NerdPointLight> POINT_LIGHTS = new ArrayList<>(0);
+
+    protected final ArrayList<NerdSpotLightQueue> SPOT_LIGHTS_QUEUES = new ArrayList<>(0);
+    protected final ArrayList<NerdPointLightQueue> POINT_LIGHTS_QUEUES = new ArrayList<>(0);
 
     protected final ArrayList<NerdAmbientLight> AMBIENT_LIGHTS = new ArrayList<>(0);
     protected final ArrayList<NerdDirectionalLight> DIRECTIONAL_LIGHTS = new ArrayList<>(0);
@@ -150,44 +156,92 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
     }
 
     // region Lighting methods.
+    // region `addLight()` overloads.
     // I'm not going for `public`, `final` instances of `NerdLightSlot`s because
     // this style allows users to make new types of lights, and use them here
     // without having to worry that the `NerdLightSlot` instances already exist in
     // this class, and that access to them cannot be removed entirely.
-    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdDirectionalLight p_light) {
+    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot,
+            final NerdDirectionalLight p_light) {
         // if (!this.lightApiObjectsExist)
         // this.initLightApiObjects();
 
         final int slotNumber = p_slot.ordinal();
+        this.DIRECTIONAL_LIGHTS.add(p_light);
         this.lightSlots[slotNumber] = p_light;
         this.lightSlotsArrays[slotNumber] = this.DIRECTIONAL_LIGHTS;
     }
 
-    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdAmbientLight p_light) {
+    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot,
+            final NerdAmbientLight p_light) {
         // if (!this.lightApiObjectsExist)
         // this.initLightApiObjects();
 
         final int slotNumber = p_slot.ordinal();
+        this.AMBIENT_LIGHTS.add(p_light);
         this.lightSlots[slotNumber] = p_light;
         this.lightSlotsArrays[slotNumber] = this.AMBIENT_LIGHTS;
     }
 
-    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdPointLight p_light) {
+    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdSpotLightQueue p_lightQueue) {
         // if (!this.lightApiObjectsExist)
         // this.initLightApiObjects();
 
         final int slotNumber = p_slot.ordinal();
-        this.lightSlots[slotNumber] = p_light;
-        this.lightSlotsArrays[slotNumber] = this.POINT_LIGHTS;
+        this.lightSlots[slotNumber] = p_lightQueue;
+        this.lightSlotsArrays[slotNumber] = this.SPOT_LIGHTS;
     }
 
-    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdSpotLight p_light) {
+    public void addLight(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdPointLightQueue p_lightQueue) {
         // if (!this.lightApiObjectsExist)
         // this.initLightApiObjects();
 
         final int slotNumber = p_slot.ordinal();
-        this.lightSlots[slotNumber] = p_light;
-        this.lightSlotsArrays[slotNumber] = this.SPOT_LIGHTS;
+        this.lightSlots[slotNumber] = p_lightQueue;
+        this.lightSlotsArrays[slotNumber] = this.POINT_LIGHTS;
+    }
+    // endregion
+
+    // region Internal light processing methods.
+    public void applyLights() {
+        if (!this.SPOT_LIGHTS_QUEUES.isEmpty()) {
+        }
+
+        if (!this.POINT_LIGHTS_QUEUES.isEmpty()) {
+        }
+
+        for (final NerdSpotLight l : this.SPOT_LIGHTS)
+            super.GRAPHICS.spotLight(
+                    l.COLOR.x, l.COLOR.y, l.COLOR.z,
+                    l.POSITION.x, l.POSITION.y, l.POSITION.z,
+                    l.DIRECTION.x, l.DIRECTION.y, l.DIRECTION.z,
+                    l.angle, l.concentration);
+
+        for (final NerdPointLight l : this.POINT_LIGHTS)
+            super.GRAPHICS.pointLight(
+                    l.COLOR.x, l.COLOR.y, l.COLOR.z,
+                    l.POSITION.x, l.POSITION.y, l.POSITION.z);
+
+        for (final NerdAmbientLight l : this.AMBIENT_LIGHTS)
+            super.GRAPHICS.ambientLight(
+                    l.COLOR.x, l.COLOR.y, l.COLOR.z,
+                    l.POSITION.x, l.POSITION.y, l.POSITION.z);
+
+        for (final NerdDirectionalLight l : this.DIRECTIONAL_LIGHTS)
+            super.GRAPHICS.directionalLight(
+                    l.COLOR.x, l.COLOR.y, l.COLOR.z,
+                    l.DIRECTION.x, l.DIRECTION.y, l.DIRECTION.z);
+    }
+    // endregion
+
+    public void clearLightSlot(final NerdP3dGraphics.NerdLightSlot p_slot) {
+        this.lightSlots[p_slot.ordinal()] = null;
+        // this.lightSlotsArrays[p_slot.ordinal()] = null; // Not needed, is it?
+        // It's not like these arrays need to disappear from memory before this method.
+    }
+
+    public NerdLightSlotEntry getLight(final NerdP3dGraphics.NerdLightSlot p_slot) {
+        return this.lightSlots[p_slot.ordinal()];
     }
     // endregion
 
