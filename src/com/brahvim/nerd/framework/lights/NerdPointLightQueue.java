@@ -82,6 +82,7 @@ public class NerdPointLightQueue implements NerdLightSlotEntry {
 	// endregion
 
 	// region Sorting function management.
+	/** @return The light that gets to the top upon sorting. */
 	public NerdPointLight sort() {
 		if (this.QUEUE.isEmpty())
 			throw new IndexOutOfBoundsException("This `" +

@@ -208,19 +208,19 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 	// region Internal light processing methods.
 	public void applyLights() {
 		for (final var q : this.SPOT_LIGHTS_QUEUES) {
-			final var winningLight = q.sort();
+			final var winner = q.sort();
 			super.GRAPHICS.spotLight(
-					winningLight.COLOR.x, winningLight.COLOR.y, winningLight.COLOR.z,
-					winningLight.POSITION.x, winningLight.POSITION.y, winningLight.POSITION.z,
-					winningLight.DIRECTION.x, winningLight.DIRECTION.y, winningLight.DIRECTION.z,
-					winningLight.angle, winningLight.concentration);
+					winner.COLOR.x, winner.COLOR.y, winner.COLOR.z,
+					winner.POSITION.x, winner.POSITION.y, winner.POSITION.z,
+					winner.DIRECTION.x, winner.DIRECTION.y, winner.DIRECTION.z,
+					winner.angle, winner.concentration);
 		}
 
 		for (final var q : this.POINT_LIGHTS_QUEUES) {
-			final var winningLight = q.sort();
+			final var winner = q.sort();
 			super.GRAPHICS.pointLight(
-					winningLight.COLOR.x, winningLight.COLOR.y, winningLight.COLOR.z,
-					winningLight.POSITION.x, winningLight.POSITION.y, winningLight.POSITION.z);
+					winner.COLOR.x, winner.COLOR.y, winner.COLOR.z,
+					winner.POSITION.x, winner.POSITION.y, winner.POSITION.z);
 		}
 
 		for (final var l : this.SPOT_LIGHTS)
