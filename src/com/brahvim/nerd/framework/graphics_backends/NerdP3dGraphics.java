@@ -207,30 +207,40 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 
 	// region Internal light processing methods.
 	public void applyLights() {
-		if (!this.SPOT_LIGHTS_QUEUES.isEmpty()) {
+		for (final var q : this.SPOT_LIGHTS_QUEUES) {
+			final var winningLight = q.sort();
+			super.GRAPHICS.spotLight(
+					winningLight.COLOR.x, winningLight.COLOR.y, winningLight.COLOR.z,
+					winningLight.POSITION.x, winningLight.POSITION.y, winningLight.POSITION.z,
+					winningLight.DIRECTION.x, winningLight.DIRECTION.y, winningLight.DIRECTION.z,
+					winningLight.angle, winningLight.concentration);
 		}
 
-		if (!this.POINT_LIGHTS_QUEUES.isEmpty()) {
+		for (final var q : this.POINT_LIGHTS_QUEUES) {
+			final var winningLight = q.sort();
+			super.GRAPHICS.pointLight(
+					winningLight.COLOR.x, winningLight.COLOR.y, winningLight.COLOR.z,
+					winningLight.POSITION.x, winningLight.POSITION.y, winningLight.POSITION.z);
 		}
 
-		for (final NerdSpotLight l : this.SPOT_LIGHTS)
+		for (final var l : this.SPOT_LIGHTS)
 			super.GRAPHICS.spotLight(
 					l.COLOR.x, l.COLOR.y, l.COLOR.z,
 					l.POSITION.x, l.POSITION.y, l.POSITION.z,
 					l.DIRECTION.x, l.DIRECTION.y, l.DIRECTION.z,
 					l.angle, l.concentration);
 
-		for (final NerdPointLight l : this.POINT_LIGHTS)
+		for (final var l : this.POINT_LIGHTS)
 			super.GRAPHICS.pointLight(
 					l.COLOR.x, l.COLOR.y, l.COLOR.z,
 					l.POSITION.x, l.POSITION.y, l.POSITION.z);
 
-		for (final NerdAmbientLight l : this.AMBIENT_LIGHTS)
+		for (final var l : this.AMBIENT_LIGHTS)
 			super.GRAPHICS.ambientLight(
 					l.COLOR.x, l.COLOR.y, l.COLOR.z,
 					l.POSITION.x, l.POSITION.y, l.POSITION.z);
 
-		for (final NerdDirectionalLight l : this.DIRECTIONAL_LIGHTS)
+		for (final var l : this.DIRECTIONAL_LIGHTS)
 			super.GRAPHICS.directionalLight(
 					l.COLOR.x, l.COLOR.y, l.COLOR.z,
 					l.DIRECTION.x, l.DIRECTION.y, l.DIRECTION.z);
