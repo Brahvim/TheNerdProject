@@ -26,21 +26,21 @@ public class NerdSpotLightQueue implements NerdLightSlotEntry {
 
 	}
 
-	public static class NerdSpotLightDistanceSorter implements Comparator<NerdSpotLight> {
+	public static class NerdSpotLightDistanceComparator implements Comparator<NerdSpotLight> {
 
 		// region Fields.
 		public static final Comparator<NerdSpotLight> DEFAULT_EQUALS_CASE_COMPARATOR = (a, b) -> 0;
 
-		public Comparator<NerdSpotLight> equalsCaseComparator = NerdSpotLightDistanceSorter.DEFAULT_EQUALS_CASE_COMPARATOR;
+		public Comparator<NerdSpotLight> equalsCaseComparator = NerdSpotLightDistanceComparator.DEFAULT_EQUALS_CASE_COMPARATOR;
 
 		private float centerVecMagSq;
 		// endregion
 
-		public NerdSpotLightDistanceSorter(final PVector p_center) {
+		public NerdSpotLightDistanceComparator(final PVector p_center) {
 			this.centerVecMagSq = p_center.magSq();
 		}
 
-		public NerdSpotLightDistanceSorter(
+		public NerdSpotLightDistanceComparator(
 				final PVector p_center,
 				final Comparator<NerdSpotLight> p_equalsCaseComparator) {
 			this(p_center);
@@ -71,21 +71,21 @@ public class NerdSpotLightQueue implements NerdLightSlotEntry {
 
 	}
 
-	public static class NerdSpotLightDirectionSorter implements Comparator<NerdSpotLight> {
+	public static class NerdSpotLightDirectionComparator implements Comparator<NerdSpotLight> {
 
 		// region Fields.
 		public static final Comparator<NerdSpotLight> DEFAULT_EQUALS_CASE_COMPARATOR = (a, b) -> 0;
 
-		public Comparator<NerdSpotLight> equalsCaseComparator = NerdSpotLightDirectionSorter.DEFAULT_EQUALS_CASE_COMPARATOR;
+		public Comparator<NerdSpotLight> equalsCaseComparator = NerdSpotLightDirectionComparator.DEFAULT_EQUALS_CASE_COMPARATOR;
 
 		private float dirVecComponentSum;
 		// endregion
 
-		public NerdSpotLightDirectionSorter(final PVector p_center) {
+		public NerdSpotLightDirectionComparator(final PVector p_center) {
 			this.setDirection(p_center);
 		}
 
-		public NerdSpotLightDirectionSorter(
+		public NerdSpotLightDirectionComparator(
 				final PVector p_center,
 				final Comparator<NerdSpotLight> p_equalsCaseComparator) {
 			this.setDirection(p_center);
@@ -122,6 +122,7 @@ public class NerdSpotLightQueue implements NerdLightSlotEntry {
 	// endregion
 
 	private final List<NerdSpotLight> QUEUE = new ArrayList<>(2);
+
 	private Comparator<NerdSpotLight> sortingFunction;
 
 	// region Light management.
