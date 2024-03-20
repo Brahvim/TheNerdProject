@@ -8,14 +8,14 @@ import processing.core.PVector;
 
 public class NerdPointLightQueue implements NerdLightSlotEntry {
 
-    private final ArrayList<NerdSpotLight> QUEUE = new ArrayList<>(2);
+	public static class NerdPointLight implements NerdLightSlotEntry {
 
-    public static class NerdPointLight implements NerdLightSlotEntry {
+		public final PVector
+		/*   */ POSITION = new PVector(),
+				COLOR = new PVector();
 
-        public final PVector
-        /*   */ POSITION = new PVector(),
-                COLOR = new PVector();
+	}
 
-    }
+	private final ArrayList<NerdSpotLight> QUEUE = new ArrayList<>(2);
 
 }

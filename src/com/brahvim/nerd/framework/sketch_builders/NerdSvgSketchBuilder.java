@@ -7,25 +7,25 @@ import processing.svg.PGraphicsSVG;
 
 public class NerdSvgSketchBuilder extends NerdSketchBuilder<PGraphicsSVG> {
 
-    public NerdSvgSketchBuilder() {
-        super(PGraphicsSVG.class);
-        super.sketchConstructor = NerdSvgSketch::new;
-    }
+	public NerdSvgSketchBuilder() {
+		super(PGraphicsSVG.class);
+		super.sketchConstructor = NerdSvgSketch::new;
+	}
 
-    public NerdSvgSketchBuilder(
-            final NerdSketchBuilder.NerdSketchModulesSetConsumer<PGraphicsSVG> p_modulesSet) {
-        super(PGraphicsSVG.class, p_modulesSet);
-    }
+	public NerdSvgSketchBuilder(
+			final NerdSketchBuilder.NerdSketchModulesSetConsumer<PGraphicsSVG> p_modulesSet) {
+		super(PGraphicsSVG.class, p_modulesSet);
+	}
 
-    public NerdSvgSketchBuilder(
-            final NerdSketchBuilder.NerdSketchConstructorFunction<PGraphicsSVG> p_sketchConstructor) {
-        super(PGraphicsSVG.class, p_sketchConstructor);
-    }
+	public NerdSvgSketchBuilder(
+			final NerdSketchBuilder.NerdSketchConstructorFunction<PGraphicsSVG> p_sketchConstructor) {
+		super(PGraphicsSVG.class, p_sketchConstructor);
+	}
 
-    public NerdSvgSketchBuilder(
-            final NerdSketchBuilder.NerdSketchConstructorFunction<PGraphicsSVG> p_sketchConstructor,
-            final NerdSketchBuilder.NerdSketchModulesSetConsumer<PGraphicsSVG> p_modulesSet) {
-        super(PGraphicsSVG.class, p_sketchConstructor, p_modulesSet);
-    }
+	public NerdSvgSketchBuilder(
+			final NerdSketchBuilder.NerdSketchConstructorFunction<PGraphicsSVG> p_sketchConstructor,
+			final NerdSketchBuilder.NerdSketchModulesSetConsumer<PGraphicsSVG> p_modulesSet) {
+		super(PGraphicsSVG.class, p_sketchConstructor, p_modulesSet);
+	}
 
 }

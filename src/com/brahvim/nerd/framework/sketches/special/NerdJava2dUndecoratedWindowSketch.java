@@ -13,33 +13,33 @@ import processing.core.PSurface;
 
 public class NerdJava2dUndecoratedWindowSketch extends NerdSketch<PGraphicsJava2D> {
 
-    protected NerdJava2dWindowModule window;
+	protected NerdJava2dWindowModule window;
 
-    public NerdJava2dUndecoratedWindowSketch(final NerdSketchSettings<PGraphicsJava2D> p_settings) {
-        super(p_settings);
-    }
+	public NerdJava2dUndecoratedWindowSketch(final NerdSketchSettings<PGraphicsJava2D> p_settings) {
+		super(p_settings);
+	}
 
-    @Override
-    public void postSetup() {
-        super.postSetup();
+	@Override
+	public void postSetup() {
+		super.postSetup();
 
-        // Our specialty!:
-        this.window = (NerdJava2dWindowModule) super.GENERIC_WINDOW;
-        this.window.stayUndecorated = true;
-    }
+		// Our specialty!:
+		this.window = (NerdJava2dWindowModule) super.GENERIC_WINDOW;
+		this.window.stayUndecorated = true;
+	}
 
-    @Override
-    // To remove borders WITHOUT using `fullScreen()`:
-    protected PSurface initSurface() {
-        final PSurface toRet = super.initSurface();
-        final PSurfaceAWT.SmoothCanvas smoothCanvas = (SmoothCanvas) ((PSurfaceAWT) this.surface).getNative();
+	@Override
+	// To remove borders WITHOUT using `fullScreen()`:
+	protected PSurface initSurface() {
+		final PSurface toRet = super.initSurface();
+		final PSurfaceAWT.SmoothCanvas smoothCanvas = (SmoothCanvas) ((PSurfaceAWT) this.surface).getNative();
 
-        final Frame frame = smoothCanvas.getFrame();
-        frame.removeNotify();
-        frame.setUndecorated(true);
-        frame.addNotify();
+		final Frame frame = smoothCanvas.getFrame();
+		frame.removeNotify();
+		frame.setUndecorated(true);
+		frame.addNotify();
 
-        return toRet;
-    }
+		return toRet;
+	}
 
 }

@@ -7,8 +7,8 @@ import processing.awt.PGraphicsJava2D;
 
 public class NerdJava2dSketch extends NerdSketch<PGraphicsJava2D> {
 
-    public NerdJava2dSketch(final NerdSketchSettings<PGraphicsJava2D> p_settings) {
-        super(p_settings);
-    }
+	public NerdJava2dSketch(final NerdSketchSettings<PGraphicsJava2D> p_settings) {
+		super(p_settings);
+	}
 
 }

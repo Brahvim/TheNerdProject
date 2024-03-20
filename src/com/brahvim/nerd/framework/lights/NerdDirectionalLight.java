@@ -4,8 +4,8 @@ import processing.core.PVector;
 
 public class NerdDirectionalLight implements NerdLightSlotEntry {
 
-    public final PVector
-    /*   */ DIRECTION = new PVector(),
-            COLOR = new PVector();
+	public final PVector
+	/*   */ DIRECTION = new PVector(),
+			COLOR = new PVector();
 
 }

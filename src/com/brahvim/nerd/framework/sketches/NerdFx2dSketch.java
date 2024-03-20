@@ -7,8 +7,8 @@ import processing.javafx.PGraphicsFX2D;
 
 public class NerdFx2dSketch extends NerdSketch<PGraphicsFX2D> {
 
-    public NerdFx2dSketch(final NerdSketchSettings<PGraphicsFX2D> p_settings) {
-        super(p_settings);
-    }
+	public NerdFx2dSketch(final NerdSketchSettings<PGraphicsFX2D> p_settings) {
+		super(p_settings);
+	}
 
 }

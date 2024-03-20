@@ -7,8 +7,8 @@ import processing.pdf.PGraphicsPDF;
 
 public class NerdPdfSketch extends NerdSketch<PGraphicsPDF> {
 
-    public NerdPdfSketch(final NerdSketchSettings<PGraphicsPDF> p_settings) {
-        super(p_settings);
-    }
+	public NerdPdfSketch(final NerdSketchSettings<PGraphicsPDF> p_settings) {
+		super(p_settings);
+	}
 
 }

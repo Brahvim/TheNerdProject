@@ -7,8 +7,8 @@ import processing.opengl.PGraphics3D;
 
 public class NerdP3dSketch extends NerdSketch<PGraphics3D> {
 
-    public NerdP3dSketch(final NerdSketchSettings<PGraphics3D> p_settings) {
-        super(p_settings);
-    }
+	public NerdP3dSketch(final NerdSketchSettings<PGraphics3D> p_settings) {
+		super(p_settings);
+	}
 
 }

@@ -66,7 +66,7 @@ public class NerdLoadableClass<ClassT> {
 	public URL getUrl() {
 		try {
 			return new URL(this.url.toString());
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 		}
 		return null;

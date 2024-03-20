@@ -7,8 +7,8 @@ import processing.svg.PGraphicsSVG;
 
 public class NerdSvgSketch extends NerdSketch<PGraphicsSVG> {
 
-    public NerdSvgSketch(final NerdSketchSettings<PGraphicsSVG> p_settings) {
-        super(p_settings);
-    }
+	public NerdSvgSketch(final NerdSketchSettings<PGraphicsSVG> p_settings) {
+		super(p_settings);
+	}
 
 }

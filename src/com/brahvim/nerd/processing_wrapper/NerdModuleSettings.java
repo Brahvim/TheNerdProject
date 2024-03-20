@@ -4,9 +4,9 @@ import processing.core.PGraphics;
 
 public abstract class NerdModuleSettings<SketchPGraphicsT extends PGraphics, ModuleT extends NerdModule<SketchPGraphicsT>> { // NOSONAR!
 
-    protected NerdModuleSettings() {
-    }
+	protected NerdModuleSettings() {
+	}
 
-    public abstract <RetModuleClassT extends ModuleT> Class<RetModuleClassT> getNerdModuleClass();
+	public abstract <RetModuleClassT extends ModuleT> Class<RetModuleClassT> getNerdModuleClass();
 
 }

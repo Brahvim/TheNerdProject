@@ -7,8 +7,8 @@ import processing.opengl.PGraphics2D;
 
 public class NerdP2dSketch extends NerdSketch<PGraphics2D> {
 
-    public NerdP2dSketch(final NerdSketchSettings<PGraphics2D> p_settings) {
-        super(p_settings);
-    }
+	public NerdP2dSketch(final NerdSketchSettings<PGraphics2D> p_settings) {
+		super(p_settings);
+	}
 
 }

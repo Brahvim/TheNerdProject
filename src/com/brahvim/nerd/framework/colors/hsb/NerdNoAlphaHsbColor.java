@@ -5,96 +5,96 @@ import com.brahvim.nerd.framework.colors.rgb.NerdRgbColor;
 
 public class NerdNoAlphaHsbColor implements NerdHsbColor, NerdNoAlphaColor {
 
-    public float hue, saturation = 255, brightness = 255;
+	public float hue, saturation = 255, brightness = 255;
 
-    // region Constructors.
-    public NerdNoAlphaHsbColor() {
-    }
+	// region Constructors.
+	public NerdNoAlphaHsbColor() {
+	}
 
-    public NerdNoAlphaHsbColor(final float p_hue) {
-        this.hue = p_hue;
-    }
+	public NerdNoAlphaHsbColor(final float p_hue) {
+		this.hue = p_hue;
+	}
 
-    public NerdNoAlphaHsbColor(final NerdRgbColor p_rgbColor) {
-        // Normalize!:
-        final float r = p_rgbColor.getRed() / 255.0f;
-        final float g = p_rgbColor.getGreen() / 255.0f;
-        final float b = p_rgbColor.getBlue() / 255.0f;
+	public NerdNoAlphaHsbColor(final NerdRgbColor p_rgbColor) {
+		// Normalize!:
+		final float r = p_rgbColor.getRed() / 255.0f;
+		final float g = p_rgbColor.getGreen() / 255.0f;
+		final float b = p_rgbColor.getBlue() / 255.0f;
 
-        // Max and min for some reason:
-        final float max = Math.max(Math.max(r, g), b);
-        final float min = Math.min(Math.min(r, g), b);
+		// Max and min for some reason:
+		final float max = Math.max(Math.max(r, g), b);
+		final float min = Math.min(Math.min(r, g), b);
 
-        // Calculate brightness:
-        this.brightness = max;
+		// Calculate brightness:
+		this.brightness = max;
 
-        // Calculate saturation:
-        this.saturation = max == 0 ? 0 : (max - min) / max;
+		// Calculate saturation:
+		this.saturation = max == 0 ? 0 : (max - min) / max;
 
-        // Calculate hue:
-        if (max == min) {
-            this.hue = 0; // Achromatic component (gray).
-            return;
-        }
+		// Calculate hue:
+		if (max == min) {
+			this.hue = 0; // Achromatic component (gray).
+			return;
+		}
 
-        final float delta = max - min;
-        if (max == r)
-            this.hue = (g - b) / delta + (g < b ? 6 : 0);
-        else if (max == g)
-            this.hue = (b - r) / delta + 2;
-        else
-            this.hue = (r - g) / delta + 4;
+		final float delta = max - min;
+		if (max == r)
+			this.hue = (g - b) / delta + (g < b ? 6 : 0);
+		else if (max == g)
+			this.hue = (b - r) / delta + 2;
+		else
+			this.hue = (r - g) / delta + 4;
 
-        this.hue /= 6;
-    }
+		this.hue /= 6;
+	}
 
-    public NerdNoAlphaHsbColor(final float p_hue, final float p_saturation) {
-        this.hue = p_hue;
-        this.saturation = p_saturation;
-    }
+	public NerdNoAlphaHsbColor(final float p_hue, final float p_saturation) {
+		this.hue = p_hue;
+		this.saturation = p_saturation;
+	}
 
-    public NerdNoAlphaHsbColor(final float p_hue, final float p_saturation, final float p_brightness) {
-        this.hue = p_hue;
-        this.saturation = p_saturation;
-        this.brightness = p_brightness;
-    }
-    // endregion
+	public NerdNoAlphaHsbColor(final float p_hue, final float p_saturation, final float p_brightness) {
+		this.hue = p_hue;
+		this.saturation = p_saturation;
+		this.brightness = p_brightness;
+	}
+	// endregion
 
-    // region Getters.
-    @Override
-    public float getHue() {
-        return this.hue;
-    }
+	// region Getters.
+	@Override
+	public float getHue() {
+		return this.hue;
+	}
 
-    @Override
-    public float getSaturation() {
-        return this.saturation;
-    }
+	@Override
+	public float getSaturation() {
+		return this.saturation;
+	}
 
-    @Override
-    public float getBrightness() {
-        return this.brightness;
-    }
-    // endregion
+	@Override
+	public float getBrightness() {
+		return this.brightness;
+	}
+	// endregion
 
-    // region Setters.
-    @Override
-    public NerdNoAlphaHsbColor setHue(final float p_value) {
-        this.hue = p_value;
-        return this;
-    }
+	// region Setters.
+	@Override
+	public NerdNoAlphaHsbColor setHue(final float p_value) {
+		this.hue = p_value;
+		return this;
+	}
 
-    @Override
-    public NerdNoAlphaHsbColor setSaturation(final float p_value) {
-        this.saturation = p_value;
-        return this;
-    }
+	@Override
+	public NerdNoAlphaHsbColor setSaturation(final float p_value) {
+		this.saturation = p_value;
+		return this;
+	}
 
-    @Override
-    public NerdNoAlphaHsbColor setBrightness(final float p_value) {
-        this.brightness = p_value;
-        return this;
-    }
-    // endregion
+	@Override
+	public NerdNoAlphaHsbColor setBrightness(final float p_value) {
+		this.brightness = p_value;
+		return this;
+	}
+	// endregion
 
 }
