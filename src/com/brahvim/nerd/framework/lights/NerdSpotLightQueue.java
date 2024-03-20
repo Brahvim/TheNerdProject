@@ -106,6 +106,7 @@ public class NerdSpotLightQueue implements NerdLightSlotEntry {
 			// ...Actually, actually! Screw that! We could instead just compare
 			// the sum of the differences of the components of each vector!
 
+			// TODO: Normalize deez vectorz. This is not the very best assumption haha!
 			final float d1 = (p_1.DIRECTION.x + p_1.DIRECTION.y + p_1.DIRECTION.z) - this.dirVecComponentSum;
 			final float d2 = (p_2.DIRECTION.x + p_2.DIRECTION.y + p_2.DIRECTION.z) - this.dirVecComponentSum;
 
