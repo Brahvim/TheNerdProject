@@ -1,6 +1,5 @@
 package com.brahvim.nerd.framework.graphics_backends;
 
-import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
 import com.brahvim.nerd.processing_wrapper.NerdAbstractGraphics;
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
@@ -74,9 +73,11 @@ public abstract class NerdFramebufferBackedGraphics<SketchPGraphicsT extends PGr
 		super.GRAPHICS.set(x, y, c);
 	}
 
-	public void set(final int x, final int y, final NerdNoAlphaColor noAlphaColor) {
-		super.GRAPHICS.set(x, y, super.color(noAlphaColor));
-	}
+	// TODO: Write a `NerdColor` version for `set()`!
+	// public void set(final int x, final int y, final NerdNoAlphaColor
+	// noAlphaColor) {
+	// super.GRAPHICS.set(x, y, super.color(noAlphaColor));
+	// }
 
 	public void set(final int x, final int y, final PImage img) {
 		super.GRAPHICS.set(x, y, img);

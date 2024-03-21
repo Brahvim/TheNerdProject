@@ -4,24 +4,25 @@ import processing.core.PConstants;
 
 public enum NerdSketchRenderer {
 
-	// Enum entries:
-	GENERIC(""),
-	P3D(PConstants.P3D),
-	P2D(PConstants.P2D),
-	PDF(PConstants.PDF),
-	SVG(PConstants.SVG),
-	FX2D(PConstants.FX2D),
-	JAVA2D(PConstants.JAVA2D);
+	P3D(),
+	P2D(),
+	PDF(),
+	SVG(),
+	FX2D(),
+	JAVA2D(),
+	GENERIC();
 
 	// region Class stuff.
-	private final String processingConstant;
-
-	private NerdSketchRenderer(final String p_processingConstant) {
-		this.processingConstant = p_processingConstant;
-	}
-
-	public String getPConstant() {
-		return this.processingConstant;
+	public String toPConstant() {
+		return switch (this) {
+			case GENERIC -> "";
+			case P3D -> PConstants.P3D;
+			case P2D -> PConstants.P2D;
+			case PDF -> PConstants.PDF;
+			case SVG -> PConstants.SVG;
+			case FX2D -> PConstants.FX2D;
+			case JAVA2D -> PConstants.JAVA2D;
+		};
 	}
 	// endregion
 
