@@ -272,6 +272,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	protected final NerdInputModule<SketchPGraphicsT> INPUT;
 	protected final NerdWindowModule<SketchPGraphicsT> WINDOW;
 	// endregion
+	// endregion
 
 	// region `static` methods.
 	protected static NerdAbstractGraphics<?> createNerdGenericGraphicsWrapperForSketch(final NerdSketch<?> p_sketch) {
@@ -1931,9 +1932,11 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// this.GRAPHICS.noLights();
 	// }
 
-	public void noSmooth() {
-		this.GRAPHICS.noSmooth();
-	}
+	// Can be set *only* when the sketch begins, so...
+	// Why expose static functionality?:
+	// public void noSmooth() {
+	// this.GRAPHICS.noSmooth();
+	// }
 
 	public void noStroke() {
 		this.GRAPHICS.noStroke();
@@ -2192,6 +2195,7 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// }
 
 	// Can be set *only* when the sketch begins, so...
+	// Why expose static functionality?:
 	// public void smooth() {
 	// this.GRAPHICS.smooth();
 	// }

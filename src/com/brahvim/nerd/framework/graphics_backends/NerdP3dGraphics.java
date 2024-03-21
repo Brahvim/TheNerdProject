@@ -30,19 +30,6 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 	// (Cameras are best implemented using DOD! Write a camera 'manager' here.
 	// Use that guy! Let people extend 'im! He'll act in your best interest, trust!)
 
-	public enum NerdLightSlot {
-
-		ONE(),
-		TWO(),
-		THREE(),
-		FOUR(),
-		FIVE(),
-		SIX(),
-		SEVEN(),
-		EIGHT();
-
-	}
-
 	// region Inner classes.
 	public class TwoDimensionalPush implements AutoCloseable {
 
@@ -67,6 +54,19 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 		public void close() throws Exception {
 			NerdP3dGraphics.this.endCamera();
 		}
+
+	}
+
+	public enum NerdLightSlot {
+
+		ONE(),
+		TWO(),
+		THREE(),
+		FOUR(),
+		FIVE(),
+		SIX(),
+		SEVEN(),
+		EIGHT();
 
 	}
 	// endregion
@@ -189,22 +189,46 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 		this.LIGHT_SLOTS_ARRAYS[slotNumber] = this.AMBIENT_LIGHTS;
 	}
 
-	public void setLightSlotObject(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdSpotLightQueue p_lightQueue) {
+	public void setLightSlotObject(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdSpotLight p_spotLight) {
 		// if (!this.lightApiObjectsExist)
 		// this.initLightApiObjects();
 
 		final int slotNumber = p_slot.ordinal();
-		this.LIGHT_SLOTS[slotNumber] = p_lightQueue;
+		this.SPOT_LIGHTS.add(p_spotLight);
+		this.LIGHT_SLOTS[slotNumber] = p_spotLight;
 		this.LIGHT_SLOTS_ARRAYS[slotNumber] = this.SPOT_LIGHTS;
 	}
 
-	public void setLightSlotObject(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdPointLightQueue p_lightQueue) {
+	public void setLightSlotObject(final NerdP3dGraphics.NerdLightSlot p_slot, final NerdPointLight p_pointLight) {
 		// if (!this.lightApiObjectsExist)
 		// this.initLightApiObjects();
 
 		final int slotNumber = p_slot.ordinal();
-		this.LIGHT_SLOTS[slotNumber] = p_lightQueue;
+		this.POINT_LIGHTS.add(p_pointLight);
+		this.LIGHT_SLOTS[slotNumber] = p_pointLight;
 		this.LIGHT_SLOTS_ARRAYS[slotNumber] = this.POINT_LIGHTS;
+	}
+
+	public void setLightSlotObject(
+			final NerdP3dGraphics.NerdLightSlot p_slot, final NerdSpotLightQueue p_spotLightsQueue) {
+		// if (!this.lightApiObjectsExist)
+		// this.initLightApiObjects();
+
+		final int slotNumber = p_slot.ordinal();
+		this.SPOT_LIGHTS_QUEUES.add(p_spotLightsQueue);
+		this.LIGHT_SLOTS[slotNumber] = p_spotLightsQueue;
+		this.LIGHT_SLOTS_ARRAYS[slotNumber] = this.SPOT_LIGHTS_QUEUES;
+	}
+
+	public void setLightSlotObject(
+			final NerdP3dGraphics.NerdLightSlot p_slot, final NerdPointLightQueue p_pointLightsQueue) {
+		// if (!this.lightApiObjectsExist)
+		// this.initLightApiObjects();
+
+		final int slotNumber = p_slot.ordinal();
+		this.POINT_LIGHTS_QUEUES.add(p_pointLightsQueue);
+		this.LIGHT_SLOTS[slotNumber] = p_pointLightsQueue;
+		this.LIGHT_SLOTS_ARRAYS[slotNumber] = this.POINT_LIGHTS_QUEUES;
 	}
 	// endregion
 
@@ -539,8 +563,8 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 	 * Expands to:
 	 * {@code PGraphics::ortho(-p_cx, p_cx, -p_cy, p_cy, p_near, p_far)}.
 	 *
-	 * @param p_cx   is the screen center on the `x`-axis.
-	 * @param p_cy   is the screen center on the `y`-axis.
+	 * @param p_cx   is the screen center on the x-axis.
+	 * @param p_cy   is the screen center on the y-axis.
 	 * @param p_near is the camera's distance from near plane.
 	 * @param p_far  is the camera's distance from far plane.
 	 */
@@ -650,7 +674,7 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 	// endregion
 	// endregion
 
-	// region 3D shapes (and shapes in general haha).
+	// rwegion 3D shapes (and shapes in general haha).
 	// region `drawClosedShape()` and `drawOpenShape()`.
 	public void drawClosedShape(final float p_x, final float p_y, final float p_z,
 			final int p_shapeType, final Runnable p_shapingFxn) {

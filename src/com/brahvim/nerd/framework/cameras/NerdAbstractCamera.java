@@ -49,8 +49,8 @@ public abstract class NerdAbstractCamera {
 			near = NerdAbstractCamera.DEFAULT_NEAR,
 			mouseZ = NerdAbstractCamera.DEFAULT_MOUSE_Z;
 
-	public int projection = PConstants.PERSPECTIVE;
 	public boolean doAutoAspect = true;
+	public int projection = PConstants.PERSPECTIVE;
 	// endregion
 
 	protected final NerdP3dGraphics GRAPHICS;

@@ -10,7 +10,7 @@ import processing.core.PVector;
 public class NerdSpotLightQueue implements NerdLightSlotEntry {
 
 	// region Inner classes.
-	public static class NerdSpotLight {
+	public static class NerdSpotLight implements NerdLightSlotEntry {
 
 		public float angle, concentration = 4000;
 

@@ -16,6 +16,21 @@ public class NerdPointLightQueue implements NerdLightSlotEntry {
 		/*   */ position = new PVector(),
 				color = new PVector();
 
+		public NerdPointLight() {
+		}
+
+		public NerdPointLight(final PVector p_color, final PVector p_position) {
+			this.setColor(p_color);
+			this.setPosition(p_position);
+		}
+
+		public NerdPointLight(
+				final float p_colorX, final float p_colorY, final float p_colorZ,
+				final float p_posX, final float p_posY, final float p_posZ) {
+			this.color.set(p_colorX, p_colorY, p_colorZ);
+			this.position.set(p_posX, p_posY, p_posZ);
+		}
+
 		// region Color and position getters and setters.
 		public PVector getColor() {
 			return this.color;
