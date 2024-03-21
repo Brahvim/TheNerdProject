@@ -2,7 +2,7 @@ package com.brahvim.nerd.framework.colors;
 
 import processing.core.PConstants;
 
-public enum NerdProcessingColorSpace {
+public enum NerdProcessingColorSpace implements NerdColorSpace {
 
     RGB(),
     HSB();
