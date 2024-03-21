@@ -3,6 +3,7 @@ package com.brahvim.nerd.framework.lights;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import processing.core.PVector;
 
@@ -11,9 +12,31 @@ public class NerdPointLightQueue implements NerdLightSlotEntry {
 	// region Inner classes.
 	public static class NerdPointLight implements NerdLightSlotEntry {
 
-		public final PVector
-		/*   */ POSITION = new PVector(),
-				COLOR = new PVector();
+		private PVector
+		/*   */ position = new PVector(),
+				color = new PVector();
+
+		// region Color and position getters and setters.
+		public PVector getColor() {
+			return this.color;
+		}
+
+		public PVector getPosition() {
+			return this.position;
+		}
+
+		public PVector setColor(final PVector p_color) {
+			final PVector toRet = this.color;
+			this.color = Objects.requireNonNull(p_color);
+			return toRet;
+		}
+
+		public PVector setPosition(final PVector p_position) {
+			final PVector toRet = this.position;
+			this.position = Objects.requireNonNull(p_position);
+			return toRet;
+		}
+		// endregion
 
 	}
 
@@ -48,8 +71,8 @@ public class NerdPointLightQueue implements NerdLightSlotEntry {
 			// final float d1 = p_1.POSITION.dist(this.CENTER);
 			// final float d2 = p_2.POSITION.dist(this.CENTER);
 
-			final float d1 = p_1.POSITION.magSq() - this.centerVecMagSq;
-			final float d2 = p_2.POSITION.magSq() - this.centerVecMagSq;
+			final float d1 = p_1.position.magSq() - this.centerVecMagSq;
+			final float d2 = p_2.position.magSq() - this.centerVecMagSq;
 
 			if (d1 == d2)
 				return this.equalsCaseComparator.compare(p_1, p_2);

@@ -3,6 +3,7 @@ package com.brahvim.nerd.framework.lights;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import processing.core.PVector;
 
@@ -11,14 +12,46 @@ public class NerdSpotLightQueue implements NerdLightSlotEntry {
 	// region Inner classes.
 	public static class NerdSpotLight {
 
-		public final PVector
-		/*   */ COLOR = new PVector(),
-				POSITION = new PVector(),
-				DIRECTION = new PVector();
-
 		public float angle, concentration = 4000;
 
+		private PVector
+		/*   */ color = new PVector(),
+				position = new PVector(),
+				direction = new PVector();
+
 		private final PVector PDIR = new PVector();
+
+		// region Color and position getters and setters.
+		public PVector getColor() {
+			return this.color;
+		}
+
+		public PVector getPosition() {
+			return this.position;
+		}
+
+		public PVector setColor(final PVector p_color) {
+			final PVector toRet = this.color;
+			this.color = Objects.requireNonNull(p_color);
+			return toRet;
+		}
+
+		public PVector setPosition(final PVector p_position) {
+			final PVector toRet = this.position;
+			this.position = Objects.requireNonNull(p_position);
+			return toRet;
+		}
+		// endregion
+
+		public PVector getDirection() {
+			return this.direction;
+		}
+
+		public PVector setDirection(final PVector p_direction) {
+			final var toRet = this.direction;
+			this.direction = Objects.requireNonNull(p_direction);
+			return toRet;
+		}
 
 		public PVector getPreviousFrameDirection() {
 			return this.PDIR;
@@ -37,7 +70,7 @@ public class NerdSpotLightQueue implements NerdLightSlotEntry {
 		// endregion
 
 		public NerdSpotLightDistanceComparator(final PVector p_center) {
-			this.centerVecMagSq = p_center.magSq();
+			this.setCenter(p_center);
 		}
 
 		public NerdSpotLightDistanceComparator(
@@ -57,8 +90,8 @@ public class NerdSpotLightQueue implements NerdLightSlotEntry {
 			// final float d1 = p_1.POSITION.dist(this.CENTER);
 			// final float d2 = p_2.POSITION.dist(this.CENTER);
 
-			final float d1 = p_1.POSITION.magSq() - this.centerVecMagSq;
-			final float d2 = p_2.POSITION.magSq() - this.centerVecMagSq;
+			final float d1 = p_1.position.magSq() - this.centerVecMagSq;
+			final float d2 = p_2.position.magSq() - this.centerVecMagSq;
 
 			if (d1 == d2)
 				return this.equalsCaseComparator.compare(p_1, p_2);
@@ -107,8 +140,8 @@ public class NerdSpotLightQueue implements NerdLightSlotEntry {
 			// the sum of the differences of the components of each vector!
 
 			// TODO: Normalize deez vectorz. This is not the very best assumption haha!
-			final float d1 = (p_1.DIRECTION.x + p_1.DIRECTION.y + p_1.DIRECTION.z) - this.dirVecComponentSum;
-			final float d2 = (p_2.DIRECTION.x + p_2.DIRECTION.y + p_2.DIRECTION.z) - this.dirVecComponentSum;
+			final float d1 = (p_1.direction.x + p_1.direction.y + p_1.direction.z) - this.dirVecComponentSum;
+			final float d2 = (p_2.direction.x + p_2.direction.y + p_2.direction.z) - this.dirVecComponentSum;
 
 			if (d1 == d2)
 				return this.equalsCaseComparator.compare(p_1, p_2);
