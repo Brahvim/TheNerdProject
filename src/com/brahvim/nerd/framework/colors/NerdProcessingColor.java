@@ -1,5 +1,6 @@
 package com.brahvim.nerd.framework.colors;
 
+import java.awt.Color;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,14 +20,28 @@ public class NerdProcessingColor {
     public Optional<Integer> toInt() {
         if (!(this.colorSpace instanceof NerdProcessingColorSpace))
             return Optional.empty();
-        else {
-            final int r = (int) (this.x * 255);
-            final int g = (int) (this.y * 255);
-            final int b = (int) (this.z * 255);
-            return Optional.of((r << 16) | (g << 8) | b);
-            // final int alpha = (int) (this.a * 255);
-            // return Optional.of((alpha << 24) | (r << 16) | (g << 8) | b);
-        }
+        else
+            return Optional.of(((byte) this.x << 16) | ((byte) this.y << 8) | (byte) this.z);
+    }
+
+    public final NerdProcessingColor toRgb() {
+        final int rgb = Color.HSBtoRGB(this.x, this.y, this.z);
+
+        this.x = (rgb >> 16) & 0xFF;
+        this.y = (rgb >> 8) & 0xFF;
+        this.z = rgb & 0xFF;
+
+        return this;
+    }
+
+    public final NerdProcessingColor toHsb() {
+        final float[] hsb = Color.RGBtoHSB((int) this.x, (int) this.y, (int) this.z, new float[3]);
+
+        this.x = hsb[0];
+        this.y = hsb[1];
+        this.z = hsb[2];
+
+        return this;
     }
 
     public final NerdColorSpace getColorSpace() {

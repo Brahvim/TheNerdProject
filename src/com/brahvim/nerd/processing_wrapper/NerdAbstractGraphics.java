@@ -575,6 +575,9 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 	// }
 
 	public void colorMode(final int mode) {
+		if (!(mode == PConstants.RGB || mode == PConstants.HSB))
+			throw new IllegalArgumentException("Only pass `PConstants` here!");
+
 		this.setColorSpaceEnum(mode);
 		this.GRAPHICS.colorMode(mode);
 	}
@@ -584,20 +587,24 @@ public abstract class NerdAbstractGraphics<SketchPGraphicsT extends PGraphics> {
 		this.GRAPHICS.colorMode(p_colorSpaceEnum.toPConstant());
 	}
 
-	public void colorMode(final int mode, final float max) {
-		this.setColorSpaceEnum(mode);
-		this.GRAPHICS.colorMode(mode, max);
-	}
+	// Nope! I'm sorry...:
 
-	public void colorMode(final int mode, final float max1, final float max2, final float max3) {
-		this.setColorSpaceEnum(mode);
-		this.GRAPHICS.colorMode(mode, max1, max2, max3);
-	}
+	// public void colorMode(final int mode, final float max) {
+	// this.setColorSpaceEnum(mode);
+	// this.GRAPHICS.colorMode(mode, max);
+	// }
 
-	public void colorMode(final int mode, final float max1, final float max2, final float max3, final float maxA) {
-		this.setColorSpaceEnum(mode);
-		this.GRAPHICS.colorMode(mode, max1, max2, max3, maxA);
-	}
+	// public void colorMode(final int mode, final float max1, final float max2,
+	// final float max3) {
+	// this.setColorSpaceEnum(mode);
+	// this.GRAPHICS.colorMode(mode, max1, max2, max3);
+	// }
+
+	// public void colorMode(final int mode, final float max1, final float max2,
+	// final float max3, final float maxA) {
+	// this.setColorSpaceEnum(mode);
+	// this.GRAPHICS.colorMode(mode, max1, max2, max3, maxA);
+	// }
 
 	protected void setColorSpaceEnum(final int p_colorSpaceEnum) {
 		switch (p_colorSpaceEnum) {
