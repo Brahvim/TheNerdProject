@@ -1,8 +1,9 @@
 package com.brahvim.nerd.framework.colors.rgb;
 
 import com.brahvim.nerd.framework.colors.NerdAlphaColor;
+import com.brahvim.nerd.framework.colors.NerdCompactColor;
 
-public class NerdCompactArgbColor implements NerdAlphaRgbColor {
+public class NerdCompactArgbColor implements NerdAlphaRgbColor, NerdCompactColor {
 
 	public int color;
 
@@ -48,48 +49,12 @@ public class NerdCompactArgbColor implements NerdAlphaRgbColor {
 	public int getAlpha() {
 		return (this.color >>> 24) & 0xFF;
 	}
-
-	/** @return {@code -1} if this color isn't gray, else the gray value. */
-	@Override
-	public int getIfGray() {
-		return this.isGray() ? this.getRed() : -1;
-	}
 	// endregion
-
-	// Query:
-	@Override
-	public boolean isGray() {
-		return (this.getRed() == this.getGreen()) && (this.getGreen() == this.getBlue());
-	}
 
 	// region Setters.
 	@Override
-	public NerdCompactArgbColor setParam1(final float p_value) {
-		this.setRed((int) p_value);
-		return this;
-	}
-
-	@Override
-	public NerdCompactArgbColor setParam2(final float p_value) {
-		this.setGreen((int) p_value);
-		return this;
-	}
-
-	@Override
-	public NerdCompactArgbColor setParam3(final float p_value) {
-		this.setBlue((int) p_value);
-		return this;
-	}
-
-	@Override
 	public NerdAlphaColor makeOpaque() {
 		this.setAlpha(255);
-		return this;
-	}
-
-	@Override
-	public NerdAlphaColor makeTransparent() {
-		this.setAlpha(0);
 		return this;
 	}
 
@@ -102,6 +67,12 @@ public class NerdCompactArgbColor implements NerdAlphaRgbColor {
 	@Override
 	public NerdCompactArgbColor whiteOut() {
 		this.color = Integer.MAX_VALUE;
+		return this;
+	}
+
+	@Override
+	public NerdAlphaColor makeTransparent() {
+		this.setAlpha(0);
 		return this;
 	}
 
@@ -134,12 +105,40 @@ public class NerdCompactArgbColor implements NerdAlphaRgbColor {
 		return this;
 	}
 
+	@Override
+	public NerdCompactArgbColor setParam1(final float p_value) {
+		this.setRed((int) p_value);
+		return this;
+	}
+
+	@Override
+	public NerdCompactArgbColor setParam2(final float p_value) {
+		this.setGreen((int) p_value);
+		return this;
+	}
+
+	@Override
+	public NerdCompactArgbColor setParam3(final float p_value) {
+		this.setBlue((int) p_value);
+		return this;
+	}
+
 	public NerdCompactArgbColor set(final int p_red, final int p_green, final int p_blue) {
 		this.color = ((p_red & 0xFF) << 16) | ((p_green & 0xFF) << 8) | (p_blue & 0xFF);
 		return this;
 	}
 
+	public NerdCompactArgbColor set(final byte p_red, final int p_green, final byte p_blue) {
+		this.color = ((p_red & 0xFF) << 16) | ((p_green & 0xFF) << 8) | (p_blue & 0xFF);
+		return this;
+	}
+
 	public NerdCompactArgbColor set(final int p_red, final int p_green, final int p_blue, final int p_alpha) {
+		this.color = ((p_alpha & 0xFF) << 24) | ((p_red & 0xFF) << 16) | ((p_green & 0xFF) << 8) | (p_blue & 0xFF);
+		return this;
+	}
+
+	public NerdCompactArgbColor set(final byte p_red, final byte p_green, final byte p_blue, final byte p_alpha) {
 		this.color = ((p_alpha & 0xFF) << 24) | ((p_red & 0xFF) << 16) | ((p_green & 0xFF) << 8) | (p_blue & 0xFF);
 		return this;
 	}

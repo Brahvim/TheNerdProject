@@ -5,7 +5,7 @@ import com.brahvim.nerd.framework.colors.NerdProcessingColorSpace;
 
 public interface NerdHsbColor extends NerdProcessingColor {
 
-	// region Default methods.
+	// region Default implementations.
 	@Override
 	public default float getParam1() {
 		return this.getHue();
@@ -22,7 +22,7 @@ public interface NerdHsbColor extends NerdProcessingColor {
 	}
 
 	@Override
-	default NerdProcessingColorSpace getColorSpace() {
+	public default NerdProcessingColorSpace getColorSpace() {
 		return NerdProcessingColorSpace.HSB;
 	}
 
@@ -45,16 +45,20 @@ public interface NerdHsbColor extends NerdProcessingColor {
 	}
 	// endregion
 
+	// region Getters.
 	public float getHue();
 
 	public float getSaturation();
 
 	public float getBrightness();
+	// endregion
 
+	// region Setters.
 	public NerdHsbColor setHue(final float p_value);
 
 	public NerdHsbColor setSaturation(final float p_value);
 
 	public NerdHsbColor setBrightness(final float p_value);
+	// endregion
 
 }

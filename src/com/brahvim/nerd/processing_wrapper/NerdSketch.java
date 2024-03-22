@@ -18,7 +18,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.brahvim.nerd.io.NerdStringsTable;
-import com.brahvim.nerd.io.asset_loader.NerdAsset;
 import com.brahvim.nerd.io.asset_loader.NerdAssetLoader;
 import com.brahvim.nerd.io.asset_loader.NerdAssetsModule;
 import com.brahvim.nerd.useless_callback_interfaces.workflow.NerdSketchAllWorkflowsListener;

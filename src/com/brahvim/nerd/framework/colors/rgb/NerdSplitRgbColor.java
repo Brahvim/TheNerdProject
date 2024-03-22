@@ -1,8 +1,9 @@
 package com.brahvim.nerd.framework.colors.rgb;
 
 import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
+import com.brahvim.nerd.framework.colors.NerdSplitColor;
 
-public class NerdSplitRgbColor implements NerdRgbColor, NerdNoAlphaColor {
+public class NerdSplitRgbColor implements NerdRgbColor, NerdNoAlphaColor, NerdSplitColor {
 
 	public int red, green, blue;
 
@@ -57,19 +58,7 @@ public class NerdSplitRgbColor implements NerdRgbColor, NerdNoAlphaColor {
 	public int getBlue() {
 		return this.blue;
 	}
-
-	/** @return {@code -1} if this color isn't gray, else the gray value. */
-	@Override
-	public int getIfGray() {
-		return this.isGray() ? this.red : -1;
-	}
 	// endregion
-
-	// Query:
-	@Override
-	public boolean isGray() {
-		return this.red == this.green && this.green == this.blue;
-	}
 
 	// region Setters.
 	@Override

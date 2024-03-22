@@ -1,21 +1,22 @@
 package com.brahvim.nerd.framework.colors.hsb;
 
 import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
+import com.brahvim.nerd.framework.colors.NerdSplitColor;
 import com.brahvim.nerd.framework.colors.rgb.NerdRgbColor;
 
-public class NerdNoAlphaHsbColor implements NerdHsbColor, NerdNoAlphaColor {
+public class NerdSplitHsbColor implements NerdHsbColor, NerdNoAlphaColor, NerdSplitColor {
 
 	public float hue, saturation = 255, brightness = 255;
 
 	// region Constructors.
-	public NerdNoAlphaHsbColor() {
+	public NerdSplitHsbColor() {
 	}
 
-	public NerdNoAlphaHsbColor(final float p_hue) {
+	public NerdSplitHsbColor(final float p_hue) {
 		this.hue = p_hue;
 	}
 
-	public NerdNoAlphaHsbColor(final NerdRgbColor p_rgbColor) {
+	public NerdSplitHsbColor(final NerdRgbColor p_rgbColor) {
 		// Normalize!:
 		final float r = p_rgbColor.getRed() / 255.0f;
 		final float g = p_rgbColor.getGreen() / 255.0f;
@@ -48,12 +49,12 @@ public class NerdNoAlphaHsbColor implements NerdHsbColor, NerdNoAlphaColor {
 		this.hue /= 6;
 	}
 
-	public NerdNoAlphaHsbColor(final float p_hue, final float p_saturation) {
+	public NerdSplitHsbColor(final float p_hue, final float p_saturation) {
 		this.hue = p_hue;
 		this.saturation = p_saturation;
 	}
 
-	public NerdNoAlphaHsbColor(final float p_hue, final float p_saturation, final float p_brightness) {
+	public NerdSplitHsbColor(final float p_hue, final float p_saturation, final float p_brightness) {
 		this.hue = p_hue;
 		this.saturation = p_saturation;
 		this.brightness = p_brightness;
@@ -79,19 +80,38 @@ public class NerdNoAlphaHsbColor implements NerdHsbColor, NerdNoAlphaColor {
 
 	// region Setters.
 	@Override
-	public NerdNoAlphaHsbColor setHue(final float p_value) {
+	public NerdSplitHsbColor setGray(final int p_gray) {
+		this.saturation = 0;
+		this.brightness = p_gray;
+		return this;
+	}
+
+	@Override
+	public NerdSplitHsbColor blackOut() {
+		this.setGray(0);
+		return this;
+	}
+
+	@Override
+	public NerdSplitHsbColor whiteOut() {
+		this.setGray(255);
+		return this;
+	}
+
+	@Override
+	public NerdSplitHsbColor setHue(final float p_value) {
 		this.hue = p_value;
 		return this;
 	}
 
 	@Override
-	public NerdNoAlphaHsbColor setSaturation(final float p_value) {
+	public NerdSplitHsbColor setSaturation(final float p_value) {
 		this.saturation = p_value;
 		return this;
 	}
 
 	@Override
-	public NerdNoAlphaHsbColor setBrightness(final float p_value) {
+	public NerdSplitHsbColor setBrightness(final float p_value) {
 		this.brightness = p_value;
 		return this;
 	}

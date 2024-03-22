@@ -12,7 +12,6 @@ public class NerdMaterial {
 	/*   */ ambience = new NerdSplitRgbColor(),
 			emission = new NerdSplitRgbColor(),
 			specular = new NerdSplitRgbColor();
-	public static final String NULL_VALUE_MESSAGE = "Don't put `null`s here!";
 
 	// region Constructors.
 	public NerdMaterial() {
@@ -67,17 +66,17 @@ public class NerdMaterial {
 	}
 
 	public NerdMaterial setAmbience(final NerdNoAlphaColor p_ambience) {
-		this.ambience = Objects.requireNonNull(p_ambience, NerdMaterial.NULL_VALUE_MESSAGE);
+		this.ambience = Objects.requireNonNull(p_ambience);
 		return this;
 	}
 
 	public NerdMaterial setEmission(final NerdNoAlphaColor p_emission) {
-		this.emission = Objects.requireNonNull(p_emission, NerdMaterial.NULL_VALUE_MESSAGE);
+		this.emission = Objects.requireNonNull(p_emission);
 		return this;
 	}
 
 	public NerdMaterial setSpecular(final NerdNoAlphaColor p_specular) {
-		this.specular = Objects.requireNonNull(p_specular, NerdMaterial.NULL_VALUE_MESSAGE);
+		this.specular = Objects.requireNonNull(p_specular);
 		return this;
 	}
 	// endregion

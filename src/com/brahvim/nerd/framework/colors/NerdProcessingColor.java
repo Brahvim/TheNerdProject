@@ -8,13 +8,31 @@ public interface NerdProcessingColor extends NerdColor {
 
     public float getParam3();
 
+    /** @return {@code -1} if this color isn't gray, else the gray value. */
+    public default float getIfGray() {
+        return this.isGray() ? this.getParam1() : -1;
+    }
+
     @Override
     public NerdProcessingColorSpace getColorSpace();
 
-    public NerdColor setParam1(float value);
+    // Query:
+    public default boolean isGray() {
+        final float param2 = this.getParam2();
+        return this.getParam1() == param2
+                && param2 == this.getParam3();
+    }
 
-    public NerdColor setParam2(float value);
+    public NerdProcessingColor blackOut();
 
-    public NerdColor setParam3(float value);
+    public NerdProcessingColor whiteOut();
+
+    public NerdProcessingColor setGray(int gray);
+
+    public NerdProcessingColor setParam1(float value);
+
+    public NerdProcessingColor setParam2(float value);
+
+    public NerdProcessingColor setParam3(float value);
 
 }
