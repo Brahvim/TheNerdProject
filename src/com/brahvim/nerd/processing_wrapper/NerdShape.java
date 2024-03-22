@@ -189,20 +189,23 @@ public class NerdShape {
 		return this;
 	}
 
-	public NerdShape colorMode(final int mode, final float max) {
-		this.SHAPE.colorMode(mode, max);
-		return this;
-	}
+	// public NerdObjShape colorMode(final int mode, final float max) {
+	// this.OBJ_SHAPE.colorMode(mode, max);
+	// return this;
+	// }
 
-	public NerdShape colorMode(final int mode, final float maxX, final float maxY, final float maxZ) {
-		this.SHAPE.colorMode(mode, maxX, maxY, maxZ);
-		return this;
-	}
+	// public NerdObjShape colorMode(final int mode, final float maxX, final float
+	// maxY, final float maxZ) {
+	// this.OBJ_SHAPE.colorMode(mode, maxX, maxY, maxZ);
+	// return this;
+	// }
 
-	public NerdShape colorMode(final int mode, final float maxX, final float maxY, final float maxZ, final float maxA) {
-		this.SHAPE.colorMode(mode, maxX, maxY, maxZ, maxA);
-		return this;
-	}
+	// public NerdObjShape colorMode(final int mode, final float maxX, final float
+	// maxY, final float maxZ,
+	// final float maxA) {
+	// this.OBJ_SHAPE.colorMode(mode, maxX, maxY, maxZ, maxA);
+	// return this;
+	// }
 
 	public boolean contains(final float x, final float y) {
 		return this.SHAPE.contains(x, y);

@@ -234,24 +234,26 @@ public class NerdSvgShape extends NerdShape {
 		return this;
 	}
 
-	@Override
-	public NerdSvgShape colorMode(final int mode, final float max) {
-		this.SVG_SHAPE.colorMode(mode, max);
-		return this;
-	}
+	// @Override
+	// public NerdObjShape colorMode(final int mode, final float max) {
+	// this.OBJ_SHAPE.colorMode(mode, max);
+	// return this;
+	// }
 
-	@Override
-	public NerdSvgShape colorMode(final int mode, final float maxX, final float maxY, final float maxZ) {
-		this.SVG_SHAPE.colorMode(mode, maxX, maxY, maxZ);
-		return this;
-	}
+	// @Override
+	// public NerdObjShape colorMode(final int mode, final float maxX, final float
+	// maxY, final float maxZ) {
+	// this.OBJ_SHAPE.colorMode(mode, maxX, maxY, maxZ);
+	// return this;
+	// }
 
-	@Override
-	public NerdSvgShape colorMode(final int mode, final float maxX, final float maxY, final float maxZ,
-			final float maxA) {
-		this.SVG_SHAPE.colorMode(mode, maxX, maxY, maxZ, maxA);
-		return this;
-	}
+	// @Override
+	// public NerdObjShape colorMode(final int mode, final float maxX, final float
+	// maxY, final float maxZ,
+	// final float maxA) {
+	// this.OBJ_SHAPE.colorMode(mode, maxX, maxY, maxZ, maxA);
+	// return this;
+	// }
 
 	@Override
 	public boolean contains(final float x, final float y) {
