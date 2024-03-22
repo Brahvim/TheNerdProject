@@ -1,10 +1,9 @@
 package com.brahvim.nerd.framework.colors.rgb;
 
-import com.brahvim.nerd.framework.colors.NerdColor;
-import com.brahvim.nerd.framework.colors.NerdColorSpace;
+import com.brahvim.nerd.framework.colors.NerdProcessingColor;
 import com.brahvim.nerd.framework.colors.NerdProcessingColorSpace;
 
-public interface NerdRgbColor extends NerdColor {
+public interface NerdRgbColor extends NerdProcessingColor {
 
 	// region Default methods.
 	@Override
@@ -49,7 +48,7 @@ public interface NerdRgbColor extends NerdColor {
 	public int getIfGray();
 
 	@Override
-	default NerdColorSpace getColorSpace() {
+	default NerdProcessingColorSpace getColorSpace() {
 		return NerdProcessingColorSpace.RGB;
 	}
 	// endregion

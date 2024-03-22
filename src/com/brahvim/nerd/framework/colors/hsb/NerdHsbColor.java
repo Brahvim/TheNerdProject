@@ -1,10 +1,9 @@
 package com.brahvim.nerd.framework.colors.hsb;
 
-import com.brahvim.nerd.framework.colors.NerdColor;
-import com.brahvim.nerd.framework.colors.NerdColorSpace;
+import com.brahvim.nerd.framework.colors.NerdProcessingColor;
 import com.brahvim.nerd.framework.colors.NerdProcessingColorSpace;
 
-public interface NerdHsbColor extends NerdColor {
+public interface NerdHsbColor extends NerdProcessingColor {
 
 	// region Default methods.
 	@Override
@@ -23,7 +22,7 @@ public interface NerdHsbColor extends NerdColor {
 	}
 
 	@Override
-	default NerdColorSpace getColorSpace() {
+	default NerdProcessingColorSpace getColorSpace() {
 		return NerdProcessingColorSpace.HSB;
 	}
 
