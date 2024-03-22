@@ -1,5 +1,7 @@
 package com.brahvim.nerd.io.asset_loader;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.brahvim.nerd.processing_wrapper.NerdSketch;
 
 import processing.core.PGraphics;
@@ -17,7 +19,10 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics, AssetT> {
 	private AssetT data;
 	private Runnable onLoad;
 	private long millis = -1;
-	protected boolean loaded, ploaded, failure;
+	protected AtomicBoolean
+	/*   */ loaded = new AtomicBoolean(false),
+			ploaded = new AtomicBoolean(false),
+			failure = new AtomicBoolean(false);
 	// endregion
 
 	// region Construction.
@@ -69,7 +74,7 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics, AssetT> {
 
 	// ...will cause a surge in CPU usage! Careful!...
 	public NerdAsset<SketchPGraphicsT, AssetT> completeLoad() throws InterruptedException {
-		while (!this.loaded) {
+		while (!this.loaded.get()) {
 			System.out.println("Waiting for `" + this.NAME + "` to load...");
 
 			// Don't let the CPU go crazy!:
@@ -85,11 +90,11 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics, AssetT> {
 	}
 
 	public NerdAsset<SketchPGraphicsT, AssetT> startLoading() {
-		if (this.loaded)
+		if (this.loaded.get())
 			return this;
 
 		this.fetchData();
-		this.loaded = true;
+		this.loaded.set(true);
 
 		if (this.onLoad != null)
 			this.onLoad.run();
@@ -99,15 +104,15 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics, AssetT> {
 
 	// region "Yes/No" questions.
 	public boolean wasLoaded() {
-		return this.ploaded;
+		return this.ploaded.get();
 	}
 
 	public boolean hasLoaded() {
-		return this.loaded;
+		return this.loaded.get();
 	}
 
 	public boolean hasFailed() {
-		return this.failure;
+		return this.failure.get();
 	}
 	// endregion
 
@@ -175,7 +180,7 @@ public class NerdAsset<SketchPGraphicsT extends PGraphics, AssetT> {
 			this.frame = this.SKETCH.frameCount;
 		} catch (final NerdAssetLoaderException e) {
 			this.data = null;
-			this.failure = true;
+			this.failure.set(true);
 			e.printStackTrace();
 		}
 	}
