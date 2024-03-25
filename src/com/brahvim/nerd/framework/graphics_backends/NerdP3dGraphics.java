@@ -72,6 +72,32 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 	// endregion
 
 	// region Fields.
+	// region `static` fields.
+	// region Camera API.
+	public static final float DEFAULT_CAMERA_MOUSE_SENSITIVITY = 0.18f;
+
+	public static final float
+	/*   */ DEFAULT_CAMERA_FOV = PApplet.radians(60),
+			DEFAULT_CAMERA_NEAR = 0.1f,
+			DEFAULT_CAMERA_FAR = 10_000,
+			DEFAULT_CAMERA_MOUSE_Z = 1;
+
+	public static final float
+	/*   */ // "Center", a.k.a. "look-at" vector:
+	/*   */ DEFAULT_CAMERA_CENTER_X = 0,
+			DEFAULT_CAMERA_CENTER_Y = 0,
+			DEFAULT_CAMERA_CENTER_Z = 0,
+			// Camera's position/location vector.
+			DEFAULT_CAMERA_POSITION_X = 0,
+			DEFAULT_CAMERA_POSITION_Y = 0,
+			DEFAULT_CAMERA_POSITION_Z = 0,
+			// "Up", a.k.a. "orientation" vector:
+			DEFAULT_CAMERA_ORIENTATION_X = 0,
+			DEFAULT_CAMERA_ORIENTATION_Y = 1,
+			DEFAULT_CAMERA_ORIENTATION_Z = 0;
+	// endregion
+	// endregion
+
 	public boolean autoApplyCameraMatrix = true;
 
 	protected final NerdUnprojector UNPROJECTOR;
@@ -137,8 +163,8 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 			final NerdSketch<PGraphics3D> p_sketch) {
 		this(p_sketch, p_sketch.createGraphics());
 	}
-	// endregion
 
+	// endregion
 	public NerdP3dGraphics(final NerdSketch<PGraphics3D> p_sketch, final PGraphics3D p_graphics) {
 		super(p_sketch, p_graphics);
 
@@ -149,6 +175,55 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 		this.currentCamera = this.DEFAULT_CAMERA;
 		this.previousCamera = this.DEFAULT_CAMERA;
 	}
+
+	// region `static` methods.
+	// region Camera default vector manipulation/creation methods.
+	public static PVector setAsCameraDefaultCenter() {
+		return new PVector(
+				NerdP3dGraphics.DEFAULT_CAMERA_CENTER_X,
+				NerdP3dGraphics.DEFAULT_CAMERA_CENTER_Y,
+				NerdP3dGraphics.DEFAULT_CAMERA_CENTER_Z);
+	}
+
+	public static PVector setAsCameraDefaultPosition() {
+		return new PVector(
+				NerdP3dGraphics.DEFAULT_CAMERA_POSITION_X,
+				NerdP3dGraphics.DEFAULT_CAMERA_POSITION_Y,
+				NerdP3dGraphics.DEFAULT_CAMERA_POSITION_Z);
+	}
+
+	public static PVector setAsCameraDefaultOrientation() {
+		return new PVector(
+				NerdP3dGraphics.DEFAULT_CAMERA_ORIENTATION_X,
+				NerdP3dGraphics.DEFAULT_CAMERA_ORIENTATION_Y,
+				NerdP3dGraphics.DEFAULT_CAMERA_ORIENTATION_Z);
+	}
+
+	public static PVector setAsCameraDefaultCenter(final PVector p_toSet) {
+		p_toSet.set(
+				NerdP3dGraphics.DEFAULT_CAMERA_CENTER_X,
+				NerdP3dGraphics.DEFAULT_CAMERA_CENTER_Y,
+				NerdP3dGraphics.DEFAULT_CAMERA_CENTER_Z);
+		return p_toSet;
+	}
+
+	public static PVector setAsCameraDefaultPosition(final PVector p_toSet) {
+		p_toSet.set(
+				NerdP3dGraphics.DEFAULT_CAMERA_POSITION_X,
+				NerdP3dGraphics.DEFAULT_CAMERA_POSITION_Y,
+				NerdP3dGraphics.DEFAULT_CAMERA_POSITION_Z);
+		return p_toSet;
+	}
+
+	public static PVector setAsCameraDefaultOrientation(final PVector p_toSet) {
+		p_toSet.set(
+				NerdP3dGraphics.DEFAULT_CAMERA_ORIENTATION_X,
+				NerdP3dGraphics.DEFAULT_CAMERA_ORIENTATION_Y,
+				NerdP3dGraphics.DEFAULT_CAMERA_ORIENTATION_Z);
+		return p_toSet;
+	}
+	// endregion
+	// endregion
 
 	@Override
 	protected void preDrawImpl() {
@@ -541,7 +616,7 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 	// endregion
 
 	// region Projection functions.
-	public void perspective(final NerdAbstractCamera p_cam) {
+	public void perspective(final com.brahvim.nerd.framework.dod_cameras.NerdAbstractCamera p_cam) {
 		this.GRAPHICS.perspective(p_cam.fov, p_cam.aspect, p_cam.near, p_cam.far);
 	}
 
@@ -549,7 +624,7 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 		this.GRAPHICS.perspective(p_fov, this.WINDOW.scr, p_near, p_far);
 	}
 
-	public void ortho(final NerdAbstractCamera p_cam) {
+	public void ortho(final com.brahvim.nerd.framework.dod_cameras.NerdAbstractCamera p_cam) {
 		this.GRAPHICS.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy,
 				this.WINDOW.cy, p_cam.near, p_cam.far);
 	}
@@ -674,7 +749,7 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 	// endregion
 	// endregion
 
-	// rwegion 3D shapes (and shapes in general haha).
+	// region 3D shapes (and shapes in general haha).
 	// region `drawClosedShape()` and `drawOpenShape()`.
 	public void drawClosedShape(final float p_x, final float p_y, final float p_z,
 			final int p_shapeType, final Runnable p_shapingFxn) {

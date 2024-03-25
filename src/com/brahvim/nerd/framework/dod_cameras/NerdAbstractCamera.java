@@ -5,45 +5,76 @@ import java.util.function.Consumer;
 
 import com.brahvim.nerd.framework.graphics_backends.NerdP3dGraphics;
 
-import processing.core.PApplet;
 import processing.core.PVector;
 
 public class NerdAbstractCamera {
 
     // region Fields.
-    public boolean doAutoAspect;
-    public float fov, far, near, aspect;
+    public boolean doAutoAspect = true;
+    public float
+    /*   */ aspect /* `= 1`? */,
+            fov = NerdP3dGraphics.DEFAULT_CAMERA_FOV,
+            far = NerdP3dGraphics.DEFAULT_CAMERA_FAR,
+            near = NerdP3dGraphics.DEFAULT_CAMERA_NEAR,
+            mouseZ = NerdP3dGraphics.DEFAULT_CAMERA_MOUSE_Z;
 
-    private Consumer<NerdP3dGraphics> projection;
-    private PVector position, orientation, clearColor;
+    private PVector position, orientation;
+    private Consumer<NerdP3dGraphics> projectionFunction;
     // endregion
 
     public NerdAbstractCamera() {
-        // Initialize camera properties with default values
-        this.position = new PVector();
-        this.clearColor = new PVector();
-        this.orientation = new PVector(0, 1, 0);
-        this.fov = PApplet.radians(60);
-        this.near = 0.1f;
-        this.far = 10000;
-        this.doAutoAspect = true;
-        this.aspect = 1;
+        this.position = NerdP3dGraphics.setAsCameraDefaultPosition();
+        this.orientation = NerdP3dGraphics.setAsCameraDefaultOrientation();
     }
 
-    public boolean isDoAutoAspect() {
-        return this.doAutoAspect;
+    public NerdAbstractCamera(final PVector p_position) {
+        this.position = p_position;
+        this.orientation = NerdP3dGraphics.setAsCameraDefaultOrientation();
     }
 
-    public void setDoAutoAspect(final boolean doAutoAspect) {
-        this.doAutoAspect = doAutoAspect;
+    public NerdAbstractCamera(final PVector p_position, final PVector p_orientation) {
+        this.position = p_position;
+        this.orientation = p_orientation;
     }
 
-    public void setAspect(final float aspect) {
-        this.aspect = aspect;
-    }
-
+    // region Getters.
     public PVector getPosition() {
         return this.position;
+    }
+
+    public PVector getOrientation() {
+        return this.orientation;
+    }
+
+    public Consumer<NerdP3dGraphics> getProjectionFunction() {
+        return this.projectionFunction;
+    }
+    // endregion
+
+    // region Setters.
+    public NerdAbstractCamera setFov(final float p_fov) {
+        this.fov = p_fov;
+        return this;
+    }
+
+    public NerdAbstractCamera setAspect(final float p_aspect) {
+        this.aspect = p_aspect;
+        return this;
+    }
+
+    public NerdAbstractCamera setFar(final float p_far) {
+        this.far = p_far;
+        return this;
+    }
+
+    public NerdAbstractCamera setNear(final float p_near) {
+        this.near = p_near;
+        return this;
+    }
+
+    public NerdAbstractCamera setMouseZ(final float p_mouseZ) {
+        this.mouseZ = p_mouseZ;
+        return this;
     }
 
     public PVector setPosition(final PVector p_position) {
@@ -52,32 +83,16 @@ public class NerdAbstractCamera {
         return toRet;
     }
 
-    public PVector getOrientation() {
-        return this.orientation;
-    }
-
     public PVector setOrientation(final PVector p_orientation) {
         final PVector toRet = this.orientation;
         this.orientation = Objects.requireNonNull(p_orientation);
         return toRet;
     }
 
-    public PVector getClearColor() {
-        return this.clearColor;
+    public Consumer<NerdP3dGraphics> setProjectionFunction(final Consumer<NerdP3dGraphics> p_projectionFunction) {
+        this.projectionFunction = p_projectionFunction;
+        return this.projectionFunction;
     }
-
-    public PVector setClearColor(final PVector p_clearColor) {
-        final PVector toRet = this.clearColor;
-        this.clearColor = Objects.requireNonNull(p_clearColor);
-        return toRet;
-    }
-
-    public Consumer<NerdP3dGraphics> getProjection() {
-        return this.projection;
-    }
-
-    public void setProjection(final Consumer<NerdP3dGraphics> p_projectionFunction) {
-        this.projection = p_projectionFunction;
-    }
+    // endregion
 
 }

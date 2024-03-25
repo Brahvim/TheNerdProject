@@ -98,7 +98,7 @@ public abstract class NerdAbstractCamera {
 
 	@SuppressWarnings("unchecked")
 	protected NerdAbstractCamera(final NerdAbstractCamera p_camera) {
-		this.GRAPHICS = Objects.requireNonNull(p_camera, "The parameter `p_camera` was `null`!").GRAPHICS;
+		this.GRAPHICS = Objects.requireNonNull(p_camera).GRAPHICS;
 		this.SKETCH = this.GRAPHICS.getSketch();
 		this.WINDOW = (NerdGlWindowModule) this.SKETCH.getNerdModule(NerdWindowModule.class);
 
