@@ -18,24 +18,11 @@ public class NerdAbstractCamera {
             near = NerdP3dGraphics.DEFAULT_CAMERA_NEAR,
             mouseZ = NerdP3dGraphics.DEFAULT_CAMERA_MOUSE_Z;
 
-    private PVector position, orientation;
-    private Consumer<NerdP3dGraphics> projectionFunction;
+    protected Consumer<NerdP3dGraphics> projectionFunction;
+    protected PVector
+    /*   */ position = NerdP3dGraphics.setAsCameraDefaultPosition(),
+            orientation = NerdP3dGraphics.setAsCameraDefaultOrientation();
     // endregion
-
-    public NerdAbstractCamera() {
-        this.position = NerdP3dGraphics.setAsCameraDefaultPosition();
-        this.orientation = NerdP3dGraphics.setAsCameraDefaultOrientation();
-    }
-
-    public NerdAbstractCamera(final PVector p_position) {
-        this.position = p_position;
-        this.orientation = NerdP3dGraphics.setAsCameraDefaultOrientation();
-    }
-
-    public NerdAbstractCamera(final PVector p_position, final PVector p_orientation) {
-        this.position = p_position;
-        this.orientation = p_orientation;
-    }
 
     // region Getters.
     public PVector getPosition() {

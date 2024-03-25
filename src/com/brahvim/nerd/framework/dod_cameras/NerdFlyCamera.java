@@ -9,7 +9,7 @@ import processing.core.PVector;
 public class NerdFlyCamera extends NerdAbstractCamera {
 
     // region Fields.
-    private PVector front;
+    protected PVector front;
     private boolean pholdMouse;
 
     public float yaw, zoom, pitch;
@@ -17,9 +17,6 @@ public class NerdFlyCamera extends NerdAbstractCamera {
     public boolean shouldConstrainPitch = true;
     public float mouseSensitivity = NerdP3dGraphics.DEFAULT_CAMERA_MOUSE_SENSITIVITY;
     // endregion
-
-    public NerdFlyCamera(final PVector p_position, final PVector p_front) {
-    }
 
     public PVector getFront() {
         return this.front;
@@ -29,14 +26,14 @@ public class NerdFlyCamera extends NerdAbstractCamera {
         return this.front;
     }
 
+    public boolean hadLockedMouseLastFrame() {
+        return this.pholdMouse;
+    }
+
     public PVector setFront(final PVector p_front) {
         final PVector toRet = this.front;
         this.front = Objects.requireNonNull(p_front);
         return toRet;
-    }
-
-    public boolean hadLockedMouseLastFrame() {
-        return this.pholdMouse;
     }
 
 }

@@ -15,6 +15,7 @@ public abstract class NerdFramebufferBackedGraphics<SketchPGraphicsT extends PGr
 
 		@Override
 		public void close() throws Exception {
+			// NerdFramebufferBackedGraphics.this.GRAPHICS.pixels = this.PIXELS;
 			NerdFramebufferBackedGraphics.this.updatePixels();
 		}
 
