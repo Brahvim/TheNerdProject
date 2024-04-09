@@ -1,5 +1,7 @@
 package com.brahvim.nerd.framework.colors.hsb;
 
+import java.awt.Color;
+
 import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
 import com.brahvim.nerd.framework.colors.NerdSplitColor;
 import com.brahvim.nerd.framework.colors.rgb.NerdRgbColor;
@@ -16,6 +18,24 @@ public class NerdSplitHsbColor implements NerdHsbColor, NerdNoAlphaColor, NerdSp
 		this.hue = p_hue;
 	}
 
+	// Generic HSB constructor:
+	public NerdSplitHsbColor(final NerdHsbColor p_hsbColor) {
+		this.hue = p_hsbColor.getHue();
+		this.saturation = p_hsbColor.getSaturation();
+		this.brightness = p_hsbColor.getBrightness();
+	}
+
+	// Generic RGB constructor. Can't have specific ones here, 'cause the method
+	// calls do pretty much the same work:
+	public NerdSplitHsbColor(final NerdRgbColor p_rgbColor) {
+		final float[] hsbValues = Color.RGBtoHSB(
+				p_rgbColor.getRed(), p_rgbColor.getGreen(), p_rgbColor.getBlue(), null);
+
+		this.hue = hsbValues[0];
+		this.saturation = hsbValues[1];
+		this.brightness = hsbValues[2];
+	}
+
 	// Copy-constructor:
 	public NerdSplitHsbColor(final NerdSplitHsbColor p_splitHsbColor) {
 		this.hue = p_splitHsbColor.hue;
@@ -30,20 +50,26 @@ public class NerdSplitHsbColor implements NerdHsbColor, NerdNoAlphaColor, NerdSp
 		this.brightness = p_splitAhsbColor.brightness;
 	}
 
-	// Generic HSB constructor:
-	public NerdSplitHsbColor(final NerdHsbColor p_hsbColor) {
-		this.hue = p_hsbColor.getHue();
-		this.saturation = p_hsbColor.getSaturation();
-		this.brightness = p_hsbColor.getBrightness();
+	public NerdSplitHsbColor(final float p_hue, final float p_saturation) {
+		this.hue = p_hue;
+		this.saturation = p_saturation;
 	}
 
-	// Generic RGB constructor. Can't have specific ones here, 'cause the method
-	// calls do pretty much the same work:
-	public NerdSplitHsbColor(final NerdRgbColor p_rgbColor) {
+	public NerdSplitHsbColor(final float p_hue, final float p_saturation, final float p_brightness) {
+		this.hue = p_hue;
+		this.saturation = p_saturation;
+		this.brightness = p_brightness;
+	}
+	// endregion
+
+	// VSCode just called it this and not "`extracted()`".
+	// ???!
+	@SuppressWarnings("unused")
+	private void getDelta(final NerdRgbColor p_rgbColor) {
 		// Normalize!:
 		final float r = p_rgbColor.getRed() / 255.0f;
-		final float g = p_rgbColor.getGreen() / 255.0f;
 		final float b = p_rgbColor.getBlue() / 255.0f;
+		final float g = p_rgbColor.getGreen() / 255.0f;
 
 		// Max and min for some reason:
 		final float max = Math.max(Math.max(r, g), b);
@@ -72,18 +98,6 @@ public class NerdSplitHsbColor implements NerdHsbColor, NerdNoAlphaColor, NerdSp
 		this.hue /= 6;
 	}
 
-	public NerdSplitHsbColor(final float p_hue, final float p_saturation) {
-		this.hue = p_hue;
-		this.saturation = p_saturation;
-	}
-
-	public NerdSplitHsbColor(final float p_hue, final float p_saturation, final float p_brightness) {
-		this.hue = p_hue;
-		this.saturation = p_saturation;
-		this.brightness = p_brightness;
-	}
-	// endregion
-
 	// region Getters.
 	@Override
 	public float getHue() {
@@ -103,13 +117,6 @@ public class NerdSplitHsbColor implements NerdHsbColor, NerdNoAlphaColor, NerdSp
 
 	// region Setters.
 	@Override
-	public NerdSplitHsbColor setGray(final int p_gray) {
-		this.saturation = 0;
-		this.brightness = p_gray;
-		return this;
-	}
-
-	@Override
 	public NerdSplitHsbColor blackOut() {
 		this.setGray(0);
 		return this;
@@ -118,6 +125,13 @@ public class NerdSplitHsbColor implements NerdHsbColor, NerdNoAlphaColor, NerdSp
 	@Override
 	public NerdSplitHsbColor whiteOut() {
 		this.setGray(255);
+		return this;
+	}
+
+	@Override
+	public NerdSplitHsbColor setGray(final int p_gray) {
+		this.saturation = 0;
+		this.brightness = p_gray;
 		return this;
 	}
 

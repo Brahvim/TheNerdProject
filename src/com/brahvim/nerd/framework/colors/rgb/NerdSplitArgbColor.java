@@ -1,6 +1,10 @@
 package com.brahvim.nerd.framework.colors.rgb;
 
+import java.awt.Color;
+
 import com.brahvim.nerd.framework.colors.NerdSplitColor;
+import com.brahvim.nerd.framework.colors.hsb.NerdCompactAhsbColor;
+import com.brahvim.nerd.framework.colors.hsb.NerdHsbColor;
 
 public class NerdSplitArgbColor implements NerdAlphaRgbColor, NerdSplitColor {
 
@@ -13,36 +17,69 @@ public class NerdSplitArgbColor implements NerdAlphaRgbColor, NerdSplitColor {
 
 	public NerdSplitArgbColor(final int p_gray) {
 		this.red = p_gray;
-		this.green = p_gray;
 		this.blue = p_gray;
+		this.green = p_gray;
+	}
+
+	public NerdSplitArgbColor(final NerdRgbColor p_rgbColor) {
+		this.red = p_rgbColor.getRed();
+		this.blue = p_rgbColor.getBlue();
+		this.green = p_rgbColor.getGreen();
+	}
+
+	public NerdSplitArgbColor(final NerdHsbColor p_hsbColor) {
+		final Color rgbColor = new Color(Color.HSBtoRGB(
+				p_hsbColor.getHue() / 255,
+				p_hsbColor.getSaturation() / 255,
+				p_hsbColor.getBrightness() / 255));
+
+		this.red = rgbColor.getRed();
+		this.blue = rgbColor.getBlue();
+		this.green = rgbColor.getGreen();
 	}
 
 	// Perhaps this will be faster without the casting?:
-	public NerdSplitArgbColor(final NerdSplitRgbColor p_floatColor) {
-		this.red = p_floatColor.red;
-		this.green = p_floatColor.green;
-		this.blue = p_floatColor.blue;
+	public NerdSplitArgbColor(final NerdSplitRgbColor p_splitRgbColor) {
+		this.red = p_splitRgbColor.red;
+		this.blue = p_splitRgbColor.blue;
+		this.green = p_splitRgbColor.green;
 	}
 
-	public NerdSplitArgbColor(final NerdSplitArgbColor p_floatColor) {
-		this.red = p_floatColor.red;
-		this.green = p_floatColor.green;
-		this.blue = p_floatColor.blue;
+	// Copy-constructor:
+	public NerdSplitArgbColor(final NerdSplitArgbColor p_splitArgbColor) {
+		this.red = p_splitArgbColor.red;
+		this.blue = p_splitArgbColor.blue;
+		this.green = p_splitArgbColor.green;
+		this.alpha = p_splitArgbColor.alpha;
+	}
 
-		this.alpha = p_floatColor.alpha;
+	public NerdSplitArgbColor(final NerdCompactArgbColor p_compactArgbColor) {
+		this.red = p_compactArgbColor.getRed();
+		this.blue = p_compactArgbColor.getBlue();
+		this.green = p_compactArgbColor.getGreen();
+	}
+
+	public NerdSplitArgbColor(final NerdCompactAhsbColor p_compactAhsbColor) {
+		final Color rgbColor = new Color(Color.HSBtoRGB(
+				p_compactAhsbColor.getHue() / 255,
+				p_compactAhsbColor.getSaturation() / 255,
+				p_compactAhsbColor.getBrightness() / 255));
+
+		this.red = rgbColor.getRed();
+		this.blue = rgbColor.getBlue();
+		this.green = rgbColor.getGreen();
 	}
 
 	public NerdSplitArgbColor(final int p_red, final int p_green, final int p_blue) {
 		this.red = p_red;
-		this.green = p_green;
 		this.blue = p_blue;
+		this.green = p_green;
 	}
 
 	public NerdSplitArgbColor(final int p_red, final int p_green, final int p_blue, final int p_alpha) {
 		this.red = p_red;
-		this.green = p_green;
 		this.blue = p_blue;
-
+		this.green = p_green;
 		this.alpha = p_alpha;
 	}
 	// endregion
@@ -79,8 +116,8 @@ public class NerdSplitArgbColor implements NerdAlphaRgbColor, NerdSplitColor {
 	@Override
 	public NerdSplitArgbColor blackOut() {
 		this.red = 0;
-		this.green = 0;
 		this.blue = 0;
+		this.green = 0;
 
 		return this;
 	}
@@ -88,8 +125,8 @@ public class NerdSplitArgbColor implements NerdAlphaRgbColor, NerdSplitColor {
 	@Override
 	public NerdSplitArgbColor whiteOut() {
 		this.red = 255;
-		this.green = 255;
 		this.blue = 255;
+		this.green = 255;
 
 		return this;
 	}
@@ -109,8 +146,8 @@ public class NerdSplitArgbColor implements NerdAlphaRgbColor, NerdSplitColor {
 	@Override
 	public NerdSplitArgbColor setGray(final int p_gray) {
 		this.red = p_gray;
-		this.green = p_gray;
 		this.blue = p_gray;
+		this.green = p_gray;
 
 		return this;
 	}

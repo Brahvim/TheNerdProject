@@ -40,6 +40,7 @@ public class NerdSplitAhsbColor implements NerdAlphaHsbColor, NerdSplitColor {
 		this.brightness = p_color.brightness;
 	}
 
+	// Copy-constructor:
 	public NerdSplitAhsbColor(final NerdSplitAhsbColor p_color) {
 		this.hue = p_color.hue;
 		this.alpha = p_color.alpha;

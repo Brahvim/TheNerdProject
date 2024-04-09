@@ -1,6 +1,9 @@
 package com.brahvim.nerd.framework.colors.rgb;
 
+import java.awt.Color;
+
 import com.brahvim.nerd.framework.colors.NerdCompactColor;
+import com.brahvim.nerd.framework.colors.hsb.NerdHsbColor;
 
 public class NerdCompactArgbColor implements NerdAlphaRgbColor, NerdCompactColor {
 
@@ -11,16 +14,25 @@ public class NerdCompactArgbColor implements NerdAlphaRgbColor, NerdCompactColor
 		this.color = p_color;
 	}
 
-	public NerdCompactArgbColor(final NerdCompactArgbColor p_intColor) {
-		this.color = p_intColor.color;
+	// Generic HSB constructor:
+	public NerdCompactArgbColor(final NerdHsbColor p_hsbColor) {
+		this.color = Color.HSBtoRGB(
+				p_hsbColor.getHue() / 255,
+				p_hsbColor.getSaturation() / 255,
+				p_hsbColor.getBrightness() / 255);
 	}
 
-	public NerdCompactArgbColor(final NerdSplitRgbColor p_floatColor) {
-		this.set(p_floatColor.red, p_floatColor.green, p_floatColor.blue, 255);
+	public NerdCompactArgbColor(final NerdSplitRgbColor p_splitRgbColor) {
+		this.set(p_splitRgbColor.red, p_splitRgbColor.green, p_splitRgbColor.blue, 255);
 	}
 
-	public NerdCompactArgbColor(final NerdSplitArgbColor p_floatColor) {
-		this.set(p_floatColor.red, p_floatColor.green, p_floatColor.blue, p_floatColor.alpha);
+	public NerdCompactArgbColor(final NerdSplitArgbColor p_splitArgbColor) {
+		this.set(p_splitArgbColor.red, p_splitArgbColor.green, p_splitArgbColor.blue, p_splitArgbColor.alpha);
+	}
+
+	// Copy-constructor:
+	public NerdCompactArgbColor(final NerdCompactArgbColor p_compactArgbColor) {
+		this.color = p_compactArgbColor.color;
 	}
 
 	public NerdCompactArgbColor(final int p_red, final int p_green, final int p_blue) {

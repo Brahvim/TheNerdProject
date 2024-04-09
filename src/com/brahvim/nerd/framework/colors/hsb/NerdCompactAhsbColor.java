@@ -1,7 +1,10 @@
 package com.brahvim.nerd.framework.colors.hsb;
 
+import java.awt.Color;
+
 import com.brahvim.nerd.framework.colors.NerdAlphaColor;
 import com.brahvim.nerd.framework.colors.NerdCompactColor;
+import com.brahvim.nerd.framework.colors.rgb.NerdRgbColor;
 
 public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor {
 
@@ -10,6 +13,16 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
     // region Constructors.
     public NerdCompactAhsbColor(final int p_color) {
         this.color = p_color;
+    }
+
+    // Generic RGB constructor:
+    public NerdCompactAhsbColor(final NerdRgbColor p_rgbColor) {
+        final float[] hsbValues = Color.RGBtoHSB(
+                p_rgbColor.getRed(), p_rgbColor.getGreen(), p_rgbColor.getBlue(), null);
+
+        this.setHue(hsbValues[0]);
+        this.setSaturation(hsbValues[1]);
+        this.setBrightness(hsbValues[2]);
     }
 
     public NerdCompactAhsbColor(final NerdSplitHsbColor p_splitAhsbColor) {
@@ -82,12 +95,6 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
     }
 
     @Override
-    public NerdCompactAhsbColor setGray(final int p_gray) {
-
-        return this;
-    }
-
-    @Override
     public NerdCompactAhsbColor makeOpaque() {
         this.color = (this.color & 0x00FFFFFF) | 0xFF000000;
         return this;
@@ -96,6 +103,21 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
     @Override
     public NerdCompactAhsbColor makeTransparent() {
         this.color = (this.color & 0x00FFFFFF);
+        return this;
+    }
+
+    @Override
+    public NerdAlphaColor setAlpha(int p_value) {
+        p_value = Math.max(0, Math.min(255, p_value));
+        final int alpha = p_value;
+        this.color &= 0x00FFFFFF;
+        this.color |= (alpha << 24);
+        return this;
+    }
+
+    @Override
+    public NerdCompactAhsbColor setGray(final int p_gray) {
+
         return this;
     }
 
@@ -110,11 +132,12 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
     }
 
     @Override
-    public NerdAlphaColor setAlpha(int p_value) {
+    public NerdCompactAhsbColor setBrightness(float p_value) {
         p_value = Math.max(0, Math.min(255, (int) p_value));
-        final int alpha = (int) p_value;
-        this.color &= 0x00FFFFFF;
-        this.color |= (alpha << 24);
+        final int alpha = (this.color >>> 24) & 0xFF;
+        final int brightness = (int) (p_value * 255);
+        this.color = (this.color & 0xFFFFFF00) | brightness;
+        this.color |= alpha << 24;
         return this;
     }
 
@@ -124,16 +147,6 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
         final int alpha = (this.color >>> 24) & 0xFF;
         final int saturation = (int) (p_value * 255) << 8;
         this.color = (this.color & 0xFFFF00FF) | saturation;
-        this.color |= alpha << 24;
-        return this;
-    }
-
-    @Override
-    public NerdCompactAhsbColor setBrightness(float p_value) {
-        p_value = Math.max(0, Math.min(255, (int) p_value));
-        final int alpha = (this.color >>> 24) & 0xFF;
-        final int brightness = (int) (p_value * 255);
-        this.color = (this.color & 0xFFFFFF00) | brightness;
         this.color |= alpha << 24;
         return this;
     }
