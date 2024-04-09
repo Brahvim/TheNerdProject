@@ -10,6 +10,10 @@ public class NerdCompactArgbColor implements NerdAlphaRgbColor, NerdCompactColor
 	public int color;
 
 	// region Constructors.
+	public NerdCompactArgbColor() {
+		super();
+	}
+
 	public NerdCompactArgbColor(final int p_color) {
 		this.color = p_color;
 	}

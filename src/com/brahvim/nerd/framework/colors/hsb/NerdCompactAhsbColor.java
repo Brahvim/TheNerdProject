@@ -11,6 +11,9 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
     public int color;
 
     // region Constructors.
+    public NerdCompactAhsbColor() {
+    }
+
     public NerdCompactAhsbColor(final int p_color) {
         this.color = p_color;
     }
@@ -25,15 +28,21 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
         this.setBrightness(hsbValues[2]);
     }
 
-    public NerdCompactAhsbColor(final NerdSplitHsbColor p_splitAhsbColor) {
-        this.setHue(p_splitAhsbColor.hue);
-        this.setSaturation(p_splitAhsbColor.saturation);
-        this.setBrightness(p_splitAhsbColor.brightness);
+    public NerdCompactAhsbColor(final NerdHsbColor p_rgbColor) {
+        this.setHue(p_rgbColor.getHue());
+        this.setSaturation(p_rgbColor.getSaturation());
+        this.setBrightness(p_rgbColor.getBrightness());
     }
 
-    public NerdCompactAhsbColor(final NerdSplitAhsbColor p_splitAhsbColor) {
+    public NerdCompactAhsbColor(final NerdAlphaHsbColor p_alphaHsbColor) {
+        this.setHue(p_alphaHsbColor.getHue());
+        this.setAlpha(p_alphaHsbColor.getAlpha());
+        this.setSaturation(p_alphaHsbColor.getSaturation());
+        this.setBrightness(p_alphaHsbColor.getBrightness());
+    }
+
+    public NerdCompactAhsbColor(final NerdSplitHsbColor p_splitAhsbColor) {
         this.setHue(p_splitAhsbColor.hue);
-        this.setAlpha(p_splitAhsbColor.alpha);
         this.setSaturation(p_splitAhsbColor.saturation);
         this.setBrightness(p_splitAhsbColor.brightness);
     }

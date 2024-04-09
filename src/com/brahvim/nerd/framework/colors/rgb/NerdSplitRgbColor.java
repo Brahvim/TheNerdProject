@@ -1,7 +1,10 @@
 package com.brahvim.nerd.framework.colors.rgb;
 
+import java.awt.Color;
+
 import com.brahvim.nerd.framework.colors.NerdNoAlphaColor;
 import com.brahvim.nerd.framework.colors.NerdSplitColor;
+import com.brahvim.nerd.framework.colors.hsb.NerdHsbColor;
 
 public class NerdSplitRgbColor implements NerdRgbColor, NerdNoAlphaColor, NerdSplitColor {
 
@@ -17,12 +20,24 @@ public class NerdSplitRgbColor implements NerdRgbColor, NerdNoAlphaColor, NerdSp
 		this.green = p_gray;
 	}
 
+	public NerdSplitRgbColor(final NerdHsbColor p_hsbColor) {
+		final Color rgbColor = new Color(Color.HSBtoRGB(
+				p_hsbColor.getHue() / 255,
+				p_hsbColor.getSaturation() / 255,
+				p_hsbColor.getBrightness() / 255));
+
+		this.red = rgbColor.getRed();
+		this.blue = rgbColor.getBlue();
+		this.green = rgbColor.getGreen();
+	}
+
 	public NerdSplitRgbColor(final NerdCompactArgbColor p_compactArgbColor) {
 		this.red = p_compactArgbColor.getRed();
 		this.blue = p_compactArgbColor.getBlue();
 		this.green = p_compactArgbColor.getGreen();
 	}
 
+	// Copy-constructor:
 	public NerdSplitRgbColor(final NerdSplitRgbColor p_splitRgbColor) {
 		this.red = p_splitRgbColor.red;
 		this.blue = p_splitRgbColor.blue;
