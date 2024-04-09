@@ -13,33 +13,33 @@ public class NerdSplitRgbColor implements NerdRgbColor, NerdNoAlphaColor, NerdSp
 
 	public NerdSplitRgbColor(final int p_gray) {
 		this.red = p_gray;
-		this.green = p_gray;
 		this.blue = p_gray;
+		this.green = p_gray;
 	}
 
-	public NerdSplitRgbColor(final NerdCompactArgbColor p_compactColor) {
-		this.red = p_compactColor.getRed();
-		this.green = p_compactColor.getGreen();
-		this.blue = p_compactColor.getBlue();
+	public NerdSplitRgbColor(final NerdCompactArgbColor p_compactArgbColor) {
+		this.red = p_compactArgbColor.getRed();
+		this.blue = p_compactArgbColor.getBlue();
+		this.green = p_compactArgbColor.getGreen();
 	}
 
-	public NerdSplitRgbColor(final NerdSplitRgbColor p_splitColor) {
-		this.red = p_splitColor.red;
-		this.green = p_splitColor.green;
-		this.blue = p_splitColor.blue;
+	public NerdSplitRgbColor(final NerdSplitRgbColor p_splitRgbColor) {
+		this.red = p_splitRgbColor.red;
+		this.blue = p_splitRgbColor.blue;
+		this.green = p_splitRgbColor.green;
 	}
 
 	// Perhaps this will be faster without the casting?:
 	public NerdSplitRgbColor(final NerdSplitArgbColor p_splitColor) {
 		this.red = p_splitColor.red;
-		this.green = p_splitColor.green;
 		this.blue = p_splitColor.blue;
+		this.green = p_splitColor.green;
 	}
 
 	public NerdSplitRgbColor(final int p_red, final int p_green, final int p_blue) {
 		this.red = p_red;
-		this.green = p_green;
 		this.blue = p_blue;
+		this.green = p_green;
 	}
 	// endregion
 
@@ -50,34 +50,17 @@ public class NerdSplitRgbColor implements NerdRgbColor, NerdNoAlphaColor, NerdSp
 	}
 
 	@Override
-	public int getGreen() {
-		return this.green;
+	public int getBlue() {
+		return this.blue;
 	}
 
 	@Override
-	public int getBlue() {
-		return this.blue;
+	public int getGreen() {
+		return this.green;
 	}
 	// endregion
 
 	// region Setters.
-	@Override
-	public NerdSplitRgbColor setParam1(final float p_value) {
-		this.red = (int) p_value;
-		return this;
-	}
-
-	@Override
-	public NerdSplitRgbColor setParam2(final float p_value) {
-		this.green = (int) p_value;
-		return this;
-	}
-
-	@Override
-	public NerdSplitRgbColor setParam3(final float p_value) {
-		this.blue = (int) p_value;
-		return this;
-	}
 
 	@Override
 	public NerdSplitRgbColor blackOut() {
@@ -113,14 +96,32 @@ public class NerdSplitRgbColor implements NerdRgbColor, NerdNoAlphaColor, NerdSp
 	}
 
 	@Override
+	public NerdSplitRgbColor setBlue(final int p_value) {
+		this.blue = p_value;
+		return this;
+	}
+
+	@Override
 	public NerdSplitRgbColor setGreen(final int p_value) {
 		this.green = p_value;
 		return this;
 	}
 
 	@Override
-	public NerdSplitRgbColor setBlue(final int p_value) {
-		this.blue = p_value;
+	public NerdSplitRgbColor setParam1(final float p_value) {
+		this.red = (int) p_value;
+		return this;
+	}
+
+	@Override
+	public NerdSplitRgbColor setParam2(final float p_value) {
+		this.green = (int) p_value;
+		return this;
+	}
+
+	@Override
+	public NerdSplitRgbColor setParam3(final float p_value) {
+		this.blue = (int) p_value;
 		return this;
 	}
 	// endregion

@@ -28,14 +28,59 @@ public class NerdSplitAhsbColor implements NerdAlphaHsbColor, NerdSplitColor {
 		this.brightness = components[2];
 	}
 
+	public NerdSplitAhsbColor(final NerdHsbColor p_hsbColor) {
+		this.hue = p_hsbColor.getHue();
+		this.saturation = p_hsbColor.getSaturation();
+		this.brightness = p_hsbColor.getBrightness();
+	}
+
+	public NerdSplitAhsbColor(final NerdSplitHsbColor p_color) {
+		this.hue = p_color.hue;
+		this.saturation = p_color.saturation;
+		this.brightness = p_color.brightness;
+	}
+
+	public NerdSplitAhsbColor(final NerdSplitAhsbColor p_color) {
+		this.hue = p_color.hue;
+		this.alpha = p_color.alpha;
+		this.saturation = p_color.saturation;
+		this.brightness = p_color.brightness;
+	}
+
+	public NerdSplitAhsbColor(final NerdAlphaHsbColor p_ahsbColor) {
+		this.hue = p_ahsbColor.getHue();
+		this.alpha = p_ahsbColor.getAlpha();
+		this.saturation = p_ahsbColor.getSaturation();
+		this.brightness = p_ahsbColor.getBrightness();
+	}
+
 	public NerdSplitAhsbColor(final NerdAlphaRgbColor p_argbColor) {
-		this((NerdRgbColor) p_argbColor);
+		final float[] components = Color.RGBtoHSB(
+				p_argbColor.getRed(), p_argbColor.getGreen(), p_argbColor.getBlue(), new float[3]);
+
+		this.hue = components[0];
+		this.saturation = components[1];
+		this.brightness = components[2];
+	}
+
+	public NerdSplitAhsbColor(final NerdCompactAhsbColor p_compactAhsbColor) {
+		this.hue = p_compactAhsbColor.getHue();
+		this.alpha = p_compactAhsbColor.getAlpha();
+		this.saturation = p_compactAhsbColor.getSaturation();
+		this.brightness = p_compactAhsbColor.getBrightness();
 	}
 
 	public NerdSplitAhsbColor(final NerdRgbColor p_rgbColor, final int p_alpha) {
-		this(p_rgbColor);
+		final float[] components = Color.RGBtoHSB(
+				p_rgbColor.getRed(), p_rgbColor.getGreen(), p_rgbColor.getBlue(), new float[3]);
+
 		this.alpha = p_alpha;
+		this.hue = components[0];
+		this.saturation = components[1];
+		this.brightness = components[2];
 	}
+
+	// Using individual `float`s:
 
 	public NerdSplitAhsbColor(final float p_hue, final float p_saturation) {
 		this.hue = p_hue;
@@ -51,10 +96,9 @@ public class NerdSplitAhsbColor implements NerdAlphaHsbColor, NerdSplitColor {
 	public NerdSplitAhsbColor(final float p_hue, final float p_saturation, final float p_brightness,
 			final int p_alpha) {
 		this.hue = p_hue;
+		this.alpha = p_alpha;
 		this.saturation = p_saturation;
 		this.brightness = p_brightness;
-
-		this.alpha = p_alpha;
 	}
 	// endregion
 
@@ -88,6 +132,12 @@ public class NerdSplitAhsbColor implements NerdAlphaHsbColor, NerdSplitColor {
 	}
 
 	@Override
+	public NerdSplitAhsbColor setAlpha(final int p_value) {
+		this.alpha = p_value;
+		return this;
+	}
+
+	@Override
 	public NerdSplitAhsbColor setSaturation(final float p_value) {
 		this.saturation = p_value;
 		return this;
@@ -110,7 +160,6 @@ public class NerdSplitAhsbColor implements NerdAlphaHsbColor, NerdSplitColor {
 		this.alpha = 100;
 		return this;
 	}
-	// endregion
 
 	@Override
 	public NerdSplitAhsbColor blackOut() {
@@ -125,9 +174,11 @@ public class NerdSplitAhsbColor implements NerdAlphaHsbColor, NerdSplitColor {
 	}
 
 	@Override
-	public NerdSplitAhsbColor setGray(int gray) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'setGray'");
+	public NerdSplitAhsbColor setGray(final int p_gray) {
+		this.saturation = 0;
+		this.brightness = p_gray;
+		return this;
 	}
+	// endregion
 
 }

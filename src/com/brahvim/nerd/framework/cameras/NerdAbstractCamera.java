@@ -109,27 +109,14 @@ public abstract class NerdAbstractCamera {
 	}
 	// endregion
 
-	protected void applyOrtho() {
-		this.GRAPHICS.ortho(
-				-this.GRAPHICS.cx, this.GRAPHICS.cx,
-				-this.GRAPHICS.cy, this.GRAPHICS.cy,
-				this.near, this.far);
-	}
-
-	protected void applyPerspective() {
-		this.GRAPHICS.perspective(
-				this.fov, this.aspect,
-				this.near, this.far);
-	}
-
 	// region `public` methods.
 	public abstract void applyMatrix();
 
 	public void applyProjection() {
 		// Apply projection:
 		switch (this.projection) {
-			case PConstants.ORTHOGRAPHIC -> this.applyOrtho();
-			case PConstants.PERSPECTIVE -> this.applyPerspective();
+			case PConstants.ORTHOGRAPHIC -> this.GRAPHICS.ortho(this);
+			case PConstants.PERSPECTIVE -> this.GRAPHICS.perspective(this);
 			// default -> throw new UnsupportedOperationException(
 			// "`NerdCamera::projection` can only be either" +
 			// "`PConstants.PERSPECTIVE` or `PConstants.ORTHOGRAPHIC`.");

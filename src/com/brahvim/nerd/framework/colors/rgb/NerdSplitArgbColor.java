@@ -47,16 +47,15 @@ public class NerdSplitArgbColor implements NerdAlphaRgbColor, NerdSplitColor {
 	}
 	// endregion
 
-	// Getter:
-	@Override
-	public int getAlpha() {
-		return this.alpha;
-	}
-
 	// region Getters.
 	@Override
 	public int getRed() {
 		return this.red;
+	}
+
+	@Override
+	public int getAlpha() {
+		return this.alpha;
 	}
 
 	@Override
@@ -71,6 +70,12 @@ public class NerdSplitArgbColor implements NerdAlphaRgbColor, NerdSplitColor {
 	// endregion
 
 	// region Setters.
+	@Override
+	public NerdSplitArgbColor setAlpha(final int p_value) {
+		this.alpha = p_value;
+		return this;
+	}
+
 	@Override
 	public NerdSplitArgbColor blackOut() {
 		this.red = 0;

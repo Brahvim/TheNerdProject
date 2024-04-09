@@ -1,24 +1,45 @@
 package com.brahvim.nerd.framework.colors.hsb;
 
+import com.brahvim.nerd.framework.colors.NerdAlphaColor;
 import com.brahvim.nerd.framework.colors.NerdCompactColor;
 
 public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor {
 
     public int color;
 
+    // region Constructors.
     public NerdCompactAhsbColor(final int p_color) {
         this.color = p_color;
     }
 
+    public NerdCompactAhsbColor(final NerdSplitHsbColor p_splitAhsbColor) {
+        this.setHue(p_splitAhsbColor.hue);
+        this.setSaturation(p_splitAhsbColor.saturation);
+        this.setBrightness(p_splitAhsbColor.brightness);
+    }
+
+    public NerdCompactAhsbColor(final NerdSplitAhsbColor p_splitAhsbColor) {
+        this.setHue(p_splitAhsbColor.hue);
+        this.setAlpha(p_splitAhsbColor.alpha);
+        this.setSaturation(p_splitAhsbColor.saturation);
+        this.setBrightness(p_splitAhsbColor.brightness);
+    }
+
+    // Copy-constructor:
+    public NerdCompactAhsbColor(final NerdCompactAhsbColor p_compactAhsbColor) {
+        this.color = p_compactAhsbColor.color;
+    }
+    // endregion
+
     // region Getters.
     @Override
     public float getParam1() {
-        return getHue();
+        return this.getHue();
     }
 
     @Override
     public float getParam2() {
-        return getSaturation();
+        return this.getSaturation();
     }
 
     @Override
@@ -26,10 +47,12 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
         return this.getBrightness();
     }
 
+    @Override
     public float getHue() {
         return ((this.color >> 16) & 0xFF) / 255.0f;
     }
 
+    @Override
     public float getSaturation() {
         return ((this.color >> 8) & 0xFF) / 255.0f;
     }
@@ -59,7 +82,7 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
     }
 
     @Override
-    public NerdCompactAhsbColor setGray(int p_gray) {
+    public NerdCompactAhsbColor setGray(final int p_gray) {
 
         return this;
     }
@@ -76,43 +99,58 @@ public class NerdCompactAhsbColor implements NerdAlphaHsbColor, NerdCompactColor
         return this;
     }
 
+    @Override
     public NerdCompactAhsbColor setHue(float p_value) {
-        int alpha = (this.color >>> 24) & 0xFF;
-        int hue = (int) (p_value * 255) << 16;
+        p_value = Math.max(0, Math.min(255, (int) p_value));
+        final int alpha = (this.color >>> 24) & 0xFF;
+        final int hue = (int) (p_value * 255) << 16;
         this.color = (this.color & 0xFF00FFFF) | hue;
         this.color |= alpha << 24;
         return this;
     }
 
+    @Override
+    public NerdAlphaColor setAlpha(int p_value) {
+        p_value = Math.max(0, Math.min(255, (int) p_value));
+        final int alpha = (int) p_value;
+        this.color &= 0x00FFFFFF;
+        this.color |= (alpha << 24);
+        return this;
+    }
+
+    @Override
     public NerdCompactAhsbColor setSaturation(float p_value) {
-        int alpha = (this.color >>> 24) & 0xFF;
-        int saturation = (int) (p_value * 255) << 8;
+        p_value = Math.max(0, Math.min(255, (int) p_value));
+        final int alpha = (this.color >>> 24) & 0xFF;
+        final int saturation = (int) (p_value * 255) << 8;
         this.color = (this.color & 0xFFFF00FF) | saturation;
         this.color |= alpha << 24;
         return this;
     }
 
+    @Override
     public NerdCompactAhsbColor setBrightness(float p_value) {
-        int alpha = (this.color >>> 24) & 0xFF;
-        int brightness = (int) (p_value * 255);
+        p_value = Math.max(0, Math.min(255, (int) p_value));
+        final int alpha = (this.color >>> 24) & 0xFF;
+        final int brightness = (int) (p_value * 255);
         this.color = (this.color & 0xFFFFFF00) | brightness;
         this.color |= alpha << 24;
         return this;
     }
 
     @Override
-    public NerdCompactAhsbColor setParam1(float p_value) {
-        return setHue(p_value);
+    public NerdCompactAhsbColor setParam1(final float p_value) {
+        return this.setHue(p_value);
     }
 
     @Override
-    public NerdCompactAhsbColor setParam2(float p_value) {
-        return setSaturation(p_value);
+    public NerdCompactAhsbColor setParam2(final float p_value) {
+        return this.setSaturation(p_value);
     }
 
     @Override
-    public NerdCompactAhsbColor setParam3(float p_value) {
-        return setBrightness(p_value);
+    public NerdCompactAhsbColor setParam3(final float p_value) {
+        return this.setBrightness(p_value);
     }
     // endregion
 

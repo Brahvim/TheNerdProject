@@ -14,6 +14,8 @@ public interface NerdAlphaColor extends NerdColor {
 	public NerdAlphaColor makeOpaque();
 
 	public NerdAlphaColor makeTransparent();
+
+	public NerdAlphaColor setAlpha(final int p_value);
 	// endregion
 
 }

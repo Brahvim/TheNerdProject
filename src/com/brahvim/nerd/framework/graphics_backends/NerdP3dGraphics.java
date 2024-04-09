@@ -620,18 +620,24 @@ public class NerdP3dGraphics extends NerdOpenGlGraphics<PGraphics3D> {
 		this.GRAPHICS.perspective(p_cam.fov, p_cam.aspect, p_cam.near, p_cam.far);
 	}
 
+	public void perspective(final NerdAbstractCamera p_cam) {
+		this.GRAPHICS.perspective(p_cam.fov, p_cam.aspect, p_cam.near, p_cam.far);
+	}
+
 	public void perspective(final float p_fov, final float p_near, final float p_far) {
 		this.GRAPHICS.perspective(p_fov, this.WINDOW.scr, p_near, p_far);
 	}
 
 	public void ortho(final com.brahvim.nerd.framework.dod_cameras.NerdAbstractCamera p_cam) {
-		this.GRAPHICS.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy,
-				this.WINDOW.cy, p_cam.near, p_cam.far);
+		this.GRAPHICS.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy, this.WINDOW.cy, p_cam.near, p_cam.far);
+	}
+
+	public void ortho(final NerdAbstractCamera p_cam) {
+		this.GRAPHICS.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy, this.WINDOW.cy, p_cam.near, p_cam.far);
 	}
 
 	public void ortho(final float p_near, final float p_far) {
-		this.GRAPHICS.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy,
-				this.WINDOW.cy, p_near, p_far);
+		this.GRAPHICS.ortho(-this.WINDOW.cx, this.WINDOW.cx, -this.WINDOW.cy, this.WINDOW.cy, p_near, p_far);
 	}
 
 	/**

@@ -16,6 +16,29 @@ public class NerdSplitHsbColor implements NerdHsbColor, NerdNoAlphaColor, NerdSp
 		this.hue = p_hue;
 	}
 
+	// Copy-constructor:
+	public NerdSplitHsbColor(final NerdSplitHsbColor p_splitHsbColor) {
+		this.hue = p_splitHsbColor.hue;
+		this.saturation = p_splitHsbColor.saturation;
+		this.brightness = p_splitHsbColor.brightness;
+	}
+
+	// For compile-time performance gains:
+	public NerdSplitHsbColor(final NerdSplitAhsbColor p_splitAhsbColor) {
+		this.hue = p_splitAhsbColor.hue;
+		this.saturation = p_splitAhsbColor.saturation;
+		this.brightness = p_splitAhsbColor.brightness;
+	}
+
+	// Generic HSB constructor:
+	public NerdSplitHsbColor(final NerdHsbColor p_hsbColor) {
+		this.hue = p_hsbColor.getHue();
+		this.saturation = p_hsbColor.getSaturation();
+		this.brightness = p_hsbColor.getBrightness();
+	}
+
+	// Generic RGB constructor. Can't have specific ones here, 'cause the method
+	// calls do pretty much the same work:
 	public NerdSplitHsbColor(final NerdRgbColor p_rgbColor) {
 		// Normalize!:
 		final float r = p_rgbColor.getRed() / 255.0f;
