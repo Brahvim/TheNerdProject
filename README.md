@@ -4,6 +4,8 @@
 "Nerd" is supposed to be a...<br>
 *'game engine'*, (...uhh, yes...?) that aims to wrap the "Processing" creative-coding framework's APIs to make it easier to use it for large projects.
 
+## [Installation instructions are here! :D](https://github.com/Brahvim/NerdDemos)
+
 ...By the way,
 
 ## *This is a rewrite!*
