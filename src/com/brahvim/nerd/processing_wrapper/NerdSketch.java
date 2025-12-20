@@ -472,8 +472,7 @@ public class NerdSketch<SketchPGraphicsT extends PGraphics> extends PApplet impl
 	// }
 
 	// @SuppressWarnings("unchecked")
-	public <RetModuleT extends NerdModule<SketchPGraphicsT>>
-	/*   */ RetModuleT getNerdModule(
+	public <RetModuleT extends NerdModule<SketchPGraphicsT>> RetModuleT getNerdModule(
 			final Class<? extends RetModuleT> p_moduleClass) {
 		for (final var m : this.MODULES)
 			if (p_moduleClass.isInstance(m))

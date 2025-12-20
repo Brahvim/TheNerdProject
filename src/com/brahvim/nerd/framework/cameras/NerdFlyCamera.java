@@ -17,15 +17,15 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	// region Fields.
 	public static final float DEFAULT_MOUSE_SENSITIVITY = 0.18f;
 
-	public final PVector FRONT, DEFAULT_FRONT;
-
 	public float yaw, zoom, pitch;
 	public boolean holdMouse = true;
+	public final PVector FRONT, DEFAULT_FRONT;
 	public boolean shouldConstrainPitch = true;
 	public float mouseSensitivity = NerdFlyCamera.DEFAULT_MOUSE_SENSITIVITY;
 
 	protected final NerdDisplayModule<PGraphics3D> DISPLAY;
-
+	protected final NerdInputModule<PGraphics3D> INPUT;
+	protected final GLWindow GLWINDOW;
 	private boolean pholdMouse;
 	// endregion
 
@@ -34,26 +34,32 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 	@SuppressWarnings("unchecked")
 	public NerdFlyCamera(final NerdP3dGraphics p_graphics, final PVector p_defaultFront) {
 		super(p_graphics);
+		this.INPUT = super.SKETCH.getNerdModule(NerdInputModule.class);
 		this.DISPLAY = super.SKETCH.getNerdModule(NerdDisplayModule.class);
 
 		this.FRONT = p_defaultFront.copy();
 		super.WINDOW.cursorVisible = false;
 		this.DEFAULT_FRONT = p_defaultFront.copy();
+		this.GLWINDOW = super.WINDOW.getNativeObject();
 	}
 
 	@SuppressWarnings("unchecked")
 	public NerdFlyCamera(final NerdP3dGraphics p_graphics) {
 		super(p_graphics);
+		this.INPUT = super.SKETCH.getNerdModule(NerdInputModule.class);
 		this.DISPLAY = super.SKETCH.getNerdModule(NerdDisplayModule.class);
 
 		this.FRONT = super.POSITION.copy();
 		super.WINDOW.cursorVisible = false;
 		this.DEFAULT_FRONT = this.FRONT.copy();
+		this.GLWINDOW = super.WINDOW.getNativeObject();
 	}
 
+	@SuppressWarnings("unchecked")
 	public NerdFlyCamera(final NerdFlyCamera p_source) {
 		super(p_source);
 		this.DISPLAY = p_source.DISPLAY;
+		this.INPUT = super.SKETCH.getNerdModule(NerdInputModule.class);
 
 		// Copying settings over to `this`.
 		this.FRONT = p_source.FRONT.copy();
@@ -67,6 +73,7 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		this.zoom = p_source.zoom;
 		this.pitch = p_source.pitch;
 
+		this.GLWINDOW = super.WINDOW.getNativeObject();
 		this.mouseSensitivity = p_source.mouseSensitivity;
 		this.shouldConstrainPitch = p_source.shouldConstrainPitch;
 	}
@@ -162,22 +169,22 @@ public class NerdFlyCamera extends NerdAbstractCamera {
 		final Point mouseLockPos = this.calculateMouseLockPos();
 
 		if (this.holdMouse) {
-			final GLWindow window = super.WINDOW.getNativeObject();
-			// window.warpPointer(mouseLockPos.x, mouseLockPos.y);
-			window.warpPointer(window.getSurfaceWidth() / 2, window.getSurfaceHeight() / 2);
 
-			@SuppressWarnings("unchecked")
-			final NerdInputModule<PGraphics3D> input = super.SKETCH.getNerdModule(NerdInputModule.class);
+			// this.WINDOW.warpPointer(mouseLockPos.x, mouseLockPos.y);
+			this.GLWINDOW.warpPointer(this.GLWINDOW.getSurfaceWidth() / 2, this.GLWINDOW.getSurfaceHeight() / 2);
 
 			// Should use our own `Robot` instance anyway!:
 			// super.SKETCH.ROBOT.mouseMove(mouseLockPos.x, mouseLockPos.y);
 			this.yaw += this.mouseSensitivity
-					* (input.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
+					* (this.INPUT.GLOBAL_MOUSE_POINT.x - mouseLockPos.x);
 			this.pitch += this.mouseSensitivity
-					* (input.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
+					* (this.INPUT.GLOBAL_MOUSE_POINT.y - mouseLockPos.y);
+
 		} else if (super.SKETCH.mousePressed) {
+
 			this.yaw += this.mouseSensitivity * (super.SKETCH.mouseX - super.SKETCH.pmouseX);
 			this.pitch += this.mouseSensitivity * (super.SKETCH.mouseY - super.SKETCH.pmouseY);
+
 		}
 		// endregion
 
